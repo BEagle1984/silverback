@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Sergio Aquilini
+﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -126,7 +126,7 @@ public class MessageValidationTests : KafkaTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(Encoding.UTF8.GetBytes("{\"String10\": \"1234567890abcd\"}"));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes.ShouldBeEmpty();
@@ -163,7 +163,7 @@ public class MessageValidationTests : KafkaTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(Encoding.UTF8.GetBytes("{\"String10\": \"1234567890abcd\"}"));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
@@ -200,7 +200,7 @@ public class MessageValidationTests : KafkaTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(Encoding.UTF8.GetBytes("{\"String10\": \"1234567890abcd\"}"));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);

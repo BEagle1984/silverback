@@ -67,7 +67,7 @@ public partial class ConsumerEndpointTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         areOverlapping.ShouldBeFalse();
         receivedMessages.Sum().ShouldBe(10);
@@ -100,7 +100,7 @@ public partial class ConsumerEndpointTests : KafkaTests
             await producer2.ProduceAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
@@ -139,7 +139,7 @@ public partial class ConsumerEndpointTests : KafkaTests
             await producer2.ProduceAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
@@ -187,7 +187,7 @@ public partial class ConsumerEndpointTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         KafkaConsumer[] consumers = [.. Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>()];
         consumers.Length.ShouldBe(2);
@@ -230,7 +230,7 @@ public partial class ConsumerEndpointTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         KafkaConsumer[] consumers = [.. Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>()];
         consumers.Length.ShouldBe(2);
@@ -281,7 +281,7 @@ public partial class ConsumerEndpointTests : KafkaTests
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "0" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
         DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 0))!.Offset.Value.ShouldBe(3);
@@ -325,7 +325,7 @@ public partial class ConsumerEndpointTests : KafkaTests
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "0" });
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "0" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
         DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 0))!.Offset.Value.ShouldBe(4);
@@ -370,7 +370,7 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         await Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single().Client.DisconnectAsync();
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
         offsetCommittedCallback.CallsCount.ShouldBe(1);
@@ -397,7 +397,7 @@ public partial class ConsumerEndpointTests : KafkaTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
@@ -410,7 +410,7 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         await consumer.StartAsync();
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
     }
@@ -436,7 +436,7 @@ public partial class ConsumerEndpointTests : KafkaTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
@@ -450,7 +450,7 @@ public partial class ConsumerEndpointTests : KafkaTests
         await consumer.Client.ConnectAsync();
 
         await Helper.WaitUntilConnectedAsync();
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
     }
@@ -506,7 +506,7 @@ public partial class ConsumerEndpointTests : KafkaTests
             taskCompletionSource.SetResult(true);
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedMessages.Count.ShouldBe(12);
     }

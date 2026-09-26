@@ -39,11 +39,11 @@ public partial class ConsumerEndpointTests
 
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Handled message" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         received.ShouldBe(1);
 
         await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         await AsyncTestingUtil.WaitAsync(() =>
             Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status == ConsumerStatus.Stopped &&
             Helper.GetConsumerForEndpoint(DefaultTopicName).Client.Status == ClientStatus.Disconnected);
@@ -76,12 +76,12 @@ public partial class ConsumerEndpointTests
 
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Handled message" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         received.ShouldBe(1);
 
         await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         received.ShouldBe(1);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
@@ -133,13 +133,13 @@ public partial class ConsumerEndpointTests
         await producer.ProduceAsync(new TestEventTwo());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         received.ShouldBe(3);
 
         await producer.ProduceAsync(new TestEventTwo());
         await producer.ProduceAsync(new TestEventThree());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         received.ShouldBe(4);
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
 

@@ -75,7 +75,7 @@ public partial class ChunkingTests
             [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("6", 2, true));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         receivedFiles.Count.ShouldBe(1);
@@ -152,7 +152,7 @@ public partial class ChunkingTests
             [.. rawMessage.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, true));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         receivedFiles.Count.ShouldBe(1);
@@ -205,7 +205,7 @@ public partial class ChunkingTests
             [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, true, typeof(BinaryMessage)));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedFiles.Count.ShouldBe(1);
         receivedFiles[0].ShouldBe(rawMessage2);
@@ -260,7 +260,7 @@ public partial class ChunkingTests
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
         await consumer.Client.DisconnectAsync();
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         await AsyncTestingUtil.WaitAsync(() => enumerationAborted);
 
         enumerationAborted.ShouldBeTrue();

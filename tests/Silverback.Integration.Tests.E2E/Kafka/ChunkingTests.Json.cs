@@ -50,7 +50,7 @@ public partial class ChunkingTests
             await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"Long message {i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(5);
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(5 * chunksPerMessage);
@@ -121,7 +121,7 @@ public partial class ChunkingTests
             await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"Long message {i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(5);
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(5 * chunksPerMessage);
@@ -174,7 +174,7 @@ public partial class ChunkingTests
                 HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 1");
@@ -217,7 +217,7 @@ public partial class ChunkingTests
                 HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 1");
@@ -281,7 +281,7 @@ public partial class ChunkingTests
             [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes
@@ -337,7 +337,7 @@ public partial class ChunkingTests
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(messagesCount * chunksPerMessage);
 
         cancellationTokenSource.Cancel();
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(messagesCount);
         Helper.Spy.InboundEnvelopes
@@ -369,7 +369,7 @@ public partial class ChunkingTests
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Message 1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Message 2" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);

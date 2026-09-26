@@ -225,38 +225,11 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
     public long GetCommittedOffsetsCount(string topic) =>
         _committedOffsets.Values.Where(offset => offset.Topic == topic).Sum(offset => offset.Offset);
 
-    public async ValueTask WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            MockedConfluentConsumer[] consumers;
-            long stateVersion;
+    public ValueTask WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default) =>
+        WaitUntilAllMessagesCoreAsync(topicNames, false, cancellationToken);
 
-            lock (_stateLock)
-            {
-                consumers =
-                [
-                    .. _subscribedConsumers.Select(consumer => consumer.Consumer),
-                    .. _manuallyAssignedConsumers.Cast<MockedConfluentConsumer>()
-                ];
-                stateVersion = _stateVersion;
-            }
-
-            if (consumers.All(consumer => HasFinishedConsuming(consumer, topicNames)))
-            {
-                lock (_stateLock)
-                {
-                    if (stateVersion == _stateVersion &&
-                        (consumers.Length == 0 || !_isRebalancing && !_isRebalanceScheduled))
-                    {
-                        return;
-                    }
-                }
-            }
-
-            await Task.Delay(10, cancellationToken).ConfigureAwait(false);
-        }
-    }
+    public ValueTask WaitUntilAllMessagesAreCommittedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default) =>
+        WaitUntilAllMessagesCoreAsync(topicNames, true, cancellationToken);
 
     public void NotifyAssignmentComplete(MockedConfluentConsumer consumer)
     {
@@ -272,6 +245,41 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
     }
 
     public void Dispose() => _subscriptionsChangeSemaphore.Dispose();
+
+    private async ValueTask WaitUntilAllMessagesCoreAsync(IReadOnlyCollection<string> topicNames, bool waitForCommit, CancellationToken cancellationToken)
+    {
+        while (true)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            MockedConfluentConsumer[] consumers;
+            long stateVersion;
+
+            lock (_stateLock)
+            {
+                consumers =
+                [
+                    .. _subscribedConsumers.Select(consumer => consumer.Consumer),
+                    .. _manuallyAssignedConsumers.Cast<MockedConfluentConsumer>()
+                ];
+                stateVersion = _stateVersion;
+            }
+
+            if (consumers.All(consumer => HasFinishedConsuming(consumer, topicNames, waitForCommit)))
+            {
+                lock (_stateLock)
+                {
+                    if (stateVersion == _stateVersion &&
+                        (consumers.Length == 0 || !_isRebalancing && !_isRebalanceScheduled))
+                    {
+                        return;
+                    }
+                }
+            }
+
+            await Task.Delay(10, cancellationToken).ConfigureAwait(false);
+        }
+    }
 
     private async Task RebalanceAsync()
     {
@@ -418,7 +426,7 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
             _subscribedConsumers.Select(consumer =>
                 Task.WhenAny(consumer.PartitionsAssignedTaskCompletionSource.Task, Task.Delay(100))));
 
-    private bool HasFinishedConsuming(MockedConfluentConsumer consumer, IReadOnlyCollection<string> topicNames)
+    private bool HasFinishedConsuming(MockedConfluentConsumer consumer, IReadOnlyCollection<string> topicNames, bool waitForCommit)
     {
         if (consumer.IsDisposed)
             return true;
@@ -436,11 +444,11 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
                 if (lastOffset < 0)
                     return true;
 
-                if (string.IsNullOrEmpty(consumer.Config.GroupId))
-                    return consumer.GetStoredOffset(topicPartition).Offset > lastOffset;
+                TopicPartitionOffset? offset = waitForCommit
+                    ? GetCommittedOffset(topicPartition)
+                    : consumer.GetStoredOffset(topicPartition);
 
-                return _committedOffsets.TryGetValue(topicPartition, out TopicPartitionOffset? committedOffset) &&
-                       committedOffset.Offset > lastOffset;
+                return offset != null && offset.Offset > lastOffset;
             });
     }
 

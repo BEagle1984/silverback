@@ -29,8 +29,10 @@ public class OutboxInMemoryTests : KafkaTests
     {
     }
 
-    [Fact]
-    public async Task Outbox_ShouldProduceMessages()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Outbox_ShouldProduceMessages(bool waitForCommit)
     {
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -61,7 +63,15 @@ public class OutboxInMemoryTests : KafkaTests
             await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        if (waitForCommit)
+        {
+            await Helper.WaitUntilAllMessagesAreCommittedAsync();
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+        }
+        else
+        {
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        }
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);

@@ -27,6 +27,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private readonly Dictionary<TopicPartition, TopicPartitionOffset> _storedOffsets = [];
 
+    private readonly Dictionary<TopicPartition, TopicPartitionOffset> _pendingCommitOffsets = [];
+
     private readonly Dictionary<TopicPartition, Offset> _lastEofOffsets = [];
 
     private readonly int _autoCommitIntervalMs;
@@ -281,6 +283,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         lock (_storedOffsets)
         {
             _storedOffsets[offset.TopicPartition] = offset;
+            _pendingCommitOffsets[offset.TopicPartition] = offset;
         }
     }
 
@@ -295,6 +298,12 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         Check.NotNull(tpo, nameof(tpo));
 
         _currentOffsets[tpo.TopicPartition] = tpo;
+
+        lock (_storedOffsets)
+        {
+            // Reset processing progress without making the seek offset eligible for commit
+            _storedOffsets[tpo.TopicPartition] = tpo;
+        }
     }
 
     public void Pause(IEnumerable<TopicPartition> partitions)
@@ -484,6 +493,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
                 lock (_storedOffsets)
                 {
                     _storedOffsets.Remove(topicPartition);
+                    _pendingCommitOffsets.Remove(topicPartition);
                 }
 
                 _lastEofOffsets.Remove(topicPartition);
@@ -739,12 +749,12 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
         lock (_storedOffsets)
         {
-            if (_storedOffsets.Count == 0)
+            if (_pendingCommitOffsets.Count == 0)
                 return [];
 
-            List<TopicPartitionOffset> committedOffsets = [.. _storedOffsets.Values];
+            List<TopicPartitionOffset> committedOffsets = [.. _pendingCommitOffsets.Values];
             _consumerGroup.Commit(committedOffsets);
-            _storedOffsets.Clear();
+            _pendingCommitOffsets.Clear();
 
             if (isAutoCommit)
             {

@@ -53,7 +53,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne());
         }
 
-        await AsyncTestingUtil.WaitAsync(() => received >= 5);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         received.ShouldBe(5);
         Helper.ConsumerGroups.Count.ShouldBe(1);
@@ -69,7 +69,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne());
         }
 
-        await AsyncTestingUtil.WaitAsync(() => received >= 8);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
         received.ShouldBe(8);
     }
 
@@ -102,7 +102,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne());
         }
 
-        await AsyncTestingUtil.WaitAsync(() => received >= 5);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         received.ShouldBe(5);
         Helper.ConsumerGroups.Count.ShouldBe(1);
@@ -118,7 +118,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne());
         }
 
-        await AsyncTestingUtil.WaitAsync(() => received >= 8);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
         received.ShouldBe(8);
     }
 }

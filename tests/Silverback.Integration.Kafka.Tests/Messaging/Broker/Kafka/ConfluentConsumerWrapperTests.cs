@@ -164,6 +164,20 @@ public class ConfluentConsumerWrapperTests
                     })));
     }
 
+    [Fact]
+    public async Task StoreOffset_ShouldStoreLocallyWithoutCommitting_WhenOffsetsCommitIsDisabled()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync(commitOffsets: false);
+        TopicPartitionOffset offset = new("topic", 0, 2);
+
+        consumer.StoreOffset(offset);
+        consumer.Commit();
+        await consumer.DisconnectAsync();
+
+        _confluentConsumer.Received(1).StoreOffset(offset);
+        _confluentConsumer.DidNotReceive().Commit();
+    }
+
     [Theory]
     [InlineData(ErrorCode.UnknownMemberId)]
     [InlineData(ErrorCode.Local_TimedOut)]
@@ -302,13 +316,14 @@ public class ConfluentConsumerWrapperTests
         Substitute.For<IServiceProvider>(),
         Substitute.For<ISilverbackLogger<KafkaConsumer>>());
 
-    private async Task<ConfluentConsumerWrapper> GetConnectedConsumerAsync(bool enableAutoCommit = true)
+    private async Task<ConfluentConsumerWrapper> GetConnectedConsumerAsync(bool enableAutoCommit = true, bool commitOffsets = true)
     {
         KafkaConsumerConfiguration configuration = new()
         {
             GroupId = "group",
             EnableAutoCommit = enableAutoCommit,
             CommitOffsetEach = enableAutoCommit ? null : 1,
+            CommitOffsets = commitOffsets,
             Endpoints = new[]
             {
                 new KafkaConsumerEndpointConfiguration

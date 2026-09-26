@@ -15,5 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Silverback.Tests.Extended.Shared/Silverback.Tests.Extended.Shared.csproj" />
+    <ProjectReference Include="../../../src/Silverback.Storage.Memory/Silverback.Storage.Memory.csproj" />
   </ItemGroup>
 </Project>

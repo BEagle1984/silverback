@@ -59,7 +59,7 @@ public partial class ChunkingTests
 
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(6);
         Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.ShouldBeLessThanOrEqualTo(10));
@@ -107,7 +107,7 @@ public partial class ChunkingTests
                 HeadersHelper.GetChunkHeaders("1", 2, true));
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedFiles.Count.ShouldBe(3);
         receivedFiles[0].ShouldBe(Encoding.UTF8.GetBytes("Long message 1"));
@@ -154,7 +154,7 @@ public partial class ChunkingTests
                 HeadersHelper.GetChunkHeaders("1", 2, 3));
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedFiles.Count.ShouldBe(3);
         receivedFiles[0].ShouldBe(Encoding.UTF8.GetBytes("Long message 1"));
@@ -201,7 +201,7 @@ public partial class ChunkingTests
                 HeadersHelper.GetChunkHeaders("1", 2, 3));
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedFiles.Count.ShouldBe(3);
         receivedFiles[0].ShouldBe(Encoding.UTF8.GetBytes("Long message 1"));
@@ -248,7 +248,7 @@ public partial class ChunkingTests
                 HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(BinaryMessage)));
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedFiles.Count.ShouldBe(3);
         receivedFiles[0].ShouldBe(Encoding.UTF8.GetBytes("Long message 1"));
@@ -314,7 +314,7 @@ public partial class ChunkingTests
             [.. rawMessage2.Skip(6)],
             HeadersHelper.GetChunkHeaders("1", 2, 3));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
         receivedFiles.Count.ShouldBe(2);
@@ -388,7 +388,7 @@ public partial class ChunkingTests
             [.. rawMessage1.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, 3));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedFilesCount.ShouldBe(3);
         receivedFiles.Count.ShouldBe(3);
@@ -425,7 +425,7 @@ public partial class ChunkingTests
 
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);

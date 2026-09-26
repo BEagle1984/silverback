@@ -12,7 +12,7 @@ using Silverback.Messaging.Configuration.Kafka;
 namespace Silverback.Testing;
 
 /// <inheritdoc cref="ITestingHelper" />
-public interface IKafkaTestingHelper : ITestingHelper
+public partial interface IKafkaTestingHelper : ITestingHelper
 {
     /// <summary>
     ///     Gets a collection of <see cref="IMockedConsumerGroup" /> representing all known consumer groups.

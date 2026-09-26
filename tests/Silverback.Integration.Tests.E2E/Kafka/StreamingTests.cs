@@ -59,7 +59,7 @@ public partial class StreamingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
@@ -102,7 +102,7 @@ public partial class StreamingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
@@ -145,7 +145,7 @@ public partial class StreamingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
@@ -188,7 +188,7 @@ public partial class StreamingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
@@ -231,7 +231,7 @@ public partial class StreamingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
@@ -273,7 +273,7 @@ public partial class StreamingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)

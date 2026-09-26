@@ -37,14 +37,18 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
     [InlineData("automatic", false, false)]
     [InlineData("per-message", false, false)]
     [InlineData("disabled", false, false)]
+    [InlineData("client-side", false, false)]
     [InlineData("automatic", true, false)]
     [InlineData("per-message", true, false)]
     [InlineData("disabled", true, false)]
+    [InlineData("client-side", true, false)]
     [InlineData("automatic", true, true)]
     [InlineData("per-message", true, true)]
     public async Task Commit_ShouldRespectGroupMembership_WithStaticAssignment(string commitMode, bool shareActiveGroup, bool retryOnError)
     {
         _ = fixture;
+
+        bool commitsToBroker = commitMode is not ("disabled" or "client-side");
 
         string prefix = "stress-static-" + Guid.NewGuid().ToString("N");
         string groupId = prefix + "-group";
@@ -109,7 +113,7 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
         HostApplicationBuilder builder = Host.CreateApplicationBuilder();
         builder.Logging.ClearProviders().AddProvider(logs);
         builder.Services.AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddKafka())
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddInMemoryKafkaOffsetStore())
             .AddSingletonBrokerClientCallback(commits)
             .AddDelegateSubscriber<ReconciliationMessage>(message =>
             {
@@ -149,6 +153,9 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
                             break;
                         case "disabled":
                             consumer.DisableOffsetsCommit();
+                            break;
+                        case "client-side":
+                            consumer.DisableOffsetsCommit().StoreOffsetsClientSide(store => store.UseMemory());
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(commitMode));
@@ -218,7 +225,7 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
 
             (await processed.Task.WaitAsync(Timeout)).ShouldBe(new ReconciliationMessage(0, 1));
 
-            if (commitMode == "disabled")
+            if (!commitsToBroker)
             {
                 // Observe several automatic-commit intervals before checking that processing did not persist an offset
                 await Task.Delay(1000);
@@ -254,11 +261,11 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
 
             await host.StopAsync().WaitAsync(Timeout);
 
-            Offset expected = commitMode == "disabled" || shareActiveGroup ? Offset.Unset : delivery.Offset + 1;
+            Offset expected = !commitsToBroker || shareActiveGroup ? Offset.Unset : delivery.Offset + 1;
             ReadCommittedOffset().ShouldBe(expected);
             logs.ProcessingErrors.ShouldBeEmpty();
 
-            ReconciliationMessage[] expectedMessages = shareActiveGroup && commitMode != "disabled"
+            ReconciliationMessage[] expectedMessages = shareActiveGroup && commitsToBroker
                 ? [new ReconciliationMessage(0, 1), new ReconciliationMessage(0, 2)]
                 : [new ReconciliationMessage(0, 1)];
             received.ShouldBe(expectedMessages);

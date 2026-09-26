@@ -55,7 +55,7 @@ public partial class ErrorPoliciesTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(message);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
         tryCount.ShouldBe(11);
@@ -114,7 +114,7 @@ public partial class ErrorPoliciesTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = i.ToString(CultureInfo.InvariantCulture) });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(20);
         tryCount.ShouldBe(6);
@@ -174,7 +174,7 @@ public partial class ErrorPoliciesTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = i.ToString(CultureInfo.InvariantCulture) });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(20);
         tryCount.ShouldBe(6);
@@ -211,7 +211,7 @@ public partial class ErrorPoliciesTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         tryCount.ShouldBe(3);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
@@ -245,7 +245,7 @@ public partial class ErrorPoliciesTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         tryCount.ShouldBe(11);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
@@ -288,7 +288,7 @@ public partial class ErrorPoliciesTests
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message three" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message four" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(16);
         Helper.Spy.RawOutboundEnvelopes.ForEach(envelope =>
@@ -349,7 +349,7 @@ public partial class ErrorPoliciesTests
             await publisher.PublishAsync(new TestIndexedMessage(i, "Long message"));
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(16);
         tryCounters.ShouldAllBe(tryCount => tryCount.Value == 3);
@@ -408,7 +408,7 @@ public partial class ErrorPoliciesTests
 
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         tryCount.ShouldBe(2);
 
@@ -463,7 +463,7 @@ public partial class ErrorPoliciesTests
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.OutboundEnvelopes[0].RawMessage.ReadAll().ShouldNotBe(rawMessage.ReReadAll());
@@ -510,7 +510,7 @@ public partial class ErrorPoliciesTests
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(8);
         Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().ShouldNotBe(rawMessage.Read(10));
@@ -566,7 +566,7 @@ public partial class ErrorPoliciesTests
             await producer.ProduceAsync(new TestEventOne());
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         tryMessageCount.ShouldBe(12);
         receivedBatches.ShouldBe(5);
@@ -611,7 +611,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
@@ -659,7 +659,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(4);
@@ -708,7 +708,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
@@ -760,7 +760,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
@@ -808,7 +808,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(6);
@@ -856,7 +856,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(6);
@@ -916,7 +916,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(6);
@@ -952,7 +952,7 @@ public partial class ErrorPoliciesTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         tryCount.ShouldBe(11);
 

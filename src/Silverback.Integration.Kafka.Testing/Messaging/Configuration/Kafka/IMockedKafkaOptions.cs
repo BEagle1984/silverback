@@ -23,9 +23,15 @@ public interface IMockedKafkaOptions
     int DefaultPartitionsCount { get; set; }
 
     /// <summary>
-    ///     Gets or sets the value to be used instead of the default 5 seconds or the configured <see cref="KafkaConsumerConfiguration.AutoCommitIntervalMs" />
-    ///     for the inbound topics. Set it to <c>null</c> to disable the feature. The default is 50 milliseconds.
+    ///     Gets or sets the auto-commit interval in milliseconds to use in mocked consumers instead of
+    ///     <see cref="KafkaConsumerConfiguration.AutoCommitIntervalMs" />. The override is applied automatically and defaults to 50 milliseconds.
+    ///     Set it to <c>null</c> to use the consumer's configured interval, or 5 seconds if no interval is configured.
     /// </summary>
+    /// <remarks>
+    ///     This override only affects consumers with auto-commit enabled and speeds up tests that wait for broker offset commits.
+    ///     <see cref="Silverback.Testing.ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[])" /> uses locally stored offsets
+    ///     and does not depend on this interval.
+    /// </remarks>
     int? OverriddenAutoCommitIntervalMs { get; set; }
 
     /// <summary>

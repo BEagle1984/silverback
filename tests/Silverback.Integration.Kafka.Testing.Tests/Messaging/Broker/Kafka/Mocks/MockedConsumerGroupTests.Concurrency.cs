@@ -162,6 +162,7 @@ public partial class MockedConsumerGroupTests
 
         TaskCompletionSource inspectionStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource joiningConsumerInspected = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        MockedConfluentConsumer joining = fixture.CreateConsumer();
         using ManualResetEventSlim releaseInspection = new();
         int inspected = 0;
         fixture.BeforeTopicInspection = (_, _) =>
@@ -179,7 +180,6 @@ public partial class MockedConsumerGroupTests
         try
         {
             await inspectionStarted.Task.WaitAsync(RaceTimeout);
-            MockedConfluentConsumer joining = fixture.CreateConsumer();
             fixture.Produce("joining-topic");
             joining.Subscribe("joining-topic");
             await fixture.AssignAllAsync();
@@ -199,7 +199,7 @@ public partial class MockedConsumerGroupTests
         completed.ShouldBeSameAs(joiningConsumerInspected.Task);
         inspection.IsCompleted.ShouldBeFalse();
 
-        fixture.Group.Commit([new TopicPartitionOffset("joining-topic", 0, 1)]);
+        joining.StoreOffset(new TopicPartitionOffset("joining-topic", 0, 1));
         await inspection.WaitAsync(RaceTimeout);
     }
 

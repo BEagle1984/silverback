@@ -19,6 +19,56 @@ public partial class MockedConsumerGroupTests
 {
     private const string BootstrapServers = "PLAINTEXT://mock";
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldUseStoredOffsets_RegardlessOfCommit(bool commit)
+    {
+        MockedKafkaOptions options = new()
+        {
+            DefaultPartitionsCount = 1,
+            PartitionsAssignmentDelay = TimeSpan.Zero
+        };
+        InMemoryTopicCollection topics = new(options);
+        using MockedConsumerGroup group = new("group", BootstrapServers, topics);
+        using MockedConfluentConsumer consumer = GetConsumer(group, topics, options, PartitionAssignmentStrategy.RoundRobin);
+        TopicPartition partition = new("topic", 0);
+        topics.Get("topic", consumer.Config).Push(0, new Message<byte[]?, byte[]?> { Value = [1] }, Guid.Empty);
+        consumer.Assign(new TopicPartitionOffset(partition, 0));
+        consumer.Consume(TimeSpan.FromSeconds(1)).ShouldNotBeNull();
+
+        using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(5));
+        Task wait = group.WaitUntilAllMessagesAreConsumedAsync([], timeout.Token).AsTask();
+        Task committedWait = group.WaitUntilAllMessagesAreCommittedAsync([], timeout.Token).AsTask();
+
+        wait.IsCompleted.ShouldBeFalse();
+
+        consumer.StoreOffset(new TopicPartitionOffset(partition, 1));
+
+        if (commit)
+            consumer.Commit();
+
+        await wait;
+        await group.WaitUntilAllMessagesAreConsumedAsync([], timeout.Token);
+
+        consumer.GetStoredOffset(partition).Offset.ShouldBe(new Offset(1));
+        group.CommittedOffsets.Count.ShouldBe(commit ? 1 : 0);
+
+        if (!commit)
+            committedWait.IsCompleted.ShouldBeFalse();
+
+        consumer.Commit().Count.ShouldBe(commit ? 0 : 1);
+        await committedWait;
+
+        consumer.Seek(new TopicPartitionOffset(partition, 0));
+        Task replayWait = group.WaitUntilAllMessagesAreConsumedAsync([], timeout.Token).AsTask();
+
+        replayWait.IsCompleted.ShouldBeFalse();
+
+        consumer.StoreOffset(new TopicPartitionOffset(partition, 1));
+        await replayWait;
+    }
+
     [Fact]
     public async Task Rebalance_ShouldRevokeAndReassignUnchangedConsumer_WhenUsingRoundRobin()
     {

@@ -65,7 +65,7 @@ public partial interface ITestingHelper
     ValueTask WaitUntilConnectedAsync(bool throwTimeoutException, CancellationToken cancellationToken);
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -79,7 +79,7 @@ public partial interface ITestingHelper
     ValueTask WaitUntilAllMessagesAreConsumedAsync(params string[] endpointNames);
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -96,7 +96,7 @@ public partial interface ITestingHelper
     ValueTask WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout, params string[] endpointNames);
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -114,7 +114,7 @@ public partial interface ITestingHelper
     ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, params string[] endpointNames);
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -132,7 +132,7 @@ public partial interface ITestingHelper
     ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, TimeSpan? timeout = null);
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -153,7 +153,7 @@ public partial interface ITestingHelper
     ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, TimeSpan? timeout, params string[] endpointNames);
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -170,7 +170,7 @@ public partial interface ITestingHelper
     ValueTask WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken, params string[] endpointNames);
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.

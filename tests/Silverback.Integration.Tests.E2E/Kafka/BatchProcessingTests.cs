@@ -83,7 +83,7 @@ public partial class BatchProcessingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -148,7 +148,7 @@ public partial class BatchProcessingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -213,7 +213,7 @@ public partial class BatchProcessingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -278,7 +278,7 @@ public partial class BatchProcessingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -343,7 +343,7 @@ public partial class BatchProcessingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -404,7 +404,7 @@ public partial class BatchProcessingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -475,7 +475,7 @@ public partial class BatchProcessingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -626,7 +626,7 @@ public partial class BatchProcessingTests : KafkaTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         completedBatches.ShouldBe(2);
@@ -673,10 +673,10 @@ public partial class BatchProcessingTests : KafkaTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.ProduceAsync(new TestEventOne());
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         await producer.ProduceAsync(new TestEventOne());
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         completedBatches.ShouldBe(2);
@@ -726,7 +726,7 @@ public partial class BatchProcessingTests : KafkaTests
         await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(1);
         receivedBatches[0].Count.ShouldBe(1);
@@ -780,7 +780,7 @@ public partial class BatchProcessingTests : KafkaTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(2);
@@ -841,7 +841,7 @@ public partial class BatchProcessingTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         actualTraceIds.ShouldBe(expectedTraceIds);
         batchStartTraceIds.ShouldBe([expectedTraceIds[0], expectedTraceIds[5]]);

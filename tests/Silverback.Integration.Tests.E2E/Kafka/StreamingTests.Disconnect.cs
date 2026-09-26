@@ -56,7 +56,7 @@ public partial class StreamingTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         receivedMessages.Count.ShouldBe(2);
 
         await Helper.GetConsumerForEndpoint(DefaultTopicName).Client.DisconnectAsync();
@@ -92,7 +92,7 @@ public partial class StreamingTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         receivedMessages.Count.ShouldBe(2);
 
         await Helper.GetConsumerForEndpoint(DefaultTopicName).Client.DisconnectAsync();

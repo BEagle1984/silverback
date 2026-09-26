@@ -71,7 +71,7 @@ public class MqttToKafkaTests : KafkaTests
 
         await AsyncTestingUtil.WaitAsync(() => eventOneCount >= 15);
         await AsyncTestingUtil.WaitAsync(() => eventTwoCount >= 15);
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         eventOneCount.ShouldBe(15);
         eventTwoCount.ShouldBe(15);

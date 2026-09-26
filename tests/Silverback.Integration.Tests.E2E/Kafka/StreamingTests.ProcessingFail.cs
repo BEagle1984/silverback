@@ -53,7 +53,7 @@ public partial class StreamingTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
 
         receivedMessages.Count.ShouldBe(2);
@@ -101,7 +101,7 @@ public partial class StreamingTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
 
         receivedMessages.Count.ShouldBe(2);

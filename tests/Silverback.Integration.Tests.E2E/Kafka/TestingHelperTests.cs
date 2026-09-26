@@ -2,11 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -24,8 +27,128 @@ public class TestingHelperTests : KafkaTests
     {
     }
 
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(0, true)]
+    [InlineData(10, false)]
+    [InlineData(-1, false)]
+    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldWaitForProcessing_WithoutWaitingForCommit(
+        int commitOffsetEach,
+        bool clientSideOffsetStore)
+    {
+        TaskCompletionSource entered = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int processed = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(1).OverrideAutoCommitIntervalMs(60000))
+                .AddInMemoryKafkaOffsetStore())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer =>
+                {
+                    consumer
+                        .WithGroupId(DefaultGroupId)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName));
+
+                    if (commitOffsetEach == 0)
+                        consumer.DisableOffsetsCommit();
+                    else if (commitOffsetEach > 0)
+                        consumer.CommitOffsetEach(commitOffsetEach);
+
+                    if (clientSideOffsetStore)
+                        consumer.StoreOffsetsClientSide(store => store.UseMemory());
+                }))
+            .AddDelegateSubscriber<TestEventOne>(async Task (_) =>
+            {
+                entered.TrySetResult();
+                await release.Task;
+                Interlocked.Increment(ref processed);
+            }));
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventOne());
+        await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Task wait = Helper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromSeconds(5)).AsTask();
+
+        try
+        {
+            await Should.ThrowAsync<TimeoutException>(() => wait.WaitAsync(TimeSpan.FromMilliseconds(100)));
+            Volatile.Read(ref processed).ShouldBe(0);
+        }
+        finally
+        {
+            release.TrySetResult();
+        }
+
+        await wait;
+
+        Volatile.Read(ref processed).ShouldBe(1);
+        DefaultConsumerGroup.CommittedOffsets.ShouldBeEmpty();
+
+        await Should.ThrowAsync<TimeoutException>(() =>
+            Helper.WaitUntilAllMessagesAreCommittedAsync(TimeSpan.FromMilliseconds(100)).AsTask());
+
+        DefaultConsumerGroup.CommittedOffsets.ShouldBeEmpty();
+    }
+
     [Fact]
-    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldWaitAllTopicsAndPartitions()
+    public async Task WaitUntilAllMessagesAreCommittedAsync_ShouldWaitForBrokerCommit_AfterProcessingCompletes()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(10)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Task wait = Helper.WaitUntilAllMessagesAreCommittedAsync(TimeSpan.FromSeconds(5)).AsTask();
+
+        await Should.ThrowAsync<TimeoutException>(() => wait.WaitAsync(TimeSpan.FromMilliseconds(100)));
+        DefaultConsumerGroup.CommittedOffsets.ShouldBeEmpty();
+
+        Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single().Client.Commit();
+        await wait;
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task WaitUntilAllMessagesAreCommittedAsync_ShouldRespectCancellation(bool throwTimeoutException)
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka()));
+
+        using CancellationTokenSource cancellation = new();
+        await cancellation.CancelAsync();
+
+        if (throwTimeoutException)
+        {
+            await Should.ThrowAsync<TimeoutException>(() =>
+                Helper.WaitUntilAllMessagesAreCommittedAsync(cancellation.Token).AsTask());
+        }
+        else
+        {
+            await Helper.WaitUntilAllMessagesAreCommittedAsync(false, cancellation.Token);
+        }
+    }
+
+    [Fact]
+    public async Task WaitUntilAllMessagesAreCommittedAsync_ShouldWaitAllTopicsAndPartitions()
     {
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -52,7 +175,7 @@ public class TestingHelperTests : KafkaTests
             await publisher.PublishAsync(new TestEventThree { ContentEventThree = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.ShouldBe(
             [
@@ -67,7 +190,7 @@ public class TestingHelperTests : KafkaTests
     }
 
     [Fact]
-    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldWaitSpecifiedTopicsOnly()
+    public async Task WaitUntilAllMessagesAreCommittedAsync_ShouldWaitSpecifiedTopicsOnly()
     {
         TaskCompletionSource taskCompletionSource = new();
 
@@ -100,7 +223,7 @@ public class TestingHelperTests : KafkaTests
 
         try
         {
-            await Helper.WaitUntilAllMessagesAreConsumedAsync("topic1", "topic2");
+            await Helper.WaitUntilAllMessagesAreCommittedAsync("topic1", "topic2");
 
             Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.ShouldBe(
                 [
@@ -118,7 +241,7 @@ public class TestingHelperTests : KafkaTests
     }
 
     [Fact]
-    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldWaitSpecifiedFriendlyEndpointNamesOnly()
+    public async Task WaitUntilAllMessagesAreCommittedAsync_ShouldWaitSpecifiedFriendlyEndpointNamesOnly()
     {
         TaskCompletionSource taskCompletionSource = new();
 
@@ -151,7 +274,7 @@ public class TestingHelperTests : KafkaTests
 
         try
         {
-            await Helper.WaitUntilAllMessagesAreConsumedAsync("one", "two");
+            await Helper.WaitUntilAllMessagesAreCommittedAsync("one", "two");
 
             Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.ShouldBe(
                 [

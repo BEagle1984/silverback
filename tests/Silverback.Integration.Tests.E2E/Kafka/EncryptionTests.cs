@@ -60,7 +60,7 @@ public class EncryptionTests : KafkaTests
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
@@ -112,7 +112,7 @@ public class EncryptionTests : KafkaTests
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
@@ -161,7 +161,7 @@ public class EncryptionTests : KafkaTests
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
@@ -210,7 +210,7 @@ public class EncryptionTests : KafkaTests
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(12);
 
@@ -276,7 +276,7 @@ public class EncryptionTests : KafkaTests
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
@@ -333,7 +333,7 @@ public class EncryptionTests : KafkaTests
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(12);
 

@@ -58,7 +58,7 @@ public partial class BatchProcessingTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.ShouldBe(5);
         offsetCommittedCallback.CallsCount.ShouldBe(5);

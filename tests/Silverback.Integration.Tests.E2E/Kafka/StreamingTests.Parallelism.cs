@@ -51,7 +51,7 @@ public partial class StreamingTests
             await producer.ProduceAsync(new TestEventWithKafkaKey { Content = $"{i}", KafkaKey = i });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedStreams.Count.ShouldBe(3);
         receivedMessages.Count.ShouldBe(15);
@@ -96,7 +96,7 @@ public partial class StreamingTests
             await producer.ProduceAsync(new TestEventWithKafkaKey { Content = $"{i}", KafkaKey = i });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedStreams.Count.ShouldBe(1);
         receivedMessages.Count.ShouldBe(15);
@@ -156,7 +156,7 @@ public partial class StreamingTests
             taskCompletionSource.SetResult(true);
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedMessages.Count.ShouldBe(12);
     }

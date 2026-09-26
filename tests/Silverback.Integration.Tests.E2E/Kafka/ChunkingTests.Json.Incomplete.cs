@@ -56,7 +56,7 @@ public partial class ChunkingTests
             [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("6", 2, true, typeof(TestEventOne)));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Message 2");
@@ -96,7 +96,7 @@ public partial class ChunkingTests
             rawMessage2,
             HeadersHelper.GetHeaders("6", typeof(TestEventOne)));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Message 2");
@@ -144,7 +144,7 @@ public partial class ChunkingTests
             [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("6", 2, true, typeof(TestEventOne)));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Message 2");
@@ -196,7 +196,7 @@ public partial class ChunkingTests
             [.. rawMessage.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
@@ -255,7 +255,7 @@ public partial class ChunkingTests
             [.. rawMessage.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, 3, typeof(TestEventOne)));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
@@ -300,7 +300,7 @@ public partial class ChunkingTests
             [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Message 2");
@@ -343,7 +343,7 @@ public partial class ChunkingTests
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
         await consumer.Client.DisconnectAsync();
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);

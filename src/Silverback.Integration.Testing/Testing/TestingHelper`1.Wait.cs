@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Util;
 
 namespace Silverback.Testing;
 
@@ -21,7 +22,10 @@ namespace Silverback.Testing;
 [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Used for testing only")]
 public abstract partial class TestingHelper
 {
-    private static readonly TimeSpan DefaultWaitTimeout = TimeSpan.FromSeconds(30);
+    /// <summary>
+    ///     The default timeout for testing helper waits.
+    /// </summary>
+    protected static readonly TimeSpan DefaultWaitTimeout = TimeSpan.FromSeconds(30);
 
     /// <inheritdoc cref="ITestingHelper.WaitUntilConnectedAsync(TimeSpan?)" />
     public ValueTask WaitUntilConnectedAsync(TimeSpan? timeout = null) =>
@@ -95,32 +99,16 @@ public abstract partial class TestingHelper
         WaitUntilAllMessagesAreConsumedAsync(true, cancellationToken, endpointNames);
 
     /// <inheritdoc cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(bool,CancellationToken,string[])" />
-    public async ValueTask WaitUntilAllMessagesAreConsumedAsync(
+    public ValueTask WaitUntilAllMessagesAreConsumedAsync(
         bool throwTimeoutException,
         CancellationToken cancellationToken,
-        params string[] endpointNames)
-    {
-        try
-        {
-            // Loop until the outbox is empty since the consumers may produce new messages
-            do
-            {
-                await WaitUntilOutboxIsEmptyAsync(cancellationToken).ConfigureAwait(false);
-
-                await WaitUntilAllMessagesAreConsumedCoreAsync(endpointNames ?? [], cancellationToken).ConfigureAwait(false);
-            }
-            while (!await IsOutboxEmptyAsync().ConfigureAwait(false));
-        }
-        catch (OperationCanceledException ex)
-        {
-            const string message = "Timeout elapsed before all messages could be consumed and processed";
-
-            if (throwTimeoutException)
-                throw new TimeoutException(message);
-
-            _logger.LogWarning(ex, message);
-        }
-    }
+        params string[] endpointNames) =>
+        WaitUntilAllMessagesCoreAsync(
+            WaitUntilAllMessagesAreConsumedCoreAsync,
+            "Timeout elapsed before all messages could be consumed and processed",
+            throwTimeoutException,
+            endpointNames,
+            cancellationToken);
 
     /// <inheritdoc cref="ITestingHelper.WaitUntilOutboxIsEmptyAsync(TimeSpan?)" />
     public async ValueTask WaitUntilOutboxIsEmptyAsync(TimeSpan? timeout = null)
@@ -165,7 +153,7 @@ public abstract partial class TestingHelper
     }
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -180,4 +168,42 @@ public abstract partial class TestingHelper
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
     protected abstract Task WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection<string> endpointNames, CancellationToken cancellationToken);
+
+    /// <summary>
+    ///     Waits for the outbox and the specified broker operation, repeating if consumers produce more outbox messages.
+    /// </summary>
+    /// <param name="waitAction">The broker operation to await.</param>
+    /// <param name="timeoutMessage">The message to log or include in the exception when the wait is canceled.</param>
+    /// <param name="throwTimeoutException">Whether to throw instead of logging when the wait is canceled.</param>
+    /// <param name="endpointNames">The endpoint names to wait for, or an empty array to consider all endpoints.</param>
+    /// <param name="cancellationToken">The cancellation token to observe.</param>
+    /// <returns>A task that completes when the broker operation and the outbox have completed.</returns>
+    protected async ValueTask WaitUntilAllMessagesCoreAsync(
+        Func<IReadOnlyCollection<string>, CancellationToken, Task> waitAction,
+        string timeoutMessage,
+        bool throwTimeoutException,
+        string[] endpointNames,
+        CancellationToken cancellationToken)
+    {
+        Check.NotNull(waitAction, nameof(waitAction));
+
+        try
+        {
+            do
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await WaitUntilOutboxIsEmptyAsync(cancellationToken).ConfigureAwait(false);
+
+                await waitAction(endpointNames ?? [], cancellationToken).ConfigureAwait(false);
+            }
+            while (!await IsOutboxEmptyAsync().ConfigureAwait(false));
+        }
+        catch (OperationCanceledException ex)
+        {
+            if (throwTimeoutException)
+                throw new TimeoutException(timeoutMessage);
+
+            _logger.LogWarning(ex, "{Message}", timeoutMessage);
+        }
+    }
 }

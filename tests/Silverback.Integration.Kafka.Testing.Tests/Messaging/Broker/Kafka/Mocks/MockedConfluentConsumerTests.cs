@@ -188,8 +188,7 @@ public class MockedConfluentConsumerTests
     {
         MockedKafkaOptions options = new()
         {
-            PartitionsAssignmentDelay = TimeSpan.Zero,
-            OverriddenAutoCommitIntervalMs = null
+            PartitionsAssignmentDelay = TimeSpan.Zero
         };
 
         return new MockedConfluentConsumer(
@@ -227,6 +226,11 @@ public class MockedConfluentConsumerTests
         public long GetCommittedOffsetsCount(string topic) => 0;
 
         public ValueTask WaitUntilAllMessagesAreConsumedAsync(
+            IReadOnlyCollection<string> topicNames,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask WaitUntilAllMessagesAreCommittedAsync(
             IReadOnlyCollection<string> topicNames,
             CancellationToken cancellationToken = default) =>
             ValueTask.CompletedTask;

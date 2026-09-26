@@ -96,7 +96,7 @@ public partial class BatchProcessingTests
 
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -150,7 +150,7 @@ public partial class BatchProcessingTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromSeconds(500));
+        await Helper.WaitUntilAllMessagesAreCommittedAsync(false, TimeSpan.FromSeconds(500));
 
         receivedBatches.Count.ShouldBeGreaterThanOrEqualTo(2);
         receivedBatches.All(list => list.Count <= 10).ShouldBeTrue();
@@ -202,7 +202,7 @@ public partial class BatchProcessingTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromSeconds(500));
+        await Helper.WaitUntilAllMessagesAreCommittedAsync(false, TimeSpan.FromSeconds(500));
 
         receivedBatches.Count.ShouldBeGreaterThanOrEqualTo(5);
         receivedBatches.All(list => list.Count <= 30).ShouldBeTrue();
@@ -255,7 +255,7 @@ public partial class BatchProcessingTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromSeconds(500));
+        await Helper.WaitUntilAllMessagesAreCommittedAsync(false, TimeSpan.FromSeconds(500));
 
         receivedBatches.Count.ShouldBeGreaterThanOrEqualTo(5);
         receivedBatches.Sum(batch => batch.Count).ShouldBe(100);
@@ -312,7 +312,7 @@ public partial class BatchProcessingTests
 
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -388,7 +388,7 @@ public partial class BatchProcessingTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         completedBatches.ShouldBeGreaterThan(1);
         exitedSubscribers.ShouldBeGreaterThan(1);

@@ -111,7 +111,8 @@ The broker-specific testing helper (<xref:Silverback.Testing.IKafkaTestingHelper
 The most commonly used helpers are:
 
 - <xref:Silverback.Testing.ITestingHelper.WaitUntilConnectedAsync(System.Nullable{System.TimeSpan})> – wait until consumers are connected and ready.
-- <xref:Silverback.Testing.ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.String[])> – wait until routed messages have been processed and committed (**mocked brokers only**).
+- <xref:Silverback.Testing.ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.String[])> – wait until routed messages have been processed (**mocked brokers only**).
+- <xref:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.String[])> – wait until Kafka message offsets have been committed (**mocked Kafka only**).
 - <xref:Silverback.Testing.ITestingHelper.WaitUntilOutboxIsEmptyAsync(System.Nullable{System.TimeSpan})> – wait until the outbox has been drained (if you’re using the outbox).
 
 ### Example: publish and wait
@@ -170,6 +171,12 @@ Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 ```
 
 ## Kafka Specifics
+
+### Auto-Commit Interval
+
+`WaitUntilAllMessagesAreConsumedAsync()` uses locally stored offsets, so it does not depend on the auto-commit interval or require broker commits to be enabled. Use `WaitUntilAllMessagesAreCommittedAsync()` when asserting committed offsets.
+
+Mocked Kafka automatically overrides the auto-commit interval to **50 milliseconds** to speed up commit waits when auto-commit is enabled. No explicit configuration is needed. Use <xref:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.OverrideAutoCommitIntervalMs(System.Nullable{System.Int32})> only when a test requires different commit timing. Passing `null` disables the override and uses the consumer's configured interval, or 5 seconds if no interval is configured.
 
 ### Access In-Memory topics
 

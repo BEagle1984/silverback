@@ -98,8 +98,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (_confluentConsumer == null)
             throw new InvalidOperationException("The underlying consumer is not initialized.");
 
-        if (Configuration.CommitOffsets)
-            _confluentConsumer.StoreOffset(topicPartitionOffset);
+        _confluentConsumer.StoreOffset(topicPartitionOffset);
     }
 
     public void Commit()

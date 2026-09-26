@@ -82,7 +82,7 @@ public partial class BatchProcessingTests
                 });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);
@@ -157,7 +157,7 @@ public partial class BatchProcessingTests
                 });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(10);

@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Sergio Aquilini
+﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -69,7 +69,7 @@ public class RebalanceTests : KafkaTests
             await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = i });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(5);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
@@ -83,7 +83,7 @@ public class RebalanceTests : KafkaTests
         await consumers[1].Client.ConnectAsync();
 
         // Connecting schedules the rebalance; publish the next wave only after assignment completes
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         await AsyncTestingUtil.WaitAsync(() => consumers[0].Client.Assignment.Count == 3 && consumers[1].Client.Assignment.Count == 2);
 
         consumers[0].Client.Assignment.Count.ShouldBe(3);
@@ -94,7 +94,7 @@ public class RebalanceTests : KafkaTests
             await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = i });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
@@ -147,7 +147,7 @@ public class RebalanceTests : KafkaTests
             await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = i });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(5);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
@@ -161,7 +161,7 @@ public class RebalanceTests : KafkaTests
         await consumers[1].Client.ConnectAsync();
 
         // Connecting schedules the rebalance; publish the next wave only after assignment completes
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
         await AsyncTestingUtil.WaitAsync(() => consumers[0].Client.Assignment.Count == 3 && consumers[1].Client.Assignment.Count == 2);
 
         consumers[0].Client.Assignment.Count.ShouldBe(3);
@@ -172,7 +172,7 @@ public class RebalanceTests : KafkaTests
             await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = i });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
@@ -314,7 +314,7 @@ public class RebalanceTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne(), [new MessageHeader(KafkaMessageHeaders.DestinationPartition, 4)]);
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(15);
         completedBatches.ShouldBe(10);
@@ -406,7 +406,7 @@ public class RebalanceTests : KafkaTests
             await producer.ProduceAsync(new TestEventOne(), [new MessageHeader(KafkaMessageHeaders.DestinationPartition, 4)]);
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(12);
         completedBatches.ShouldBe(10);
@@ -477,7 +477,7 @@ public class RebalanceTests : KafkaTests
                 new MessageHeader(KafkaMessageHeaders.DestinationPartition, 1)
             ]);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(7);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
@@ -545,7 +545,7 @@ public class RebalanceTests : KafkaTests
             [.. rawMessage.Skip(10)],
             HeadersHelper.GetChunkHeaders("1", 2, 3));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);

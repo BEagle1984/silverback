@@ -48,7 +48,7 @@ public partial class ErrorPoliciesTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         tryCount.ShouldBe(11);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
@@ -91,7 +91,7 @@ public partial class ErrorPoliciesTests
             [.. rawMessage.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         tryCount.ShouldBe(11);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
@@ -130,7 +130,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         tryCount.ShouldBe(11);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
@@ -189,7 +189,7 @@ public partial class ErrorPoliciesTests
         await producer.RawProduceAsync(rawMessage);
         await producer.RawProduceAsync(rawMessage);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(8);
         completedBatches.ShouldBe(2);
@@ -267,7 +267,7 @@ public partial class ErrorPoliciesTests
         await producer.RawProduceAsync(rawMessage);
         await producer.RawProduceAsync(rawMessage);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(8);
         completedBatches.ShouldBe(2);

@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Testing;
 
 namespace Silverback.Messaging.Configuration.Kafka;
 
@@ -37,13 +36,14 @@ public interface IMockedKafkaOptionsBuilder
     IMockedKafkaOptionsBuilder WithPartitionsCount(string topicName, int partitionsCount);
 
     /// <summary>
-    ///     Specifies the value to be used instead of the default 5 seconds or the configured
-    ///     <see cref="KafkaConsumerConfiguration.AutoCommitIntervalMs" /> for the inbound topics. Set it to
-    ///     <c>null</c> to disable the feature. The default is 10 milliseconds.
+    ///     Specifies the auto-commit interval in milliseconds to use in mocked consumers instead of
+    ///     <see cref="KafkaConsumerConfiguration.AutoCommitIntervalMs" />. The override is applied automatically and defaults to 50 milliseconds.
+    ///     Set it to <c>null</c> to use the consumer's configured interval, or 5 seconds if no interval is configured.
     /// </summary>
     /// <remarks>
-    ///     This is necessary to speed up the tests, since the <see cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[])" />
-    ///     method and its overloads wait until the offsets are committed.
+    ///     This override only affects consumers with auto-commit enabled and speeds up tests that wait for broker offset commits.
+    ///     <see cref="Silverback.Testing.ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[])" /> uses locally stored offsets
+    ///     and does not depend on this interval.
     /// </remarks>
     /// <param name="intervalMs">
     ///     The desired auto commit interval in milliseconds.

@@ -47,7 +47,7 @@ public partial class ErrorPoliciesTests
             {
                 { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
             });
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.ShouldBeEmpty();
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
@@ -58,7 +58,7 @@ public partial class ErrorPoliciesTests
             {
                 { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
             });
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
@@ -95,7 +95,7 @@ public partial class ErrorPoliciesTests
         await producer.RawProduceAsync(
             [.. invalidRawMessage.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.ShouldBeEmpty();
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
@@ -109,7 +109,7 @@ public partial class ErrorPoliciesTests
         await producer.RawProduceAsync(
             [.. rawMessage.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
@@ -183,7 +183,7 @@ public partial class ErrorPoliciesTests
         await producer.RawProduceAsync(rawMessage);
         await producer.RawProduceAsync(rawMessage);
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         receivedBatches.Count.ShouldBe(2);
         receivedBatches[0].Count.ShouldBe(5);
