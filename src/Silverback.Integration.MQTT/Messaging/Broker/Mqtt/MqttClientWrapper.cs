@@ -138,11 +138,13 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientDisconnectingCallback>(callback => callback
             .OnClientDisconnectingAsync(Configuration)).ConfigureAwait(false);
 
+        // Stop accepting messages before connection cancellation can yield
+        _publishQueueChannel.Writer.TryComplete();
+
         if (_connectCancellationTokenSource != null)
             await _connectCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
-        // Stop accepting messages and allow pending publishes to finish before disconnecting the transport
-        _publishQueueChannel.Writer.TryComplete();
+        // Allow pending publishes to finish before disconnecting the transport
         _publishCancellationTokenSource?.CancelAfter(Configuration.Timeout);
         await _publishTask.ConfigureAwait(false);
 
