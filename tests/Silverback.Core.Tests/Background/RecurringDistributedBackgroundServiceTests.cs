@@ -69,10 +69,11 @@ public class RecurringDistributedBackgroundServiceTests
     [Fact]
     public async Task StartAsync_ShouldNotExecuteInParallel_WhenInMemoryLockIsUsed()
     {
-        bool executed1 = false;
-        bool executed2 = false;
+        TimeSpan timeout = TimeSpan.FromSeconds(5);
+        TaskCompletionSource<bool> started1 = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> started2 = new(TaskCreationOptions.RunContinuationsAsynchronously);
         int executingCount = 0;
-        bool executedInParallel = false;
+        int executedInParallel = 0;
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
             .AddFakeLogger()
@@ -82,45 +83,54 @@ public class RecurringDistributedBackgroundServiceTests
 
         string lockName = $"shared-lock-{Guid.NewGuid():N}";
         using TestRecurringDistributedBackgroundService service1 = new(
-            async stoppingToken => await ExecuteTask(stoppingToken, () => executed1 = true),
+            stoppingToken => ExecuteTask(stoppingToken, started1),
             lockFactory.GetDistributedLock(new InMemoryLockSettings(lockName), serviceProvider));
         using TestRecurringDistributedBackgroundService service2 = new(
-            async stoppingToken => await ExecuteTask(stoppingToken, () => executed2 = true),
+            stoppingToken => ExecuteTask(stoppingToken, started2),
             lockFactory.GetDistributedLock(new InMemoryLockSettings(lockName), serviceProvider));
 
         service2.DistributedLock.ShouldBeSameAs(service1.DistributedLock);
 
-        async Task ExecuteTask(CancellationToken stoppingToken, Action execute)
+        async Task ExecuteTask(CancellationToken stoppingToken, TaskCompletionSource<bool> started)
         {
-            Interlocked.Increment(ref executingCount);
+            if (Interlocked.Increment(ref executingCount) > 1)
+                Interlocked.Exchange(ref executedInParallel, 1);
 
-            execute.Invoke();
-
-            if (executingCount > 1)
-                executedInParallel = true;
-
-            await Task.Delay(100, stoppingToken);
-            Interlocked.Decrement(ref executingCount);
+            try
+            {
+                started.TrySetResult(true);
+                await Task.Delay(Timeout.InfiniteTimeSpan, stoppingToken);
+            }
+            finally
+            {
+                Interlocked.Decrement(ref executingCount);
+            }
         }
 
-        await service1.StartAsync(CancellationToken.None);
-        await service2.StartAsync(CancellationToken.None);
+        try
+        {
+            await service1.StartAsync(CancellationToken.None);
+            await service2.StartAsync(CancellationToken.None);
 
-        await AsyncTestingUtil.WaitAsync(() => executed1 || executed2);
-        await Task.Delay(100);
+            await Task.WhenAny(started1.Task, started2.Task).WaitAsync(timeout);
+            (started1.Task.IsCompleted && started2.Task.IsCompleted).ShouldBeFalse();
 
-        (executed1 || executed2).ShouldBeTrue();
-        (executed1 && executed2).ShouldBeFalse();
+            if (started1.Task.IsCompleted)
+                await service1.StopAsync(CancellationToken.None).WaitAsync(timeout);
+            else
+                await service2.StopAsync(CancellationToken.None).WaitAsync(timeout);
 
-        if (executed1)
-            await service1.StopAsync(CancellationToken.None);
-        else
-            await service2.StopAsync(CancellationToken.None);
+            await Task.WhenAll(started1.Task, started2.Task).WaitAsync(timeout);
+            Volatile.Read(ref executedInParallel).ShouldBe(0);
+        }
+        finally
+        {
+            await Task.WhenAll(
+                service1.StopAsync(CancellationToken.None),
+                service2.StopAsync(CancellationToken.None)).WaitAsync(timeout);
+        }
 
-        await AsyncTestingUtil.WaitAsync(() => executed1 && executed2);
-        (executed1 && executed2).ShouldBeTrue();
-
-        executedInParallel.ShouldBeFalse();
+        Volatile.Read(ref executingCount).ShouldBe(0);
     }
 
     [Fact]

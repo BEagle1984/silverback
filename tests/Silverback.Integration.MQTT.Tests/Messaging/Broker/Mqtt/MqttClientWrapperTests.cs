@@ -59,17 +59,34 @@ public class MqttClientWrapperTests
         await using ProducerHarness harness = new();
         await harness.ConnectAsync();
 
+        TaskCompletionSource<bool> cancellationStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        using ManualResetEventSlim releaseCancellation = new();
+
+        // Hold cancellation open to verify that the publish queue is already closed
+        using CancellationTokenRegistration registration = harness.ConnectionCancellationToken.Register(() =>
+        {
+            cancellationStarted.TrySetResult(true);
+            releaseCancellation.Wait(TimeSpan.FromSeconds(30)).ShouldBeTrue();
+        });
+
         Task first = harness.ProduceAsync(1);
         await harness.PublishStarted.Task.WaitAsync(Timeout);
         Task second = harness.ProduceAsync(2);
         Task third = harness.ProduceAsync(3);
         Task disconnecting = harness.Client.DisconnectAsync().AsTask();
 
-        disconnecting.IsCompleted.ShouldBeFalse();
-        await Should.ThrowAsync<ProduceException>(() => harness.ProduceAsync(4).WaitAsync(Timeout));
-
-        harness.ReleasePublish.TrySetResult(true);
-        await Task.WhenAll(first, second, third, disconnecting).WaitAsync(Timeout);
+        try
+        {
+            await cancellationStarted.Task.WaitAsync(Timeout);
+            disconnecting.IsCompleted.ShouldBeFalse();
+            await Should.ThrowAsync<ProduceException>(() => harness.ProduceAsync(4).WaitAsync(Timeout));
+        }
+        finally
+        {
+            releaseCancellation.Set();
+            harness.ReleasePublish.TrySetResult(true);
+            await Task.WhenAll(first, second, third, disconnecting).WaitAsync(Timeout);
+        }
 
         harness.Published.ToArray().ShouldBe([1, 2, 3]);
         harness.PublishedBeforeDisconnect.ShouldBeTrue();
@@ -302,9 +319,10 @@ public class MqttClientWrapperTests
         {
             _nativeClient.IsConnected.Returns(_ => Volatile.Read(ref _isConnected));
 
-            _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
+            _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(call =>
             {
                 Interlocked.Increment(ref _connectionAttempts);
+                ConnectionCancellationToken = call.Arg<CancellationToken>();
 
                 if (Volatile.Read(ref _connectionUnavailable))
                     throw new InvalidOperationException("The broker is unavailable.");
@@ -318,7 +336,7 @@ public class MqttClientWrapperTests
             {
                 PublishCancellationToken = call.Arg<CancellationToken>();
                 PublishStarted.TrySetResult(true);
-                await ReleasePublish.Task.WaitAsync(Timeout, PublishCancellationToken);
+                await ReleasePublish.Task.WaitAsync(PublishCancellationToken);
                 byte number = call.Arg<MqttApplicationMessage>().Payload.ToArray()[0];
 
                 if (FailFirstPublish && number == 1)
@@ -380,6 +398,8 @@ public class MqttClientWrapperTests
         public TaskCompletionSource<bool> ReleasePublish { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public CancellationToken PublishCancellationToken { get; private set; }
+
+        public CancellationToken ConnectionCancellationToken { get; private set; }
 
         public bool PublishedBeforeDisconnect { get; private set; }
 
