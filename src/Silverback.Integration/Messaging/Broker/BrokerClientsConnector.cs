@@ -30,6 +30,8 @@ internal sealed class BrokerClientsConnector : IBrokerClientsConnector, IDisposa
 
     private bool _isInitialized;
 
+    private bool _isDisposed;
+
     private bool _hasConnected;
 
     public BrokerClientsConnector(
@@ -122,11 +124,18 @@ internal sealed class BrokerClientsConnector : IBrokerClientsConnector, IDisposa
         }
         finally
         {
-            _connectSemaphore.Release();
+            if (!_isDisposed)
+            {
+                _connectSemaphore.Release();
+            }
         }
     }
 
-    public void Dispose() => _connectSemaphore.Dispose();
+    public void Dispose()
+    {
+        _isDisposed = true;
+        _connectSemaphore.Dispose();
+    }
 
     private async ValueTask InitializeCoreAsync()
     {
