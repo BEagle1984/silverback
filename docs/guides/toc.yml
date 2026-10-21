@@ -6,6 +6,8 @@
   items:
     - name: Connecting
       href: broker/connecting.md
+    - name: Kafka via Dekaf (Preview)
+      href: broker/dekaf.md
     - name: Callbacks
       href: broker/callbacks.md
     - name: Producing
