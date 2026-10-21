@@ -31,12 +31,17 @@ public sealed record KafkaProducerConfiguration : KafkaClientConfiguration
 
     /// <summary>
     ///     Gets a value indicating whether the producer ensures that messages are written exactly once and in the
-    ///     original order. Dekaf enables idempotence by default.
+    ///     original order. When not set, the idempotence is enabled (Dekaf default), unless <see cref="Acks" /> is
+    ///     set to a value other than <see cref="Kafka.Acks.All" /> and the producer isn't transactional, since the
+    ///     idempotence requires all acks.
     /// </summary>
     public bool? EnableIdempotence { get; init; }
 
     /// <summary>
-    ///     Gets the delay in milliseconds to wait for messages to accumulate before sending a batch.
+    ///     Gets the delay in milliseconds to wait for messages to accumulate before sending a batch. The value is
+    ///     truncated to whole milliseconds and the default is 0 (Dekaf default, unlike the 5 milliseconds of librdkafka).
+    ///     Dekaf rejects a linger exceeding the delivery timeout (120 seconds) minus the request timeout (30 seconds)
+    ///     when the producer is created.
     /// </summary>
     public double? LingerMs { get; init; }
 

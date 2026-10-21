@@ -166,7 +166,8 @@ internal sealed class ConsumeLoopHandler : IDisposable
         NotifyPollCompleted();
 
         // The consume loop drives the Dekaf consumer synchronously from a single long-running thread, since its
-        // API must not be called concurrently and the rebalance handling relies on running inside the poll.
+        // API must not be called concurrently. The rebalance callbacks can nevertheless run concurrently with the
+        // poll, see DekafConsumerWrapper.
         // The call to DisconnectAsync is the only exception since we are exiting anyway and Consume will
         // not be called anymore.
         if (!cancellationToken.IsCancellationRequested)

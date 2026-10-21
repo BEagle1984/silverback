@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Dekaf.Consumer;
@@ -18,6 +19,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Util;
 using DekafTopicPartition = Dekaf.TopicPartition;
 using DekafTopicPartitionOffset = Dekaf.TopicPartitionOffset;
+using DekafTopicPartitionTimestamp = Dekaf.TopicPartitionTimestamp;
 
 namespace Silverback.Messaging.Broker.Kafka;
 
@@ -28,9 +30,14 @@ namespace Silverback.Messaging.Broker.Kafka;
 ///     The partitions assignment is driven by the rebalance listener. While a rebalance callback runs, the consumer
 ///     operations (commit, store, seek, pause, resume) are routed through the <see cref="IRebalanceConsumer" />
 ///     handed to the callback, since Dekaf's consumer API must not be re-entered from inside its own callbacks.
+///     Unlike librdkafka, Dekaf doesn't only invoke the callbacks from within the poll but also from its background
+///     group membership loop, concurrently with the poll (see the Known Issues in the Dekaf documentation page).
 /// </remarks>
 internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper, IConsumerAwareRebalanceListener
 {
+    // Same default as Dekaf and librdkafka
+    private const int DefaultAutoCommitIntervalMs = 5000;
+
     private readonly IDekafClientsFactory _clientsFactory;
 
     private readonly IBrokerClientCallbacksInvoker _callbacksInvoker;
@@ -48,12 +55,23 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
     // The stored offsets not yet committed, needed to commit the partitions being revoked (see CommitInRebalanceScope)
     private readonly ConcurrentDictionary<DekafTopicPartition, long> _pendingOffsets = new();
 
+    // Serializes the commits, which could otherwise send an older snapshot of the pending offsets after a newer one
+    private readonly System.Threading.Lock _commitLock = new();
+
     // Set only for the duration of a rebalance callback and bound to its thread: an AsyncLocal would flow into the
     // channel reader tasks started by the callback, which would keep using the view after it has expired
     private RebalanceScope? _rebalanceScope;
 
+    // The exception thrown by a rebalance callback with the auto recovery disabled, rethrown by the next Consume
+    private Exception? _rebalanceCallbackException;
+
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Disposed in DisconnectCoreAsync")]
     private IKafkaConsumer<byte[], byte[]>? _dekafConsumer;
+
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Disposed in StopPeriodicCommitAsync")]
+    private CancellationTokenSource? _periodicCommitCancellationTokenSource;
+
+    private Task? _periodicCommitTask;
 
     public DekafConsumerWrapper(
         string name,
@@ -104,6 +122,9 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
     {
         IKafkaConsumer<byte[], byte[]> dekafConsumer = EnsureConnected(ClientStatus.Initialized, ClientStatus.Initializing);
 
+        if (Interlocked.Exchange(ref _rebalanceCallbackException, null) is { } rebalanceCallbackException)
+            ExceptionDispatchInfo.Throw(rebalanceCallbackException);
+
         // The consume loop drives the consumer synchronously from its own long-running thread
         ConsumeResult<byte[], byte[]>? result = dekafConsumer.ConsumeOneAsync(timeout).SafeWait();
 
@@ -134,44 +155,50 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
 
         RebalanceScope? scope = CurrentRebalanceScope;
 
-        // An offset stored while committing stays pending
-        KeyValuePair<DekafTopicPartition, long>[] pendingOffsets = [.. _pendingOffsets];
-        KeyValuePair<DekafTopicPartition, long>[] committableOffsets;
-
-        lock (_assignmentLock)
+        lock (_commitLock)
         {
-            committableOffsets =
-            [
-                .. pendingOffsets.Where(pair => _assignment.Contains(pair.Key) || scope?.RevokingPartitions.Contains(pair.Key) == true)
-            ];
-        }
+            // An offset stored while committing stays pending
+            KeyValuePair<DekafTopicPartition, long>[] pendingOffsets = [.. _pendingOffsets];
+            KeyValuePair<DekafTopicPartition, long>[] committableOffsets;
 
-        try
-        {
-            if (committableOffsets.Length > 0)
+            lock (_assignmentLock)
             {
-                IEnumerable<DekafTopicPartitionOffset> offsets =
-                    committableOffsets.Select(pair => new DekafTopicPartitionOffset(pair.Key.Topic, pair.Key.Partition, pair.Value));
-
-                if (scope != null)
-                    scope.Consumer.CommitAsync(offsets).SafeWait();
-                else
-                    dekafConsumer.CommitAsync(offsets).SafeWait();
+                committableOffsets =
+                [
+                    .. pendingOffsets.Where(pair => _assignment.Contains(pair.Key) || scope?.RevokingPartitions.Contains(pair.Key) == true)
+                ];
             }
 
-            foreach (KeyValuePair<DekafTopicPartition, long> pendingOffset in pendingOffsets)
+            try
             {
-                _pendingOffsets.TryRemove(pendingOffset);
-            }
+                if (committableOffsets.Length > 0)
+                {
+                    IEnumerable<DekafTopicPartitionOffset> offsets =
+                        committableOffsets.Select(pair => new DekafTopicPartitionOffset(pair.Key.Topic, pair.Key.Partition, pair.Value));
 
-            foreach (KeyValuePair<DekafTopicPartition, long> committedOffset in committableOffsets)
-            {
-                _logger.LogOffsetCommitted(committedOffset.Key.ToSilverback(committedOffset.Value), Consumer);
+                    if (scope != null)
+                        scope.Consumer.CommitAsync(offsets).SafeWait();
+                    else
+                        dekafConsumer.CommitAsync(offsets).SafeWait();
+                }
+
+                foreach (KeyValuePair<DekafTopicPartition, long> pendingOffset in pendingOffsets)
+                {
+                    _pendingOffsets.TryRemove(pendingOffset);
+                }
+
+                foreach (KeyValuePair<DekafTopicPartition, long> committedOffset in committableOffsets)
+                {
+                    _logger.LogOffsetCommitted(committedOffset.Key.ToSilverback(committedOffset.Value), Consumer);
+                }
             }
-        }
-        catch (KafkaException ex)
-        {
-            _logger.LogConsumerCommitError(Consumer, [], ex);
+            catch (KafkaException ex)
+            {
+                _logger.LogConsumerCommitError(
+                    Consumer,
+                    [.. committableOffsets.Select(pair => new KafkaOffset(pair.Key.ToSilverback(pair.Value)))],
+                    ex);
+            }
         }
     }
 
@@ -179,7 +206,7 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
     {
         Check.NotNull(topicPartitionOffset, nameof(topicPartitionOffset));
 
-        TrySeek(GetOperations(ClientStatus.Initialized), topicPartitionOffset);
+        Seek(GetOperations(ClientStatus.Initialized), [topicPartitionOffset]);
     }
 
     public void Pause(IEnumerable<TopicPartition> partitions)
@@ -247,6 +274,8 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
             _assignment.Clear();
         }
 
+        Volatile.Write(ref _rebalanceCallbackException, null);
+
         IKafkaConsumer<byte[], byte[]> dekafConsumer = _clientsFactory.CreateConsumer(Configuration, this);
         _dekafConsumer = dekafConsumer;
 
@@ -258,6 +287,9 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
                 PerformStaticAssignment(dekafConsumer);
             else
                 Subscribe(dekafConsumer);
+
+            if (Configuration.EnableAutoCommit && !DekafClientsFactory.UsesDekafAutoCommit(Configuration))
+                StartPeriodicCommit();
         }
         catch
         {
@@ -277,7 +309,9 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
 
         try
         {
-            if (!Configuration.EnableAutoCommit)
+            await StopPeriodicCommitAsync().ConfigureAwait(false);
+
+            if (!DekafClientsFactory.UsesDekafAutoCommit(Configuration))
                 Commit();
         }
         finally
@@ -314,22 +348,34 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
             result.Timestamp);
     }
 
-    // Silverback's Offset encodes the logical offsets as negative values, while Dekaf exposes dedicated seek methods
-    private static bool TrySeek(ConsumerOperations operations, TopicPartitionOffset topicPartitionOffset)
+    // Silverback's Offset encodes the logical offsets as negative values, while Dekaf exposes dedicated seek methods.
+    // Returns the offsets actually seeked to, skipping the ones meaning "start from the committed offset".
+    private static List<TopicPartitionOffset> Seek(ConsumerOperations operations, IEnumerable<TopicPartitionOffset> topicPartitionOffsets)
     {
-        Offset offset = topicPartitionOffset.Offset;
+        List<TopicPartitionOffset> seekedOffsets = [];
+        List<DekafTopicPartition> seekToBeginningPartitions = [];
 
-        if (offset == Offset.Unset || offset == Offset.Stored)
-            return false;
+        foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
+        {
+            Offset offset = topicPartitionOffset.Offset;
 
-        if (offset == Offset.Beginning)
-            operations.SeekToBeginning(topicPartitionOffset.TopicPartition.ToDekaf());
-        else if (offset == Offset.End)
-            operations.SeekToEnd(topicPartitionOffset.TopicPartition.ToDekaf());
-        else
-            operations.Seek(topicPartitionOffset.ToDekaf());
+            if (offset == Offset.Unset || offset == Offset.Stored)
+                continue;
 
-        return true;
+            if (offset == Offset.Beginning)
+                seekToBeginningPartitions.Add(topicPartitionOffset.TopicPartition.ToDekaf());
+            else if (offset == Offset.End)
+                operations.SeekToEnd(topicPartitionOffset.TopicPartition.ToDekaf());
+            else
+                operations.Seek(topicPartitionOffset.ToDekaf());
+
+            seekedOffsets.Add(topicPartitionOffset);
+        }
+
+        if (seekToBeginningPartitions.Count > 0)
+            operations.SeekToBeginning(seekToBeginningPartitions);
+
+        return seekedOffsets;
     }
 
     private IKafkaConsumer<byte[], byte[]> EnsureConnected(params ClientStatus[] allowedStatuses)
@@ -356,7 +402,7 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
     // Dekaf only logs the exceptions thrown by the rebalance listener: they are handled like the consume errors instead,
     // which the Confluent.Kafka consumer rethrows from Consume, so that the consumer doesn't keep running with a
     // partially applied assignment
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Handled via auto recovery")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Handled via auto recovery or rethrown by Consume")]
     private void RunInRebalanceScope(IRebalanceConsumer consumer, IReadOnlyCollection<DekafTopicPartition> revokingPartitions, Action action)
     {
         Volatile.Write(ref _rebalanceScope, new RebalanceScope(consumer, Environment.CurrentManagedThreadId, revokingPartitions));
@@ -367,9 +413,10 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
         }
         catch (Exception ex)
         {
+            // Without auto recovery the consume loop stops and disconnects the consumer, as for any consume error
             if (!Configuration.EnableAutoRecovery)
             {
-                _logger.LogKafkaExceptionNoAutoRecovery(Consumer, ex);
+                Volatile.Write(ref _rebalanceCallbackException, ex);
                 return;
             }
 
@@ -410,10 +457,9 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
 
         ConsumerOperations operations = GetOperationsInRebalanceCallback();
 
-        foreach (TopicPartitionOffset topicPartitionOffset in Consumer.OnPartitionsAssigned(topicPartitionOffsets))
+        foreach (TopicPartitionOffset topicPartitionOffset in Seek(operations, Consumer.OnPartitionsAssigned(topicPartitionOffsets)))
         {
-            if (TrySeek(operations, topicPartitionOffset))
-                _logger.LogPartitionOffsetReset(topicPartitionOffset, Consumer);
+            _logger.LogPartitionOffsetReset(topicPartitionOffset, Consumer);
         }
     }
 
@@ -456,12 +502,61 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
 
         dekafConsumer.Partitions.Assign(partitions);
 
-        DirectConsumerOperations operations = new(dekafConsumer);
+        Seek(new DirectConsumerOperations(dekafConsumer), assignment);
 
         foreach (TopicPartitionOffset topicPartitionOffset in assignment)
         {
-            TrySeek(operations, topicPartitionOffset);
             _logger.LogPartitionStaticallyAssigned(topicPartitionOffset, Consumer);
+        }
+    }
+
+    // Dekaf's auto-commit loop doesn't commit for a static assignment, see DekafClientsFactory.UsesDekafAutoCommit
+    private void StartPeriodicCommit()
+    {
+        _periodicCommitCancellationTokenSource = new CancellationTokenSource();
+        _periodicCommitTask = Task.Run(() => CommitPeriodicallyAsync(_periodicCommitCancellationTokenSource.Token));
+    }
+
+    private async Task StopPeriodicCommitAsync()
+    {
+        if (_periodicCommitCancellationTokenSource == null || _periodicCommitTask == null)
+            return;
+
+        await _periodicCommitCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+
+        try
+        {
+            await _periodicCommitTask.ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected
+        }
+
+        _periodicCommitCancellationTokenSource.Dispose();
+        _periodicCommitCancellationTokenSource = null;
+        _periodicCommitTask = null;
+    }
+
+    // As with the Dekaf auto-commit, the errors are logged and the next interval retries
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    private async Task CommitPeriodicallyAsync(CancellationToken cancellationToken)
+    {
+        using PeriodicTimer timer = new(TimeSpan.FromMilliseconds(Configuration.AutoCommitIntervalMs ?? DefaultAutoCommitIntervalMs));
+
+        while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
+        {
+            if (Status != ClientStatus.Initialized)
+                continue;
+
+            try
+            {
+                Commit();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogConsumerCommitError(Consumer, [], ex);
+            }
         }
     }
 
@@ -500,11 +595,26 @@ internal sealed class DekafConsumerWrapper : BrokerClient, IDekafConsumerWrapper
         public abstract void Resume(DekafTopicPartition[] partitions);
 
         // Dekaf seeks to offset 0, which is out of range (and then reset according to the auto offset reset policy) as
-        // soon as the retention deleted the first segment: the log start offset is resolved instead
-        public void SeekToBeginning(DekafTopicPartition partition)
+        // soon as the retention deleted the first segment: the log start offsets are resolved instead, with a single
+        // request per broker. The partitions Dekaf couldn't resolve (e.g. no leader yet) fall back to the watermarks
+        // query, which waits for the metadata.
+        public void SeekToBeginning(IReadOnlyCollection<DekafTopicPartition> partitions)
         {
-            long logStartOffset = _dekafConsumer.Offsets.QueryWatermarkOffsetsAsync(partition).SafeWait().Low;
-            Seek(new DekafTopicPartitionOffset(partition.Topic, partition.Partition, logStartOffset));
+            IReadOnlyDictionary<DekafTopicPartition, long> logStartOffsets = _dekafConsumer.Offsets
+                .GetOffsetsForTimesAsync(
+                    partitions.Select(partition => new DekafTopicPartitionTimestamp(
+                        partition.Topic,
+                        partition.Partition,
+                        DekafTopicPartitionTimestamp.Earliest)))
+                .SafeWait();
+
+            foreach (DekafTopicPartition partition in partitions)
+            {
+                if (!logStartOffsets.TryGetValue(partition, out long logStartOffset) || logStartOffset < 0)
+                    logStartOffset = _dekafConsumer.Offsets.QueryWatermarkOffsetsAsync(partition).SafeWait().Low;
+
+                Seek(new DekafTopicPartitionOffset(partition.Topic, partition.Partition, logStartOffset));
+            }
         }
     }
 

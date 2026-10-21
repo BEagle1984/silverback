@@ -186,8 +186,8 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         if (GetMetadataTimeout <= TimeSpan.Zero)
             throw new BrokerConfigurationException("The get metadata timeout must be greater than zero.");
 
-        if (!ProcessPartitionsIndependently && Endpoints.Skip(0).Any(endpoint => endpoint != Endpoints.First()))
-            throw new BrokerConfigurationException("All endpoints must use the same Batch settings if the partitions are consumed independently.");
+        if (!ProcessPartitionsIndependently && Endpoints.Any(endpoint => endpoint != Endpoints.First()))
+            throw new BrokerConfigurationException("All endpoints must use the same Batch settings if the partitions aren't processed independently.");
     }
 
     internal override ConsumerConfig ToConfluentConfig()

@@ -102,20 +102,32 @@ internal sealed class KafkaBrokerConsumerGroup : IMockedConsumerGroup
             return true;
         }
 
+        // The subscribed topics are consumed entirely, while a static assignment only covers the configured partitions
         string[] topics =
         [
-            .. consumers.SelectMany(consumer => consumer.Configuration.Endpoints)
+            .. consumers.Where(consumer => !consumer.Configuration.IsStaticAssignment)
+                .SelectMany(consumer => consumer.Configuration.Endpoints)
                 .SelectMany(endpoint => endpoint.TopicPartitions)
                 .Select(topicPartition => topicPartition.Topic)
                 .Where(topic => IsRelevantTopic(topic, topicNames))
                 .Distinct(StringComparer.Ordinal)
         ];
 
-        IReadOnlyList<DekafTopicPartition> partitions = await _inspector.GetTopicPartitionsAsync(topics, cancellationToken).ConfigureAwait(false);
+        IReadOnlyList<DekafTopicPartition> subscribedPartitions = await _inspector.GetTopicPartitionsAsync(topics, cancellationToken).ConfigureAwait(false);
 
         // The topics may not be created yet
-        if (partitions.Count == 0 && topics.Length > 0)
+        if (subscribedPartitions.Count == 0 && topics.Length > 0)
             return false;
+
+        DekafTopicPartition[] partitions =
+        [
+            .. subscribedPartitions.Union(
+                consumers.Where(consumer => consumer.Configuration.IsStaticAssignment)
+                    .SelectMany(consumer => consumer.Configuration.Endpoints)
+                    .SelectMany(endpoint => endpoint.TopicPartitions)
+                    .Where(topicPartition => IsRelevantTopic(topicPartition.Topic, topicNames))
+                    .Select(topicPartition => new DekafTopicPartition(topicPartition.Topic, topicPartition.Partition)))
+        ];
 
         // A partition without owner means that the group is still rebalancing
         HashSet<DekafTopicPartition> assigned =
@@ -126,7 +138,7 @@ internal sealed class KafkaBrokerConsumerGroup : IMockedConsumerGroup
 
         if (partitions.Any(partition => !assigned.Contains(partition)))
         {
-            _logger.LogTrace("Group {GroupId}: rebalancing ({Assigned}/{Partitions} partitions assigned)", GroupId, assigned.Count, partitions.Count);
+            _logger.LogTrace("Group {GroupId}: rebalancing ({Assigned}/{Partitions} partitions assigned)", GroupId, assigned.Count, partitions.Length);
             return false;
         }
 
@@ -143,7 +155,7 @@ internal sealed class KafkaBrokerConsumerGroup : IMockedConsumerGroup
             }
         }
 
-        _logger.LogTrace("Group {GroupId}: all {Partitions} partitions consumed ({Offsets})", GroupId, partitions.Count, string.Join(", ", committedOffsets));
+        _logger.LogTrace("Group {GroupId}: all {Partitions} partitions consumed ({Offsets})", GroupId, partitions.Length, string.Join(", ", committedOffsets));
         return true;
     }
 }

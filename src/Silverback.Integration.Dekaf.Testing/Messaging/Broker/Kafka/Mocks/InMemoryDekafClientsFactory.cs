@@ -66,7 +66,7 @@ internal sealed class InMemoryDekafClientsFactory : IDekafClientsFactory
             innerConsumer,
             rebalanceListener,
             configuration.GroupId,
-            configuration.EnableAutoCommit);
+            DekafClientsFactory.UsesDekafAutoCommit(configuration));
         _consumers.Enqueue(consumer);
         return consumer;
     }

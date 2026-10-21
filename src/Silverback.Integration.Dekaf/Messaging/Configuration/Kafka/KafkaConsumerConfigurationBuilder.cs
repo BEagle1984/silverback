@@ -116,6 +116,7 @@ public class KafkaConsumerConfigurationBuilder
 
     /// <summary>
     ///     Sets the frequency in milliseconds at which the stored offsets are committed when auto-commit is enabled.
+    ///     The default is 5000.
     /// </summary>
     /// <param name="autoCommitIntervalMs">
     ///     The auto-commit interval in milliseconds.
@@ -367,8 +368,8 @@ public class KafkaConsumerConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies that the consumer has to be automatically recycled when a <c>Dekaf.Errors.KafkaException</c>
-    ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). This is the default.
+    ///     Specifies that the consumer has to be automatically recycled when an exception is thrown while
+    ///     polling/consuming or by a partitions assigned/revoked callback. This is the default.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
@@ -380,8 +381,8 @@ public class KafkaConsumerConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies that the consumer doesn't have to be automatically recycled when a <c>Dekaf.Errors.KafkaException</c>
-    ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported).
+    ///     Specifies that the consumer doesn't have to be automatically recycled when an exception is thrown while
+    ///     polling/consuming or by a partitions assigned/revoked callback. The consumer is disconnected instead.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.

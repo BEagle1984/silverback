@@ -47,6 +47,7 @@ public sealed record KafkaConsumerConfiguration : KafkaClientConfiguration
 
     /// <summary>
     ///     Gets the frequency in milliseconds at which the stored offsets are committed when auto-commit is enabled.
+    ///     The default is 5000.
     /// </summary>
     public int? AutoCommitIntervalMs { get; init; }
 
@@ -114,8 +115,9 @@ public sealed record KafkaConsumerConfiguration : KafkaClientConfiguration
     }
 
     /// <summary>
-    ///     Gets a value indicating whether the consumer has to be automatically recycled when a <c>Dekaf.Errors.KafkaException</c>
-    ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). The default is <c>true</c>.
+    ///     Gets a value indicating whether the consumer has to be automatically recycled when an exception is thrown
+    ///     while polling/consuming or by a partitions assigned/revoked callback. When disabled, the consumer is
+    ///     disconnected instead. The default is <c>true</c>.
     /// </summary>
     public bool EnableAutoRecovery { get; init; } = true;
 
@@ -207,8 +209,8 @@ public sealed record KafkaConsumerConfiguration : KafkaClientConfiguration
         if (BackpressureLimit < 1)
             throw new BrokerConfigurationException("The backpressure limit must be greater or equal to 1.");
 
-        if (!ProcessPartitionsIndependently && Endpoints.Skip(0).Any(endpoint => endpoint != Endpoints.First()))
-            throw new BrokerConfigurationException("All endpoints must use the same Batch settings if the partitions are consumed independently.");
+        if (!ProcessPartitionsIndependently && Endpoints.Any(endpoint => endpoint != Endpoints.First()))
+            throw new BrokerConfigurationException("All endpoints must use the same Batch settings if the partitions aren't processed independently.");
     }
 
     private void ValidateEndpoints()
@@ -251,6 +253,10 @@ public sealed record KafkaConsumerConfiguration : KafkaClientConfiguration
 
         if (ClientSideOffsetStore != null)
             throw new BrokerConfigurationException($"The {nameof(GroupId)} should be specified when using a client side offset store.");
+
+        // Dekaf ignores the instance id of a consumer that isn't part of a group
+        if (!string.IsNullOrEmpty(GroupInstanceId))
+            throw new BrokerConfigurationException($"The {nameof(GroupId)} must be specified when the {nameof(GroupInstanceId)} is set.");
     }
 
     private void ValidateCommitStrategy()
@@ -262,6 +268,10 @@ public sealed record KafkaConsumerConfiguration : KafkaClientConfiguration
 
             if (!EnableAutoCommit && CommitOffsetEach is null or < 1)
                 throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} must be greater or equal to 1 when auto-commit is disabled.");
+
+            // Dekaf only checks the upper bound: 0 would commit in a busy loop and a negative value would never commit
+            if (AutoCommitIntervalMs is < 1)
+                throw new BrokerConfigurationException($"{nameof(AutoCommitIntervalMs)} must be greater or equal to 1.");
 
             if (SendOffsetsToTransaction)
                 throw new BrokerConfigurationException($"{nameof(SendOffsetsToTransaction)} and {nameof(CommitOffsets)} cannot be enabled at the same time.");

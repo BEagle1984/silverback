@@ -34,8 +34,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks;
 ///         <item>
 ///             <description>
 ///                 The in-memory consumer commits the stored offsets only when it is closed. With auto-commit enabled,
-///                 every stored offset is committed right away, as if the auto-commit interval was zero, so that the
-///                 tests can observe the committed offsets while the consumer is running.
+///                 every stored offset of a still assigned partition is committed right away, as if the auto-commit
+///                 interval was zero, so that the tests can observe the committed offsets while the consumer is running.
 ///             </description>
 ///         </item>
 ///     </list>
@@ -164,14 +164,25 @@ internal sealed class TrackingInMemoryConsumer : IKafkaConsumer<byte[], byte[]>,
             }
 
             // The in-memory consumer computes the positions when subscribing only, while the real client starts
-            // reading a newly assigned partition from the committed offset
-            foreach (DekafTopicPartition partition in assigned)
+            // reading a newly assigned partition from the committed offset. A partition explicitly seeked since its
+            // assignment (e.g. a static assignment with a start offset) keeps its position, as with the real client.
+            foreach (DekafTopicPartition partition in assigned.Where(partition => !_consumedBaselines.ContainsKey(partition)))
             {
                 await SeekToStartingOffsetAsync(partition, cancellationToken).ConfigureAwait(false);
             }
 
             if (assigned.Length > 0)
                 await _rebalanceListener.OnPartitionsAssignedAsync(this, assigned, cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            // Report the assignment again at the next poll, as the real client wouldn't consider it completed
+            lock (_notifiedAssignmentLock)
+            {
+                _notifiedAssignment.ExceptWith(assigned);
+            }
+
+            throw;
         }
         finally
         {
@@ -201,11 +212,15 @@ internal sealed class TrackingInMemoryConsumer : IKafkaConsumer<byte[], byte[]>,
 
     public void StoreOffset(DekafTopicPartitionOffset offset)
     {
-        _innerConsumer.StoreOffset(offset);
-        _storedOffsets[new DekafTopicPartition(offset.Topic, offset.Partition)] = offset.Offset;
+        DekafTopicPartition partition = new(offset.Topic, offset.Partition);
 
-        // The in-memory commit completes synchronously, blocking is therefore safe (and the interface method is sync)
-        if (_enableAutoCommit)
+        _innerConsumer.StoreOffset(offset);
+        _storedOffsets[partition] = offset.Offset;
+
+        // The cluster reassigns the partitions immediately and doesn't reject the commits of a former owner, which could
+        // overwrite the offset committed by the new owner: the auto-commit only covers the partitions still assigned.
+        // The in-memory commit completes synchronously, blocking is therefore safe (and the interface method is sync).
+        if (_enableAutoCommit && _innerConsumer.Assignment.Contains(partition))
             _innerConsumer.CommitAsync([offset]).SafeWait();
     }
 

@@ -68,7 +68,8 @@ public class KafkaProducerConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the delay in milliseconds to wait for messages to accumulate before sending a batch.
+    ///     Sets the delay in milliseconds to wait for messages to accumulate before sending a batch. The value is
+    ///     truncated to whole milliseconds and the default is 0.
     /// </summary>
     /// <param name="lingerMs">
     ///     The linger delay in milliseconds.

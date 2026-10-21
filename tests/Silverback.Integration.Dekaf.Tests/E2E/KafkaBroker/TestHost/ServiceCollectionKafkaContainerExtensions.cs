@@ -41,14 +41,14 @@ public static class ServiceCollectionKafkaContainerExtensions
         if (clusterOptions == null)
             return services;
 
-        KafkaContainerHost containerHost = KafkaContainerHost.Start(clusterOptions.DefaultPartitionCount);
+        int defaultPartitionCount = clusterOptions.DefaultPartitionCount;
 
-        // The clients factory resolves the container host, so that the service provider disposes it together with the
-        // test host as soon as any client is created
+        // The container is started when first resolved (by the clients factory), so that it's always disposed together
+        // with the service provider, also when the host fails to start before creating any client
         return services
             .RemoveAll<IDekafClientsFactory>()
             .RemoveAll<IKafkaTestingHelper>()
-            .AddSingleton(_ => containerHost)
+            .AddSingleton(_ => KafkaContainerHost.Start(defaultPartitionCount))
             .AddSingleton<IDekafClientsFactory>(serviceProvider => new ContainerDekafClientsFactory(
                 serviceProvider.GetRequiredService<KafkaContainerHost>(),
                 serviceProvider.GetRequiredService<ILoggerFactory>()))

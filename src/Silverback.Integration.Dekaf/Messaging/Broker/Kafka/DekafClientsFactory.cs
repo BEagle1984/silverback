@@ -54,7 +54,7 @@ internal sealed class DekafClientsFactory : IDekafClientsFactory
             .WithRebalanceListener(rebalanceListener)
             .WithIsolationLevel(ConsumerIsolationLevel)
             .WithAutoOffsetStore(EnableAutoOffsetStore)
-            .WithOffsetCommitMode(configuration.EnableAutoCommit ? OffsetCommitMode.Auto : OffsetCommitMode.Manual);
+            .WithOffsetCommitMode(UsesDekafAutoCommit(configuration) ? OffsetCommitMode.Auto : OffsetCommitMode.Manual);
 
         if (!string.IsNullOrEmpty(configuration.ClientId))
             builder.WithClientId(configuration.ClientId);
@@ -123,6 +123,11 @@ internal sealed class DekafClientsFactory : IDekafClientsFactory
 
         return builder.Build();
     }
+
+    // Dekaf only auto-commits while the consumer is a joined group member, which a static assignment never is: the
+    // DekafConsumerWrapper commits periodically in that case. Applied by the in-memory clients factory as well.
+    internal static bool UsesDekafAutoCommit(KafkaConsumerConfiguration configuration) =>
+        configuration.EnableAutoCommit && !configuration.IsStaticAssignment;
 
     internal static DekafAutoOffsetReset MapAutoOffsetReset(Configuration.Kafka.AutoOffsetReset autoOffsetReset) =>
         autoOffsetReset switch

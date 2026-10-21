@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -254,6 +255,42 @@ public class RebalanceTests : KafkaTests
         receivedBatches.Sum(batch => batch.Count).ShouldBe((20 * 5) + (5 * movedPartitions));
 
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20 * 5);
+    }
+
+    // Use case: a partitions assigned callback fails while the auto recovery is disabled. The consumer must be
+    // disconnected, as for a consume error, rather than keep running with a partially applied assignment.
+    [Fact]
+    public async Task Rebalance_ShouldDisconnect_WhenPartitionsAssignedCallbackThrowsWithoutAutoRecovery()
+    {
+        await Host
+            .ConfigureServices(services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(clients => clients
+                    .WithBootstrapServers("PLAINTEXT://e2e")
+                    .AddConsumer(consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .DisableAutoRecovery()
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddTransientBrokerClientCallback<FailingPartitionsAssignedCallback>()
+                .AddIntegrationSpyAndSubscriber())
+            .RunAsync(waitUntilBrokerClientsConnected: false);
+
+        KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.Client.Assignment.ShouldBeEmpty();
+    }
+
+    private sealed class FailingPartitionsAssignedCallback : IKafkaPartitionsAssignedCallback
+    {
+        public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
+            IReadOnlyCollection<TopicPartition> topicPartitions,
+            IKafkaConsumer consumer) =>
+            throw new InvalidOperationException("Test");
     }
 
     private sealed class PartitionCallbacksHandler : IKafkaPartitionsAssignedCallback, IKafkaPartitionsRevokedCallback
