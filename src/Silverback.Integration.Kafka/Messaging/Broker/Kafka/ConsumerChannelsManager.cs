@@ -44,7 +44,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             consumer.Configuration.MaxDegreeOfParallelism);
     }
 
-    public void StartReading(TopicPartition topicPartition) => StartReading(GetOrCreateChannel(topicPartition));
+    public void StartReading(TopicPartition topicPartition) => StartReading(GetOrReplaceStoppingChannel(topicPartition));
 
     public Task StopReadingAsync(TopicPartition topicPartition)
     {
@@ -174,6 +174,25 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             static (keyTopicPartition, args) =>
                 new PartitionChannel(args.BackpressureLimit, keyTopicPartition, args.Logger),
             (_consumer.Configuration.BackpressureLimit, Logger: _logger));
+
+    private PartitionChannel GetOrReplaceStoppingChannel(TopicPartition topicPartition)
+    {
+        while (true)
+        {
+            PartitionChannel channel = GetOrCreateChannel(topicPartition);
+
+            if (!channel.ReadCancellationToken.IsCancellationRequested)
+                return channel;
+
+            // A pending stop completes and unregisters its channel, so it must not be restarted
+            PartitionChannel replacement = new(_consumer.Configuration.BackpressureLimit, channel.TopicPartition, _logger);
+
+            if (_channels.TryUpdate(channel.TopicPartition, replacement, channel))
+                return replacement;
+
+            replacement.Dispose();
+        }
+    }
 
     private TopicPartition GetTopicPartitionForChannelKey(TopicPartition topicPartition) =>
         _consumer.Configuration.ProcessPartitionsIndependently ? topicPartition : AnyTopicPartition;

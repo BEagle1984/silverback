@@ -928,6 +928,45 @@ public partial class KafkaConsumerTests
     }
 
     [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Start_ShouldReplaceChannel_WhenNonBlockingStopIsStillDraining(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        active.IgnoreCancellation = true;
+        await harness.DeliverAsync((0, 0));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        PartitionChannel original = harness.GetChannel(0).ShouldNotBeNull();
+
+        await harness.Consumer.StopAsync(false).AsTask().WaitAsync(Timeout);
+        await active.ReaderStopped.Task.WaitAsync(Timeout);
+        await harness.Consumer.StartAsync().AsTask().WaitAsync(Timeout);
+
+        PartitionChannel replacement = harness.GetChannel(0).ShouldNotBeNull();
+
+        replacement.ShouldNotBeSameAs(original);
+
+        active.Release.TrySetResult(true);
+        await original.ReadTask.WaitAsync(Timeout);
+        await PollHarness.WaitUntilAsync(() => original.IsCompleted);
+
+        // The late completion of the old stop must not unregister the replacement
+        harness.GetChannel(0).ShouldBeSameAs(replacement);
+
+        await harness.DeliverAsync((0, 0), (0, 1));
+        await harness.WaitForCommitAsync(0, 2);
+
+        harness.UnsafeStores.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
     public async Task FullBuffers_ShouldStopAndReplayWithoutSkippingUnfinishedRecords(bool rollback)
