@@ -2,10 +2,15 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Npgsql;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Lock;
 using Silverback.Storage;
 using Silverback.Storage.DataAccess;
@@ -220,5 +225,133 @@ public class PostgreSqlTableLockFixture : PostgresTests
 
         DateTime lastHeartbeat = dataAccess.ExecuteScalar<DateTime>($"SELECT LastHeartbeat FROM \"{_lockSettings.TableName}\" WHERE LockName = 'test-lock'", null, TimeSpan.FromSeconds(1));
         lastHeartbeat.ShouldBeGreaterThan(initialHeartbeat);
+    }
+
+    [Fact]
+    public async Task AcquireAsync_ShouldAcquireExpiredLock()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
+
+        SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
+
+        PostgreSqlDataAccess dataAccess = new(ConnectionString);
+        await dataAccess.ExecuteNonQueryAsync(
+            $"INSERT INTO \"{_lockSettings.TableName}\" (LockName, Handler, AcquiredOn, LastHeartbeat) " +
+            "VALUES ('test-lock', 'other-handler', NOW() - INTERVAL '1 hour', NOW() - INTERVAL '1 hour')",
+            null,
+            TimeSpan.FromSeconds(1));
+
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(_lockSettings, serviceProvider);
+
+        using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(5));
+        await using DistributedLockHandle handle = await distributedLock.AcquireAsync(cancellationTokenSource.Token);
+
+        string? handler = dataAccess.ExecuteScalar<string>(
+            $"SELECT Handler FROM \"{_lockSettings.TableName}\" WHERE LockName = 'test-lock'",
+            null,
+            TimeSpan.FromSeconds(1));
+        handler.ShouldNotBeNull();
+        handler.ShouldNotBe("other-handler");
+    }
+
+    [Fact]
+    public async Task AcquireAsync_ShouldNotAcquireLockHeldByOtherHandler()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
+
+        SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
+
+        PostgreSqlDataAccess dataAccess = new(ConnectionString);
+        await dataAccess.ExecuteNonQueryAsync(
+            $"INSERT INTO \"{_lockSettings.TableName}\" (LockName, Handler, AcquiredOn, LastHeartbeat) " +
+            "VALUES ('test-lock', 'other-handler', NOW(), NOW())",
+            null,
+            TimeSpan.FromSeconds(1));
+
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(_lockSettings, serviceProvider);
+
+        using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromMilliseconds(200));
+        Func<Task> act = () => distributedLock.AcquireAsync(cancellationTokenSource.Token).AsTask();
+
+        await act.ShouldThrowAsync<OperationCanceledException>();
+        string? handler = dataAccess.ExecuteScalar<string>(
+            $"SELECT Handler FROM \"{_lockSettings.TableName}\" WHERE LockName = 'test-lock'",
+            null,
+            TimeSpan.FromSeconds(1));
+        handler.ShouldBe("other-handler");
+    }
+
+    [Fact]
+    public async Task AcquireAsync_ShouldNotLogErrors_WhenAcquiringConcurrently()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddLoggerSubstitute(LogLevel.Trace)
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
+
+        SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
+
+        LoggerSubstitute<PostgreSqlTableLock> logger =
+            (LoggerSubstitute<PostgreSqlTableLock>)serviceProvider.GetRequiredService<ILogger<PostgreSqlTableLock>>();
+
+        PostgreSqlTableLock[] distributedLocks =
+        [
+            .. Enumerable.Range(0, 10).Select(_ => new PostgreSqlTableLock(
+                _lockSettings,
+                serviceProvider.GetRequiredService<ISilverbackLogger<PostgreSqlTableLock>>()))
+        ];
+
+        Task<DistributedLockHandle>[] tasks = [.. distributedLocks.Select(distributedLock => distributedLock.AcquireAsync().AsTask())];
+
+        DistributedLockHandle handle = await await Task.WhenAny(tasks);
+        await Task.Delay(100);
+
+        tasks.Count(task => task.IsCompleted).ShouldBe(1);
+        logger.DidNotReceive(LogLevel.Error, null, eventId: 64);
+        logger.DidNotReceive(LogLevel.Error, typeof(PostgresException), eventId: 64);
+
+        await handle.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task PostgreSqlTableLockHandle_ShouldCancelLockLostToken_WhenLockIsTakenOver()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
+
+        SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
+
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(_lockSettings, serviceProvider);
+
+        await using DistributedLockHandle handle = await distributedLock.AcquireAsync();
+
+        PostgreSqlDataAccess dataAccess = new(ConnectionString);
+        await dataAccess.ExecuteNonQueryAsync(
+            $"UPDATE \"{_lockSettings.TableName}\" SET Handler = 'other-handler' WHERE LockName = 'test-lock'",
+            null,
+            TimeSpan.FromSeconds(1));
+
+        await AsyncTestingUtil.WaitAsync(() => handle.LockLostToken.IsCancellationRequested, TimeSpan.FromSeconds(5));
+
+        handle.LockLostToken.IsCancellationRequested.ShouldBeTrue();
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
@@ -41,12 +42,14 @@ public class PostgreSqlTableLock : TableBasedDistributedLock
 
         _dataAccess = new PostgreSqlDataAccess(Check.NotNull(settings, nameof(settings)).ConnectionString);
 
+        // Atomically insert the lock or take it over if it's free or expired
         _acquireLockSql = $"INSERT INTO \"{settings.TableName}\" (LockName, Handler, AcquiredOn, LastHeartbeat) " +
-                          "SELECT @lockName, @handler, NOW(), NOW() " +
-                          "WHERE NOT EXISTS (" +
-                          $"   SELECT 1 FROM \"{settings.TableName}\"" +
-                          "    WHERE LockName = @lockName AND Handler IS NOT NULL AND " +
-                          "          LastHeartbeat >= NOW() - @lockTimeout * INTERVAL '1 second')";
+                          "VALUES (@lockName, @handler, NOW(), NOW()) " +
+                          "ON CONFLICT (LockName) DO UPDATE " +
+                          "SET Handler = EXCLUDED.Handler, AcquiredOn = EXCLUDED.AcquiredOn, LastHeartbeat = EXCLUDED.LastHeartbeat " +
+                          $"WHERE \"{settings.TableName}\".Handler IS NULL OR " +
+                          $"      \"{settings.TableName}\".LastHeartbeat IS NULL OR " +
+                          $"      \"{settings.TableName}\".LastHeartbeat < NOW() - @lockTimeout * INTERVAL '1 second'";
 
         _heartbeatSql = $"UPDATE \"{settings.TableName}\" " +
                         "SET LastHeartbeat = NOW() " +
@@ -72,14 +75,19 @@ public class PostgreSqlTableLock : TableBasedDistributedLock
     }
 
     /// <inheritdoc cref="TableBasedDistributedLock.UpdateHeartbeatAsync" />
-    protected override Task UpdateHeartbeatAsync(string handlerName) =>
-        _dataAccess.ExecuteNonQueryAsync(
+    protected override async Task UpdateHeartbeatAsync(string handlerName)
+    {
+        int affected = await _dataAccess.ExecuteNonQueryAsync(
             _heartbeatSql,
             [
                 new NpgsqlParameter("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
                 new NpgsqlParameter("@handler", NpgsqlDbType.Text) { Value = handlerName }
             ],
-            _settings.DbCommandTimeout);
+            _settings.DbCommandTimeout).ConfigureAwait(false);
+
+        if (affected == 0)
+            throw new InvalidOperationException($"The lock {_settings.LockName} is not held by the current handler anymore.");
+    }
 
     /// <inheritdoc cref="TableBasedDistributedLock.ReleaseLockAsync" />
     protected override Task ReleaseLockAsync(string handlerName) => _dataAccess.ExecuteNonQueryAsync(
