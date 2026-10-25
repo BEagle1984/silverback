@@ -55,7 +55,7 @@ public abstract class DistributedBackgroundService : BackgroundService
                 {
                     await AcquireLockAndExecuteAsync(stoppingToken).ConfigureAwait(false);
                 }
-                catch (TaskCanceledException)
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
                 {
                     // Don't log exception fired by the cancellation token
                 }

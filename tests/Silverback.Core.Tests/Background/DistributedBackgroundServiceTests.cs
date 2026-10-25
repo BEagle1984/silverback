@@ -5,7 +5,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using Silverback.Background;
 using Silverback.Configuration;
@@ -119,12 +121,47 @@ public class DistributedBackgroundServiceTests
         executedInParallel.ShouldBeFalse();
     }
 
+    [Fact]
+    public async Task StopAsync_ShouldNotLogException_WhenOperationIsCanceledWhileAcquiringLock()
+    {
+        LoggerSubstitute<DistributedBackgroundService> logger = new(LogLevel.Trace);
+        CancelableDistributedLock distributedLock = new();
+
+        using TestDistributedBackgroundService service = new(_ => Task.CompletedTask, distributedLock, CreateSilverbackLogger(logger));
+        await service.StartAsync(CancellationToken.None);
+        await distributedLock.AcquiringTask;
+
+        await service.StopAsync(CancellationToken.None);
+
+        logger.DidNotReceive(LogLevel.Error, typeof(OperationCanceledException), eventId: 42);
+    }
+
+    [Fact]
+    public async Task StartAsync_ShouldLogException_WhenOperationIsCanceledWithoutStopping()
+    {
+        LoggerSubstitute<DistributedBackgroundService> logger = new(LogLevel.Trace);
+        IDistributedLock distributedLock = Substitute.For<IDistributedLock>();
+        distributedLock.AcquireAsync(Arg.Any<CancellationToken>()).ThrowsAsync(new OperationCanceledException());
+
+        using TestDistributedBackgroundService service = new(_ => Task.CompletedTask, distributedLock, CreateSilverbackLogger(logger));
+        await service.StartAsync(CancellationToken.None);
+        await service.ExecuteTask!;
+
+        logger.Received(LogLevel.Error, typeof(OperationCanceledException), eventId: 42);
+    }
+
+    private static SilverbackLogger<DistributedBackgroundService> CreateSilverbackLogger(LoggerSubstitute<DistributedBackgroundService> logger) =>
+        new(new MappedLevelsLogger<DistributedBackgroundService>([], logger));
+
     private sealed class TestDistributedBackgroundService : DistributedBackgroundService
     {
         private readonly Func<CancellationToken, Task> _task;
 
-        public TestDistributedBackgroundService(Func<CancellationToken, Task> task, IDistributedLock distributedLock)
-            : base(distributedLock, Substitute.For<ISilverbackLogger<DistributedBackgroundService>>())
+        public TestDistributedBackgroundService(
+            Func<CancellationToken, Task> task,
+            IDistributedLock distributedLock,
+            ISilverbackLogger<DistributedBackgroundService>? logger = null)
+            : base(distributedLock, logger ?? Substitute.For<ISilverbackLogger<DistributedBackgroundService>>())
         {
             DistributedLock = distributedLock;
             _task = task;
@@ -133,5 +170,29 @@ public class DistributedBackgroundServiceTests
         public new IDistributedLock DistributedLock { get; }
 
         protected override Task ExecuteLockedAsync(CancellationToken stoppingToken) => _task.Invoke(stoppingToken);
+    }
+
+    // Throws a plain OperationCanceledException on cancellation, like the PostgreSQL advisory lock does
+    private sealed class CancelableDistributedLock : IDistributedLock
+    {
+        private readonly TaskCompletionSource _acquiringTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public Task AcquiringTask => _acquiringTaskCompletionSource.Task;
+
+        public async ValueTask<DistributedLockHandle> AcquireAsync(CancellationToken cancellationToken = default)
+        {
+            _acquiringTaskCompletionSource.TrySetResult();
+
+            try
+            {
+                await Task.Delay(Timeout.Infinite, cancellationToken);
+            }
+            catch (TaskCanceledException)
+            {
+                // Rethrown as OperationCanceledException
+            }
+
+            throw new OperationCanceledException(cancellationToken);
+        }
     }
 }
