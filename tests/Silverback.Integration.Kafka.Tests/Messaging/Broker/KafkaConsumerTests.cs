@@ -902,6 +902,32 @@ public partial class KafkaConsumerTests
     }
 
     [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Start_ShouldResumeSingleConsumeLoop_WhenNonBlockingStopIsStillPolling(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        await harness.DeliverAsync((0, 0));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        // The previous consume loop is still inside the native Consume call when the consumer is restarted
+        await harness.Consumer.StopAsync(false).AsTask().WaitAsync(Timeout);
+        await harness.Consumer.StartAsync().AsTask().WaitAsync(Timeout);
+
+        await harness.DeliverAsync((0, 0), (0, 1));
+        await harness.WaitForCommitAsync(0, 2);
+
+        harness.Logs.Count(log => log.StartsWith("Consume loop stopped", StringComparison.Ordinal)).ShouldBe(1);
+        harness.UnsafeStores.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
     public async Task FullBuffers_ShouldStopAndReplayWithoutSkippingUnfinishedRecords(bool rollback)

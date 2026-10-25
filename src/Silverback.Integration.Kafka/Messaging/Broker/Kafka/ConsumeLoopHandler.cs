@@ -68,14 +68,14 @@ internal sealed class ConsumeLoopHandler : IDisposable
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        if (_consumeTaskCompletionSource == null || _consumeTaskCompletionSource.Task.IsCompleted)
-            _consumeTaskCompletionSource = new TaskCompletionSource<bool>();
-
-        TaskCompletionSource<bool>? taskCompletionSource = _consumeTaskCompletionSource;
+        // A previous loop may still be inside Consume after a non-blocking stop, so the new loop must wait for it to exit
+        Task previousLoop = Stopping;
+        TaskCompletionSource<bool> taskCompletionSource = new();
+        _consumeTaskCompletionSource = taskCompletionSource;
         CancellationToken cancellationToken = _cancellationTokenSource.Token;
 
         Task.Factory.StartNew(
-                () => ConsumeAsync(taskCompletionSource, cancellationToken),
+                () => ConsumeAsync(previousLoop, taskCompletionSource, cancellationToken),
                 CancellationToken.None,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default)
@@ -137,8 +137,12 @@ internal sealed class ConsumeLoopHandler : IDisposable
         _isDisposed = true;
     }
 
-    private async Task ConsumeAsync(TaskCompletionSource<bool> taskCompletionSource, CancellationToken cancellationToken)
+    private async Task ConsumeAsync(Task previousLoop, TaskCompletionSource<bool> taskCompletionSource, CancellationToken cancellationToken)
     {
+        // Wait synchronously to keep polling on this long-running thread; the Confluent consumer must not be polled concurrently
+        if (!previousLoop.IsCompleted)
+            previousLoop.SafeWait();
+
         // Clear the current activity to ensure we don't propagate the previous traceId
         Activity.Current = null;
         _logger.LogConsumerTrace(
