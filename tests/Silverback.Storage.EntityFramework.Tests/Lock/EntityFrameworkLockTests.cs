@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -288,6 +289,162 @@ public sealed class EntityFrameworkLockTests : IDisposable
         }
 
         lastHeartbeat.ShouldBeGreaterThan(initialHeartbeat);
+    }
+
+    [Fact]
+    public async Task AcquireAsync_ShouldAcquireExpiredLock()
+    {
+        EntityFrameworkLockSettings lockSettings = new($"test-lock{Guid.NewGuid():N}", _dbContextType, _dbContextFactory)
+        {
+            AcquireInterval = TimeSpan.FromMilliseconds(10),
+            HeartbeatInterval = TimeSpan.FromMilliseconds(10),
+            LockTimeout = TimeSpan.FromSeconds(100)
+        };
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddEntityFrameworkLock());
+
+        using IServiceScope scope = serviceProvider.CreateScope();
+        TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+
+        dbContext.Locks.Add(
+            new SilverbackLock
+            {
+                LockName = lockSettings.LockName,
+                Handler = "other-handler",
+                AcquiredOn = DateTime.UtcNow.AddHours(-1),
+                LastHeartbeat = DateTime.UtcNow.AddHours(-1)
+            });
+        await dbContext.SaveChangesAsync();
+
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(lockSettings, serviceProvider);
+
+        await using DistributedLockHandle handle = await distributedLock.AcquireAsync();
+
+        SilverbackLock lockEntity = await dbContext.Locks.AsNoTracking().SingleAsync();
+        lockEntity.Handler.ShouldNotBeNull();
+        lockEntity.Handler.ShouldNotBe("other-handler");
+        lockEntity.LastHeartbeat.ShouldNotBeNull();
+        lockEntity.LastHeartbeat.Value.ShouldBeGreaterThan(DateTime.UtcNow.AddMinutes(-1));
+    }
+
+    [Fact]
+    public async Task AcquireAsync_ShouldNotAcquireLockHeldByOtherHandler()
+    {
+        EntityFrameworkLockSettings lockSettings = new($"test-lock{Guid.NewGuid():N}", _dbContextType, _dbContextFactory)
+        {
+            AcquireInterval = TimeSpan.FromMilliseconds(10),
+            HeartbeatInterval = TimeSpan.FromMilliseconds(10),
+            LockTimeout = TimeSpan.FromSeconds(100)
+        };
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddEntityFrameworkLock());
+
+        using IServiceScope scope = serviceProvider.CreateScope();
+        TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+
+        dbContext.Locks.Add(
+            new SilverbackLock
+            {
+                LockName = lockSettings.LockName,
+                Handler = "other-handler",
+                AcquiredOn = DateTime.UtcNow,
+                LastHeartbeat = DateTime.UtcNow
+            });
+        await dbContext.SaveChangesAsync();
+
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(lockSettings, serviceProvider);
+
+        using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromMilliseconds(200));
+        Func<Task> act = () => distributedLock.AcquireAsync(cancellationTokenSource.Token).AsTask();
+
+        await act.ShouldThrowAsync<OperationCanceledException>();
+        SilverbackLock lockEntity = await dbContext.Locks.AsNoTracking().SingleAsync();
+        lockEntity.Handler.ShouldBe("other-handler");
+    }
+
+    [Fact]
+    public async Task EntityFrameworkTableLockHandle_DisposeAsync_ShouldKeepLockRow()
+    {
+        EntityFrameworkLockSettings lockSettings = new($"test-lock{Guid.NewGuid():N}", _dbContextType, _dbContextFactory)
+        {
+            AcquireInterval = TimeSpan.FromMilliseconds(10),
+            HeartbeatInterval = TimeSpan.FromMilliseconds(10),
+            LockTimeout = TimeSpan.FromSeconds(100)
+        };
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddEntityFrameworkLock());
+
+        using IServiceScope scope = serviceProvider.CreateScope();
+        TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(lockSettings, serviceProvider);
+
+        DistributedLockHandle handle = await distributedLock.AcquireAsync();
+        await handle.DisposeAsync();
+
+        SilverbackLock lockEntity = await dbContext.Locks.AsNoTracking().SingleAsync();
+        lockEntity.LockName.ShouldBe(lockSettings.LockName);
+        lockEntity.Handler.ShouldBeNull();
+        lockEntity.AcquiredOn.ShouldBeNull();
+        lockEntity.LastHeartbeat.ShouldBeNull();
+
+        handle = await distributedLock.AcquireAsync();
+
+        handle.ShouldNotBeNull();
+        (await dbContext.Locks.AsNoTracking().SingleAsync()).Handler.ShouldNotBeNull();
+        await handle.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task EntityFrameworkTableLockHandle_ShouldCancelLockLostToken_WhenLockIsTakenOver()
+    {
+        EntityFrameworkLockSettings lockSettings = new($"test-lock{Guid.NewGuid():N}", _dbContextType, _dbContextFactory)
+        {
+            AcquireInterval = TimeSpan.FromMilliseconds(10),
+            HeartbeatInterval = TimeSpan.FromMilliseconds(10),
+            LockTimeout = TimeSpan.FromSeconds(100)
+        };
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddEntityFrameworkLock());
+
+        using IServiceScope scope = serviceProvider.CreateScope();
+        TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(lockSettings, serviceProvider);
+
+        await using DistributedLockHandle handle = await distributedLock.AcquireAsync();
+
+        await dbContext.Locks
+            .Where(lockEntity => lockEntity.LockName == lockSettings.LockName)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(lockEntity => lockEntity.Handler, "other-handler"));
+
+        await AsyncTestingUtil.WaitAsync(() => handle.LockLostToken.IsCancellationRequested, TimeSpan.FromSeconds(5));
+
+        handle.LockLostToken.IsCancellationRequested.ShouldBeTrue();
     }
 
     public void Dispose() => _sqliteConnection.Dispose();

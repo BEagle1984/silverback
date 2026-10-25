@@ -53,28 +53,40 @@ public class EntityFrameworkLock : TableBasedDistributedLock
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider);
 
-        SilverbackLock? lockEntity = await dbContext.Set<SilverbackLock>()
-            .AsTracking()
-            .Where(lockEntity => lockEntity.LockName == _settings.LockName)
-            .FirstOrDefaultAsync()
+        DateTime now = DateTime.UtcNow;
+        DateTime expiredHeartbeat = now - _settings.LockTimeout;
+
+        // Atomically take over the existing lock, if it's free or expired
+        int affected = await dbContext.Set<SilverbackLock>()
+            .Where(
+                lockEntity => lockEntity.LockName == _settings.LockName &&
+                              (lockEntity.Handler == null || lockEntity.LastHeartbeat == null || lockEntity.LastHeartbeat < expiredHeartbeat))
+            .ExecuteUpdateAsync(
+                setters => setters
+                    .SetProperty(lockEntity => lockEntity.Handler, handlerName)
+                    .SetProperty(lockEntity => lockEntity.AcquiredOn, now)
+                    .SetProperty(lockEntity => lockEntity.LastHeartbeat, now))
             .ConfigureAwait(false);
 
-        if (lockEntity is { Handler: not null } && lockEntity.LastHeartbeat >= DateTime.UtcNow - _settings.LockTimeout)
+        if (affected > 0)
+            return true;
+
+        bool exists = await dbContext.Set<SilverbackLock>()
+            .AnyAsync(lockEntity => lockEntity.LockName == _settings.LockName)
+            .ConfigureAwait(false);
+
+        if (exists)
             return false;
 
-        if (lockEntity == null)
-        {
-            lockEntity = new SilverbackLock
+        // The row is created only the first time and is then kept, so that the insert race can only occur once
+        dbContext.Set<SilverbackLock>().Add(
+            new SilverbackLock
             {
-                LockName = _settings.LockName
-            };
-
-            dbContext.Set<SilverbackLock>().Add(lockEntity);
-        }
-
-        lockEntity.Handler = handlerName;
-        lockEntity.AcquiredOn = DateTime.UtcNow;
-        lockEntity.LastHeartbeat = DateTime.UtcNow;
+                LockName = _settings.LockName,
+                Handler = handlerName,
+                AcquiredOn = now,
+                LastHeartbeat = now
+            });
 
         try
         {
@@ -83,7 +95,7 @@ public class EntityFrameworkLock : TableBasedDistributedLock
         }
         catch (DbUpdateException ex)
         {
-            // Probably another process has acquired the lock in the meanwhile
+            // Probably another process has created the lock in the meanwhile
             _logger.LogAcquireLockConcurrencyException(_settings.LockName, ex);
             return false;
         }
@@ -95,15 +107,13 @@ public class EntityFrameworkLock : TableBasedDistributedLock
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider);
 
-        SilverbackLock lockEntity = await dbContext.Set<SilverbackLock>()
-            .AsTracking()
+        int affected = await dbContext.Set<SilverbackLock>()
             .Where(lockEntity => lockEntity.LockName == _settings.LockName && lockEntity.Handler == handlerName)
-            .FirstAsync()
+            .ExecuteUpdateAsync(setters => setters.SetProperty(lockEntity => lockEntity.LastHeartbeat, DateTime.UtcNow))
             .ConfigureAwait(false);
 
-        lockEntity.LastHeartbeat = DateTime.UtcNow;
-
-        await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        if (affected == 0)
+            throw new InvalidOperationException($"The lock {_settings.LockName} is not held by the current handler anymore.");
     }
 
     /// <inheritdoc cref="TableBasedDistributedLock.ReleaseLockAsync" />
@@ -112,16 +122,14 @@ public class EntityFrameworkLock : TableBasedDistributedLock
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider);
 
-        SilverbackLock? lockEntity = await dbContext.Set<SilverbackLock>()
-            .AsTracking()
+        // Keep the row and just clear the handler, to avoid the insert race on the next acquisition
+        await dbContext.Set<SilverbackLock>()
             .Where(lockEntity => lockEntity.LockName == _settings.LockName && lockEntity.Handler == handlerName)
-            .FirstOrDefaultAsync()
+            .ExecuteUpdateAsync(
+                setters => setters
+                    .SetProperty(lockEntity => lockEntity.Handler, (string?)null)
+                    .SetProperty(lockEntity => lockEntity.AcquiredOn, (DateTime?)null)
+                    .SetProperty(lockEntity => lockEntity.LastHeartbeat, (DateTime?)null))
             .ConfigureAwait(false);
-
-        if (lockEntity != null)
-        {
-            dbContext.Set<SilverbackLock>().Remove(lockEntity);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
     }
 }
