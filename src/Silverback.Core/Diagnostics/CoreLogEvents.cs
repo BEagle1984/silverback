@@ -72,7 +72,7 @@ public static class CoreLogEvents
     /// </summary>
     public static LogEvent LockReleased { get; } = new(
         LogLevel.Information,
-        GetEventId(62, nameof(LockAcquired)),
+        GetEventId(62, nameof(LockReleased)),
         "Lock {LockName} released");
 
     /// <summary>
@@ -88,7 +88,7 @@ public static class CoreLogEvents
     /// </summary>
     public static LogEvent AcquireLockFailed { get; } = new(
         LogLevel.Error,
-        GetEventId(64, nameof(LockLost)),
+        GetEventId(64, nameof(AcquireLockFailed)),
         "Failed to acquire lock {LockName}");
 
     /// <summary>
@@ -97,7 +97,7 @@ public static class CoreLogEvents
     /// </summary>
     public static LogEvent AcquireLockConcurrencyException { get; } = new(
         LogLevel.Information,
-        GetEventId(65, nameof(LockLost)),
+        GetEventId(65, nameof(AcquireLockConcurrencyException)),
         "Failed to acquire lock {LockName}");
 
     /// <summary>
@@ -105,7 +105,7 @@ public static class CoreLogEvents
     /// </summary>
     public static LogEvent ReleaseLockFailed { get; } = new(
         LogLevel.Error,
-        GetEventId(66, nameof(LockLost)),
+        GetEventId(66, nameof(ReleaseLockFailed)),
         "Failed to release lock {LockName}");
 
     private static EventId GetEventId(int id, string name) => new(id, $"Silverback.Core_{name}");
