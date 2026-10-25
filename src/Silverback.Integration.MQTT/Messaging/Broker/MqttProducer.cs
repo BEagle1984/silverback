@@ -99,7 +99,8 @@ public sealed class MqttProducer : Producer
     {
         Check.NotNull(envelope, nameof(envelope));
 
-        TaskCompletionSource<IBrokerMessageIdentifier?> taskCompletionSource = new();
+        // The result is set on the publishing loop, which must not run the caller's continuation inline
+        TaskCompletionSource<IBrokerMessageIdentifier?> taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
         await using ConfiguredAsyncDisposable disposable =
             cancellationToken.Register(() => taskCompletionSource.TrySetCanceled(cancellationToken)).ConfigureAwait(false);
 
