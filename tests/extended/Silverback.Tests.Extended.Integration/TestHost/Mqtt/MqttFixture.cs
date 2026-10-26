@@ -15,6 +15,10 @@ public sealed class MqttFixture : DockerTestsFixture
 {
     public const string BrokerHost = "localhost";
 
+    // The proxy balances the connections across both nodes in round robin, so a single successful connection doesn't
+    // prove that the whole cluster is ready
+    private const int RequiredConsecutiveConnections = 6;
+
     protected override IReadOnlyCollection<string> InfrastructureServices => ["emqx1", "emqx2", "haproxy"];
 
     protected override async Task WaitForInfrastructureAsync()
@@ -25,6 +29,7 @@ public sealed class MqttFixture : DockerTestsFixture
             .WithTcpServer(BrokerHost)
             .WithClientId("stress-ready-" + Guid.NewGuid().ToString("N"))
             .Build();
+        int consecutiveConnections = 0;
 
         while (stopwatch.Elapsed < TimeSpan.FromMinutes(2))
         {
@@ -34,15 +39,20 @@ public sealed class MqttFixture : DockerTestsFixture
                 await client.ConnectAsync(options, cancellation.Token);
                 await client.DisconnectAsync(cancellationToken: cancellation.Token);
 
-                return;
+                if (++consecutiveConnections == RequiredConsecutiveConnections)
+                    return;
+
+                continue;
             }
             catch (MqttCommunicationException)
             {
                 // The MQTT cluster and its proxy must accept connections before starting the tests
+                consecutiveConnections = 0;
             }
             catch (OperationCanceledException)
             {
                 // A connection attempt can time out while the broker is starting
+                consecutiveConnections = 0;
             }
 
             await Task.Delay(250);
