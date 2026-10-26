@@ -85,6 +85,7 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
         }
 
         ConcurrentQueue<string> peerDiagnostics = new();
+        bool peerAssignmentEmpty = false;
 
         using IConsumer<Ignore, byte[]> observer = new ConsumerBuilder<Ignore, byte[]>(
             new ConsumerConfig
@@ -105,7 +106,10 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
                 AutoOffsetReset = AutoOffsetReset.Earliest,
                 TopicMetadataRefreshIntervalMs = 250,
                 Debug = "cgrp,topic"
-            }).SetLogHandler((_, message) => peerDiagnostics.Enqueue(message.Message)).Build();
+            })
+            .SetLogHandler((_, message) => peerDiagnostics.Enqueue(message.Message))
+            .SetPartitionsAssignedHandler((_, partitions) => peerAssignmentEmpty = partitions.Count == 0)
+            .Build();
         using CancellationTokenSource stopPeer = new();
         TaskCompletionSource<bool> peerReady = new(TaskCreationOptions.RunContinuationsAsynchronously);
         Task peerLoop = Task.CompletedTask;
@@ -200,6 +204,16 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
                             {
                                 // CreateTopics can return before the topic metadata has propagated to every broker
                                 output.WriteLine($"Waiting for peer topic metadata: {exception.Error}");
+                            }
+
+                            // The group leader can compute the assignment from the metadata of a broker that doesn't
+                            // know the new topic yet, so rejoin to have it assigned again
+                            if (peerAssignmentEmpty && !peerReady.Task.IsCompleted)
+                            {
+                                output.WriteLine("Peer received an empty assignment, rejoining the group");
+                                peerAssignmentEmpty = false;
+                                peer.Unsubscribe();
+                                peer.Subscribe(peerTopic);
                             }
 
                             if (peer.Assignment.Count > 0)
