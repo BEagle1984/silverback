@@ -149,15 +149,17 @@ public class MoveMessageErrorPolicyBuilderTests
         policy.MessageToPublishFactory.Invoke(null!, null!).ShouldBeOfType<TestEventOne>();
     }
 
-    [Fact]
-    public void WithMaxRetries_ShouldSetMaxFailedAttempts()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(42)]
+    public void WithMaxRetries_ShouldSetMaxFailedAttempts(int value)
     {
         MoveMessageErrorPolicyBuilder builder = new("topic1");
 
-        builder.WithMaxRetries(42);
+        builder.WithMaxRetries(value);
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
-        policy.MaxFailedAttempts.ShouldBe(42);
+        policy.MaxFailedAttempts.ShouldBe(value);
     }
 
     [Theory]

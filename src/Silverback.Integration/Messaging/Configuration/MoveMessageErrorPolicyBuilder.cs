@@ -45,7 +45,7 @@ public class MoveMessageErrorPolicyBuilder : ErrorPolicyBaseBuilder<MoveMessageE
     /// </returns>
     public MoveMessageErrorPolicyBuilder WithMaxRetries(int retries)
     {
-        _maxFailedAttempts = Check.GreaterThan(retries, nameof(retries), 1);
+        _maxFailedAttempts = Check.GreaterOrEqualTo(retries, nameof(retries), 1);
         return this;
     }
 
