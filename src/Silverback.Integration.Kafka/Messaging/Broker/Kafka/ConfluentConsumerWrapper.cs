@@ -207,6 +207,10 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
             if (!Configuration.EnableAutoCommit)
                 Commit();
         }
+        catch (InvalidOperationException exception) when (exception.Message.Equals("The consumer is not connected.", StringComparison.OrdinalIgnoreCase))
+        {
+            // The consumer is already disconnected, so we can ignore this exception.
+        }
         finally
         {
             try
