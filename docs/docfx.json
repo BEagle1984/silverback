@@ -72,8 +72,7 @@
     ],
     "globalMetadata": {
       "_appTitle": "Silverback",
-      "_appName": "Silverback",
-      "_appLogoPath": "images/logo-mark.png",
+      "_appLogoPath": "images/logo.png",
       "_appFaviconPath": "images/favicon.ico",
       "_appFooter": "© 2026 Sergio Aquilini",
       "_description": "Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.",

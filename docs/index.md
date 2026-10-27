@@ -17,7 +17,7 @@ _disableContribution: true
     <a class="sb-btn sb-btn-secondary" href="samples/intro.md"><i class="bi bi-collection"></i> Samples</a>
     <a class="sb-btn sb-btn-secondary" href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
   </div>
-  <code class="sb-install">dotnet add package Silverback.Integration.Kafka</code>
+  <code class="sb-install">dotnet add package <span class="sb-package">Silverback.Integration.Kafka</span></code>
   <div class="sb-badges">
     <a href="https://www.nuget.org/packages/Silverback.Core"><img alt="NuGet version" src="https://img.shields.io/nuget/v/Silverback.Core?label=NuGet&color=2f6fb3"></a>
     <a href="https://www.nuget.org/packages/Silverback.Core"><img alt="NuGet downloads" src="https://img.shields.io/nuget/dt/Silverback.Core?label=downloads&color=2f6fb3"></a>

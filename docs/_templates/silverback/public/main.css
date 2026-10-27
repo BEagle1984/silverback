@@ -392,10 +392,9 @@ body > header {
 }
 
 .navbar-brand img {
-    height: 34px;
+    height: 40px;
     width: auto;
     padding: 0;
-    border-radius: 8px;
 }
 
 .navbar .navbar-nav .nav-link {
@@ -730,6 +729,17 @@ body[data-layout="landing"] article {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
     color: #e6edf3;
+}
+
+.sb-hero .sb-install .sb-package {
+    display: inline-block;
+    color: #a5d6ff;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.sb-hero .sb-install .sb-package.sb-package-out {
+    opacity: 0;
+    transform: translateY(-0.35em);
 }
 
 .sb-hero .sb-install::before {
