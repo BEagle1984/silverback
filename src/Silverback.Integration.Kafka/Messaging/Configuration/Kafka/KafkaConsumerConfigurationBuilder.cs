@@ -804,11 +804,12 @@ public partial class KafkaConsumerConfigurationBuilder
     public partial KafkaConsumerConfigurationBuilder WithFetchQueueBackoffMs(int? fetchQueueBackoffMs);
 
     /// <summary>
-    ///     Sets the acknowledgement mode for share consumers. <c>implicit</c> means that the messages are implicitly acknowledged when the next poll is called. <c>explicit</c> means that the messages must be explicitly acknowledged
-    ///     using rd_kafka_share_acknowledge*(). This property is only supported for share consumers.
+    ///     Sets the maximum number of records returned in a single call to <see cref="IConsumer{TKey,TValue}.Consume(System.TimeSpan)" />.
+    ///     This value is sent to the broker in the ShareFetch request and therefore bounds the number of records the broker acquires and returns per fetch. Note: this limit is currently best-effort and not strictly enforced,
+    ///     so a poll may occasionally return more records than this value. This property is only supported for share consumers.
     /// </summary>
     /// <param name="maxPollRecords">
-    ///     The maximum number of records returned in a single call to poll(). This is a hint, and the actual number may be lower.
+    ///     The maximum number of records returned in a single call to poll.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.

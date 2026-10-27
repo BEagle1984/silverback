@@ -46,6 +46,11 @@ public partial record KafkaSchemaRegistryConfiguration
     public int? RetriesMaxWaitMs { get; init; }
 
     /// <summary>
+    ///     Gets the maximum number of connections per server.
+    /// </summary>
+    public int? MaxConnectionsPerServer { get; init; }
+
+    /// <summary>
     ///     Gets the file or directory path to the CA certificate(s) for verifying the registry's key. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store.
     ///     On Mac OSX this configuration defaults to <c>probe</c>. It is recommended to install openssl using Homebrew, to provide CA certificates. On Linux install the distribution's ca-certificates package.
     ///     If OpenSSL is statically linked or <see cref="SslCaLocation" /> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.
@@ -84,6 +89,55 @@ public partial record KafkaSchemaRegistryConfiguration
     public string? BasicAuthUserInfo { get; init; }
 
     /// <summary>
+    ///     Gets the source of the bearer authentication credentials: a static token (<see cref="BearerAuthToken" />), an OAuth client
+    ///     (<see cref="BearerAuthClientId" /> and <see cref="BearerAuthClientSecret" />), the Azure Instance Metadata Service (IMDS) or a custom
+    ///     <see cref="Confluent.SchemaRegistry.IAuthenticationHeaderValueProvider" /> implementation.
+    /// </summary>
+    public BearerAuthCredentialsSource? BearerAuthCredentialsSource { get; init; }
+
+    /// <summary>
+    ///     Gets the bearer authentication token.
+    /// </summary>
+    public string? BearerAuthToken { get; init; }
+
+    /// <summary>
+    ///     Gets the logical cluster for the bearer authentication credentials.
+    /// </summary>
+    public string? BearerAuthLogicalCluster { get; init; }
+
+    /// <summary>
+    ///     Gets the identity pool for the bearer authentication credentials.
+    /// </summary>
+    public string? BearerAuthIdentityPoolId { get; init; }
+
+    /// <summary>
+    ///     Gets the client ID for the bearer authentication credentials.
+    /// </summary>
+    public string? BearerAuthClientId { get; init; }
+
+    /// <summary>
+    ///     Gets the client secret for the bearer authentication credentials.
+    /// </summary>
+    public string? BearerAuthClientSecret { get; init; }
+
+    /// <summary>
+    ///     Gets the scope for the bearer authentication credentials.
+    /// </summary>
+    public string? BearerAuthScope { get; init; }
+
+    /// <summary>
+    ///     Gets the token endpoint for the bearer authentication credentials.
+    /// </summary>
+    [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "Generated according to wrapped class.")]
+    public string? BearerAuthTokenEndpointUrl { get; init; }
+
+    /// <summary>
+    ///     Gets the token query parameters for the bearer token endpoint. Currently valid only when using the Azure Instance Metadata Service (IMDS)
+    ///     for token retrieval.
+    /// </summary>
+    public string? BearerAuthTokenEndpointQuery { get; init; }
+
+    /// <summary>
     ///     Maps to the Confluent client configuration.
     /// </summary>
     /// <returns>
@@ -98,13 +152,23 @@ public partial record KafkaSchemaRegistryConfiguration
             MaxRetries = MaxRetries,
             RetriesWaitMs = RetriesWaitMs,
             RetriesMaxWaitMs = RetriesMaxWaitMs,
+            MaxConnectionsPerServer = MaxConnectionsPerServer,
             SslCaLocation = SslCaLocation,
             SslKeystoreLocation = SslKeystoreLocation,
             SslKeystorePassword = SslKeystorePassword,
             EnableSslCertificateVerification = EnableSslCertificateVerification,
             MaxCachedSchemas = MaxCachedSchemas,
             LatestCacheTtlSecs = LatestCacheTtlSecs,
-            BasicAuthUserInfo = BasicAuthUserInfo
+            BasicAuthUserInfo = BasicAuthUserInfo,
+            BearerAuthCredentialsSource = BearerAuthCredentialsSource,
+            BearerAuthToken = BearerAuthToken,
+            BearerAuthLogicalCluster = BearerAuthLogicalCluster,
+            BearerAuthIdentityPoolId = BearerAuthIdentityPoolId,
+            BearerAuthClientId = BearerAuthClientId,
+            BearerAuthClientSecret = BearerAuthClientSecret,
+            BearerAuthScope = BearerAuthScope,
+            BearerAuthTokenEndpointUrl = BearerAuthTokenEndpointUrl,
+            BearerAuthTokenEndpointQuery = BearerAuthTokenEndpointQuery
         };
 }
 
@@ -129,6 +193,8 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
 
     private int? _retriesMaxWaitMs;
 
+    private int? _maxConnectionsPerServer;
+
     private string? _sslCaLocation;
 
     private string? _sslKeystoreLocation;
@@ -142,6 +208,24 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     private int? _latestCacheTtlSecs;
 
     private string? _basicAuthUserInfo;
+
+    private BearerAuthCredentialsSource? _bearerAuthCredentialsSource;
+
+    private string? _bearerAuthToken;
+
+    private string? _bearerAuthLogicalCluster;
+
+    private string? _bearerAuthIdentityPoolId;
+
+    private string? _bearerAuthClientId;
+
+    private string? _bearerAuthClientSecret;
+
+    private string? _bearerAuthScope;
+
+    private string? _bearerAuthTokenEndpointUrl;
+
+    private string? _bearerAuthTokenEndpointQuery;
 
     public partial KafkaSchemaRegistryConfigurationBuilder WithBasicAuthCredentialsSource(AuthCredentialsSource? basicAuthCredentialsSource)
     {
@@ -176,6 +260,12 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     public partial KafkaSchemaRegistryConfigurationBuilder WithRetriesMaxWaitMs(int? retriesMaxWaitMs)
     {
         _retriesMaxWaitMs = retriesMaxWaitMs;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithMaxConnectionsPerServer(int? maxConnectionsPerServer)
+    {
+        _maxConnectionsPerServer = maxConnectionsPerServer;
         return this;
     }
 
@@ -215,6 +305,60 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
         return this;
     }
 
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthCredentialsSource(BearerAuthCredentialsSource? bearerAuthCredentialsSource)
+    {
+        _bearerAuthCredentialsSource = bearerAuthCredentialsSource;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthToken(string? bearerAuthToken)
+    {
+        _bearerAuthToken = bearerAuthToken;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthLogicalCluster(string? bearerAuthLogicalCluster)
+    {
+        _bearerAuthLogicalCluster = bearerAuthLogicalCluster;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthIdentityPoolId(string? bearerAuthIdentityPoolId)
+    {
+        _bearerAuthIdentityPoolId = bearerAuthIdentityPoolId;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthClientId(string? bearerAuthClientId)
+    {
+        _bearerAuthClientId = bearerAuthClientId;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthClientSecret(string? bearerAuthClientSecret)
+    {
+        _bearerAuthClientSecret = bearerAuthClientSecret;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthScope(string? bearerAuthScope)
+    {
+        _bearerAuthScope = bearerAuthScope;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthTokenEndpointUrl(string? bearerAuthTokenEndpointUrl)
+    {
+        _bearerAuthTokenEndpointUrl = bearerAuthTokenEndpointUrl;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthTokenEndpointQuery(string? bearerAuthTokenEndpointQuery)
+    {
+        _bearerAuthTokenEndpointQuery = bearerAuthTokenEndpointQuery;
+        return this;
+    }
+
     internal KafkaSchemaRegistryConfigurationBuilder WithEnableSslCertificateVerification(bool? enableSslCertificateVerification)
     {
         _enableSslCertificateVerification = enableSslCertificateVerification;
@@ -230,12 +374,22 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
             MaxRetries = _maxRetries,
             RetriesWaitMs = _retriesWaitMs,
             RetriesMaxWaitMs = _retriesMaxWaitMs,
+            MaxConnectionsPerServer = _maxConnectionsPerServer,
             SslCaLocation = _sslCaLocation,
             SslKeystoreLocation = _sslKeystoreLocation,
             SslKeystorePassword = _sslKeystorePassword,
             EnableSslCertificateVerification = _enableSslCertificateVerification,
             MaxCachedSchemas = _maxCachedSchemas,
             LatestCacheTtlSecs = _latestCacheTtlSecs,
-            BasicAuthUserInfo = _basicAuthUserInfo
+            BasicAuthUserInfo = _basicAuthUserInfo,
+            BearerAuthCredentialsSource = _bearerAuthCredentialsSource,
+            BearerAuthToken = _bearerAuthToken,
+            BearerAuthLogicalCluster = _bearerAuthLogicalCluster,
+            BearerAuthIdentityPoolId = _bearerAuthIdentityPoolId,
+            BearerAuthClientId = _bearerAuthClientId,
+            BearerAuthClientSecret = _bearerAuthClientSecret,
+            BearerAuthScope = _bearerAuthScope,
+            BearerAuthTokenEndpointUrl = _bearerAuthTokenEndpointUrl,
+            BearerAuthTokenEndpointQuery = _bearerAuthTokenEndpointQuery
         };
 }

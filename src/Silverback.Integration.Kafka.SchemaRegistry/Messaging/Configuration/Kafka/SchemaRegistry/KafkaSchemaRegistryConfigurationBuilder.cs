@@ -80,6 +80,17 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     public partial KafkaSchemaRegistryConfigurationBuilder WithRetriesMaxWaitMs(int? retriesMaxWaitMs);
 
     /// <summary>
+    ///     Sets the maximum number of connections per server.
+    /// </summary>
+    /// <param name="maxConnectionsPerServer">
+    ///     The maximum number of connections per server.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithMaxConnectionsPerServer(int? maxConnectionsPerServer);
+
+    /// <summary>
     ///     Sets the file or directory path to the CA certificate(s) for verifying the registry's key.
     /// </summary>
     /// <param name="sslCaLocation">
@@ -168,6 +179,109 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public partial KafkaSchemaRegistryConfigurationBuilder WithLatestCacheTtlSecs(int? latestCacheTtlSecs);
+
+    /// <summary>
+    ///     Sets the source of the bearer authentication credentials: a static token (see <see cref="WithBearerAuthToken" />), an OAuth client
+    ///     (see <see cref="WithBearerAuthClientId" /> and <see cref="WithBearerAuthClientSecret" />), the Azure Instance Metadata Service (IMDS) or a
+    ///     custom <see cref="IAuthenticationHeaderValueProvider" /> implementation.
+    /// </summary>
+    /// <param name="bearerAuthCredentialsSource">
+    ///     The source of the bearer authentication credentials.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthCredentialsSource(BearerAuthCredentialsSource? bearerAuthCredentialsSource);
+
+    /// <summary>
+    ///     Sets the bearer authentication token.
+    /// </summary>
+    /// <param name="bearerAuthToken">
+    ///     The bearer authentication token.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthToken(string? bearerAuthToken);
+
+    /// <summary>
+    ///     Sets the logical cluster for the bearer authentication credentials.
+    /// </summary>
+    /// <param name="bearerAuthLogicalCluster">
+    ///     The logical cluster for the bearer authentication credentials.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthLogicalCluster(string? bearerAuthLogicalCluster);
+
+    /// <summary>
+    ///     Sets the identity pool for the bearer authentication credentials.
+    /// </summary>
+    /// <param name="bearerAuthIdentityPoolId">
+    ///     The identity pool for the bearer authentication credentials.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthIdentityPoolId(string? bearerAuthIdentityPoolId);
+
+    /// <summary>
+    ///     Sets the client ID for the bearer authentication credentials.
+    /// </summary>
+    /// <param name="bearerAuthClientId">
+    ///     The client ID for the bearer authentication credentials.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthClientId(string? bearerAuthClientId);
+
+    /// <summary>
+    ///     Sets the client secret for the bearer authentication credentials.
+    /// </summary>
+    /// <param name="bearerAuthClientSecret">
+    ///     The client secret for the bearer authentication credentials.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthClientSecret(string? bearerAuthClientSecret);
+
+    /// <summary>
+    ///     Sets the scope for the bearer authentication credentials.
+    /// </summary>
+    /// <param name="bearerAuthScope">
+    ///     The scope for the bearer authentication credentials.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthScope(string? bearerAuthScope);
+
+    /// <summary>
+    ///     Sets the token endpoint for the bearer authentication credentials.
+    /// </summary>
+    /// <param name="bearerAuthTokenEndpointUrl">
+    ///     The token endpoint for the bearer authentication credentials.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "Declared as string in the underlying library")]
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthTokenEndpointUrl(string? bearerAuthTokenEndpointUrl);
+
+    /// <summary>
+    ///     Sets the token query parameters for the bearer token endpoint. Currently valid only when using the Azure Instance Metadata Service (IMDS)
+    ///     for token retrieval.
+    /// </summary>
+    /// <param name="bearerAuthTokenEndpointQuery">
+    ///     The token query parameters for the bearer token endpoint.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthTokenEndpointQuery(string? bearerAuthTokenEndpointQuery);
 
     /// <summary>
     ///     Builds the <see cref="KafkaSchemaRegistryConfiguration" /> instance.

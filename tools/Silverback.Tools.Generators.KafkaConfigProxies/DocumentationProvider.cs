@@ -317,10 +317,10 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the additional information to be provided to the broker as a comma-separated list of <c>key=value</c> pairs (e.g. <c>supportFeatureX=true,organizationId=sales-emea</c>). Only used when <see cref=\"SaslOauthbearerMethod\" /> is set to <see cref=\"Confluent.Kafka.SaslOauthbearerMethod.Oidc\" />.");
                 break;
             case nameof(ClientConfig.SaslOauthbearerTokenEndpointUrl):
-                builder.AppendLine("    ///     Gets the JWT claim name to use as the subject (principal) when validating OIDC access tokens. Must be present in the JWT payload with a non-empty value. Should match the broker's <c>sasl.oauthbearer.sub.claim.name</c> configuration for consistent authentication. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\".");
+                builder.AppendLine("    ///     Gets the OAuth/OIDC issuer token endpoint HTTP(S) URI used to retrieve the token. Only used when <see cref=\"SaslOauthbearerMethod\" /> is set to <see cref=\"Confluent.Kafka.SaslOauthbearerMethod.Oidc\" />.");
                 break;
             case nameof(ClientConfig.SaslOauthbearerSubClaimName):
-                builder.AppendLine("    ///     Gets the claim name to be used as the SASL/OAUTHBEARER authentication identity (username) when communicating with the broker. The default value is <c>\"sub\"</c>. Only used when <see cref=\"SaslOauthbearerMethod\" /> is set to <see cref=\"Confluent.Kafka.SaslOauthbearerMethod.Oidc\" />.");
+                builder.AppendLine("    ///     Gets the JWT claim name to use as the subject (principal) when validating OIDC access tokens. Must be present in the JWT payload with a non-empty value. Should match the broker's <c>sasl.oauthbearer.sub.claim.name</c> configuration for consistent authentication. Only used when <see cref=\"SaslOauthbearerMethod\" /> is set to <see cref=\"Confluent.Kafka.SaslOauthbearerMethod.Oidc\" />.");
                 break;
             case nameof(ClientConfig.SaslOauthbearerGrantType):
                 builder.AppendLine("    ///     Gets the OAuth grant type to use when communicating with the identity provider.");
@@ -663,6 +663,39 @@ public static class DocumentationProvider
                 break;
             case nameof(SchemaRegistryConfig.RetriesMaxWaitMs):
                 builder.AppendLine("    ///     Gets the time to wait for any retry in milliseconds.");
+                break;
+            case nameof(SchemaRegistryConfig.MaxConnectionsPerServer):
+                builder.AppendLine("    ///     Gets the maximum number of connections per server.");
+                break;
+            case nameof(SchemaRegistryConfig.BearerAuthCredentialsSource):
+                builder.AppendLine("    ///     Gets the source of the bearer authentication credentials: a static token (<see cref=\"BearerAuthToken\" />), an OAuth client");
+                builder.AppendLine("    ///     (<see cref=\"BearerAuthClientId\" /> and <see cref=\"BearerAuthClientSecret\" />), the Azure Instance Metadata Service (IMDS) or a custom");
+                builder.AppendLine("    ///     <see cref=\"Confluent.SchemaRegistry.IAuthenticationHeaderValueProvider\" /> implementation.");
+                break;
+            case nameof(SchemaRegistryConfig.BearerAuthToken):
+                builder.AppendLine("    ///     Gets the bearer authentication token.");
+                break;
+            case nameof(SchemaRegistryConfig.BearerAuthLogicalCluster):
+                builder.AppendLine("    ///     Gets the logical cluster for the bearer authentication credentials.");
+                break;
+            case nameof(SchemaRegistryConfig.BearerAuthIdentityPoolId):
+                builder.AppendLine("    ///     Gets the identity pool for the bearer authentication credentials.");
+                break;
+            case nameof(SchemaRegistryConfig.BearerAuthClientId):
+                builder.AppendLine("    ///     Gets the client ID for the bearer authentication credentials.");
+                break;
+            case nameof(SchemaRegistryConfig.BearerAuthClientSecret):
+                builder.AppendLine("    ///     Gets the client secret for the bearer authentication credentials.");
+                break;
+            case nameof(SchemaRegistryConfig.BearerAuthScope):
+                builder.AppendLine("    ///     Gets the scope for the bearer authentication credentials.");
+                break;
+            case nameof(SchemaRegistryConfig.BearerAuthTokenEndpointUrl):
+                builder.AppendLine("    ///     Gets the token endpoint for the bearer authentication credentials.");
+                break;
+            case nameof(SchemaRegistryConfig.BearerAuthTokenEndpointQuery):
+                builder.AppendLine("    ///     Gets the token query parameters for the bearer token endpoint. Currently valid only when using the Azure Instance Metadata Service (IMDS)");
+                builder.AppendLine("    ///     for token retrieval.");
                 break;
         }
     }

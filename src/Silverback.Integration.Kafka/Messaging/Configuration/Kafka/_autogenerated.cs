@@ -424,13 +424,13 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     public string? SaslOauthbearerExtensions { get; init; }
 
     /// <summary>
-    ///     Gets the JWT claim name to use as the subject (principal) when validating OIDC access tokens. Must be present in the JWT payload with a non-empty value. Should match the broker's <c>sasl.oauthbearer.sub.claim.name</c> configuration for consistent authentication. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc".
+    ///     Gets the OAuth/OIDC issuer token endpoint HTTP(S) URI used to retrieve the token. Only used when <see cref="SaslOauthbearerMethod" /> is set to <see cref="Confluent.Kafka.SaslOauthbearerMethod.Oidc" />.
     /// </summary>
     [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "Generated according to wrapped class.")]
     public string? SaslOauthbearerTokenEndpointUrl { get; init; }
 
     /// <summary>
-    ///     Gets the claim name to be used as the SASL/OAUTHBEARER authentication identity (username) when communicating with the broker. The default value is <c>"sub"</c>. Only used when <see cref="SaslOauthbearerMethod" /> is set to <see cref="Confluent.Kafka.SaslOauthbearerMethod.Oidc" />.
+    ///     Gets the JWT claim name to use as the subject (principal) when validating OIDC access tokens. Must be present in the JWT payload with a non-empty value. Should match the broker's <c>sasl.oauthbearer.sub.claim.name</c> configuration for consistent authentication. Only used when <see cref="SaslOauthbearerMethod" /> is set to <see cref="Confluent.Kafka.SaslOauthbearerMethod.Oidc" />.
     /// </summary>
     public string? SaslOauthbearerSubClaimName { get; init; }
 
