@@ -72,9 +72,9 @@ Subscribers can return a result after processing a message.
 ```csharp
 public async Task<QueryResult> PublishSomething()
 {
-    MyQuery query = new MyQuery() { ... };
-    QueryResult result = await _publisher.PublishAsync(query);
-    return result.Single();
+    MyQuery query = new MyQuery { ... };
+    IReadOnlyCollection<QueryResult> results = await _publisher.PublishAsync<QueryResult>(query);
+    return results.Single();
 }
 ```
 
@@ -180,7 +180,7 @@ public class Startup
 }
 ```
 
-By default, all public methods in a registered subscriber class (excluding the ones declared in the based classes) are subscribed. To subscribe non-public methods, or methods from the base classes, or customize the subscription options, use the <xref:Silverback.Messaging.Subscribers.SubscribeAttribute> to decorate the methods.
+By default, all public methods in a registered subscriber class (excluding the ones declared in the base classes) are subscribed. To subscribe non-public methods, or methods from the base classes, or customize the subscription options, use the <xref:Silverback.Messaging.Subscribers.SubscribeAttribute> to decorate the methods.
 
 You can also disable automatic subscription of public methods:
 
@@ -190,7 +190,7 @@ services
     .AddScopedSubscriber<SubscribingService>(autoSubscribeAllPublicMethods: false);
 ```
 
-### Delegate based subscription
+### Delegate-Based Subscription
 
 In some cases you may prefer to subscribe a method delegate (or an inline lambda) directly using the `AddDelegateSubscriber` method.
 
@@ -209,7 +209,7 @@ public class Startup
 }
 ```
 
-### Supported methods and parameters
+### Supported Methods and Parameters
 
 The subscribed method (or delegate) can either be synchronous or asynchronous (returning a `Task` or a `ValueTask`).
 
@@ -222,7 +222,7 @@ public class SubscribingService
 {
     public async Task OnMessageReceived(BasketCheckoutMessage message, CheckoutService service)
     {
-        service.Checkout(message.BaksetId, message.UserId);
+        service.Checkout(message.BasketId, message.UserId);
     }
 }
 ```
@@ -239,13 +239,13 @@ public class Startup
             .AddDelegateSubscriber(
                 (BasketCheckoutMessage message, CheckoutService service) =>
                 {
-                    service.Checkout(message.BaksetId, message.UserId);
+                    service.Checkout(message.BasketId, message.UserId);
                 });
     }
 }
 ```
 
-### Return values
+### Subscriber Return Values
 
 A subscriber can also have a return value that can be collected by the publisher.
 
@@ -287,18 +287,17 @@ or
 ```csharp
 public class SubscribingService
 {
-    public IEnumerable<IMessage> OnMessageReceived(IEnumerable<SampleMessage> messages) =>
-        messages.SelectMany(message =>
+    public IEnumerable<IMessage> OnMessageReceived(SampleMessage message)
+    {
+        yield return new OtherSampleMessage1
         {
-            yield return new OtherSampleMessage1
-            {
-                ...
-            };
-            yield return new OtherSampleMessage2
-            {
-                ...
-            };
-        });
+            ...
+        };
+        yield return new OtherSampleMessage2
+        {
+            ...
+        };
+    }
 }
 ```
 
@@ -352,14 +351,16 @@ public class TracingBehavior : IBehavior
         _tracer = tracer;
     }
     
-    public async Task<IReadOnlyCollection<object?>> HandleAsync(
+    public async ValueTask<IReadOnlyCollection<object?>> HandleAsync(
+        IPublisher publisher,
         object message,
-        MessageHandler next)
+        MessageHandler next,
+        CancellationToken cancellationToken)
     {
         try
         {
             _tracer.TraceProcessing(message);
-            object result = await next(message);
+            IReadOnlyCollection<object?> result = await next(message);
             _tracer.TraceProcessed(message);
             return result;
         }
@@ -387,9 +388,11 @@ public class SortedBehavior : IBehavior, ISorted
 {
     public int SortIndex => 120;
     
-    public Task<IReadOnlyCollection<object?>> HandleAsync(
+    public ValueTask<IReadOnlyCollection<object?>> HandleAsync(
+        IPublisher publisher,
         object message,
-        MessageHandler next)
+        MessageHandler next,
+        CancellationToken cancellationToken)
     {
         return next(message);
     }

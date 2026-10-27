@@ -49,7 +49,7 @@ public class MyCallbackHandler : IBrokerClientsConfiguredCallback
 
 [Confluent.Kafka](https://github.com/confluentinc/confluent-kafka-dotnet) (used by the Kafka integration) exposes events for partition assignments, errors, statistics, and more. Silverback surfaces those events as callbacks.
 
-### Consumer callbacks
+### Consumer Callbacks
 
 Available callbacks for Kafka consumers:
 
@@ -68,7 +68,7 @@ Available callbacks for Kafka consumers:
 - <xref:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback>\
   Triggered when the consumer reaches the end of a partition (requires `EnablePartitionEof = true`).
 
-#### Example: reset offsets on partition assignment
+#### Example: Reset Offsets on Partition Assignment
 
 ```csharp
 services.AddSilverback()
@@ -92,7 +92,7 @@ public class OffsetsResetCallbackHandler : IKafkaPartitionsAssignedCallback
 }
 ```
 
-### Producer callbacks
+### Producer Callbacks
 
 Available callbacks for Kafka producers:
 
@@ -110,7 +110,7 @@ MQTT clients expose connect/disconnect lifecycle events.
 - <xref:Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback>\
   Triggered when the client is about to disconnect (not called if the connection is lost unexpectedly).
 
-#### Example: publish a message when the client connects
+### Example: Publish a Message When the Client Connects
 
 ```csharp
 services.AddSilverback()
@@ -130,7 +130,7 @@ public class ConnectionCallbackHandler : IMqttClientConnectedCallback
         _publisher = publisher;
     }
 
-    public async Task OnClientConnectedAsync(MqttClientConfig config) =>
+    public async Task OnClientConnectedAsync(MqttClientConfiguration configuration) =>
         await _publisher.PublishAsync(new ClientConnectedMessage());
 }
 ```

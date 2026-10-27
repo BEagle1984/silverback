@@ -66,10 +66,10 @@ namespace Sample
         public OrderType OrderType { get; set; }
 
         [Header("x-books-order")]
-        public bool ContainsBooks => Items.Any(item => item.Type == "book")
+        public bool ContainsBooks => Items.Any(item => item.Type == "book");
 
         [Header("x-dvd-order")]
-        public bool ContainsDvd => Items.Any(item => item.Type == "dvd")
+        public bool ContainsDvd => Items.Any(item => item.Type == "dvd");
     }
 }
 ```

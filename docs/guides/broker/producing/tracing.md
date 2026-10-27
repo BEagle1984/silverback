@@ -14,7 +14,7 @@ Similarly, Silverback ensures that the current tracing context is propagated whe
 
 This transparent propagation allows all downstream consumers to continue the trace and provide full observability of the system.
 
-[!Important]
+> [!Important]
 > This works out of the box with Kafka and MQTT 5 (leveraging user properties), while previous MQTT versions don't support custom headers and therefore can't propagate the trace context.
 
 ## Additional Resources

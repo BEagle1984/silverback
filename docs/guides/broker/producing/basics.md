@@ -43,7 +43,7 @@ Use `AddProducer` (Kafka) or `AddClient` (MQTT) to create a producer/client inst
 > [!Tip]
 > Underlying client configuration:
 > - Kafka: https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html
-> - MQTTnet: https://github.com/chkr1011/MQTTnet/wiki
+> - MQTTnet: https://github.com/dotnet/MQTTnet/wiki
 
 ## Publish Messages
 

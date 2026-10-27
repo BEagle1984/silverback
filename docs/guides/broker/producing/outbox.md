@@ -34,7 +34,7 @@ services
         .AddEntityFrameworkOutbox()
         .AddOutboxWorker(worker => worker
             .ProcessOutbox(outbox => outbox
-                .UseEntityFramework<AppDbContext>()))))
+                .UseEntityFramework<AppDbContext>())))
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
         .AddProducer("producer1", producer => producer
@@ -52,7 +52,7 @@ services
         .AddPostgreSqlOutbox()
         .AddOutboxWorker(worker => worker
             .ProcessOutbox(outbox => outbox
-                .UsePostgreSql(connectionString)))))
+                .UsePostgreSql(connectionString))))
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
         .AddProducer("producer1", producer => producer
@@ -70,7 +70,7 @@ services
         .AddSqliteOutbox()
         .AddOutboxWorker(worker => worker
             .ProcessOutbox(outbox => outbox
-                .UseSqlite(connectionString)))))
+                .UseSqlite(connectionString))))
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
         .AddProducer("producer1", producer => producer
@@ -126,7 +126,7 @@ The default locking mechanism from the selected storage package is automatically
 ```csharp
 .AddOutboxWorker(worker => worker
     .WithDistributedLock(distributedLock => distributedLock
-        .UsePostgreSqlAdvisoryLock(connectionString))
+        .UsePostgreSqlAdvisoryLock("outbox", connectionString))
     .ProcessOutbox(outbox => outbox
         .UsePostgreSql(connectionString)))
 ```
@@ -139,7 +139,7 @@ The default locking mechanism from the selected storage package is automatically
 The outbox table and the locks table (if used) must be created in the database. If you are using Entity Framework, you can create the tables by running the migrations. If you are using a different storage package, you can normally use the `SilverbackStorageInitializer` to create the necessary tables.
 
 ```csharp
-storageInitializer.CreateSqliteOutboxAsync(connectionString);
+await storageInitializer.CreateSqliteOutboxAsync(connectionString);
 ```
 
 ## Health Check

@@ -4,7 +4,7 @@ uid: consuming-validation
 
 # Validating the Consumed Messages
 
-The messages are validated using the same mechanism implemented in the asp.net controllers.
+The messages are validated using the same mechanism implemented in the ASP.NET Core controllers.
 
 You can either decorate the message model with the [System.ComponentModel.DataAnnotations.ValidationAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute) standard implementations, create your own attributes (extending [ValidationAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute)) or otherwise you can implement the [IValidatableObject](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.ivalidatableobject) interface in your message model.
 
@@ -12,7 +12,7 @@ You can either decorate the message model with the [System.ComponentModel.DataAn
 
 By default, the validation is enabled and the <xref:Silverback.Messaging.Validation.MessageValidationMode> is set to `LogWarning`. This means that a warning is logged if the consumed message is not valid.
 
-## Preventing Invalid Messages to be Processed
+## Preventing Invalid Messages from Being Processed
 
 If you want to prevent invalid messages from being processed, you can set the <xref:Silverback.Messaging.Validation.MessageValidationMode> to `ThrowException`. This way, an exception will be thrown when the message is received and the processing will fail. Silverback will then handle the exception according to the specified error policy (see <xref:consuming#error-handling>).
 

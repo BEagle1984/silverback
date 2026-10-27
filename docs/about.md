@@ -27,4 +27,4 @@ Silverback is built upon several outstanding open-source libraries:
 - [Rx.NET](https://github.com/dotnet/reactive) – Provides powerful reactive extensions for composing asynchronous and event-based programs.
 - [Json.NET](https://github.com/JamesNK/Newtonsoft.Json) – Used to be the gold standard for JSON serialization in .NET, still widely used for its flexibility and features.
 - [Confluent Kafka .NET Client](https://github.com/confluentinc/confluent-kafka-dotnet) – Facilitates integration with Apache Kafka for distributed messaging.
-- [MQTTnet](https://github.com/chkr1011/MQTTnet) – Supports MQTT-based messaging for IoT and lightweight communication scenarios.
+- [MQTTnet](https://github.com/dotnet/MQTTnet) – Supports MQTT-based messaging for IoT and lightweight communication scenarios.

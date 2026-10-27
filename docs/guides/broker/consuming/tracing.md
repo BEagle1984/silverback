@@ -15,7 +15,7 @@ Similarly, Silverback makes consuming traced messages a seamless experience. If 
 
 In other words, if your producers propagate tracing context (which Silverback also does automatically), consumers don’t require any special code: the trace simply flows through your message handling pipeline.
 
-[!Important]
+> [!Important]
 > This works out of the box with Kafka and MQTT 5 (leveraging user properties), while previous MQTT versions don't support custom headers and therefore can't propagate the trace context.
 
 ## Additional Resources

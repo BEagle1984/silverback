@@ -21,10 +21,10 @@ services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
-        .AddConsumer("consumer1", producer => producer
+        .AddConsumer("consumer1", consumer => consumer
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("my-topic")
-                .EnableBatchProcessing(1000, TimeSpan.FromSeconds(30))));
+                .EnableBatchProcessing(1000, TimeSpan.FromSeconds(30)))));
 ```
 # [MQTT](#tab/mqtt)
 ```csharp
@@ -36,7 +36,7 @@ services.AddSilverback()
             .WithClientId("client1")
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("messages/my")
-                .EnableBatchProcessing(1000, TimeSpan.FromSeconds(30))));
+                .EnableBatchProcessing(1000, TimeSpan.FromSeconds(30)))));
 ```
 ***
 
@@ -62,9 +62,13 @@ public async Task HandleAsync(IAsyncEnumerable<IInboundEnvelope<MyMessage>> enve
     await foreach (IInboundEnvelope<MyMessage> envelope in envelopes)
     {
         if (envelope.IsTombstone)
+        {
             // delete the related entity
+        }
         else
+        {
             // create or update the entity
+        }
     }
 
     // commit once for the whole batch
@@ -77,7 +81,7 @@ public async Task HandleAsync(IAsyncEnumerable<IInboundEnvelope<MyMessage>> enve
 > If the subscriber throws, the configured error policy applies to the whole batch.
 
 > [!Note]
-> With Kafka, a batch per topic partition is created by default. You can decide to process all partitions together by calling `ProcessAllPartitionsTogether` on the endpoint configuration and that will create a single batch for the whole topic.
+> With Kafka, a batch per topic partition is created by default. You can decide to process all partitions together by calling `ProcessAllPartitionsTogether` on the consumer configuration and that will create a single batch for the whole topic.
 
 ## Additional Resources
 

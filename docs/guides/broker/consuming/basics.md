@@ -43,7 +43,7 @@ services.AddSilverback()
 > - Call `Consume<TMessage>` multiple times to add multiple endpoints to the same consumer/client. This usually reduces resource usage compared to creating one consumer per endpoint.
 > - In Kafka, producers and consumers are separate entities. In MQTT, the same client can both produce and consume.
 > - Naming consumers/clients and endpoints is optional but recommended for logging and diagnostics. It can also prevent double-registration if the same configuration block runs more than once.
-> - For broker-specific options, see the upstream client docs: [confluent-kafka-dotnet](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html) and [MQTTnet](https://github.com/chkr1011/MQTTnet/wiki).
+> - For broker-specific options, see the upstream client docs: [confluent-kafka-dotnet](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html) and [MQTTnet](https://github.com/dotnet/MQTTnet/wiki).
 
 ## Handle Messages
 
@@ -92,23 +92,21 @@ Limit the maximum degree of parallelism:
 
 ```csharp
 .AddConsumer("consumer1", consumer => consumer
+    .LimitParallelism(3)
     .Consume<MyMessage>("endpoint1", endpoint => endpoint
-        .LimitParallelism(3)
-        .ConsumeFrom("my-topic-1")
-        .ConsumeFrom("my-topic-2")))
+        .ConsumeFrom("my-topic-1", "my-topic-2")))
 ```
 
 Process all partitions in a single stream (disables partition-based parallelism):
 
 ```csharp
 .AddConsumer("consumer1", consumer => consumer
+    .ProcessAllPartitionsTogether()
     .Consume<MyMessage>("endpoint1", endpoint => endpoint
-        .ProcessAllPartitionsTogether()
-        .ConsumeFrom("my-topic-1")
-        .ConsumeFrom("my-topic-2")))
+        .ConsumeFrom("my-topic-1", "my-topic-2")))
 ```
 
-Use `LimitBackpressure(n)` to set the buffer capacity per partition when processing partitions independently. With `ProcessAllPartitionsTogether()`, it sets the capacity of the shared buffer for all partitions. The default limit is 50.
+Both settings apply to the whole consumer, not to a single endpoint. Use `LimitBackpressure(n)` to set the buffer capacity per partition when processing partitions independently. With `ProcessAllPartitionsTogether()`, it sets the capacity of the shared buffer for all partitions. The default limit is 50.
 
 ### MQTT
 
@@ -119,8 +117,7 @@ Enable parallel processing and set the maximum degree of parallelism:
     .WithClientId("client1")
     .EnableParallelProcessing(10)
     .Consume<MyMessage>("endpoint1", endpoint => endpoint
-        .ConsumeFrom("messages/topic1")
-        .ConsumeFrom("messages/topic2")
+        .ConsumeFrom("messages/topic1", "messages/topic2")
         .WithAtLeastOnceQoS()));
 ```
 
@@ -128,7 +125,7 @@ Use `LimitBackpressure(n)` to limit how many incoming MQTT messages Silverback b
 
 For example, `EnableParallelProcessing(4)` with `LimitBackpressure(7)` allows up to 28 buffered messages, plus four being processed. This setting controls Silverback's processing buffers, not buffers in MQTTnet or the broker.
 
-## MQTT sessions
+## MQTT Sessions
 
 Use `RequestPersistentSession()` to resume the broker session after reconnecting. Configure a stable client identifier with `WithClientId(...)`; reconnecting with a different identifier creates a different session. With MQTT 5, persistence requests no expiration by default, unless an expiration was explicitly configured. For a finite retention period, use `RequestPersistentSession(TimeSpan.FromHours(1))` or `WithSessionExpiration(TimeSpan.FromHours(1))`. Shared client settings also support `RequestPersistentSession()` and `WithSessionExpiration(...)`.
 
@@ -184,29 +181,31 @@ services.AddSilverback()
 > [!Important]
 > <xref:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy> waits before retrying and may delay polling. With Kafka, ensure broker/client timeouts (for example `max.poll.interval.ms`) are configured accordingly.
 
-### Apply rules
+### Apply Rules
 
-Use `ApplyTo`, `Exclude`, and `ApplyWhen` to control which exceptions are handled and when.
+Use `ApplyTo`, `Exclude`, and `ApplyWhen` to control which exceptions are handled and when. The `ApplyWhen` and `Publish` functions receive the `IRawInboundEnvelope` (and optionally the exception), not the deserialized message.
+
+The `MoveTo` policy accepts either the name of a topic or the friendly name of an endpoint already configured in a producer.
 
 ```csharp
 .OnError(policy => policy
-    .MoveToKafkaTopic(
-        moveEndpoint => moveEndpoint.ProduceTo("some-other-topic"),
+    .MoveTo(
+        "some-other-topic",
         movePolicy => movePolicy
             .ApplyTo<MyException>()
-            .ApplyWhen((msg, ex) => msg.Xy == myValue))
+            .ApplyWhen((envelope, exception) => envelope.Headers.Contains("x-move-on-error")))
     .ThenSkip());
 ```
 
-### Publish events
+### Publish Events
 
 You can publish a message when a policy is applied (for logging, alerts, etc.).
 
 ```csharp
 .OnError(policy => policy
-    .Retry(3, TimeSpan.FromSeconds(1))
+    .Retry(3, retryPolicy => retryPolicy.WithInterval(TimeSpan.FromSeconds(1)))
     .ThenSkip(skipPolicy => skipPolicy
-        .Publish(msg => new ProcessingFailedEvent(msg))));
+        .Publish(envelope => new ProcessingFailedEvent(envelope))));
 ```
 
 ## Additional Resources

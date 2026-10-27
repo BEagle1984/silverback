@@ -30,7 +30,7 @@ services.AddSilverback()
 
 ### Newtonsoft.Json
 
-Silverback also provides a deserializer based on `Newtonsoft.Json`. It is found in the [Silverback.Newtonsoft](https://www.nuget.org/packages/Silverback.Newtonsoft/) package and can be enabled by calling the `DeserializeJsonUsingNewtonsoft` method.
+Silverback also provides a deserializer based on `Newtonsoft.Json`. It is found in the [Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/) package and can be enabled by calling the `DeserializeJsonUsingNewtonsoft` method.
 
 ```csharp
 services.AddSilverback()
@@ -58,7 +58,7 @@ services.AddSilverback()
                         settings =>
                         {
                             settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                        }))));
+                        })))));
 ```
 
 ### Polymorphic Deserialization
@@ -71,7 +71,7 @@ To handle polymorphic nested properties, you have instead to rely on the seriali
 
 ### Schema Registry
 
-To integrate with Confluent Schema Registry, you can use the dedicated JSON deserializer designed for schema registry support found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This uses the Confluent deserializer under the hood, which in turn uses `Newtonsoft.Json`.
+To integrate with Confluent Schema Registry, you can use the dedicated JSON deserializer designed for schema registry support found in the [Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/) package. This uses the Confluent deserializer under the hood, which in turn uses `Newtonsoft.Json`.
 
 ```csharp
 services.AddSilverback()
@@ -86,8 +86,8 @@ services.AddSilverback()
                     .Configure(
                         config =>
                         {
-                            config.AutoRegisterSchemas = false;
-                        }))));
+                            config.UseLatestVersion = true;
+                        })))));
 ```
 
 > [!Note]
@@ -176,7 +176,7 @@ services.AddSilverback()
 
 ## Avro
 
-To deserialize Avro formatted messages you can use the Avro deserializer found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This deserializer is based on the Confluent Avro deserializer and requires a schema registry.
+To deserialize Avro formatted messages you can use the Avro deserializer found in the [Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/) package. This deserializer is based on the Confluent Avro deserializer and requires a schema registry.
 
 ```csharp
 services.AddSilverback()
@@ -198,7 +198,7 @@ services.AddSilverback()
 
 ## Protobuf
 
-To deserialize Protobuf messages you can use the Protobuf deserializer found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This deserializer is based on the Confluent Protobuf deserializer and requires a schema registry.
+To deserialize Protobuf messages you can use the Protobuf deserializer found in the [Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/) package. This deserializer is based on the Confluent Protobuf deserializer and requires a schema registry.
 
 ```csharp
 services.AddSilverback()

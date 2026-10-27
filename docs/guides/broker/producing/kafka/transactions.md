@@ -25,7 +25,7 @@ services.AddSilverback()
             .Produce<MyMessage>("endpoint1", endpoint => endpoint
                 .ProduceTo("my-topic"))
             .Produce<AnotherMessage>("endpoint2", endpoint => endpoint
-                .ProduceTo("my-other-topic")))));
+                .ProduceTo("my-other-topic"))));
 ```
 
 ## Using Transactions
@@ -66,7 +66,7 @@ services.AddSilverback()
         .AddConsumer("consumer1", consumer => consumer
             .Consume<InputMessage>("endpoint-in", endpoint => endpoint
                 .ConsumeFrom("in-topic"))
-            .SendOffsetsToTransaction())));
+            .SendOffsetsToTransaction()));
 ```
 
 ## Additional Resources

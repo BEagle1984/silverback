@@ -22,7 +22,7 @@ public class MySubscriber
 }
 ```
 
-## Use `HeaderAttribute` on the message model
+## Use `HeaderAttribute` on the Message Model
 
 Decorate message properties with <xref:Silverback.Messaging.Messages.HeaderAttribute> to map header values into the model.
 

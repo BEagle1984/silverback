@@ -9,7 +9,7 @@ Here is the list of the default headers that may be sent.
 
 The static classes <xref:Silverback.Messaging.Messages.DefaultMessageHeaders> and <xref:Silverback.Messaging.Messages.KafkaMessageHeaders> contain all default header names constants.
 
-### Default
+## Default
 
 Header | Name
 :-- | :--
@@ -25,7 +25,7 @@ Header | Name
 [EncryptionKeyId](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId) | `x-encryption-key-id`
 [FailureReason](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_FailureReason) | `x-failure-reason`
 
-### Kafka
+## Kafka
 
 Header | Name
 :-- | :--
@@ -37,10 +37,9 @@ Header | Name
 [SourceTimestamp](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_SourceTimestamp) | `x-source-timestamp`
 [FirstChunkOffset](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_FirstChunkOffset) | `x-chunk-first-offset`
 
-### MQTT
+## MQTT
 
-Header | Name
-:-- | :--
+MQTT doesn't add any additional header to the produced messages. The constants in <xref:Silverback.Messaging.Messages.MqttMessageHeaders> are used internally to map some envelope headers to the corresponding MQTT 5 properties (response topic and correlation data) and to set the dynamic destination topic.
 
 ## Customizing Default Header Names
 
@@ -49,7 +48,7 @@ The default header names can be overridden using the `WithCustomHeaderName` conf
 ```csharp
 services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
-    .WithCustomHeaderName(DefaultMessageHeaders.ChunkId, "x-ch-id")
+    .WithCustomHeaderName(DefaultMessageHeaders.ChunkIndex, "x-ch-idx")
     .WithCustomHeaderName(DefaultMessageHeaders.ChunksCount, "x-ch-cnt")
     .AddBrokerClientsConfigurator<MyClientsConfigurator>();
 ```

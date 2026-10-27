@@ -13,7 +13,7 @@ The end-to-end message encryption in Silverback is handled transparently in the 
 
 ## Symmetric Encryption
 
-Enabling the end-to-end encryption using a symmetric algorithm just require an extra configuration in the endpoint.
+Enabling the end-to-end encryption using a symmetric algorithm just requires an extra configuration in the endpoint.
 
 The default symmetric encryption algorithm is AES.
 
@@ -38,7 +38,7 @@ services.AddSilverback()
         .AddProducer("producer1", producer => producer
             .Produce<MyMessage>("endpoint1", endpoint => endpoint
                 .ProduceTo("my-topic")
-                .Encrypt(new SymmetricEncryptionSettings))));
+                .Encrypt(new SymmetricEncryptionSettings
                 {
                     AlgorithmName = "TripleDES",
                     Key = encryptionKey
@@ -47,7 +47,7 @@ services.AddSilverback()
 
 The <xref:Silverback.Messaging.Encryption.SymmetricEncryptionSettings> class encapsulates all common settings of a symmetric algorithm (block size, initialization vector, ...).
 
-The `AlgorithmName` is used to load the algorithm implementation using the [SymmetricAlgorithm.Create(string)](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm.create) method. Refer to the [SymmetricAlgorithm](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm) class documentation to see which implementations are available in .net core are. Silverback uses [Aes](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes) by default.
+The `AlgorithmName` is used to load the algorithm implementation using the [SymmetricAlgorithm.Create(string)](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm.create) method. Refer to the [SymmetricAlgorithm](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm) class documentation to see which implementations are available in .NET. Silverback uses [Aes](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes) by default.
 
 ### Random Initialization Vector
 

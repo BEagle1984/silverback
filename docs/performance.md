@@ -8,7 +8,7 @@ Silverback tries to improve the performance with every release and a huge effort
 
 ## Benchmark Results
 
-The benchmarks were built with .NET 10 and run on a Windows 11 workstation (AMD Ryzen 9 9950X3D, 64 GB DDR5). They use [BenchmarkDotNet](https://benchmarkdotnet.org/), and the source code is available on [GitHub](https://github.com/BEagle1984/silverback/tree/master/benchmarks).
+The benchmarks were built with .NET 10 and run on a Windows 11 workstation (AMD Ryzen 9 9950X3D, 64 GB DDR5). They use [BenchmarkDotNet](https://benchmarkdotnet.org/), and the source code is available on [GitHub](https://github.com/BEagle1984/silverback/tree/master/tests/extended).
 
 ### Message Bus
 
@@ -62,7 +62,7 @@ Publishing 1000 messages to Kafka (running in docker on the local machine) to a 
 
 #### v4.6.2
 
-| ethod                       | Mean    | Error   | StdDev  | Ratio | Allocated |
+| Method                      | Mean    | Error   | StdDev  | Ratio | Allocated |
 |-----------------------------|--------:|--------:|--------:|------:|----------:|
 | PublishAsync inside foreach | 15.68 s | 0.025 s | 0.024 s |  1.00 |  20.17 MB |
 

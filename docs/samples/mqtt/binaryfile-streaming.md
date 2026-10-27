@@ -13,29 +13,29 @@ See also: <xref:serialization>, <xref:deserialization>, <xref:producing-chunking
 The producer exposes two REST API that receive the path of a local file to be streamed. The second API uses a custom `BinaryMessage` to forward further metadata (the file name in this example).
 
 # [Startup](#tab/producer-startup)
-[!code-csharp[Producer.Startup](../../../samples/Mqtt/BinaryFileStreaming.Producer/Startup.cs)]
+[!code-csharp[Producer.Startup](../../../samples/MQTT/BinaryFileStreaming.Producer/Startup.cs)]
 # [BrokerClientsConfigurator](#tab/producer-endpoints)
-[!code-csharp[Producer.BrokerClientsConfigurator](../../../samples/Mqtt/BinaryFileStreaming.Producer/BrokerClientsConfigurator.cs)]
+[!code-csharp[Producer.BrokerClientsConfigurator](../../../samples/MQTT/BinaryFileStreaming.Producer/BrokerClientsConfigurator.cs)]
 # [CustomBinaryFileMessage](#tab/producer-custom-message)
-[!code-csharp[Producer.CustomBinaryFileMessage](../../../samples/Mqtt/BinaryFileStreaming.Producer/Messages/CustomBinaryMessage.cs)]
+[!code-csharp[Producer.CustomBinaryFileMessage](../../../samples/MQTT/BinaryFileStreaming.Producer/Messages/CustomBinaryMessage.cs)]
 # [API Controller](#tab/producer-controller)
-[!code-csharp[Producer.ProducerController](../../../samples/Mqtt/BinaryFileStreaming.Producer/Controllers/ProducerController.cs)]
+[!code-csharp[Producer.ProducerController](../../../samples/MQTT/BinaryFileStreaming.Producer/Controllers/ProducerController.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Producer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/BinaryFileStreaming.Producer_
 
 ## Consumer
 
 The consumer simply streams the file to a temporary folder in the local file system.
 
 # [Startup](#tab/consumer-startup)
-[!code-csharp[Consumer.Startup](../../../samples/Mqtt/BinaryFileStreaming.Consumer/Startup.cs)]
+[!code-csharp[Consumer.Startup](../../../samples/MQTT/BinaryFileStreaming.Consumer/Startup.cs)]
 # [BrokerClientsConfigurator](#tab/consumer-endpoints)
-[!code-csharp[Consumer.BrokerClientsConfigurator](../../../samples/Mqtt/BinaryFileStreaming.Consumer/BrokerClientsConfigurator.cs)]
+[!code-csharp[Consumer.BrokerClientsConfigurator](../../../samples/MQTT/BinaryFileStreaming.Consumer/BrokerClientsConfigurator.cs)]
 # [CustomBinaryFileMessage](#tab/consumer-custom-message)
-[!code-csharp[Consumer.CustomBinaryFileMessage](../../../samples/Mqtt/BinaryFileStreaming.Consumer/Messages/CustomBinaryMessage.cs)]
+[!code-csharp[Consumer.CustomBinaryFileMessage](../../../samples/MQTT/BinaryFileStreaming.Consumer/Messages/CustomBinaryMessage.cs)]
 # [Subscriber](#tab/consumer-subscriber)
-[!code-csharp[Consumer.BinaryFileSubscriber](../../../samples/Mqtt/BinaryFileStreaming.Consumer/Subscribers/BinaryFileSubscriber.cs)]
+[!code-csharp[Consumer.BinaryFileSubscriber](../../../samples/MQTT/BinaryFileStreaming.Consumer/Subscribers/BinaryFileSubscriber.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Consumer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/BinaryFileStreaming.Consumer_

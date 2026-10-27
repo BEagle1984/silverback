@@ -44,7 +44,7 @@ The configuration has two parts:
 
 All examples below intentionally call `.DisableOffsetsCommit()` so that Kafka broker offsets aren’t used.
 
-### In-memory offset store
+### In-Memory Offset Store
 
 Use this for development/testing only (offsets are lost on process restart).
 
@@ -64,7 +64,7 @@ services
                 .ConsumeFrom("my-topic"))));
 ```
 
-### SQLite offset store
+### SQLite Offset Store
 
 ```csharp
 services
@@ -82,7 +82,7 @@ services
                 .ConsumeFrom("my-topic"))));
 ```
 
-### PostgreSQL offset store
+### PostgreSQL Offset Store
 
 ```csharp
 services
@@ -100,7 +100,7 @@ services
                 .ConsumeFrom("my-topic"))));
 ```
 
-### Entity Framework offset store
+### Entity Framework Offset Store
 
 When using Entity Framework, offsets are stored using a `DbContext`.
 
@@ -145,7 +145,7 @@ Silverback exposes a `KafkaOffsetStoreScope` that you can inject into your subsc
 
 If the transaction rolls back, offsets won’t be stored and the messages will be re-consumed.
 
-### A minimal example
+### A Minimal Example
 
 ```csharp
 public class MySubscriber
@@ -184,7 +184,7 @@ public class MySubscriber
 > [!Important]
 > Calling `StoreOffsetsAsync()` without enlisting a transaction still stores offsets, but you lose the atomic “exactly-once w.r.t. DB” guarantee.
 
-### Entity Framework transaction example
+### Entity Framework Transaction Example
 
 ```csharp
 public async Task OnMessageReceivedAsync(MyMessage message, KafkaOffsetStoreScope offsetStoreScope, AppDbContext db)

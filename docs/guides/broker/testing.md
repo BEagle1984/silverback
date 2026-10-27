@@ -33,7 +33,7 @@ There are two supported approaches and they solve different problems:
    and your test host overrides that by calling `UseMockedKafka` / `UseMockedMqtt` in `ConfigureTestServices` (or equivalent).
    This is ideal when the app’s configuration is shared between production and tests, and you just want to swap the transport.
 
-> [!TIP]
+> [!Tip]
 > You don’t need both. `AddMockedKafka` and `AddMockedMqtt` already register the broker and replace the transport.
 > `UseMockedKafka` / `UseMockedMqtt` are for *overriding* an existing setup.
 
@@ -65,11 +65,11 @@ services
     .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
     .AddMqttClients(
         clients => clients
-            .AddProducer(
-                producer => producer
-                    .Produce<SomeMessage>(endpoint => endpoint.ProduceTo("test/topic")))
-            .AddConsumer(
-                consumer => consumer
+            .ConnectViaTcp("tests")
+            .AddClient(
+                client => client
+                    .WithClientId("test-client")
+                    .Produce<SomeMessage>(endpoint => endpoint.ProduceTo("test/topic"))
                     .Consume(endpoint => endpoint.ConsumeFrom("test/topic"))));
 ```
 
@@ -100,7 +100,7 @@ builder.ConfigureTestServices(services =>
 });
 ```
 
-> [!NOTE]
+> [!Note]
 > `UseMockedKafka` / `UseMockedMqtt` replace the underlying broker connectivity (Confluent.Kafka / MQTTnet) with an in-memory implementation.
 > They don’t add producers/consumers/endpoints for you; those still come from your normal app configuration.
 
@@ -115,7 +115,7 @@ The most commonly used helpers are:
 - <xref:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.String[])> – wait until Kafka message offsets have been committed (**mocked Kafka only**).
 - <xref:Silverback.Testing.ITestingHelper.WaitUntilOutboxIsEmptyAsync(System.Nullable{System.TimeSpan})> – wait until the outbox has been drained (if you’re using the outbox).
 
-### Example: publish and wait
+### Example: Publish and Wait
 
 This pattern is used extensively in our end-to-end tests (see `tests/Silverback.Integration.Tests.E2E`).
 
@@ -145,7 +145,7 @@ await Helper.WaitUntilAllMessagesAreConsumedAsync();
 Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
 ```
 
-> [!IMPORTANT]
+> [!Important]
 > Don’t assert immediately after producing/publishing. Always wait for the broker pipeline to finish.
 > With mocked brokers you typically want `WaitUntilAllMessagesAreConsumedAsync()`.
 
@@ -178,7 +178,7 @@ Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 
 Mocked Kafka automatically overrides the auto-commit interval to **50 milliseconds** to speed up commit waits when auto-commit is enabled. No explicit configuration is needed. Use <xref:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.OverrideAutoCommitIntervalMs(System.Nullable{System.Int32})> only when a test requires different commit timing. Passing `null` disables the override and uses the consumer's configured interval, or 5 seconds if no interval is configured.
 
-### Access In-Memory topics
+### Access In-Memory Topics
 
 When using the mocked Kafka broker you can inspect the internal topics via <xref:Silverback.Testing.IKafkaTestingHelper.GetTopic(System.String,System.String)>.
 
@@ -200,15 +200,15 @@ var group = Helper.GetConsumerGroup("test-group");
 // group.Consumers / group.CommittedOffsets ...
 ```
 
-### Create a Producer on-the-fly
+### Create a Producer On-the-Fly
 
 Sometimes you want to produce to Kafka without going through the application’s publisher (e.g., to simulate an external producer).
 
 ```csharp
-var producer = Helper.GetProducer(
-    config => config
+IProducer producer = Helper.GetProducer(
+    producer => producer
         .WithBootstrapServers("PLAINTEXT://tests")
-        .ProduceTo("test-topic"));
+        .Produce<SomeMessage>(endpoint => endpoint.ProduceTo("test-topic")));
 
 await producer.ProduceAsync(new SomeMessage());
 ```
@@ -233,13 +233,14 @@ var messages = Helper.GetMessages("test/topic");
 messages.Count.ShouldBeGreaterThan(0);
 ```
 
-### Create a Producer on-the-fly
+### Create a Producer On-the-Fly
 
 ```csharp
-var producer = Helper.GetProducer(
-    config => config
+IProducer producer = Helper.GetProducer(
+    client => client
+        .ConnectViaTcp("tests")
         .WithClientId("external-producer")
-        .ProduceTo("test/topic"));
+        .Produce<SomeMessage>(endpoint => endpoint.ProduceTo("test/topic")));
 
 await producer.ProduceAsync(new SomeMessage());
 ```

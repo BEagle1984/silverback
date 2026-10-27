@@ -30,7 +30,7 @@ services.AddSilverback()
 
 ### Newtonsoft.Json
 
-Silverback also provides a serializer based on `Newtonsoft.Json`. It is found in the [Silverback.Newtonsoft](https://www.nuget.org/packages/Silverback.Newtonsoft/) package and can be enabled by calling the `SerializeAsJsonUsingNewtonsoft` method.
+Silverback also provides a serializer based on `Newtonsoft.Json`. It is found in the [Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/) package and can be enabled by calling the `SerializeAsJsonUsingNewtonsoft` method.
 
 ```csharp
 services.AddSilverback()
@@ -58,7 +58,7 @@ services.AddSilverback()
                         settings =>
                         {
                             settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                        }))));
+                        })))));
 ```
 
 ### Polymorphic Serialization
@@ -67,13 +67,13 @@ Silverback by default adds an `x-message-type` header to the produced messages t
 
 For example, if the producer is configured to produce messages of type `MyMessage` but it actually produces a message of type `MyDerivedMessage`, the `x-message-type` header will be set to the **assembly qualified name** of `MyDerivedMessage`.
 
-This header will always be sent, even if the actual message type is the same as the one specified in the producer configuration. This header can be dropped using the `DisableMessageTypeHeader` method.
+This header will always be sent, even if the actual message type is the same as the one specified in the producer configuration. This header can be dropped calling `DisableTypeHeader` on the serializer builder (e.g. `.SerializeAsJson(serializer => serializer.DisableTypeHeader())`).
 
 To handle polymorphic nested properties, you have instead to rely on the serializer built-in functionality (e.g., `TypeNameHandling` in `Newtonsoft.Json`).
 
 ### Schema Registry
 
-To integrate with Confluent Schema Registry, you can use the dedicated JSON serializer designed for schema registry support found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This uses the Confluent serializer under the hood, which in turn uses `Newtonsoft.Json`.
+To integrate with Confluent Schema Registry, you can use the dedicated JSON serializer designed for schema registry support found in the [Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/) package. This uses the Confluent serializer under the hood, which in turn uses `Newtonsoft.Json`.
 
 ```csharp
 services.AddSilverback()
@@ -89,7 +89,7 @@ services.AddSilverback()
                         config =>
                         {
                             config.AutoRegisterSchemas = false;
-                        }))));
+                        })))));
 ```
 
 > [!Note]
@@ -178,7 +178,7 @@ services.AddSilverback()
 
 ## Avro
 
-To serialize in Avro format you can use the Avro serializer found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This serializer is based on the Confluent Avro serializer and requires a schema registry.
+To serialize in Avro format you can use the Avro serializer found in the [Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/) package. This serializer is based on the Confluent Avro serializer and requires a schema registry.
 
 ```csharp
 services.AddSilverback()
@@ -200,7 +200,7 @@ services.AddSilverback()
 
 ## Protobuf
 
-To serialize in Protobuf format you can use the Protobuf serializer found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This serializer is based on the Confluent Protobuf serializer and requires a schema registry.
+To serialize in Protobuf format you can use the Protobuf serializer found in the [Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/) package. This serializer is based on the Confluent Protobuf serializer and requires a schema registry.
 
 ```csharp
 services.AddSilverback()

@@ -60,7 +60,7 @@ Provides:
   * PostgreSQL **advisory locks** (default and recommended)
   * PostgreSQL **table-based lock** (locks table with heartbeat)
 
-### Entity Framework (when you already use EF Core)
+### Entity Framework (When You Already Use EF Core)
 
 Package: `Silverback.Storage.EntityFramework`
 
@@ -72,7 +72,7 @@ Provides:
 
 Because EF storage uses your application's model, tables are typically created via **migrations**.
 
-### Relational abstraction (internal building block)
+### Relational Abstraction (Internal Building Block)
 
 Package: `Silverback.Storage.Relational`
 
@@ -116,7 +116,7 @@ Provider-specific provisioning methods currently include (non-exhaustive):
 >
 > Table-based locks (PostgreSQL table lock + EF lock) do require a locks table.
 
-### Entity Framework tables
+### Entity Framework Tables
 
 When using EF Core, you include the storage entities in your `DbContext`.
 
@@ -164,7 +164,7 @@ See the dedicated guide:
 
 * <xref:outbox>
 
-### Kafka offset storage (client-side offsets)
+### Kafka Offset Storage (Client-Side Offsets)
 
 Client-side offset storage persists offsets outside Kafka so that your processing + offset advancement can be committed atomically in your DB transaction.
 
@@ -190,14 +190,14 @@ Depending on the storage package you use, the default lock implementation may di
 * PostgreSQL storage supports advisory locks (default) and table-based locks
 * Entity Framework storage uses a table-based lock
 
-### Why locks exist
+### Why Locks Exist
 
 Distributed locks are used to avoid scenarios like:
 
 * two instances producing outbox messages concurrently (leading to duplicates)
 * multiple nodes running a single-instance maintenance task
 
-### Lock handle and lock loss
+### Lock Handle and Lock Loss
 
 When a lock is acquired, Silverback obtains a `DistributedLockHandle`.
 
@@ -209,7 +209,7 @@ Key behaviors:
   * For advisory locks, this token is signaled if the underlying database lock/session is lost.
   * For heartbeat-based locks, this token is signaled if a heartbeat update fails.
 
-### PostgreSQL advisory lock
+### PostgreSQL Advisory Lock
 
 Implementation: `PostgreSqlAdvisoryLock` (uses `DistributedLock.Postgres` a.k.a. Medallion.Threading).
 
@@ -227,7 +227,7 @@ You can configure advisory locks explicitly where a distributed lock is configur
     .UsePostgreSqlAdvisoryLock("outbox", connectionString))
 ```
 
-### Table-based lock (PostgreSQL and EF)
+### Table-Based Lock (PostgreSQL and EF)
 
 Base implementation: `TableBasedDistributedLock`.
 
@@ -258,7 +258,7 @@ Entity Framework lock specifics:
 * Uses a `DbContext` and the `SilverbackLock` entity/table.
 * Handles acquisition races by catching `DbUpdateException` (another process won).
 
-### In-memory lock
+### In-Memory Lock
 
 Implementation: `InMemoryLock`.
 

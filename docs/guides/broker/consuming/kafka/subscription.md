@@ -31,7 +31,7 @@ services.AddSilverback()
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
         .AddConsumer("consumer1", consumer => consumer
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
-                .ConsumeFrom("my-topic", 0, 3, 5)))));
+                .ConsumeFrom("my-topic", 0, 3, 5))));
 ```
 
 > [!Note]
@@ -67,8 +67,8 @@ services.AddSilverback()
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
         .AddConsumer("consumer1", consumer => consumer
+            .ProcessAllPartitionsTogether()
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
-                .ProcessAllPartitionsTogether()
                 .ConsumeFrom("my-topic"))));
 ```
 

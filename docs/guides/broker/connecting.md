@@ -80,13 +80,13 @@ services.AddSilverback()
                 .ProduceTo("messages/my")
                 .WithAtLeastOnceQoS()
                 .Retain()
-                .IgnoreNoMatchingSubscribersError())
+                .IgnoreNoMatchingSubscribers())
             .Consume(endpoint => endpoint
                 .ConsumeFrom("messages/other")
-                    .WithAtLeastOnceQoS()
-                    .OnError(policy => policy.Skip()))
+                .WithAtLeastOnceQoS()
+                .OnError(policy => policy.Skip()))
             .SendLastWillMessage<TestamentMessage>(lastWill => lastWill
-                .SendMessage(new TestamentMessage(){ ... })
+                .SendMessage(new TestamentMessage { ... })
                 .ProduceTo("testaments"))));
 ```
 ***
@@ -146,13 +146,13 @@ public class MyClientsConfigurator : IBrokerClientsConfigurator
                     .ProduceTo("messages/my")
                     .WithAtLeastOnceQoS()
                     .Retain()
-                    .IgnoreNoMatchingSubscribersError())
+                    .IgnoreNoMatchingSubscribers())
                 .Consume(endpoint => endpoint
                     .ConsumeFrom("messages/other")
-                        .WithAtLeastOnceQoS()
-                        .OnError(policy => policy.Skip()))
+                    .WithAtLeastOnceQoS()
+                    .OnError(policy => policy.Skip()))
                 .SendLastWillMessage<TestamentMessage>(lastWill => lastWill
-                    .SendMessage(new TestamentMessage(){ ... })
+                    .SendMessage(new TestamentMessage { ... })
                     .ProduceTo("testaments"))));
     }
 }
@@ -202,7 +202,6 @@ services
             .WithGroupId("consumer1")
             .Consume<MyOtherMessage>(endpoint => endpoint
                 .ConsumeFrom("my-other-topic"))));
-;
 ```
 
 In this case, you must manually connect the clients:
@@ -267,7 +266,7 @@ public class ConsumerManagementService
     {
         int totalCount = 0;
 
-        foreach (IConsumer in _consumers
+        foreach (IConsumer consumer in _consumers)
         {
             totalCount += consumer.StatusInfo.ConsumedMessagesCount;
         }

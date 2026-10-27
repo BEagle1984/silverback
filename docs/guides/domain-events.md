@@ -10,13 +10,13 @@ They let your aggregate record *what happened* (e.g. "order placed", "basket che
 Silverback provides built-in support to collect domain events from your entities and publish them through the internal message bus.
 When used together with storage and the transactional outbox, this becomes a solid foundation for reliable integration events.
 
-## What Silverback considers a "domain event"
+## What Silverback Considers a "Domain Event"
 
 A domain event is any message implementing <xref:Silverback.Domain.IDomainEvent>.
 
 The recommended approach is to use [Silverback.Core.Model](https://www.nuget.org/packages/Silverback.Core.Model/) and derive your events from <xref:Silverback.Domain.DomainEvent`1>.
 
-## Storing domain events in your entities
+## Storing Domain Events in Your Entities
 
 Silverback can publish domain events that are stored inside the entities being saved.
 To make this work, your entities must implement <xref:Silverback.Messaging.Messages.IMessagesSource>.
@@ -26,7 +26,7 @@ The easiest way is to inherit from <xref:Silverback.Domain.DomainEntity>, which 
 > [!Tip]
 > You don't have to use `DomainEntity`. If you have your own base entity type, you can still integrate with this feature by implementing <xref:Silverback.Messaging.Messages.IMessagesSource>.
 
-### Sample aggregate root
+### Sample Aggregate Root
 
 In this example, calling `Checkout()` records a domain event by adding it to the in-memory event collection.
 
@@ -71,7 +71,7 @@ public sealed class BasketCheckedOutDomainEvent : DomainEvent<Basket>;
 > [!Note]
 > `DomainEntity` also exposes a `DomainEvents` property. It's primarily there for inspection/testing, while publication is handled by the publisher described below.
 
-## Publishing domain events with Entity Framework Core
+## Publishing Domain Events with Entity Framework Core
 
 To publish domain events as part of your `DbContext.SaveChanges` call, use <xref:Silverback.Domain.EntityFrameworkDomainEventsPublisher`1>.
 
@@ -81,7 +81,7 @@ This helper is designed to:
 - publish the collected domain events via <xref:Silverback.Messaging.Publishing.IPublisher>
 - align the publisher storage transaction (used e.g. by the transactional outbox) with the current EF Core transaction when possible
 
-### DbContext integration
+### DbContext Integration
 
 Create an `EntityFrameworkDomainEventsPublisher<TDbContext>` instance and delegate the `SaveChanges*` calls to it.
 
@@ -124,7 +124,7 @@ public class SampleDbContext : DbContext
 > [!Important]
 > The example above wires domain event publication directly into `SaveChanges`. This makes it hard to "forget" publishing and keeps your service code clean.
 
-## Handling published domain events
+## Handling Published Domain Events
 
 Domain events are published to the internal bus, so you can handle them like any other in-memory message (see <xref:bus>).
 
@@ -147,7 +147,7 @@ public class BasketDomainEventsSubscriber
 
 Register the subscriber using `AddScopedSubscriber`, `AddSingletonSubscriber`, or `AddTransientSubscriber`.
 
-## Domain events vs integration events
+## Domain Events vs. Integration Events
 
 Domain events are usually *internal* to a bounded context.
 If you want to notify other services via Kafka/MQTT/etc., you typically convert domain events into integration events.
@@ -157,13 +157,13 @@ If you're using the transactional outbox, you can do that conversion in a subscr
 > [!Tip]
 > If you're building an event-driven architecture, combining domain events + outbox is a common way to keep your database changes and outgoing messages consistent.
 
-## Common pitfalls
+## Common Pitfalls
 
 - **Publishing from inside the entity**: the entity should only *record* events (`AddEvent<T>()`). Publishing is infrastructure.
 - **Forgetting to hook into SaveChanges**: if you don't integrate `EntityFrameworkDomainEventsPublisher`, recorded events will never be published.
 - **Long-running subscribers**: domain events run in-process; keep handlers quick and delegate slow work to background jobs or integration messages.
 
-## Next steps
+## Next Steps
 
 - Learn how to publish and subscribe using the internal bus: <xref:bus>
-- Learn how to connect to Kafka/MQTT and produce externally: <xref:setup>
+- Learn how to connect to Kafka/MQTT and produce externally: <xref:broker>

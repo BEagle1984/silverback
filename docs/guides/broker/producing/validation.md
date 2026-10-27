@@ -4,7 +4,7 @@ uid: producing-validation
 
 # Validating the Produced Messages
 
-The messages are being validated using the same mechanism implemented in the asp.net controllers.
+The messages are being validated using the same mechanism implemented in the ASP.NET Core controllers.
 
 You can either decorate the message model with the [System.ComponentModel.DataAnnotations.ValidationAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute) standard implementations, create your own attributes (extending [ValidationAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute)) or otherwise you can implement the [IValidatableObject](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.ivalidatableobject) interface in your message model.
 
@@ -12,7 +12,7 @@ You can either decorate the message model with the [System.ComponentModel.DataAn
 
 By default, the validation is enabled and the <xref:Silverback.Messaging.Validation.MessageValidationMode> is set to `LogWarning`. This means that a warning is logged if the produced message is not valid.
 
-## Preventing Invalid Messages to be Produced
+## Preventing Invalid Messages from Being Produced
 
 If you want to prevent invalid messages from being produced, you can set the <xref:Silverback.Messaging.Validation.MessageValidationMode> to `ThrowException`. This way, an exception will be thrown by the `Publish` method if the message is not valid.
 

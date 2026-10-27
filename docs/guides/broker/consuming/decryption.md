@@ -66,13 +66,12 @@ services.AddSilverback()
                 .DecryptUsingAes(
                     keyIdentifier => keyIdentifier switch
                     {
-                        "old-key" => "...",
-                        _ => "..."
+                        "old-key" => oldKey,
+                        _ => currentKey
                     }))));
 ```
 
-(Implementation details of a key resolver depend on your integration; the important part is that the consumer can obtain the right key by the identifier included with the message.)
-
+The key provider function receives the key identifier read from the message headers (`null` if the message doesn't specify any) and must return the key as `byte[]`. How the keys are stored and resolved depends on your integration.
 
 ## Additional Resources
 

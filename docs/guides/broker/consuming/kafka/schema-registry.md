@@ -33,7 +33,7 @@ services.AddSilverback()
                     .ConnectToSchemaRegistry("http://localhost:4242")
                     .Configure(config =>
                     {
-                        config.AutoRegisterSchemas = false;
+                        config.UseLatestVersion = true;
                     })))));
 ```
 
@@ -91,7 +91,7 @@ services.AddSilverback()
 
 In most setups, schemas are registered by producers and consumers only read existing schemas.
 
-If you disable automatic schema registration (`AutoRegisterSchemas = false`), ensure schemas are registered before producing messages.
+If automatic schema registration is disabled in the producer (`AutoRegisterSchemas = false`), ensure schemas are registered before producing messages.
 
 You can register schemas programmatically using <xref:Silverback.Messaging.Serialization.IConfluentSchemaRegistryClientFactory>:
 

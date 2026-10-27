@@ -37,6 +37,6 @@ The main solution contains unit tests. There are also runnable <xref:samples> in
 
 ## Contributors
 
-Thanks to all contributors [contributors](https://leereilly.net/github-high-scores/?beagle1984/silverback).
+Thanks to all the [contributors](https://github.com/BEagle1984/silverback/graphs/contributors)!
 
 <iframe src="https://leereilly.net/github-high-scores/?beagle1984/silverback" style="width: 100%;height: 1000px"></iframe>
