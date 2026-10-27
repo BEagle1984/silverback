@@ -6,7 +6,23 @@ uid: sample-mqtt-basic
 
 This sample implements the simplest possible producer and consumer.
 
-See also: <xref:broker>, <xref:producing>, <xref:consuming>
+## What This Sample Shows
+
+- Connecting Silverback to an MQTT broker with `AddMqtt` and moving the clients configuration to an `IBrokerClientsConfigurator`.
+- Producing the `SampleMessage` to the `samples/basic` topic with at-least-once QoS and the retain flag, logging a warning when no subscriber matches.
+- Consuming the same topic with at-least-once QoS, skipping the messages that fail to be processed.
+- Configuring a last will message (`TestamentMessage`) that is sent to the `samples/testaments` topic if the consumer disconnects ungracefully.
+
+## How to Run
+
+Start the infrastructure as described in <xref:samples>, then run the two applications from the repository root.
+
+```bash
+dotnet run --project ./samples/MQTT/Basic.Producer/.
+dotnet run --project ./samples/MQTT/Basic.Consumer/.
+```
+
+Observe the console output while the messages are produced and consumed.
 
 ## Common
 
@@ -44,3 +60,10 @@ The consumer processes the messages and outputs their value to the standard outp
 ***
 
 _Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/Basic.Consumer_
+
+## Additional Resources
+
+- <xref:broker>
+- <xref:producing>
+- <xref:consuming>
+- <xref:sample-mqtt-basic-v3> sample

@@ -304,4 +304,5 @@ public class ConsumerManagementService
 
 * <xref:producing>
 * <xref:consuming>
+* <xref:mqtt>
 * <xref:samples>

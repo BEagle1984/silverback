@@ -15,7 +15,7 @@ Name | Index | Description
 <xref:Silverback.Messaging.Diagnostics.ActivityProducerBehavior> |   100 | Starts an [Activity](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity) and adds the tracing information to the message headers.
 <xref:Silverback.Messaging.Headers.HeadersWriterProducerBehavior> |   200 | Maps the properties decorated with the <xref:Silverback.Messaging.Messages.HeaderAttribute> to the message headers.
 <xref:Silverback.Messaging.Producing.Enrichers.MessageEnricherProducerBehavior> |   250 | Invokes all the <xref:Silverback.Messaging.Producing.Enrichers.IOutboundMessageEnricher> configured for the endpoint.
-<xref:Silverback.Messaging.Producing.KafkaMessageKeyInitializerProducerBehavior> |   300 | Sets the Kafka key with the value from the properties decorated with the `KafkaKeyMemberAttribute` and ensures that a random key is generated when chunking is enabled and no key is set.
+<xref:Silverback.Messaging.Producing.KafkaMessageKeyInitializerProducerBehavior> |   300 | Sets the Kafka key with the value from the properties decorated with the <xref:Silverback.Messaging.Messages.KafkaKeyMemberAttribute>, unless a key is already set.
 <xref:Silverback.Messaging.Producing.Filter.FilterProducerBehavior> |   400 | Applies the configured filters to the message being produced.
 <xref:Silverback.Messaging.BinaryMessages.BinaryMessageHandlerProducerBehavior> |   500 | Switches to the <xref:Silverback.Messaging.BinaryMessages.BinaryMessageSerializer> if the message being produced implements the <xref:Silverback.Messaging.Messages.IBinaryMessage> interface.
 <xref:Silverback.Messaging.Validation.ValidatorProducerBehavior> | 550 | Validates the message being produced.

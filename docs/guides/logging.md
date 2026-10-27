@@ -4,9 +4,13 @@ uid: logging
 
 # Logging and Tracing
 
+Silverback writes its logs through the standard `Microsoft.Extensions.Logging` abstractions, so they flow into whatever logging provider your application uses (console, Serilog, OpenTelemetry, etc.). Each event has a stable `EventId` that can be used to filter or route the logs.
+
+On top of that, Silverback creates [Activity](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity) objects to support distributed tracing (see [Tracing](#tracing)).
+
 ## Log Events
 
-Silverback logs several events that can be used to monitor the application and troubleshoot issues.
+Silverback logs several events that can be used to monitor the application and troubleshoot issues. The tables below list the events and their default level.
 
 ### Core
 
@@ -144,6 +148,25 @@ Id | Level | Message | Reference
 4102 | Warning | Warning from MqttClient ({Source}): '{LogMessage}' | [MqttClientLogWarning](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_MqttClientLogWarning)
 4103 | Information | Information from MqttClient ({Source}): '{LogMessage}' | [MqttClientLogInformation](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_MqttClientLogInformation)
 4104 | Trace | Verbose from MqttClient ({Source}): '{LogMessage}' | [MqttClientLogVerbose](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_MqttClientLogVerbose)
+
+## Customizing the Log Levels
+
+The level of each Silverback log event can be overridden using `WithLogLevels`. The level can be set statically or determined dynamically, for example depending on the exception type.
+
+```csharp
+services
+    .AddSilverback()
+    .WithLogLevels(levels => levels
+        .SetLogLevel(CoreLogEvents.LockAcquired.EventId, LogLevel.Debug)
+        .SetLogLevel(
+            IntegrationLogEvents.ProcessingConsumedMessageError.EventId,
+            (exception, defaultLevel) => exception is TimeoutException ? LogLevel.Warning : defaultLevel));
+```
+
+The event ids are exposed by the <xref:Silverback.Diagnostics.CoreLogEvents>, <xref:Silverback.Diagnostics.IntegrationLogEvents>, <xref:Silverback.Diagnostics.KafkaLogEvents> and <xref:Silverback.Diagnostics.MqttLogEvents> static classes.
+
+> [!Tip]
+> To reduce the noise, you can also use the standard logging filters to change the minimum level of the `Silverback` categories.
 
 ## Tracing
 

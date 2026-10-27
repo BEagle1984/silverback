@@ -127,13 +127,7 @@ For example, `EnableParallelProcessing(4)` with `LimitBackpressure(7)` allows up
 
 ## MQTT Sessions
 
-Use `RequestPersistentSession()` to resume the broker session after reconnecting. Configure a stable client identifier with `WithClientId(...)`; reconnecting with a different identifier creates a different session. With MQTT 5, persistence requests no expiration by default, unless an expiration was explicitly configured. For a finite retention period, use `RequestPersistentSession(TimeSpan.FromHours(1))` or `WithSessionExpiration(TimeSpan.FromHours(1))`. Shared client settings also support `RequestPersistentSession()` and `WithSessionExpiration(...)`.
-
-`WithSessionExpiration(TimeSpan.Zero)` explicitly ends the session on disconnect, even when used with `RequestPersistentSession()`. `TimeSpan.MaxValue` requests no expiration. Finite durations are rounded up to whole seconds, up to 4,294,967,294 seconds. The broker can override the requested expiration. MQTT 3.1.1 uses its persistent-session flag and does not support a client-configured expiration.
-
-`RequestCleanSession()` discards any existing session and requests a nonpersistent session. In MQTT 5, `RequestCleanStart()` discards the existing session but preserves the configured expiration, so the new session can persist after disconnect.
-
-Unread messages buffered locally are discarded on disconnect. Broker replay requires a persistent session and QoS 1 or 2; QoS 0 does not provide replay guarantees. Subscribers must still tolerate repeated processing when an unfinished message is redelivered.
+Use `RequestPersistentSession()` together with a stable client identifier (`WithClientId(...)`) to resume the broker session after reconnecting and get the messages published in the meantime (QoS 1 or 2 only). See <xref:mqtt> for all the session options and their details.
 
 ## Error Handling
 
@@ -177,6 +171,9 @@ services.AddSilverback()
 
 > [!Important]
 > If processing still fails after the last policy in the chain, the exception is returned to the consumer and the consumer stops.
+
+> [!Tip]
+> See <xref:error-policies> for all the available policies and options.
 
 > [!Important]
 > <xref:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy> waits before retrying and may delay polling. With Kafka, ensure broker/client timeouts (for example `max.poll.interval.ms`) are configured accordingly.

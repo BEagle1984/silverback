@@ -6,7 +6,28 @@ uid: sample-mqtt-binaryfile
 
 This sample demonstrates how to deal with raw binary contents and large messages, to transfer some files through MQTT.
 
-See also: <xref:serialization>, <xref:deserialization>, <xref:producing-chunking>, <xref:consuming-chunking>
+## What This Sample Shows
+
+- Producing a file as a `BinaryMessage` that wraps the `FileStream`.
+- Extending `BinaryMessage` with a custom property mapped to a header (`x-filename`) via the `[Header]` attribute.
+- Producing to the `samples/binary-files` topic with at-least-once QoS and the retain flag.
+- Streaming the consumed content straight to a file and retrying up to 5 times in case of error.
+
+## How to Run
+
+Start the infrastructure as described in <xref:samples>, then run the two applications from the repository root.
+
+```bash
+dotnet run --project ./samples/MQTT/BinaryFileStreaming.Producer/.
+dotnet run --project ./samples/MQTT/BinaryFileStreaming.Consumer/.
+```
+
+The producer exposes a Swagger UI at the `/swagger` path of the address it logs at startup. Use it to call the `binary-file` or `custom-binary-file` endpoint, passing the path of a local file.
+
+> [!Note]
+> The producer's launch profile binds to port `0`, so a free port is picked at every start. Look for the `Now listening on` line in the console output to find the address.
+
+The consumer saves the received files into a `temp` folder, two levels above its working directory (`samples/temp` when run from the project folder).
 
 ## Producer
 
@@ -39,3 +60,11 @@ The consumer simply streams the file to a temporary folder in the local file sys
 ***
 
 _Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/BinaryFileStreaming.Consumer_
+
+## Additional Resources
+
+- <xref:serialization>
+- <xref:deserialization>
+- <xref:producing-chunking>
+- <xref:consuming-chunking>
+- <xref:producing-headers>

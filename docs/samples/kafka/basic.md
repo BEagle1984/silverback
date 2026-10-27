@@ -6,7 +6,24 @@ uid: sample-kafka-basic
 
 This sample implements the simplest possible producer and consumer.
 
-See also: <xref:broker>, <xref:producing>, <xref:consuming>
+## What This Sample Shows
+
+- Connecting Silverback to Kafka with `AddKafka` and moving the broker clients configuration to an `IBrokerClientsConfigurator`.
+- Configuring a producer that routes the `SampleMessage` to the `samples-basic` topic and publishing it through the `IPublisher` from a hosted service (one message every 100 ms).
+- Configuring a consumer with a group id, starting from the earliest offset when no offset is stored for the group.
+- Applying an error policy that retries each message twice and then skips it.
+- Subscribing to the `IInboundEnvelope<SampleMessage>` to access the message together with its envelope.
+
+## How to Run
+
+Start the infrastructure as described in <xref:samples>, then run the two applications from the repository root.
+
+```bash
+dotnet run --project ./samples/Kafka/Basic.Producer/.
+dotnet run --project ./samples/Kafka/Basic.Consumer/.
+```
+
+Observe the console output while the messages are produced and consumed.
 
 ## Common
 
@@ -44,3 +61,10 @@ The consumer processes the messages and outputs their value to the standard outp
 ***
 
 _Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Basic.Consumer_
+
+## Additional Resources
+
+- <xref:broker>
+- <xref:producing>
+- <xref:consuming>
+- <xref:setup>

@@ -6,10 +6,16 @@
       href: kafka/basic.md
     - name: Batch Processing
       href: kafka/batch.md
+    - name: Batch Processing with Tombstones
+      href: kafka/batch-tombstone.md
     - name: File Streaming
       href: kafka/binaryfile-streaming.md
     - name: Avro
       href: kafka/avro.md
+    - name: JSON with Schema Registry
+      href: kafka/json-schema-registry.md
+    - name: Transactional Producer
+      href: kafka/transactional-producer.md
 - name: MQTT
   items:
     - name: Basic

@@ -13,7 +13,7 @@ _disableContribution: true
   <p class="sb-tagline">Simplicity at its core. Flexibility at its peak. Effortless messaging for .NET.</p>
   <p class="sb-subtitle">A message bus and broker integration library to build event-driven architectures with first-class support for <strong>Apache Kafka</strong> and <strong>MQTT</strong>.</p>
   <div class="sb-actions">
-    <a class="sb-btn sb-btn-primary" href="guides/setup.md"><i class="bi bi-rocket-takeoff"></i> Get Started</a>
+    <a class="sb-btn sb-btn-primary" href="guides/quickstart.md"><i class="bi bi-rocket-takeoff"></i> Get Started</a>
     <a class="sb-btn sb-btn-secondary" href="samples/intro.md"><i class="bi bi-collection"></i> Samples</a>
     <a class="sb-btn sb-btn-secondary" href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
   </div>
@@ -94,6 +94,10 @@ public class OrderCreatedHandler
 ## Explore the Documentation
 
 <div class="sb-cards">
+  <a class="sb-card" href="guides/quickstart.md">
+    <span class="sb-card-title">Quickstart</span>
+    <p>Produce and consume via Kafka in five minutes.</p>
+  </a>
   <a class="sb-card" href="guides/setup.md">
     <span class="sb-card-title">Setting Up Silverback</span>
     <p>Packages, registration and configuration basics.</p>
@@ -113,6 +117,14 @@ public class OrderCreatedHandler
   <a class="sb-card" href="samples/intro.md">
     <span class="sb-card-title">Samples</span>
     <p>Runnable Kafka and MQTT examples.</p>
+  </a>
+  <a class="sb-card" href="guides/migration-v5.md">
+    <span class="sb-card-title">Migrating from v4</span>
+    <p>Step-by-step upgrade guide to Silverback 5.</p>
+  </a>
+  <a class="sb-card" href="guides/faq.md">
+    <span class="sb-card-title">FAQ and Troubleshooting</span>
+    <p>Answers to the most common questions.</p>
   </a>
   <a class="sb-card" href="api/Silverback.yml">
     <span class="sb-card-title">API Reference</span>

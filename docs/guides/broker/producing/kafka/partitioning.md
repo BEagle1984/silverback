@@ -11,7 +11,7 @@ Kafka partitions determine message ordering and parallelism. By default, Kafka d
 By default (no explicit partition), Kafka derives the partition from the message key.
 
 - If you set a key, messages with the same key are routed to the same partition and keep their relative order.
-- If you don't set a key, a key may be generated and partitioning will be effectively random.
+- If you don't set a key, the key is `null` and the partition is chosen by the Kafka partitioner.
 
 ### Using `WrapAndPublishAsync` / `WrapAndPublishBatchAsync`
 
@@ -37,6 +37,25 @@ services.AddSilverback()
                 .ProduceTo("my-topic")
                 .SetKafkaKey(message => message.Id))));
 ```
+
+### Using the `KafkaKeyMemberAttribute`
+
+Alternatively, decorate one or more properties of the message model with the <xref:Silverback.Messaging.Messages.KafkaKeyMemberAttribute>.
+
+```csharp
+public class OrderEvent
+{
+    [KafkaKeyMember]
+    public string OrderId { get; set; }
+
+    public string Status { get; set; }
+}
+```
+
+If a single property is decorated, its value is used as key (e.g. `42`). If multiple properties are decorated, the key is built concatenating their names and values (e.g. `OrderId=42,LineId=3`). Empty values are ignored and the key is `null` if none of the decorated properties has a value.
+
+> [!Note]
+> A key set explicitly via `SetKafkaKey` (in the endpoint configuration or on the envelope) takes precedence over the attribute.
 
 ## Custom Partitioning
 

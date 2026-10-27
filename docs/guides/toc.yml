@@ -1,3 +1,5 @@
+- name: Quickstart
+  href: quickstart.md
 - name: Setting Up Silverback
   href: setup.md
 - name: Using the Message Bus
@@ -54,6 +56,8 @@
           href: broker/consuming/decryption.md
         - name: Validation
           href: broker/consuming/validation.md
+        - name: Error Handling Policies
+          href: broker/consuming/error-policies.md
         - name: Behaviors
           href: broker/consuming/behaviors.md
         - name: Tracing
@@ -70,6 +74,8 @@
               href: broker/consuming/kafka/offset.md
             - name: Schema Registry
               href: broker/consuming/kafka/schema-registry.md
+    - name: MQTT Specifics
+      href: broker/mqtt.md
     - name: Default Headers
       href: broker/default-headers.md
     - name: Testing
@@ -92,3 +98,7 @@
       href: practical/mqtt-request-response.md
     - name: Background Services with a Distributed Lock
       href: practical/background-services.md
+- name: Migrating from v4 to v5
+  href: migration-v5.md
+- name: FAQ and Troubleshooting
+  href: faq.md

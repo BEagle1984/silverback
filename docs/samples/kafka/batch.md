@@ -6,7 +6,22 @@ uid: sample-kafka-batch
 
 In this sample the consumed messages are processed in batch.
 
-See also: <xref:consuming>
+## What This Sample Shows
+
+- Publishing 100 messages at once with `WrapAndPublishBatchAsync`, setting the Kafka key of each envelope.
+- Enabling batch processing on the consumer endpoint with `EnableBatchProcessing`, using batches of up to 100 messages and a maximum wait time of 5 seconds.
+- Subscribing to an `IAsyncEnumerable<SampleMessage>` to stream through each batch, computing the sum of the numbers it contains.
+
+## How to Run
+
+Start the infrastructure as described in <xref:samples>, then run the two applications from the repository root.
+
+```bash
+dotnet run --project ./samples/Kafka/Batch.Producer/.
+dotnet run --project ./samples/Kafka/Batch.Consumer/.
+```
+
+The consumer logs the size and the sum of each processed batch.
 
 ## Common
 
@@ -44,3 +59,10 @@ The consumer processes the messages in batch and outputs the batch sum to the st
 ***
 
 _Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Batch.Consumer_
+
+## Additional Resources
+
+- <xref:batch-processing>
+- <xref:consuming>
+- <xref:producing>
+- <xref:sample-kafka-batch-tombstone> sample

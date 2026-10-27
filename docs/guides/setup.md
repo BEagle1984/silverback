@@ -25,6 +25,7 @@ If you need to integrate with a message broker, choose the appropriate package:
 - **[Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx/)** – Enables Rx.NET integration, allowing observables from the message bus stream.
 - **[Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/)** – Supports serialization using Newtonsoft.Json instead of System.Text.Json.
 - **[Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/)** – Provides integration with Schema Registry for Protobuf, Avro, or JSON serialization with schema support.
+- **[Silverback.Integration.HealthChecks](https://www.nuget.org/packages/Silverback.Integration.HealthChecks/)** – Adds health checks to monitor the consumers and the outbox (see <xref:consumer-health-check>).
 
 ### Storage Options
 
@@ -37,8 +38,9 @@ Certain Silverback features rely on a storage mechanism. Choose the appropriate 
 
 ### Testing Support
 
-For unit testing message-driven applications, you can use in-memory broker mocks:
+For unit testing message-driven applications, you can use in-memory broker mocks (see <xref:testing>):
 
+- **[Silverback.Integration.Testing](https://www.nuget.org/packages/Silverback.Integration.Testing/)** – The broker-independent testing helpers and envelope builders (implicitly referenced by the broker-specific packages below).
 - **[Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/)** – Provides an in-memory Kafka mock, simulating partitioning, offsets management, and other broker behaviors.
 - **[Silverback.Integration.MQTT.Testing](https://www.nuget.org/packages/Silverback.Integration.MQTT.Testing/)** – Provides an in-memory MQTT mock to test MQTT-related logic.
 
@@ -67,4 +69,10 @@ services.AddSilverback()
 
 ## Next Steps
 
-With these steps, Silverback is now set up and ready to use! You can explore more advanced topics such as message processing, broker integration, and custom configurations in the following guides.
+With these steps, Silverback is now set up and ready to use! Continue with:
+
+- <xref:quickstart> – a complete minimal application producing and consuming via Kafka.
+- <xref:bus> – publishing and subscribing to messages in-process.
+- <xref:broker> – configuring the broker clients and endpoints.
+- <xref:producing> and <xref:consuming> – producing and consuming messages in depth.
+- <xref:samples> – runnable examples.
