@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TestsTargetFrameworks)</TargetFrameworks>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <RootNamespace>Silverback.Tests.Integration.Dekaf</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <!-- The ported E2E tests keep the namespaces of Silverback.Integration.Tests.E2E, whose files are partially shared -->
+    <NoWarn>$(NoWarn);IDE0130</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.msbuild">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="Shouldly"/>
+    <PackageReference Include="Testcontainers.Kafka"/>
+    <PackageReference Include="xunit"/>
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Silverback.Core.Model\Silverback.Core.Model.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Core.Rx\Silverback.Core.Rx.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Integration.Dekaf\Silverback.Integration.Dekaf.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Integration.Dekaf.Testing\Silverback.Integration.Dekaf.Testing.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj"/>
+    <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj"/>
+    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj"/>
+  </ItemGroup>
+  <!-- The E2E test infrastructure and message types are shared with Silverback.Integration.Tests.E2E -->
+  <ItemGroup>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\TestHost\E2ETests.cs" Link="E2E\TestHost\E2ETests.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\TestHost\Startup.cs" Link="E2E\TestHost\Startup.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\TestHost\TestApplicationFactory.cs" Link="E2E\TestHost\TestApplicationFactory.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\TestTypes\HeadersHelper.cs" Link="E2E\TestTypes\HeadersHelper.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\TestTypes\RemoveMessageTypeHeaderProducerBehavior.cs" Link="E2E\TestTypes\RemoveMessageTypeHeaderProducerBehavior.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\TestTypes\Messages\*.cs" Exclude="..\Silverback.Integration.Tests.E2E\TestTypes\Messages\AvroMessage.cs;..\Silverback.Integration.Tests.E2E\TestTypes\Messages\ProtobufMessage*.cs" LinkBase="E2E\TestTypes\Messages"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Util\DefaultSerializers.cs" Link="E2E\Util\DefaultSerializers.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Util\EnvelopesExtensions.cs" Link="E2E\Util\EnvelopesExtensions.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Util\MessageSerializerExtensions.cs" Link="E2E\Util\MessageSerializerExtensions.cs"/>
+  </ItemGroup>
+  <!--
+    The Kafka E2E tests run unchanged against the Dekaf integration. E2E\Kafka contains adapted copies of the tests that
+    depend on the Confluent.Kafka types or on the Confluent.Kafka based mock (the reason is explained in each file).
+    Not ported: the tests of the features not supported by the Dekaf integration (outbox, client-side offset storage,
+    schema registry, statistics/error/log/offsets committed callbacks) and the tests relying on the mock internals
+    (e.g. the delayed partitions assignment).
+  -->
+  <ItemGroup>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\BasicTests.cs" Link="E2E\Kafka\BasicTests.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\BatchProcessingTests.Binary.cs" Link="E2E\Kafka\BatchProcessingTests.Binary.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\BatchProcessingTests.Disconnect.cs" Link="E2E\Kafka\BatchProcessingTests.Disconnect.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\BatchProcessingTests.Partitions.cs" Link="E2E\Kafka\BatchProcessingTests.Partitions.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\BatchProcessingTests.ProcessingFail.cs" Link="E2E\Kafka\BatchProcessingTests.ProcessingFail.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\BatchProcessingTests.Timeout.cs" Link="E2E\Kafka\BatchProcessingTests.Timeout.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\BatchProcessingTests.cs" Link="E2E\Kafka\BatchProcessingTests.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ChunkingTests.Batch.cs" Link="E2E\Kafka\ChunkingTests.Batch.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ChunkingTests.Binary.Abort.cs" Link="E2E\Kafka\ChunkingTests.Binary.Abort.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ChunkingTests.Binary.Incomplete.cs" Link="E2E\Kafka\ChunkingTests.Binary.Incomplete.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ChunkingTests.Binary.ProcessingFail.cs" Link="E2E\Kafka\ChunkingTests.Binary.ProcessingFail.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ChunkingTests.Json.Incomplete.cs" Link="E2E\Kafka\ChunkingTests.Json.Incomplete.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ChunkingTests.Json.cs" Link="E2E\Kafka\ChunkingTests.Json.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ChunkingTests.cs" Link="E2E\Kafka\ChunkingTests.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ErrorPoliciesTests.RetrySkip.cs" Link="E2E\Kafka\ErrorPoliciesTests.RetrySkip.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ErrorPoliciesTests.Skip.cs" Link="E2E\Kafka\ErrorPoliciesTests.Skip.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\ErrorPoliciesTests.cs" Link="E2E\Kafka\ErrorPoliciesTests.cs"/>
+    <Compile Include="..\Silverback.Integration.Tests.E2E\Kafka\KafkaTransactionsTests.cs" Link="E2E\Kafka\KafkaTransactionsTests.cs"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\xunit.runner.json">
+      <Link>xunit.runner.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

@@ -2,6 +2,8 @@
   <PropertyGroup Label="Package information">
     <BaseVersionSuffix></BaseVersionSuffix>
     <BaseVersion>5.6.0$(BaseVersionSuffix)</BaseVersion>
+    <!-- The Dekaf based Kafka integration is released as preview until it reaches feature parity with the Confluent.Kafka based one -->
+    <DekafVersion>$(BaseVersion)-preview</DekafVersion>
     <AnalysisMode>All</AnalysisMode>
   </PropertyGroup>
   <PropertyGroup Label="Build">

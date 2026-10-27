@@ -1,0 +1,109 @@
+﻿// Copyright (c) 2026 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.Linq;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Consuming.Transaction;
+using Silverback.Util;
+
+namespace Silverback.Messaging.Transactions;
+
+internal sealed class KafkaTransaction : IKafkaTransaction
+{
+    private readonly ISilverbackContext _context;
+
+    private IDekafProducerWrapper? _producerWrapper;
+
+    private bool _isPending;
+
+    public KafkaTransaction(ISilverbackContext context, string? transactionalIdSuffix = null)
+    {
+        _context = Check.NotNull(context, nameof(context));
+        TransactionalIdSuffix = transactionalIdSuffix;
+
+        _context.AddKafkaTransaction(this);
+    }
+
+    public string? TransactionalIdSuffix { get; internal set; }
+
+    public void Commit()
+    {
+        if (_producerWrapper == null)
+            throw new InvalidOperationException("The transaction is not bound to a producer.");
+
+        EnsureIsPending();
+
+        if (_context.TryGetConsumerPipelineContext(out ConsumerPipelineContext? consumerPipelineContext) &&
+            consumerPipelineContext is
+            {
+                Consumer: KafkaConsumer { Configuration.SendOffsetsToTransaction: true } kafkaConsumer
+            })
+        {
+            _producerWrapper.SendOffsetsToTransaction(
+                [.. consumerPipelineContext.GetCommitIdentifiers().Cast<KafkaOffset>().Select(offset => new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1))],
+                kafkaConsumer.Client.GetConsumerGroupMetadata());
+        }
+
+        _producerWrapper.CommitTransaction();
+        _isPending = false;
+        _producerWrapper = null;
+    }
+
+    public void Abort()
+    {
+        EnsureIsPending();
+
+        _producerWrapper?.AbortTransaction();
+        _isPending = false;
+        _producerWrapper = null;
+    }
+
+    public void AbortIfPending()
+    {
+        if (_isPending)
+            Abort();
+    }
+
+    public void Dispose()
+    {
+        if (_isPending)
+            Abort();
+
+        _context.ClearKafkaTransaction();
+    }
+
+    internal void EnsureBegin()
+    {
+        if (_producerWrapper == null)
+            throw new InvalidOperationException("The transaction is not bound to a producer.");
+
+        if (!_isPending)
+            Begin();
+    }
+
+    internal void Begin()
+    {
+        if (_producerWrapper == null)
+            throw new InvalidOperationException("The transaction is not bound to a producer.");
+
+        _producerWrapper.BeginTransaction();
+        _isPending = true;
+    }
+
+    internal void BindProducerWrapper(IDekafProducerWrapper producerWrapper)
+    {
+        if (_producerWrapper != null && producerWrapper != _producerWrapper)
+            throw new InvalidOperationException("The transaction is already bound to a producer.");
+
+        _producerWrapper = producerWrapper;
+    }
+
+    private void EnsureIsPending()
+    {
+        if (!_isPending)
+            throw new InvalidOperationException("The transaction is not pending.");
+    }
+}

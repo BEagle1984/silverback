@@ -1,0 +1,262 @@
+﻿// Copyright (c) 2026 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
+using Silverback.Diagnostics;
+using Silverback.Util;
+
+namespace Silverback.Messaging.Broker.Kafka;
+
+internal sealed class ConsumeLoopHandler : IDisposable
+{
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
+    private readonly KafkaConsumer _consumer;
+
+    private readonly ISilverbackLogger _logger;
+
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
+    private readonly ConsumerChannelsManager _channelsManager;
+
+    private readonly OffsetsTracker? _offsetsTracker;
+
+    private CancellationTokenSource _cancellationTokenSource = new();
+
+    private TaskCompletionSource<bool>? _consumeTaskCompletionSource;
+
+    private TaskCompletionSource<bool>? _pendingPollTaskCompletionSource;
+
+    private DateTime _lastSuccessfulConsume = DateTime.UtcNow;
+
+    private bool _isDisposed;
+
+    public ConsumeLoopHandler(
+        KafkaConsumer consumer,
+        ConsumerChannelsManager channelsManager,
+        OffsetsTracker? offsetsTracker,
+        ISilverbackLogger logger)
+    {
+        _consumer = Check.NotNull(consumer, nameof(consumer));
+        _channelsManager = Check.NotNull(channelsManager, nameof(channelsManager));
+        _offsetsTracker = offsetsTracker;
+        _logger = Check.NotNull(logger, nameof(logger));
+    }
+
+    public string Id { get; } = Guid.NewGuid().ToString();
+
+    public Task Stopping => _consumeTaskCompletionSource?.Task ?? Task.CompletedTask;
+
+    public bool IsConsuming { get; private set; }
+
+    public void Start()
+    {
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
+
+        if (IsConsuming)
+            return;
+
+        IsConsuming = true;
+
+        if (_cancellationTokenSource.IsCancellationRequested)
+        {
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        if (_consumeTaskCompletionSource == null || _consumeTaskCompletionSource.Task.IsCompleted)
+            _consumeTaskCompletionSource = new TaskCompletionSource<bool>();
+
+        TaskCompletionSource<bool>? taskCompletionSource = _consumeTaskCompletionSource;
+        CancellationToken cancellationToken = _cancellationTokenSource.Token;
+
+        Task.Factory.StartNew(
+                () => ConsumeAsync(taskCompletionSource, cancellationToken),
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default)
+            .FireAndForget();
+    }
+
+    public async Task StopAsync()
+    {
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
+
+        if (!IsConsuming)
+        {
+            await Stopping.ConfigureAwait(false);
+            return;
+        }
+
+        _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler | InstanceId: {InstanceId}", () => [Id]);
+
+        await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+
+        IsConsuming = false;
+
+        _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler, awaiting stopping token | InstanceId: {InstanceId}", () => [Id]);
+
+        await Stopping.ConfigureAwait(false);
+    }
+
+    public Task WaitUntilCurrentPollCompletesAsync()
+    {
+        Task stopping = Stopping;
+
+        if (stopping.IsCompleted)
+            return Task.CompletedTask;
+
+        TaskCompletionSource<bool>? completion = Volatile.Read(ref _pendingPollTaskCompletionSource);
+
+        if (completion == null)
+        {
+            TaskCompletionSource<bool> newCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            completion = Interlocked.CompareExchange(ref _pendingPollTaskCompletionSource, newCompletion, null) ?? newCompletion;
+        }
+
+        // Stopping also completes the wait if the last poll finished before this request was registered
+        return Task.WhenAny(completion.Task, stopping);
+    }
+
+    public void Dispose()
+    {
+        if (_isDisposed)
+            return;
+
+        _logger.LogConsumerTrace(_consumer, "Disposing ConsumeLoopHandler | InstanceId: {InstanceId}", () => [Id]);
+
+        StopAsync().SafeWait();
+        _cancellationTokenSource.Dispose();
+
+        _logger.LogConsumerTrace(_consumer, "ConsumeLoopHandler disposed | InstanceId: {InstanceId}", () => [Id]);
+
+        _isDisposed = true;
+    }
+
+    private async Task ConsumeAsync(TaskCompletionSource<bool> taskCompletionSource, CancellationToken cancellationToken)
+    {
+        // Clear the current activity to ensure we don't propagate the previous traceId
+        Activity.Current = null;
+        _logger.LogConsumerTrace(
+            _consumer,
+            "Starting consume loop | InstanceId: {InstanceId}, TaskId: {TaskId}",
+            () => [Id, taskCompletionSource.Task.Id]);
+
+        // Reset the last successful consume time to avoid false stall detection
+        _lastSuccessfulConsume = DateTime.UtcNow;
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            bool continueConsuming = ConsumeOnce(cancellationToken);
+            NotifyPollCompleted();
+
+            if (!continueConsuming)
+                break;
+        }
+
+        _logger.LogConsumerTrace(
+            _consumer,
+            "Consume loop stopped | InstanceId: {InstanceId}, TaskId: {TaskId}",
+            () => [Id, taskCompletionSource.Task.Id]);
+
+        taskCompletionSource.TrySetResult(true);
+        NotifyPollCompleted();
+
+        // The consume loop drives the Dekaf consumer synchronously from a single long-running thread, since its
+        // API must not be called concurrently. The rebalance callbacks can nevertheless run concurrently with the
+        // poll, see DekafConsumerWrapper.
+        // The call to DisconnectAsync is the only exception since we are exiting anyway and Consume will
+        // not be called anymore.
+        if (!cancellationToken.IsCancellationRequested)
+            await _consumer.Client.DisconnectAsync().ConfigureAwait(false);
+    }
+
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    private bool ConsumeOnce(CancellationToken cancellationToken)
+    {
+        try
+        {
+            KafkaConsumedRecord? consumedRecord = Consume(_consumer.Client, cancellationToken);
+
+            if (consumedRecord == null)
+                return CheckConsumerStall();
+
+            _lastSuccessfulConsume = DateTime.UtcNow;
+            _logger.LogConsuming(consumedRecord, _consumer);
+
+            _offsetsTracker?.TrackOffset(consumedRecord.TopicPartitionOffset);
+            _channelsManager.Write(consumedRecord, cancellationToken);
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogConsumingCanceled(_consumer, ex);
+        }
+        catch (ChannelClosedException ex)
+        {
+            // The channel can be closed while a concurrent rollback or rebalance retires it
+            _logger.LogConsumingCanceled(_consumer, ex);
+        }
+        catch (Exception ex)
+        {
+            AutoRecoveryIfEnabled(ex);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void NotifyPollCompleted()
+    {
+        if (Volatile.Read(ref _pendingPollTaskCompletionSource) != null)
+            Interlocked.Exchange(ref _pendingPollTaskCompletionSource, null)?.TrySetResult(true);
+    }
+
+    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Temporary tracing")]
+    private KafkaConsumedRecord? Consume(IDekafConsumerWrapper client, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return client.Consume(_consumer.Configuration.PollingTimeout);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            // Ignore exceptions if the client is being disconnected
+            cancellationToken.ThrowIfCancellationRequested();
+            throw;
+        }
+    }
+
+    private bool CheckConsumerStall()
+    {
+        if (!_consumer.Configuration.StallDetectionThreshold.HasValue ||
+            DateTime.UtcNow - _lastSuccessfulConsume <= _consumer.Configuration.StallDetectionThreshold)
+        {
+            return true;
+        }
+
+        _logger.LogStaleConsumer(_consumer.Configuration.StallDetectionThreshold.Value, _consumer);
+        _consumer.TriggerReconnectAsync().FireAndForget();
+
+        return false;
+    }
+
+    private void AutoRecoveryIfEnabled(Exception ex)
+    {
+        if (!_consumer.Configuration.EnableAutoRecovery)
+        {
+            _logger.LogKafkaExceptionNoAutoRecovery(_consumer, ex);
+            return;
+        }
+
+        _logger.LogKafkaExceptionAutoRecovery(_consumer, ex);
+
+        _consumer.TriggerReconnectAsync().FireAndForget();
+    }
+}

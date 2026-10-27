@@ -65,6 +65,8 @@ Core:
 Broker integration:
 
 - **[Silverback.Integration.Kafka](https://www.nuget.org/packages/Silverback.Integration.Kafka/)** – Kafka support.
+- **[Silverback.Integration.Dekaf](https://www.nuget.org/packages/Silverback.Integration.Dekaf/)** – Kafka support built on the fully managed
+  Dekaf client instead of Confluent.Kafka (preview, Kafka 4.0+).
 - **[Silverback.Integration.Mqtt](https://www.nuget.org/packages/Silverback.Integration.Mqtt/)** – MQTT support.
 
 Optional features:
@@ -84,6 +86,7 @@ Storage (for outbox, client-side offsets, distributed locks):
 Testing:
 
 - **[Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/)**
+- **[Silverback.Integration.Dekaf.Testing](https://www.nuget.org/packages/Silverback.Integration.Dekaf.Testing/)**
 - **[Silverback.Integration.Mqtt.Testing](https://www.nuget.org/packages/Silverback.Integration.Mqtt.Testing/)**
 
 ### Supported .NET Versions

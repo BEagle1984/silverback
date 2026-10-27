@@ -32,10 +32,11 @@ public abstract partial class TestingHelper
         WaitUntilConnectedAsync(true, timeout);
 
     /// <inheritdoc cref="ITestingHelper.WaitUntilConnectedAsync(bool,TimeSpan?)" />
-    public ValueTask WaitUntilConnectedAsync(bool throwTimeoutException, TimeSpan? timeout = null)
+    public async ValueTask WaitUntilConnectedAsync(bool throwTimeoutException, TimeSpan? timeout = null)
     {
+        // Awaited before disposing the token source, whose disposal would otherwise stop the timeout
         using CancellationTokenSource cancellationTokenSource = new(timeout ?? DefaultWaitTimeout);
-        return WaitUntilConnectedAsync(cancellationTokenSource.Token);
+        await WaitUntilConnectedAsync(throwTimeoutException, cancellationTokenSource.Token).ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="ITestingHelper.WaitUntilConnectedAsync(CancellationToken)" />

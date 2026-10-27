@@ -15,6 +15,9 @@ Choose the package matching the broker you’re using:
 - [Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing)
   - Mocked in-memory Kafka broker (topics, consumer groups, commits, ...).
   - Registers <xref:Silverback.Testing.IKafkaTestingHelper>.
+- [Silverback.Integration.Dekaf.Testing](https://www.nuget.org/packages/Silverback.Integration.Dekaf.Testing)
+  - In-memory Kafka cluster (Dekaf.Testing) for the [Dekaf based integration](xref:dekaf).
+  - Registers a similar <xref:Silverback.Testing.IKafkaTestingHelper> (see [the differences](xref:dekaf#testing)).
 - [Silverback.Integration.MQTT.Testing](https://www.nuget.org/packages/Silverback.Integration.MQTT.Testing)
   - Mocked in-memory MQTT broker.
   - Registers <xref:Silverback.Testing.IMqttTestingHelper>.
