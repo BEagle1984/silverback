@@ -1,12 +1,12 @@
-- name: v5.x
+- name: Silverback 5
   href: 500.md
-- name: v4.x
+- name: Silverback 4
   href: 400.md
-- name: v3.x
+- name: Silverback 3
   href: 300.md
-- name: v2.x
+- name: Silverback 2
   href: 200.md
-- name: v1.x
+- name: Silverback 1
   href: 100.md
-- name: v0.x
+- name: Pre-1.0
   href: 000.md

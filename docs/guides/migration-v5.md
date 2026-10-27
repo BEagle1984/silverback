@@ -140,7 +140,7 @@ The testing helpers (<xref:Silverback.Testing.ITestingHelper>, <xref:Silverback.
 
 ## Additional Resources
 
-- [Release Notes v5](xref:releases-500)
+- [Silverback 5 Release Notes](xref:releases-500)
 - <xref:setup>
 - <xref:broker>
 - <xref:samples>
