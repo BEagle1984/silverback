@@ -7,9 +7,9 @@
             title: 'View on GitHub'
         },
         {
-            icon: 'cloud-download',
+            icon: 'box-seam',
             href: 'https://www.nuget.org/packages?q=Silverback',
-            title: 'Download from NuGet'
+            title: 'NuGet packages'
         }
     ]
 }

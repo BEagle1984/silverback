@@ -1,54 +1,128 @@
 ---
 title: "Home"
+_layout: landing
 _disableAffix: true
 _disableToc: true
+_disableBreadcrumb: true
+_disableNextArticle: true
+_disableContribution: true
 ---
 
-# Silverback
+<div class="sb-hero">
+  <h1>Silverback</h1>
+  <p class="sb-tagline">Simplicity at its core. Flexibility at its peak. Effortless messaging for .NET.</p>
+  <p class="sb-subtitle">A message bus and broker integration library to build event-driven architectures with first-class support for <strong>Apache Kafka</strong> and <strong>MQTT</strong>.</p>
+  <div class="sb-actions">
+    <a class="sb-btn sb-btn-primary" href="guides/setup.md"><i class="bi bi-rocket-takeoff"></i> Get Started</a>
+    <a class="sb-btn sb-btn-secondary" href="samples/intro.md"><i class="bi bi-collection"></i> Samples</a>
+    <a class="sb-btn sb-btn-secondary" href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+  </div>
+  <code class="sb-install">dotnet add package Silverback.Integration.Kafka</code>
+  <div class="sb-badges">
+    <a href="https://www.nuget.org/packages/Silverback.Core"><img alt="NuGet version" src="https://img.shields.io/nuget/v/Silverback.Core?label=NuGet&color=2f6fb3"></a>
+    <a href="https://www.nuget.org/packages/Silverback.Core"><img alt="NuGet downloads" src="https://img.shields.io/nuget/dt/Silverback.Core?label=downloads&color=2f6fb3"></a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/BEagle1984/silverback?color=2f6fb3"></a>
+  </div>
+</div>
 
-Simplicity at its core. Flexibility at its peak. Effortless messaging for .NET.
+## Produce and Consume in a Few Lines
 
-## What is Silverback
+Configure the broker connection, the producer and consumer endpoints, and a subscriber. Silverback takes care of serialization, headers, error handling and delivery.
 
-Silverback is a message bus and broker integration library for .NET.
-It is designed to simplify event-driven architectures and asynchronous messaging, with first-class support for **Apache Kafka** and **MQTT**.
+```csharp
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(clients => clients
+        .WithBootstrapServers("PLAINTEXT://localhost:9092")
+        .AddProducer(producer => producer
+            .Produce<OrderCreated>(endpoint => endpoint
+                .ProduceTo("orders")))
+        .AddConsumer(consumer => consumer
+            .WithGroupId("billing")
+            .Consume<OrderCreated>(endpoint => endpoint
+                .ConsumeFrom("orders")
+                .OnError(policy => policy.Retry(3).ThenSkip()))))
+    .AddSingletonSubscriber<OrderCreatedHandler>();
+```
 
-Silverback aims to be both **high-level** (consistent configuration and developer experience) and **broker-aware**.
-Kafka is a first-class citizen: features like partition-based parallelism, keys/partitioning, tombstones, Schema Registry integration, idempotency, and transactions are surfaced where they matter.
+```csharp
+// Publish: the message is routed to the "orders" topic
+await publisher.PublishAsync(new OrderCreated(orderId));
+
+// Consume: the subscriber is invoked for each consumed message
+public class OrderCreatedHandler
+{
+    public Task HandleAsync(OrderCreated message) => ...;
+}
+```
 
 ## Why Silverback
 
-- **Kafka-first, not Kafka-only** – a consistent API across brokers, while still leveraging Kafka-specific capabilities.
-- **Reliable by design** – transactional outbox, error policies, and storage-backed features.
-- **Operational usability** – structured logging, diagnostics, and tracing.
-- **Built-in cross-cutting features** – headers, validation, encryption, chunking, batching.
-- **Testability** – in-memory broker mocks and end-to-end helpers.
+<div class="sb-cards">
+  <a class="sb-card" href="guides/broker/connecting.md">
+    <span class="sb-card-icon"><i class="bi bi-diagram-3"></i></span>
+    <span class="sb-card-title">Kafka-First, Not Kafka-Only</span>
+    <p>A consistent, fluent API for Kafka and MQTT that still surfaces partitions, keys, tombstones and transactions.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/producing/outbox.md">
+    <span class="sb-card-icon"><i class="bi bi-shield-check"></i></span>
+    <span class="sb-card-title">Reliable by Design</span>
+    <p>Transactional outbox, error policies (retry, skip, move) and storage-backed offsets and locks.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/consuming/batch-processing.md">
+    <span class="sb-card-icon"><i class="bi bi-lightning-charge"></i></span>
+    <span class="sb-card-title">Built for Throughput</span>
+    <p>Partition-based parallelism, batch processing, streaming and chunking of large payloads.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/producing/serialization.md">
+    <span class="sb-card-icon"><i class="bi bi-layers"></i></span>
+    <span class="sb-card-title">Cross-Cutting Features</span>
+    <p>Serialization, Schema Registry (JSON, Avro, Protobuf), headers, validation and end-to-end encryption.</p>
+  </a>
+  <a class="sb-card" href="guides/logging.md">
+    <span class="sb-card-icon"><i class="bi bi-activity"></i></span>
+    <span class="sb-card-title">Observable</span>
+    <p>Structured logging, distributed tracing via <code>System.Diagnostics</code> and health checks.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/testing.md">
+    <span class="sb-card-icon"><i class="bi bi-check2-circle"></i></span>
+    <span class="sb-card-title">Testable</span>
+    <p>In-memory Kafka and MQTT brokers and testing helpers for fast and reliable end-to-end tests.</p>
+  </a>
+</div>
 
-## Key Features
+## Explore the Documentation
 
-- **In-memory message bus** with optional Rx.NET integration.
-- **Broker integration** for Kafka and MQTT with a consistent, fluent configuration API.
-- **Kafka-optimized**: partition-based parallelism, keys/partitioning, tombstones, Schema Registry integration, idempotency, and transactions.
-- **Transactional outbox** and storage-backed features.
-- **Error policies** to retry, skip, or move messages.
-- **Batch processing** and **chunking** for throughput and large payloads.
-- **Distributed tracing** via `System.Diagnostics`.
-- **Testing support** with in-memory brokers and helper APIs.
+<div class="sb-cards">
+  <a class="sb-card" href="guides/setup.md">
+    <span class="sb-card-title">Setting Up Silverback</span>
+    <p>Packages, registration and configuration basics.</p>
+  </a>
+  <a class="sb-card" href="guides/bus.md">
+    <span class="sb-card-title">Using the Message Bus</span>
+    <p>Publish and subscribe in-process, behaviors and return values.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/producing/basics.md">
+    <span class="sb-card-title">Producing Messages</span>
+    <p>Endpoints, routing, headers, outbox and Kafka specifics.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/consuming/basics.md">
+    <span class="sb-card-title">Consuming Messages</span>
+    <p>Subscribers, parallelism, batches and error handling.</p>
+  </a>
+  <a class="sb-card" href="samples/intro.md">
+    <span class="sb-card-title">Samples</span>
+    <p>Runnable Kafka and MQTT examples.</p>
+  </a>
+  <a class="sb-card" href="api/Silverback.yml">
+    <span class="sb-card-title">API Reference</span>
+    <p>The complete public API.</p>
+  </a>
+</div>
 
 ## Supported .NET Versions
 
-Starting with v5, Silverback targets the **latest .NET LTS** (Long-Term Support) version only.
-
-The library is built and tested against the current LTS release.
-It can run on newer compatible .NET versions (including STS releases), but older frameworks are no longer targeted or supported.
-
-This policy reduces maintenance overhead and keeps Silverback aligned with the .NET platform lifecycle.
-
-## Getting Started
-
-- <xref:setup> – core concepts and configuration.
-- <xref:samples> – runnable examples.
-- [API Reference](xref:Silverback) – full API documentation.
+Starting with v5, Silverback targets the **latest .NET LTS** (Long-Term Support) version only. It can run on newer compatible .NET versions (including STS releases), but older frameworks are no longer targeted or supported. This policy reduces maintenance overhead and keeps Silverback aligned with the .NET platform lifecycle.
 
 ## Community
 
@@ -56,9 +130,6 @@ This policy reduces maintenance overhead and keeps Silverback aligned with the .
 - [Discussions](https://github.com/BEagle1984/silverback/discussions) – ask questions and share ideas.
 - <xref:contributing> – how to contribute.
 
-> [!Important]
-> The documentation update for v5 is still in progress. Some sections may be missing or incomplete. Please notify us if you find any mistake or inconsistency.
-
-> [!Tip]
-> The v4 documentation is still browsable here: [silverback-messaging.net/v4/](/v4/)
-
+<div class="sb-banner">
+  <i class="bi bi-info-circle"></i> Looking for the previous version? The v4 documentation is still available at <a href="/v4/">silverback-messaging.net/v4</a>. Found a mistake? Please <a href="https://github.com/BEagle1984/silverback/issues">open an issue</a>.
+</div>
