@@ -141,6 +141,7 @@ Starting with v5, Silverback targets the **latest .NET LTS** (Long-Term Support)
 - [Issues](https://github.com/BEagle1984/silverback/issues) – report bugs or suggest improvements.
 - [Discussions](https://github.com/BEagle1984/silverback/discussions) – ask questions and share ideas.
 - <xref:contributing> – how to contribute.
+- <xref:about> – who maintains Silverback, license and credits.
 
 <div class="sb-banner">
   <i class="bi bi-info-circle"></i> Looking for the previous version? The v4 documentation is still available at <a href="/v4/">silverback-messaging.net/v4</a>. Found a mistake? Please <a href="https://github.com/BEagle1984/silverback/issues">open an issue</a>.
