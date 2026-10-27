@@ -39,7 +39,7 @@ public class ProducerBackgroundService : BackgroundService
     {
         try
         {
-            using IKafkaTransaction transaction = _publisher.InitKafkaTransaction("secondary");
+            using IKafkaTransaction transaction = _publisher.InitKafkaTransaction();
             _logger.LogInformation("Transaction '{TransactionalIdSuffix}' initialized", transaction.TransactionalIdSuffix);
 
             await _publisher.PublishAsync(
