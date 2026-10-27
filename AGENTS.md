@@ -24,3 +24,9 @@
 - Unit tests have one test class per production type, named `<ProductionType>Tests`, in the corresponding unit test project. Mirror the production type's relative folder and namespace beneath the test project's root namespace. Omit generic arity from the test class name, following the existing convention.
 - Add coverage to the existing test class instead of introducing a separate feature- or scenario-named class. Only split unusually large classes into partial files when needed; retain the same class and namespace, using filenames such as `<ProductionType>Tests.Feature.cs`.
 - E2E and extended integration tests may be organized by feature or use case. This exception does not apply to unit test projects, including unit tests that exercise several collaborating components.
+
+## Running tests
+
+- "Run the tests" means the main solution: `dotnet test Silverback.sln`. The Docker-dependent tests need the root `docker-compose.yaml` stack running.
+- Do not run the extended integration tests (`tests/extended`) unless the user asks for them. Offer them when a change affects broker client behavior, such as consumer or producer logic, rebalancing, or a Confluent.Kafka or MQTTnet upgrade. A run takes over 12 minutes and builds Docker images from the working tree, so do not edit files while it runs.
+- The extended tests build with the locally cached `mcr.microsoft.com/dotnet/sdk:10.0` image. If the build fails with "A compatible .NET SDK was not found", run `docker pull mcr.microsoft.com/dotnet/sdk:10.0` to satisfy the `global.json` minimum.
