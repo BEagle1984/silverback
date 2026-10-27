@@ -380,11 +380,11 @@ public partial class PublisherTests
 
         [Subscribe(Exclusive = true)]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        public async Task Subscriber1Async(TestEventOne message) => await ExecuteAsync(message, _messages1);
+        public Task Subscriber1Async(TestEventOne message) => ExecuteAsync(message, _messages1);
 
         [Subscribe(Exclusive = true)]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        public async Task Subscriber2Async(TestEventOne message) => await ExecuteAsync(message, _messages2);
+        public Task Subscriber2Async(TestEventOne message) => ExecuteAsync(message, _messages2);
 
         private async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
@@ -415,11 +415,11 @@ public partial class PublisherTests
 
         [Subscribe(Exclusive = false)]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        public async Task Subscriber1Async(TestEventOne message) => await ExecuteAsync(message, _messages1);
+        public Task Subscriber1Async(TestEventOne message) => ExecuteAsync(message, _messages1);
 
         [Subscribe(Exclusive = false)]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        public async Task Subscriber2Async(TestEventOne message) => await ExecuteAsync(message, _messages2);
+        public Task Subscriber2Async(TestEventOne message) => ExecuteAsync(message, _messages2);
 
         public void Dispose() => _countdownEvent.Dispose();
 

@@ -260,7 +260,7 @@ public partial class PublisherTests
     }
 
     [Fact]
-    public async Task PublishAndPublishAsync_ShouldNotThrow_WhenThrowIfUnhandledIsEnabledAndMessageIsSubscribed()
+    public Task PublishAndPublishAsync_ShouldNotThrow_WhenThrowIfUnhandledIsEnabledAndMessageIsSubscribed()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
             .AddFakeLogger()
@@ -278,7 +278,7 @@ public partial class PublisherTests
         Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true);
 
         actSync.ShouldNotThrow();
-        await actAsync.ShouldNotThrowAsync();
+        return actAsync.ShouldNotThrowAsync();
     }
 
     [Fact]

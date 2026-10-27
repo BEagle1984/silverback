@@ -72,6 +72,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
         Task.Run(() => ReadChannelAsync(channel)).FireAndForget();
     }
 
+    [SuppressMessage("Usage", "VSTHRD202:Return Task directly instead of awaiting", Justification = "The disposed check must fault the returned task instead of throwing synchronously")]
     protected virtual async Task StopReadingAsync(TChannel channel)
     {
         Check.ThrowObjectDisposedIf(_isDisposed, this);

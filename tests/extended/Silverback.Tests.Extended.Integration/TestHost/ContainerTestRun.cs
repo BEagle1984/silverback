@@ -34,8 +34,8 @@ public sealed class ContainerTestRun : IAsyncDisposable
 
     public string Artifacts { get; }
 
-    public static async Task<string> LogsAsync(IContainerService container) =>
-        await DockerTestsFixture.RunDockerAsync(TimeSpan.FromSeconds(20), "logs", "--timestamps", container.Name);
+    public static Task<string> LogsAsync(IContainerService container) =>
+        DockerTestsFixture.RunDockerAsync(TimeSpan.FromSeconds(20), "logs", "--timestamps", container.Name);
 
     public async Task<IContainerService> StartAsync(string member, params string[] environment)
     {

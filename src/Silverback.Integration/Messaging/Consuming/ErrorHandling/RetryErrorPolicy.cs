@@ -134,21 +134,21 @@ public record RetryErrorPolicy : ErrorPolicyBase
             }
         }
 
-        private async Task ApplyDelayAsync(ConsumerPipelineContext context)
+        private Task ApplyDelayAsync(ConsumerPipelineContext context)
         {
             int failedAttempts = context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
 
             TimeSpan delay = IncrementalDelayHelper.Compute(failedAttempts, _initialDelay, _delayIncrement, _delayFactor, _maxDelay);
 
             if (delay <= TimeSpan.Zero)
-                return;
+                return Task.CompletedTask;
 
             _logger.LogProcessingTrace(
                 context.Envelope,
                 "Waiting {delay} milliseconds before retrying to process the message(s).",
                 () => [delay]);
 
-            await Task.Delay(delay).ConfigureAwait(false);
+            return Task.Delay(delay);
         }
     }
 }

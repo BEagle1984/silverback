@@ -278,7 +278,7 @@ public class BrokerClientCallbacksInvokerTests
 
     [Fact(Skip = "TODO: Check why this was the expected behavior")]
     [SuppressMessage("Usage", "xUnit1004:Test methods should not be skipped", Justification = "To be reviewed")]
-    public async Task InvokeAsync_ShouldSwallowHandlerExceptions()
+    public Task InvokeAsync_ShouldSwallowHandlerExceptions()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
             .AddFakeLogger()
@@ -290,7 +290,7 @@ public class BrokerClientCallbacksInvokerTests
 
         Func<Task> act = () => invoker.InvokeAsync<ICallbackOneAsync>(handler => handler.HandleAsync()).AsTask();
 
-        await act.ShouldNotThrowAsync();
+        return act.ShouldNotThrowAsync();
     }
 
     [Fact]
@@ -355,7 +355,7 @@ public class BrokerClientCallbacksInvokerTests
     }
 
     [Fact]
-    public async Task InvokeAsync_ObjectDisposedThrownCreatingScope_ExceptionIgnored()
+    public Task InvokeAsync_ObjectDisposedThrownCreatingScope_ExceptionIgnored()
     {
         IServiceScopeFactory? serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
         serviceScopeFactory.CreateScope().ThrowsForAnyArgs(_ => new ObjectDisposedException("test"));
@@ -366,7 +366,7 @@ public class BrokerClientCallbacksInvokerTests
 
         Func<Task> act = () => invoker.InvokeAsync<ICallbackOneAsync>(callback => callback.HandleAsync()).AsTask();
 
-        await act.ShouldNotThrowAsync();
+        return act.ShouldNotThrowAsync();
     }
 
     private sealed class CallbackOneHandlerOne : ICallbackOne

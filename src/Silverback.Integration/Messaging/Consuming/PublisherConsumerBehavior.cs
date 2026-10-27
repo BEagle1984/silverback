@@ -82,12 +82,12 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         await next(context, cancellationToken).ConfigureAwait(false);
     }
 
-    private static async Task PublishEnvelopeAsync(
+    private static Task PublishEnvelopeAsync(
         ConsumerPipelineContext context,
         bool throwIfUnhandled,
         CancellationToken cancellationToken) =>
-        await context.ServiceProvider.GetRequiredService<IPublisher>()
-            .PublishAsync(context.Envelope, throwIfUnhandled, cancellationToken).ConfigureAwait(false);
+        context.ServiceProvider.GetRequiredService<IPublisher>()
+            .PublishAsync(context.Envelope, throwIfUnhandled, cancellationToken);
 
     private static bool HasMessageStreamSubscriber(ConsumerPipelineContext context) =>
         context.ServiceProvider.GetRequiredService<SubscribedMethodsCache>()

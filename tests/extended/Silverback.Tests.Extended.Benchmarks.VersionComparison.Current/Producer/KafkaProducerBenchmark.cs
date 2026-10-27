@@ -30,7 +30,7 @@ public class KafkaProducerBenchmark : Benchmark
     }
 
     [Benchmark(Description = "WrapAndPublishBatchAsync")]
-    public async Task WrapAndPublishAsync() => await Publisher.WrapAndPublishBatchAsync(_events);
+    public Task WrapAndPublishAsync() => Publisher.WrapAndPublishBatchAsync(_events);
 
     protected override void ConfigureSilverback(SilverbackBuilder silverbackBuilder) => silverbackBuilder
         .WithConnectionToMessageBroker(broker => broker.AddKafka())

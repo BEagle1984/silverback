@@ -125,10 +125,10 @@ public partial class BrokerClientCallbacksTests
             _publisher = publisher;
         }
 
-        public async Task OnBrokerClientsConnectedAsync()
+        public Task OnBrokerClientsConnectedAsync()
         {
             TestEventOne message = new();
-            await _publisher.PublishAsync(message);
+            return _publisher.PublishAsync(message);
         }
     }
 }

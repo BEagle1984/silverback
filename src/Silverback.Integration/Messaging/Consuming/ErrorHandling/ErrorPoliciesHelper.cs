@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Consuming.ErrorHandling;
 
 internal static class ErrorPoliciesHelper
 {
-    public static async Task<bool> ApplyErrorPoliciesAsync(
+    public static Task<bool> ApplyErrorPoliciesAsync(
         ConsumerPipelineContext context,
         Exception exception)
     {
@@ -22,8 +22,8 @@ internal static class ErrorPoliciesHelper
             context.Envelope.Endpoint.Configuration.ErrorPolicy.Build(context.ServiceProvider);
 
         if (!errorPolicyImplementation.CanHandle(context, exception))
-            return false;
+            return Task.FromResult(false);
 
-        return await errorPolicyImplementation.HandleErrorAsync(context, exception).ConfigureAwait(false);
+        return errorPolicyImplementation.HandleErrorAsync(context, exception);
     }
 }
