@@ -23,15 +23,18 @@ A Kafka consumer group without committed offsets starts from the end of the topi
 
 Also double-check the bootstrap servers, the topic name and the group id. Remember that consumers in the same group share the partitions: if another instance with the same group id is running, it might be consuming the messages.
 
-### The Consumer Stops With a "No Subscriber" Error
+### The Consumer Stops With an `UnhandledMessageException`
 
-By default, an exception is thrown if no subscriber handles a consumed message, which triggers the error policy (and by default stops the consumer). Make sure that:
+By default, both the Kafka and the MQTT consumers throw an <xref:Silverback.Messaging.Publishing.UnhandledMessageException> if no subscriber handles a consumed message. The exception triggers the error policy (and by default stops the consumer). Make sure that:
 
 - the subscriber is registered (e.g. `AddSingletonSubscriber<MySubscriber>()`),
 - the subscribed method's parameter type matches the consumed message type (or one of its base types or interfaces),
 - the message is deserialized into the expected type (see <xref:deserialization>).
 
 If unhandled messages are expected, call `IgnoreUnhandledMessages()` on the consumer endpoint.
+
+> [!Note]
+> This is unrelated to the MQTT producer's behavior when no client is subscribed to the destination topic (see [MQTT Producing When Nobody Is Subscribed](#mqtt-producing-when-nobody-is-subscribed)).
 
 ### The Consumer Stopped After an Exception
 
