@@ -4,7 +4,7 @@
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Contains the constants with the names of the Kafka specific message headers used by Silverback.
+///     Contains the constants with the names of the MQTT specific message headers used by Silverback.
 /// </summary>
 public static class MqttMessageHeaders
 {
