@@ -109,6 +109,43 @@ public partial class MockedConsumerGroupTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks complete before the fixture is disposed")]
+    public async Task Remove_ShouldNotWaitForRebalance_WhenPartitionsRevokedCallbackWaitsForAnotherConsumerToLeave()
+    {
+        await using GroupRaceFixture fixture = new();
+        MockedConfluentConsumer first = fixture.CreateConsumer();
+        MockedConfluentConsumer leaving = fixture.CreateConsumer();
+        first.Subscribe("topic");
+        leaving.Subscribe("topic");
+        await fixture.AssignAllAsync();
+
+        TaskCompletionSource<bool> leavingRemovedDuringCallback = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int revoked = 0;
+
+        // Mimics the KafkaConsumer, which blocks the revoked callback until its consume loop stops; the loop can in turn
+        // depend on another consumer being disconnected (e.g. when all clients are disconnected in parallel)
+        first.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            if (Interlocked.Exchange(ref revoked, 1) == 0)
+                leavingRemovedDuringCallback.TrySetResult(Task.Run(leaving.Dispose).Wait(RaceTimeout));
+
+            return partitions;
+        };
+
+        MockedConfluentConsumer joining = fixture.CreateConsumer();
+        joining.Subscribe("topic");
+
+        (await leavingRemovedDuringCallback.Task.WaitAsync(RaceTimeout * 2))
+            .ShouldBeTrue("The consumer couldn't leave the group while the revoked callback was running");
+
+        await fixture.AssignAllAsync();
+
+        fixture.Group.GetAssignment(leaving).ShouldBeEmpty();
+        fixture.Group.GetAssignment(first).Count.ShouldBe(2);
+        fixture.Group.GetAssignment(joining).Count.ShouldBe(2);
+    }
+
+    [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The blocked read and removal complete before the gates and fixture are disposed")]
     public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldTolerateRemoval_DuringConsumerInspection()
     {
@@ -275,7 +312,7 @@ public partial class MockedConsumerGroupTests
 
             // Await the background rebalance before disposing its synchronization primitive
             SemaphoreSlim semaphore = (SemaphoreSlim)typeof(MockedConsumerGroup)
-                .GetField("_subscriptionsChangeSemaphore", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(Group)!;
+                .GetField("_rebalanceSemaphore", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(Group)!;
             await semaphore.WaitAsync(timeout.Token);
             semaphore.Release();
             Group.Dispose();

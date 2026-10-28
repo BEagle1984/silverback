@@ -36,6 +36,9 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
     private readonly SemaphoreSlim _subscriptionsChangeSemaphore = new(1, 1);
 
+    // Serializes the rebalances, since the subscriptions semaphore is released while the revoked callbacks run
+    private readonly SemaphoreSlim _rebalanceSemaphore = new(1, 1);
+
     private volatile bool _isRebalancing = true;
 
     private volatile bool _isRebalanceScheduled;
@@ -244,7 +247,11 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
         completion?.TrySetResult(true);
     }
 
-    public void Dispose() => _subscriptionsChangeSemaphore.Dispose();
+    public void Dispose()
+    {
+        _subscriptionsChangeSemaphore.Dispose();
+        _rebalanceSemaphore.Dispose();
+    }
 
     private async ValueTask WaitUntilAllMessagesCoreAsync(IReadOnlyCollection<string> topicNames, bool waitForCommit, CancellationToken cancellationToken)
     {
@@ -283,10 +290,34 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
     private async Task RebalanceAsync()
     {
+        await _rebalanceSemaphore.WaitAsync().ConfigureAwait(false);
+
         try
         {
-            await _subscriptionsChangeSemaphore.WaitAsync().ConfigureAwait(false);
+            (SubscribedConsumer[] Consumers, RebalanceResult Result)? rebalance = await ComputeRebalanceAsync().ConfigureAwait(false);
 
+            if (rebalance == null)
+                return;
+
+            // The callbacks run without holding the subscriptions semaphore, because they might wait for another consumer
+            // to leave the group (e.g. the KafkaConsumer waits for its consume loop to stop). A membership change occurring
+            // in the meantime schedules a new rebalance, like in the real Kafka.
+            InvokePartitionsRevokedCallbacks(rebalance.Value.Consumers, rebalance.Value.Result);
+
+            await CompleteRebalanceAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            _rebalanceSemaphore.Release();
+        }
+    }
+
+    private async Task<(SubscribedConsumer[] Consumers, RebalanceResult Result)?> ComputeRebalanceAsync()
+    {
+        await _subscriptionsChangeSemaphore.WaitAsync().ConfigureAwait(false);
+
+        try
+        {
             SubscribedConsumer[] consumers;
 
             lock (_stateLock)
@@ -298,7 +329,7 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
                 if (_subscriptions.Count == 0)
                 {
                     _isRebalancing = false;
-                    return;
+                    return null;
                 }
 
                 consumers = [.. _subscribedConsumers];
@@ -320,14 +351,13 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
             }
 
             IReadOnlyList<TopicPartition> partitionsToAssign = GetPartitionsToAssign();
-            RebalanceResult result;
 
             lock (_stateLock)
             {
                 EnsurePartitionAssignmentsDictionaryIsInitialized();
                 List<SubscriptionPartitionAssignment> subscriptionPartitionAssignments =
                     [.. _partitionAssignments.Values.OfType<SubscriptionPartitionAssignment>()];
-                result = GetAssignmentStrategy() switch
+                RebalanceResult result = GetAssignmentStrategy() switch
                 {
                     PartitionAssignmentStrategy.CooperativeSticky =>
                         CooperativeStickyRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments),
@@ -335,10 +365,22 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
                     // RoundRobin and Range aren't fully implemented, but both use eager revocation in the mock
                     _ => SimpleRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments)
                 };
+
+                return (consumers, result);
             }
+        }
+        finally
+        {
+            _subscriptionsChangeSemaphore.Release();
+        }
+    }
 
-            InvokePartitionsRevokedCallbacks(result);
+    private async Task CompleteRebalanceAsync()
+    {
+        await _subscriptionsChangeSemaphore.WaitAsync().ConfigureAwait(false);
 
+        try
+        {
             // Give the MockedConfluentConsumers time to realize the partitions have been revoked and return from the Consume
             await Task.Delay(20).ConfigureAwait(false);
 
@@ -407,24 +449,41 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
                 topic.Partitions.Select(partition => new TopicPartition(topic.Name, partition.Partition)))
     ];
 
-    private void InvokePartitionsRevokedCallbacks(RebalanceResult result)
+    private void InvokePartitionsRevokedCallbacks(SubscribedConsumer[] consumers, RebalanceResult result)
     {
-        foreach (MockedConfluentConsumer consumer in _subscribedConsumers.Select(subscribedConsumer => subscribedConsumer.Consumer))
+        foreach (SubscribedConsumer consumer in consumers)
         {
+            // Skip the consumers that left the group while a previous callback was running
             if (result.RevokedPartitions.TryGetValue(
-                    consumer,
+                    consumer.Consumer,
                     out IReadOnlyCollection<TopicPartition>? revokedPartitions) &&
-                revokedPartitions.Count > 0)
+                revokedPartitions.Count > 0 &&
+                IsSubscribed(consumer))
             {
-                consumer.OnPartitionsRevoked(revokedPartitions);
+                consumer.Consumer.OnPartitionsRevoked(revokedPartitions);
             }
         }
     }
 
-    private Task<Task[]> WaitUntilPartitionsAssignedAsync() =>
-        Task.WhenAll(
-            _subscribedConsumers.Select(consumer =>
-                Task.WhenAny(consumer.PartitionsAssignedTaskCompletionSource.Task, Task.Delay(100))));
+    private bool IsSubscribed(SubscribedConsumer consumer)
+    {
+        lock (_stateLock)
+        {
+            return _subscribedConsumers.Contains(consumer);
+        }
+    }
+
+    private Task<Task[]> WaitUntilPartitionsAssignedAsync()
+    {
+        Task[] assignmentTasks;
+
+        lock (_stateLock)
+        {
+            assignmentTasks = [.. _subscribedConsumers.Select(consumer => consumer.PartitionsAssignedTaskCompletionSource.Task)];
+        }
+
+        return Task.WhenAll(assignmentTasks.Select(task => Task.WhenAny(task, Task.Delay(100))));
+    }
 
     private bool HasFinishedConsuming(MockedConfluentConsumer consumer, IReadOnlyCollection<string> topicNames, bool waitForCommit)
     {
