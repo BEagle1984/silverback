@@ -392,9 +392,13 @@ body > header {
 }
 
 .navbar-brand img {
-    height: 40px;
+    height: 32px;
     width: auto;
     padding: 0;
+}
+
+[data-bs-theme="dark"] .navbar-brand img {
+    filter: invert(1);
 }
 
 .navbar .navbar-nav .nav-link {

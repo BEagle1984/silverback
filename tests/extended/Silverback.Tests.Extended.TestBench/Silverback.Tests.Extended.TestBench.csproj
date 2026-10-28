@@ -6,7 +6,7 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RootNamespace>Silverback.Tests.Extended.TestBench</RootNamespace>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>..\..\..\graphics\Icon.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\..\graphics\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ductus.FluentDocker" />
@@ -49,8 +49,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\graphics\Icon.png">
-      <Link>Icon.png</Link>
+    <None Include="..\..\..\graphics\icon.png">
+      <Link>icon.png</Link>
     </None>
   </ItemGroup>
   <ItemGroup>
