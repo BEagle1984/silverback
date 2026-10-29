@@ -106,6 +106,24 @@ public class ActivitySourcesTests
     }
 
     [Fact]
+    public void StartConsumeActivity_ShouldSetRemoteParent_WhenListenerIsSetup()
+    {
+        using TestActivityListener listener = new();
+
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+        };
+
+        IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
+        using Activity activity = ActivitySources.StartConsumeActivity(envelope);
+
+        listener.Activities.ShouldContain(activity);
+        activity.HasRemoteParent.ShouldBeTrue();
+        activity.ParentSpanId.ToString().ShouldBe("b7ad6b7169203331");
+    }
+
+    [Fact]
     public void UpdateConsumeActivity_ShouldSetTraceIdOnCurrentActivity()
     {
         using Activity activity = new("activity");
@@ -142,6 +160,26 @@ public class ActivitySourcesTests
         Activity.Current.ShouldNotBeNull();
         Activity.Current.TraceId.ToString().ShouldBe("0af7651916cd43dd8448eb211c80319c");
         Activity.Current.TraceStateString.ShouldBe("my-state");
+    }
+
+    [Fact]
+    public void UpdateConsumeActivity_ShouldSetRemoteParentOnCurrentActivity()
+    {
+        using TestActivityListener listener = new();
+        using Activity activity = new("activity");
+        activity.Start();
+
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+        };
+
+        IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
+        ActivitySources.UpdateConsumeActivity(envelope);
+
+        Activity.Current.ShouldBeSameAs(activity);
+        activity.HasRemoteParent.ShouldBeTrue();
+        activity.ParentSpanId.ToString().ShouldBe("b7ad6b7169203331");
     }
 
     [Fact]

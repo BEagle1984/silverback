@@ -72,6 +72,8 @@ internal static class ActivitySources
         traceIdField?.SetValue(currentActivity, activity.TraceId.ToString());
         FieldInfo? spanIdField = typeof(Activity).GetField("_spanId", BindingFlags.NonPublic | BindingFlags.Instance);
         spanIdField?.SetValue(currentActivity, activity.SpanId.ToString());
+        PropertyInfo? hasRemoteParentProperty = typeof(Activity).GetProperty(nameof(Activity.HasRemoteParent));
+        hasRemoteParentProperty?.SetValue(currentActivity, activity.HasRemoteParent);
 
         currentActivity.SetEndpointName(envelope.Endpoint.RawName);
         currentActivity.ClearBaggage();

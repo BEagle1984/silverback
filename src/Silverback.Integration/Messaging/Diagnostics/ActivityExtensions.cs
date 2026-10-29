@@ -76,7 +76,7 @@ internal static class ActivityExtensions
         if (!activitySource.HasListeners())
             return null;
 
-        return traceId != null && ActivityContext.TryParse(traceId, traceState, out ActivityContext context)
+        return traceId != null && ActivityContext.TryParse(traceId, traceState, isRemote: true, out ActivityContext context)
             ? activitySource.StartActivity(name, activityKind, context)
             : activitySource.StartActivity(name, activityKind);
     }
