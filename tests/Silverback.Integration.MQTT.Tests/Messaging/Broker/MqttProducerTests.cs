@@ -4,7 +4,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
@@ -24,6 +24,7 @@ public class MqttProducerTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
     [Fact]
     public async Task ProduceAsync_ShouldNotBlockPublishing_WhenContinuationProducesSynchronously()
     {

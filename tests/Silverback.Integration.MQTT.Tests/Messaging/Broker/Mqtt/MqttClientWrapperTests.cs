@@ -53,6 +53,7 @@ public class MqttClientWrapperTests
         await Should.ThrowAsync<ProduceException>(() => harness.ProduceAsync(1).WaitAsync(Timeout));
     }
 
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The registration is disposed first")]
     [Fact]
     public async Task DisconnectAsync_ShouldFlushQueuedMessagesInOrder_AndRejectNewMessages()
     {

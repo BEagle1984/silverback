@@ -102,6 +102,7 @@ public class BrokerStatistics
     [JsonPropertyName("req")]
     public Dictionary<string, long> Requests { get; init; } = [];
 
+    [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global", Justification = "Deserialized")]
     [JsonPropertyName("toppars")]
     public Dictionary<string, TopicPartitions> TopicPartitions { get; init; } = [];
 }

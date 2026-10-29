@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -260,6 +261,7 @@ public class PostgreSqlTableLockFixture : PostgresTests
         handler.ShouldNotBe("other-handler");
     }
 
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
     [Fact]
     public async Task AcquireAsync_ShouldNotAcquireLockHeldByOtherHandler()
     {

@@ -41,7 +41,7 @@ public class SubscribedMethodsCacheTests
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
             .AddFakeLogger()
             .AddSilverback()
-            .AddDelegateSubscriber<IEvent>(_ =>
+            .AddDelegateSubscriber<BaseEvent>(_ =>
             {
             })
             .AddDelegateSubscriber<BaseEventOne>(_ =>
@@ -169,13 +169,13 @@ public class SubscribedMethodsCacheTests
         result.ShouldBeFalse();
     }
 
-    private record IEvent;
+    private record BaseEvent;
 
-    private record BaseEventOne : IEvent;
+    private record BaseEventOne : BaseEvent;
 
     private record TestEventOne : BaseEventOne;
 
-    private record TestEventTwo : IEvent;
+    private record TestEventTwo : BaseEvent;
 
     private class Envelope<T> : IEnvelope<T>
         where T : new()

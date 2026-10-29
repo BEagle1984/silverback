@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -333,6 +334,7 @@ public sealed class EntityFrameworkLockTests : IDisposable
         lockEntity.LastHeartbeat.Value.ShouldBeGreaterThan(DateTime.UtcNow.AddMinutes(-1));
     }
 
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
     [Fact]
     public async Task AcquireAsync_ShouldNotAcquireLockHeldByOtherHandler()
     {

@@ -24,6 +24,7 @@ public class TopicStatistics
     [JsonPropertyName("batchcnt")]
     public WindowStatistics BatchCnt { get; init; } = new();
 
+    [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global", Justification = "Deserialized")]
     [JsonPropertyName("partitions")]
     public Dictionary<string, PartitionStatistics> Partitions { get; init; } = [];
 }

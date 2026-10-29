@@ -52,12 +52,12 @@ public class TestingHelperTests
             .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
             .BuildServiceProvider();
 
-        return new TestTestingHelper(serviceProvider, new LoggerSubstitute<TestingHelper>(LogLevel.Trace));
+        return new TestTestingHelper(serviceProvider, new LoggerSubstitute<TestTestingHelper>(LogLevel.Trace));
     }
 
     private sealed class TestTestingHelper : TestingHelper
     {
-        public TestTestingHelper(IServiceProvider serviceProvider, ILogger<TestingHelper> logger)
+        public TestTestingHelper(IServiceProvider serviceProvider, ILogger<TestTestingHelper> logger)
             : base(serviceProvider, logger)
         {
         }

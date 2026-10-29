@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +28,7 @@ public class TestingHelperTests : KafkaTests
     {
     }
 
+    [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Interlocked access")]
     [Theory]
     [InlineData(0, false)]
     [InlineData(0, true)]
