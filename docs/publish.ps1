@@ -43,6 +43,58 @@ function Get-GitOriginUrl {
     return ([string]$urls[0]).Trim()
 }
 
+function Get-ContentHash {
+    param([string] $Path)
+
+    return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.Substring(0, 12).ToLowerInvariant()
+}
+
+function Add-AssetVersions {
+    param([string] $Path)
+
+    # GitHub Pages caches every file for 10 minutes, so the static assets get a content hash to avoid stale styles and scripts
+    $publicPath = Join-Path $Path "public"
+    $utf8 = [Text.UTF8Encoding]::new($false)
+
+    # docfx.min.js imports main.js, so main.js has to be versioned first to make the change flow into the docfx.min.js hash
+    $docfxScriptPath = Join-Path $publicPath "docfx.min.js"
+    $docfxScript = [IO.File]::ReadAllText($docfxScriptPath)
+    $mainScriptImport = 'import("./main.js")'
+    if (-not $docfxScript.Contains($mainScriptImport)) {
+        throw "The main.js import was not found in '$docfxScriptPath'."
+    }
+
+    $mainScriptHash = Get-ContentHash (Join-Path $publicPath "main.js")
+    $docfxScript = $docfxScript.Replace($mainScriptImport, "import(`"./main.js?v=$mainScriptHash`")")
+    [IO.File]::WriteAllText($docfxScriptPath, $docfxScript, $utf8)
+    Write-Host "Versioned 'main.js' as '$mainScriptHash'."
+
+    $assetHashes = @{}
+    foreach ($assetName in @("docfx.min.css", "main.css", "docfx.min.js")) {
+        $assetHashes[$assetName] = Get-ContentHash (Join-Path $publicPath $assetName)
+        Write-Host "Versioned '$assetName' as '$($assetHashes[$assetName])'."
+    }
+
+    $assetReferenceRegex = [regex] '(?<=["/])public/(docfx\.min\.css|main\.css|docfx\.min\.js)(?=")'
+    $updatedPagesCount = 0
+    $pages = Get-ChildItem -LiteralPath $Path -Filter "*.html" -Recurse -File |
+        Where-Object { -not $_.FullName.StartsWith((Join-Path $Path "v4\"), [StringComparison]::OrdinalIgnoreCase) }
+
+    foreach ($page in $pages) {
+        $content = [IO.File]::ReadAllText($page.FullName)
+        $updatedContent = $assetReferenceRegex.Replace(
+            $content,
+            { param($match) "$($match.Value)?v=$($assetHashes[$match.Groups[1].Value])" })
+
+        if ($updatedContent -ne $content) {
+            [IO.File]::WriteAllText($page.FullName, $updatedContent, $utf8)
+            $updatedPagesCount++
+        }
+    }
+
+    Write-Host "Added the asset versions to $updatedPagesCount pages."
+}
+
 $repositoryPath = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
 $repositoryParentPath = Split-Path -Parent $repositoryPath
 $publishRepositoryPath = Join-Path $repositoryParentPath "silverback-ghpages"
@@ -102,6 +154,9 @@ else {
 Write-Step "Copying the generated site"
 $siteItems | Copy-Item -Destination $publishRepositoryPath -Recurse -Force
 Write-Host "Copied the contents of '$sitePath' to '$publishRepositoryPath'."
+
+Write-Step "Adding the cache-busting asset versions"
+Add-AssetVersions $publishRepositoryPath
 
 Write-Step "Reading the Silverback version"
 [xml] $buildProps = Get-Content -LiteralPath $buildPropsPath -Raw
