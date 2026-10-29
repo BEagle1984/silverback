@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -345,7 +344,7 @@ public class StreamPublisherTests
 
         Func<Task> act = async () => await await Task.WhenAny(tasks);
 
-        await act.ShouldThrowAsync<TargetInvocationException>();
+        await act.ShouldThrowAsync<TestException>();
     }
 
     [Fact]
@@ -388,7 +387,7 @@ public class StreamPublisherTests
 
         Func<Task> act = async () => await await Task.WhenAny(tasks);
 
-        await act.ShouldThrowAsync<TargetInvocationException>();
+        await act.ShouldThrowAsync<TestException>();
     }
 
     [Fact]

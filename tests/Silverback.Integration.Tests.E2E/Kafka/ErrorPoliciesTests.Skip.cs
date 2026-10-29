@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,6 +63,42 @@ public partial class ErrorPoliciesTests
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task SkipPolicy_ShouldSkipMessage_WhenSyncSubscriberThrowsApplicableException()
+    {
+        int tryCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Skip(skipPolicy => skipPolicy.ApplyTo<ArgumentException>())))))
+            .AddIntegrationSpy()
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            throw new ArgumentException("Skip!");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        tryCount.ShouldBe(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
+        Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
     }
 
     [Fact]

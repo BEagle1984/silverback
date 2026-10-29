@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -33,7 +32,7 @@ public partial class PublisherTests
 
         Action act = () => publisher.Publish(new TestEventOne());
 
-        act.ShouldThrow<TargetInvocationException>();
+        act.ShouldThrow<InvalidOperationException>();
         messages.Count.ShouldBe(1);
     }
 
@@ -55,7 +54,7 @@ public partial class PublisherTests
 
         Func<Task> act = () => publisher.PublishAsync(new TestEventOne());
 
-        await act.ShouldThrowAsync<TargetInvocationException>();
+        await act.ShouldThrowAsync<InvalidOperationException>();
         messages.Count.ShouldBe(1);
     }
 
@@ -78,8 +77,8 @@ public partial class PublisherTests
         Action act1 = () => publisher.Publish(new TestEventOne());
         Action act2 = () => publisher.Publish(new TestEventOne());
 
-        act1.ShouldThrow<TargetInvocationException>();
-        act2.ShouldThrow<TargetInvocationException>();
+        act1.ShouldThrow<InvalidOperationException>();
+        act2.ShouldThrow<InvalidOperationException>();
         messages.Count.ShouldBe(2);
     }
 
@@ -102,8 +101,8 @@ public partial class PublisherTests
         Func<Task> act1 = () => publisher.PublishAsync(new TestEventOne());
         Func<Task> act2 = () => publisher.PublishAsync(new TestEventOne());
 
-        await act1.ShouldThrowAsync<TargetInvocationException>();
-        await act2.ShouldThrowAsync<TargetInvocationException>();
+        await act1.ShouldThrowAsync<InvalidOperationException>();
+        await act2.ShouldThrowAsync<InvalidOperationException>();
         messages.Count.ShouldBe(2);
     }
 }

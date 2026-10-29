@@ -178,6 +178,6 @@ internal static class SubscribedMethodInvoker
     private static object? InvokeWithActivity(MethodInfo methodInfo, object? target, object?[] arguments)
     {
         using Activity? activity = ActivitySources.StartInvokeSubscriberActivity(methodInfo);
-        return methodInfo.Invoke(target, arguments);
+        return methodInfo.Invoke(target, BindingFlags.DoNotWrapExceptions, null, arguments, null);
     }
 }
