@@ -49,6 +49,9 @@ public partial class ConsumerEndpointTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
+        // The scope is disposed right after the commit, which is what the helper awaits
+        await AsyncTestingUtil.WaitAsync(() => scopedServices.All(service => service.Disposed));
+
         scopedServices.Count.ShouldBe(5);
         scopedServices.ShouldAllBe(service => service.Disposed);
     }
@@ -91,6 +94,9 @@ public partial class ConsumerEndpointTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
+        // The scope is disposed right after the commit, which is what the helper awaits
+        await AsyncTestingUtil.WaitAsync(() => scopedServices.All(service => service.Disposed));
+
         scopedServices.Count.ShouldBe(3);
         scopedServices.ShouldAllBe(service => service.Disposed);
     }
@@ -132,6 +138,9 @@ public partial class ConsumerEndpointTests
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        // The scope is disposed right after the commit, which is what the helper awaits
+        await AsyncTestingUtil.WaitAsync(() => scopedServices.All(service => service.Disposed));
 
         scopedServices.Count.ShouldBe(1);
         scopedServices.ShouldAllBe(service => service.Disposed);

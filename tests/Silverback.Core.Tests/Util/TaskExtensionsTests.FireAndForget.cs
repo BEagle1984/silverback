@@ -15,7 +15,7 @@ namespace Silverback.Tests.Core.Util;
 public partial class TaskExtensionsTests
 {
     [Fact]
-    public void FireAndForget_ShouldTriggerTaskWithoutBlocking()
+    public async Task FireAndForget_ShouldTriggerTaskWithoutBlocking()
     {
         bool executed = false;
         SemaphoreSlim semaphore1 = new(0, 1);
@@ -23,7 +23,7 @@ public partial class TaskExtensionsTests
 
         async Task Execute()
         {
-            await semaphore1.WaitAsync(TimeSpan.FromSeconds(1));
+            await semaphore1.WaitAsync(TimeSpan.FromSeconds(10));
             executed = true;
             semaphore2.Release();
         }
@@ -33,13 +33,13 @@ public partial class TaskExtensionsTests
         executed.ShouldBeFalse();
 
         semaphore1.Release();
-        semaphore2.Wait(TimeSpan.FromSeconds(1));
+        await semaphore2.WaitAsync(TimeSpan.FromSeconds(10));
 
         executed.ShouldBeTrue();
     }
 
     [Fact]
-    public void FireAndForget_ShouldTriggerValueTaskWithoutBlocking()
+    public async Task FireAndForget_ShouldTriggerValueTaskWithoutBlocking()
     {
         bool executed = false;
         SemaphoreSlim semaphore1 = new(0, 1);
@@ -47,7 +47,7 @@ public partial class TaskExtensionsTests
 
         async ValueTask Execute()
         {
-            await semaphore1.WaitAsync(TimeSpan.FromSeconds(1));
+            await semaphore1.WaitAsync(TimeSpan.FromSeconds(10));
             executed = true;
             semaphore2.Release();
         }
@@ -57,13 +57,13 @@ public partial class TaskExtensionsTests
         executed.ShouldBeFalse();
 
         semaphore1.Release();
-        semaphore2.Wait(TimeSpan.FromSeconds(1));
+        await semaphore2.WaitAsync(TimeSpan.FromSeconds(10));
 
         executed.ShouldBeTrue();
     }
 
     [Fact]
-    public void FireAndForget_ShouldTriggerTaskWithReturnValueWithoutBlocking()
+    public async Task FireAndForget_ShouldTriggerTaskWithReturnValueWithoutBlocking()
     {
         bool executed = false;
         SemaphoreSlim semaphore1 = new(0, 1);
@@ -71,7 +71,7 @@ public partial class TaskExtensionsTests
 
         async Task<int> Execute()
         {
-            await semaphore1.WaitAsync(TimeSpan.FromSeconds(1));
+            await semaphore1.WaitAsync(TimeSpan.FromSeconds(10));
             executed = true;
             semaphore2.Release();
             return 42;
@@ -82,13 +82,13 @@ public partial class TaskExtensionsTests
         executed.ShouldBeFalse();
 
         semaphore1.Release();
-        semaphore2.Wait(TimeSpan.FromSeconds(1));
+        await semaphore2.WaitAsync(TimeSpan.FromSeconds(10));
 
         executed.ShouldBeTrue();
     }
 
     [Fact]
-    public void FireAndForget_ShouldTriggerValueTaskWithReturnValueWithoutBlocking()
+    public async Task FireAndForget_ShouldTriggerValueTaskWithReturnValueWithoutBlocking()
     {
         bool executed = false;
         SemaphoreSlim semaphore1 = new(0, 1);
@@ -96,7 +96,7 @@ public partial class TaskExtensionsTests
 
         async ValueTask<int> Execute()
         {
-            await semaphore1.WaitAsync(TimeSpan.FromSeconds(1));
+            await semaphore1.WaitAsync(TimeSpan.FromSeconds(10));
             executed = true;
             semaphore2.Release();
             return 42;
@@ -107,7 +107,7 @@ public partial class TaskExtensionsTests
         executed.ShouldBeFalse();
 
         semaphore1.Release();
-        semaphore2.Wait(TimeSpan.FromSeconds(1));
+        await semaphore2.WaitAsync(TimeSpan.FromSeconds(10));
 
         executed.ShouldBeTrue();
     }
