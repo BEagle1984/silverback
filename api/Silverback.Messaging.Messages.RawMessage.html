@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Class RawMessage | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class RawMessage | Silverback ">
-      
       <meta name="description" content="Wraps a raw message .">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class RawMessage | Silverback ">
+      <meta property="og:description" content="Wraps a raw message .">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Messages_RawMessage" data-uid="Silverback.Messaging.Messages.RawMessage" class="text-break">
-Class RawMessage  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+Class RawMessage  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -163,7 +178,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage__ctor_System_IO_Stream_" data-uid="Silverback.Messaging.Messages.RawMessage.#ctor(System.IO.Stream)">
   RawMessage(Stream?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a> class.</p>
@@ -200,7 +215,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_Content" data-uid="Silverback.Messaging.Messages.RawMessage.Content">
   Content
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the message content.</p>
@@ -236,7 +251,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_FromByteArray_System_Byte___" data-uid="Silverback.Messaging.Messages.RawMessage.FromByteArray(System.Byte[])">
   FromByteArray(byte[]?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a> instance from the specified content.</p>
@@ -275,7 +290,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_FromStream_System_IO_Stream_" data-uid="Silverback.Messaging.Messages.RawMessage.FromStream(System.IO.Stream)">
   FromStream(Stream?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a> instance from the specified content.</p>
@@ -314,7 +329,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_ToByteArray" data-uid="Silverback.Messaging.Messages.RawMessage.ToByteArray">
   ToByteArray()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the message content.</p>
@@ -347,7 +362,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_ToByteArrayAsync" data-uid="Silverback.Messaging.Messages.RawMessage.ToByteArrayAsync">
   ToByteArrayAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the message content.</p>
@@ -380,7 +395,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_ToStream" data-uid="Silverback.Messaging.Messages.RawMessage.ToStream">
   ToStream()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the message content.</p>
@@ -417,7 +432,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_op_Implicit_Silverback_Messaging_Messages_RawMessage__System_Byte__" data-uid="Silverback.Messaging.Messages.RawMessage.op_Implicit(Silverback.Messaging.Messages.RawMessage)~System.Byte[]">
   implicit operator byte[]?(RawMessage?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a> to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array.</p>
@@ -456,7 +471,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_op_Implicit_Silverback_Messaging_Messages_RawMessage__System_IO_Stream" data-uid="Silverback.Messaging.Messages.RawMessage.op_Implicit(Silverback.Messaging.Messages.RawMessage)~System.IO.Stream">
   implicit operator Stream?(RawMessage?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a> to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a>.</p>
@@ -495,7 +510,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_op_Implicit_System_Byte____Silverback_Messaging_Messages_RawMessage" data-uid="Silverback.Messaging.Messages.RawMessage.op_Implicit(System.Byte[])~Silverback.Messaging.Messages.RawMessage">
   implicit operator RawMessage(byte[]?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array to a <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a>.</p>
@@ -534,7 +549,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Silverback_Messaging_Messages_RawMessage_op_Implicit_System_IO_Stream__Silverback_Messaging_Messages_RawMessage" data-uid="Silverback.Messaging.Messages.RawMessage.op_Implicit(System.IO.Stream)~Silverback.Messaging.Messages.RawMessage">
   implicit operator RawMessage(Stream?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Implicitly converts a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> to a <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a>.</p>
@@ -577,7 +592,7 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/RawMessage.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/RawMessage.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -588,8 +603,17 @@ Class RawMessage  <a class="header-action link-secondary" title="View source" hr
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

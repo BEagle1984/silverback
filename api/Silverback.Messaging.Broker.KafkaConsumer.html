@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Class KafkaConsumer | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class KafkaConsumer | Silverback ">
-      
       <meta name="description" content="Consumes from one or more endpoints and pushes the received messages via the message bus.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class KafkaConsumer | Silverback ">
+      <meta property="og:description" content="Consumes from one or more endpoints and pushes the received messages via the message bus.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Broker_KafkaConsumer" data-uid="Silverback.Messaging.Broker.KafkaConsumer" class="text-break">
-Class KafkaConsumer  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+Class KafkaConsumer  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -112,7 +127,7 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/Consumer%601.cs">Consumer</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a>&gt;</div>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/Consumer%601.cs">Consumer</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a>&gt;</div>
       <div><span class="xref">KafkaConsumer</span></div>
     </dd>
   </dl>
@@ -138,6 +153,9 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer-1.html#Silverback_Messaging_Broker_Consumer_1_StopAsync_System_Boolean_">Consumer&lt;KafkaOffset&gt;.StopAsync(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer-1.html#Silverback_Messaging_Broker_Consumer_1_StopAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_System_Boolean_">Consumer&lt;KafkaOffset&gt;.StopAsync(IBrokerMessageIdentifier, bool)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer-1.html#Silverback_Messaging_Broker_Consumer_1_CommitAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">Consumer&lt;KafkaOffset&gt;.CommitAsync(IBrokerMessageIdentifier)</a>
@@ -226,7 +244,7 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer__ctor_System_String_Silverback_Messaging_Broker_Kafka_IConfluentConsumerWrapper_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__Silverback_Messaging_Broker_Callbacks_IBrokerClientCallbacksInvoker_Silverback_Messaging_Consuming_KafkaOffsetStore_IKafkaOffsetStoreFactory_System_IServiceProvider_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_KafkaConsumer__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.#ctor(System.String,Silverback.Messaging.Broker.Kafka.IConfluentConsumerWrapper,Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},Silverback.Messaging.Broker.Callbacks.IBrokerClientCallbacksInvoker,Silverback.Messaging.Consuming.KafkaOffsetStore.IKafkaOffsetStoreFactory,System.IServiceProvider,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.KafkaConsumer})">
   KafkaConsumer(string, IConfluentConsumerWrapper, KafkaConsumerConfiguration, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IBrokerClientCallbacksInvoker, IKafkaOffsetStoreFactory, IServiceProvider, ISilverbackLogger&lt;KafkaConsumer&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a> class.</p>
@@ -260,7 +278,7 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
     <dt><code>serviceProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></dt>
     <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a> to be used to resolve the necessary services.</p>
 </dd>
-    <dt><code>logger</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Core/Diagnostics/ISilverbackLogger%601.cs">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a>&gt;</dt>
+    <dt><code>logger</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Core/Diagnostics/ISilverbackLogger%601.cs">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a>&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger&lt;TCategoryName&gt;</a>.</p>
 </dd>
   </dl>
@@ -284,7 +302,7 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_Client" data-uid="Silverback.Messaging.Broker.KafkaConsumer.Client">
   Client
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the related <a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html">IBrokerClient</a>.</p>
@@ -316,7 +334,7 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_Configuration" data-uid="Silverback.Messaging.Broker.KafkaConsumer.Configuration">
   Configuration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the consumer configuration.</p>
@@ -348,7 +366,7 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_EndpointsConfiguration" data-uid="Silverback.Messaging.Broker.KafkaConsumer.EndpointsConfiguration">
   EndpointsConfiguration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the endpoints configuration.</p>
@@ -384,7 +402,7 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.KafkaOffset})">
   CommitCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Commits the specified messages sending the acknowledgement to the message broker.</p>
@@ -423,7 +441,7 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_Dispose_System_Boolean_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.Dispose(System.Boolean)">
   Dispose(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
@@ -456,7 +474,7 @@ Class KafkaConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_GetOffsetsForTimestamps_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionTimestamp__System_TimeSpan_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamps(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionTimestamp},System.TimeSpan)">
   GetOffsetsForTimestamps(IEnumerable&lt;TopicPartitionTimestamp&gt;, TimeSpan)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Looks up the offsets for the given partitions by timestamp. The returned offset for each partition is the earliest offset for which
@@ -503,7 +521,7 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_Pause_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.Pause(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition})">
   Pause(IEnumerable&lt;TopicPartition&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Pauses the consumption of the specified partitions.</p>
@@ -536,7 +554,7 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_Resume_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.Resume(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition})">
   Resume(IEnumerable&lt;TopicPartition&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Resumes the consumption of the specified partitions.</p>
@@ -569,7 +587,7 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.KafkaOffset})">
   RollbackCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>If necessary, notifies the message broker that the specified messages couldn't be processed
@@ -609,7 +627,7 @@ successfully, to ensure that they will be consumed again.</p>
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_Seek_Confluent_Kafka_TopicPartitionOffset_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.Seek(Confluent.Kafka.TopicPartitionOffset)">
   Seek(TopicPartitionOffset)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Seeks the specified partition to the specified offset.</p>
@@ -642,7 +660,7 @@ successfully, to ensure that they will be consumed again.</p>
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_StartCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StartCoreAsync">
   StartCoreAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Starts consuming. Called to resume consuming after <a class="xref" href="Silverback.Messaging.Broker.Consumer-1.html#Silverback_Messaging_Broker_Consumer_1_StopAsync_System_Boolean_">StopAsync(bool)</a> has been called.</p>
@@ -675,7 +693,7 @@ successfully, to ensure that they will be consumed again.</p>
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_StopCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StopCoreAsync">
   StopCoreAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Stops consuming while staying connected to the message broker.</p>
@@ -704,11 +722,54 @@ successfully, to ensure that they will be consumed again.</p>
 
 
 
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_TryBeginStop_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.TryBeginStop*"></a>
+
+  <h3 id="Silverback_Messaging_Broker_KafkaConsumer_TryBeginStop_Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.TryBeginStop(Silverback.Messaging.Broker.KafkaOffset)">
+  TryBeginStop(KafkaOffset?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks whether consuming should stop and marks the consumer as stopping.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override bool TryBeginStop(KafkaOffset? brokerMessageIdentifier)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>brokerMessageIdentifier</code> <a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a></dt>
+    <dd><p>The original identifier from the message that caused the stop request, or <code>null</code> for an unconditional stop.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value indicating whether the stop request was accepted.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Silverback_Messaging_Broker_KafkaConsumer_TryBeginStop_Silverback_Messaging_Broker_KafkaOffset__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Called after acquiring the start/stop semaphore, before canceling processing. Overrides must keep any
+broker-specific validation atomic with the call to the base implementation that marks the consumer as stopping.</p>
+</div>
+
+
+
+
   <a id="Silverback_Messaging_Broker_KafkaConsumer_WaitUntilConsumingStoppedCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync*"></a>
 
   <h3 id="Silverback_Messaging_Broker_KafkaConsumer_WaitUntilConsumingStoppedCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync">
   WaitUntilConsumingStoppedCoreAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Waits until the consuming is stopped.</p>
@@ -745,7 +806,7 @@ successfully, to ensure that they will be consumed again.</p>
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -756,8 +817,17 @@ successfully, to ensure that they will be consumed again.</p>
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

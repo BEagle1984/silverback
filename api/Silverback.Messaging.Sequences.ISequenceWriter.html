@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Interface ISequenceWriter | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface ISequenceWriter | Silverback ">
-      
       <meta name="description" content="Can set the headers used to match the message with the sequence it belongs to. If needed it can also split a single message into multiple messages.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Interface ISequenceWriter | Silverback ">
+      <meta property="og:description" content="Can set the headers used to match the message with the sequence it belongs to. If needed it can also split a single message into multiple messages.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Sequences_ISequenceWriter" data-uid="Silverback.Messaging.Sequences.ISequenceWriter" class="text-break">
-Interface ISequenceWriter  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs"><i class="bi bi-code-slash"></i></a>
+Interface ISequenceWriter  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -127,7 +142,7 @@ split a single message into multiple messages.</p>
 
   <h3 id="Silverback_Messaging_Sequences_ISequenceWriter_CanHandle_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.ISequenceWriter.CanHandle(Silverback.Messaging.Messages.IOutboundEnvelope)">
   CanHandle(IOutboundEnvelope)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Checks whether this writer can and must handle the specified message.</p>
@@ -166,7 +181,7 @@ split a single message into multiple messages.</p>
 
   <h3 id="Silverback_Messaging_Sequences_ISequenceWriter_ProcessMessageAsync_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.ISequenceWriter.ProcessMessageAsync(Silverback.Messaging.Messages.IOutboundEnvelope)">
   ProcessMessageAsync(IOutboundEnvelope)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the headers used to match the message with the sequence it belongs to. If needed it can
@@ -211,7 +226,7 @@ produced.</p>
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -222,8 +237,17 @@ produced.</p>
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

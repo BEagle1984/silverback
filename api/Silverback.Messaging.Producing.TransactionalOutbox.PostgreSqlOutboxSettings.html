@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Class PostgreSqlOutboxSettings | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class PostgreSqlOutboxSettings | Silverback ">
-      
       <meta name="description" content="The  and  settings.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class PostgreSqlOutboxSettings | Silverback ">
+      <meta property="og:description" content="The  and  settings.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings" class="text-break">
-Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -158,7 +173,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings__ctor_Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.#ctor(Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings)">
   PostgreSqlOutboxSettings(PostgreSqlOutboxSettings)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -189,7 +204,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings__ctor_System_String_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.#ctor(System.String)">
   PostgreSqlOutboxSettings(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.html">PostgreSqlOutboxSettings</a> class.</p>
@@ -226,7 +241,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_ConnectionString" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.ConnectionString">
   ConnectionString
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the connection string to the PostgreSql database.</p>
@@ -258,7 +273,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_CreateTableTimeout" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.CreateTableTimeout">
   CreateTableTimeout
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the timeout for the table creation. The default is 30 seconds.</p>
@@ -290,7 +305,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_DbCommandTimeout" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.DbCommandTimeout">
   DbCommandTimeout
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the database command timeout. The default is 10 seconds.</p>
@@ -322,7 +337,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_EqualityContract" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.EqualityContract">
   EqualityContract
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -353,7 +368,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_TableName" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.TableName">
   TableName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the name of the outbox table. The default is <code>&quot;SilverbackOutbox&quot;</code>.</p>
@@ -389,7 +404,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_Equals_Silverback_Messaging_Producing_TransactionalOutbox_OutboxSettings_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.Equals(Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings)">
   Equals(OutboxSettings?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -425,7 +440,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_Equals_Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.Equals(Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings)">
   Equals(PostgreSqlOutboxSettings?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -461,7 +476,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_Equals_System_Object_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.Equals(System.Object)">
   Equals(object?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -497,7 +512,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_GetCompatibleLockSettings" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.GetCompatibleLockSettings">
   GetCompatibleLockSettings()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns an instance of <a class="xref" href="Silverback.Lock.PostgreSqlAdvisoryLockSettings.html">PostgreSqlAdvisoryLockSettings</a>.</p>
@@ -530,7 +545,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_GetHashCode" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -561,7 +576,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.PrintMembers(System.Text.StringBuilder)">
   PrintMembers(StringBuilder)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -597,7 +612,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_ToString" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -628,7 +643,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_Validate" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.Validate">
   Validate()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Throws a <a class="xref" href="Silverback.SilverbackConfigurationException.html">SilverbackConfigurationException</a> if the configuration is not valid.</p>
@@ -651,37 +666,6 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
 
 
-  <a id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings__Clone___" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.{Clone}$*"></a>
-
-  <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings__Clone__" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.{Clone}$">
-  &lt;Clone&gt;$()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override PostgreSqlOutboxSettings &lt;Clone&gt;$()</code></pre>
-  </div>
-
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.html">PostgreSqlOutboxSettings</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
   <h2 class="section" id="operators">Operators
 </h2>
 
@@ -690,7 +674,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_op_Equality_Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.op_Equality(Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings,Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings)">
   operator ==(PostgreSqlOutboxSettings?, PostgreSqlOutboxSettings?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -728,7 +712,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
   <h3 id="Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_op_Inequality_Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.op_Inequality(Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings,Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings)">
   operator !=(PostgreSqlOutboxSettings?, PostgreSqlOutboxSettings?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -770,7 +754,7 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Storage.PostgreSql/Messaging/Producing/TransactionalOutbox/PostgreSqlOutboxSettings.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -781,8 +765,17 @@ Class PostgreSqlOutboxSettings  <a class="header-action link-secondary" title="V
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Logging and Tracing | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Logging and Tracing | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -87,8 +102,10 @@
         <article data-uid="logging">
 <h1 id="logging-and-tracing">Logging and Tracing</h1>
 
+<p>Silverback writes its logs through the standard <code>Microsoft.Extensions.Logging</code> abstractions, so they flow into whatever logging provider your application uses (console, Serilog, OpenTelemetry, etc.). Each event has a stable <code>EventId</code> that can be used to filter or route the logs.</p>
+<p>On top of that, Silverback creates <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> objects to support distributed tracing (see <a href="#tracing">Tracing</a>).</p>
 <h2 id="log-events">Log Events</h2>
-<p>Silverback logs several events that can be used to monitor the application and troubleshoot issues.</p>
+<p>Silverback logs several events that can be used to monitor the application and troubleshoot issues. The tables below list the events and their default level.</p>
 <h3 id="core">Core</h3>
 <table>
 <thead>
@@ -843,12 +860,26 @@
 </tr>
 </tbody>
 </table>
+<h2 id="customizing-the-log-levels">Customizing the Log Levels</h2>
+<p>The level of each Silverback log event can be overridden using <code>WithLogLevels</code>. The level can be set statically or determined dynamically, for example depending on the exception type.</p>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithLogLevels(levels =&gt; levels
+        .SetLogLevel(CoreLogEvents.LockAcquired.EventId, LogLevel.Debug)
+        .SetLogLevel(
+            IntegrationLogEvents.ProcessingConsumedMessageError.EventId,
+            (exception, defaultLevel) =&gt; exception is TimeoutException ? LogLevel.Warning : defaultLevel));
+</code></pre>
+<p>The event ids are exposed by the <a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html">CoreLogEvents</a>, <a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html">IntegrationLogEvents</a>, <a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html">KafkaLogEvents</a> and <a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html">MqttLogEvents</a> static classes.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>To reduce the noise, you can also use the standard logging filters to change the minimum level of the <code>Silverback</code> categories.</p>
+</div>
 <h2 id="tracing">Tracing</h2>
 <p>An <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> is created:</p>
 <ul>
 <li>in the Consumer when a message is received (initialized with the <code>traceparent</code> header, if submitted)</li>
-<li>in the Producer when a message is being sent (submitting the <code>Activity.Id</code> in the <code>traceparent</code> header )</li>
-<li>when a sequence (e.g., a <a class="xref" href="../api/Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>) is being consumed</li>
+<li>in the Producer when a message is being sent (submitting the <code>Activity.Id</code> in the <code>traceparent</code> header)</li>
 <li>when a subscriber is being invoked (either internally or from a consumer)</li>
 </ul>
 <p>This allows tracing the message handling and follow it across different services (distributed tracing).</p>
@@ -867,11 +898,7 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>Silverback.Integration.Consume</code></td>
-<td style="text-align: left;">A consumed message is being processed.<br><br>Tags: <ul><li><code>messaging.message_id</code></li><li><code>messaging.destination</code></li><li>[<code>messaging.sequence.activity</code>]</li><li>[<code>messaging.kafka.message_key</code>]</li><li>[<code>messaging.kafka.partition</code>]</li></ul></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>Silverback.Integration.Sequence</code></td>
-<td style="text-align: left;">A sequence of messages is being processed.<br><br>Tags: <em>none</em></td>
+<td style="text-align: left;">A consumed message is being processed.<br><br>Tags: <ul><li><code>messaging.message_id</code></li><li><code>messaging.destination</code></li><li>[<code>messaging.sequence_id</code>]</li><li>[<code>messaging.kafka.message_key</code>]</li><li>[<code>messaging.kafka.partition</code>]</li></ul></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>Silverback.Core.Subscribers.InvokeSubscriber</code></td>
@@ -899,8 +926,17 @@
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

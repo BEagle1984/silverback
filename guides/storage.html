@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Storage Integration | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Storage Integration | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -137,7 +152,7 @@ If you need <em>horizontal scalability</em>, SQLite is usually not the right cho
 </ul>
 </li>
 </ul>
-<h3 id="entity-framework-when-you-already-use-ef-core">Entity Framework (when you already use EF Core)</h3>
+<h3 id="entity-framework-when-you-already-use-ef-core">Entity Framework (When You Already Use EF Core)</h3>
 <p>Package: <code>Silverback.Storage.EntityFramework</code></p>
 <p>Provides:</p>
 <ul>
@@ -146,7 +161,7 @@ If you need <em>horizontal scalability</em>, SQLite is usually not the right cho
 <li>EF Core table-based distributed lock (locks table with heartbeat)</li>
 </ul>
 <p>Because EF storage uses your application's model, tables are typically created via <strong>migrations</strong>.</p>
-<h3 id="relational-abstraction-internal-building-block">Relational abstraction (internal building block)</h3>
+<h3 id="relational-abstraction-internal-building-block">Relational Abstraction (Internal Building Block)</h3>
 <p>Package: <code>Silverback.Storage.Relational</code></p>
 <p>This package contains shared building blocks for relational stores (e.g., the base implementation of table-based locks). Most applications don't need to reference it directly.</p>
 <h2 id="how-to-initialize--provision-the-storage">How to Initialize / Provision the Storage</h2>
@@ -186,7 +201,7 @@ await initializer.CreateSqliteKafkaOffsetStoreAsync(connectionString);
 <p>Advisory locks do <strong>not</strong> require a table.</p>
 <p>Table-based locks (PostgreSQL table lock + EF lock) do require a locks table.</p>
 </div>
-<h3 id="entity-framework-tables">Entity Framework tables</h3>
+<h3 id="entity-framework-tables">Entity Framework Tables</h3>
 <p>When using EF Core, you include the storage entities in your <code>DbContext</code>.</p>
 <p>Outbox:</p>
 <pre><code class="lang-csharp">public DbSet&lt;SilverbackOutboxMessage&gt; Outbox { get; set; } = null!;
@@ -219,7 +234,7 @@ Instead you:</p>
 <ul>
 <li><a class="xref" href="broker/producing/outbox.html">Transactional Outbox</a></li>
 </ul>
-<h3 id="kafka-offset-storage-client-side-offsets">Kafka offset storage (client-side offsets)</h3>
+<h3 id="kafka-offset-storage-client-side-offsets">Kafka Offset Storage (Client-Side Offsets)</h3>
 <p>Client-side offset storage persists offsets outside Kafka so that your processing + offset advancement can be committed atomically in your DB transaction.</p>
 <p>High level steps:</p>
 <ol>
@@ -241,13 +256,13 @@ Silverback achieves this by acquiring a lock before running and by monitoring lo
 <li>PostgreSQL storage supports advisory locks (default) and table-based locks</li>
 <li>Entity Framework storage uses a table-based lock</li>
 </ul>
-<h3 id="why-locks-exist">Why locks exist</h3>
+<h3 id="why-locks-exist">Why Locks Exist</h3>
 <p>Distributed locks are used to avoid scenarios like:</p>
 <ul>
 <li>two instances producing outbox messages concurrently (leading to duplicates)</li>
 <li>multiple nodes running a single-instance maintenance task</li>
 </ul>
-<h3 id="lock-handle-and-lock-loss">Lock handle and lock loss</h3>
+<h3 id="lock-handle-and-lock-loss">Lock Handle and Lock Loss</h3>
 <p>When a lock is acquired, Silverback obtains a <code>DistributedLockHandle</code>.</p>
 <p>Key behaviors:</p>
 <ul>
@@ -260,7 +275,7 @@ Silverback achieves this by acquiring a lock before running and by monitoring lo
 </ul>
 </li>
 </ul>
-<h3 id="postgresql-advisory-lock">PostgreSQL advisory lock</h3>
+<h3 id="postgresql-advisory-lock">PostgreSQL Advisory Lock</h3>
 <p>Implementation: <code>PostgreSqlAdvisoryLock</code> (uses <code>DistributedLock.Postgres</code> a.k.a. Medallion.Threading).</p>
 <p>Characteristics:</p>
 <ul>
@@ -273,7 +288,7 @@ Silverback achieves this by acquiring a lock before running and by monitoring lo
 <pre><code class="lang-csharp">.WithDistributedLock(lockSettings =&gt; lockSettings
     .UsePostgreSqlAdvisoryLock(&quot;outbox&quot;, connectionString))
 </code></pre>
-<h3 id="table-based-lock-postgresql-and-ef">Table-based lock (PostgreSQL and EF)</h3>
+<h3 id="table-based-lock-postgresql-and-ef">Table-Based Lock (PostgreSQL and EF)</h3>
 <p>Base implementation: <code>TableBasedDistributedLock</code>.</p>
 <p>How it works:</p>
 <ol>
@@ -303,7 +318,7 @@ Prefer a consistent time source and keep nodes time-synchronized.</p>
 <li>Uses a <code>DbContext</code> and the <code>SilverbackLock</code> entity/table.</li>
 <li>Handles acquisition races by catching <code>DbUpdateException</code> (another process won).</li>
 </ul>
-<h3 id="in-memory-lock">In-memory lock</h3>
+<h3 id="in-memory-lock">In-Memory Lock</h3>
 <p>Implementation: <code>InMemoryLock</code>.</p>
 <ul>
 <li>Uses a local <code>SemaphoreSlim</code>.</li>
@@ -344,8 +359,17 @@ Prefer a consistent time source and keep nodes time-synchronized.</p>
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

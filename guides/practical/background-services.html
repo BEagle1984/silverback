@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Background Services with Distributed Lock | Silverback </title>
+      <title>Background Services with a Distributed Lock | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Background Services with Distributed Lock | Silverback ">
+      <meta name="title" content="Background Services with a Distributed Lock | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Background Services with a Distributed Lock | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../../public/docfx.min.css">
       <link rel="stylesheet" href="../../public/main.css">
       <meta name="docfx:navrel" content="../../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../../index.html">
-            <img id="logo" class="svg" src="../../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -85,9 +100,148 @@
         </div>
 
         <article data-uid="background-services">
-<h1 id="background-services-with-distributed-lock">Background Services with Distributed Lock</h1>
+<h1 id="background-services-with-a-distributed-lock">Background Services with a Distributed Lock</h1>
 
-<p><em>...coming soon...</em></p>
+<p>When an application is scaled out to several instances, some background tasks must still run on a single node at a time: a periodic cleanup, a data export, a polling job, etc. Silverback uses a distributed lock to ensure that only one instance of the outbox worker is active, and the same building blocks are available to implement your own <a href="https://learn.microsoft.com/en-us/dotnet/core/extensions/hosted-services">hosted services</a>.</p>
+<h2 id="base-classes">Base Classes</h2>
+<p>Two base classes are available in the <code>Silverback.Background</code> namespace (<a href="https://www.nuget.org/packages/Silverback.Core">Silverback.Core</a>):</p>
+<ul>
+<li><a class="xref" href="../../api/Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a> acquires the lock and then calls <code>ExecuteLockedAsync</code> once. The lock is released when the method returns.</li>
+<li><a class="xref" href="../../api/Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a> acquires the lock and calls <code>ExecuteLockedAsync</code> repeatedly, waiting for the specified interval between two executions. The lock is held for as long as the instance keeps running.</li>
+</ul>
+<p>Both classes derive from <code>BackgroundService</code> and receive an <a class="xref" href="../../api/Silverback.Lock.IDistributedLock.html">IDistributedLock</a> in their constructor. The lock is obtained from the <a class="xref" href="../../api/Silverback.Lock.IDistributedLockFactory.html">IDistributedLockFactory</a>, passing the settings of the desired lock implementation.</p>
+<h2 id="implement-the-service">Implement the Service</h2>
+<p>The following example runs a cleanup task every 5 minutes, on one instance at a time, using a PostgreSQL advisory lock.</p>
+<pre><code class="lang-csharp">public class CleanupService : RecurringDistributedBackgroundService
+{
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+
+    public CleanupService(
+        IDistributedLockFactory distributedLockFactory,
+        IServiceProvider serviceProvider,
+        IServiceScopeFactory serviceScopeFactory,
+        IConfiguration configuration,
+        ISilverbackLogger&lt;CleanupService&gt; logger)
+        : base(
+            TimeSpan.FromMinutes(5),
+            distributedLockFactory.GetDistributedLock(
+                new PostgreSqlAdvisoryLockSettings(&quot;cleanup&quot;, configuration.GetConnectionString(&quot;Default&quot;)!),
+                serviceProvider),
+            logger)
+    {
+        _serviceScopeFactory = serviceScopeFactory;
+    }
+
+    protected override async Task ExecuteLockedAsync(CancellationToken stoppingToken)
+    {
+        try
+        {
+            using IServiceScope scope = _serviceScopeFactory.CreateScope();
+            ICleanupJob job = scope.ServiceProvider.GetRequiredService&lt;ICleanupJob&gt;();
+
+            await job.RunAsync(stoppingToken);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            // Log and swallow the exception, to keep the recurring service alive
+        }
+    }
+}
+</code></pre>
+<h2 id="register-the-lock-and-the-service">Register the Lock and the Service</h2>
+<p>The lock implementation must be registered in Silverback, and the service must be registered as a hosted service.</p>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_postgresql" role="tab" aria-controls="tabpanel_1_postgresql" data-tab="postgresql" tabindex="0" aria-selected="true">PostgreSQL</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_ef" role="tab" aria-controls="tabpanel_1_ef" data-tab="ef" tabindex="-1">Entity Framework</a>
+</li>
+</ul>
+<section id="tabpanel_1_postgresql" role="tabpanel" data-tab="postgresql">
+
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .AddPostgreSqlAdvisoryLock();
+
+services.AddHostedService&lt;CleanupService&gt;();
+</code></pre>
+</section>
+<section id="tabpanel_1_ef" role="tabpanel" data-tab="ef" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .AddEntityFrameworkLock();
+
+services.AddHostedService&lt;CleanupService&gt;();
+</code></pre>
+</section>
+</div>
+
+<p>Each storage package provides its own lock settings. You can either instantiate the settings record directly or use the same builder that is used to configure the outbox worker:</p>
+<table>
+<thead>
+<tr>
+<th>Lock</th>
+<th>Settings</th>
+<th>Registration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PostgreSQL advisory lock</td>
+<td><code>new PostgreSqlAdvisoryLockSettings(lockName, connectionString)</code> or <code>new DistributedLockSettingsBuilder().UsePostgreSqlAdvisoryLock(lockName, connectionString).Build()</code></td>
+<td><code>AddPostgreSqlAdvisoryLock()</code></td>
+</tr>
+<tr>
+<td>PostgreSQL table-based lock</td>
+<td><code>new DistributedLockSettingsBuilder().UsePostgreSqlTable(lockName, connectionString).Build()</code></td>
+<td><code>AddPostgreSqlTableLock()</code></td>
+</tr>
+<tr>
+<td>Entity Framework table-based lock</td>
+<td><code>new DistributedLockSettingsBuilder().UseDbContext&lt;TDbContext&gt;(lockName).Build()</code></td>
+<td><code>AddEntityFrameworkLock()</code></td>
+</tr>
+<tr>
+<td>In-memory lock (single process only)</td>
+<td><code>new InMemoryLockSettings(lockName)</code></td>
+<td><code>AddInMemoryLock()</code></td>
+</tr>
+</tbody>
+</table>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The table-based locks require a locks table. With Entity Framework, add a <code>DbSet&lt;SilverbackLock&gt;</code> to your <code>DbContext</code> and create the table via migrations. For PostgreSQL, the table can be created with <code>CreatePostgreSqlLocksTableAsync</code>. See <a class="xref" href="../storage.html">Storage Integration</a> for details.</p>
+</div>
+<div class="TIP">
+<h5>Tip</h5>
+<p>In the tests, call <code>UseInMemoryLock()</code> to replace every distributed lock with the in-memory implementation, without changing the service code.</p>
+</div>
+<p>Passing <code>null</code> settings to <code>GetDistributedLock</code> returns a no-op lock: the task will then run on every instance.</p>
+<h2 id="key-points">Key Points</h2>
+<ul>
+<li><strong>Lock name</strong>: use a dedicated lock name per task. All instances executing the same task must use the same name, while unrelated tasks must use different names to avoid blocking each other.</li>
+<li><strong>Interval</strong>: in the recurring service, the interval is the delay between the end of an execution and the start of the next one, not a fixed schedule.</li>
+<li><strong>Lock loss</strong>: in the recurring service, the token passed to <code>ExecuteLockedAsync</code> is canceled when the service is stopping or the lock is lost (e.g., the database connection drops or a heartbeat fails). The service then tries to acquire the lock again. Always forward the token to your long-running operations.</li>
+<li><strong>Pause and resume</strong>: <a class="xref" href="../../api/Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a> exposes the <code>Pause()</code> and <code>Resume()</code> methods to temporarily suspend the execution without releasing the lock.</li>
+<li><strong>Scoped services</strong>: hosted services are singletons. Create a scope via <code>IServiceScopeFactory</code> to resolve scoped dependencies such as a <code>DbContext</code>.</li>
+</ul>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>An exception thrown by <code>ExecuteLockedAsync</code> (other than a cancellation) is logged and stops the service: the recurring task will not be executed anymore until the application is restarted. Handle the exceptions inside <code>ExecuteLockedAsync</code> if the task must keep running, as shown in the example above.</p>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>The base <a class="xref" href="../../api/Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a> passes only the stopping token to <code>ExecuteLockedAsync</code> and doesn't react to a lost lock. For long-running work, prefer the recurring service or override <code>AcquireLockAndExecuteAsync</code> to observe the <code>LockLostToken</code> of the <a class="xref" href="../../api/Silverback.Lock.DistributedLockHandle.html">DistributedLockHandle</a>.</p>
+</div>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../storage.html">Storage Integration</a></li>
+<li><a class="xref" href="../broker/producing/outbox.html">Transactional Outbox</a></li>
+</ul>
 
 </article>
 
@@ -108,8 +262,17 @@
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../about.html">About</a>
+            <a href="../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

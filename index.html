@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Home | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Home | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="public/docfx.min.css">
       <link rel="stylesheet" href="public/main.css">
       <meta name="docfx:navrel" content="toc.html">
@@ -33,18 +48,18 @@
       <script type="module" src="./public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
   </head>
 
-  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+  <body class="tex2jax_ignore" data-layout="landing" data-yaml-mime="">
     <header class="bg-body border-bottom">
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="index.html">
-            <img id="logo" class="svg" src="images/logo.png" alt="">
+            <img id="logo" class="svg" src="images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -67,66 +82,138 @@
       <div class="content">
         <div class="actionbar">
 
-          <nav id="breadcrumb"></nav>
         </div>
 
         <article data-uid="">
-<h1 id="silverback">Silverback</h1>
 
-<p>Simplicity at its core. Flexibility at its peak. Effortless messaging for .NET.</p>
-<h2 id="what-is-silverback">What is Silverback</h2>
-<p>Silverback is a message bus and broker integration library for .NET.
-It is designed to simplify event-driven architectures and asynchronous messaging, with first-class support for <strong>Apache Kafka</strong> and <strong>MQTT</strong>.</p>
-<p>Silverback aims to be both <strong>high-level</strong> (consistent configuration and developer experience) and <strong>broker-aware</strong>.
-Kafka is a first-class citizen: features like partition-based parallelism, keys/partitioning, tombstones, Schema Registry integration, idempotency, and transactions are surfaced where they matter.</p>
+<div class="sb-hero">
+  <h1>Silverback</h1>
+  <p class="sb-tagline">Simplicity at its core. Flexibility at its peak. Effortless messaging for .NET.</p>
+  <p class="sb-subtitle">A message bus and broker integration library to build event-driven architectures with first-class support for <strong>Apache Kafka</strong> and <strong>MQTT</strong>.</p>
+  <div class="sb-actions">
+    <a class="sb-btn sb-btn-primary" href="guides/quickstart.html"><i class="bi bi-rocket-takeoff"></i> Get Started</a>
+    <a class="sb-btn sb-btn-secondary" href="samples/intro.html"><i class="bi bi-collection"></i> Samples</a>
+    <a class="sb-btn sb-btn-secondary" href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+  </div>
+  <code class="sb-install">dotnet add package <span class="sb-package">Silverback.Integration.Kafka</span></code>
+  <div class="sb-badges">
+    <a href="https://www.nuget.org/packages/Silverback.Core"><img alt="NuGet version" src="https://img.shields.io/nuget/v/Silverback.Core?label=NuGet&color=2f6fb3"></a>
+    <a href="https://www.nuget.org/packages/Silverback.Core"><img alt="NuGet downloads" src="https://img.shields.io/nuget/dt/Silverback.Core?label=downloads&color=2f6fb3"></a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/BEagle1984/silverback?color=2f6fb3"></a>
+  </div>
+</div>
+<h2 id="produce-and-consume-in-a-few-lines">Produce and Consume in a Few Lines</h2>
+<p>Configure the broker connection, the producer and consumer endpoints, and a subscriber. Silverback takes care of serialization, headers, error handling and delivery.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(producer =&gt; producer
+            .Produce&lt;OrderCreated&gt;(endpoint =&gt; endpoint
+                .ProduceTo(&quot;orders&quot;)))
+        .AddConsumer(consumer =&gt; consumer
+            .WithGroupId(&quot;billing&quot;)
+            .Consume&lt;OrderCreated&gt;(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;orders&quot;)
+                .OnError(policy =&gt; policy.Retry(3).ThenSkip()))))
+    .AddSingletonSubscriber&lt;OrderCreatedHandler&gt;();
+</code></pre>
+<pre><code class="lang-csharp">// Publish: the message is routed to the &quot;orders&quot; topic
+await publisher.PublishAsync(new OrderCreated(orderId));
+
+// Consume: the subscriber is invoked for each consumed message
+public class OrderCreatedHandler
+{
+    public Task HandleAsync(OrderCreated message) =&gt; ...;
+}
+</code></pre>
 <h2 id="why-silverback">Why Silverback</h2>
-<ul>
-<li><strong>Kafka-first, not Kafka-only</strong> – a consistent API across brokers, while still leveraging Kafka-specific capabilities.</li>
-<li><strong>Reliable by design</strong> – transactional outbox, error policies, and storage-backed features.</li>
-<li><strong>Operational usability</strong> – structured logging, diagnostics, and tracing.</li>
-<li><strong>Built-in cross-cutting features</strong> – headers, validation, encryption, chunking, batching.</li>
-<li><strong>Testability</strong> – in-memory broker mocks and end-to-end helpers.</li>
-</ul>
-<h2 id="key-features">Key Features</h2>
-<ul>
-<li><strong>In-memory message bus</strong> with optional Rx.NET integration.</li>
-<li><strong>Broker integration</strong> for Kafka and MQTT with a consistent, fluent configuration API.</li>
-<li><strong>Kafka-optimized</strong>: partition-based parallelism, keys/partitioning, tombstones, Schema Registry integration, idempotency, and transactions.</li>
-<li><strong>Transactional outbox</strong> and storage-backed features.</li>
-<li><strong>Error policies</strong> to retry, skip, or move messages.</li>
-<li><strong>Batch processing</strong> and <strong>chunking</strong> for throughput and large payloads.</li>
-<li><strong>Distributed tracing</strong> via <code>System.Diagnostics</code>.</li>
-<li><strong>Testing support</strong> with in-memory brokers and helper APIs.</li>
-</ul>
+<div class="sb-cards">
+  <a class="sb-card" href="guides/broker/connecting.html">
+    <span class="sb-card-icon"><i class="bi bi-diagram-3"></i></span>
+    <span class="sb-card-title">Kafka-First, Not Kafka-Only</span>
+    <p>A consistent, fluent API for Kafka and MQTT that still surfaces partitions, keys, tombstones and transactions.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/producing/outbox.html">
+    <span class="sb-card-icon"><i class="bi bi-shield-check"></i></span>
+    <span class="sb-card-title">Reliable by Design</span>
+    <p>Transactional outbox, error policies (retry, skip, move) and storage-backed offsets and locks.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/consuming/batch-processing.html">
+    <span class="sb-card-icon"><i class="bi bi-lightning-charge"></i></span>
+    <span class="sb-card-title">Built for Throughput</span>
+    <p>Partition-based parallelism, batch processing, streaming and chunking of large payloads.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/producing/serialization.html">
+    <span class="sb-card-icon"><i class="bi bi-layers"></i></span>
+    <span class="sb-card-title">Cross-Cutting Features</span>
+    <p>Serialization, Schema Registry (JSON, Avro, Protobuf), headers, validation and end-to-end encryption.</p>
+  </a>
+  <a class="sb-card" href="guides/logging.html">
+    <span class="sb-card-icon"><i class="bi bi-activity"></i></span>
+    <span class="sb-card-title">Observable</span>
+    <p>Structured logging, distributed tracing via <code>System.Diagnostics</code> and health checks.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/testing.html">
+    <span class="sb-card-icon"><i class="bi bi-check2-circle"></i></span>
+    <span class="sb-card-title">Testable</span>
+    <p>In-memory Kafka and MQTT brokers and testing helpers for fast and reliable end-to-end tests.</p>
+  </a>
+</div>
+<h2 id="explore-the-documentation">Explore the Documentation</h2>
+<div class="sb-cards">
+  <a class="sb-card" href="guides/quickstart.html">
+    <span class="sb-card-title">Quickstart</span>
+    <p>Produce and consume via Kafka in five minutes.</p>
+  </a>
+  <a class="sb-card" href="guides/setup.html">
+    <span class="sb-card-title">Setting Up Silverback</span>
+    <p>Packages, registration and configuration basics.</p>
+  </a>
+  <a class="sb-card" href="guides/bus.html">
+    <span class="sb-card-title">Using the Message Bus</span>
+    <p>Publish and subscribe in-process, behaviors and return values.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/producing/basics.html">
+    <span class="sb-card-title">Producing Messages</span>
+    <p>Endpoints, routing, headers, outbox and Kafka specifics.</p>
+  </a>
+  <a class="sb-card" href="guides/broker/consuming/basics.html">
+    <span class="sb-card-title">Consuming Messages</span>
+    <p>Subscribers, parallelism, batches and error handling.</p>
+  </a>
+  <a class="sb-card" href="samples/intro.html">
+    <span class="sb-card-title">Samples</span>
+    <p>Runnable Kafka and MQTT examples.</p>
+  </a>
+  <a class="sb-card" href="guides/migration-v5.html">
+    <span class="sb-card-title">Migrating from v4</span>
+    <p>Step-by-step upgrade guide to Silverback 5.</p>
+  </a>
+  <a class="sb-card" href="guides/faq.html">
+    <span class="sb-card-title">FAQ and Troubleshooting</span>
+    <p>Answers to the most common questions.</p>
+  </a>
+  <a class="sb-card" href="api/Silverback.html">
+    <span class="sb-card-title">API Reference</span>
+    <p>The complete public API.</p>
+  </a>
+</div>
 <h2 id="supported-net-versions">Supported .NET Versions</h2>
-<p>Starting with v5, Silverback targets the <strong>latest .NET LTS</strong> (Long-Term Support) version only.</p>
-<p>The library is built and tested against the current LTS release.
-It can run on newer compatible .NET versions (including STS releases), but older frameworks are no longer targeted or supported.</p>
-<p>This policy reduces maintenance overhead and keeps Silverback aligned with the .NET platform lifecycle.</p>
-<h2 id="getting-started">Getting Started</h2>
-<ul>
-<li><a class="xref" href="guides/setup.html">Setting Up Silverback</a> – core concepts and configuration.</li>
-<li><a class="xref" href="samples/intro.html">Samples</a> – runnable examples.</li>
-<li><a class="xref" href="api/Silverback.html">API Reference</a> – full API documentation.</li>
-</ul>
+<p>Starting with v5, Silverback targets the <strong>latest .NET LTS</strong> (Long-Term Support) version only. It can run on newer compatible .NET versions (including STS releases), but older frameworks are no longer targeted or supported. This policy reduces maintenance overhead and keeps Silverback aligned with the .NET platform lifecycle.</p>
 <h2 id="community">Community</h2>
 <ul>
 <li><a href="https://github.com/BEagle1984/silverback/issues">Issues</a> – report bugs or suggest improvements.</li>
 <li><a href="https://github.com/BEagle1984/silverback/discussions">Discussions</a> – ask questions and share ideas.</li>
 <li><a class="xref" href="contributing.html">Contributing</a> – how to contribute.</li>
 </ul>
-<div class="IMPORTANT">
-<h5>Important</h5>
-<p>The documentation update for v5 is still in progress. Some sections may be missing or incomplete. Please notify us if you find any mistake or inconsistency.</p>
-</div>
-<div class="TIP">
-<h5>Tip</h5>
-<p>The v4 documentation is still browsable here: <a href="/v4/">silverback-messaging.net/v4/</a></p>
+<p>Silverback is open source, licensed under the MIT License and maintained by Sergio Aquilini. Learn more about the project, its maintainer and the libraries it builds upon in <a class="xref" href="about.html">About Silverback</a>.</p>
+<div class="sb-banner">
+  <i class="bi bi-info-circle"></i> Looking for the previous version? The v4 documentation is still available at <a href="/v4/">silverback-messaging.net/v4</a>. Found a mistake? Please <a href="https://github.com/BEagle1984/silverback/issues">open an issue</a>.
 </div>
 
 </article>
 
-        <div class="next-article d-print-none border-top" id="nextArticle"></div>
 
       </div>
       
@@ -136,8 +223,17 @@ It can run on newer compatible .NET versions (including STS releases), but older
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="about.html">About</a>
+            <a href="contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

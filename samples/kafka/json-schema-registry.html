@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Kafka - JSON with Schema Registry | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Kafka - JSON with Schema Registry | Silverback ">
+      
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Kafka - JSON with Schema Registry | Silverback ">
+      
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
+      <link rel="icon" href="../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/samples/kafka/json-schema-registry.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'dark'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="sample-kafka-json-schema-registry">
+<h1 id="kafka---json-with-schema-registry">Kafka - JSON with Schema Registry</h1>
+
+<p>This sample implements a producer and consumer which take advantage of the schema registry and serialize the messages as JSON, validated against a JSON schema.</p>
+<h2 id="what-this-sample-shows">What This Sample Shows</h2>
+<ul>
+<li>Enabling the Confluent schema registry integration with <code>AddConfluentSchemaRegistry</code>.</li>
+<li>Defining the JSON schema alongside the message class (as a constant excluded from serialization via <code>[JsonIgnore]</code>).</li>
+<li>Registering the schema for the <code>samples-json-schema-registry-value</code> subject at startup through the <code>IConfluentSchemaRegistryClientFactory</code>.</li>
+<li>Serializing with <code>SerializeAsJsonUsingSchemaRegistry</code>, disabling the automatic schema registration and using the latest registered version.</li>
+<li>Deserializing with <code>DeserializeJsonUsingSchemaRegistry</code>.</li>
+</ul>
+<h2 id="how-to-run">How to Run</h2>
+<p>Start the infrastructure as described in <a class="xref" href="../intro.html">Samples</a> (the schema registry is required, listening on <code>localhost:8081</code>), then run the two applications from the repository root.</p>
+<pre><code class="lang-bash">dotnet run --project ./samples/Kafka/JsonSchemaRegistry.Producer/.
+dotnet run --project ./samples/Kafka/JsonSchemaRegistry.Consumer/.
+</code></pre>
+<p>Observe the console output while the messages are produced and consumed.</p>
+<h2 id="common">Common</h2>
+<p>The message being exchanged and its JSON schema are defined in a common project.</p>
+<pre><code class="lang-csharp" name="Common.Message">using Newtonsoft.Json;
+
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Common;
+
+public class SampleMessage
+{
+    [JsonIgnore]
+    public const string Schema =
+        &quot;&quot;&quot;
+        {
+          &quot;$schema&quot;: &quot;http://json-schema.org/draft-04/schema#&quot;,
+          &quot;description&quot;: &quot;&quot;,
+          &quot;type&quot;: &quot;object&quot;,
+          &quot;properties&quot;: {
+            &quot;number&quot;: {
+              &quot;type&quot;: &quot;number&quot;
+            }
+          },
+          &quot;required&quot;: [
+            &quot;number&quot;
+          ]
+        }
+        &quot;&quot;&quot;;
+
+    public int Number { get; set; }
+}
+</code></pre>
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/JsonSchemaRegistry.Common">https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/JsonSchemaRegistry.Common</a></em></p>
+<h2 id="producer">Producer</h2>
+<p>The producer uses a hosted service to register the schema and then publish some messages in the background.</p>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_producer-startup" role="tab" aria-controls="tabpanel_1_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_producer-endpoints" role="tab" aria-controls="tabpanel_1_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_producer-background-service" role="tab" aria-controls="tabpanel_1_producer-background-service" data-tab="producer-background-service" tabindex="-1">Background Service</a>
+</li>
+</ul>
+<section id="tabpanel_1_producer-startup" role="tabpanel" data-tab="producer-startup">
+<pre><code class="lang-csharp" name="Producer.Startup">using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
+
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Producer;
+
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Enable Silverback
+        services.AddSilverback()
+
+            // Use Apache Kafka as message broker and the Confluent schema registry
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka()
+                .AddConfluentSchemaRegistry())
+
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;();
+
+        // Add the hosted service that produces the random sample messages
+        services.AddHostedService&lt;ProducerBackgroundService&gt;();
+    }
+
+    public void Configure()
+    {
+    }
+}
+</code></pre></section>
+<section id="tabpanel_1_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Producer.BrokerClientsConfigurator">using Silverback.Messaging.Configuration;
+using Silverback.Samples.Kafka.JsonSchemaRegistry.Common;
+
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Producer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
+{
+    public void Configure(BrokerClientsConfigurationBuilder builder)
+    {
+        builder
+            .AddKafkaClients(
+                clients =&gt; clients
+
+                    // The bootstrap server address is needed to connect
+                    .WithBootstrapServers(&quot;PLAINTEXT://localhost:19092&quot;)
+
+                    // Add a producer
+                    .AddProducer(
+                        producer =&gt; producer
+
+                            // Produce the AvroMessage to the samples-avro topic
+                            .Produce&lt;SampleMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ProduceTo(&quot;samples-json-schema-registry&quot;)
+
+                                    // Configure JSON serialization
+                                    .SerializeAsJsonUsingSchemaRegistry(
+                                        avro =&gt; avro
+                                            .ConnectToSchemaRegistry(&quot;localhost:8081&quot;)
+                                            .Configure(
+                                                serializer =&gt;
+                                                {
+                                                    serializer.AutoRegisterSchemas = false;
+                                                    serializer.UseLatestVersion = true;
+                                                })))));
+    }
+}
+</code></pre></section>
+<section id="tabpanel_1_producer-background-service" role="tabpanel" data-tab="producer-background-service" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Producer.BackgroundService">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Confluent.SchemaRegistry;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Serialization;
+using Silverback.Samples.Kafka.JsonSchemaRegistry.Common;
+
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Producer;
+
+public class ProducerBackgroundService : BackgroundService
+{
+    private readonly IConfluentSchemaRegistryClientFactory _schemaRegistryClientFactory;
+
+    private readonly IPublisher _publisher;
+
+    private readonly ILogger&lt;ProducerBackgroundService&gt; _logger;
+
+    public ProducerBackgroundService(
+        IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory,
+        IPublisher publisher,
+        ILogger&lt;ProducerBackgroundService&gt; logger)
+    {
+        _schemaRegistryClientFactory = schemaRegistryClientFactory;
+        _publisher = publisher;
+        _logger = logger;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        // Push the Avro schema to the schema registry
+        ISchemaRegistryClient schemaRegistry = _schemaRegistryClientFactory.GetClient(
+            schemaRegistryConfigurationBuilder =&gt; schemaRegistryConfigurationBuilder
+                .WithUrl(&quot;localhost:8081&quot;));
+
+        await schemaRegistry.RegisterSchemaAsync(
+            &quot;samples-json-schema-registry-value&quot;,
+            new Schema(SampleMessage.Schema, null, SchemaType.Json, null, null));
+
+        int number = 0;
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await ProduceMessageAsync(++number);
+
+            await Task.Delay(100, stoppingToken);
+        }
+    }
+
+    private async Task ProduceMessageAsync(int number)
+    {
+        try
+        {
+            await _publisher.PublishAsync(
+                new SampleMessage
+                {
+                    Number = number
+                });
+
+            _logger.LogInformation(&quot;Produced {Number}&quot;, number);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, &quot;Failed to produce {Number}&quot;, number);
+        }
+    }
+}
+</code></pre></section>
+</div>
+
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/JsonSchemaRegistry.Producer">https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/JsonSchemaRegistry.Producer</a></em></p>
+<h2 id="consumer">Consumer</h2>
+<p>The consumer processes the messages and outputs their value to the standard output.</p>
+<div class="tabGroup" id="tabgroup_2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_2_consumer-startup" role="tab" aria-controls="tabpanel_2_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_consumer-endpoints" role="tab" aria-controls="tabpanel_2_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_consumer-subscriber" role="tab" aria-controls="tabpanel_2_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
+</li>
+</ul>
+<section id="tabpanel_2_consumer-startup" role="tabpanel" data-tab="consumer-startup">
+<pre><code class="lang-csharp" name="Consumer.Startup">using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
+
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Consumer;
+
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Enable Silverback
+        services.AddSilverback()
+
+            // Use Apache Kafka as message broker and the Confluent schema registry
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka()
+                .AddConfluentSchemaRegistry())
+
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;()
+
+            // Register the subscribers
+            .AddSingletonSubscriber&lt;SampleMessageSubscriber&gt;();
+    }
+
+    public void Configure()
+    {
+    }
+}
+</code></pre></section>
+<section id="tabpanel_2_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Consumer.BrokerClientsConfigurator">using Silverback.Messaging.Configuration;
+using Silverback.Samples.Kafka.JsonSchemaRegistry.Common;
+
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Consumer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
+{
+    public void Configure(BrokerClientsConfigurationBuilder builder)
+    {
+        builder
+            .AddKafkaClients(
+                clients =&gt; clients
+
+                    // The bootstrap server address is needed to connect
+                    .WithBootstrapServers(&quot;PLAINTEXT://localhost:19092&quot;)
+
+                    // Add a consumer
+                    .AddConsumer(
+                        consumer =&gt; consumer
+
+                            // Set the consumer group id
+                            .WithGroupId(&quot;sample-consumer&quot;)
+
+                            // AutoOffsetReset.Earliest means that the consumer
+                            // must start consuming from the beginning of the topic,
+                            // if no offset was stored for this consumer group
+                            .AutoResetOffsetToEarliest()
+
+                            // Consume the AvroMessage from the samples-avro topic
+                            .Consume&lt;SampleMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ConsumeFrom(&quot;samples-json-schema-registry&quot;)
+
+                                    // Configure JSON deserialization
+                                    .DeserializeJsonUsingSchemaRegistry(
+                                        json =&gt; json
+                                            .ConnectToSchemaRegistry(&quot;localhost:8081&quot;)))));
+    }
+}
+</code></pre></section>
+<section id="tabpanel_2_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Consumer.Subscriber">using Microsoft.Extensions.Logging;
+using Silverback.Samples.Kafka.JsonSchemaRegistry.Common;
+
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Consumer;
+
+public class SampleMessageSubscriber
+{
+    private readonly ILogger&lt;SampleMessageSubscriber&gt; _logger;
+
+    public SampleMessageSubscriber(ILogger&lt;SampleMessageSubscriber&gt; logger)
+    {
+        _logger = logger;
+    }
+
+    public void OnMessageReceived(SampleMessage message) =&gt;
+        _logger.LogInformation(&quot;Received {MessageNumber}&quot;, message.Number);
+}
+</code></pre></section>
+</div>
+
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/JsonSchemaRegistry.Consumer">https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/JsonSchemaRegistry.Consumer</a></em></p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../guides/broker/producing/kafka/schema-registry.html">Kafka Schema Registry</a></li>
+<li><a class="xref" href="../../guides/broker/consuming/kafka/schema-registry.html">Kafka Schema Registry</a></li>
+<li><a class="xref" href="../../guides/broker/producing/serialization.html">Serializing the Produced Messages</a></li>
+<li><a class="xref" href="../../guides/broker/consuming/deserialization.html">Deserializing the Consumed Messages</a></li>
+<li><a class="xref" href="avro.html">Kafka - Avro</a> sample</li>
+</ul>
+
+</article>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+      
+      <div class="affix">
+        <div class="contribution d-print-none">
+          <a href="https://github.com/beagle1984/silverback/blob/master/docs/samples/kafka/json-schema-registry.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../about.html">About</a>
+            <a href="../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

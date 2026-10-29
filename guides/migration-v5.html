@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Migrating from v4 to v5 | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Migrating from v4 to v5 | Silverback ">
+      
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Migrating from v4 to v5 | Silverback ">
+      
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/guides/migration-v5.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'dark'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="migration-v5">
+<h1 id="migrating-from-v4-to-v5">Migrating from v4 to v5</h1>
+
+<p>Silverback 5 is a complete refactoring of the library. Most concepts (message bus, subscribers, behaviors, producers and consumers, error policies, outbox) are still there, but the configuration API, the storage layer and several interfaces changed. This guide walks you through the most common steps to upgrade an existing v4 application.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>The <a class="xref" href="../changelog/500.html">release notes</a> contain the complete list of the new features and breaking changes.</p>
+</div>
+<h2 id="1-target-net-10-and-update-the-packages">1. Target .NET 10 and Update the Packages</h2>
+<p>Starting with v5, Silverback targets only the latest .NET LTS release (currently .NET 10).</p>
+<ul>
+<li>Update your projects to <code>net10.0</code>.</li>
+<li>Upgrade all <code>Silverback.*</code> packages to the same 5.x version.</li>
+<li>The RabbitMQ integration has been discontinued: <a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ">Silverback.Integration.RabbitMQ</a> is not available for v5.</li>
+<li>The storage-dependent features moved to the new storage packages: <a href="https://www.nuget.org/packages/Silverback.Storage.EntityFramework/">Silverback.Storage.EntityFramework</a>, <a href="https://www.nuget.org/packages/Silverback.Storage.PostgreSql/">Silverback.Storage.PostgreSql</a>, <a href="https://www.nuget.org/packages/Silverback.Storage.Sqlite/">Silverback.Storage.Sqlite</a> and <a href="https://www.nuget.org/packages/Silverback.Storage.Memory/">Silverback.Storage.Memory</a> (see <a class="xref" href="storage.html">Storage Integration</a>).</li>
+</ul>
+<p>Some extension methods moved to different namespaces, so a few <code>using</code> directives need to be adjusted (e.g. <code>Silverback.Messaging.Configuration</code> → <code>Silverback.Configuration</code>).</p>
+<h2 id="2-migrate-the-endpoints-configuration">2. Migrate the Endpoints Configuration</h2>
+<p>The biggest change is the configuration of the broker endpoints. <code>AddKafkaEndpoints</code>/<code>AddMqttEndpoints</code> with <code>AddOutbound</code>/<code>AddInbound</code> have been replaced by <code>AddKafkaClients</code>/<code>AddMqttClients</code>, where you configure the clients (producers and consumers) and their typed endpoints using <code>Produce&lt;TMessage&gt;</code> and <code>Consume&lt;TMessage&gt;</code>. The Confluent and MQTTnet settings are now exposed as fluent configuration methods instead of the <code>Configure</code> callback.</p>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_v4" role="tab" aria-controls="tabpanel_1_v4" data-tab="v4" tabindex="0" aria-selected="true">v4</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_v5" role="tab" aria-controls="tabpanel_1_v5" data-tab="v5" tabindex="-1">v5</a>
+</li>
+</ul>
+<section id="tabpanel_1_v4" role="tabpanel" data-tab="v4">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaEndpoints(endpoints =&gt; endpoints
+        .Configure(config =&gt;
+        {
+            config.BootstrapServers = &quot;PLAINTEXT://localhost:9092&quot;;
+        })
+        .AddOutbound&lt;OrderCreatedEvent&gt;(endpoint =&gt; endpoint
+            .ProduceTo(&quot;order-events&quot;))
+        .AddInbound(endpoint =&gt; endpoint
+            .ConsumeFrom(&quot;inventory-events&quot;)
+            .Configure(config =&gt;
+            {
+                config.GroupId = &quot;my-consumer&quot;;
+                config.AutoOffsetReset = AutoOffsetResetType.Earliest;
+            })
+            .OnError(policy =&gt; policy.Retry(3).ThenSkip())));
+</code></pre>
+</section>
+<section id="tabpanel_1_v5" role="tabpanel" data-tab="v5" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(producer =&gt; producer
+            .Produce&lt;OrderCreatedEvent&gt;(endpoint =&gt; endpoint
+                .ProduceTo(&quot;order-events&quot;)))
+        .AddConsumer(consumer =&gt; consumer
+            .WithGroupId(&quot;my-consumer&quot;)
+            .AutoResetOffsetToEarliest()
+            .Consume&lt;InventoryEvent&gt;(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;inventory-events&quot;)
+                .OnError(policy =&gt; policy.Retry(3).ThenSkip()))));
+</code></pre>
+</section>
+</div>
+
+<p>Things to keep in mind:</p>
+<ul>
+<li>In Kafka, each <code>AddProducer</code>/<code>AddConsumer</code> creates a dedicated client. Group multiple endpoints in the same client to reduce the number of connections. With MQTT, a single client (<code>AddClient</code>) can both produce and consume.</li>
+<li>The message type passed to <code>Consume&lt;TMessage&gt;</code> is used to select the default deserializer, so the <code>x-message-type</code> header is not needed anymore for non-polymorphic topics (see <a class="xref" href="broker/consuming/deserialization.html">Deserializing the Consumed Messages</a>).</li>
+<li>Some settings moved from the endpoint to the consumer, such as the parallelism (<code>LimitParallelism</code>, <code>ProcessAllPartitionsTogether</code>, <code>LimitBackpressure</code>).</li>
+<li><code>IEndpointsConfigurator</code> has been replaced by <a class="xref" href="../api/Silverback.Messaging.Configuration.IBrokerClientsConfigurator.html">IBrokerClientsConfigurator</a>, registered via <code>AddBrokerClientsConfigurator</code>.</li>
+<li>Assigning a name to the clients and endpoints (e.g. <code>AddProducer(&quot;producer1&quot;, ...)</code>, <code>Produce&lt;T&gt;(&quot;endpoint1&quot;, ...)</code>) is optional but recommended, and required when using the outbox.</li>
+</ul>
+<p>See <a class="xref" href="broker/connecting.html">Connecting to a Message Broker</a>, <a class="xref" href="broker/producing/basics.html">Producing Messages</a> and <a class="xref" href="broker/consuming/basics.html">Consuming Messages</a> for the details.</p>
+<h2 id="3-replace-the-specialized-publishers">3. Replace the Specialized Publishers</h2>
+<p><code>IEventPublisher</code>, <code>ICommandPublisher</code> and <code>IQueryPublisher</code> have been removed (as well as the <code>UseModel</code> configuration method). Use the equivalent extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (from the <code>Silverback.Core.Model</code> package) or inject the <a class="xref" href="../api/Silverback.Messaging.Publishing.IApplicationPublisher.html">IApplicationPublisher</a> if you prefer a more easily mockable interface.</p>
+<div class="tabGroup" id="tabgroup_2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_2_v4" role="tab" aria-controls="tabpanel_2_v4" data-tab="v4" tabindex="0" aria-selected="true">v4</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_v5" role="tab" aria-controls="tabpanel_2_v5" data-tab="v5" tabindex="-1">v5</a>
+</li>
+</ul>
+<section id="tabpanel_2_v4" role="tabpanel" data-tab="v4">
+
+<pre><code class="lang-csharp">public class OrderService
+{
+    private readonly IEventPublisher _publisher;
+
+    public OrderService(IEventPublisher publisher) =&gt; _publisher = publisher;
+
+    public Task PlaceOrderAsync(Order order) =&gt;
+        _publisher.PublishAsync(new OrderCreatedEvent(order.Id));
+}
+</code></pre>
+</section>
+<section id="tabpanel_2_v5" role="tabpanel" data-tab="v5" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class OrderService
+{
+    private readonly IPublisher _publisher;
+
+    public OrderService(IPublisher publisher) =&gt; _publisher = publisher;
+
+    public Task PlaceOrderAsync(Order order) =&gt;
+        _publisher.PublishEventAsync(new OrderCreatedEvent(order.Id));
+}
+</code></pre>
+</section>
+</div>
+
+<p>The <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> is now registered as transient and can be injected into singleton services. All publishing methods accept a <code>CancellationToken</code>.</p>
+<h2 id="4-review-the-behaviors-and-callbacks">4. Review the Behaviors and Callbacks</h2>
+<ul>
+<li><a class="xref" href="../api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a>, <a class="xref" href="../api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> and <a class="xref" href="../api/Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a> now return <code>ValueTask</code> and receive a <code>CancellationToken</code> (see <a class="xref" href="bus.html">Using the Message Bus</a>, <a class="xref" href="broker/producing/behaviors.html">Producer Behaviors Pipeline</a> and <a class="xref" href="broker/consuming/behaviors.html">Consumer Behaviors Pipeline</a>).</li>
+<li><code>IBrokerCallback</code> and the <code>Add*BrokerCallbackHandler</code> methods have been renamed to <code>IBrokerClientCallback</code> and <code>Add*BrokerClientCallback</code> (see <a class="xref" href="broker/callbacks.html">Broker Callbacks</a>).</li>
+<li><code>IBroker</code> and <code>IBrokerCollection</code> have been removed. Use <code>IProducerCollection</code>, <code>IConsumerCollection</code> and <a class="xref" href="../api/Silverback.Messaging.Broker.IBrokerClientCollection.html">IBrokerClientCollection</a> instead (see <a class="xref" href="broker/connecting.html">Connecting to a Message Broker</a>).</li>
+<li>The <code>IMessageSerializer</code> interface has been split into <a class="xref" href="../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> and <a class="xref" href="../api/Silverback.Messaging.Serialization.IMessageDeserializer.html">IMessageDeserializer</a>.</li>
+</ul>
+<h2 id="5-migrate-the-outbox-and-the-storage">5. Migrate the Outbox and the Storage</h2>
+<p>The outbox and all storage-backed features have been rewritten from scratch.</p>
+<ul>
+<li>Reference the storage package matching your database and configure the outbox and the outbox worker as shown in <a class="xref" href="broker/producing/outbox.html">Transactional Outbox</a>.</li>
+<li>With Entity Framework, add the <code>SilverbackOutboxMessage</code> (and, if used, the <code>SilverbackLock</code>) entities to your <code>DbContext</code> and create a migration. The table schema differs from v4.</li>
+<li>Writing to the outbox is not automatically part of your database transaction anymore: begin the transaction explicitly and enlist it in the publisher (<code>EnlistDbTransaction</code>) to keep the application changes and the outbox messages atomic.</li>
+<li>The exactly-once guard (inbound log / offset store) has been replaced by the client-side offset storage (see <a class="xref" href="broker/consuming/kafka/offset.html">Kafka Offset Storage</a>).</li>
+</ul>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Make sure the v4 outbox is empty before switching to v5, since the messages stored by v4 cannot be processed by the new outbox worker.</p>
+</div>
+<h2 id="6-check-the-changed-defaults">6. Check the Changed Defaults</h2>
+<p>A few defaults changed and might affect the behavior of your application:</p>
+<ul>
+<li>The Kafka key isn't set to a random <code>Guid</code> anymore but is <code>null</code> unless explicitly set (see <a class="xref" href="broker/producing/kafka/partitioning.html">Kafka Keys and Partitioning</a>).</li>
+<li>The JSON deserializers don't use the <code>x-message-type</code> header by default. Enable it explicitly if you rely on polymorphic deserialization (see <a class="xref" href="broker/consuming/deserialization.html">Deserializing the Consumed Messages</a>).</li>
+<li>The Newtonsoft.Json serializer uses <code>TypeNameHandling.None</code> and the Newtonsoft.Json default value handling.</li>
+<li>The Kafka consumer processes up to 100 partitions in parallel (<code>MaxDegreeOfParallelism</code>) and buffers up to 50 messages per partition (<code>BackpressureLimit</code>).</li>
+<li>The MQTT producer doesn't throw anymore if no subscriber is consuming the produced message.</li>
+</ul>
+<h2 id="7-update-the-tests">7. Update the Tests</h2>
+<p>The testing helpers (<a class="xref" href="../api/Silverback.Testing.ITestingHelper.html">ITestingHelper</a>, <a class="xref" href="../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a> and <a class="xref" href="../api/Silverback.Testing.IMqttTestingHelper.html">IMqttTestingHelper</a>) changed in a few places, and new envelope builders are available to create test envelopes. See <a class="xref" href="broker/testing.html">Testing</a>.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../changelog/500.html">Silverback 5 Release Notes</a></li>
+<li><a class="xref" href="setup.html">Setting Up Silverback</a></li>
+<li><a class="xref" href="broker/connecting.html">Connecting to a Message Broker</a></li>
+<li><a class="xref" href="../samples/intro.html">Samples</a></li>
+<li><a href="/v4/">v4 documentation</a></li>
+</ul>
+
+</article>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+      
+      <div class="affix">
+        <div class="contribution d-print-none">
+          <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/migration-v5.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

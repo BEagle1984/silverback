@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Error Handling Policies | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Error Handling Policies | Silverback ">
+      
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Error Handling Policies | Silverback ">
+      
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
+      <link rel="icon" href="../../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+      <link rel="stylesheet" href="../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../toc.html">
+      <meta name="docfx:tocrel" content="../../toc.html">
+      
+      <meta name="docfx:rel" content="../../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/consuming/error-policies.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'dark'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../index.html">
+            <img id="logo" class="svg" src="../../../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="error-policies">
+<h1 id="error-handling-policies">Error Handling Policies</h1>
+
+<p>When a subscriber throws while processing a consumed message, or the message cannot be deserialized, decrypted or validated, Silverback applies the error policy configured for the consumer endpoint. Error policies let you retry the processing, skip the message, move it to another topic, or stop the consumer.</p>
+<p>This guide covers the built-in policies, how to combine them, and the caveats to be aware of.</p>
+<h2 id="default-behavior">Default Behavior</h2>
+<p>If no error policy is configured, the <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a> is applied: the exception is logged and the consumer is stopped and disconnected. The failed message isn't committed (Kafka) or acknowledged (MQTT), so it will be consumed again once the consumer is restarted.</p>
+<p>This is a safe default, because no message is ever lost, but a single faulty message (a so-called <em>poison message</em>) will block the consumer until the issue is fixed. In most cases you will want to configure an explicit policy.</p>
+<h2 id="configure-a-policy">Configure a Policy</h2>
+<p>The error policy is configured per endpoint, using <code>OnError</code>.</p>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_kafka" role="tab" aria-controls="tabpanel_1_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_mqtt" role="tab" aria-controls="tabpanel_1_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_1_kafka" role="tabpanel" data-tab="kafka">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .WithGroupId(&quot;my-group&quot;)
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .OnError(policy =&gt; policy.Retry(3).ThenSkip()))));
+</code></pre>
+</section>
+<section id="tabpanel_1_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
+    .AddMqttClients(clients =&gt; clients
+        .ConnectViaTcp(&quot;localhost&quot;)
+        .AddClient(&quot;my-client&quot;, client =&gt; client
+            .WithClientId(&quot;client1&quot;)
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;messages/my&quot;)
+                .WithAtLeastOnceQoS()
+                .OnError(policy =&gt; policy.Retry(3).ThenSkip()))));
+</code></pre>
+</section>
+</div>
+
+<p>The <code>OnError</code> method accepts either a builder action (receiving an <a class="xref" href="../../../api/Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a>) or an <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a> instance (see <a href="#custom-policies">Custom Policies</a>).</p>
+<h2 id="built-in-policies">Built-in Policies</h2>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Builder method</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a></td>
+<td><code>Stop()</code></td>
+<td>Stops the consumer (default). The message isn't committed.</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a></td>
+<td><code>Skip()</code></td>
+<td>Logs the error, ignores the message and commits it, so that the consumer can proceed with the next one.</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a></td>
+<td><code>Retry()</code></td>
+<td>Rolls back and processes the same message again, optionally after a delay.</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></td>
+<td><code>MoveTo(...)</code></td>
+<td>Produces the failed message to another endpoint (or to the end of the same topic) and commits it.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stop">Stop</h3>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy.Stop())
+</code></pre>
+<p>Explicitly configuring <code>Stop()</code> is only useful as the last element of a chain, or in combination with the <a href="#apply-rules">apply rules</a> to stop the consumer only for specific exceptions.</p>
+<h3 id="skip">Skip</h3>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy.Skip())
+</code></pre>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>The skipped message is lost. Combine <code>Skip()</code> with logging or with the <a href="#publish-events">Publish</a> feature if you need to keep track of the skipped messages, or use <code>MoveTo</code> to park them in a dead letter topic instead.</p>
+</div>
+<h3 id="retry">Retry</h3>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy.Retry(5))
+</code></pre>
+<p>The retries count specifies how many times the processing will be retried; <code>Retry(5)</code> results in up to 6 processing attempts in total. You can alternatively specify the count with <code>WithMaxRetries</code>:</p>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy.Retry(retryPolicy =&gt; retryPolicy.WithMaxRetries(5)))
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p><code>Retry()</code> without a retries count retries indefinitely, until the processing succeeds.</p>
+</div>
+<p>If the processing still fails after the last retry, the next policy in the chain is applied. If there is no next policy, the consumer is stopped.</p>
+<h4 id="retry-delay">Retry Delay</h4>
+<p>By default, the message is retried immediately. Use one of the following methods of the <a class="xref" href="../../../api/Silverback.Messaging.Configuration.RetryErrorPolicyBuilder.html">RetryErrorPolicyBuilder</a> to delay the retries:</p>
+<ul>
+<li><code>WithInterval(TimeSpan interval)</code>: waits a fixed interval before each retry.</li>
+<li><code>WithIncrementalDelay(TimeSpan initialDelay, TimeSpan delayIncrement, TimeSpan? maxDelay = null)</code>: starts from the initial delay and adds the increment at each failed attempt, optionally capping the delay to <code>maxDelay</code>.</li>
+<li><code>WithExponentialDelay(TimeSpan initialDelay, double delayFactor, TimeSpan? maxDelay = null)</code>: starts from the initial delay and multiplies it by the factor at each failed attempt, optionally capping the delay to <code>maxDelay</code>.</li>
+</ul>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy
+    .Retry(3, retryPolicy =&gt; retryPolicy.WithInterval(TimeSpan.FromSeconds(1)))
+    .ThenSkip())
+</code></pre>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy
+    .Retry(10, retryPolicy =&gt; retryPolicy
+        .WithExponentialDelay(
+            TimeSpan.FromMilliseconds(100),
+            2,
+            TimeSpan.FromSeconds(30)))
+    .ThenMoveTo(&quot;my-topic-dlq&quot;))
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>The delay is applied in-process, while the consumer holds on to the failed message: no further message is processed from the same partition (Kafka) or by the same processing channel (MQTT) in the meantime. Long delays can therefore cause broker timeouts. See <a href="#kafka-considerations">Kafka Considerations</a> and <a href="#mqtt-considerations">MQTT Considerations</a>.</p>
+</div>
+<h3 id="move">Move</h3>
+<p>The <code>MoveTo</code> policy produces the failed message to another endpoint and then commits it, so that the consumer can proceed. A typical use case is a <em>dead letter</em> topic, where the failed messages are parked for later analysis or reprocessing.</p>
+<p>The endpoint name can be either the name of a topic or the friendly name of an endpoint configured in a producer. In both cases a producer endpoint must be configured: Silverback uses that producer (and its configuration, including the serializer) to produce the moved message.</p>
+<div class="tabGroup" id="tabgroup_2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_2_kafka" role="tab" aria-controls="tabpanel_2_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_mqtt" role="tab" aria-controls="tabpanel_2_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_2_kafka" role="tabpanel" data-tab="kafka">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;dead-letter&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic-dlq&quot;)))
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .WithGroupId(&quot;my-group&quot;)
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .OnError(policy =&gt; policy
+                    .Retry(3)
+                    .ThenMoveTo(&quot;dead-letter&quot;)))));
+</code></pre>
+</section>
+<section id="tabpanel_2_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
+    .AddMqttClients(clients =&gt; clients
+        .ConnectViaTcp(&quot;localhost&quot;)
+        .AddClient(&quot;my-client&quot;, client =&gt; client
+            .WithClientId(&quot;client1&quot;)
+            .Produce&lt;MyMessage&gt;(&quot;dead-letter&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;messages/my/dlq&quot;)
+                .WithAtLeastOnceQoS())
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;messages/my&quot;)
+                .WithAtLeastOnceQoS()
+                .OnError(policy =&gt; policy
+                    .Retry(3)
+                    .ThenMoveTo(&quot;dead-letter&quot;)))));
+</code></pre>
+</section>
+</div>
+
+<div class="NOTE">
+<h5>Note</h5>
+<p>If the moved message was successfully deserialized, the deserialized message is serialized again by the destination producer. Otherwise (for example, if the deserialization failed), the raw message is moved as-is. The original headers are preserved.</p>
+</div>
+<h4 id="transform-the-moved-message">Transform the Moved Message</h4>
+<p>Use <code>Transform</code> to modify the outbound envelope before it is produced, for example to add some headers. An overload also receives the exception.</p>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy
+    .MoveTo(
+        &quot;dead-letter&quot;,
+        movePolicy =&gt; movePolicy
+            .Transform((envelope, exception) =&gt; envelope?.AddOrReplaceHeader(&quot;x-error-message&quot;, exception.Message))))
+</code></pre>
+<h4 id="move-to-the-same-topic">Move to the Same Topic</h4>
+<p>Moving the message to the end of the same topic is a way to retry it later without blocking the consumption of the subsequent messages. In this case, limit the number of attempts with <code>WithMaxRetries</code>, otherwise a message that keeps failing will be moved over and over.</p>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy
+    .MoveTo(
+        &quot;my-topic&quot;,
+        movePolicy =&gt; movePolicy.WithMaxRetries(10))
+    .ThenSkip())
+</code></pre>
+<p>The failed attempts count travels with the moved message in the <code>x-failed-attempts</code> header (see <a href="#failed-attempts-header">Failed Attempts Header</a>), allowing Silverback to keep counting when the message is consumed again.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Moving the message breaks the ordering guarantees: the moved message will be processed after the messages that were already in the destination topic.</p>
+</div>
+<h4 id="kafka-headers-added-to-the-moved-message">Kafka Headers Added to the Moved Message</h4>
+<p>When moving a message consumed from Kafka, Silverback adds some headers describing the source of the message and the failure:</p>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x-source-topic</code></td>
+<td>The topic the message was consumed from.</td>
+</tr>
+<tr>
+<td><code>x-source-partition</code></td>
+<td>The source partition.</td>
+</tr>
+<tr>
+<td><code>x-source-offset</code></td>
+<td>The source offset.</td>
+</tr>
+<tr>
+<td><code>x-source-timestamp</code></td>
+<td>The timestamp of the source message.</td>
+</tr>
+<tr>
+<td><code>x-source-consumer-group-id</code></td>
+<td>The consumer group id.</td>
+</tr>
+<tr>
+<td><code>x-failure-reason</code></td>
+<td>The type of the innermost exception and its source.</td>
+</tr>
+</tbody>
+</table>
+<p>The header names are defined in <a class="xref" href="../../../api/Silverback.Messaging.Messages.KafkaMessageHeaders.html">KafkaMessageHeaders</a> and <a class="xref" href="../../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html">DefaultMessageHeaders</a>. See also <a class="xref" href="../default-headers.html">Default Headers</a>.</p>
+<h2 id="chaining-policies">Chaining Policies</h2>
+<p>Policies can be chained to define an escalation path. Start the chain with one of the <code>IErrorPolicyBuilder</code> methods (<code>Stop</code>, <code>Skip</code>, <code>Retry</code>, <code>MoveTo</code>) and continue with the corresponding <code>Then*</code> methods (<code>ThenStop</code>, <code>ThenSkip</code>, <code>ThenRetry</code>, <code>ThenMoveTo</code>).</p>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy
+    .Retry(3, retryPolicy =&gt; retryPolicy.WithInterval(TimeSpan.FromSeconds(1)))
+    .ThenRetry(5, retryPolicy =&gt; retryPolicy.WithInterval(TimeSpan.FromSeconds(30)))
+    .ThenMoveTo(&quot;dead-letter&quot;))
+</code></pre>
+<p>The policies are evaluated in order, each time the processing fails, and the first policy that can handle the error is applied. A policy is skipped if:</p>
+<ul>
+<li>its maximum number of attempts (<code>Retry(n)</code>, <code>WithMaxRetries(n)</code>) has been exceeded;</li>
+<li>the exception doesn't match its <a href="#apply-rules">apply rules</a>;</li>
+<li>the policy can't handle the message (for example, <code>MoveTo</code> can't move a <a href="#batches-chunking-and-sequences">sequence</a>).</li>
+</ul>
+<p>The maximum attempts of the chained policies are cumulative. In the example above, the first policy handles the first 3 failures, the second policy the next 5, and the message is moved after the ninth failed attempt.</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>If none of the policies in the chain can handle the error, the exception is rethrown and the consumer is stopped, exactly as with the default policy. End the chain with <code>Skip</code>, <code>MoveTo</code> (without a limit), or an unlimited <code>Retry</code> if the consumer must never stop.</p>
+</div>
+<h2 id="failed-attempts-header">Failed Attempts Header</h2>
+<p>Each time the processing fails, the consumer increments the failed attempts counter of the message and stores it in the <code>x-failed-attempts</code> header of the inbound envelope (<a class="xref" href="../../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html">DefaultMessageHeaders</a>.<code>FailedAttempts</code>). The error policies use this value to determine whether their maximum attempts have been reached, and the retry policy to compute the delay.</p>
+<p>The counter is kept in memory by the consumer, using the header value as the starting point. Because of this:</p>
+<ul>
+<li>when a message is moved with <code>MoveTo</code>, the header is produced along with it and the count continues when the message is consumed again;</li>
+<li>the in-memory count isn't persisted: after a restart, a message that wasn't moved starts counting from zero again.</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>MQTT 3.1.1 doesn't support headers, so the <code>x-failed-attempts</code> header can't be transferred with the moved message. For this reason, Silverback rejects a configuration that sets a maximum number of attempts on a policy other than <code>Retry</code> when using MQTT 3.1.1. See <a class="xref" href="../mqtt.html">MQTT Specifics</a>.</p>
+</div>
+<h2 id="apply-rules">Apply Rules</h2>
+<p>By default, a policy is applied to any exception. Use the methods inherited from <a class="xref" href="../../../api/Silverback.Messaging.Configuration.ErrorPolicyBaseBuilder-1.html">ErrorPolicyBaseBuilder&lt;TBuilder&gt;</a> to restrict it:</p>
+<ul>
+<li><code>ApplyTo&lt;TException&gt;()</code> / <code>ApplyTo(Type exceptionType)</code>: applies the policy only to the specified exception types (and their subclasses). Can be called multiple times.</li>
+<li><code>Exclude&lt;TException&gt;()</code> / <code>Exclude(Type exceptionType)</code>: never applies the policy to the specified exception types (and their subclasses). Can be called multiple times.</li>
+<li><code>ApplyWhen(Func&lt;IRawInboundEnvelope, bool&gt;)</code> / <code>ApplyWhen(Func&lt;IRawInboundEnvelope, Exception, bool&gt;)</code>: applies the policy only when the custom function returns <code>true</code>.</li>
+</ul>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy
+    .Retry(5, retryPolicy =&gt; retryPolicy
+        .ApplyTo&lt;TimeoutException&gt;()
+        .ApplyTo&lt;HttpRequestException&gt;()
+        .WithIncrementalDelay(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)))
+    .ThenMoveTo(
+        &quot;dead-letter&quot;,
+        movePolicy =&gt; movePolicy
+            .Exclude&lt;MyFatalException&gt;()
+            .ApplyWhen((envelope, exception) =&gt; !envelope.Headers.Contains(&quot;x-do-not-move&quot;)))
+    .ThenStop())
+</code></pre>
+<p>In this example, only the transient errors are retried; all other errors (and the transient errors still failing after 5 retries) cause the message to be moved, unless it's a <code>MyFatalException</code> or the message carries the <code>x-do-not-move</code> header, in which case the consumer is stopped.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The <code>ApplyWhen</code> and <code>Publish</code> functions receive the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>, not the deserialized message, since the error could have occurred before or during the deserialization. Cast it to <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> to access the deserialized message, when available.</p>
+</div>
+<h2 id="publish-events">Publish Events</h2>
+<p>Each policy can publish a message to the internal <a class="xref" href="../../bus.html">Using the Message Bus</a> when it's applied, for example to raise an alert or to track the skipped messages. Use <code>Publish</code> with a factory function receiving the envelope (and optionally the exception). If the function returns <code>null</code>, nothing is published.</p>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy
+    .Retry(3, retryPolicy =&gt; retryPolicy.WithInterval(TimeSpan.FromSeconds(1)))
+    .ThenSkip(skipPolicy =&gt; skipPolicy
+        .Publish((envelope, exception) =&gt; new ProcessingFailedEvent(envelope, exception))))
+</code></pre>
+<pre><code class="lang-csharp">public class ProcessingFailedEventHandler
+{
+    public Task HandleAsync(ProcessingFailedEvent failedEvent) =&gt;
+        _alertService.NotifyAsync(failedEvent);
+}
+</code></pre>
+<p>The message is published in a new dependency injection scope, after the policy has been applied. It's published to the internal bus and is therefore produced to a broker only if an outbound endpoint is configured for its type.</p>
+<h2 id="batches-chunking-and-sequences">Batches, Chunking and Sequences</h2>
+<p>When the consumed messages are part of a sequence (a batch, a chunked message, etc.), the error policy is applied to the whole sequence:</p>
+<ul>
+<li><strong>Batch processing</strong> (<a class="xref" href="batch-processing.html">Batch Processing Consumed Messages</a>): if the subscriber throws, the whole batch is rolled back. <code>Retry</code> processes the whole batch again, and <code>Skip</code> skips all the messages in the batch.</li>
+<li><strong>Chunking</strong> (<a class="xref" href="chunking.html">Consuming Chunked Messages</a>): all chunks belonging to the same message are retried or skipped together.</li>
+<li><strong>MoveTo</strong> can't move a sequence: the policy logs a warning and is skipped, falling back to the next policy in the chain (or stopping the consumer, if there is none). Don't rely on <code>MoveTo</code> with batch processing or chunked messages; use <code>Skip</code> with <code>Publish</code> instead.</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Error policies aren't supported when streaming is enabled via <code>AllowStreaming()</code>. Silverback rejects any policy other than the default stop policy in that case.</p>
+</div>
+<h2 id="kafka-considerations">Kafka Considerations</h2>
+<p>The Kafka consumer polls the broker in a background loop, which pushes the consumed messages into a bounded buffer per partition (see <code>LimitBackpressure</code> in <a class="xref" href="basics.html">Consuming Messages</a>). While a message is being retried, the partition doesn't advance; once the buffer is full, the loop waits and stops polling.</p>
+<p>If no poll occurs within <code>max.poll.interval.ms</code> (5 minutes by default), the consumer is considered failed and is removed from the group, triggering a rebalance. When using long retry delays or many retries, make sure the total time spent retrying stays below that threshold, or increase it:</p>
+<pre><code class="lang-csharp">.AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+    .WithGroupId(&quot;my-group&quot;)
+    .WithMaxPollIntervalMs(600000)
+    .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+        .ConsumeFrom(&quot;my-topic&quot;)
+        .OnError(policy =&gt; policy
+            .Retry(5, retryPolicy =&gt; retryPolicy.WithInterval(TimeSpan.FromMinutes(1)))
+            .ThenSkip())))
+</code></pre>
+<p>Other things to consider:</p>
+<ul>
+<li>Partitions are processed independently by default, so a retry only blocks the affected partition. With <code>ProcessAllPartitionsTogether()</code> a retry blocks the consumption of all partitions.</li>
+<li>Since a rollback seeks back to the failed offset, the messages already buffered for that partition are consumed again after the retry.</li>
+<li>For long-lasting failures, prefer moving the message to a retry or dead letter topic over long in-process retries.</li>
+</ul>
+<h2 id="mqtt-considerations">MQTT Considerations</h2>
+<p>MQTT can't re-read messages from the broker: the retry policy reprocesses the message that is held locally, and the message is acknowledged only after it has been successfully processed, skipped or moved.</p>
+<ul>
+<li>While a message is being retried, the processing channel it belongs to is blocked. With the default sequential processing, this means that the whole client stops processing messages; consider <code>EnableParallelProcessing</code> (see <a class="xref" href="../mqtt.html">MQTT Specifics</a>).</li>
+<li>The broker only delivers a limited number of unacknowledged QoS 1/2 messages (<em>Receive Maximum</em>, configurable via <code>LimitUnacknowledgedPublications</code>), so new messages stop flowing until the failed message is acknowledged.</li>
+<li>If the client disconnects while retrying, the unacknowledged message is redelivered by the broker only if a persistent session and QoS 1 or 2 are used.</li>
+<li>With MQTT 3.1.1, headers aren't supported, so the failed attempts count can't be transferred with moved messages (see <a href="#failed-attempts-header">Failed Attempts Header</a>).</li>
+</ul>
+<h2 id="custom-policies">Custom Policies</h2>
+<p>You can implement your own policy by implementing <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>, which builds the actual <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicyImplementation.html">IErrorPolicyImplementation</a>, and passing an instance to <code>OnError</code>.</p>
+<pre><code class="lang-csharp">public class MyErrorPolicy : IErrorPolicy
+{
+    public IErrorPolicyImplementation Build(IServiceProvider serviceProvider) =&gt;
+        new MyErrorPolicyImplementation(serviceProvider.GetRequiredService&lt;IMyAuditService&gt;());
+
+    private sealed class MyErrorPolicyImplementation : IErrorPolicyImplementation
+    {
+        private readonly IMyAuditService _auditService;
+
+        public MyErrorPolicyImplementation(IMyAuditService auditService)
+        {
+            _auditService = auditService;
+        }
+
+        public bool CanHandle(ConsumerPipelineContext context, Exception exception) =&gt;
+            exception is MyRecoverableException;
+
+        public async Task&lt;bool&gt; HandleErrorAsync(ConsumerPipelineContext context, Exception exception)
+        {
+            await _auditService.TrackFailureAsync(context.Envelope, exception);
+
+            // Roll back the transaction and commit the consumer, to skip the message
+            await context.TransactionManager.RollbackAsync(exception, commitConsumer: true);
+
+            return true;
+        }
+    }
+}
+</code></pre>
+<pre><code class="lang-csharp">.Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+    .ConsumeFrom(&quot;my-topic&quot;)
+    .OnError(new MyErrorPolicy()))
+</code></pre>
+<p><code>HandleErrorAsync</code> returns <code>true</code> if the error was handled, or <code>false</code> to rethrow the exception and stop the consumer. The implementation is responsible for completing the consumer transaction via the <a class="xref" href="../../../api/Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.html">IConsumerTransactionManager</a>.</p>
+<p>Alternatively, derive from <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a> and <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyImplementation.html">ErrorPolicyImplementation</a> to benefit from the built-in support for the apply rules, the maximum attempts and the published events.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Look at the built-in policies (for example <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a> and <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>) for a reference on how to interact with the transaction manager.</p>
+</div>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="basics.html">Consuming Messages</a></li>
+<li><a class="xref" href="batch-processing.html">Batch Processing Consumed Messages</a></li>
+<li><a class="xref" href="chunking.html">Consuming Chunked Messages</a></li>
+<li><a class="xref" href="validation.html">Validating the Consumed Messages</a></li>
+<li><a class="xref" href="../default-headers.html">Default Headers</a></li>
+<li><a class="xref" href="../mqtt.html">MQTT Specifics</a></li>
+</ul>
+
+</article>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+      
+      <div class="affix">
+        <div class="contribution d-print-none">
+          <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/consuming/error-policies.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../../about.html">About</a>
+            <a href="../../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

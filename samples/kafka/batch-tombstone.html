@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Kafka - Batch Processing with Tombstones | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Kafka - Batch Processing with Tombstones | Silverback ">
+      
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Kafka - Batch Processing with Tombstones | Silverback ">
+      
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
+      <link rel="icon" href="../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/samples/kafka/batch-tombstone.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'dark'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="sample-kafka-batch-tombstone">
+<h1 id="kafka---batch-processing-with-tombstones">Kafka - Batch Processing with Tombstones</h1>
+
+<p>In this sample the producer publishes batches of messages that include some tombstones (messages with a key but a <code>null</code> value) and the consumer processes them in batch, telling the tombstones apart from the regular messages.</p>
+<h2 id="what-this-sample-shows">What This Sample Shows</h2>
+<ul>
+<li>Publishing a batch with <code>WrapAndPublishBatchAsync</code>, mapping each source item to a message and returning <code>null</code> (every number divisible by 30) to produce a tombstone.</li>
+<li>Setting the Kafka key of each envelope (<code>N&lt;number&gt;</code>) so that the tombstones still carry a key.</li>
+<li>Consuming in batches of up to 100 messages (or whatever is received within 5 seconds) with <code>EnableBatchProcessing</code>.</li>
+<li>Subscribing to a stream of <code>IInboundEnvelope&lt;SampleMessage&gt;</code> and checking <code>IsTombstone</code> to handle the tombstones, using <code>GetKafkaKey</code> to read the key.</li>
+</ul>
+<h2 id="how-to-run">How to Run</h2>
+<p>Start the infrastructure as described in <a class="xref" href="../intro.html">Samples</a>, then run the two applications from the repository root.</p>
+<pre><code class="lang-bash">dotnet run --project ./samples/Kafka/BatchWithTombstone.Producer/.
+dotnet run --project ./samples/Kafka/BatchWithTombstone.Consumer/.
+</code></pre>
+<p>The consumer logs every received message or tombstone together with its key and then the size of each processed batch.</p>
+<h2 id="common">Common</h2>
+<p>The message being exchanged is defined in a common project.</p>
+<pre><code class="lang-csharp" name="Common.Message">namespace Silverback.Samples.Kafka.BatchWithTombstone.Common;
+
+public class SampleMessage
+{
+    public int Number { get; set; }
+}
+</code></pre>
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BatchWithTombstone.Common">https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BatchWithTombstone.Common</a></em></p>
+<h2 id="producer">Producer</h2>
+<p>The producer uses a hosted service to publish batches of 100 messages in the background, replacing some of them with tombstones.</p>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_producer-startup" role="tab" aria-controls="tabpanel_1_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_producer-endpoints" role="tab" aria-controls="tabpanel_1_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_producer-background-service" role="tab" aria-controls="tabpanel_1_producer-background-service" data-tab="producer-background-service" tabindex="-1">Background Service</a>
+</li>
+</ul>
+<section id="tabpanel_1_producer-startup" role="tabpanel" data-tab="producer-startup">
+<pre><code class="lang-csharp" name="Producer.Startup">using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
+
+namespace Silverback.Samples.Kafka.BatchWithTombstone.Producer;
+
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Enable Silverback
+        services.AddSilverback()
+
+            // Use Apache Kafka as message broker
+            .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;();
+
+        // Add the hosted service that produces the random sample messages
+        services.AddHostedService&lt;ProducerBackgroundService&gt;();
+    }
+
+    public void Configure()
+    {
+    }
+}
+</code></pre></section>
+<section id="tabpanel_1_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Producer.BrokerClientsConfigurator">using Silverback.Messaging.Configuration;
+using Silverback.Samples.Kafka.BatchWithTombstone.Common;
+
+namespace Silverback.Samples.Kafka.BatchWithTombstone.Producer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
+{
+    public void Configure(BrokerClientsConfigurationBuilder builder)
+    {
+        builder
+            .AddKafkaClients(
+                clients =&gt; clients
+
+                    // The bootstrap server address is needed to connect
+                    .WithBootstrapServers(&quot;PLAINTEXT://localhost:19092&quot;)
+
+                    // Add a producer
+                    .AddProducer(
+                        producer =&gt; producer
+
+                            // Produce the SampleMessage to the samples-batch topic
+                            .Produce&lt;SampleMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ProduceTo(&quot;samples-batch-with-tombstone&quot;))));
+    }
+}
+</code></pre></section>
+<section id="tabpanel_1_producer-background-service" role="tabpanel" data-tab="producer-background-service" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Producer.BackgroundService">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
+using Silverback.Samples.Kafka.BatchWithTombstone.Common;
+
+namespace Silverback.Samples.Kafka.BatchWithTombstone.Producer;
+
+public class ProducerBackgroundService : BackgroundService
+{
+    private readonly IPublisher _publisher;
+
+    private readonly ILogger&lt;ProducerBackgroundService&gt; _logger;
+
+    public ProducerBackgroundService(
+        IPublisher publisher,
+        ILogger&lt;ProducerBackgroundService&gt; logger)
+    {
+        _publisher = publisher;
+        _logger = logger;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        int number = 0;
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await ProduceMessagesAsync(++number * 100);
+
+            await Task.Delay(50, stoppingToken);
+        }
+    }
+
+    private async Task ProduceMessagesAsync(int number)
+    {
+        try
+        {
+            IEnumerable&lt;int&gt; batch = Enumerable.Range(number, 100);
+
+            await _publisher.WrapAndPublishBatchAsync(
+                batch,
+                n =&gt; n % 30 == 0 ? null : new SampleMessage { Number = n },
+                (envelope, n) =&gt; envelope.SetKafkaKey($&quot;N{n}&quot;));
+
+            _logger.LogInformation(&quot;Produced {FirstNumber}-{LastNumber}&quot;, number, number + 99);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, &quot;Failed to produce {FirstNumber}-{LastNumber}&quot;, number, number + 99);
+        }
+    }
+}
+</code></pre></section>
+</div>
+
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BatchWithTombstone.Producer">https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BatchWithTombstone.Producer</a></em></p>
+<h2 id="consumer">Consumer</h2>
+<p>The consumer processes the messages in batch, logging the key of each tombstone and the key and number of each regular message.</p>
+<div class="tabGroup" id="tabgroup_2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_2_consumer-startup" role="tab" aria-controls="tabpanel_2_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_consumer-endpoints" role="tab" aria-controls="tabpanel_2_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_consumer-subscriber" role="tab" aria-controls="tabpanel_2_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
+</li>
+</ul>
+<section id="tabpanel_2_consumer-startup" role="tabpanel" data-tab="consumer-startup">
+<pre><code class="lang-csharp" name="Consumer.Startup">using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
+
+namespace Silverback.Samples.Kafka.BatchWithTombstone.Consumer;
+
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Enable Silverback
+        services.AddSilverback()
+
+            // Use Apache Kafka as message broker
+            .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;()
+
+            // Register the subscribers
+            .AddSingletonSubscriber&lt;SampleMessageBatchSubscriber&gt;();
+    }
+
+    public void Configure()
+    {
+    }
+}
+</code></pre></section>
+<section id="tabpanel_2_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Consumer.BrokerClientsConfigurator">using System;
+using Silverback.Messaging.Configuration;
+using Silverback.Samples.Kafka.BatchWithTombstone.Common;
+
+namespace Silverback.Samples.Kafka.BatchWithTombstone.Consumer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
+{
+    public void Configure(BrokerClientsConfigurationBuilder builder)
+    {
+        builder
+            .AddKafkaClients(
+                clients =&gt; clients
+
+                    // The bootstrap server address is needed to connect
+                    .WithBootstrapServers(&quot;PLAINTEXT://localhost:19092&quot;)
+
+                    // Add a consumer
+                    .AddConsumer(
+                        consumer =&gt; consumer
+
+                            // Set the consumer group id
+                            .WithGroupId(&quot;sample-consumer&quot;)
+
+                            // AutoOffsetReset.Earliest means that the consumer
+                            // must start consuming from the beginning of the topic,
+                            // if no offset was stored for this consumer group
+                            .AutoResetOffsetToEarliest()
+
+                            // Consume the SampleMessage from the samples-batch topic
+                            .Consume&lt;SampleMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ConsumeFrom(&quot;samples-batch-with-tombstone&quot;)
+
+                                    // Configure processing in batches of 100 messages,
+                                    // with a max wait time of 5 seconds
+                                    .EnableBatchProcessing(100, TimeSpan.FromSeconds(5)))));
+    }
+}
+</code></pre></section>
+<section id="tabpanel_2_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Consumer.Subscriber">using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Messages;
+using Silverback.Samples.Kafka.BatchWithTombstone.Common;
+
+namespace Silverback.Samples.Kafka.BatchWithTombstone.Consumer;
+
+public class SampleMessageBatchSubscriber
+{
+    private readonly ILogger&lt;SampleMessageBatchSubscriber&gt; _logger;
+
+    public SampleMessageBatchSubscriber(ILogger&lt;SampleMessageBatchSubscriber&gt; logger)
+    {
+        _logger = logger;
+    }
+
+    public async Task OnBatchReceivedAsync(IAsyncEnumerable&lt;IInboundEnvelope&lt;SampleMessage&gt;&gt; batch)
+    {
+        int count = 0;
+
+        await foreach (IInboundEnvelope&lt;SampleMessage&gt; envelope in batch)
+        {
+            if (envelope.IsTombstone)
+            {
+                _logger.LogInformation(
+                    &quot;Received tombstone message with key {Key}&quot;,
+                    envelope.GetKafkaKey());
+            }
+            else
+            {
+                _logger.LogInformation(
+                    &quot;Received message with key {Key} and number {Number}&quot;,
+                    envelope.GetKafkaKey(),
+                    envelope.Message?.Number);
+            }
+
+            count++;
+        }
+
+        _logger.LogInformation(&quot;Received batch of {Count} messages&quot;, count);
+    }
+}
+</code></pre></section>
+</div>
+
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BatchWithTombstone.Consumer">https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BatchWithTombstone.Consumer</a></em></p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../guides/broker/producing/kafka/tombstone.html">Producing Tombstone Messages</a></li>
+<li><a class="xref" href="../../guides/broker/consuming/kafka/tombstone.html">Consuming Tombstone Messages</a></li>
+<li><a class="xref" href="../../guides/broker/consuming/batch-processing.html">Batch Processing Consumed Messages</a></li>
+<li><a class="xref" href="batch.html">Kafka - Batch Processing</a> sample</li>
+</ul>
+
+</article>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+      
+      <div class="affix">
+        <div class="contribution d-print-none">
+          <a href="https://github.com/beagle1984/silverback/blob/master/docs/samples/kafka/batch-tombstone.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../about.html">About</a>
+            <a href="../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

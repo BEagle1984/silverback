@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Interface IIntegrationPublisher | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IIntegrationPublisher | Silverback ">
-      
       <meta name="description" content="Exposes the methods to enrich and publish the messages to the configured message broker endpoints.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Interface IIntegrationPublisher | Silverback ">
+      <meta property="og:description" content="Exposes the methods to enrich and publish the messages to the configured message broker endpoints.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Publishing_IIntegrationPublisher" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher" class="text-break">
-Interface IIntegrationPublisher  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+Interface IIntegrationPublisher  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -125,7 +140,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishAsync__1___0_System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishAsync``1(``0,System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}},System.Threading.CancellationToken)">
   WrapAndPublishAsync&lt;TMessage&gt;(TMessage?, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the message in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes it.</p>
@@ -176,7 +191,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishAsync__1___0_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishAsync``1(``0,System.Threading.CancellationToken)">
   WrapAndPublishAsync&lt;TMessage&gt;(TMessage?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the message in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes it.</p>
@@ -224,7 +239,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishAsync__2___0_System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishAsync``2(``0,System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1,System.Threading.CancellationToken)">
   WrapAndPublishAsync&lt;TMessage, TArgument&gt;(TMessage?, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the message in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes it.</p>
@@ -281,7 +296,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__1_System_Collections_Generic_IAsyncEnumerable___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``1(System.Collections.Generic.IAsyncEnumerable{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TMessage&gt;(IAsyncEnumerable&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -332,7 +347,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__1_System_Collections_Generic_IAsyncEnumerable___0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``1(System.Collections.Generic.IAsyncEnumerable{``0},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TMessage&gt;(IAsyncEnumerable&lt;TMessage?&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -380,7 +395,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__1_System_Collections_Generic_IEnumerable___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``1(System.Collections.Generic.IEnumerable{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TMessage&gt;(IEnumerable&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -431,7 +446,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__1_System_Collections_Generic_IEnumerable___0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``1(System.Collections.Generic.IEnumerable{``0},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TMessage&gt;(IEnumerable&lt;TMessage?&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -479,7 +494,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__1_System_Collections_Generic_IReadOnlyCollection___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``1(System.Collections.Generic.IReadOnlyCollection{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TMessage&gt;(IReadOnlyCollection&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -530,7 +545,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__1_System_Collections_Generic_IReadOnlyCollection___0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``1(System.Collections.Generic.IReadOnlyCollection{``0},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TMessage&gt;(IReadOnlyCollection&lt;TMessage?&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -578,7 +593,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__2_System_Collections_Generic_IAsyncEnumerable___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``2(System.Collections.Generic.IAsyncEnumerable{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1,System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TMessage, TArgument&gt;(IAsyncEnumerable&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -635,7 +650,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__2_System_Collections_Generic_IAsyncEnumerable___0__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``2(System.Collections.Generic.IAsyncEnumerable{``0},System.Func{``0,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TSource, TMessage&gt;(IAsyncEnumerable&lt;TSource&gt;, Func&lt;TSource, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -692,7 +707,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__2_System_Collections_Generic_IAsyncEnumerable___0__System_Func___0___1__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``2(System.Collections.Generic.IAsyncEnumerable{``0},System.Func{``0,``1},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TSource, TMessage&gt;(IAsyncEnumerable&lt;TSource&gt;, Func&lt;TSource, TMessage?&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -746,7 +761,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__2_System_Collections_Generic_IEnumerable___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``2(System.Collections.Generic.IEnumerable{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1,System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TMessage, TArgument&gt;(IEnumerable&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -803,7 +818,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__2_System_Collections_Generic_IEnumerable___0__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TSource, TMessage&gt;(IEnumerable&lt;TSource&gt;, Func&lt;TSource, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -860,7 +875,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__2_System_Collections_Generic_IEnumerable___0__System_Func___0___1__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TSource, TMessage&gt;(IEnumerable&lt;TSource&gt;, Func&lt;TSource, TMessage?&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -914,7 +929,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__2_System_Collections_Generic_IReadOnlyCollection___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``2(System.Collections.Generic.IReadOnlyCollection{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1,System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TMessage, TArgument&gt;(IReadOnlyCollection&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -971,7 +986,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__2_System_Collections_Generic_IReadOnlyCollection___0__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``2(System.Collections.Generic.IReadOnlyCollection{``0},System.Func{``0,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TSource, TMessage&gt;(IReadOnlyCollection&lt;TSource&gt;, Func&lt;TSource, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1028,7 +1043,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__2_System_Collections_Generic_IReadOnlyCollection___0__System_Func___0___1__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``2(System.Collections.Generic.IReadOnlyCollection{``0},System.Func{``0,``1},System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TSource, TMessage&gt;(IReadOnlyCollection&lt;TSource&gt;, Func&lt;TSource, TMessage?&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1082,7 +1097,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__3_System_Collections_Generic_IAsyncEnumerable___0__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``3(System.Collections.Generic.IAsyncEnumerable{``0},System.Func{``0,``2,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0,``2},``2,System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TSource, TMessage, TArgument&gt;(IAsyncEnumerable&lt;TSource&gt;, Func&lt;TSource, TArgument, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt;, TArgument, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1145,7 +1160,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__3_System_Collections_Generic_IEnumerable___0__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``2,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0,``2},``2,System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TSource, TMessage, TArgument&gt;(IEnumerable&lt;TSource&gt;, Func&lt;TSource, TArgument, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt;, TArgument, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1208,7 +1223,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatchAsync__3_System_Collections_Generic_IReadOnlyCollection___0__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatchAsync``3(System.Collections.Generic.IReadOnlyCollection{``0},System.Func{``0,``2,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0,``2},``2,System.Threading.CancellationToken)">
   WrapAndPublishBatchAsync&lt;TSource, TMessage, TArgument&gt;(IReadOnlyCollection&lt;TSource&gt;, Func&lt;TSource, TArgument, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt;, TArgument, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1271,7 +1286,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__1_System_Collections_Generic_IAsyncEnumerable___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``1(System.Collections.Generic.IAsyncEnumerable{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}})">
   WrapAndPublishBatch&lt;TMessage&gt;(IAsyncEnumerable&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1313,7 +1328,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__1_System_Collections_Generic_IEnumerable___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``1(System.Collections.Generic.IEnumerable{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}})">
   WrapAndPublishBatch&lt;TMessage&gt;(IEnumerable&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1355,7 +1370,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__1_System_Collections_Generic_IReadOnlyCollection___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``1(System.Collections.Generic.IReadOnlyCollection{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}})">
   WrapAndPublishBatch&lt;TMessage&gt;(IReadOnlyCollection&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1397,7 +1412,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__2_System_Collections_Generic_IAsyncEnumerable___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``2(System.Collections.Generic.IAsyncEnumerable{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1)">
   WrapAndPublishBatch&lt;TMessage, TArgument&gt;(IAsyncEnumerable&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1445,7 +1460,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__2_System_Collections_Generic_IAsyncEnumerable___0__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``2(System.Collections.Generic.IAsyncEnumerable{``0},System.Func{``0,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0})">
   WrapAndPublishBatch&lt;TSource, TMessage&gt;(IAsyncEnumerable&lt;TSource&gt;, Func&lt;TSource, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1493,7 +1508,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__2_System_Collections_Generic_IEnumerable___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``2(System.Collections.Generic.IEnumerable{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1)">
   WrapAndPublishBatch&lt;TMessage, TArgument&gt;(IEnumerable&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1541,7 +1556,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__2_System_Collections_Generic_IEnumerable___0__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0})">
   WrapAndPublishBatch&lt;TSource, TMessage&gt;(IEnumerable&lt;TSource&gt;, Func&lt;TSource, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1589,7 +1604,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__2_System_Collections_Generic_IReadOnlyCollection___0__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``2(System.Collections.Generic.IReadOnlyCollection{``0},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1)">
   WrapAndPublishBatch&lt;TMessage, TArgument&gt;(IReadOnlyCollection&lt;TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1637,7 +1652,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__2_System_Collections_Generic_IReadOnlyCollection___0__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``2(System.Collections.Generic.IReadOnlyCollection{``0},System.Func{``0,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0})">
   WrapAndPublishBatch&lt;TSource, TMessage&gt;(IReadOnlyCollection&lt;TSource&gt;, Func&lt;TSource, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1685,7 +1700,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__3_System_Collections_Generic_IAsyncEnumerable___0__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``3(System.Collections.Generic.IAsyncEnumerable{``0},System.Func{``0,``2,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0,``2},``2)">
   WrapAndPublishBatch&lt;TSource, TMessage, TArgument&gt;(IAsyncEnumerable&lt;TSource&gt;, Func&lt;TSource, TArgument, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt;, TArgument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1739,7 +1754,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__3_System_Collections_Generic_IEnumerable___0__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``2,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0,``2},``2)">
   WrapAndPublishBatch&lt;TSource, TMessage, TArgument&gt;(IEnumerable&lt;TSource&gt;, Func&lt;TSource, TArgument, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt;, TArgument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1793,7 +1808,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublishBatch__3_System_Collections_Generic_IReadOnlyCollection___0__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublishBatch``3(System.Collections.Generic.IReadOnlyCollection{``0},System.Func{``0,``2,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0,``2},``2)">
   WrapAndPublishBatch&lt;TSource, TMessage, TArgument&gt;(IReadOnlyCollection&lt;TSource&gt;, Func&lt;TSource, TArgument, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt;, TArgument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
@@ -1847,7 +1862,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublish__1___0_System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublish``1(``0,System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}})">
   WrapAndPublish&lt;TMessage&gt;(TMessage?, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the message in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes it.</p>
@@ -1889,7 +1904,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
   <h3 id="Silverback_Messaging_Publishing_IIntegrationPublisher_WrapAndPublish__2___0_System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_" data-uid="Silverback.Messaging.Publishing.IIntegrationPublisher.WrapAndPublish``2(``0,System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1)">
   WrapAndPublish&lt;TMessage, TArgument&gt;(TMessage?, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wraps the message in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes it.</p>
@@ -1941,7 +1956,7 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Publishing/IIntegrationPublisher.Sync.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -1952,8 +1967,17 @@ Interface IIntegrationPublisher  <a class="header-action link-secondary" title="
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

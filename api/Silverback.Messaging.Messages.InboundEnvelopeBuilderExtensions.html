@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Class InboundEnvelopeBuilderExtensions | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class InboundEnvelopeBuilderExtensions | Silverback ">
-      
       <meta name="description" content="Adds the Kafka specific methods to the .">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class InboundEnvelopeBuilderExtensions | Silverback ">
+      <meta property="og:description" content="Adds the Kafka specific methods to the .">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions" class="text-break">
-Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
+Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -157,7 +172,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h3 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaKey__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_String_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaKey``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.String)">
   WithKafkaKey&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the key of the message consumed from Kafka.</p>
@@ -170,7 +185,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </dd>
     <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
@@ -180,7 +195,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </dd>
   </dl>
@@ -205,7 +220,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h3 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaOffset__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaOffset``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},Silverback.Messaging.Broker.KafkaOffset)">
   WithKafkaOffset&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, KafkaOffset)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the offset of the message.</p>
@@ -218,7 +233,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </dd>
     <dt><code>offset</code> <a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a></dt>
@@ -228,7 +243,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </dd>
   </dl>
@@ -253,7 +268,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h3 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaOffset__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_String_System_Int32_System_Int64_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaOffset``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.String,System.Int32,System.Int64)">
   WithKafkaOffset&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, string, int, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the offset of the message.</p>
@@ -266,7 +281,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </dd>
     <dt><code>topic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
@@ -282,7 +297,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </dd>
   </dl>
@@ -307,7 +322,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h3 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaTimestamp__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_DateTime_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaTimestamp``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.DateTime)">
   WithKafkaTimestamp&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, DateTime)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the timestamp of the message consumed from Kafka.</p>
@@ -320,7 +335,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </dd>
     <dt><code>timestamp</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></dt>
@@ -330,7 +345,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </dd>
   </dl>
@@ -355,7 +370,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h3 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaTopic__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_String_System_Int32_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaTopic``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.String,System.Int32)">
   WithKafkaTopic&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, string, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the topic and, optionally, the partition from which the message was consumed.</p>
@@ -368,7 +383,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </dd>
     <dt><code>topic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
@@ -381,7 +396,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </dd>
   </dl>
@@ -406,7 +421,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h3 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithMqttCorrelationData__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_Byte___" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithMqttCorrelationData``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.Byte[])">
   WithMqttCorrelationData&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, byte[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the correlation data.</p>
@@ -419,7 +434,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </dd>
     <dt><code>correlationData</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
@@ -429,7 +444,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </dd>
   </dl>
@@ -454,7 +469,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h3 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithMqttTopic__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_String_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithMqttTopic``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.String)">
   WithMqttTopic&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the topic from which the message was consumed.</p>
@@ -467,7 +482,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><code>builder</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </dd>
     <dt><code>topic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
@@ -477,7 +492,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
+    <dt><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </dd>
   </dl>
@@ -506,7 +521,7 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Messaging/Messages/InboundEnvelopeBuilderExtensions.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -517,8 +532,17 @@ Class InboundEnvelopeBuilderExtensions  <a class="header-action link-secondary" 
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Release Notes v3.x.x | Silverback </title>
+      <title>Silverback 3 Release Notes | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Release Notes v3.x.x | Silverback ">
+      <meta name="title" content="Silverback 3 Release Notes | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Silverback 3 Release Notes | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -85,9 +100,10 @@
         </div>
 
         <article data-uid="releases-300">
-<h1 id="release-notes-v3xx">Release Notes v3.x.x</h1>
+<h1 id="silverback-3-release-notes">Silverback 3 Release Notes</h1>
 
 <h2 id="380"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.8.0">3.8.0</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2022-09-20</p>
 <h3 id="whats-new">What's New</h3>
 <ul>
 <li>Topic name resolvers can be used to filter the messages to be produce: returning <code>null</code> will discard the message</li>
@@ -100,21 +116,25 @@
 <li>Improve error handling during connection to MQTT</li>
 </ul>
 <h2 id="373"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.7.3">3.7.3</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2022-07-21</p>
 <h3 id="fixes-1">Fixes</h3>
 <ul>
 <li>Support topic names with symbols (e.g. hyphens) in mocked MQTT broker</li>
 </ul>
 <h2 id="372"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.7.2">3.7.2</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2022-07-01</p>
 <h3 id="fixes-2">Fixes</h3>
 <ul>
 <li>Correctly invoke the <a class="xref" href="../api/Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.html">IKafkaOffsetCommittedCallback</a> when auto commit is disabled [<a href="https://github.com/BEagle1984/silverback/issues/167">#167</a>]</li>
 </ul>
 <h2 id="371"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.7.1">3.7.1</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2022-06-27</p>
 <h3 id="fixes-3">Fixes</h3>
 <ul>
 <li>Improve message streams abort process to avoid first chance exceptions (e.g. during dispose)</li>
 </ul>
 <h2 id="370"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.7.0">3.7.0</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2022-05-18</p>
 <h3 id="whats-new-1">What's New</h3>
 <ul>
 <li>Implement basic support for Kafka transactions via <a class="xref" href="../api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html">KafkaTransactionalProducer</a> <em>(Note: this is just a first step and a more comprehensive implementation is planned for the upcoming release 4.0.0)</em></li>
@@ -125,12 +145,14 @@
 <li>Fix possible race condition in consumer pipeline</li>
 </ul>
 <h2 id="361"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.6.1">3.6.1</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2022-03-24</p>
 <h3 id="fixes-5">Fixes</h3>
 <ul>
 <li>Handle race condition in <a class="xref" href="../api/Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a> with timeout</li>
 <li>Limit consumer status history</li>
 </ul>
 <h2 id="360"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.6.0">3.6.0</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2022-03-04</p>
 <h3 id="whats-new-2">What's New</h3>
 <ul>
 <li>Handle <code>IAsyncEnumerable&lt;T&gt;</code> returned by the subscriber and republished the contained messages</li>
@@ -148,11 +170,12 @@
 <li>Fully validate messages, including nested objects</li>
 </ul>
 <h2 id="350"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.5.0">3.5.0</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2021-10-31</p>
 <h3 id="whats-new-3">What's New</h3>
 <ul>
 <li>Log <code>MqttClient</code> internal events (see <a class="xref" href="../guides/logging.html">Logging and Tracing</a>)</li>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.8.2">Confluent.Kafka 1.8.2</a></li>
-<li>Upgrade to <a href="https://github.com/chkr1011/MQTTnet/releases/tag/v3.0.16">MQTTnet 3.0.16</a></li>
+<li>Upgrade to <a href="https://github.com/dotnet/MQTTnet/releases/tag/v3.0.16">MQTTnet 3.0.16</a></li>
 <li>Upgrade to <a href="https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.2">RabbitMQ.Client 6.2.2</a></li>
 <li>Update several dependencies</li>
 </ul>
@@ -163,17 +186,20 @@
 <li>Allow max retries specification and error policies chains with MQTT V3</li>
 </ul>
 <h2 id="340"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.4.0">3.4.0</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2021-09-27</p>
 <h3 id="whats-new-4">What's New</h3>
 <ul>
 <li>Support encryption key rotation (see <a class="xref" href="../guides/broker/producing/encryption.html">Encrypt Produced Messages</a>)</li>
 </ul>
 <h2 id="331"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.3.1">3.3.1</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2021-09-03</p>
 <h3 id="fixes-8">Fixes</h3>
 <ul>
 <li>Fix <code>AddHeaders&lt;TMessage&gt;</code> and <code>WithKafkaKey&lt;TMessage&gt;</code> not being correctly invoked by all <code>IProducer.Produce</code> and <code>IProducer.ProducerAsync</code> overloads</li>
 <li>Add endpoint friendly name to all logs</li>
 </ul>
 <h2 id="330"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.3.0">3.3.0</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2021-08-29</p>
 <h3 id="whats-new-5">What's New</h3>
 <ul>
 <li>Optimize in-memory mocked Kafka (avoid spawning too many threads)</li>
@@ -187,6 +213,7 @@
 <li>Ignore null or empty Kafka key in producer</li>
 </ul>
 <h2 id="320"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.2.0">3.2.0</a></h2>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2021-07-13</p>
 <h3 id="whats-new-6">What's New</h3>
 <ul>
 <li>Add new Kafka partition EOF callback to be notified when the end of a partition is reached by the consumer (see <a class="xref" href="../guides/broker/callbacks.html">Broker Callbacks</a> and <a class="xref" href="../api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html">IKafkaPartitionEofCallback</a>)</li>
@@ -215,8 +242,17 @@
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

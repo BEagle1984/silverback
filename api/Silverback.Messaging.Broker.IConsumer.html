@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Interface IConsumer | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IConsumer | Silverback ">
-      
       <meta name="description" content="Consumes from one or more endpoints and pushes the received messages via the message bus.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Interface IConsumer | Silverback ">
+      <meta property="og:description" content="Consumes from one or more endpoints and pushes the received messages via the message bus.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Broker_IConsumer" data-uid="Silverback.Messaging.Broker.IConsumer" class="text-break">
-Interface IConsumer  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+Interface IConsumer  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -125,7 +140,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_Client" data-uid="Silverback.Messaging.Broker.IConsumer.Client">
   Client
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the related <a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html">IBrokerClient</a>.</p>
@@ -157,7 +172,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_DisplayName" data-uid="Silverback.Messaging.Broker.IConsumer.DisplayName">
   DisplayName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the name to be displayed in the human-targeted output (e.g. logs, health checks result, etc.).</p>
@@ -189,7 +204,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_EndpointsConfiguration" data-uid="Silverback.Messaging.Broker.IConsumer.EndpointsConfiguration">
   EndpointsConfiguration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the endpoints configuration.</p>
@@ -221,7 +236,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_Name" data-uid="Silverback.Messaging.Broker.IConsumer.Name">
   Name
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the consumer name.</p>
@@ -253,7 +268,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_StatusInfo" data-uid="Silverback.Messaging.Broker.IConsumer.StatusInfo">
   StatusInfo
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Broker.IConsumerStatusInfo.html">IConsumerStatusInfo</a> containing the status details and basic statistics of this consumer.</p>
@@ -289,16 +304,16 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_CommitAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_" data-uid="Silverback.Messaging.Broker.IConsumer.CommitAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier)">
   CommitAsync(IBrokerMessageIdentifier)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><param>
-                Confirms that the specified message has been successfully processed.
-            
+    Confirms that the specified message has been successfully processed.
+
 <param>
-                The acknowledgement will be sent to the message broker and the message will never be consumed
-                again (by the same logical consumer / consumer group).
-            
+    The acknowledgement will be sent to the message broker and the message will never be consumed
+    again (by the same logical consumer / consumer group).
+
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -316,7 +331,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
 </dd>
   </dl>
 
@@ -334,16 +349,16 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_CommitAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__" data-uid="Silverback.Messaging.Broker.IConsumer.CommitAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IBrokerMessageIdentifier})">
   CommitAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><param>
-                Confirms that the specified messages have been successfully processed.
-            
+    Confirms that the specified messages have been successfully processed.
+
 <param>
-                The acknowledgement will be sent to the message broker, and the message will never be consumed
-                again (by the same logical consumer / consumer group).
-            
+    The acknowledgement will be sent to the message broker, and the message will never be consumed
+    again (by the same logical consumer / consumer group).
+
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -361,7 +376,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
 </dd>
   </dl>
 
@@ -379,7 +394,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_IncrementFailedAttempts_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Broker.IConsumer.IncrementFailedAttempts(Silverback.Messaging.Messages.IRawInboundEnvelope)">
   IncrementFailedAttempts(IRawInboundEnvelope)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Increments the stored failed attempts count for the specified envelope.</p>
@@ -418,16 +433,16 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_RollbackAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_" data-uid="Silverback.Messaging.Broker.IConsumer.RollbackAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier)">
   RollbackAsync(IBrokerMessageIdentifier)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><param>
-                Notifies that an error occurred while processing the specified message.
-            
+    Notifies that an error occurred while processing the specified message.
+
 <param>
-                If necessary, the information will be sent to the message broker to ensure that the message will
-                be consumed again.
-            
+    If necessary, the information will be sent to the message broker to ensure that the message will
+    be consumed again.
+
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -445,7 +460,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
 </dd>
   </dl>
 
@@ -463,16 +478,16 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_RollbackAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__" data-uid="Silverback.Messaging.Broker.IConsumer.RollbackAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IBrokerMessageIdentifier})">
   RollbackAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><param>
-                Notifies that an error occured while processing the specified messages.
-            
+    Notifies that an error occured while processing the specified messages.
+
 <param>
-                If necessary the information will be sent to the message broker to ensure that the message will
-                be re-processed.
-            
+    If necessary the information will be sent to the message broker to ensure that the message will
+    be re-processed.
+
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -490,7 +505,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
 </dd>
   </dl>
 
@@ -508,7 +523,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_StartAsync" data-uid="Silverback.Messaging.Broker.IConsumer.StartAsync">
   StartAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Starts consuming. Used after <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StopAsync_System_Boolean_">StopAsync(bool)</a> has been called to resume consuming.</p>
@@ -523,7 +538,7 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
 </dd>
   </dl>
 
@@ -539,9 +554,58 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
 
   <a id="Silverback_Messaging_Broker_IConsumer_StopAsync_" data-uid="Silverback.Messaging.Broker.IConsumer.StopAsync*"></a>
 
+  <h3 id="Silverback_Messaging_Broker_IConsumer_StopAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_System_Boolean_" data-uid="Silverback.Messaging.Broker.IConsumer.StopAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier,System.Boolean)">
+  StopAsync(IBrokerMessageIdentifier, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Requests that the consumer stop because processing the specified message failed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ValueTask StopAsync(IBrokerMessageIdentifier brokerMessageIdentifier, bool waitUntilStopped = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>brokerMessageIdentifier</code> <a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a></dt>
+    <dd><p>The original identifier from the received message that caused the stop request.</p>
+</dd>
+    <dt><code>waitUntilStopped</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether to wait for message processing to finish. Pass <code>false</code> when calling from message processing
+to avoid waiting for the calling operation itself.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the stop request. If <code class="paramref">waitUntilStopped</code> is <code>true</code>,
+accepted stop requests also wait for message processing to finish.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Silverback_Messaging_Broker_IConsumer_StopAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_System_Boolean__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The original message identifier allows the broker implementation to ignore obsolete stop requests.
+For example, delayed error handling for a Kafka message from an earlier partition assignment must not
+stop consumption after reassignment. Use <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StopAsync_System_Boolean_">StopAsync(bool)</a> to stop unconditionally.</p>
+</div>
+
+
+
+
+  <a id="Silverback_Messaging_Broker_IConsumer_StopAsync_" data-uid="Silverback.Messaging.Broker.IConsumer.StopAsync*"></a>
+
   <h3 id="Silverback_Messaging_Broker_IConsumer_StopAsync_System_Boolean_" data-uid="Silverback.Messaging.Broker.IConsumer.StopAsync(System.Boolean)">
   StopAsync(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Stops the consumer without disconnecting. Can be used to pause and resume consuming.</p>
@@ -562,8 +626,8 @@ Interface IConsumer  <a class="header-action link-secondary" title="View source"
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation. This <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will complete as
-soon as the stopping signal has been sent.</p>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the stop request. If <code class="paramref">waitUntilStopped</code> is <code>true</code>,
+accepted stop requests also wait for message processing to finish.</p>
 </dd>
   </dl>
 
@@ -581,7 +645,7 @@ soon as the stopping signal has been sent.</p>
 
   <h3 id="Silverback_Messaging_Broker_IConsumer_TriggerReconnectAsync" data-uid="Silverback.Messaging.Broker.IConsumer.TriggerReconnectAsync">
   TriggerReconnectAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Stops the consumer and starts an asynchronous <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> to disconnect and reconnect it.</p>
@@ -596,7 +660,7 @@ soon as the stopping signal has been sent.</p>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation. This <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will complete as
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation. This <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> will complete as
 soon as the stopping signal has been sent, while the process will be completed in another asynchronous
 <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>.</p>
 </dd>
@@ -623,7 +687,7 @@ soon as the stopping signal has been sent, while the process will be completed i
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Broker/IConsumer.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Broker/IConsumer.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -634,8 +698,17 @@ soon as the stopping signal has been sent, while the process will be completed i
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

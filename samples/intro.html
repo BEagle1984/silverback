@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Samples | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Samples | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -87,12 +102,84 @@
         <article data-uid="samples">
 <h1 id="samples">Samples</h1>
 
-<p>Short, runnable examples that demonstrate core Silverback concepts and common integration scenarios.</p>
-<p>Source code:</p>
+<p>Short, runnable examples that demonstrate core Silverback concepts and common integration scenarios. Each sample consists of a producer and a consumer application (plus a common project, where the message contract is shared) and focuses on a single feature.</p>
+<p>The source code of all samples is available in the <a href="https://github.com/BEagle1984/silverback/tree/master/samples">samples folder</a> of the repository, grouped into the <code>Silverback.Samples.sln</code> solution.</p>
+<h2 id="running-the-samples">Running the Samples</h2>
+<h3 id="prerequisites">Prerequisites</h3>
 <ul>
-<li>Repository folder: <a href="https://github.com/BEagle1984/silverback/tree/master/samples">https://github.com/BEagle1984/silverback/tree/master/samples</a></li>
-<li>Setup/run instructions: <a href="https://github.com/BEagle1984/silverback/blob/master/samples/README.md">https://github.com/BEagle1984/silverback/blob/master/samples/README.md</a></li>
+<li>The .NET SDK version pinned in the repository's <code>global.json</code>.</li>
+<li>Docker, to run the message brokers locally.</li>
 </ul>
+<h3 id="starting-the-infrastructure">Starting the Infrastructure</h3>
+<p>The <code>docker-compose.yaml</code> file in the repository root starts everything the samples need: a two-node Kafka cluster (reachable at <code>localhost:19092</code> and <code>localhost:29092</code>), the Confluent schema registry (<code>localhost:8081</code>) and an EMQX MQTT cluster behind HAProxy (<code>localhost:1883</code>).</p>
+<pre><code class="lang-bash">docker compose up -d
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>The compose file also starts some web UIs that help to inspect what's going on, like Conduktor for Kafka (http://localhost:8080) and the EMQX dashboard (http://localhost:18083). The credentials are listed in the comments at the top of the compose file.</p>
+</div>
+<h3 id="running-a-sample">Running a Sample</h3>
+<p>Run the producer and the consumer in two separate terminals, from the repository root. For example, for the basic Kafka sample:</p>
+<pre><code class="lang-bash">dotnet run --project ./samples/Kafka/Basic.Producer/.
+dotnet run --project ./samples/Kafka/Basic.Consumer/.
+</code></pre>
+<p>Then observe the console output while the messages are produced and consumed. Each sample page lists the exact commands and any additional step.</p>
+<h2 id="kafka-samples">Kafka Samples</h2>
+<div class="sb-cards">
+  <a class="sb-card" href="kafka/basic.html">
+    <span class="sb-card-icon"><i class="bi bi-send"></i></span>
+    <span class="sb-card-title">Kafka – Basic</span>
+    <p>The simplest possible producer and consumer, with an error policy.</p>
+  </a>
+  <a class="sb-card" href="kafka/batch.html">
+    <span class="sb-card-icon"><i class="bi bi-collection"></i></span>
+    <span class="sb-card-title">Kafka – Batch Processing</span>
+    <p>Publish messages in batch and consume them in batches of up to 100 messages.</p>
+  </a>
+  <a class="sb-card" href="kafka/batch-tombstone.html">
+    <span class="sb-card-icon"><i class="bi bi-trash3"></i></span>
+    <span class="sb-card-title">Kafka – Batch with Tombstones</span>
+    <p>Produce tombstones within a batch and tell them apart while consuming in batch.</p>
+  </a>
+  <a class="sb-card" href="kafka/binaryfile-streaming.html">
+    <span class="sb-card-icon"><i class="bi bi-file-earmark-binary"></i></span>
+    <span class="sb-card-title">Kafka – File Streaming</span>
+    <p>Stream large binary files through Kafka, split into chunks.</p>
+  </a>
+  <a class="sb-card" href="kafka/avro.html">
+    <span class="sb-card-icon"><i class="bi bi-file-earmark-code"></i></span>
+    <span class="sb-card-title">Kafka – Avro</span>
+    <p>Serialize the messages as Avro using the Confluent schema registry.</p>
+  </a>
+  <a class="sb-card" href="kafka/json-schema-registry.html">
+    <span class="sb-card-icon"><i class="bi bi-braces"></i></span>
+    <span class="sb-card-title">Kafka – JSON with Schema Registry</span>
+    <p>Serialize the messages as JSON, validated against a schema in the schema registry.</p>
+  </a>
+  <a class="sb-card" href="kafka/transactional-producer.html">
+    <span class="sb-card-icon"><i class="bi bi-check2-all"></i></span>
+    <span class="sb-card-title">Kafka – Transactional Producer</span>
+    <p>Produce messages atomically with Kafka transactions, committing or aborting them.</p>
+  </a>
+</div>
+<h2 id="mqtt-samples">MQTT Samples</h2>
+<div class="sb-cards">
+  <a class="sb-card" href="mqtt/basic.html">
+    <span class="sb-card-icon"><i class="bi bi-broadcast"></i></span>
+    <span class="sb-card-title">MQTT – Basic</span>
+    <p>The simplest possible producer and consumer, with a last will message.</p>
+  </a>
+  <a class="sb-card" href="mqtt/basic-v3.html">
+    <span class="sb-card-icon"><i class="bi bi-broadcast-pin"></i></span>
+    <span class="sb-card-title">MQTT – Basic (MQTT v3)</span>
+    <p>The same basic producer and consumer, using MQTT protocol version 3.1.0.</p>
+  </a>
+  <a class="sb-card" href="mqtt/binaryfile-streaming.html">
+    <span class="sb-card-icon"><i class="bi bi-file-earmark-arrow-up"></i></span>
+    <span class="sb-card-title">MQTT – File Streaming</span>
+    <p>Stream binary files through MQTT, with a custom header carrying the file name.</p>
+  </a>
+</div>
 
 </article>
 
@@ -113,8 +200,17 @@
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

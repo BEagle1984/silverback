@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Consumer Health Check | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Consumer Health Check | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../../../public/docfx.min.css">
       <link rel="stylesheet" href="../../../public/main.css">
       <meta name="docfx:navrel" content="../../../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../../../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../../../index.html">
-            <img id="logo" class="svg" src="../../../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../../../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -87,14 +102,72 @@
         <article data-uid="consumer-health-check">
 <h1 id="consumer-health-check">Consumer Health Check</h1>
 
-<p>A health check is available to monitor the consumers and alert if they don't appear to be connected or consuming any messages.</p>
-<pre><code class="lang-csharp">.AddHealthChecks()
-.AddConsumersCheck()
+<p>The <a href="https://www.nuget.org/packages/Silverback.Integration.HealthChecks/">Silverback.Integration.HealthChecks</a> package integrates with the <a href="https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks">ASP.NET Core health checks</a> to monitor the consumers and report them as unhealthy if they aren't connected or consuming.</p>
+<pre><code class="lang-powershell">dotnet add package Silverback.Integration.HealthChecks
 </code></pre>
-<p>A few parameters such as the grace period to wait for the consumers to be connected can be configured. See <a class="xref" href="../../../api/Silverback.Messaging.HealthChecks.HealthCheckBuilderExtensions.html">HealthCheckBuilderExtensions</a> for details.</p>
+<h2 id="registering-the-check">Registering the Check</h2>
+<p>Add the consumers check to the health checks builder:</p>
+<pre><code class="lang-csharp">services
+    .AddHealthChecks()
+    .AddConsumersCheck();
+</code></pre>
+<p>The check verifies that every consumer reached at least the minimum healthy status. A consumer whose status changed recently is not reported as unhealthy until the grace period has elapsed, to tolerate the transient states during the startup and the rebalances.</p>
+<h2 id="options">Options</h2>
+<p>The <code>AddConsumersCheck</code> method accepts the following optional parameters:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>minHealthyStatus</code></td>
+<td style="text-align: left;"><code>ConsumerStatus.Connected</code></td>
+<td style="text-align: left;">The minimum <a class="xref" href="../../../api/Silverback.Messaging.Broker.ConsumerStatus.html">ConsumerStatus</a> a consumer must have to be considered healthy (<code>Stopped</code>, <code>Started</code>, <code>Connected</code> or <code>Consuming</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>gracePeriod</code></td>
+<td style="text-align: left;">30 seconds</td>
+<td style="text-align: left;">The time to wait after each status change before a consumer is considered unhealthy.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>name</code></td>
+<td style="text-align: left;"><code>&quot;Consumers&quot;</code></td>
+<td style="text-align: left;">The name of the health check.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>failureStatus</code></td>
+<td style="text-align: left;"><code>HealthStatus.Unhealthy</code></td>
+<td style="text-align: left;">The status reported when the check fails.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tags</code></td>
+<td style="text-align: left;"><em>none</em></td>
+<td style="text-align: left;">The tags used to filter the health checks.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-csharp">services
+    .AddHealthChecks()
+    .AddConsumersCheck(
+        minHealthyStatus: ConsumerStatus.Consuming,
+        gracePeriod: TimeSpan.FromMinutes(1),
+        tags: [&quot;ready&quot;]);
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Requiring <code>ConsumerStatus.Consuming</code> makes the check stricter: a consumer is considered healthy only after it received at least one message. Use it only when messages are expected to flow continuously.</p>
+</div>
+<h2 id="outbox-check">Outbox Check</h2>
+<p>A similar check is available to monitor the outbox (<code>AddOutboxCheck</code>), verifying that the messages are being produced and the queue isn't growing too much. See <a class="xref" href="../producing/outbox.html">Transactional Outbox</a>.</p>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
-<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.HealthChecks.HealthCheckBuilderExtensions.html">HealthCheckBuilderExtensions</a></li>
+<li><a class="xref" href="basics.html">Consuming Messages</a></li>
+<li><a class="xref" href="../producing/outbox.html">Transactional Outbox</a></li>
 </ul>
 
 </article>
@@ -116,8 +189,17 @@
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../../about.html">About</a>
+            <a href="../../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="MQTT - File Streaming | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="MQTT - File Streaming | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../../public/docfx.min.css">
       <link rel="stylesheet" href="../../public/main.css">
       <meta name="docfx:navrel" content="../../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../../index.html">
-            <img id="logo" class="svg" src="../../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -88,7 +103,24 @@
 <h1 id="mqtt---file-streaming">MQTT - File Streaming</h1>
 
 <p>This sample demonstrates how to deal with raw binary contents and large messages, to transfer some files through MQTT.</p>
-<p>See also: <a class="xref" href="../../guides/broker/producing/serialization.html">Serializing the Produced Messages</a>, <a class="xref" href="../../guides/broker/consuming/deserialization.html">Deserializing the Consumed Messages</a>, <a class="xref" href="../../guides/broker/producing/chunking.html">Producing Chunked Messages</a>, <a class="xref" href="../../guides/broker/consuming/chunking.html">Consuming Chunked Messages</a></p>
+<h2 id="what-this-sample-shows">What This Sample Shows</h2>
+<ul>
+<li>Producing a file as a <code>BinaryMessage</code> that wraps the <code>FileStream</code>.</li>
+<li>Extending <code>BinaryMessage</code> with a custom property mapped to a header (<code>x-filename</code>) via the <code>[Header]</code> attribute.</li>
+<li>Producing to the <code>samples/binary-files</code> topic with at-least-once QoS and the retain flag.</li>
+<li>Streaming the consumed content straight to a file and retrying up to 5 times in case of error.</li>
+</ul>
+<h2 id="how-to-run">How to Run</h2>
+<p>Start the infrastructure as described in <a class="xref" href="../intro.html">Samples</a>, then run the two applications from the repository root.</p>
+<pre><code class="lang-bash">dotnet run --project ./samples/MQTT/BinaryFileStreaming.Producer/.
+dotnet run --project ./samples/MQTT/BinaryFileStreaming.Consumer/.
+</code></pre>
+<p>The producer exposes a Swagger UI at the <code>/swagger</code> path of the address it logs at startup. Use it to call the <code>binary-file</code> or <code>custom-binary-file</code> endpoint, passing the path of a local file.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The producer's launch profile binds to port <code>0</code>, so a free port is picked at every start. Look for the <code>Now listening on</code> line in the console output to find the address.</p>
+</div>
+<p>The consumer saves the received files into a <code>temp</code> folder, two levels above its working directory (<code>samples/temp</code> when run from the project folder).</p>
 <h2 id="producer">Producer</h2>
 <p>The producer exposes two REST API that receive the path of a local file to be streamed. The second API uses a custom <code>BinaryMessage</code> to forward further metadata (the file name in this example).</p>
 <div class="tabGroup" id="tabgroup_1">
@@ -267,7 +299,7 @@ public class ProducerController : ControllerBase
 </code></pre></section>
 </div>
 
-<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Producer">https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Producer</a></em></p>
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/BinaryFileStreaming.Producer">https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/BinaryFileStreaming.Producer</a></em></p>
 <h2 id="consumer">Consumer</h2>
 <p>The consumer simply streams the file to a temporary folder in the local file system.</p>
 <div class="tabGroup" id="tabgroup_2">
@@ -425,7 +457,15 @@ public class BinaryFileSubscriber
 </code></pre></section>
 </div>
 
-<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Consumer">https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Consumer</a></em></p>
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/BinaryFileStreaming.Consumer">https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/BinaryFileStreaming.Consumer</a></em></p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../guides/broker/producing/serialization.html">Serializing the Produced Messages</a></li>
+<li><a class="xref" href="../../guides/broker/consuming/deserialization.html">Deserializing the Consumed Messages</a></li>
+<li><a class="xref" href="../../guides/broker/producing/chunking.html">Producing Chunked Messages</a></li>
+<li><a class="xref" href="../../guides/broker/consuming/chunking.html">Consuming Chunked Messages</a></li>
+<li><a class="xref" href="../../guides/broker/producing/headers.html">Setting Headers</a></li>
+</ul>
 
 </article>
 
@@ -446,8 +486,17 @@ public class BinaryFileSubscriber
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../about.html">About</a>
+            <a href="../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

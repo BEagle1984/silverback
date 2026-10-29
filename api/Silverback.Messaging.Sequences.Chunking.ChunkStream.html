@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Class ChunkStream | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class ChunkStream | Silverback ">
-      
       <meta name="description" content="The  implementation used to read the chunked messages. This stream is used by the  and it is asynchronously pushed with the chunks being consumed.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class ChunkStream | Silverback ">
+      <meta property="og:description" content="The  implementation used to read the chunked messages. This stream is used by the  and it is asynchronously pushed with the chunks being consumed.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Sequences_Chunking_ChunkStream" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream" class="text-break">
-Class ChunkStream  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+Class ChunkStream  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -261,7 +276,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream__ctor_Silverback_Messaging_Messages_IMessageStreamEnumerable_Silverback_Messaging_Messages_IRawInboundEnvelope__" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.#ctor(Silverback.Messaging.Messages.IMessageStreamEnumerable{Silverback.Messaging.Messages.IRawInboundEnvelope})">
   ChunkStream(IMessageStreamEnumerable&lt;IRawInboundEnvelope&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkStream.html">ChunkStream</a> class.</p>
@@ -274,7 +289,7 @@ consumed.</p>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>source</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Core/Messaging/Messages/IMessageStreamEnumerable%601.cs">IMessageStreamEnumerable</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>&gt;</dt>
+    <dt><code>source</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Core/Messaging/Messages/IMessageStreamEnumerable%601.cs">IMessageStreamEnumerable</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>&gt;</dt>
     <dd><p>The chunks composing this stream.</p>
 </dd>
   </dl>
@@ -298,7 +313,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanRead" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanRead">
   CanRead
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -329,7 +344,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanSeek" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanSeek">
   CanSeek
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -360,7 +375,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanTimeout" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanTimeout">
   CanTimeout
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -391,7 +406,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanWrite" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanWrite">
   CanWrite
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -422,7 +437,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Length" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Length">
   Length
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -453,7 +468,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Position" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Position">
   Position
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -488,7 +503,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Close" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Close">
   Close()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -514,7 +529,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Dispose_System_Boolean_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Dispose(System.Boolean)">
   Dispose(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -545,7 +560,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_DisposeAsync" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.DisposeAsync">
   DisposeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -576,7 +591,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Flush" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Flush">
   Flush()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -602,7 +617,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Read_System_Byte___System_Int32_System_Int32_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Read(System.Byte[],System.Int32,System.Int32)">
   Read(byte[], int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -642,7 +657,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Read_System_Span_System_Byte__" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Read(System.Span{System.Byte})">
   Read(Span&lt;byte&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -678,7 +693,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_ReadAsync_System_Byte___System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)">
   ReadAsync(byte[], int, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -720,7 +735,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_ReadAsync_System_Memory_System_Byte__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.ReadAsync(System.Memory{System.Byte},System.Threading.CancellationToken)">
   ReadAsync(Memory&lt;byte&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -758,7 +773,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Seek_System_Int64_System_IO_SeekOrigin_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Seek(System.Int64,System.IO.SeekOrigin)">
   Seek(long, SeekOrigin)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -796,7 +811,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_SetLength_System_Int64_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.SetLength(System.Int64)">
   SetLength(long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -827,7 +842,7 @@ consumed.</p>
 
   <h3 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Write_System_Byte___System_Int32_System_Int32_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Write(System.Byte[],System.Int32,System.Int32)">
   Write(byte[], int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -866,7 +881,7 @@ consumed.</p>
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -877,8 +892,17 @@ consumed.</p>
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

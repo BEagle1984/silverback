@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Using the Message Bus | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Using the Message Bus | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -139,9 +154,9 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
 <p>Subscribers can return a result after processing a message.</p>
 <pre><code class="lang-csharp">public async Task&lt;QueryResult&gt; PublishSomething()
 {
-    MyQuery query = new MyQuery() { ... };
-    QueryResult result = await _publisher.PublishAsync(query);
-    return result.Single();
+    MyQuery query = new MyQuery { ... };
+    IReadOnlyCollection&lt;QueryResult&gt; results = await _publisher.PublishAsync&lt;QueryResult&gt;(query);
+    return results.Single();
 }
 </code></pre>
 <div class="NOTE">
@@ -229,13 +244,13 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
     }
 }
 </code></pre>
-<p>By default, all public methods in a registered subscriber class (excluding the ones declared in the based classes) are subscribed. To subscribe non-public methods, or methods from the base classes, or customize the subscription options, use the <a class="xref" href="../api/Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a> to decorate the methods.</p>
+<p>By default, all public methods in a registered subscriber class (excluding the ones declared in the base classes) are subscribed. To subscribe non-public methods, or methods from the base classes, or customize the subscription options, use the <a class="xref" href="../api/Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a> to decorate the methods.</p>
 <p>You can also disable automatic subscription of public methods:</p>
 <pre><code class="lang-csharp">services
     .AddSilverback()
     .AddScopedSubscriber&lt;SubscribingService&gt;(autoSubscribeAllPublicMethods: false);
 </code></pre>
-<h3 id="delegate-based-subscription">Delegate based subscription</h3>
+<h3 id="delegate-based-subscription">Delegate-Based Subscription</h3>
 <p>In some cases you may prefer to subscribe a method delegate (or an inline lambda) directly using the <code>AddDelegateSubscriber</code> method.</p>
 <pre><code class="lang-csharp">public class Startup
 {
@@ -250,7 +265,7 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
     }
 }
 </code></pre>
-<h3 id="supported-methods-and-parameters">Supported methods and parameters</h3>
+<h3 id="supported-methods-and-parameters">Supported Methods and Parameters</h3>
 <p>The subscribed method (or delegate) can either be synchronous or asynchronous (returning a <code>Task</code> or a <code>ValueTask</code>).</p>
 <p>The first parameter must be the message and the parameter type can be the specific message, a base class or an implemented interface.</p>
 <p>The method can have other parameters that will be resolved using the service provider, or the cancellation token (see <a href="#cancellation">Cancellation</a>).</p>
@@ -258,7 +273,7 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
 {
     public async Task OnMessageReceived(BasketCheckoutMessage message, CheckoutService service)
     {
-        service.Checkout(message.BaksetId, message.UserId);
+        service.Checkout(message.BasketId, message.UserId);
     }
 }
 </code></pre>
@@ -272,12 +287,12 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
             .AddDelegateSubscriber(
                 (BasketCheckoutMessage message, CheckoutService service) =&gt;
                 {
-                    service.Checkout(message.BaksetId, message.UserId);
+                    service.Checkout(message.BasketId, message.UserId);
                 });
     }
 }
 </code></pre>
-<h3 id="return-values-1">Return values</h3>
+<h3 id="subscriber-return-values">Subscriber Return Values</h3>
 <p>A subscriber can also have a return value that can be collected by the publisher.</p>
 <pre><code class="lang-csharp">public class SubscribingService
 {
@@ -308,18 +323,17 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
 <p>or</p>
 <pre><code class="lang-csharp">public class SubscribingService
 {
-    public IEnumerable&lt;IMessage&gt; OnMessageReceived(IEnumerable&lt;SampleMessage&gt; messages) =&gt;
-        messages.SelectMany(message =&gt;
+    public IEnumerable&lt;IMessage&gt; OnMessageReceived(SampleMessage message)
+    {
+        yield return new OtherSampleMessage1
         {
-            yield return new OtherSampleMessage1
-            {
-                ...
-            };
-            yield return new OtherSampleMessage2
-            {
-                ...
-            };
-        });
+            ...
+        };
+        yield return new OtherSampleMessage2
+        {
+            ...
+        };
+    }
 }
 </code></pre>
 <p>Silverback recognizes only the messages implementing <a class="xref" href="../api/Silverback.Messaging.Messages.IMessage.html">IMessage</a> as messages to be republished (<a class="xref" href="../api/Silverback.Messaging.Messages.IEvent.html">IEvent</a>, <a class="xref" href="../api/Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>, and <a class="xref" href="../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a> all implement that interface), but you can register your own types, base types or interfaces.</p>
@@ -359,14 +373,16 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
         _tracer = tracer;
     }
     
-    public async Task&lt;IReadOnlyCollection&lt;object?&gt;&gt; HandleAsync(
+    public async ValueTask&lt;IReadOnlyCollection&lt;object?&gt;&gt; HandleAsync(
+        IPublisher publisher,
         object message,
-        MessageHandler next)
+        MessageHandler next,
+        CancellationToken cancellationToken)
     {
         try
         {
             _tracer.TraceProcessing(message);
-            object result = await next(message);
+            IReadOnlyCollection&lt;object?&gt; result = await next(message);
             _tracer.TraceProcessed(message);
             return result;
         }
@@ -388,9 +404,11 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
 {
     public int SortIndex =&gt; 120;
     
-    public Task&lt;IReadOnlyCollection&lt;object?&gt;&gt; HandleAsync(
+    public ValueTask&lt;IReadOnlyCollection&lt;object?&gt;&gt; HandleAsync(
+        IPublisher publisher,
         object message,
-        MessageHandler next)
+        MessageHandler next,
+        CancellationToken cancellationToken)
     {
         return next(message);
     }
@@ -416,8 +434,17 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

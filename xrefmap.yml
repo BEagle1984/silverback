@@ -4462,18 +4462,6 @@ references:
   fullName.vb: Silverback.Lock.DistributedLockSettings.<>
   nameWithType: DistributedLockSettings.operator !=
   nameWithType.vb: DistributedLockSettings.<>
-- uid: Silverback.Lock.DistributedLockSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Lock.DistributedLockSettings.html#Silverback_Lock_DistributedLockSettings__Clone__
-  commentId: M:Silverback.Lock.DistributedLockSettings.{Clone}$
-  fullName: Silverback.Lock.DistributedLockSettings.<Clone>$()
-  nameWithType: DistributedLockSettings.<Clone>$()
-- uid: Silverback.Lock.DistributedLockSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Lock.DistributedLockSettings.html#Silverback_Lock_DistributedLockSettings__Clone___
-  commentId: Overload:Silverback.Lock.DistributedLockSettings.{Clone}$
-  fullName: Silverback.Lock.DistributedLockSettings.<Clone>$
-  nameWithType: DistributedLockSettings.<Clone>$
 - uid: Silverback.Lock.EntityFrameworkLock
   name: EntityFrameworkLock
   href: api/Silverback.Lock.EntityFrameworkLock.html
@@ -4732,18 +4720,6 @@ references:
   fullName.vb: Silverback.Lock.EntityFrameworkLockSettings.<>
   nameWithType: EntityFrameworkLockSettings.operator !=
   nameWithType.vb: EntityFrameworkLockSettings.<>
-- uid: Silverback.Lock.EntityFrameworkLockSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Lock.EntityFrameworkLockSettings.html#Silverback_Lock_EntityFrameworkLockSettings__Clone__
-  commentId: M:Silverback.Lock.EntityFrameworkLockSettings.{Clone}$
-  fullName: Silverback.Lock.EntityFrameworkLockSettings.<Clone>$()
-  nameWithType: EntityFrameworkLockSettings.<Clone>$()
-- uid: Silverback.Lock.EntityFrameworkLockSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Lock.EntityFrameworkLockSettings.html#Silverback_Lock_EntityFrameworkLockSettings__Clone___
-  commentId: Overload:Silverback.Lock.EntityFrameworkLockSettings.{Clone}$
-  fullName: Silverback.Lock.EntityFrameworkLockSettings.<Clone>$
-  nameWithType: EntityFrameworkLockSettings.<Clone>$
 - uid: Silverback.Lock.EntityFrameworkLockSettingsBuilder
   name: EntityFrameworkLockSettingsBuilder
   href: api/Silverback.Lock.EntityFrameworkLockSettingsBuilder.html
@@ -5017,18 +4993,6 @@ references:
   fullName.vb: Silverback.Lock.InMemoryLockSettings.<>
   nameWithType: InMemoryLockSettings.operator !=
   nameWithType.vb: InMemoryLockSettings.<>
-- uid: Silverback.Lock.InMemoryLockSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Lock.InMemoryLockSettings.html#Silverback_Lock_InMemoryLockSettings__Clone__
-  commentId: M:Silverback.Lock.InMemoryLockSettings.{Clone}$
-  fullName: Silverback.Lock.InMemoryLockSettings.<Clone>$()
-  nameWithType: InMemoryLockSettings.<Clone>$()
-- uid: Silverback.Lock.InMemoryLockSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Lock.InMemoryLockSettings.html#Silverback_Lock_InMemoryLockSettings__Clone___
-  commentId: Overload:Silverback.Lock.InMemoryLockSettings.{Clone}$
-  fullName: Silverback.Lock.InMemoryLockSettings.<Clone>$
-  nameWithType: InMemoryLockSettings.<Clone>$
 - uid: Silverback.Lock.PostgreSqlAdvisoryLock
   name: PostgreSqlAdvisoryLock
   href: api/Silverback.Lock.PostgreSqlAdvisoryLock.html
@@ -5239,18 +5203,6 @@ references:
   fullName.vb: Silverback.Lock.PostgreSqlAdvisoryLockSettings.<>
   nameWithType: PostgreSqlAdvisoryLockSettings.operator !=
   nameWithType.vb: PostgreSqlAdvisoryLockSettings.<>
-- uid: Silverback.Lock.PostgreSqlAdvisoryLockSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Lock.PostgreSqlAdvisoryLockSettings.html#Silverback_Lock_PostgreSqlAdvisoryLockSettings__Clone__
-  commentId: M:Silverback.Lock.PostgreSqlAdvisoryLockSettings.{Clone}$
-  fullName: Silverback.Lock.PostgreSqlAdvisoryLockSettings.<Clone>$()
-  nameWithType: PostgreSqlAdvisoryLockSettings.<Clone>$()
-- uid: Silverback.Lock.PostgreSqlAdvisoryLockSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Lock.PostgreSqlAdvisoryLockSettings.html#Silverback_Lock_PostgreSqlAdvisoryLockSettings__Clone___
-  commentId: Overload:Silverback.Lock.PostgreSqlAdvisoryLockSettings.{Clone}$
-  fullName: Silverback.Lock.PostgreSqlAdvisoryLockSettings.<Clone>$
-  nameWithType: PostgreSqlAdvisoryLockSettings.<Clone>$
 - uid: Silverback.Lock.PostgreSqlAdvisoryLockSettingsBuilder
   name: PostgreSqlAdvisoryLockSettingsBuilder
   href: api/Silverback.Lock.PostgreSqlAdvisoryLockSettingsBuilder.html
@@ -5566,18 +5518,6 @@ references:
   fullName.vb: Silverback.Lock.PostgreSqlTableLockSettings.<>
   nameWithType: PostgreSqlTableLockSettings.operator !=
   nameWithType.vb: PostgreSqlTableLockSettings.<>
-- uid: Silverback.Lock.PostgreSqlTableLockSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Lock.PostgreSqlTableLockSettings.html#Silverback_Lock_PostgreSqlTableLockSettings__Clone__
-  commentId: M:Silverback.Lock.PostgreSqlTableLockSettings.{Clone}$
-  fullName: Silverback.Lock.PostgreSqlTableLockSettings.<Clone>$()
-  nameWithType: PostgreSqlTableLockSettings.<Clone>$()
-- uid: Silverback.Lock.PostgreSqlTableLockSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Lock.PostgreSqlTableLockSettings.html#Silverback_Lock_PostgreSqlTableLockSettings__Clone___
-  commentId: Overload:Silverback.Lock.PostgreSqlTableLockSettings.{Clone}$
-  fullName: Silverback.Lock.PostgreSqlTableLockSettings.<Clone>$
-  nameWithType: PostgreSqlTableLockSettings.<Clone>$
 - uid: Silverback.Lock.PostgreSqlTableLockSettingsBuilder
   name: PostgreSqlTableLockSettingsBuilder
   href: api/Silverback.Lock.PostgreSqlTableLockSettingsBuilder.html
@@ -6052,18 +5992,6 @@ references:
   fullName.vb: Silverback.Lock.TableBasedDistributedLockSettings.<>
   nameWithType: TableBasedDistributedLockSettings.operator !=
   nameWithType.vb: TableBasedDistributedLockSettings.<>
-- uid: Silverback.Lock.TableBasedDistributedLockSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Lock.TableBasedDistributedLockSettings.html#Silverback_Lock_TableBasedDistributedLockSettings__Clone__
-  commentId: M:Silverback.Lock.TableBasedDistributedLockSettings.{Clone}$
-  fullName: Silverback.Lock.TableBasedDistributedLockSettings.<Clone>$()
-  nameWithType: TableBasedDistributedLockSettings.<Clone>$()
-- uid: Silverback.Lock.TableBasedDistributedLockSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Lock.TableBasedDistributedLockSettings.html#Silverback_Lock_TableBasedDistributedLockSettings__Clone___
-  commentId: Overload:Silverback.Lock.TableBasedDistributedLockSettings.{Clone}$
-  fullName: Silverback.Lock.TableBasedDistributedLockSettings.<Clone>$
-  nameWithType: TableBasedDistributedLockSettings.<Clone>$
 - uid: Silverback.Messaging
   name: Silverback.Messaging
   href: api/Silverback.Messaging.html
@@ -10047,6 +9975,15 @@ references:
   fullName.vb: Silverback.Messaging.Broker.Consumer(Of TIdentifier).StatusInfo
   nameWithType: Consumer<TIdentifier>.StatusInfo
   nameWithType.vb: Consumer(Of TIdentifier).StatusInfo
+- uid: Silverback.Messaging.Broker.Consumer`1.StopAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier,System.Boolean)
+  name: StopAsync(IBrokerMessageIdentifier, bool)
+  href: api/Silverback.Messaging.Broker.Consumer-1.html#Silverback_Messaging_Broker_Consumer_1_StopAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_System_Boolean_
+  commentId: M:Silverback.Messaging.Broker.Consumer`1.StopAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier,System.Boolean)
+  name.vb: StopAsync(IBrokerMessageIdentifier, Boolean)
+  fullName: Silverback.Messaging.Broker.Consumer<TIdentifier>.StopAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier, bool)
+  fullName.vb: Silverback.Messaging.Broker.Consumer(Of TIdentifier).StopAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier, Boolean)
+  nameWithType: Consumer<TIdentifier>.StopAsync(IBrokerMessageIdentifier, bool)
+  nameWithType.vb: Consumer(Of TIdentifier).StopAsync(IBrokerMessageIdentifier, Boolean)
 - uid: Silverback.Messaging.Broker.Consumer`1.StopAsync(System.Boolean)
   name: StopAsync(bool)
   href: api/Silverback.Messaging.Broker.Consumer-1.html#Silverback_Messaging_Broker_Consumer_1_StopAsync_System_Boolean_
@@ -10096,6 +10033,23 @@ references:
   fullName.vb: Silverback.Messaging.Broker.Consumer(Of TIdentifier).TriggerReconnectAsync
   nameWithType: Consumer<TIdentifier>.TriggerReconnectAsync
   nameWithType.vb: Consumer(Of TIdentifier).TriggerReconnectAsync
+- uid: Silverback.Messaging.Broker.Consumer`1.TryBeginStop(`0)
+  name: TryBeginStop(TIdentifier?)
+  href: api/Silverback.Messaging.Broker.Consumer-1.html#Silverback_Messaging_Broker_Consumer_1_TryBeginStop__0_
+  commentId: M:Silverback.Messaging.Broker.Consumer`1.TryBeginStop(`0)
+  name.vb: TryBeginStop(TIdentifier)
+  fullName: Silverback.Messaging.Broker.Consumer<TIdentifier>.TryBeginStop(TIdentifier?)
+  fullName.vb: Silverback.Messaging.Broker.Consumer(Of TIdentifier).TryBeginStop(TIdentifier)
+  nameWithType: Consumer<TIdentifier>.TryBeginStop(TIdentifier?)
+  nameWithType.vb: Consumer(Of TIdentifier).TryBeginStop(TIdentifier)
+- uid: Silverback.Messaging.Broker.Consumer`1.TryBeginStop*
+  name: TryBeginStop
+  href: api/Silverback.Messaging.Broker.Consumer-1.html#Silverback_Messaging_Broker_Consumer_1_TryBeginStop_
+  commentId: Overload:Silverback.Messaging.Broker.Consumer`1.TryBeginStop
+  fullName: Silverback.Messaging.Broker.Consumer<TIdentifier>.TryBeginStop
+  fullName.vb: Silverback.Messaging.Broker.Consumer(Of TIdentifier).TryBeginStop
+  nameWithType: Consumer<TIdentifier>.TryBeginStop
+  nameWithType.vb: Consumer(Of TIdentifier).TryBeginStop
 - uid: Silverback.Messaging.Broker.Consumer`1.WaitUntilConsumingStoppedCoreAsync
   name: WaitUntilConsumingStoppedCoreAsync()
   href: api/Silverback.Messaging.Broker.Consumer-1.html#Silverback_Messaging_Broker_Consumer_1_WaitUntilConsumingStoppedCoreAsync
@@ -10502,6 +10456,15 @@ references:
   commentId: Overload:Silverback.Messaging.Broker.IConsumer.StatusInfo
   fullName: Silverback.Messaging.Broker.IConsumer.StatusInfo
   nameWithType: IConsumer.StatusInfo
+- uid: Silverback.Messaging.Broker.IConsumer.StopAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier,System.Boolean)
+  name: StopAsync(IBrokerMessageIdentifier, bool)
+  href: api/Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StopAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_System_Boolean_
+  commentId: M:Silverback.Messaging.Broker.IConsumer.StopAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier,System.Boolean)
+  name.vb: StopAsync(IBrokerMessageIdentifier, Boolean)
+  fullName: Silverback.Messaging.Broker.IConsumer.StopAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier, bool)
+  fullName.vb: Silverback.Messaging.Broker.IConsumer.StopAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier, Boolean)
+  nameWithType: IConsumer.StopAsync(IBrokerMessageIdentifier, bool)
+  nameWithType.vb: IConsumer.StopAsync(IBrokerMessageIdentifier, Boolean)
 - uid: Silverback.Messaging.Broker.IConsumer.StopAsync(System.Boolean)
   name: StopAsync(bool)
   href: api/Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StopAsync_System_Boolean_
@@ -12614,6 +12577,21 @@ references:
   commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Rebalance
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Rebalance
   nameWithType: IMockedConsumerGroup.Rebalance
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync(System.Collections.Generic.IReadOnlyCollection{System.String},System.Threading.CancellationToken)
+  name: WaitUntilAllMessagesAreCommittedAsync(IReadOnlyCollection<string>, CancellationToken)
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_WaitUntilAllMessagesAreCommittedAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Threading_CancellationToken_
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync(System.Collections.Generic.IReadOnlyCollection{System.String},System.Threading.CancellationToken)
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(IReadOnlyCollection(Of String), CancellationToken)
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync(System.Collections.Generic.IReadOnlyCollection<string>, System.Threading.CancellationToken)
+  fullName.vb: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync(System.Collections.Generic.IReadOnlyCollection(Of String), System.Threading.CancellationToken)
+  nameWithType: IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync(IReadOnlyCollection<string>, CancellationToken)
+  nameWithType.vb: IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync(IReadOnlyCollection(Of String), CancellationToken)
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync*
+  name: WaitUntilAllMessagesAreCommittedAsync
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_WaitUntilAllMessagesAreCommittedAsync_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync
+  nameWithType: IMockedConsumerGroup.WaitUntilAllMessagesAreCommittedAsync
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.WaitUntilAllMessagesAreConsumedAsync(System.Collections.Generic.IReadOnlyCollection{System.String},System.Threading.CancellationToken)
   name: WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string>, CancellationToken)
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_WaitUntilAllMessagesAreConsumedAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Threading_CancellationToken_
@@ -12986,6 +12964,21 @@ references:
   commentId: Overload:Silverback.Messaging.Broker.KafkaConsumer.StopCoreAsync
   fullName: Silverback.Messaging.Broker.KafkaConsumer.StopCoreAsync
   nameWithType: KafkaConsumer.StopCoreAsync
+- uid: Silverback.Messaging.Broker.KafkaConsumer.TryBeginStop(Silverback.Messaging.Broker.KafkaOffset)
+  name: TryBeginStop(KafkaOffset?)
+  href: api/Silverback.Messaging.Broker.KafkaConsumer.html#Silverback_Messaging_Broker_KafkaConsumer_TryBeginStop_Silverback_Messaging_Broker_KafkaOffset_
+  commentId: M:Silverback.Messaging.Broker.KafkaConsumer.TryBeginStop(Silverback.Messaging.Broker.KafkaOffset)
+  name.vb: TryBeginStop(KafkaOffset)
+  fullName: Silverback.Messaging.Broker.KafkaConsumer.TryBeginStop(Silverback.Messaging.Broker.KafkaOffset?)
+  fullName.vb: Silverback.Messaging.Broker.KafkaConsumer.TryBeginStop(Silverback.Messaging.Broker.KafkaOffset)
+  nameWithType: KafkaConsumer.TryBeginStop(KafkaOffset?)
+  nameWithType.vb: KafkaConsumer.TryBeginStop(KafkaOffset)
+- uid: Silverback.Messaging.Broker.KafkaConsumer.TryBeginStop*
+  name: TryBeginStop
+  href: api/Silverback.Messaging.Broker.KafkaConsumer.html#Silverback_Messaging_Broker_KafkaConsumer_TryBeginStop_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaConsumer.TryBeginStop
+  fullName: Silverback.Messaging.Broker.KafkaConsumer.TryBeginStop
+  nameWithType: KafkaConsumer.TryBeginStop
 - uid: Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync
   name: WaitUntilConsumingStoppedCoreAsync()
   href: api/Silverback.Messaging.Broker.KafkaConsumer.html#Silverback_Messaging_Broker_KafkaConsumer_WaitUntilConsumingStoppedCoreAsync
@@ -13325,18 +13318,6 @@ references:
   fullName.vb: Silverback.Messaging.Broker.KafkaOffset.<=
   nameWithType: KafkaOffset.operator <=
   nameWithType.vb: KafkaOffset.<=
-- uid: Silverback.Messaging.Broker.KafkaOffset.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Broker.KafkaOffset.html#Silverback_Messaging_Broker_KafkaOffset__Clone__
-  commentId: M:Silverback.Messaging.Broker.KafkaOffset.{Clone}$
-  fullName: Silverback.Messaging.Broker.KafkaOffset.<Clone>$()
-  nameWithType: KafkaOffset.<Clone>$()
-- uid: Silverback.Messaging.Broker.KafkaOffset.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Broker.KafkaOffset.html#Silverback_Messaging_Broker_KafkaOffset__Clone___
-  commentId: Overload:Silverback.Messaging.Broker.KafkaOffset.{Clone}$
-  fullName: Silverback.Messaging.Broker.KafkaOffset.<Clone>$
-  nameWithType: KafkaOffset.<Clone>$
 - uid: Silverback.Messaging.Broker.KafkaProducer
   name: KafkaProducer
   href: api/Silverback.Messaging.Broker.KafkaProducer.html
@@ -14696,18 +14677,6 @@ references:
   fullName.vb: Silverback.Messaging.Broker.MqttMessageIdentifier.<>
   nameWithType: MqttMessageIdentifier.operator !=
   nameWithType.vb: MqttMessageIdentifier.<>
-- uid: Silverback.Messaging.Broker.MqttMessageIdentifier.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Broker.MqttMessageIdentifier.html#Silverback_Messaging_Broker_MqttMessageIdentifier__Clone__
-  commentId: M:Silverback.Messaging.Broker.MqttMessageIdentifier.{Clone}$
-  fullName: Silverback.Messaging.Broker.MqttMessageIdentifier.<Clone>$()
-  nameWithType: MqttMessageIdentifier.<Clone>$()
-- uid: Silverback.Messaging.Broker.MqttMessageIdentifier.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Broker.MqttMessageIdentifier.html#Silverback_Messaging_Broker_MqttMessageIdentifier__Clone___
-  commentId: Overload:Silverback.Messaging.Broker.MqttMessageIdentifier.{Clone}$
-  fullName: Silverback.Messaging.Broker.MqttMessageIdentifier.<Clone>$
-  nameWithType: MqttMessageIdentifier.<Clone>$
 - uid: Silverback.Messaging.Broker.MqttProducer
   name: MqttProducer
   href: api/Silverback.Messaging.Broker.MqttProducer.html
@@ -16385,18 +16354,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.<>
   nameWithType: ConsumerEndpointConfiguration.operator !=
   nameWithType.vb: ConsumerEndpointConfiguration.<>
-- uid: Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.html#Silverback_Messaging_Configuration_ConsumerEndpointConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.<Clone>$()
-  nameWithType: ConsumerEndpointConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.html#Silverback_Messaging_Configuration_ConsumerEndpointConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.<Clone>$
-  nameWithType: ConsumerEndpointConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions
   name: ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions
   href: api/Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions.html
@@ -16936,18 +16893,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.EndpointConfiguration.<>
   nameWithType: EndpointConfiguration.operator !=
   nameWithType.vb: EndpointConfiguration.<>
-- uid: Silverback.Messaging.Configuration.EndpointConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.EndpointConfiguration.html#Silverback_Messaging_Configuration_EndpointConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.EndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.EndpointConfiguration.<Clone>$()
-  nameWithType: EndpointConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.EndpointConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.EndpointConfiguration.html#Silverback_Messaging_Configuration_EndpointConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.EndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.EndpointConfiguration.<Clone>$
-  nameWithType: EndpointConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.EndpointConfigurationBuilder`3
   name: EndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>
   href: api/Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html
@@ -17104,6 +17049,48 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.EndpointConfigurationBuilder(Of TMessage, TConfiguration, TBuilder).ValidateMessageAndWarn
   nameWithType: EndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>.ValidateMessageAndWarn
   nameWithType.vb: EndpointConfigurationBuilder(Of TMessage, TConfiguration, TBuilder).ValidateMessageAndWarn
+- uid: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions
+  name: EndpointsConfigurationBuilderAddKafkaClientsExtensions
+  href: api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.html
+  commentId: T:Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions
+  fullName: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions
+  nameWithType: EndpointsConfigurationBuilderAddKafkaClientsExtensions
+- uid: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder,System.Action{Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder})
+  name: AddKafkaClients(BrokerClientsConfigurationBuilder, Action<KafkaClientsConfigurationBuilder>)
+  href: api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.html#Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddKafkaClientsExtensions_AddKafkaClients_Silverback_Messaging_Configuration_BrokerClientsConfigurationBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaClientsConfigurationBuilder__
+  commentId: M:Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder,System.Action{Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder})
+  name.vb: AddKafkaClients(BrokerClientsConfigurationBuilder, Action(Of KafkaClientsConfigurationBuilder))
+  fullName: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder, System.Action<Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder>)
+  fullName.vb: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder, System.Action(Of Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder))
+  nameWithType: EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(BrokerClientsConfigurationBuilder, Action<KafkaClientsConfigurationBuilder>)
+  nameWithType.vb: EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(BrokerClientsConfigurationBuilder, Action(Of KafkaClientsConfigurationBuilder))
+- uid: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients*
+  name: AddKafkaClients
+  href: api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.html#Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddKafkaClientsExtensions_AddKafkaClients_
+  commentId: Overload:Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients
+  fullName: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients
+  nameWithType: EndpointsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients
+- uid: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions
+  name: EndpointsConfigurationBuilderAddMqttEndpointsExtensions
+  href: api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.html
+  commentId: T:Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions
+  fullName: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions
+  nameWithType: EndpointsConfigurationBuilderAddMqttEndpointsExtensions
+- uid: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder,System.Action{Silverback.Messaging.Configuration.Mqtt.MqttClientsConfigurationBuilder})
+  name: AddMqttClients(BrokerClientsConfigurationBuilder, Action<MqttClientsConfigurationBuilder>)
+  href: api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.html#Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddMqttEndpointsExtensions_AddMqttClients_Silverback_Messaging_Configuration_BrokerClientsConfigurationBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_MqttClientsConfigurationBuilder__
+  commentId: M:Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder,System.Action{Silverback.Messaging.Configuration.Mqtt.MqttClientsConfigurationBuilder})
+  name.vb: AddMqttClients(BrokerClientsConfigurationBuilder, Action(Of MqttClientsConfigurationBuilder))
+  fullName: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder, System.Action<Silverback.Messaging.Configuration.Mqtt.MqttClientsConfigurationBuilder>)
+  fullName.vb: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder, System.Action(Of Silverback.Messaging.Configuration.Mqtt.MqttClientsConfigurationBuilder))
+  nameWithType: EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(BrokerClientsConfigurationBuilder, Action<MqttClientsConfigurationBuilder>)
+  nameWithType.vb: EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(BrokerClientsConfigurationBuilder, Action(Of MqttClientsConfigurationBuilder))
+- uid: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients*
+  name: AddMqttClients
+  href: api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.html#Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddMqttEndpointsExtensions_AddMqttClients_
+  commentId: Overload:Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients
+  fullName: Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients
+  nameWithType: EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients
 - uid: Silverback.Messaging.Configuration.EntityFrameworkKafkaOffsetStoreSettingsBuilder
   name: EntityFrameworkKafkaOffsetStoreSettingsBuilder
   href: api/Silverback.Messaging.Configuration.EntityFrameworkKafkaOffsetStoreSettingsBuilder.html
@@ -18338,18 +18325,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.<>
   nameWithType: KafkaClientConfiguration.operator !=
   nameWithType.vb: KafkaClientConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.<Clone>$()
-  nameWithType: KafkaClientConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.<Clone>$
-  nameWithType: KafkaClientConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder
   name: KafkaClientConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder.html
@@ -21894,22 +21869,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration(Of TConfluentConfig).<>
   nameWithType: KafkaClientConfiguration<TConfluentConfig>.operator !=
   nameWithType.vb: KafkaClientConfiguration(Of TConfluentConfig).<>
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration`1.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration`1.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration<TConfluentConfig>.<Clone>$()
-  fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration(Of TConfluentConfig).<Clone>$()
-  nameWithType: KafkaClientConfiguration<TConfluentConfig>.<Clone>$()
-  nameWithType.vb: KafkaClientConfiguration(Of TConfluentConfig).<Clone>$()
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration`1.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration`1.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration<TConfluentConfig>.<Clone>$
-  fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration(Of TConfluentConfig).<Clone>$
-  nameWithType: KafkaClientConfiguration<TConfluentConfig>.<Clone>$
-  nameWithType.vb: KafkaClientConfiguration(Of TConfluentConfig).<Clone>$
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder
   name: KafkaClientsConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder.html
@@ -24070,18 +24029,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.<>
   nameWithType: KafkaConsumerConfiguration.operator !=
   nameWithType.vb: KafkaConsumerConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.<Clone>$()
-  nameWithType: KafkaConsumerConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.<Clone>$
-  nameWithType: KafkaConsumerConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder
   name: KafkaConsumerConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.html
@@ -25051,18 +24998,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.<>
   nameWithType: KafkaConsumerEndpointConfiguration.operator !=
   nameWithType.vb: KafkaConsumerEndpointConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.<Clone>$()
-  nameWithType: KafkaConsumerEndpointConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.<Clone>$
-  nameWithType: KafkaConsumerEndpointConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfigurationBuilder`1
   name: KafkaConsumerEndpointConfigurationBuilder<TMessage>
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfigurationBuilder-1.html
@@ -25709,18 +25644,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.<>
   nameWithType: KafkaProducerConfiguration.operator !=
   nameWithType.vb: KafkaProducerConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.<Clone>$()
-  nameWithType: KafkaProducerConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.<Clone>$
-  nameWithType: KafkaProducerConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder
   name: KafkaProducerConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html
@@ -26375,18 +26298,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.<>
   nameWithType: KafkaProducerEndpointConfiguration.operator !=
   nameWithType.vb: KafkaProducerEndpointConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.<Clone>$()
-  nameWithType: KafkaProducerEndpointConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.<Clone>$
-  nameWithType: KafkaProducerEndpointConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1
   name: KafkaProducerEndpointConfigurationBuilder<TMessage>
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html
@@ -26674,6 +26585,114 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BasicAuthUserInfo
   fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BasicAuthUserInfo
   nameWithType: KafkaSchemaRegistryConfiguration.BasicAuthUserInfo
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientId
+  name: BearerAuthClientId
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthClientId
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientId
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientId
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthClientId
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientId*
+  name: BearerAuthClientId
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthClientId_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientId
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientId
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthClientId
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientSecret
+  name: BearerAuthClientSecret
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthClientSecret
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientSecret
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientSecret
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthClientSecret
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientSecret*
+  name: BearerAuthClientSecret
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthClientSecret_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientSecret
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthClientSecret
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthClientSecret
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthCredentialsSource
+  name: BearerAuthCredentialsSource
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthCredentialsSource
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthCredentialsSource
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthCredentialsSource
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthCredentialsSource
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthCredentialsSource*
+  name: BearerAuthCredentialsSource
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthCredentialsSource_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthCredentialsSource
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthCredentialsSource
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthCredentialsSource
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthIdentityPoolId
+  name: BearerAuthIdentityPoolId
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthIdentityPoolId
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthIdentityPoolId
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthIdentityPoolId
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthIdentityPoolId
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthIdentityPoolId*
+  name: BearerAuthIdentityPoolId
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthIdentityPoolId_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthIdentityPoolId
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthIdentityPoolId
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthIdentityPoolId
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthLogicalCluster
+  name: BearerAuthLogicalCluster
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthLogicalCluster
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthLogicalCluster
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthLogicalCluster
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthLogicalCluster
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthLogicalCluster*
+  name: BearerAuthLogicalCluster
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthLogicalCluster_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthLogicalCluster
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthLogicalCluster
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthLogicalCluster
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthScope
+  name: BearerAuthScope
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthScope
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthScope
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthScope
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthScope
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthScope*
+  name: BearerAuthScope
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthScope_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthScope
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthScope
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthScope
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthToken
+  name: BearerAuthToken
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthToken
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthToken
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthToken
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthToken
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthToken*
+  name: BearerAuthToken
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthToken_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthToken
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthToken
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthToken
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointQuery
+  name: BearerAuthTokenEndpointQuery
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthTokenEndpointQuery
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointQuery
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointQuery
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointQuery
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointQuery*
+  name: BearerAuthTokenEndpointQuery
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthTokenEndpointQuery_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointQuery
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointQuery
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointQuery
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointUrl
+  name: BearerAuthTokenEndpointUrl
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthTokenEndpointUrl
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointUrl
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointUrl
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointUrl
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointUrl*
+  name: BearerAuthTokenEndpointUrl
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_BearerAuthTokenEndpointUrl_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointUrl
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointUrl
+  nameWithType: KafkaSchemaRegistryConfiguration.BearerAuthTokenEndpointUrl
 - uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.EnableSslCertificateVerification
   name: EnableSslCertificateVerification
   href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_EnableSslCertificateVerification
@@ -26746,6 +26765,18 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.MaxCachedSchemas
   fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.MaxCachedSchemas
   nameWithType: KafkaSchemaRegistryConfiguration.MaxCachedSchemas
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.MaxConnectionsPerServer
+  name: MaxConnectionsPerServer
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_MaxConnectionsPerServer
+  commentId: P:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.MaxConnectionsPerServer
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.MaxConnectionsPerServer
+  nameWithType: KafkaSchemaRegistryConfiguration.MaxConnectionsPerServer
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.MaxConnectionsPerServer*
+  name: MaxConnectionsPerServer
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_MaxConnectionsPerServer_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.MaxConnectionsPerServer
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.MaxConnectionsPerServer
+  nameWithType: KafkaSchemaRegistryConfiguration.MaxConnectionsPerServer
 - uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.MaxRetries
   name: MaxRetries
   href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration_MaxRetries
@@ -26902,18 +26933,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.<>
   nameWithType: KafkaSchemaRegistryConfiguration.operator !=
   nameWithType.vb: KafkaSchemaRegistryConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.<Clone>$()
-  nameWithType: KafkaSchemaRegistryConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.<Clone>$
-  nameWithType: KafkaSchemaRegistryConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder
   name: KafkaSchemaRegistryConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html
@@ -27001,6 +27020,138 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBasicAuthUserInfo
   fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBasicAuthUserInfo
   nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBasicAuthUserInfo
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId(System.String)
+  name: WithBearerAuthClientId(string?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthClientId_System_String_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId(System.String)
+  name.vb: WithBearerAuthClientId(String)
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId(string?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId(String)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId(string?)
+  nameWithType.vb: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId(String)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId*
+  name: WithBearerAuthClientId
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthClientId_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientId
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret(System.String)
+  name: WithBearerAuthClientSecret(string?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthClientSecret_System_String_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret(System.String)
+  name.vb: WithBearerAuthClientSecret(String)
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret(string?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret(String)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret(string?)
+  nameWithType.vb: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret(String)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret*
+  name: WithBearerAuthClientSecret
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthClientSecret_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthClientSecret
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthCredentialsSource(System.Nullable{Confluent.SchemaRegistry.BearerAuthCredentialsSource})
+  name: WithBearerAuthCredentialsSource(BearerAuthCredentialsSource?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthCredentialsSource_System_Nullable_Confluent_SchemaRegistry_BearerAuthCredentialsSource__
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthCredentialsSource(System.Nullable{Confluent.SchemaRegistry.BearerAuthCredentialsSource})
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthCredentialsSource(Confluent.SchemaRegistry.BearerAuthCredentialsSource?)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthCredentialsSource(BearerAuthCredentialsSource?)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthCredentialsSource*
+  name: WithBearerAuthCredentialsSource
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthCredentialsSource_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthCredentialsSource
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthCredentialsSource
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthCredentialsSource
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId(System.String)
+  name: WithBearerAuthIdentityPoolId(string?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthIdentityPoolId_System_String_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId(System.String)
+  name.vb: WithBearerAuthIdentityPoolId(String)
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId(string?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId(String)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId(string?)
+  nameWithType.vb: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId(String)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId*
+  name: WithBearerAuthIdentityPoolId
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthIdentityPoolId_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthIdentityPoolId
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster(System.String)
+  name: WithBearerAuthLogicalCluster(string?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthLogicalCluster_System_String_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster(System.String)
+  name.vb: WithBearerAuthLogicalCluster(String)
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster(string?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster(String)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster(string?)
+  nameWithType.vb: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster(String)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster*
+  name: WithBearerAuthLogicalCluster
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthLogicalCluster_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthLogicalCluster
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope(System.String)
+  name: WithBearerAuthScope(string?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthScope_System_String_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope(System.String)
+  name.vb: WithBearerAuthScope(String)
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope(string?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope(String)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope(string?)
+  nameWithType.vb: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope(String)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope*
+  name: WithBearerAuthScope
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthScope_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthScope
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken(System.String)
+  name: WithBearerAuthToken(string?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthToken_System_String_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken(System.String)
+  name.vb: WithBearerAuthToken(String)
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken(string?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken(String)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken(string?)
+  nameWithType.vb: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken(String)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken*
+  name: WithBearerAuthToken
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthToken_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthToken
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery(System.String)
+  name: WithBearerAuthTokenEndpointQuery(string?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthTokenEndpointQuery_System_String_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery(System.String)
+  name.vb: WithBearerAuthTokenEndpointQuery(String)
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery(string?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery(String)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery(string?)
+  nameWithType.vb: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery(String)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery*
+  name: WithBearerAuthTokenEndpointQuery
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthTokenEndpointQuery_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointQuery
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl(System.String)
+  name: WithBearerAuthTokenEndpointUrl(string?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthTokenEndpointUrl_System_String_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl(System.String)
+  name.vb: WithBearerAuthTokenEndpointUrl(String)
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl(string?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl(String)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl(string?)
+  nameWithType.vb: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl(String)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl*
+  name: WithBearerAuthTokenEndpointUrl
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithBearerAuthTokenEndpointUrl_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithBearerAuthTokenEndpointUrl
 - uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithLatestCacheTtlSecs(System.Nullable{System.Int32})
   name: WithLatestCacheTtlSecs(int?)
   href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithLatestCacheTtlSecs_System_Nullable_System_Int32__
@@ -27031,6 +27182,21 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxCachedSchemas
   fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxCachedSchemas
   nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithMaxCachedSchemas
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer(System.Nullable{System.Int32})
+  name: WithMaxConnectionsPerServer(int?)
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithMaxConnectionsPerServer_System_Nullable_System_Int32__
+  commentId: M:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer(System.Nullable{System.Int32})
+  name.vb: WithMaxConnectionsPerServer(Integer?)
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer(int?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer(Integer?)
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer(int?)
+  nameWithType.vb: KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer(Integer?)
+- uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer*
+  name: WithMaxConnectionsPerServer
+  href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithMaxConnectionsPerServer_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer
+  fullName: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer
+  nameWithType: KafkaSchemaRegistryConfigurationBuilder.WithMaxConnectionsPerServer
 - uid: Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.WithMaxRetries(System.Nullable{System.Int32})
   name: WithMaxRetries(int?)
   href: api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaSchemaRegistryConfigurationBuilder_WithMaxRetries_System_Nullable_System_Int32__
@@ -27550,18 +27716,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.<>
   nameWithType: MqttClientChannelConfiguration.operator !=
   nameWithType.vb: MqttClientChannelConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientChannelConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.<Clone>$()
-  nameWithType: MqttClientChannelConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientChannelConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.<Clone>$
-  nameWithType: MqttClientChannelConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration
   name: MqttClientConfiguration
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.html
@@ -28018,18 +28172,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.<>
   nameWithType: MqttClientConfiguration.operator !=
   nameWithType.vb: MqttClientConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.<Clone>$()
-  nameWithType: MqttClientConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.<Clone>$
-  nameWithType: MqttClientConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilder
   name: MqttClientConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilder.html
@@ -28954,18 +29096,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.<>
   nameWithType: MqttClientTcpConfiguration.operator !=
   nameWithType.vb: MqttClientTcpConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientTcpConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.<Clone>$()
-  nameWithType: MqttClientTcpConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientTcpConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.<Clone>$
-  nameWithType: MqttClientTcpConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder
   name: MqttClientTcpConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.html
@@ -29503,18 +29633,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.<>
   nameWithType: MqttClientTlsConfiguration.operator !=
   nameWithType.vb: MqttClientTlsConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.<Clone>$()
-  nameWithType: MqttClientTlsConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.<Clone>$
-  nameWithType: MqttClientTlsConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder
   name: MqttClientTlsConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html
@@ -30091,18 +30209,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.<>
   nameWithType: MqttClientWebSocketConfiguration.operator !=
   nameWithType.vb: MqttClientWebSocketConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.<Clone>$()
-  nameWithType: MqttClientWebSocketConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.<Clone>$
-  nameWithType: MqttClientWebSocketConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfigurationBuilder
   name: MqttClientWebSocketConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfigurationBuilder.html
@@ -30406,18 +30512,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.<>
   nameWithType: MqttClientWebSocketProxyConfiguration.operator !=
   nameWithType.vb: MqttClientWebSocketProxyConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.<Clone>$()
-  nameWithType: MqttClientWebSocketProxyConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.<Clone>$
-  nameWithType: MqttClientWebSocketProxyConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfigurationBuilder
   name: MqttClientWebSocketProxyConfigurationBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfigurationBuilder.html
@@ -31267,18 +31361,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.<>
   nameWithType: MqttConsumerEndpoint.operator !=
   nameWithType.vb: MqttConsumerEndpoint.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpoint__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.<Clone>$()
-  nameWithType: MqttConsumerEndpoint.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpoint__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.<Clone>$
-  nameWithType: MqttConsumerEndpoint.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration
   name: MqttConsumerEndpointConfiguration
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.html
@@ -31456,18 +31538,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.<>
   nameWithType: MqttConsumerEndpointConfiguration.operator !=
   nameWithType.vb: MqttConsumerEndpointConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.<Clone>$()
-  nameWithType: MqttConsumerEndpointConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.<Clone>$
-  nameWithType: MqttConsumerEndpointConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfigurationBuilder`1
   name: MqttConsumerEndpointConfigurationBuilder<TMessage>
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfigurationBuilder-1.html
@@ -31893,18 +31963,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.<>
   nameWithType: MqttLastWillMessageConfiguration.operator !=
   nameWithType.vb: MqttLastWillMessageConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.<Clone>$()
-  nameWithType: MqttLastWillMessageConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.<Clone>$
-  nameWithType: MqttLastWillMessageConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfigurationBuilder`1
   name: MqttLastWillMessageConfigurationBuilder<TMessage>
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfigurationBuilder-1.html
@@ -32364,18 +32422,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.<>
   nameWithType: MqttProducerEndpoint.operator !=
   nameWithType.vb: MqttProducerEndpoint.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html#Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpoint__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.<Clone>$()
-  nameWithType: MqttProducerEndpoint.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html#Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpoint__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.<Clone>$
-  nameWithType: MqttProducerEndpoint.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration
   name: MqttProducerEndpointConfiguration
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html
@@ -32577,18 +32623,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.<>
   nameWithType: MqttProducerEndpointConfiguration.operator !=
   nameWithType.vb: MqttProducerEndpointConfiguration.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.<Clone>$()
-  nameWithType: MqttProducerEndpointConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.<Clone>$
-  nameWithType: MqttProducerEndpointConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1
   name: MqttProducerEndpointConfigurationBuilder<TMessage>
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html
@@ -33230,18 +33264,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.<>
   nameWithType: MqttUserProperty.operator !=
   nameWithType.vb: MqttUserProperty.<>
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.html#Silverback_Messaging_Configuration_Mqtt_MqttUserProperty__Clone__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.<Clone>$()
-  nameWithType: MqttUserProperty.<Clone>$()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.html#Silverback_Messaging_Configuration_Mqtt_MqttUserProperty__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.{Clone}$
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.<Clone>$
-  nameWithType: MqttUserProperty.<Clone>$
 - uid: Silverback.Messaging.Configuration.Mqtt.NoMatchingSubscribersBehavior
   name: NoMatchingSubscribersBehavior
   href: api/Silverback.Messaging.Configuration.Mqtt.NoMatchingSubscribersBehavior.html
@@ -34163,18 +34185,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointConfiguration.<>
   nameWithType: ProducerEndpointConfiguration.operator !=
   nameWithType.vb: ProducerEndpointConfiguration.<>
-- uid: Silverback.Messaging.Configuration.ProducerEndpointConfiguration.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html#Silverback_Messaging_Configuration_ProducerEndpointConfiguration__Clone__
-  commentId: M:Silverback.Messaging.Configuration.ProducerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.ProducerEndpointConfiguration.<Clone>$()
-  nameWithType: ProducerEndpointConfiguration.<Clone>$()
-- uid: Silverback.Messaging.Configuration.ProducerEndpointConfiguration.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html#Silverback_Messaging_Configuration_ProducerEndpointConfiguration__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.ProducerEndpointConfiguration.{Clone}$
-  fullName: Silverback.Messaging.Configuration.ProducerEndpointConfiguration.<Clone>$
-  nameWithType: ProducerEndpointConfiguration.<Clone>$
 - uid: Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions
   name: ProducerEndpointConfigurationBuilderSchemaRegistryExtensions
   href: api/Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions.html
@@ -34791,22 +34801,6 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointConfiguration(Of TEndpoint).<>
   nameWithType: ProducerEndpointConfiguration<TEndpoint>.operator !=
   nameWithType.vb: ProducerEndpointConfiguration(Of TEndpoint).<>
-- uid: Silverback.Messaging.Configuration.ProducerEndpointConfiguration`1.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Configuration.ProducerEndpointConfiguration-1.html#Silverback_Messaging_Configuration_ProducerEndpointConfiguration_1__Clone__
-  commentId: M:Silverback.Messaging.Configuration.ProducerEndpointConfiguration`1.{Clone}$
-  fullName: Silverback.Messaging.Configuration.ProducerEndpointConfiguration<TEndpoint>.<Clone>$()
-  fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointConfiguration(Of TEndpoint).<Clone>$()
-  nameWithType: ProducerEndpointConfiguration<TEndpoint>.<Clone>$()
-  nameWithType.vb: ProducerEndpointConfiguration(Of TEndpoint).<Clone>$()
-- uid: Silverback.Messaging.Configuration.ProducerEndpointConfiguration`1.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Configuration.ProducerEndpointConfiguration-1.html#Silverback_Messaging_Configuration_ProducerEndpointConfiguration_1__Clone___
-  commentId: Overload:Silverback.Messaging.Configuration.ProducerEndpointConfiguration`1.{Clone}$
-  fullName: Silverback.Messaging.Configuration.ProducerEndpointConfiguration<TEndpoint>.<Clone>$
-  fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointConfiguration(Of TEndpoint).<Clone>$
-  nameWithType: ProducerEndpointConfiguration<TEndpoint>.<Clone>$
-  nameWithType.vb: ProducerEndpointConfiguration(Of TEndpoint).<Clone>$
 - uid: Silverback.Messaging.Configuration.ProtobufMessageDeserializerBuilder
   name: ProtobufMessageDeserializerBuilder
   href: api/Silverback.Messaging.Configuration.ProtobufMessageDeserializerBuilder.html
@@ -35869,18 +35863,6 @@ references:
   fullName.vb: Silverback.Messaging.ConsumerEndpoint.<>
   nameWithType: ConsumerEndpoint.operator !=
   nameWithType.vb: ConsumerEndpoint.<>
-- uid: Silverback.Messaging.ConsumerEndpoint.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint__Clone__
-  commentId: M:Silverback.Messaging.ConsumerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.ConsumerEndpoint.<Clone>$()
-  nameWithType: ConsumerEndpoint.<Clone>$()
-- uid: Silverback.Messaging.ConsumerEndpoint.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint__Clone___
-  commentId: Overload:Silverback.Messaging.ConsumerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.ConsumerEndpoint.<Clone>$
-  nameWithType: ConsumerEndpoint.<Clone>$
 - uid: Silverback.Messaging.ConsumerEndpoint`1
   name: ConsumerEndpoint<TConfiguration>
   href: api/Silverback.Messaging.ConsumerEndpoint-1.html
@@ -36068,22 +36050,6 @@ references:
   fullName.vb: Silverback.Messaging.ConsumerEndpoint(Of TConfiguration).<>
   nameWithType: ConsumerEndpoint<TConfiguration>.operator !=
   nameWithType.vb: ConsumerEndpoint(Of TConfiguration).<>
-- uid: Silverback.Messaging.ConsumerEndpoint`1.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.ConsumerEndpoint-1.html#Silverback_Messaging_ConsumerEndpoint_1__Clone__
-  commentId: M:Silverback.Messaging.ConsumerEndpoint`1.{Clone}$
-  fullName: Silverback.Messaging.ConsumerEndpoint<TConfiguration>.<Clone>$()
-  fullName.vb: Silverback.Messaging.ConsumerEndpoint(Of TConfiguration).<Clone>$()
-  nameWithType: ConsumerEndpoint<TConfiguration>.<Clone>$()
-  nameWithType.vb: ConsumerEndpoint(Of TConfiguration).<Clone>$()
-- uid: Silverback.Messaging.ConsumerEndpoint`1.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.ConsumerEndpoint-1.html#Silverback_Messaging_ConsumerEndpoint_1__Clone___
-  commentId: Overload:Silverback.Messaging.ConsumerEndpoint`1.{Clone}$
-  fullName: Silverback.Messaging.ConsumerEndpoint<TConfiguration>.<Clone>$
-  fullName.vb: Silverback.Messaging.ConsumerEndpoint(Of TConfiguration).<Clone>$
-  nameWithType: ConsumerEndpoint<TConfiguration>.<Clone>$
-  nameWithType.vb: ConsumerEndpoint(Of TConfiguration).<Clone>$
 - uid: Silverback.Messaging.Consuming
   name: Silverback.Messaging.Consuming
   href: api/Silverback.Messaging.Consuming.html
@@ -36321,18 +36287,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.<>
   nameWithType: ErrorPolicyBase.operator !=
   nameWithType.vb: ErrorPolicyBase.<>
-- uid: Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase__Clone__
-  commentId: M:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.<Clone>$()
-  nameWithType: ErrorPolicyBase.<Clone>$()
-- uid: Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.<Clone>$
-  nameWithType: ErrorPolicyBase.<Clone>$
 - uid: Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyChain
   name: ErrorPolicyChain
   href: api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyChain.html
@@ -36663,18 +36617,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.<>
   nameWithType: MoveMessageErrorPolicy.operator !=
   nameWithType.vb: MoveMessageErrorPolicy.<>
-- uid: Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html#Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy__Clone__
-  commentId: M:Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.<Clone>$()
-  nameWithType: MoveMessageErrorPolicy.<Clone>$()
-- uid: Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html#Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.<Clone>$
-  nameWithType: MoveMessageErrorPolicy.<Clone>$
 - uid: Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy
   name: RetryErrorPolicy
   href: api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html
@@ -36876,18 +36818,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.<>
   nameWithType: RetryErrorPolicy.operator !=
   nameWithType.vb: RetryErrorPolicy.<>
-- uid: Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html#Silverback_Messaging_Consuming_ErrorHandling_RetryErrorPolicy__Clone__
-  commentId: M:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.<Clone>$()
-  nameWithType: RetryErrorPolicy.<Clone>$()
-- uid: Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html#Silverback_Messaging_Consuming_ErrorHandling_RetryErrorPolicy__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.<Clone>$
-  nameWithType: RetryErrorPolicy.<Clone>$
 - uid: Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy
   name: SkipMessageErrorPolicy
   href: api/Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html
@@ -37041,18 +36971,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.<>
   nameWithType: SkipMessageErrorPolicy.operator !=
   nameWithType.vb: SkipMessageErrorPolicy.<>
-- uid: Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html#Silverback_Messaging_Consuming_ErrorHandling_SkipMessageErrorPolicy__Clone__
-  commentId: M:Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.<Clone>$()
-  nameWithType: SkipMessageErrorPolicy.<Clone>$()
-- uid: Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html#Silverback_Messaging_Consuming_ErrorHandling_SkipMessageErrorPolicy__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.<Clone>$
-  nameWithType: SkipMessageErrorPolicy.<Clone>$
 - uid: Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy
   name: StopConsumerErrorPolicy
   href: api/Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.html
@@ -37206,18 +37124,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.<>
   nameWithType: StopConsumerErrorPolicy.operator !=
   nameWithType.vb: StopConsumerErrorPolicy.<>
-- uid: Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.html#Silverback_Messaging_Consuming_ErrorHandling_StopConsumerErrorPolicy__Clone__
-  commentId: M:Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.<Clone>$()
-  nameWithType: StopConsumerErrorPolicy.<Clone>$()
-- uid: Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.html#Silverback_Messaging_Consuming_ErrorHandling_StopConsumerErrorPolicy__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.{Clone}$
-  fullName: Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.<Clone>$
-  nameWithType: StopConsumerErrorPolicy.<Clone>$
 - uid: Silverback.Messaging.Consuming.KafkaOffsetStore
   name: Silverback.Messaging.Consuming.KafkaOffsetStore
   href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.html
@@ -37467,18 +37373,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.<>
   nameWithType: EntityFrameworkKafkaOffsetStoreSettings.operator !=
   nameWithType.vb: EntityFrameworkKafkaOffsetStoreSettings.<>
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_EntityFrameworkKafkaOffsetStoreSettings__Clone__
-  commentId: M:Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.<Clone>$()
-  nameWithType: EntityFrameworkKafkaOffsetStoreSettings.<Clone>$()
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_EntityFrameworkKafkaOffsetStoreSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.<Clone>$
-  nameWithType: EntityFrameworkKafkaOffsetStoreSettings.<Clone>$
 - uid: Silverback.Messaging.Consuming.KafkaOffsetStore.IKafkaOffsetStore
   name: IKafkaOffsetStore
   href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.IKafkaOffsetStore.html
@@ -37761,18 +37655,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.<>
   nameWithType: InMemoryKafkaOffsetStoreSettings.operator !=
   nameWithType.vb: InMemoryKafkaOffsetStoreSettings.<>
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_InMemoryKafkaOffsetStoreSettings__Clone__
-  commentId: M:Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.<Clone>$()
-  nameWithType: InMemoryKafkaOffsetStoreSettings.<Clone>$()
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_InMemoryKafkaOffsetStoreSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.<Clone>$
-  nameWithType: InMemoryKafkaOffsetStoreSettings.<Clone>$
 - uid: Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreConsumerBehavior
   name: KafkaOffsetStoreConsumerBehavior
   href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreConsumerBehavior.html
@@ -38082,18 +37964,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.<>
   nameWithType: KafkaOffsetStoreSettings.operator !=
   nameWithType.vb: KafkaOffsetStoreSettings.<>
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_KafkaOffsetStoreSettings__Clone__
-  commentId: M:Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.<Clone>$()
-  nameWithType: KafkaOffsetStoreSettings.<Clone>$()
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_KafkaOffsetStoreSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.<Clone>$
-  nameWithType: KafkaOffsetStoreSettings.<Clone>$
 - uid: Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStore
   name: PostgreSqlKafkaOffsetStore
   href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStore.html
@@ -38358,18 +38228,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.<>
   nameWithType: PostgreSqlKafkaOffsetStoreSettings.operator !=
   nameWithType.vb: PostgreSqlKafkaOffsetStoreSettings.<>
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_PostgreSqlKafkaOffsetStoreSettings__Clone__
-  commentId: M:Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.<Clone>$()
-  nameWithType: PostgreSqlKafkaOffsetStoreSettings.<Clone>$()
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_PostgreSqlKafkaOffsetStoreSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.<Clone>$
-  nameWithType: PostgreSqlKafkaOffsetStoreSettings.<Clone>$
 - uid: Silverback.Messaging.Consuming.KafkaOffsetStore.SilverbackContextKafkaOffsetStoreExtensions
   name: SilverbackContextKafkaOffsetStoreExtensions
   href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.SilverbackContextKafkaOffsetStoreExtensions.html
@@ -38736,18 +38594,6 @@ references:
   fullName.vb: Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.<>
   nameWithType: SqliteKafkaOffsetStoreSettings.operator !=
   nameWithType.vb: SqliteKafkaOffsetStoreSettings.<>
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_SqliteKafkaOffsetStoreSettings__Clone__
-  commentId: M:Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.<Clone>$()
-  nameWithType: SqliteKafkaOffsetStoreSettings.<Clone>$()
-- uid: Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.html#Silverback_Messaging_Consuming_KafkaOffsetStore_SqliteKafkaOffsetStoreSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.{Clone}$
-  fullName: Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.<Clone>$
-  nameWithType: SqliteKafkaOffsetStoreSettings.<Clone>$
 - uid: Silverback.Messaging.Consuming.PublisherConsumerBehavior
   name: PublisherConsumerBehavior
   href: api/Silverback.Messaging.Consuming.PublisherConsumerBehavior.html
@@ -40008,18 +39854,6 @@ references:
   fullName.vb: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.<>
   nameWithType: SymmetricDecryptionSettings.operator !=
   nameWithType.vb: SymmetricDecryptionSettings.<>
-- uid: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html#Silverback_Messaging_Encryption_SymmetricDecryptionSettings__Clone__
-  commentId: M:Silverback.Messaging.Encryption.SymmetricDecryptionSettings.{Clone}$
-  fullName: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.<Clone>$()
-  nameWithType: SymmetricDecryptionSettings.<Clone>$()
-- uid: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html#Silverback_Messaging_Encryption_SymmetricDecryptionSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricDecryptionSettings.{Clone}$
-  fullName: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.<Clone>$
-  nameWithType: SymmetricDecryptionSettings.<Clone>$
 - uid: Silverback.Messaging.Encryption.SymmetricEncryptStream
   name: SymmetricEncryptStream
   href: api/Silverback.Messaging.Encryption.SymmetricEncryptStream.html
@@ -40284,18 +40118,6 @@ references:
   fullName.vb: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.<>
   nameWithType: SymmetricEncryptionSettings.operator !=
   nameWithType.vb: SymmetricEncryptionSettings.<>
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings__Clone__
-  commentId: M:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.{Clone}$
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.<Clone>$()
-  nameWithType: SymmetricEncryptionSettings.<Clone>$()
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.{Clone}$
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.<Clone>$
-  nameWithType: SymmetricEncryptionSettings.<Clone>$
 - uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase
   name: SymmetricEncryptionSettingsBase
   href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html
@@ -40533,18 +40355,6 @@ references:
   fullName.vb: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.<>
   nameWithType: SymmetricEncryptionSettingsBase.operator !=
   nameWithType.vb: SymmetricEncryptionSettingsBase.<>
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase__Clone__
-  commentId: M:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.{Clone}$
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.<Clone>$()
-  nameWithType: SymmetricEncryptionSettingsBase.<Clone>$()
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase__Clone___
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.{Clone}$
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.<Clone>$
-  nameWithType: SymmetricEncryptionSettingsBase.<Clone>$
 - uid: Silverback.Messaging.Endpoint
   name: Endpoint
   href: api/Silverback.Messaging.Endpoint.html
@@ -40722,18 +40532,6 @@ references:
   fullName.vb: Silverback.Messaging.Endpoint.<>
   nameWithType: Endpoint.operator !=
   nameWithType.vb: Endpoint.<>
-- uid: Silverback.Messaging.Endpoint.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint__Clone__
-  commentId: M:Silverback.Messaging.Endpoint.{Clone}$
-  fullName: Silverback.Messaging.Endpoint.<Clone>$()
-  nameWithType: Endpoint.<Clone>$()
-- uid: Silverback.Messaging.Endpoint.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint__Clone___
-  commentId: Overload:Silverback.Messaging.Endpoint.{Clone}$
-  fullName: Silverback.Messaging.Endpoint.<Clone>$
-  nameWithType: Endpoint.<Clone>$
 - uid: Silverback.Messaging.Headers
   name: Silverback.Messaging.Headers
   href: api/Silverback.Messaging.Headers.html
@@ -41448,18 +41246,6 @@ references:
   fullName.vb: Silverback.Messaging.KafkaConsumerEndpoint.<>
   nameWithType: KafkaConsumerEndpoint.operator !=
   nameWithType.vb: KafkaConsumerEndpoint.<>
-- uid: Silverback.Messaging.KafkaConsumerEndpoint.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint__Clone__
-  commentId: M:Silverback.Messaging.KafkaConsumerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.KafkaConsumerEndpoint.<Clone>$()
-  nameWithType: KafkaConsumerEndpoint.<Clone>$()
-- uid: Silverback.Messaging.KafkaConsumerEndpoint.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint__Clone___
-  commentId: Overload:Silverback.Messaging.KafkaConsumerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.KafkaConsumerEndpoint.<Clone>$
-  nameWithType: KafkaConsumerEndpoint.<Clone>$
 - uid: Silverback.Messaging.KafkaProducerEndpoint
   name: KafkaProducerEndpoint
   href: api/Silverback.Messaging.KafkaProducerEndpoint.html
@@ -41631,18 +41417,6 @@ references:
   fullName.vb: Silverback.Messaging.KafkaProducerEndpoint.<>
   nameWithType: KafkaProducerEndpoint.operator !=
   nameWithType.vb: KafkaProducerEndpoint.<>
-- uid: Silverback.Messaging.KafkaProducerEndpoint.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.KafkaProducerEndpoint.html#Silverback_Messaging_KafkaProducerEndpoint__Clone__
-  commentId: M:Silverback.Messaging.KafkaProducerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.KafkaProducerEndpoint.<Clone>$()
-  nameWithType: KafkaProducerEndpoint.<Clone>$()
-- uid: Silverback.Messaging.KafkaProducerEndpoint.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.KafkaProducerEndpoint.html#Silverback_Messaging_KafkaProducerEndpoint__Clone___
-  commentId: Overload:Silverback.Messaging.KafkaProducerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.KafkaProducerEndpoint.<Clone>$
-  nameWithType: KafkaProducerEndpoint.<Clone>$
 - uid: Silverback.Messaging.Messages
   name: Silverback.Messaging.Messages
   href: api/Silverback.Messaging.Messages.html
@@ -43166,18 +42940,6 @@ references:
   fullName.vb: Silverback.Messaging.Messages.MessageHeader.<>
   nameWithType: MessageHeader.operator !=
   nameWithType.vb: MessageHeader.<>
-- uid: Silverback.Messaging.Messages.MessageHeader.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Messages.MessageHeader.html#Silverback_Messaging_Messages_MessageHeader__Clone__
-  commentId: M:Silverback.Messaging.Messages.MessageHeader.{Clone}$
-  fullName: Silverback.Messaging.Messages.MessageHeader.<Clone>$()
-  nameWithType: MessageHeader.<Clone>$()
-- uid: Silverback.Messaging.Messages.MessageHeader.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Messages.MessageHeader.html#Silverback_Messaging_Messages_MessageHeader__Clone___
-  commentId: Overload:Silverback.Messaging.Messages.MessageHeader.{Clone}$
-  fullName: Silverback.Messaging.Messages.MessageHeader.<Clone>$
-  nameWithType: MessageHeader.<Clone>$
 - uid: Silverback.Messaging.Messages.MessageHeaderCollection
   name: MessageHeaderCollection
   href: api/Silverback.Messaging.Messages.MessageHeaderCollection.html
@@ -44736,18 +44498,6 @@ references:
   fullName.vb: Silverback.Messaging.ProducerEndpoint.<>
   nameWithType: ProducerEndpoint.operator !=
   nameWithType.vb: ProducerEndpoint.<>
-- uid: Silverback.Messaging.ProducerEndpoint.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint__Clone__
-  commentId: M:Silverback.Messaging.ProducerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.ProducerEndpoint.<Clone>$()
-  nameWithType: ProducerEndpoint.<Clone>$()
-- uid: Silverback.Messaging.ProducerEndpoint.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint__Clone___
-  commentId: Overload:Silverback.Messaging.ProducerEndpoint.{Clone}$
-  fullName: Silverback.Messaging.ProducerEndpoint.<Clone>$
-  nameWithType: ProducerEndpoint.<Clone>$
 - uid: Silverback.Messaging.ProducerEndpoint`1
   name: ProducerEndpoint<TConfiguration>
   href: api/Silverback.Messaging.ProducerEndpoint-1.html
@@ -44935,22 +44685,6 @@ references:
   fullName.vb: Silverback.Messaging.ProducerEndpoint(Of TConfiguration).<>
   nameWithType: ProducerEndpoint<TConfiguration>.operator !=
   nameWithType.vb: ProducerEndpoint(Of TConfiguration).<>
-- uid: Silverback.Messaging.ProducerEndpoint`1.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.ProducerEndpoint-1.html#Silverback_Messaging_ProducerEndpoint_1__Clone__
-  commentId: M:Silverback.Messaging.ProducerEndpoint`1.{Clone}$
-  fullName: Silverback.Messaging.ProducerEndpoint<TConfiguration>.<Clone>$()
-  fullName.vb: Silverback.Messaging.ProducerEndpoint(Of TConfiguration).<Clone>$()
-  nameWithType: ProducerEndpoint<TConfiguration>.<Clone>$()
-  nameWithType.vb: ProducerEndpoint(Of TConfiguration).<Clone>$()
-- uid: Silverback.Messaging.ProducerEndpoint`1.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.ProducerEndpoint-1.html#Silverback_Messaging_ProducerEndpoint_1__Clone___
-  commentId: Overload:Silverback.Messaging.ProducerEndpoint`1.{Clone}$
-  fullName: Silverback.Messaging.ProducerEndpoint<TConfiguration>.<Clone>$
-  fullName.vb: Silverback.Messaging.ProducerEndpoint(Of TConfiguration).<Clone>$
-  nameWithType: ProducerEndpoint<TConfiguration>.<Clone>$
-  nameWithType.vb: ProducerEndpoint(Of TConfiguration).<Clone>$
 - uid: Silverback.Messaging.Producing
   name: Silverback.Messaging.Producing
   href: api/Silverback.Messaging.Producing.html
@@ -45348,22 +45082,6 @@ references:
   fullName.vb: Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver(Of TMessage, TEndpoint, TConfiguration).<>
   nameWithType: DynamicProducerEndpointResolver<TMessage, TEndpoint, TConfiguration>.operator !=
   nameWithType.vb: DynamicProducerEndpointResolver(Of TMessage, TEndpoint, TConfiguration).<>
-- uid: Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver`3.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver-3.html#Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver_3__Clone__
-  commentId: M:Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver`3.{Clone}$
-  fullName: Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver<TMessage, TEndpoint, TConfiguration>.<Clone>$()
-  fullName.vb: Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver(Of TMessage, TEndpoint, TConfiguration).<Clone>$()
-  nameWithType: DynamicProducerEndpointResolver<TMessage, TEndpoint, TConfiguration>.<Clone>$()
-  nameWithType.vb: DynamicProducerEndpointResolver(Of TMessage, TEndpoint, TConfiguration).<Clone>$()
-- uid: Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver`3.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver-3.html#Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver_3__Clone___
-  commentId: Overload:Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver`3.{Clone}$
-  fullName: Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver<TMessage, TEndpoint, TConfiguration>.<Clone>$
-  fullName.vb: Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver(Of TMessage, TEndpoint, TConfiguration).<Clone>$
-  nameWithType: DynamicProducerEndpointResolver<TMessage, TEndpoint, TConfiguration>.<Clone>$
-  nameWithType.vb: DynamicProducerEndpointResolver(Of TMessage, TEndpoint, TConfiguration).<Clone>$
 - uid: Silverback.Messaging.Producing.EndpointResolvers.IDynamicProducerEndpointResolver
   name: IDynamicProducerEndpointResolver
   href: api/Silverback.Messaging.Producing.EndpointResolvers.IDynamicProducerEndpointResolver.html
@@ -45802,22 +45520,6 @@ references:
   fullName.vb: Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver(Of TMessage).<>
   nameWithType: KafkaDynamicProducerEndpointResolver<TMessage>.operator !=
   nameWithType.vb: KafkaDynamicProducerEndpointResolver(Of TMessage).<>
-- uid: Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver`1.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver-1.html#Silverback_Messaging_Producing_EndpointResolvers_KafkaDynamicProducerEndpointResolver_1__Clone__
-  commentId: M:Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver`1.{Clone}$
-  fullName: Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver<TMessage>.<Clone>$()
-  fullName.vb: Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver(Of TMessage).<Clone>$()
-  nameWithType: KafkaDynamicProducerEndpointResolver<TMessage>.<Clone>$()
-  nameWithType.vb: KafkaDynamicProducerEndpointResolver(Of TMessage).<Clone>$()
-- uid: Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver`1.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver-1.html#Silverback_Messaging_Producing_EndpointResolvers_KafkaDynamicProducerEndpointResolver_1__Clone___
-  commentId: Overload:Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver`1.{Clone}$
-  fullName: Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver<TMessage>.<Clone>$
-  fullName.vb: Silverback.Messaging.Producing.EndpointResolvers.KafkaDynamicProducerEndpointResolver(Of TMessage).<Clone>$
-  nameWithType: KafkaDynamicProducerEndpointResolver<TMessage>.<Clone>$
-  nameWithType.vb: KafkaDynamicProducerEndpointResolver(Of TMessage).<Clone>$
 - uid: Silverback.Messaging.Producing.EndpointResolvers.KafkaStaticProducerEndpointResolver
   name: KafkaStaticProducerEndpointResolver
   href: api/Silverback.Messaging.Producing.EndpointResolvers.KafkaStaticProducerEndpointResolver.html
@@ -46114,22 +45816,6 @@ references:
   fullName.vb: Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver(Of TMessage).<>
   nameWithType: MqttDynamicProducerEndpointResolver<TMessage>.operator !=
   nameWithType.vb: MqttDynamicProducerEndpointResolver(Of TMessage).<>
-- uid: Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver-1.html#Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1__Clone__
-  commentId: M:Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.{Clone}$
-  fullName: Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver<TMessage>.<Clone>$()
-  fullName.vb: Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver(Of TMessage).<Clone>$()
-  nameWithType: MqttDynamicProducerEndpointResolver<TMessage>.<Clone>$()
-  nameWithType.vb: MqttDynamicProducerEndpointResolver(Of TMessage).<Clone>$()
-- uid: Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver-1.html#Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1__Clone___
-  commentId: Overload:Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.{Clone}$
-  fullName: Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver<TMessage>.<Clone>$
-  fullName.vb: Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver(Of TMessage).<Clone>$
-  nameWithType: MqttDynamicProducerEndpointResolver<TMessage>.<Clone>$
-  nameWithType.vb: MqttDynamicProducerEndpointResolver(Of TMessage).<Clone>$
 - uid: Silverback.Messaging.Producing.EndpointResolvers.MqttStaticProducerEndpointResolver
   name: MqttStaticProducerEndpointResolver
   href: api/Silverback.Messaging.Producing.EndpointResolvers.MqttStaticProducerEndpointResolver.html
@@ -47507,18 +47193,6 @@ references:
   fullName.vb: Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.<>
   nameWithType: EntityFrameworkOutboxSettings.operator !=
   nameWithType.vb: EntityFrameworkOutboxSettings.<>
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_EntityFrameworkOutboxSettings__Clone__
-  commentId: M:Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.<Clone>$()
-  nameWithType: EntityFrameworkOutboxSettings.<Clone>$()
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_EntityFrameworkOutboxSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.<Clone>$
-  nameWithType: EntityFrameworkOutboxSettings.<Clone>$
 - uid: Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxWriter
   name: EntityFrameworkOutboxWriter
   href: api/Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxWriter.html
@@ -48131,18 +47805,6 @@ references:
   fullName.vb: Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.<>
   nameWithType: InMemoryOutboxSettings.operator !=
   nameWithType.vb: InMemoryOutboxSettings.<>
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_InMemoryOutboxSettings__Clone__
-  commentId: M:Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.<Clone>$()
-  nameWithType: InMemoryOutboxSettings.<Clone>$()
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_InMemoryOutboxSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.<Clone>$
-  nameWithType: InMemoryOutboxSettings.<Clone>$
 - uid: Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxWriter
   name: InMemoryOutboxWriter
   href: api/Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxWriter.html
@@ -48632,18 +48294,6 @@ references:
   fullName.vb: Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.<>
   nameWithType: OutboxSettings.operator !=
   nameWithType.vb: OutboxSettings.<>
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_OutboxSettings__Clone__
-  commentId: M:Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.<Clone>$()
-  nameWithType: OutboxSettings.<Clone>$()
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_OutboxSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.<Clone>$
-  nameWithType: OutboxSettings.<Clone>$
 - uid: Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorker
   name: OutboxWorker
   href: api/Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorker.html
@@ -49022,18 +48672,6 @@ references:
   fullName.vb: Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.<>
   nameWithType: OutboxWorkerSettings.operator !=
   nameWithType.vb: OutboxWorkerSettings.<>
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_OutboxWorkerSettings__Clone__
-  commentId: M:Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.<Clone>$()
-  nameWithType: OutboxWorkerSettings.<Clone>$()
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_OutboxWorkerSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.<Clone>$
-  nameWithType: OutboxWorkerSettings.<Clone>$
 - uid: Silverback.Messaging.Producing.TransactionalOutbox.OutboxWriterFactory
   name: OutboxWriterFactory
   href: api/Silverback.Messaging.Producing.TransactionalOutbox.OutboxWriterFactory.html
@@ -49370,18 +49008,6 @@ references:
   fullName.vb: Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.<>
   nameWithType: PostgreSqlOutboxSettings.operator !=
   nameWithType.vb: PostgreSqlOutboxSettings.<>
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings__Clone__
-  commentId: M:Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.<Clone>$()
-  nameWithType: PostgreSqlOutboxSettings.<Clone>$()
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_PostgreSqlOutboxSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.<Clone>$
-  nameWithType: PostgreSqlOutboxSettings.<Clone>$
 - uid: Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxWriter
   name: PostgreSqlOutboxWriter
   href: api/Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxWriter.html
@@ -49835,18 +49461,6 @@ references:
   fullName.vb: Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.<>
   nameWithType: SqliteOutboxSettings.operator !=
   nameWithType.vb: SqliteOutboxSettings.<>
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_SqliteOutboxSettings__Clone__
-  commentId: M:Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.<Clone>$()
-  nameWithType: SqliteOutboxSettings.<Clone>$()
-- uid: Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.html#Silverback_Messaging_Producing_TransactionalOutbox_SqliteOutboxSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.{Clone}$
-  fullName: Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.<Clone>$
-  nameWithType: SqliteOutboxSettings.<Clone>$
 - uid: Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxWriter
   name: SqliteOutboxWriter
   href: api/Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxWriter.html
@@ -51710,18 +51324,6 @@ references:
   fullName.vb: Silverback.Messaging.Sequences.Batch.BatchSettings.<>
   nameWithType: BatchSettings.operator !=
   nameWithType.vb: BatchSettings.<>
-- uid: Silverback.Messaging.Sequences.Batch.BatchSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Sequences.Batch.BatchSettings.html#Silverback_Messaging_Sequences_Batch_BatchSettings__Clone__
-  commentId: M:Silverback.Messaging.Sequences.Batch.BatchSettings.{Clone}$
-  fullName: Silverback.Messaging.Sequences.Batch.BatchSettings.<Clone>$()
-  nameWithType: BatchSettings.<Clone>$()
-- uid: Silverback.Messaging.Sequences.Batch.BatchSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Sequences.Batch.BatchSettings.html#Silverback_Messaging_Sequences_Batch_BatchSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Sequences.Batch.BatchSettings.{Clone}$
-  fullName: Silverback.Messaging.Sequences.Batch.BatchSettings.<Clone>$
-  nameWithType: BatchSettings.<Clone>$
 - uid: Silverback.Messaging.Sequences.Chunking
   name: Silverback.Messaging.Sequences.Chunking
   href: api/Silverback.Messaging.Sequences.Chunking.html
@@ -52085,18 +51687,6 @@ references:
   fullName.vb: Silverback.Messaging.Sequences.Chunking.ChunkSettings.<>
   nameWithType: ChunkSettings.operator !=
   nameWithType.vb: ChunkSettings.<>
-- uid: Silverback.Messaging.Sequences.Chunking.ChunkSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Sequences.Chunking.ChunkSettings.html#Silverback_Messaging_Sequences_Chunking_ChunkSettings__Clone__
-  commentId: M:Silverback.Messaging.Sequences.Chunking.ChunkSettings.{Clone}$
-  fullName: Silverback.Messaging.Sequences.Chunking.ChunkSettings.<Clone>$()
-  nameWithType: ChunkSettings.<Clone>$()
-- uid: Silverback.Messaging.Sequences.Chunking.ChunkSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Sequences.Chunking.ChunkSettings.html#Silverback_Messaging_Sequences_Chunking_ChunkSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Sequences.Chunking.ChunkSettings.{Clone}$
-  fullName: Silverback.Messaging.Sequences.Chunking.ChunkSettings.<Clone>$
-  nameWithType: ChunkSettings.<Clone>$
 - uid: Silverback.Messaging.Sequences.Chunking.ChunkStream
   name: ChunkStream
   href: api/Silverback.Messaging.Sequences.Chunking.ChunkStream.html
@@ -53794,18 +53384,6 @@ references:
   fullName.vb: Silverback.Messaging.Sequences.SequenceSettings.<>
   nameWithType: SequenceSettings.operator !=
   nameWithType.vb: SequenceSettings.<>
-- uid: Silverback.Messaging.Sequences.SequenceSettings.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Sequences.SequenceSettings.html#Silverback_Messaging_Sequences_SequenceSettings__Clone__
-  commentId: M:Silverback.Messaging.Sequences.SequenceSettings.{Clone}$
-  fullName: Silverback.Messaging.Sequences.SequenceSettings.<Clone>$()
-  nameWithType: SequenceSettings.<Clone>$()
-- uid: Silverback.Messaging.Sequences.SequenceSettings.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Sequences.SequenceSettings.html#Silverback_Messaging_Sequences_SequenceSettings__Clone___
-  commentId: Overload:Silverback.Messaging.Sequences.SequenceSettings.{Clone}$
-  fullName: Silverback.Messaging.Sequences.SequenceSettings.<Clone>$
-  nameWithType: SequenceSettings.<Clone>$
 - uid: Silverback.Messaging.Sequences.SequencerConsumerBehavior
   name: SequencerConsumerBehavior
   href: api/Silverback.Messaging.Sequences.SequencerConsumerBehavior.html
@@ -56769,18 +56347,6 @@ references:
   fullName.vb: Silverback.Messaging.Subscribers.MethodReturnType.<>
   nameWithType: MethodReturnType.operator !=
   nameWithType.vb: MethodReturnType.<>
-- uid: Silverback.Messaging.Subscribers.MethodReturnType.{Clone}$
-  name: <Clone>$()
-  href: api/Silverback.Messaging.Subscribers.MethodReturnType.html#Silverback_Messaging_Subscribers_MethodReturnType__Clone__
-  commentId: M:Silverback.Messaging.Subscribers.MethodReturnType.{Clone}$
-  fullName: Silverback.Messaging.Subscribers.MethodReturnType.<Clone>$()
-  nameWithType: MethodReturnType.<Clone>$()
-- uid: Silverback.Messaging.Subscribers.MethodReturnType.{Clone}$*
-  name: <Clone>$
-  href: api/Silverback.Messaging.Subscribers.MethodReturnType.html#Silverback_Messaging_Subscribers_MethodReturnType__Clone___
-  commentId: Overload:Silverback.Messaging.Subscribers.MethodReturnType.{Clone}$
-  fullName: Silverback.Messaging.Subscribers.MethodReturnType.<Clone>$
-  nameWithType: MethodReturnType.<Clone>$
 - uid: Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute
   name: MqttClientIdFilterAttribute
   href: api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html
@@ -58536,6 +58102,75 @@ references:
   commentId: Overload:Silverback.Testing.IKafkaTestingHelper.GetTopic
   fullName: Silverback.Testing.IKafkaTestingHelper.GetTopic
   nameWithType: IKafkaTestingHelper.GetTopic
+- uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name: WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?)
+  href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(Boolean, TimeSpan?)
+  fullName: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, System.TimeSpan?)
+  fullName.vb: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, System.TimeSpan?)
+  nameWithType: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?)
+  nameWithType.vb: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, TimeSpan?)
+- uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan},System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?, params string[])
+  href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Nullable_System_TimeSpan__System_String___
+  commentId: M:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan},System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(Boolean, TimeSpan?, ParamArray String())
+  fullName: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, System.TimeSpan?, params string[])
+  fullName.vb: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, System.TimeSpan?, ParamArray String())
+  nameWithType: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?, params string[])
+  nameWithType.vb: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, TimeSpan?, ParamArray String())
+- uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(bool, params string[])
+  href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_String___
+  commentId: M:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(Boolean, ParamArray String())
+  fullName: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, params string[])
+  fullName.vb: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, ParamArray String())
+  nameWithType: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, params string[])
+  nameWithType.vb: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, ParamArray String())
+- uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Threading.CancellationToken,System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(bool, CancellationToken, params string[])
+  href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Threading_CancellationToken_System_String___
+  commentId: M:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Threading.CancellationToken,System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(Boolean, CancellationToken, ParamArray String())
+  fullName: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, System.Threading.CancellationToken, params string[])
+  fullName.vb: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, System.Threading.CancellationToken, ParamArray String())
+  nameWithType: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, CancellationToken, params string[])
+  nameWithType.vb: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, CancellationToken, ParamArray String())
+- uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Nullable{System.TimeSpan},System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(TimeSpan?, params string[])
+  href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Nullable_System_TimeSpan__System_String___
+  commentId: M:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Nullable{System.TimeSpan},System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(TimeSpan?, ParamArray String())
+  fullName: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.TimeSpan?, params string[])
+  fullName.vb: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.TimeSpan?, ParamArray String())
+  nameWithType: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(TimeSpan?, params string[])
+  nameWithType.vb: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(TimeSpan?, ParamArray String())
+- uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(params string[])
+  href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_String___
+  commentId: M:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(ParamArray String())
+  fullName: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(params string[])
+  fullName.vb: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(ParamArray String())
+  nameWithType: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(params string[])
+  nameWithType.vb: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(ParamArray String())
+- uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Threading.CancellationToken,System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(CancellationToken, params string[])
+  href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Threading_CancellationToken_System_String___
+  commentId: M:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Threading.CancellationToken,System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(CancellationToken, ParamArray String())
+  fullName: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Threading.CancellationToken, params string[])
+  fullName.vb: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Threading.CancellationToken, ParamArray String())
+  nameWithType: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(CancellationToken, params string[])
+  nameWithType.vb: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(CancellationToken, ParamArray String())
+- uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync*
+  name: WaitUntilAllMessagesAreCommittedAsync
+  href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_
+  commentId: Overload:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync
+  fullName: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync
+  nameWithType: IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync
 - uid: Silverback.Testing.IMqttTestingHelper
   name: IMqttTestingHelper
   href: api/Silverback.Testing.IMqttTestingHelper.html
@@ -59082,6 +58717,75 @@ references:
   commentId: Overload:Silverback.Testing.KafkaTestingHelper.GetTopic
   fullName: Silverback.Testing.KafkaTestingHelper.GetTopic
   nameWithType: KafkaTestingHelper.GetTopic
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name: WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?)
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(Boolean, TimeSpan?)
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, System.TimeSpan?)
+  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, System.TimeSpan?)
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?)
+  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, TimeSpan?)
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan},System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?, params string[])
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Nullable_System_TimeSpan__System_String___
+  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan},System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(Boolean, TimeSpan?, ParamArray String())
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, System.TimeSpan?, params string[])
+  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, System.TimeSpan?, ParamArray String())
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?, params string[])
+  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, TimeSpan?, ParamArray String())
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(bool, params string[])
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_String___
+  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(Boolean, ParamArray String())
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, params string[])
+  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, ParamArray String())
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, params string[])
+  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, ParamArray String())
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Threading.CancellationToken,System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(bool, CancellationToken, params string[])
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Threading_CancellationToken_System_String___
+  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Threading.CancellationToken,System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(Boolean, CancellationToken, ParamArray String())
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, System.Threading.CancellationToken, params string[])
+  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, System.Threading.CancellationToken, ParamArray String())
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(bool, CancellationToken, params string[])
+  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(Boolean, CancellationToken, ParamArray String())
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Nullable{System.TimeSpan},System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(TimeSpan?, params string[])
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Nullable_System_TimeSpan__System_String___
+  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Nullable{System.TimeSpan},System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(TimeSpan?, ParamArray String())
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.TimeSpan?, params string[])
+  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.TimeSpan?, ParamArray String())
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(TimeSpan?, params string[])
+  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(TimeSpan?, ParamArray String())
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(params string[])
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_String___
+  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(ParamArray String())
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(params string[])
+  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(ParamArray String())
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(params string[])
+  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(ParamArray String())
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Threading.CancellationToken,System.String[])
+  name: WaitUntilAllMessagesAreCommittedAsync(CancellationToken, params string[])
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Threading_CancellationToken_System_String___
+  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Threading.CancellationToken,System.String[])
+  name.vb: WaitUntilAllMessagesAreCommittedAsync(CancellationToken, ParamArray String())
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Threading.CancellationToken, params string[])
+  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Threading.CancellationToken, ParamArray String())
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(CancellationToken, params string[])
+  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(CancellationToken, ParamArray String())
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync*
+  name: WaitUntilAllMessagesAreCommittedAsync
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_
+  commentId: Overload:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync
 - uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync(System.Collections.Generic.IReadOnlyCollection{System.String},System.Threading.CancellationToken)
   name: WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection<string>, CancellationToken)
   href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedCoreAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Threading_CancellationToken_
@@ -59364,6 +59068,12 @@ references:
   fullName.vb: Silverback.Testing.TestingHelper.New
   nameWithType: TestingHelper.TestingHelper
   nameWithType.vb: TestingHelper.New
+- uid: Silverback.Testing.TestingHelper.DefaultWaitTimeout
+  name: DefaultWaitTimeout
+  href: api/Silverback.Testing.TestingHelper.html#Silverback_Testing_TestingHelper_DefaultWaitTimeout
+  commentId: F:Silverback.Testing.TestingHelper.DefaultWaitTimeout
+  fullName: Silverback.Testing.TestingHelper.DefaultWaitTimeout
+  nameWithType: TestingHelper.DefaultWaitTimeout
 - uid: Silverback.Testing.TestingHelper.GetConsumer(System.String)
   name: GetConsumer(string)
   href: api/Silverback.Testing.TestingHelper.html#Silverback_Testing_TestingHelper_GetConsumer_System_String_
@@ -59577,6 +59287,21 @@ references:
   commentId: Overload:Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync
   fullName: Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync
   nameWithType: TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync
+- uid: Silverback.Testing.TestingHelper.WaitUntilAllMessagesCoreAsync(System.Func{System.Collections.Generic.IReadOnlyCollection{System.String},System.Threading.CancellationToken,System.Threading.Tasks.Task},System.String,System.Boolean,System.String[],System.Threading.CancellationToken)
+  name: WaitUntilAllMessagesCoreAsync(Func<IReadOnlyCollection<string>, CancellationToken, Task>, string, bool, string[], CancellationToken)
+  href: api/Silverback.Testing.TestingHelper.html#Silverback_Testing_TestingHelper_WaitUntilAllMessagesCoreAsync_System_Func_System_Collections_Generic_IReadOnlyCollection_System_String__System_Threading_CancellationToken_System_Threading_Tasks_Task__System_String_System_Boolean_System_String___System_Threading_CancellationToken_
+  commentId: M:Silverback.Testing.TestingHelper.WaitUntilAllMessagesCoreAsync(System.Func{System.Collections.Generic.IReadOnlyCollection{System.String},System.Threading.CancellationToken,System.Threading.Tasks.Task},System.String,System.Boolean,System.String[],System.Threading.CancellationToken)
+  name.vb: WaitUntilAllMessagesCoreAsync(Func(Of IReadOnlyCollection(Of String), CancellationToken, Task), String, Boolean, String(), CancellationToken)
+  fullName: Silverback.Testing.TestingHelper.WaitUntilAllMessagesCoreAsync(System.Func<System.Collections.Generic.IReadOnlyCollection<string>, System.Threading.CancellationToken, System.Threading.Tasks.Task>, string, bool, string[], System.Threading.CancellationToken)
+  fullName.vb: Silverback.Testing.TestingHelper.WaitUntilAllMessagesCoreAsync(System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of String), System.Threading.CancellationToken, System.Threading.Tasks.Task), String, Boolean, String(), System.Threading.CancellationToken)
+  nameWithType: TestingHelper.WaitUntilAllMessagesCoreAsync(Func<IReadOnlyCollection<string>, CancellationToken, Task>, string, bool, string[], CancellationToken)
+  nameWithType.vb: TestingHelper.WaitUntilAllMessagesCoreAsync(Func(Of IReadOnlyCollection(Of String), CancellationToken, Task), String, Boolean, String(), CancellationToken)
+- uid: Silverback.Testing.TestingHelper.WaitUntilAllMessagesCoreAsync*
+  name: WaitUntilAllMessagesCoreAsync
+  href: api/Silverback.Testing.TestingHelper.html#Silverback_Testing_TestingHelper_WaitUntilAllMessagesCoreAsync_
+  commentId: Overload:Silverback.Testing.TestingHelper.WaitUntilAllMessagesCoreAsync
+  fullName: Silverback.Testing.TestingHelper.WaitUntilAllMessagesCoreAsync
+  nameWithType: TestingHelper.WaitUntilAllMessagesCoreAsync
 - uid: Silverback.Testing.TestingHelper.WaitUntilConnectedAsync(System.Boolean,System.Nullable{System.TimeSpan})
   name: WaitUntilConnectedAsync(bool, TimeSpan?)
   href: api/Silverback.Testing.TestingHelper.html#Silverback_Testing_TestingHelper_WaitUntilConnectedAsync_System_Boolean_System_Nullable_System_TimeSpan__
@@ -59715,10 +59440,10 @@ references:
   nameWithType: IDisposableAsyncEnumerable<T>
   nameWithType.vb: IDisposableAsyncEnumerable(Of T)
 - uid: about
-  name: About
+  name: About Silverback
   href: about.html
 - uid: background-services
-  name: Background Services with Distributed Lock
+  name: Background Services with a Distributed Lock
   href: guides/practical/background-services.html
 - uid: batch-processing
   name: Batch Processing Consumed Messages
@@ -59777,6 +59502,12 @@ references:
 - uid: encryption
   name: Encrypt Produced Messages
   href: guides/broker/producing/encryption.html
+- uid: error-policies
+  name: Error Handling Policies
+  href: guides/broker/consuming/error-policies.html
+- uid: faq
+  name: FAQ and Troubleshooting
+  href: guides/faq.html
 - uid: kafka-offset
   name: Kafka Offset Storage
   href: guides/broker/consuming/kafka/offset.html
@@ -59798,6 +59529,12 @@ references:
 - uid: logging
   name: Logging and Tracing
   href: guides/logging.html
+- uid: migration-v5
+  name: Migrating from v4 to v5
+  href: guides/migration-v5.html
+- uid: mqtt
+  name: MQTT Specifics
+  href: guides/broker/mqtt.html
 - uid: mqtt-request-response
   name: MQTT 5 Request-Response
   href: guides/practical/mqtt-request-response.html
@@ -59809,7 +59546,7 @@ references:
   href: guides/broker/producing/outbox.html
 - uid: performance
   name: Performance
-  href: peformance.html
+  href: performance.html
 - uid: producer-behaviors
   name: Producer Behaviors Pipeline
   href: guides/broker/producing/behaviors.html
@@ -59831,26 +59568,29 @@ references:
 - uid: producing-validation
   name: Validating the Produced Messages
   href: guides/broker/producing/validation.html
+- uid: quickstart
+  name: Quickstart
+  href: guides/quickstart.html
 - uid: releases-000
-  name: Release Notes v0.x.x
+  name: Pre-1.0 Release Notes
   href: changelog/000.html
 - uid: releases-100
-  name: Release Notes v1.x.x
+  name: Silverback 1 Release Notes
   href: changelog/100.html
 - uid: releases-200
-  name: Release Notes v2.x.x
+  name: Silverback 2 Release Notes
   href: changelog/200.html
 - uid: releases-300
-  name: Release Notes v3.x.x
+  name: Silverback 3 Release Notes
   href: changelog/300.html
 - uid: releases-400
-  name: Release Notes v4.x.x
+  name: Silverback 4 Release Notes
   href: changelog/400.html
 - uid: releases-500
-  name: Release Notes v5.x.x
+  name: Silverback 5 Release Notes
   href: changelog/500.html
 - uid: same-message
-  name: Consuming Same Message from Multiple Topics
+  name: Consuming the Same Message from Multiple Topics
   href: guides/practical/same-message.html
 - uid: sample-kafka-avro
   name: Kafka - Avro
@@ -59861,9 +59601,18 @@ references:
 - uid: sample-kafka-batch
   name: Kafka - Batch Processing
   href: samples/kafka/batch.html
+- uid: sample-kafka-batch-tombstone
+  name: Kafka - Batch Processing with Tombstones
+  href: samples/kafka/batch-tombstone.html
 - uid: sample-kafka-binaryfile
   name: Kafka - File Streaming
   href: samples/kafka/binaryfile-streaming.html
+- uid: sample-kafka-json-schema-registry
+  name: Kafka - JSON with Schema Registry
+  href: samples/kafka/json-schema-registry.html
+- uid: sample-kafka-transactional-producer
+  name: Kafka - Transactional Producer
+  href: samples/kafka/transactional-producer.html
 - uid: sample-mqtt-basic
   name: MQTT - Basic
   href: samples/mqtt/basic.html

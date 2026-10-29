@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Quickstart | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Quickstart | Silverback ">
+      
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Quickstart | Silverback ">
+      
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/guides/quickstart.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'dark'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="quickstart">
+<h1 id="quickstart">Quickstart</h1>
+
+<p>This guide gets you from an empty folder to an application producing and consuming messages through Apache Kafka in a few minutes.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>The <a href="https://dotnet.microsoft.com/download">.NET 10 SDK</a></li>
+<li><a href="https://www.docker.com/">Docker</a> to run a local Kafka broker</li>
+</ul>
+<p>Start a single-node Kafka broker listening on <code>localhost:9092</code>:</p>
+<pre><code class="lang-bash">docker run -d --name kafka -p 9092:9092 apache/kafka:4.1.0
+</code></pre>
+<h2 id="create-the-project">Create the Project</h2>
+<p>Create a new worker service and add the Silverback Kafka integration package:</p>
+<pre><code class="lang-bash">dotnet new worker -n SilverbackQuickstart
+cd SilverbackQuickstart
+dotnet add package Silverback.Integration.Kafka
+</code></pre>
+<h2 id="define-the-message">Define the Message</h2>
+<p>Messages are plain classes: no base class or interface is required.</p>
+<pre><code class="lang-csharp">public class OrderCreatedEvent
+{
+    public int OrderId { get; set; }
+}
+</code></pre>
+<h2 id="configure-silverback">Configure Silverback</h2>
+<p>Replace the content of <code>Program.cs</code> with the following configuration: a producer publishing <code>OrderCreatedEvent</code> to the <code>orders</code> topic, a consumer reading from the same topic, and a subscriber handling the consumed messages.</p>
+<pre><code class="lang-csharp">using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
+
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+
+builder.Services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(producer =&gt; producer
+            .Produce&lt;OrderCreatedEvent&gt;(endpoint =&gt; endpoint
+                .ProduceTo(&quot;orders&quot;)))
+        .AddConsumer(consumer =&gt; consumer
+            .WithGroupId(&quot;quickstart&quot;)
+            .AutoResetOffsetToEarliest()
+            .Consume&lt;OrderCreatedEvent&gt;(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;orders&quot;))))
+    .AddSingletonSubscriber&lt;OrderCreatedEventHandler&gt;();
+
+builder.Services.AddHostedService&lt;Worker&gt;();
+
+builder.Build().Run();
+</code></pre>
+<h2 id="produce-the-messages">Produce the Messages</h2>
+<p>Inject the <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> and publish the messages. Silverback routes them to the <code>orders</code> topic according to the producer configuration. Replace the generated <code>Worker.cs</code> with:</p>
+<pre><code class="lang-csharp">using Silverback.Messaging.Publishing;
+
+public class Worker : BackgroundService
+{
+    private readonly IPublisher _publisher;
+
+    public Worker(IPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        int orderId = 0;
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await _publisher.PublishAsync(new OrderCreatedEvent { OrderId = ++orderId }, stoppingToken);
+
+            await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+        }
+    }
+}
+</code></pre>
+<h2 id="consume-the-messages">Consume the Messages</h2>
+<p>The consumed messages are published to the internal message bus and forwarded to the matching subscribers. A subscriber is just a class with a public method accepting the message.</p>
+<pre><code class="lang-csharp">public class OrderCreatedEventHandler
+{
+    private readonly ILogger&lt;OrderCreatedEventHandler&gt; _logger;
+
+    public OrderCreatedEventHandler(ILogger&lt;OrderCreatedEventHandler&gt; logger)
+    {
+        _logger = logger;
+    }
+
+    public void Handle(OrderCreatedEvent message) =&gt;
+        _logger.LogInformation(&quot;Order {OrderId} created&quot;, message.OrderId);
+}
+</code></pre>
+<h2 id="run-it">Run It</h2>
+<pre><code class="lang-bash">dotnet run
+</code></pre>
+<p>The log shows the orders being consumed, one per second. Stop the application with <code>Ctrl+C</code>: Silverback disconnects the clients gracefully.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Producer and consumer usually live in different services. Splitting this example in two applications only requires moving the <code>AddProducer</code> and <code>AddConsumer</code> blocks to the respective service.</p>
+</div>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li><a class="xref" href="setup.html">Setting Up Silverback</a> – the available packages and the registration options.</li>
+<li><a class="xref" href="bus.html">Using the Message Bus</a> – the in-memory message bus, subscribers and behaviors.</li>
+<li><a class="xref" href="broker/producing/basics.html">Producing Messages</a> and <a class="xref" href="broker/consuming/basics.html">Consuming Messages</a> – the producer and consumer configuration in depth.</li>
+<li><a class="xref" href="broker/consuming/error-policies.html">Error Handling Policies</a> – what happens when the processing fails.</li>
+<li><a class="xref" href="broker/producing/outbox.html">Transactional Outbox</a> – produce reliably as part of your database transaction.</li>
+<li><a class="xref" href="broker/testing.html">Testing</a> – test your application with the in-memory brokers.</li>
+<li><a class="xref" href="../samples/intro.html">Samples</a> – more complete examples.</li>
+</ul>
+
+</article>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+      
+      <div class="affix">
+        <div class="contribution d-print-none">
+          <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/quickstart.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

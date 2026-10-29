@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Consuming Messages | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Consuming Messages | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../../../public/docfx.min.css">
       <link rel="stylesheet" href="../../../public/main.css">
       <meta name="docfx:navrel" content="../../../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../../../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../../../index.html">
-            <img id="logo" class="svg" src="../../../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../../../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -134,7 +149,7 @@
 <li>Call <code>Consume&lt;TMessage&gt;</code> multiple times to add multiple endpoints to the same consumer/client. This usually reduces resource usage compared to creating one consumer per endpoint.</li>
 <li>In Kafka, producers and consumers are separate entities. In MQTT, the same client can both produce and consume.</li>
 <li>Naming consumers/clients and endpoints is optional but recommended for logging and diagnostics. It can also prevent double-registration if the same configuration block runs more than once.</li>
-<li>For broker-specific options, see the upstream client docs: <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html">confluent-kafka-dotnet</a> and <a href="https://github.com/chkr1011/MQTTnet/wiki">MQTTnet</a>.</li>
+<li>For broker-specific options, see the upstream client docs: <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html">confluent-kafka-dotnet</a> and <a href="https://github.com/dotnet/MQTTnet/wiki">MQTTnet</a>.</li>
 </ul>
 </div>
 <h2 id="handle-messages">Handle Messages</h2>
@@ -175,28 +190,30 @@
 <h3 id="kafka-1">Kafka</h3>
 <p>Limit the maximum degree of parallelism:</p>
 <pre><code class="lang-csharp">.AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+    .LimitParallelism(3)
     .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
-        .LimitParallelism(3)
-        .ConsumeFrom(&quot;my-topic-1&quot;)
-        .ConsumeFrom(&quot;my-topic-2&quot;)))
+        .ConsumeFrom(&quot;my-topic-1&quot;, &quot;my-topic-2&quot;)))
 </code></pre>
 <p>Process all partitions in a single stream (disables partition-based parallelism):</p>
 <pre><code class="lang-csharp">.AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+    .ProcessAllPartitionsTogether()
     .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
-        .ProcessAllPartitionsTogether()
-        .ConsumeFrom(&quot;my-topic-1&quot;)
-        .ConsumeFrom(&quot;my-topic-2&quot;)))
+        .ConsumeFrom(&quot;my-topic-1&quot;, &quot;my-topic-2&quot;)))
 </code></pre>
+<p>Both settings apply to the whole consumer, not to a single endpoint. Use <code>LimitBackpressure(n)</code> to set the buffer capacity per partition when processing partitions independently. With <code>ProcessAllPartitionsTogether()</code>, it sets the capacity of the shared buffer for all partitions. The default limit is 50.</p>
 <h3 id="mqtt-1">MQTT</h3>
 <p>Enable parallel processing and set the maximum degree of parallelism:</p>
 <pre><code class="lang-csharp">.AddClient(&quot;my-client&quot;, client =&gt; client
     .WithClientId(&quot;client1&quot;)
     .EnableParallelProcessing(10)
     .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
-        .ConsumeFrom(&quot;messages/topic1&quot;)
-        .ConsumeFrom(&quot;messages/topic2&quot;)
+        .ConsumeFrom(&quot;messages/topic1&quot;, &quot;messages/topic2&quot;)
         .WithAtLeastOnceQoS()));
 </code></pre>
+<p>Use <code>LimitBackpressure(n)</code> to limit how many incoming MQTT messages Silverback buffers per parallel execution. The number of parallel executions is controlled by <code>MaxDegreeOfParallelism</code>, configured with <code>EnableParallelProcessing(...)</code>. The total buffer capacity per client is <code>n × MaxDegreeOfParallelism</code>, excluding messages already being processed. The default backpressure limit is 2.</p>
+<p>For example, <code>EnableParallelProcessing(4)</code> with <code>LimitBackpressure(7)</code> allows up to 28 buffered messages, plus four being processed. This setting controls Silverback's processing buffers, not buffers in MQTTnet or the broker.</p>
+<h2 id="mqtt-sessions">MQTT Sessions</h2>
+<p>Use <code>RequestPersistentSession()</code> together with a stable client identifier (<code>WithClientId(...)</code>) to resume the broker session after reconnecting and get the messages published in the meantime (QoS 1 or 2 only). See <a class="xref" href="../mqtt.html">MQTT Specifics</a> for all the session options and their details.</p>
 <h2 id="error-handling">Error Handling</h2>
 <p>If a subscriber throws, Silverback applies the endpoint error policy. The default policy stops the consumer.</p>
 <p>Built-in policies:</p>
@@ -249,26 +266,31 @@
 <h5>Important</h5>
 <p>If processing still fails after the last policy in the chain, the exception is returned to the consumer and the consumer stops.</p>
 </div>
+<div class="TIP">
+<h5>Tip</h5>
+<p>See <a class="xref" href="error-policies.html">Error Handling Policies</a> for all the available policies and options.</p>
+</div>
 <div class="IMPORTANT">
 <h5>Important</h5>
 <p><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> waits before retrying and may delay polling. With Kafka, ensure broker/client timeouts (for example <code>max.poll.interval.ms</code>) are configured accordingly.</p>
 </div>
-<h3 id="apply-rules">Apply rules</h3>
-<p>Use <code>ApplyTo</code>, <code>Exclude</code>, and <code>ApplyWhen</code> to control which exceptions are handled and when.</p>
+<h3 id="apply-rules">Apply Rules</h3>
+<p>Use <code>ApplyTo</code>, <code>Exclude</code>, and <code>ApplyWhen</code> to control which exceptions are handled and when. The <code>ApplyWhen</code> and <code>Publish</code> functions receive the <code>IRawInboundEnvelope</code> (and optionally the exception), not the deserialized message.</p>
+<p>The <code>MoveTo</code> policy accepts either the name of a topic or the friendly name of an endpoint already configured in a producer.</p>
 <pre><code class="lang-csharp">.OnError(policy =&gt; policy
-    .MoveToKafkaTopic(
-        moveEndpoint =&gt; moveEndpoint.ProduceTo(&quot;some-other-topic&quot;),
+    .MoveTo(
+        &quot;some-other-topic&quot;,
         movePolicy =&gt; movePolicy
             .ApplyTo&lt;MyException&gt;()
-            .ApplyWhen((msg, ex) =&gt; msg.Xy == myValue))
+            .ApplyWhen((envelope, exception) =&gt; envelope.Headers.Contains(&quot;x-move-on-error&quot;)))
     .ThenSkip());
 </code></pre>
-<h3 id="publish-events">Publish events</h3>
+<h3 id="publish-events">Publish Events</h3>
 <p>You can publish a message when a policy is applied (for logging, alerts, etc.).</p>
 <pre><code class="lang-csharp">.OnError(policy =&gt; policy
-    .Retry(3, TimeSpan.FromSeconds(1))
+    .Retry(3, retryPolicy =&gt; retryPolicy.WithInterval(TimeSpan.FromSeconds(1)))
     .ThenSkip(skipPolicy =&gt; skipPolicy
-        .Publish(msg =&gt; new ProcessingFailedEvent(msg))));
+        .Publish(envelope =&gt; new ProcessingFailedEvent(envelope))));
 </code></pre>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
@@ -298,8 +320,17 @@
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../../about.html">About</a>
+            <a href="../../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Kafka Offset Storage | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Kafka Offset Storage | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../../../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../../../../public/docfx.min.css">
       <link rel="stylesheet" href="../../../../public/main.css">
       <meta name="docfx:navrel" content="../../../../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../../../../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../../../../index.html">
-            <img id="logo" class="svg" src="../../../../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../../../../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -122,7 +137,7 @@ You can even disable storing the offsets in the Kafka broker using <code>Disable
 <li>Enable client-side offset storage on the consumer</li>
 </ol>
 <p>All examples below intentionally call <code>.DisableOffsetsCommit()</code> so that Kafka broker offsets aren’t used.</p>
-<h3 id="in-memory-offset-store">In-memory offset store</h3>
+<h3 id="in-memory-offset-store">In-Memory Offset Store</h3>
 <p>Use this for development/testing only (offsets are lost on process restart).</p>
 <pre><code class="lang-csharp">services
     .AddSilverback()
@@ -138,7 +153,7 @@ You can even disable storing the offsets in the Kafka broker using <code>Disable
             .Consume(endpoint =&gt; endpoint
                 .ConsumeFrom(&quot;my-topic&quot;))));
 </code></pre>
-<h3 id="sqlite-offset-store">SQLite offset store</h3>
+<h3 id="sqlite-offset-store">SQLite Offset Store</h3>
 <pre><code class="lang-csharp">services
     .AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options
@@ -153,7 +168,7 @@ You can even disable storing the offsets in the Kafka broker using <code>Disable
             .Consume(endpoint =&gt; endpoint
                 .ConsumeFrom(&quot;my-topic&quot;))));
 </code></pre>
-<h3 id="postgresql-offset-store">PostgreSQL offset store</h3>
+<h3 id="postgresql-offset-store">PostgreSQL Offset Store</h3>
 <pre><code class="lang-csharp">services
     .AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options
@@ -168,7 +183,7 @@ You can even disable storing the offsets in the Kafka broker using <code>Disable
             .Consume(endpoint =&gt; endpoint
                 .ConsumeFrom(&quot;my-topic&quot;))));
 </code></pre>
-<h3 id="entity-framework-offset-store">Entity Framework offset store</h3>
+<h3 id="entity-framework-offset-store">Entity Framework Offset Store</h3>
 <p>When using Entity Framework, offsets are stored using a <code>DbContext</code>.</p>
 <pre><code class="lang-csharp">services
     .AddDbContextFactory&lt;AppDbContext&gt;(options =&gt; options.UseNpgsql(connectionString))
@@ -207,7 +222,7 @@ public class AppDbContext : DbContext
 <li>Commit</li>
 </ol>
 <p>If the transaction rolls back, offsets won’t be stored and the messages will be re-consumed.</p>
-<h3 id="a-minimal-example">A minimal example</h3>
+<h3 id="a-minimal-example">A Minimal Example</h3>
 <pre><code class="lang-csharp">public class MySubscriber
 {
     private readonly DbConnection _connection;
@@ -244,7 +259,7 @@ public class AppDbContext : DbContext
 <h5>Important</h5>
 <p>Calling <code>StoreOffsetsAsync()</code> without enlisting a transaction still stores offsets, but you lose the atomic “exactly-once w.r.t. DB” guarantee.</p>
 </div>
-<h3 id="entity-framework-transaction-example">Entity Framework transaction example</h3>
+<h3 id="entity-framework-transaction-example">Entity Framework Transaction Example</h3>
 <pre><code class="lang-csharp">public async Task OnMessageReceivedAsync(MyMessage message, KafkaOffsetStoreScope offsetStoreScope, AppDbContext db)
 {
     await using var tx = await db.Database.BeginTransactionAsync();
@@ -318,8 +333,17 @@ await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString)
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../../../about.html">About</a>
+            <a href="../../../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Interface IKafkaTestingHelper | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IKafkaTestingHelper | Silverback ">
-      
       <meta name="description" content="Exposes some helper methods and shortcuts to simplify testing.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Interface IKafkaTestingHelper | Silverback ">
+      <meta property="og:description" content="Exposes some helper methods and shortcuts to simplify testing.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Testing_IKafkaTestingHelper" data-uid="Silverback.Testing.IKafkaTestingHelper" class="text-break">
-Interface IKafkaTestingHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.cs"><i class="bi bi-code-slash"></i></a>
+Interface IKafkaTestingHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -183,7 +198,7 @@ Interface IKafkaTestingHelper  <a class="header-action link-secondary" title="Vi
 
   <h3 id="Silverback_Testing_IKafkaTestingHelper_ConsumerGroups" data-uid="Silverback.Testing.IKafkaTestingHelper.ConsumerGroups">
   ConsumerGroups
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a collection of <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html">IMockedConsumerGroup</a> representing all known consumer groups.</p>
@@ -220,7 +235,7 @@ Interface IKafkaTestingHelper  <a class="header-action link-secondary" title="Vi
 
   <h3 id="Silverback_Testing_IKafkaTestingHelper_GetConsumerGroup_System_String_" data-uid="Silverback.Testing.IKafkaTestingHelper.GetConsumerGroup(System.String)">
   GetConsumerGroup(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html">IMockedConsumerGroup</a> representing the consumer group with the specified id.</p>
@@ -263,7 +278,7 @@ or <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder
 
   <h3 id="Silverback_Testing_IKafkaTestingHelper_GetConsumerGroup_System_String_System_String_" data-uid="Silverback.Testing.IKafkaTestingHelper.GetConsumerGroup(System.String,System.String)">
   GetConsumerGroup(string, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html">IMockedConsumerGroup</a> representing the consumer group with the specified id.</p>
@@ -309,7 +324,7 @@ or <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder
 
   <h3 id="Silverback_Testing_IKafkaTestingHelper_GetProducer_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder__" data-uid="Silverback.Testing.IKafkaTestingHelper.GetProducer(System.Action{Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder})">
   GetProducer(Action&lt;KafkaProducerConfigurationBuilder&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a new producer with the specified configuration.</p>
@@ -348,7 +363,7 @@ or <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder
 
   <h3 id="Silverback_Testing_IKafkaTestingHelper_GetTopic_System_String_System_String_" data-uid="Silverback.Testing.IKafkaTestingHelper.GetTopic(System.String,System.String)">
   GetTopic(string, string?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a> with the specified name.</p>
@@ -391,6 +406,335 @@ or <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder
 
 
 
+  <a id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync*"></a>
+
+  <h3 id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan})">
+  WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when the offsets of all messages routed to the consumers
+have been committed to the mocked Kafka broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ValueTask WaitUntilAllMessagesAreCommittedAsync(bool throwTimeoutException, TimeSpan? timeout = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>throwTimeoutException</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value specifying whether a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeoutexception">TimeoutException</a> has to be thrown when the offsets aren't committed before the
+timeout elapses.</p>
+</dd>
+    <dt><code>timeout</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a>?</dt>
+    <dd><p>The time to wait for the message offsets to be committed. The default is 30 seconds.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all message offsets have been committed.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Nullable_System_TimeSpan___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only and does not force offset commits.</p>
+</div>
+
+
+
+
+  <a id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync*"></a>
+
+  <h3 id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Nullable_System_TimeSpan__System_String___" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Nullable{System.TimeSpan},System.String[])">
+  WaitUntilAllMessagesAreCommittedAsync(bool, TimeSpan?, params string[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when the offsets of all messages routed to the consumers
+have been committed to the mocked Kafka broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ValueTask WaitUntilAllMessagesAreCommittedAsync(bool throwTimeoutException, TimeSpan? timeout, params string[] endpointNames)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>throwTimeoutException</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value specifying whether a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeoutexception">TimeoutException</a> has to be thrown when the offsets aren't committed before the
+timeout elapses.</p>
+</dd>
+    <dt><code>timeout</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a>?</dt>
+    <dd><p>The time to wait for the message offsets to be committed. The default is 30 seconds.</p>
+</dd>
+    <dt><code>endpointNames</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The names of the endpoints to wait for. If not specified, all endpoints are considered.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all message offsets have been committed.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Nullable_System_TimeSpan__System_String____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only and does not force offset commits.</p>
+</div>
+
+
+
+
+  <a id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync*"></a>
+
+  <h3 id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_String___" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.String[])">
+  WaitUntilAllMessagesAreCommittedAsync(bool, params string[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when the offsets of all messages routed to the consumers
+have been committed to the mocked Kafka broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ValueTask WaitUntilAllMessagesAreCommittedAsync(bool throwTimeoutException, params string[] endpointNames)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>throwTimeoutException</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value specifying whether a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeoutexception">TimeoutException</a> has to be thrown when the offsets aren't committed before the
+timeout elapses.</p>
+</dd>
+    <dt><code>endpointNames</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The names of the endpoints to wait for. If not specified, all endpoints are considered.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all message offsets have been committed.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_String____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only and does not force offset commits.</p>
+</div>
+
+
+
+
+  <a id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync*"></a>
+
+  <h3 id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Threading_CancellationToken_System_String___" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Boolean,System.Threading.CancellationToken,System.String[])">
+  WaitUntilAllMessagesAreCommittedAsync(bool, CancellationToken, params string[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when the offsets of all messages routed to the consumers
+have been committed to the mocked Kafka broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ValueTask WaitUntilAllMessagesAreCommittedAsync(bool throwTimeoutException, CancellationToken cancellationToken, params string[] endpointNames)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>throwTimeoutException</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value specifying whether a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeoutexception">TimeoutException</a> has to be thrown when the offsets
+aren't committed before the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> is canceled.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> to observe while waiting for the task to complete.</p>
+</dd>
+    <dt><code>endpointNames</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The names of the endpoints to wait for. If not specified, all endpoints are considered.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all message offsets have been committed.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Boolean_System_Threading_CancellationToken_System_String____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only and does not force offset commits.</p>
+</div>
+
+
+
+
+  <a id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync*"></a>
+
+  <h3 id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Nullable_System_TimeSpan__System_String___" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Nullable{System.TimeSpan},System.String[])">
+  WaitUntilAllMessagesAreCommittedAsync(TimeSpan?, params string[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when the offsets of all messages routed to the consumers
+have been committed to the mocked Kafka broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ValueTask WaitUntilAllMessagesAreCommittedAsync(TimeSpan? timeout, params string[] endpointNames)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>timeout</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a>?</dt>
+    <dd><p>The time to wait for the message offsets to be committed. The default is 30 seconds.</p>
+</dd>
+    <dt><code>endpointNames</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The names of the endpoints to wait for. If not specified, all endpoints are considered.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all message offsets have been committed.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Nullable_System_TimeSpan__System_String____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only and does not force offset commits.</p>
+</div>
+
+
+
+
+  <a id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync*"></a>
+
+  <h3 id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_String___" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.String[])">
+  WaitUntilAllMessagesAreCommittedAsync(params string[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when the offsets of all messages routed to the consumers
+have been committed to the mocked Kafka broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ValueTask WaitUntilAllMessagesAreCommittedAsync(params string[] endpointNames)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>endpointNames</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The names of the endpoints to wait for. If not specified, all endpoints are considered.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all message offsets have been committed.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_String____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only and does not force offset commits.</p>
+</div>
+
+
+
+
+  <a id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync*"></a>
+
+  <h3 id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Threading_CancellationToken_System_String___" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreCommittedAsync(System.Threading.CancellationToken,System.String[])">
+  WaitUntilAllMessagesAreCommittedAsync(CancellationToken, params string[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when the offsets of all messages routed to the consumers
+have been committed to the mocked Kafka broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ValueTask WaitUntilAllMessagesAreCommittedAsync(CancellationToken cancellationToken, params string[] endpointNames)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> to observe while waiting for the task to complete.</p>
+</dd>
+    <dt><code>endpointNames</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The names of the endpoints to wait for. If not specified, all endpoints are considered.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all message offsets have been committed.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_Threading_CancellationToken_System_String____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only and does not force offset commits.</p>
+</div>
+
+
+
+
 
 </article>
 
@@ -399,7 +743,7 @@ or <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.Wait.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -410,8 +754,17 @@ or <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

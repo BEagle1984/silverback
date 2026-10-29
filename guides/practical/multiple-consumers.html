@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Multiple Consumers for the Same Topic | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Multiple Consumers for the Same Topic | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../../public/docfx.min.css">
       <link rel="stylesheet" href="../../public/main.css">
       <meta name="docfx:navrel" content="../../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../../index.html">
-            <img id="logo" class="svg" src="../../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -87,7 +102,121 @@
         <article data-uid="multiple-consumers">
 <h1 id="multiple-consumers-for-the-same-topic">Multiple Consumers for the Same Topic</h1>
 
-<p><em>...coming soon...</em></p>
+<p>Sometimes the same application needs to consume the same topic more than once, independently. For example, one consumer updates a read model while another one forwards the events to an external system, and each of them must track its own progress and apply its own error handling.</p>
+<p>A single consumer (Kafka) or client (MQTT) cannot subscribe to the same topic twice: Silverback rejects the configuration if two endpoints of the same consumer/client point to the same topic. You therefore need to configure separate consumers/clients and then route the consumed messages to the right subscriber.</p>
+<h2 id="configure-the-consumers">Configure the Consumers</h2>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_kafka" role="tab" aria-controls="tabpanel_1_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_mqtt" role="tab" aria-controls="tabpanel_1_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_1_kafka" role="tabpanel" data-tab="kafka">
+
+<p>With Kafka, each consumer must use a different consumer group. Each group receives all messages and commits its own offsets.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;read-model-consumer&quot;, consumer =&gt; consumer
+            .WithGroupId(&quot;read-model&quot;)
+            .Consume&lt;OrderEvent&gt;(&quot;orders-read-model&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;orders&quot;)))
+        .AddConsumer(&quot;export-consumer&quot;, consumer =&gt; consumer
+            .WithGroupId(&quot;export&quot;)
+            .Consume&lt;OrderEvent&gt;(&quot;orders-export&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;orders&quot;)
+                .OnError(policy =&gt; policy.Retry(5).ThenSkip()))));
+</code></pre>
+</section>
+<section id="tabpanel_1_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<p>With MQTT, each client must use a different client ID. The broker delivers a copy of each message to every client.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
+    .AddMqttClients(clients =&gt; clients
+        .ConnectViaTcp(&quot;localhost&quot;)
+        .AddClient(&quot;read-model-client&quot;, client =&gt; client
+            .WithClientId(&quot;my-app-read-model&quot;)
+            .Consume&lt;OrderEvent&gt;(&quot;orders-read-model&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;orders&quot;)
+                .WithAtLeastOnceQoS()))
+        .AddClient(&quot;export-client&quot;, client =&gt; client
+            .WithClientId(&quot;my-app-export&quot;)
+            .Consume&lt;OrderEvent&gt;(&quot;orders-export&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;orders&quot;)
+                .WithAtLeastOnceQoS()
+                .OnError(policy =&gt; policy.Retry(5).ThenSkip()))));
+</code></pre>
+</section>
+</div>
+
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Use different consumer/client names and endpoint names. Configuration actions registered with the same consumer/client name are merged into a single consumer, and using the same endpoint name in two different consumers throws an exception.</p>
+</div>
+<h2 id="route-the-messages-to-the-subscribers">Route the Messages to the Subscribers</h2>
+<p>All consumed messages are published to the same message bus. Without any filter, a subscriber for <code>OrderEvent</code> would receive each message twice: once per consumer. Use a filter attribute to restrict each subscriber method to a specific consumer:</p>
+<ul>
+<li><a class="xref" href="../../api/Silverback.Messaging.Subscribers.ConsumerNameFilterAttribute.html">ConsumerNameFilterAttribute</a> filters by consumer/client name (the name passed to <code>AddConsumer</code> or <code>AddClient</code>).</li>
+<li><a class="xref" href="../../api/Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html">KafkaGroupIdFilterAttribute</a> filters by Kafka consumer group ID.</li>
+<li><a class="xref" href="../../api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a> filters by MQTT client ID.</li>
+</ul>
+<pre><code class="lang-csharp">public class OrderSubscriber
+{
+    [KafkaGroupIdFilter(&quot;read-model&quot;)]
+    public async Task UpdateReadModelAsync(OrderEvent message)
+    {
+        // Update the read model
+    }
+
+    [KafkaGroupIdFilter(&quot;export&quot;)]
+    public async Task ExportAsync(OrderEvent message)
+    {
+        // Forward the event to the external system
+    }
+}
+</code></pre>
+<p>The filters can also be specified when registering the subscriber, via <a class="xref" href="../../api/Silverback.Messaging.Subscribers.Subscriptions.TypeSubscriptionOptions.html">TypeSubscriptionOptions</a> or <a class="xref" href="../../api/Silverback.Messaging.Subscribers.Subscriptions.DelegateSubscriptionOptions.html">DelegateSubscriptionOptions</a>:</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .AddScopedSubscriber&lt;ReadModelUpdater&gt;(
+        new TypeSubscriptionOptions
+        {
+            Filters = [new ConsumerNameFilterAttribute(&quot;read-model-consumer&quot;)]
+        })
+    .AddScopedSubscriber&lt;OrderExporter&gt;(
+        new TypeSubscriptionOptions
+        {
+            Filters = [new ConsumerNameFilterAttribute(&quot;export-consumer&quot;)]
+        });
+</code></pre>
+<p>Alternatively, subscribe to the <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and inspect the <code>Consumer</code> or <code>Endpoint</code> properties.</p>
+<h2 id="scaling-out-vs-consuming-twice">Scaling Out vs. Consuming Twice</h2>
+<p>Don't confuse the scenario above with load balancing:</p>
+<ul>
+<li><strong>Kafka</strong>: consumers sharing the same group ID split the partitions among them. Use the same group ID across your application instances to scale out, and different group IDs to receive every message in each consumer.</li>
+<li><strong>MQTT</strong>: to load balance across several clients, use a shared subscription (e.g., <code>ConsumeFrom(&quot;$share/my-group/orders&quot;)</code>). The broker delivers each message to only one client of the group.</li>
+</ul>
+<div class="TIP">
+<h5>Tip</h5>
+<p>With MQTT, the client ID must also be unique across your application instances. When scaling out, derive it from something unique per instance (e.g., the machine name), otherwise the clients will keep disconnecting each other.</p>
+</div>
+<h2 id="caveats">Caveats</h2>
+<ul>
+<li>Each consumer has its own connection, its own buffers and, in Kafka, its own offsets: a failure in one consumer doesn't affect the others, but the resource usage grows accordingly.</li>
+<li>Each consumer processes the message independently. If both write to the same database, design the handlers to be idempotent and avoid conflicting updates.</li>
+</ul>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../broker/consuming/basics.html">Consuming Messages</a></li>
+<li><a class="xref" href="../broker/consuming/kafka/subscription.html">Kafka Subscription and Partition Assignment</a></li>
+<li><a class="xref" href="../bus.html">Using the Message Bus</a></li>
+<li><a class="xref" href="same-message.html">Consuming the Same Message from Multiple Topics</a></li>
+</ul>
 
 </article>
 
@@ -108,8 +237,17 @@
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../about.html">About</a>
+            <a href="../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

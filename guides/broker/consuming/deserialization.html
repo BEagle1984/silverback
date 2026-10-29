@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Deserializing the Consumed Messages | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Deserializing the Consumed Messages | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../../../public/docfx.min.css">
       <link rel="stylesheet" href="../../../public/main.css">
       <meta name="docfx:navrel" content="../../../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../../../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../../../index.html">
-            <img id="logo" class="svg" src="../../../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../../../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -106,7 +121,7 @@
                         })))));
 </code></pre>
 <h3 id="newtonsoftjson">Newtonsoft.Json</h3>
-<p>Silverback also provides a deserializer based on <code>Newtonsoft.Json</code>. It is found in the <a href="https://www.nuget.org/packages/Silverback.Newtonsoft/">Silverback.Newtonsoft</a> package and can be enabled by calling the <code>DeserializeJsonUsingNewtonsoft</code> method.</p>
+<p>Silverback also provides a deserializer based on <code>Newtonsoft.Json</code>. It is found in the <a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/">Silverback.Integration.Newtonsoft</a> package and can be enabled by calling the <code>DeserializeJsonUsingNewtonsoft</code> method.</p>
 <pre><code class="lang-csharp">services.AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
     .AddKafkaClients(clients =&gt; clients
@@ -129,14 +144,14 @@
                         settings =&gt;
                         {
                             settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                        }))));
+                        })))));
 </code></pre>
 <h3 id="polymorphic-deserialization">Polymorphic Deserialization</h3>
 <p>Using the <code>WithOptionalMessageTypeHeader</code> or <code>WithMandatoryMessageTypeHeader</code> method, the deserializer can be configured to use the <code>x-message-type</code> header to determine the target message type. This allows for polymorphic deserialization, where different message types can be deserialized from the same topic.</p>
 <p>For security reasons, this feature is disabled by default.</p>
 <p>To handle polymorphic nested properties, you have instead to rely on the serializer built-in functionality (e.g., <code>TypeNameHandling</code> in <code>Newtonsoft.Json</code>).</p>
 <h3 id="schema-registry">Schema Registry</h3>
-<p>To integrate with Confluent Schema Registry, you can use the dedicated JSON deserializer designed for schema registry support found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This uses the Confluent deserializer under the hood, which in turn uses <code>Newtonsoft.Json</code>.</p>
+<p>To integrate with Confluent Schema Registry, you can use the dedicated JSON deserializer designed for schema registry support found in the <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/">Silverback.Integration.Kafka.SchemaRegistry</a> package. This uses the Confluent deserializer under the hood, which in turn uses <code>Newtonsoft.Json</code>.</p>
 <pre><code class="lang-csharp">services.AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
     .AddKafkaClients(clients =&gt; clients
@@ -149,8 +164,8 @@
                     .Configure(
                         config =&gt;
                         {
-                            config.AutoRegisterSchemas = false;
-                        }))));
+                            config.UseLatestVersion = true;
+                        })))));
 </code></pre>
 <div class="NOTE">
 <h5>Note</h5>
@@ -221,7 +236,7 @@
                     .WithEncoding(MessageEncoding.Unicode)))));
 </code></pre>
 <h2 id="avro">Avro</h2>
-<p>To deserialize Avro formatted messages you can use the Avro deserializer found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This deserializer is based on the Confluent Avro deserializer and requires a schema registry.</p>
+<p>To deserialize Avro formatted messages you can use the Avro deserializer found in the <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/">Silverback.Integration.Kafka.SchemaRegistry</a> package. This deserializer is based on the Confluent Avro deserializer and requires a schema registry.</p>
 <pre><code class="lang-csharp">services.AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
     .AddKafkaClients(clients =&gt; clients
@@ -241,7 +256,7 @@
 <p>To learn more about the schema registry support, refer to the <a class="xref" href="kafka/schema-registry.html">Kafka Schema Registry</a> guide.</p>
 </div>
 <h2 id="protobuf">Protobuf</h2>
-<p>To deserialize Protobuf messages you can use the Protobuf deserializer found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This deserializer is based on the Confluent Protobuf deserializer and requires a schema registry.</p>
+<p>To deserialize Protobuf messages you can use the Protobuf deserializer found in the <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/">Silverback.Integration.Kafka.SchemaRegistry</a> package. This deserializer is based on the Confluent Protobuf deserializer and requires a schema registry.</p>
 <pre><code class="lang-csharp">services.AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
     .AddKafkaClients(clients =&gt; clients
@@ -302,8 +317,17 @@
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../../about.html">About</a>
+            <a href="../../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

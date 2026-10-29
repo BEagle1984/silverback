@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt; | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt; | Silverback ">
-      
       <meta name="description" content="Dynamically resolves the target topic for each message being produced.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt; | Silverback ">
+      <meta property="og:description" content="Dynamically resolves the target topic for each message being produced.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1" class="text-break">
-Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -118,7 +133,7 @@ Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-acti
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>&gt;</div>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>&gt;</div>
       <div><span class="xref">MqttDynamicProducerEndpointResolver&lt;TMessage&gt;</span></div>
     </dd>
   </dl>
@@ -126,11 +141,11 @@ Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-acti
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
-      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/IDynamicProducerEndpointResolver%601.cs">IDynamicProducerEndpointResolver</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>&gt;</div>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/IDynamicProducerEndpointResolver%601.cs">IDynamicProducerEndpointResolver</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>&gt;</div>
       <div><a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IDynamicProducerEndpointResolver.html">IDynamicProducerEndpointResolver</a></div>
-      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/IProducerEndpointResolver%601.cs">IProducerEndpointResolver</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>&gt;</div>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/IProducerEndpointResolver%601.cs">IProducerEndpointResolver</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>&gt;</div>
       <div><a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IProducerEndpointResolver.html">IProducerEndpointResolver</a></div>
-      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>&gt;&gt;</div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver-1.html">MqttDynamicProducerEndpointResolver</a>&lt;TMessage&gt;&gt;</div>
     </dd>
   </dl>
@@ -161,7 +176,7 @@ Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-acti
       <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver-3.html#Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver_3_Equals_Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver__0__1__2__">DynamicProducerEndpointResolver&lt;TMessage, MqttProducerEndpoint, MqttProducerEndpointConfiguration&gt;.Equals(DynamicProducerEndpointResolver&lt;TMessage, MqttProducerEndpoint, MqttProducerEndpointConfiguration&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver-3.html#Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver_3__Clone__">DynamicProducerEndpointResolver&lt;TMessage, MqttProducerEndpoint, MqttProducerEndpointConfiguration&gt;.&lt;Clone&gt;$()</a>
+      <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, MqttProducerEndpoint, MqttProducerEndpointConfiguration&gt;.&lt;Clone&gt;$()</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver-3.html#Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver_3_RawName">DynamicProducerEndpointResolver&lt;TMessage, MqttProducerEndpoint, MqttProducerEndpointConfiguration&gt;.RawName</a>
@@ -190,7 +205,7 @@ Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-acti
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_String__" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.String})">
   MqttDynamicProducerEndpointResolver(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver-1.html">MqttDynamicProducerEndpointResolver&lt;TMessage&gt;</a> class.</p>
@@ -203,7 +218,7 @@ Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-acti
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>topicFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dt><code>topicFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
     <dd><p>The function returning the target topic for the message being produced.</p>
 </dd>
   </dl>
@@ -223,7 +238,7 @@ Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-acti
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1__ctor_System_Func__0_System_String__" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.#ctor(System.Func{`0,System.String})">
   MqttDynamicProducerEndpointResolver(Func&lt;TMessage?, string&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver-1.html">MqttDynamicProducerEndpointResolver&lt;TMessage&gt;</a> class.</p>
@@ -256,7 +271,7 @@ Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-acti
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_String____" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.String[]})">
   MqttDynamicProducerEndpointResolver(string, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string[]&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver-1.html">MqttDynamicProducerEndpointResolver&lt;TMessage&gt;</a> class.</p>
@@ -273,7 +288,7 @@ Class MqttDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-acti
     <dd><p>The topic format string that will be combined with the arguments returned by the <code class="paramref">topicArgumentsFunction</code>
 using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string.format#system-string-format(system-string-system-object())">Format(string, params object[])</a>.</p>
 </dd>
-    <dt><code>topicArgumentsFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]&gt;</dt>
+    <dt><code>topicArgumentsFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]&gt;</dt>
     <dd><p>The function returning the arguments to be used to format the string.</p>
 </dd>
   </dl>
@@ -293,7 +308,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1__ctor_System_String_System_Func__0_System_String____" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.#ctor(System.String,System.Func{`0,System.String[]})">
   MqttDynamicProducerEndpointResolver(string, Func&lt;TMessage?, string[]&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver-1.html">MqttDynamicProducerEndpointResolver&lt;TMessage&gt;</a> class.</p>
@@ -334,7 +349,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_EqualityContract" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.EqualityContract">
   EqualityContract
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -369,7 +384,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_DeserializeEndpoint_System_String_Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfiguration_" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.DeserializeEndpoint(System.String,Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration)">
   DeserializeEndpoint(string, MqttProducerEndpointConfiguration)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Deserializes the endpoint from a string.</p>
@@ -411,7 +426,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_Equals_Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver__0_Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpoint_Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfiguration__" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.Equals(Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver{`0,Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint,Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration})">
   Equals(DynamicProducerEndpointResolver&lt;TMessage, MqttProducerEndpoint, MqttProducerEndpointConfiguration&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -423,7 +438,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>other</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>&gt;</dt>
+    <dt><code>other</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -447,7 +462,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_Equals_Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver__0__" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.Equals(Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver{`0})">
   Equals(MqttDynamicProducerEndpointResolver&lt;TMessage&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -483,7 +498,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_Equals_System_Object_" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.Equals(System.Object)">
   Equals(object?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -519,7 +534,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_GetEndpointCore_Silverback_Messaging_Messages_IOutboundEnvelope__0__Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfiguration_" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.GetEndpointCore(Silverback.Messaging.Messages.IOutboundEnvelope{`0},Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration)">
   GetEndpointCore(IOutboundEnvelope&lt;TMessage&gt;, MqttProducerEndpointConfiguration)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the computed actual destination endpoint for the message being produced.</p>
@@ -561,7 +576,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_GetHashCode" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -592,7 +607,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.PrintMembers(System.Text.StringBuilder)">
   PrintMembers(StringBuilder)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -628,7 +643,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_SerializeEndpoint_Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpoint_" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.SerializeEndpoint(Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint)">
   SerializeEndpoint(MqttProducerEndpoint)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes the endpoint to a string.</p>
@@ -667,7 +682,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_ToString" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -694,37 +709,6 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
 
 
-  <a id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1__Clone___" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.{Clone}$*"></a>
-
-  <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1__Clone__" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.{Clone}$">
-  &lt;Clone&gt;$()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override MqttDynamicProducerEndpointResolver&lt;TMessage&gt; &lt;Clone&gt;$()</code></pre>
-  </div>
-
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver-1.html">MqttDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
   <h2 class="section" id="operators">Operators
 </h2>
 
@@ -733,7 +717,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_op_Equality_Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver__0__Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver__0__" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.op_Equality(Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver{`0},Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver{`0})">
   operator ==(MqttDynamicProducerEndpointResolver&lt;TMessage&gt;?, MqttDynamicProducerEndpointResolver&lt;TMessage&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -771,7 +755,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
   <h3 id="Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver_1_op_Inequality_Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver__0__Silverback_Messaging_Producing_EndpointResolvers_MqttDynamicProducerEndpointResolver__0__" data-uid="Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver`1.op_Inequality(Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver{`0},Silverback.Messaging.Producing.EndpointResolvers.MqttDynamicProducerEndpointResolver{`0})">
   operator !=(MqttDynamicProducerEndpointResolver&lt;TMessage&gt;?, MqttDynamicProducerEndpointResolver&lt;TMessage&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -813,7 +797,7 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.MQTT/Messaging/Producing/EndpointResolvers/MqttDynamicProducerEndpointResolver%601.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -824,8 +808,17 @@ using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.stri
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Class TestingHelper | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class TestingHelper | Silverback ">
-      
       <meta name="description" content="Exposes some helper methods and shortcuts to simplify testing.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class TestingHelper | Silverback ">
+      <meta property="og:description" content="Exposes some helper methods and shortcuts to simplify testing.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Testing_TestingHelper" data-uid="Silverback.Testing.TestingHelper" class="text-break">
-Class TestingHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+Class TestingHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -170,7 +185,7 @@ Class TestingHelper  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Testing_TestingHelper__ctor_System_IServiceProvider_Microsoft_Extensions_Logging_ILogger_Silverback_Testing_TestingHelper__" data-uid="Silverback.Testing.TestingHelper.#ctor(System.IServiceProvider,Microsoft.Extensions.Logging.ILogger{Silverback.Testing.TestingHelper})">
   TestingHelper(IServiceProvider, ILogger&lt;TestingHelper&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Testing.TestingHelper.html">TestingHelper</a> class.</p>
@@ -202,6 +217,41 @@ Class TestingHelper  <a class="header-action link-secondary" title="View source"
 
 
 
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Silverback_Testing_TestingHelper_DefaultWaitTimeout" data-uid="Silverback.Testing.TestingHelper.DefaultWaitTimeout">
+  DefaultWaitTimeout
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The default timeout for testing helper waits.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected static readonly TimeSpan DefaultWaitTimeout</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
 
@@ -210,7 +260,7 @@ Class TestingHelper  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Testing_TestingHelper_Spy" data-uid="Silverback.Testing.TestingHelper.Spy">
   Spy
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
@@ -249,7 +299,7 @@ Class TestingHelper  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Testing_TestingHelper_GetConsumer_System_String_" data-uid="Silverback.Testing.TestingHelper.GetConsumer(System.String)">
   GetConsumer(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the consumer with the specified name.</p>
@@ -288,7 +338,7 @@ Class TestingHelper  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Testing_TestingHelper_GetConsumerEndpointConfiguration_System_String_" data-uid="Silverback.Testing.TestingHelper.GetConsumerEndpointConfiguration(System.String)">
   GetConsumerEndpointConfiguration(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.html">ConsumerEndpointConfiguration</a> for the specified endpoint.</p>
@@ -327,7 +377,7 @@ Class TestingHelper  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Testing_TestingHelper_GetConsumerForEndpoint_System_String_" data-uid="Silverback.Testing.TestingHelper.GetConsumerForEndpoint(System.String)">
   GetConsumerForEndpoint(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the existing consumer connected to specified endpoint.</p>
@@ -366,7 +416,7 @@ Class TestingHelper  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Silverback_Testing_TestingHelper_GetEndpointRawName_System_String_" data-uid="Silverback.Testing.TestingHelper.GetEndpointRawName(System.String)">
   GetEndpointRawName(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Resolves the raw name (topic/queue name) of the specified endpoint. If the endpoint is not found in the producers or consumers
@@ -406,7 +456,7 @@ configurations an <a class="xref" href="https://learn.microsoft.com/dotnet/api/s
 
   <h3 id="Silverback_Testing_TestingHelper_GetProducerEndpointConfiguration_System_String_" data-uid="Silverback.Testing.TestingHelper.GetProducerEndpointConfiguration(System.String)">
   GetProducerEndpointConfiguration(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetProducer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetProducer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a> for the specified endpoint.</p>
@@ -445,7 +495,7 @@ configurations an <a class="xref" href="https://learn.microsoft.com/dotnet/api/s
 
   <h3 id="Silverback_Testing_TestingHelper_GetProducerForConsumer_Silverback_Messaging_Broker_IConsumerCollection_System_String_" data-uid="Silverback.Testing.TestingHelper.GetProducerForConsumer(Silverback.Messaging.Broker.IConsumerCollection,System.String)">
   GetProducerForConsumer(IConsumerCollection, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets an existing producer for the endpoint consumed by the specified consumer or initializes a new one mirroring the
@@ -488,7 +538,7 @@ consumer configuration.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_GetProducerForEndpoint_System_String_" data-uid="Silverback.Testing.TestingHelper.GetProducerForEndpoint(System.String)">
   GetProducerForEndpoint(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetProducer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetProducer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a producer for the specified endpoint.</p>
@@ -527,7 +577,7 @@ consumer configuration.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_IsOutboxEmptyAsync" data-uid="Silverback.Testing.TestingHelper.IsOutboxEmptyAsync">
   IsOutboxEmptyAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Checks whether the outbox (table) is empty.</p>
@@ -561,10 +611,10 @@ consumer configuration.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})">
   WaitUntilAllMessagesAreConsumedAsync(bool, TimeSpan?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed and committed.</p>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -607,10 +657,10 @@ timeout elapses.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__System_String___" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan},System.String[])">
   WaitUntilAllMessagesAreConsumedAsync(bool, TimeSpan?, params string[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed and committed.</p>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -656,10 +706,10 @@ timeout elapses.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_String___" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.String[])">
   WaitUntilAllMessagesAreConsumedAsync(bool, params string[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed and committed.</p>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -702,10 +752,10 @@ timeout elapses.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Threading_CancellationToken_System_String___" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Threading.CancellationToken,System.String[])">
   WaitUntilAllMessagesAreConsumedAsync(bool, CancellationToken, params string[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed and committed.</p>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -751,10 +801,10 @@ aren't consumed before the <a class="xref" href="https://learn.microsoft.com/dot
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__System_String___" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan},System.String[])">
   WaitUntilAllMessagesAreConsumedAsync(TimeSpan?, params string[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed and committed.</p>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -795,10 +845,10 @@ aren't consumed before the <a class="xref" href="https://learn.microsoft.com/dot
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_String___" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.String[])">
   WaitUntilAllMessagesAreConsumedAsync(params string[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed and committed.</p>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -837,10 +887,10 @@ aren't consumed before the <a class="xref" href="https://learn.microsoft.com/dot
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Threading_CancellationToken_System_String___" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Threading.CancellationToken,System.String[])">
   WaitUntilAllMessagesAreConsumedAsync(CancellationToken, params string[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed and committed.</p>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -882,10 +932,10 @@ aren't consumed before the <a class="xref" href="https://learn.microsoft.com/dot
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesAreConsumedCoreAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Threading_CancellationToken_" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync(System.Collections.Generic.IReadOnlyCollection{System.String},System.Threading.CancellationToken)">
   WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection&lt;string&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed and committed.</p>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages routed to the consumers have been processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -923,11 +973,62 @@ aren't consumed before the <a class="xref" href="https://learn.microsoft.com/dot
 
 
 
+  <a id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesCoreAsync_" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesCoreAsync*"></a>
+
+  <h3 id="Silverback_Testing_TestingHelper_WaitUntilAllMessagesCoreAsync_System_Func_System_Collections_Generic_IReadOnlyCollection_System_String__System_Threading_CancellationToken_System_Threading_Tasks_Task__System_String_System_Boolean_System_String___System_Threading_CancellationToken_" data-uid="Silverback.Testing.TestingHelper.WaitUntilAllMessagesCoreAsync(System.Func{System.Collections.Generic.IReadOnlyCollection{System.String},System.Threading.CancellationToken,System.Threading.Tasks.Task},System.String,System.Boolean,System.String[],System.Threading.CancellationToken)">
+  WaitUntilAllMessagesCoreAsync(Func&lt;IReadOnlyCollection&lt;string&gt;, CancellationToken, Task&gt;, string, bool, string[], CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Waits for the outbox and the specified broker operation, repeating if consumers produce more outbox messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected ValueTask WaitUntilAllMessagesCoreAsync(Func&lt;IReadOnlyCollection&lt;string&gt;, CancellationToken, Task&gt; waitAction, string timeoutMessage, bool throwTimeoutException, string[] endpointNames, CancellationToken cancellationToken)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>waitAction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</dt>
+    <dd><p>The broker operation to await.</p>
+</dd>
+    <dt><code>timeoutMessage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The message to log or include in the exception when the wait is canceled.</p>
+</dd>
+    <dt><code>throwTimeoutException</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether to throw instead of logging when the wait is canceled.</p>
+</dd>
+    <dt><code>endpointNames</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The endpoint names to wait for, or an empty array to consider all endpoints.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>The cancellation token to observe.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A task that completes when the broker operation and the outbox have completed.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Testing_TestingHelper_WaitUntilConnectedAsync_" data-uid="Silverback.Testing.TestingHelper.WaitUntilConnectedAsync*"></a>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilConnectedAsync_System_Boolean_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper.WaitUntilConnectedAsync(System.Boolean,System.Nullable{System.TimeSpan})">
   WaitUntilConnectedAsync(bool, TimeSpan?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all consumers are connected and ready.</p>
@@ -970,7 +1071,7 @@ timeout elapses.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilConnectedAsync_System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Testing.TestingHelper.WaitUntilConnectedAsync(System.Boolean,System.Threading.CancellationToken)">
   WaitUntilConnectedAsync(bool, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all consumers are connected and ready.</p>
@@ -1013,7 +1114,7 @@ timeout elapses.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper.WaitUntilConnectedAsync(System.Nullable{System.TimeSpan})">
   WaitUntilConnectedAsync(TimeSpan?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all consumers are connected and ready.</p>
@@ -1052,7 +1153,7 @@ timeout elapses.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilConnectedAsync_System_Threading_CancellationToken_" data-uid="Silverback.Testing.TestingHelper.WaitUntilConnectedAsync(System.Threading.CancellationToken)">
   WaitUntilConnectedAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.Wait.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all consumers are connected and ready.</p>
@@ -1091,7 +1192,7 @@ timeout elapses.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilOutboxIsEmptyAsync_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper.WaitUntilOutboxIsEmptyAsync(System.Nullable{System.TimeSpan})">
   WaitUntilOutboxIsEmptyAsync(TimeSpan?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages stored in the outbox have been produced.</p>
@@ -1130,7 +1231,7 @@ timeout elapses.</p>
 
   <h3 id="Silverback_Testing_TestingHelper_WaitUntilOutboxIsEmptyAsync_System_Threading_CancellationToken_" data-uid="Silverback.Testing.TestingHelper.WaitUntilOutboxIsEmptyAsync(System.Threading.CancellationToken)">
   WaitUntilOutboxIsEmptyAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> that completes when all messages stored in the outbox have been produced.</p>
@@ -1173,7 +1274,7 @@ timeout elapses.</p>
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Testing/Testing/TestingHelper%601.GetConsumer.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -1184,8 +1285,17 @@ timeout elapses.</p>
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

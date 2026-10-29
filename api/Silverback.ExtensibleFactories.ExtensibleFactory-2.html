@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Class ExtensibleFactory&lt;TService, TSettingsBase&gt; | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class ExtensibleFactory&lt;TService, TSettingsBase&gt; | Silverback ">
-      
       <meta name="description" content="The base class for factories used to allow extension in additional packages, for example adding other storage types.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class ExtensibleFactory&lt;TService, TSettingsBase&gt; | Silverback ">
+      <meta property="og:description" content="The base class for factories used to allow extension in additional packages, for example adding other storage types.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_ExtensibleFactories_ExtensibleFactory_2" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2" class="text-break">
-Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
+Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -167,8 +182,10 @@ Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action 
 
   <h2 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>Two versions are available:</p>
-<ul><li><a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
-        </li><li><a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
+<ul><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
+        </li><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
         </li></ul>
 </div>
 
@@ -181,7 +198,7 @@ Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action 
 
   <h3 id="Silverback_ExtensibleFactories_ExtensibleFactory_2__ctor" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.#ctor">
   ExtensibleFactory()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -211,7 +228,7 @@ Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action 
 
   <h3 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_AddFactory__1_System_Func___0_System_IServiceProvider__0__" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.AddFactory``1(System.Func{``0,System.IServiceProvider,`0})">
   AddFactory&lt;TSettings&gt;(Func&lt;TSettings, IServiceProvider, TService&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers the factory for the specified settings type.</p>
@@ -250,7 +267,7 @@ Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action 
 
   <h3 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_GetService__1___0_System_IServiceProvider_" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.GetService``1(``0,System.IServiceProvider)">
   GetService&lt;TSettings&gt;(TSettings, IServiceProvider)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns an object of type <code class="typeparamref">TService</code> according to the specified settings.</p>
@@ -298,7 +315,7 @@ Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action 
 
   <h3 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_HasFactory__1" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.HasFactory``1">
   HasFactory&lt;TSettings&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a boolean value indicating whether a factory for the specified settings type is registered.</p>
@@ -337,7 +354,7 @@ Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action 
 
   <h3 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_OverrideFactories_System_Func__1_System_IServiceProvider__0__" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.OverrideFactories(System.Func{`1,System.IServiceProvider,`0})">
   OverrideFactories(Func&lt;TSettingsBase, IServiceProvider, TService&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Overrides all registered factories with the specified factory.</p>
@@ -374,7 +391,7 @@ Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action 
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory%602.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -385,8 +402,17 @@ Class ExtensibleFactory&lt;TService, TSettingsBase&gt;  <a class="header-action 
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

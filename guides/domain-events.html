@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Domain-Driven Design and Domain Events | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Domain-Driven Design and Domain Events | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -91,10 +106,10 @@
 They let your aggregate record <em>what happened</em> (e.g. &quot;order placed&quot;, &quot;basket checked out&quot;) and then publish those events so that other parts of the application can react.</p>
 <p>Silverback provides built-in support to collect domain events from your entities and publish them through the internal message bus.
 When used together with storage and the transactional outbox, this becomes a solid foundation for reliable integration events.</p>
-<h2 id="what-silverback-considers-a-domain-event">What Silverback considers a &quot;domain event&quot;</h2>
+<h2 id="what-silverback-considers-a-domain-event">What Silverback Considers a &quot;Domain Event&quot;</h2>
 <p>A domain event is any message implementing <a class="xref" href="../api/Silverback.Domain.IDomainEvent.html">IDomainEvent</a>.</p>
 <p>The recommended approach is to use <a href="https://www.nuget.org/packages/Silverback.Core.Model/">Silverback.Core.Model</a> and derive your events from <a class="xref" href="../api/Silverback.Domain.DomainEvent-1.html">DomainEvent&lt;TEntity&gt;</a>.</p>
-<h2 id="storing-domain-events-in-your-entities">Storing domain events in your entities</h2>
+<h2 id="storing-domain-events-in-your-entities">Storing Domain Events in Your Entities</h2>
 <p>Silverback can publish domain events that are stored inside the entities being saved.
 To make this work, your entities must implement <a class="xref" href="../api/Silverback.Messaging.Messages.IMessagesSource.html">IMessagesSource</a>.</p>
 <p>The easiest way is to inherit from <a class="xref" href="../api/Silverback.Domain.DomainEntity.html">DomainEntity</a>, which already implements the required interface and exposes a convenient <code>AddEvent&lt;TEvent&gt;()</code> method.</p>
@@ -102,7 +117,7 @@ To make this work, your entities must implement <a class="xref" href="../api/Sil
 <h5>Tip</h5>
 <p>You don't have to use <code>DomainEntity</code>. If you have your own base entity type, you can still integrate with this feature by implementing <a class="xref" href="../api/Silverback.Messaging.Messages.IMessagesSource.html">IMessagesSource</a>.</p>
 </div>
-<h3 id="sample-aggregate-root">Sample aggregate root</h3>
+<h3 id="sample-aggregate-root">Sample Aggregate Root</h3>
 <p>In this example, calling <code>Checkout()</code> records a domain event by adding it to the in-memory event collection.</p>
 <pre><code class="lang-csharp">using Silverback.Domain;
 
@@ -144,7 +159,7 @@ public sealed class BasketCheckedOutDomainEvent : DomainEvent&lt;Basket&gt;;
 <h5>Note</h5>
 <p><code>DomainEntity</code> also exposes a <code>DomainEvents</code> property. It's primarily there for inspection/testing, while publication is handled by the publisher described below.</p>
 </div>
-<h2 id="publishing-domain-events-with-entity-framework-core">Publishing domain events with Entity Framework Core</h2>
+<h2 id="publishing-domain-events-with-entity-framework-core">Publishing Domain Events with Entity Framework Core</h2>
 <p>To publish domain events as part of your <code>DbContext.SaveChanges</code> call, use <a class="xref" href="../api/Silverback.Domain.EntityFrameworkDomainEventsPublisher-1.html">EntityFrameworkDomainEventsPublisher&lt;TDbContext&gt;</a>.</p>
 <p>This helper is designed to:</p>
 <ul>
@@ -152,7 +167,7 @@ public sealed class BasketCheckedOutDomainEvent : DomainEvent&lt;Basket&gt;;
 <li>publish the collected domain events via <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></li>
 <li>align the publisher storage transaction (used e.g. by the transactional outbox) with the current EF Core transaction when possible</li>
 </ul>
-<h3 id="dbcontext-integration">DbContext integration</h3>
+<h3 id="dbcontext-integration">DbContext Integration</h3>
 <p>Create an <code>EntityFrameworkDomainEventsPublisher&lt;TDbContext&gt;</code> instance and delegate the <code>SaveChanges*</code> calls to it.</p>
 <pre><code class="lang-csharp">using Microsoft.EntityFrameworkCore;
 using Silverback.Domain;
@@ -192,7 +207,7 @@ public class SampleDbContext : DbContext
 <h5>Important</h5>
 <p>The example above wires domain event publication directly into <code>SaveChanges</code>. This makes it hard to &quot;forget&quot; publishing and keeps your service code clean.</p>
 </div>
-<h2 id="handling-published-domain-events">Handling published domain events</h2>
+<h2 id="handling-published-domain-events">Handling Published Domain Events</h2>
 <p>Domain events are published to the internal bus, so you can handle them like any other in-memory message (see <a class="xref" href="bus.html">Using the Message Bus</a>).</p>
 <p>A typical subscriber method might look like this:</p>
 <pre><code class="lang-csharp">using Silverback.Domain;
@@ -209,7 +224,7 @@ public class BasketDomainEventsSubscriber
 }
 </code></pre>
 <p>Register the subscriber using <code>AddScopedSubscriber</code>, <code>AddSingletonSubscriber</code>, or <code>AddTransientSubscriber</code>.</p>
-<h2 id="domain-events-vs-integration-events">Domain events vs integration events</h2>
+<h2 id="domain-events-vs-integration-events">Domain Events vs. Integration Events</h2>
 <p>Domain events are usually <em>internal</em> to a bounded context.
 If you want to notify other services via Kafka/MQTT/etc., you typically convert domain events into integration events.</p>
 <p>If you're using the transactional outbox, you can do that conversion in a subscriber and publish an integration message via the same <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
@@ -217,16 +232,16 @@ If you want to notify other services via Kafka/MQTT/etc., you typically convert 
 <h5>Tip</h5>
 <p>If you're building an event-driven architecture, combining domain events + outbox is a common way to keep your database changes and outgoing messages consistent.</p>
 </div>
-<h2 id="common-pitfalls">Common pitfalls</h2>
+<h2 id="common-pitfalls">Common Pitfalls</h2>
 <ul>
 <li><strong>Publishing from inside the entity</strong>: the entity should only <em>record</em> events (<code>AddEvent&lt;T&gt;()</code>). Publishing is infrastructure.</li>
 <li><strong>Forgetting to hook into SaveChanges</strong>: if you don't integrate <code>EntityFrameworkDomainEventsPublisher</code>, recorded events will never be published.</li>
 <li><strong>Long-running subscribers</strong>: domain events run in-process; keep handlers quick and delegate slow work to background jobs or integration messages.</li>
 </ul>
-<h2 id="next-steps">Next steps</h2>
+<h2 id="next-steps">Next Steps</h2>
 <ul>
 <li>Learn how to publish and subscribe using the internal bus: <a class="xref" href="bus.html">Using the Message Bus</a></li>
-<li>Learn how to connect to Kafka/MQTT and produce externally: <a class="xref" href="setup.html">Setting Up Silverback</a></li>
+<li>Learn how to connect to Kafka/MQTT and produce externally: <a class="xref" href="broker/connecting.html">Connecting to a Message Broker</a></li>
 </ul>
 
 </article>
@@ -248,8 +263,17 @@ If you want to notify other services via Kafka/MQTT/etc., you typically convert 
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Interface IKafkaConsumer | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IKafkaConsumer | Silverback ">
-      
       <meta name="description" content="Consumes from one or more endpoints and pushes the received messages via the message bus.">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Interface IKafkaConsumer | Silverback ">
+      <meta property="og:description" content="Consumes from one or more endpoints and pushes the received messages via the message bus.">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Broker_IKafkaConsumer" data-uid="Silverback.Messaging.Broker.IKafkaConsumer" class="text-break">
-Interface IKafkaConsumer  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+Interface IKafkaConsumer  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -122,6 +137,9 @@ Interface IKafkaConsumer  <a class="header-action link-secondary" title="View so
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StopAsync_System_Boolean_">IConsumer.StopAsync(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StopAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_System_Boolean_">IConsumer.StopAsync(IBrokerMessageIdentifier, bool)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_CommitAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">IConsumer.CommitAsync(IBrokerMessageIdentifier)</a>
@@ -162,7 +180,7 @@ Interface IKafkaConsumer  <a class="header-action link-secondary" title="View so
 
   <h3 id="Silverback_Messaging_Broker_IKafkaConsumer_Client" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Client">
   Client
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the related <a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html">IBrokerClient</a>.</p>
@@ -194,7 +212,7 @@ Interface IKafkaConsumer  <a class="header-action link-secondary" title="View so
 
   <h3 id="Silverback_Messaging_Broker_IKafkaConsumer_Configuration" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Configuration">
   Configuration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the consumer configuration.</p>
@@ -226,7 +244,7 @@ Interface IKafkaConsumer  <a class="header-action link-secondary" title="View so
 
   <h3 id="Silverback_Messaging_Broker_IKafkaConsumer_EndpointsConfiguration" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.EndpointsConfiguration">
   EndpointsConfiguration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the endpoints configuration.</p>
@@ -262,7 +280,7 @@ Interface IKafkaConsumer  <a class="header-action link-secondary" title="View so
 
   <h3 id="Silverback_Messaging_Broker_IKafkaConsumer_GetOffsetsForTimestamps_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionTimestamp__System_TimeSpan_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.GetOffsetsForTimestamps(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionTimestamp},System.TimeSpan)">
   GetOffsetsForTimestamps(IEnumerable&lt;TopicPartitionTimestamp&gt;, TimeSpan)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Looks up the offsets for the given partitions by timestamp. The returned offset for each partition is the earliest offset for which
@@ -309,7 +327,7 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
 
   <h3 id="Silverback_Messaging_Broker_IKafkaConsumer_Pause_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Pause(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition})">
   Pause(IEnumerable&lt;TopicPartition&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Pauses the consumption of the specified partitions.</p>
@@ -342,7 +360,7 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
 
   <h3 id="Silverback_Messaging_Broker_IKafkaConsumer_Resume_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Resume(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition})">
   Resume(IEnumerable&lt;TopicPartition&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Resumes the consumption of the specified partitions.</p>
@@ -375,7 +393,7 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
 
   <h3 id="Silverback_Messaging_Broker_IKafkaConsumer_Seek_Confluent_Kafka_TopicPartitionOffset_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Seek(Confluent.Kafka.TopicPartitionOffset)">
   Seek(TopicPartitionOffset)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Seeks the specified partition to the specified offset.</p>
@@ -412,7 +430,7 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -423,8 +441,17 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

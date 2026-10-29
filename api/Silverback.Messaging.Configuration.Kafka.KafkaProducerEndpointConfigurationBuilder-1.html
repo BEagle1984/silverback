@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt; | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt; | Silverback ">
-      
       <meta name="description" content="Builds the .">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt; | Silverback ">
+      <meta property="og:description" content="Builds the .">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
       <meta name="docfx:navrel" content="../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +104,7 @@
 
 
   <h1 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1" class="text-break">
-Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -118,8 +133,8 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Configuration/EndpointConfigurationBuilder%603.cs">EndpointConfigurationBuilder</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.html">KafkaProducerEndpointConfiguration</a>, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</div>
-      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointConfigurationBuilder%604.AddHeader.cs">ProducerEndpointConfigurationBuilder</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.html">KafkaProducerEndpointConfiguration</a>, <a class="xref" href="Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</div>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Configuration/EndpointConfigurationBuilder%603.cs">EndpointConfigurationBuilder</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.html">KafkaProducerEndpointConfiguration</a>, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</div>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointConfigurationBuilder%604.AddHeader.cs">ProducerEndpointConfigurationBuilder</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfiguration.html">KafkaProducerEndpointConfiguration</a>, <a class="xref" href="Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</div>
       <div><span class="xref">KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;</span></div>
     </dd>
   </dl>
@@ -127,7 +142,7 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
-      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Configuration/IMessageSerializationBuilder%602.cs">IMessageSerializationBuilder</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</div>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Configuration/IMessageSerializationBuilder%602.cs">IMessageSerializationBuilder</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</div>
     </dd>
   </dl>
 
@@ -261,7 +276,7 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1__ctor_System_IServiceProvider_System_String_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.#ctor(System.IServiceProvider,System.String)">
   KafkaProducerEndpointConfigurationBuilder(IServiceProvider, string?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> class.</p>
@@ -301,7 +316,7 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_This" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.This">
   This
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets this instance.</p>
@@ -340,7 +355,7 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_CreateConfiguration" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.CreateConfiguration">
   CreateConfiguration()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates the <code class="typeparamref">TConfiguration</code> instance.</p>
@@ -373,7 +388,7 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_Confluent_Kafka_TopicPartition_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(Confluent.Kafka.TopicPartition)">
   ProduceTo(TopicPartition)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the target topic and partition.</p>
@@ -412,7 +427,7 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__Confluent_Kafka_TopicPartition__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},Confluent.Kafka.TopicPartition})">
   ProduceTo(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, TopicPartition&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the function returning the target topic and partition for each message being produced.</p>
@@ -425,7 +440,7 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>topicPartitionFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <span class="xref">TopicPartition</span>&gt;</dt>
+    <dt><code>topicPartitionFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <span class="xref">TopicPartition</span>&gt;</dt>
     <dd><p>The function returning the target topic and partition index for the message being produced.</p>
 </dd>
   </dl>
@@ -451,7 +466,7 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_String__System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.String},System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Int32})">
   ProduceTo(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string&gt;, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, int&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the functions returning the target topic and partition for each message being produced.</p>
@@ -464,10 +479,10 @@ Class KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;  <a class="heade
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>topicFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dt><code>topicFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
     <dd><p>The function returning the target topic for the message being produced.</p>
 </dd>
-    <dt><code>partitionFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dt><code>partitionFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
     <dd><p>The optional function returning the target partition index for the message being produced. If <code>null</code> the partition is
 automatically derived from the message key (use <a class="xref" href="Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a> to specify a message key, otherwise a
 random one will be generated).</p>
@@ -495,7 +510,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_System_Func__0_Confluent_Kafka_TopicPartition__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(System.Func{`0,Confluent.Kafka.TopicPartition})">
   ProduceTo(Func&lt;TMessage?, TopicPartition&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the function returning the target topic and partition for each message being produced.</p>
@@ -534,7 +549,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_System_Func__0_System_String__System_Func__0_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(System.Func{`0,System.String},System.Func{`0,System.Int32})">
   ProduceTo(Func&lt;TMessage?, string&gt;, Func&lt;TMessage?, int&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the functions returning the target topic and partition for each message being produced.</p>
@@ -578,7 +593,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Int32})">
   ProduceTo(string, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, int&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the target topic and the function returning the target partition for each message being produced.</p>
@@ -594,7 +609,7 @@ random one will be generated).</p>
     <dt><code>topic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
     <dd><p>The target topic.</p>
 </dd>
-    <dt><code>partitionFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dt><code>partitionFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
     <dd><p>The function returning the target partition index for the message being produced.</p>
 </dd>
   </dl>
@@ -620,7 +635,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_String____System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.String[]},System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Int32})">
   ProduceTo(string, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string[]&gt;, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, int&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the target topic format and an optional function returning the target partition for each message being produced.</p>
@@ -637,10 +652,10 @@ random one will be generated).</p>
     <dd><p>The topic format string that will be combined with the arguments returned by the <code class="paramref">topicArgumentsFunction</code>
 using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string.format#system-string-format(system-string-system-object())">Format(string, params object[])</a>.</p>
 </dd>
-    <dt><code>topicArgumentsFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]&gt;</dt>
+    <dt><code>topicArgumentsFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]&gt;</dt>
     <dd><p>The function returning the arguments to be used to format the string.</p>
 </dd>
-    <dt><code>partitionFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dt><code>partitionFunction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope%601.cs">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
     <dd><p>The optional function returning the target partition index for the message being produced. If <code>null</code> the partition is
 automatically derived from the message key (use <a class="xref" href="Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a> to specify a message key, otherwise a
 random one will be generated).</p>
@@ -668,7 +683,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_System_String_System_Func__0_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(System.String,System.Func{`0,System.Int32})">
   ProduceTo(string, Func&lt;TMessage?, int&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the target topic and the function returning the target partition for each message being produced.</p>
@@ -710,7 +725,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_System_String_System_Func__0_System_String____System_Func__0_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(System.String,System.Func{`0,System.String[]},System.Func{`0,System.Int32})">
   ProduceTo(string, Func&lt;TMessage?, string[]&gt;, Func&lt;TMessage?, int&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the target topic format and an optional function returning the target partition for each message being produced.</p>
@@ -758,7 +773,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceTo_System_String_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceTo(System.String,System.Nullable{System.Int32})">
   ProduceTo(string, int?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the target topic and optionally the target partition.</p>
@@ -801,7 +816,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_ProduceToDynamicTopic" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.ProduceToDynamicTopic">
   ProduceToDynamicTopic()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies that the target topic and, optionally, the target partition will be specified per each message using the envelope's
@@ -835,7 +850,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_SetKafkaKey_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Object__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.SetKafkaKey(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Object})">
   SetKafkaKey(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object?&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Uses the specified value provider function to set the kafka key for each message being produced.</p>
@@ -874,7 +889,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_SetKafkaKey_System_Func__0_System_Object__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.SetKafkaKey(System.Func{`0,System.Object})">
   SetKafkaKey(Func&lt;TMessage?, object?&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Uses the specified value provider function to set the kafka key for each message being produced.</p>
@@ -913,7 +928,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_SetKafkaKey__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.SetKafkaKey``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})">
   SetKafkaKey&lt;TMessageChildType&gt;(Func&lt;IOutboundEnvelope&lt;TMessageChildType&gt;, object?&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Uses the specified value provider function to set the kafka key for each message being produced.</p>
@@ -958,7 +973,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_SetKafkaKey__1_System_Func___0_System_Object__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.SetKafkaKey``1(System.Func{``0,System.Object})">
   SetKafkaKey&lt;TMessageChildType&gt;(Func&lt;TMessageChildType?, object?&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Uses the specified value provider function to set the kafka key for each message being produced.</p>
@@ -1003,7 +1018,7 @@ random one will be generated).</p>
 
   <h3 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_1_UseEndpointResolver__1" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder`1.UseEndpointResolver``1">
   UseEndpointResolver&lt;TResolver&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the type of the <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IKafkaProducerEndpointResolver-1.html">IKafkaProducerEndpointResolver&lt;TMessage&gt;</a> to be used to resolve the target topic and
@@ -1047,7 +1062,7 @@ partition for each message being produced.</p>
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/5e98c6a4bac160b8c5e0cef791b6712b9a26f2dc/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/85ef74467f168e237beb79a0e7b489e48eb962d9/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerEndpointConfigurationBuilder%601.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -1058,8 +1073,17 @@ partition for each message being produced.</p>
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

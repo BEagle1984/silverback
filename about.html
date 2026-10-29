@@ -1,13 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-      <title>About | Silverback </title>
+      <title>About Silverback | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="About | Silverback ">
+      <meta name="title" content="About Silverback | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="About Silverback | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="public/docfx.min.css">
       <link rel="stylesheet" href="public/main.css">
       <meta name="docfx:navrel" content="toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="index.html">
-            <img id="logo" class="svg" src="images/logo.png" alt="">
+            <img id="logo" class="svg" src="images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -71,22 +86,46 @@
         </div>
 
         <article data-uid="about">
-<h1 id="about">About</h1>
+<h1 id="about-silverback">About Silverback</h1>
 
-<p>Silverback is maintained by <strong>Sergio Aquilini</strong> (BEagle1984 on GitHub).</p>
-<p><a href="https://github.com/BEagle1984"><i class='bi bi-github'></i> GitHub</a></p>
-<p><a href="https://www.linkedin.com/in/sergio-aquilini-689764140/"><i class='bi bi-linkedin'></i> LinkedIn</a></p>
-<p><a href="mailto:sergio@aquilini.ch"><i class='bi bi-envelope-at'></i> Personal Email</a></p>
-<p><a href="mailto:silverback-project@outlook.com"><i class='bi bi-envelope-at'></i> Project Email</a></p>
-<h2 id="license">License</h2>
-<p>The code is licensed under the <strong>MIT License</strong> (see <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">LICENSE</a>).</p>
-<h2 id="credits">Credits</h2>
-<p>Silverback is built upon several outstanding open-source libraries:</p>
+<p>Silverback is an open-source message bus and broker integration library for .NET, developed since 2018 to simplify building event-driven applications on top of Apache Kafka and MQTT.</p>
 <ul>
-<li><a href="https://github.com/dotnet/reactive">Rx.NET</a> – Provides powerful reactive extensions for composing asynchronous and event-based programs.</li>
-<li><a href="https://github.com/JamesNK/Newtonsoft.Json">Json.NET</a> – Used to be the gold standard for JSON serialization in .NET, still widely used for its flexibility and features.</li>
-<li><a href="https://github.com/confluentinc/confluent-kafka-dotnet">Confluent Kafka .NET Client</a> – Facilitates integration with Apache Kafka for distributed messaging.</li>
-<li><a href="https://github.com/chkr1011/MQTTnet">MQTTnet</a> – Supports MQTT-based messaging for IoT and lightweight communication scenarios.</li>
+<li><strong>Source code:</strong> <a href="https://github.com/BEagle1984/silverback">github.com/BEagle1984/silverback</a></li>
+<li><strong>Packages:</strong> <a href="https://www.nuget.org/packages?q=Silverback">nuget.org</a></li>
+<li><strong>Release notes:</strong> <a class="xref" href="changelog/500.html">Silverback 5 Release Notes</a></li>
+</ul>
+<h2 id="license">License</h2>
+<p>Silverback is licensed under the <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>: you are free to use it in both open-source and commercial projects.</p>
+<h2 id="contact">Contact</h2>
+<p>Silverback is maintained by <strong>Sergio Aquilini</strong>.</p>
+<ul>
+<li><i class="bi bi-github"></i> <a href="https://github.com/BEagle1984">BEagle1984 on GitHub</a></li>
+<li><i class="bi bi-linkedin"></i> <a href="https://www.linkedin.com/in/sergio-aquilini-689764140/">LinkedIn</a></li>
+<li><i class="bi bi-envelope-at"></i> <a href="mailto:silverback-project@outlook.com">silverback-project@outlook.com</a></li>
+</ul>
+<p>For questions and ideas, please use the <a href="https://github.com/BEagle1984/silverback/discussions">GitHub Discussions</a>; to report a bug, open an <a href="https://github.com/BEagle1984/silverback/issues">issue</a>. See also <a class="xref" href="contributing.html">Contributing</a>.</p>
+<h2 id="acknowledgements">Acknowledgements</h2>
+<p>Silverback is built on top of several outstanding open-source libraries.</p>
+<h3 id="message-brokers">Message Brokers</h3>
+<ul>
+<li><a href="https://github.com/confluentinc/confluent-kafka-dotnet">Confluent's .NET Client for Apache Kafka</a> – The Kafka client used by <code>Silverback.Integration.Kafka</code>, as well as the Schema Registry serializers (Avro, JSON and Protobuf) used by <code>Silverback.Integration.Kafka.SchemaRegistry</code>.</li>
+<li><a href="https://github.com/dotnet/MQTTnet">MQTTnet</a> – The MQTT client used by <code>Silverback.Integration.MQTT</code>.</li>
+</ul>
+<h3 id="storage">Storage</h3>
+<ul>
+<li><a href="https://github.com/dotnet/efcore">Entity Framework Core</a> – Used by <code>Silverback.Storage.EntityFramework</code>.</li>
+<li><a href="https://github.com/npgsql/npgsql">Npgsql</a> – The PostgreSQL data provider used by <code>Silverback.Storage.PostgreSql</code>.</li>
+<li><a href="https://github.com/madelson/DistributedLock">DistributedLock</a> – Provides the PostgreSQL advisory locks used by <code>Silverback.Storage.PostgreSql</code>.</li>
+<li><a href="https://github.com/dotnet/efcore/tree/main/src/Microsoft.Data.Sqlite.Core">Microsoft.Data.Sqlite</a> – The SQLite data provider used by <code>Silverback.Storage.Sqlite</code>.</li>
+</ul>
+<h3 id="optional-integrations">Optional Integrations</h3>
+<ul>
+<li><a href="https://github.com/dotnet/reactive">Rx.NET</a> – The reactive extensions used by <code>Silverback.Core.Rx</code> to expose the message bus as an observable stream.</li>
+<li><a href="https://github.com/JamesNK/Newtonsoft.Json">Json.NET</a> – The JSON serializer used by <code>Silverback.Integration.Newtonsoft</code>.</li>
+</ul>
+<h3 id="documentation">Documentation</h3>
+<ul>
+<li><a href="https://github.com/dotnet/docfx">docfx</a> – Generates this documentation website.</li>
 </ul>
 
 </article>
@@ -108,8 +147,17 @@
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="about.html">About</a>
+            <a href="contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>

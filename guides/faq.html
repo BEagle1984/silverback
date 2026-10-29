@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>FAQ and Troubleshooting | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="FAQ and Troubleshooting | Silverback ">
+      
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="FAQ and Troubleshooting | Silverback ">
+      
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/guides/faq.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'dark'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="faq">
+<h1 id="faq-and-troubleshooting">FAQ and Troubleshooting</h1>
+
+<p>This page collects the most common questions and issues. If your problem isn't listed here, search the <a href="https://github.com/BEagle1984/silverback/issues">GitHub issues</a> or ask in the <a href="https://github.com/BEagle1984/silverback/discussions">discussions</a>.</p>
+<h2 id="consuming">Consuming</h2>
+<h3 id="the-consumer-doesnt-receive-the-messages-produced-before-it-started">The Consumer Doesn't Receive the Messages Produced Before It Started</h3>
+<p>A Kafka consumer group without committed offsets starts from the end of the topic by default (<code>auto.offset.reset=latest</code>). Use <code>AutoResetOffsetToEarliest()</code> to start from the beginning of the topic instead:</p>
+<pre><code class="lang-csharp">.AddConsumer(consumer =&gt; consumer
+    .WithGroupId(&quot;my-group&quot;)
+    .AutoResetOffsetToEarliest()
+    .Consume&lt;MyMessage&gt;(endpoint =&gt; endpoint
+        .ConsumeFrom(&quot;my-topic&quot;)))
+</code></pre>
+<p>Also double-check the bootstrap servers, the topic name and the group id. Remember that consumers in the same group share the partitions: if another instance with the same group id is running, it might be consuming the messages.</p>
+<h3 id="the-consumer-stops-with-an-unhandledmessageexception">The Consumer Stops With an <code>UnhandledMessageException</code></h3>
+<p>By default, both the Kafka and the MQTT consumers throw an <a class="xref" href="../api/Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a> if no subscriber handles a consumed message. The exception triggers the error policy (and by default stops the consumer). Make sure that:</p>
+<ul>
+<li>the subscriber is registered (e.g. <code>AddSingletonSubscriber&lt;MySubscriber&gt;()</code>),</li>
+<li>the subscribed method's parameter type matches the consumed message type (or one of its base types or interfaces),</li>
+<li>the message is deserialized into the expected type (see <a class="xref" href="broker/consuming/deserialization.html">Deserializing the Consumed Messages</a>).</li>
+</ul>
+<p>If unhandled messages are expected, call <code>IgnoreUnhandledMessages()</code> on the consumer endpoint.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>This is unrelated to the MQTT producer's behavior when no client is subscribed to the destination topic (see <a href="#mqtt-producing-when-nobody-is-subscribed">MQTT Producing When Nobody Is Subscribed</a>).</p>
+</div>
+<h3 id="the-consumer-stopped-after-an-exception">The Consumer Stopped After an Exception</h3>
+<p>The default error policy stops the consumer when the processing fails, to avoid losing messages. Configure an error policy to retry, skip or move the failed messages (see <a class="xref" href="broker/consuming/error-policies.html">Error Handling Policies</a>), and use the <a class="xref" href="broker/consuming/health-check.html">Consumer Health Check</a> to detect stopped consumers.</p>
+<h3 id="the-kafka-consumer-is-kicked-out-of-the-group-while-processing">The Kafka Consumer Is Kicked Out of the Group While Processing</h3>
+<p>If processing a message (including the retries) takes longer than <code>max.poll.interval.ms</code>, the consumer is considered dead and its partitions are reassigned. Increase the interval with <code>WithMaxPollIntervalMs(...)</code> or reduce the processing time (e.g. smaller batches, shorter retry delays).</p>
+<h3 id="the-messages-arent-processed-in-parallel">The Messages Aren't Processed in Parallel</h3>
+<p>Kafka messages from the same partition are always processed sequentially, to preserve their order. The parallelism is therefore bound by the number of assigned partitions (and by <code>LimitParallelism</code>). With MQTT, parallel processing must be enabled explicitly via <code>EnableParallelProcessing</code>. See <a class="xref" href="broker/consuming/basics.html">Consuming Messages</a>.</p>
+<h3 id="the-same-message-is-processed-more-than-once">The Same Message Is Processed More Than Once</h3>
+<p>Kafka and MQTT (with QoS 1) guarantee at-least-once delivery: a message can be redelivered after a crash, a rebalance or a reconnection, if its offset (or acknowledgment) wasn't committed yet. Make the subscribers idempotent, or use the client-side offset storage together with your database transaction to achieve exactly-once processing (see <a class="xref" href="broker/consuming/kafka/offset.html">Kafka Offset Storage</a>).</p>
+<h2 id="serialization">Serialization</h2>
+<h3 id="the-message-is-deserialized-as-the-wrong-type">The Message Is Deserialized as the Wrong Type</h3>
+<p>When consuming with <code>Consume&lt;TMessage&gt;</code>, the JSON deserializer uses <code>TMessage</code> and ignores the <code>x-message-type</code> header by default. To consume different message types from the same topic, enable the message type header in the deserializer (e.g. <code>DeserializeJson(deserializer =&gt; deserializer.WithOptionalMessageTypeHeader())</code>) and make sure the producer sends it. See <a class="xref" href="broker/consuming/deserialization.html">Deserializing the Consumed Messages</a> and <a class="xref" href="broker/producing/serialization.html">Serializing the Produced Messages</a>.</p>
+<h3 id="interoperability-with-non-silverback-producers-or-consumers">Interoperability With Non-Silverback Producers or Consumers</h3>
+<p>Silverback produces plain JSON by default and adds a few headers (see <a class="xref" href="broker/default-headers.html">Default Headers</a>). The other applications can simply ignore the headers. When consuming from a non-Silverback producer, the <code>x-message-type</code> header is missing, so make sure the consumer endpoint specifies the message type via <code>Consume&lt;TMessage&gt;</code>.</p>
+<h2 id="producing">Producing</h2>
+<h3 id="the-message-is-published-but-not-produced">The Message Is Published But Not Produced</h3>
+<p>A message is produced only if an endpoint is configured for its type (or for one of its base types or interfaces) via <code>Produce&lt;TMessage&gt;</code>. If the message is not routed to any endpoint, it is only published to the in-memory subscribers. Check also any configured filter (see <a class="xref" href="broker/producing/basics.html">Producing Messages</a>).</p>
+<h3 id="the-kafka-messages-are-not-ordered">The Kafka Messages Are Not Ordered</h3>
+<p>Kafka guarantees ordering only within a partition. Set a key (e.g. via <code>SetKafkaKey</code> or the <code>KafkaKeyMemberAttribute</code>) to ensure that the related messages land in the same partition. See <a class="xref" href="broker/producing/kafka/partitioning.html">Kafka Keys and Partitioning</a>.</p>
+<h3 id="mqtt-producing-when-nobody-is-subscribed">MQTT Producing When Nobody Is Subscribed</h3>
+<p>By default, the MQTT producer doesn't throw if no subscriber is consuming the produced message. The behavior can be configured per endpoint with <code>IgnoreNoMatchingSubscribers()</code>, <code>LogNoMatchingSubscribersWarning()</code> or <code>ThrowNoMatchingSubscribersError()</code>. See <a class="xref" href="broker/mqtt.html">MQTT Specifics</a>.</p>
+<h2 id="outbox-and-storage">Outbox and Storage</h2>
+<h3 id="the-outbox-messages-are-stored-but-never-produced">The Outbox Messages Are Stored but Never Produced</h3>
+<p>The outbox requires the outbox worker to be configured and running (<code>AddOutboxWorker</code>), and the endpoint must have a name. Also check that the transaction is committed: when the outbox write is enlisted in a database transaction, the messages become visible to the worker only after the commit. See <a class="xref" href="broker/producing/outbox.html">Transactional Outbox</a>.</p>
+<h2 id="logging-and-diagnostics">Logging and Diagnostics</h2>
+<h3 id="how-can-i-see-what-silverback-is-doing">How Can I See What Silverback Is Doing?</h3>
+<p>Lower the minimum log level of the <code>Silverback</code> categories to <code>Debug</code>, or change the level of specific events via <code>WithLogLevels</code>. All events are listed in <a class="xref" href="logging.html">Logging and Tracing</a>.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="quickstart.html">Quickstart</a></li>
+<li><a class="xref" href="broker/consuming/basics.html">Consuming Messages</a></li>
+<li><a class="xref" href="broker/producing/basics.html">Producing Messages</a></li>
+<li><a class="xref" href="broker/testing.html">Testing</a></li>
+</ul>
+
+</article>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+      
+      <div class="affix">
+        <div class="contribution d-print-none">
+          <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/faq.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

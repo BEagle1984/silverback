@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,8 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Testing | Silverback ">
       
+      <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Testing | Silverback ">
       
+      <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="../../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="../../public/docfx.min.css">
       <link rel="stylesheet" href="../../public/main.css">
       <meta name="docfx:navrel" content="../../toc.html">
@@ -33,7 +48,7 @@
       <script type="module" src="./../../public/docfx.min.js"></script>
 
       <script>
-        const theme = localStorage.getItem('theme') || 'auto'
+        const theme = localStorage.getItem('theme') || 'dark'
         document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
       </script>
 
@@ -44,7 +59,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../../index.html">
-            <img id="logo" class="svg" src="../../images/logo.png" alt="">
+            <img id="logo" class="svg" src="../../images/logo.svg" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +69,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -149,11 +164,11 @@ This is ideal when the app’s configuration is shared between production and te
     .WithConnectionToMessageBroker(options =&gt; options.AddMockedMqtt())
     .AddMqttClients(
         clients =&gt; clients
-            .AddProducer(
-                producer =&gt; producer
-                    .Produce&lt;SomeMessage&gt;(endpoint =&gt; endpoint.ProduceTo(&quot;test/topic&quot;)))
-            .AddConsumer(
-                consumer =&gt; consumer
+            .ConnectViaTcp(&quot;tests&quot;)
+            .AddClient(
+                client =&gt; client
+                    .WithClientId(&quot;test-client&quot;)
+                    .Produce&lt;SomeMessage&gt;(endpoint =&gt; endpoint.ProduceTo(&quot;test/topic&quot;))
                     .Consume(endpoint =&gt; endpoint.ConsumeFrom(&quot;test/topic&quot;))));
 </code></pre>
 <h2 id="approach-2-override-an-existing-configuration-webapplicationfactory--test-host">Approach 2: Override an Existing Configuration (WebApplicationFactory / Test Host)</h2>
@@ -185,10 +200,11 @@ They don’t add producers/consumers/endpoints for you; those still come from yo
 <p>The most commonly used helpers are:</p>
 <ul>
 <li><a class="xref" href="../../api/Silverback.Testing.ITestingHelper.html#Silverback_Testing_ITestingHelper_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__">WaitUntilConnectedAsync(TimeSpan?)</a> – wait until consumers are connected and ready.</li>
-<li><a class="xref" href="../../api/Silverback.Testing.ITestingHelper.html#Silverback_Testing_ITestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_String___">WaitUntilAllMessagesAreConsumedAsync(params string[])</a> – wait until routed messages have been processed and committed (<strong>mocked brokers only</strong>).</li>
+<li><a class="xref" href="../../api/Silverback.Testing.ITestingHelper.html#Silverback_Testing_ITestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_String___">WaitUntilAllMessagesAreConsumedAsync(params string[])</a> – wait until routed messages have been processed (<strong>mocked brokers only</strong>).</li>
+<li><a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreCommittedAsync_System_String___">WaitUntilAllMessagesAreCommittedAsync(params string[])</a> – wait until Kafka message offsets have been committed (<strong>mocked Kafka only</strong>).</li>
 <li><a class="xref" href="../../api/Silverback.Testing.ITestingHelper.html#Silverback_Testing_ITestingHelper_WaitUntilOutboxIsEmptyAsync_System_Nullable_System_TimeSpan__">WaitUntilOutboxIsEmptyAsync(TimeSpan?)</a> – wait until the outbox has been drained (if you’re using the outbox).</li>
 </ul>
-<h3 id="example-publish-and-wait">Example: publish and wait</h3>
+<h3 id="example-publish-and-wait">Example: Publish and Wait</h3>
 <p>This pattern is used extensively in our end-to-end tests (see <code>tests/Silverback.Integration.Tests.E2E</code>).</p>
 <pre><code class="lang-csharp">await Host.ConfigureServicesAndRunAsync(
     services =&gt; services
@@ -238,7 +254,10 @@ Helper.Spy.OutboundEnvelopes.ShouldNotBeEmpty();
 Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 </code></pre>
 <h2 id="kafka-specifics">Kafka Specifics</h2>
-<h3 id="access-in-memory-topics">Access In-Memory topics</h3>
+<h3 id="auto-commit-interval">Auto-Commit Interval</h3>
+<p><code>WaitUntilAllMessagesAreConsumedAsync()</code> uses locally stored offsets, so it does not depend on the auto-commit interval or require broker commits to be enabled. Use <code>WaitUntilAllMessagesAreCommittedAsync()</code> when asserting committed offsets.</p>
+<p>Mocked Kafka automatically overrides the auto-commit interval to <strong>50 milliseconds</strong> to speed up commit waits when auto-commit is enabled. No explicit configuration is needed. Use <a class="xref" href="../../api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder_OverrideAutoCommitIntervalMs_System_Nullable_System_Int32__">OverrideAutoCommitIntervalMs(int?)</a> only when a test requires different commit timing. Passing <code>null</code> disables the override and uses the consumer's configured interval, or 5 seconds if no interval is configured.</p>
+<h3 id="access-in-memory-topics">Access In-Memory Topics</h3>
 <p>When using the mocked Kafka broker you can inspect the internal topics via <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_GetTopic_System_String_System_String_">GetTopic(string, string?)</a>.</p>
 <pre><code class="lang-csharp">var topic = Helper.GetTopic(&quot;test-topic&quot;);
 
@@ -251,12 +270,12 @@ Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 <pre><code class="lang-csharp">var group = Helper.GetConsumerGroup(&quot;test-group&quot;);
 // group.Consumers / group.CommittedOffsets ...
 </code></pre>
-<h3 id="create-a-producer-on-the-fly">Create a Producer on-the-fly</h3>
+<h3 id="create-a-producer-on-the-fly">Create a Producer On-the-Fly</h3>
 <p>Sometimes you want to produce to Kafka without going through the application’s publisher (e.g., to simulate an external producer).</p>
-<pre><code class="lang-csharp">var producer = Helper.GetProducer(
-    config =&gt; config
+<pre><code class="lang-csharp">IProducer producer = Helper.GetProducer(
+    producer =&gt; producer
         .WithBootstrapServers(&quot;PLAINTEXT://tests&quot;)
-        .ProduceTo(&quot;test-topic&quot;));
+        .Produce&lt;SomeMessage&gt;(endpoint =&gt; endpoint.ProduceTo(&quot;test-topic&quot;)));
 
 await producer.ProduceAsync(new SomeMessage());
 </code></pre>
@@ -271,11 +290,12 @@ await producer.ProduceAsync(new SomeMessage());
 <pre><code class="lang-csharp">var messages = Helper.GetMessages(&quot;test/topic&quot;);
 messages.Count.ShouldBeGreaterThan(0);
 </code></pre>
-<h3 id="create-a-producer-on-the-fly-1">Create a Producer on-the-fly</h3>
-<pre><code class="lang-csharp">var producer = Helper.GetProducer(
-    config =&gt; config
+<h3 id="create-a-producer-on-the-fly-1">Create a Producer On-the-Fly</h3>
+<pre><code class="lang-csharp">IProducer producer = Helper.GetProducer(
+    client =&gt; client
+        .ConnectViaTcp(&quot;tests&quot;)
         .WithClientId(&quot;external-producer&quot;)
-        .ProduceTo(&quot;test/topic&quot;));
+        .Produce&lt;SomeMessage&gt;(endpoint =&gt; endpoint.ProduceTo(&quot;test/topic&quot;)));
 
 await producer.ProduceAsync(new SomeMessage());
 </code></pre>
@@ -311,8 +331,17 @@ await producer.ProduceAsync(new SomeMessage());
 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
-        <div class="flex-fill">
-          © 2026 Sergio Aquilini
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../../about.html">About</a>
+            <a href="../../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
         </div>
       </div>
     </footer>
