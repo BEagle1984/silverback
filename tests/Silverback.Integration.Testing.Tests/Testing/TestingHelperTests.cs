@@ -34,11 +34,11 @@ public class TestingHelperTests
     }
 
     [Fact]
-    public async Task WaitUntilConnectedAsync_ShouldNotThrow_WhenConsumerDoesNotConnectWithinTimeoutAndThrowTimeoutExceptionIsFalse()
+    public Task WaitUntilConnectedAsync_ShouldNotThrow_WhenConsumerDoesNotConnectWithinTimeoutAndThrowTimeoutExceptionIsFalse()
     {
         TestingHelper testingHelper = CreateTestingHelper(ConsumerStatus.Started);
 
-        await testingHelper.WaitUntilConnectedAsync(false, WaitTimeout).AsTask().WaitAsync(TestTimeout);
+        return testingHelper.WaitUntilConnectedAsync(false, WaitTimeout).AsTask().WaitAsync(TestTimeout);
     }
 
     private static TestingHelper CreateTestingHelper(ConsumerStatus consumerStatus)
