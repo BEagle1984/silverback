@@ -57,7 +57,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             [
                 new NpgsqlParameter("@Content", NpgsqlDbType.Bytea)
                 {
-                    Value = outboxMessage.Content
+                    Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content
                 },
                 new NpgsqlParameter("@Headers", NpgsqlDbType.Text)
                 {
@@ -99,7 +99,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             ],
             (outboxMessage, parameters) =>
             {
-                parameters[0].Value = outboxMessage.Content;
+                parameters[0].Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
                 parameters[2].Value = outboxMessage.EndpointName;
             },
@@ -130,7 +130,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             ],
             (outboxMessage, parameters) =>
             {
-                parameters[0].Value = outboxMessage.Content;
+                parameters[0].Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
                 parameters[2].Value = outboxMessage.EndpointName;
             },

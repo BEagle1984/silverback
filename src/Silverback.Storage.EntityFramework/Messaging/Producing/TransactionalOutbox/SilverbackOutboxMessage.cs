@@ -23,7 +23,6 @@ public class SilverbackOutboxMessage
     /// <summary>
     ///     Gets or sets the message raw binary content.
     /// </summary>
-    [Required]
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Entity Framework requirement")]
     public byte[]? Content { get; set; }
 

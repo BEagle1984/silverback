@@ -56,7 +56,7 @@ public class SqliteOutboxWriter : IOutboxWriter
             [
                 new SqliteParameter("@Content", SqliteType.Blob)
                 {
-                    Value = outboxMessage.Content
+                    Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content
                 },
                 new SqliteParameter("@Headers", SqliteType.Text)
                 {
@@ -98,7 +98,7 @@ public class SqliteOutboxWriter : IOutboxWriter
             ],
             (outboxMessage, parameters) =>
             {
-                parameters[0].Value = outboxMessage.Content;
+                parameters[0].Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
                 parameters[2].Value = outboxMessage.EndpointName;
             },
@@ -129,7 +129,7 @@ public class SqliteOutboxWriter : IOutboxWriter
             ],
             (outboxMessage, parameters) =>
             {
-                parameters[0].Value = outboxMessage.Content;
+                parameters[0].Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
                 parameters[2].Value = outboxMessage.EndpointName;
             },

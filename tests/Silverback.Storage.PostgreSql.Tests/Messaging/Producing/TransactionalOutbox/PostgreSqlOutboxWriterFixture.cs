@@ -131,6 +131,30 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresTests
     }
 
     [Fact]
+    public async Task AddAsync_ShouldAddItemsWithNullContentToStorage()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+
+        SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
+
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
+
+        await outboxWriter.AddAsync(new OutboxMessage(null, null, "test1"));
+        await outboxWriter.AddAsync([new OutboxMessage(null, null, "test2")]);
+        await outboxWriter.AddAsync(new[] { new OutboxMessage(null, null, "test3") }.ToAsyncEnumerable());
+
+        List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
+        dbOutboxMessages.Count.ShouldBe(3);
+        dbOutboxMessages.ShouldAllBe(dbOutboxMessage => dbOutboxMessage.Content == null);
+        dbOutboxMessages.Select(dbOutboxMessage => dbOutboxMessage.EndpointName).ShouldBe(["test1", "test2", "test3"], ignoreOrder: true);
+    }
+
+    [Fact]
     public async Task AddAsync_ShouldEnlistInTransaction()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services

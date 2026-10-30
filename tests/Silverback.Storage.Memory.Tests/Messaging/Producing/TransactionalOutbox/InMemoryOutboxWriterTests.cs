@@ -82,6 +82,29 @@ public class InMemoryOutboxWriterTests
     }
 
     [Fact]
+    public async Task AddAsync_ShouldAddItemsWithNullContentToStorage()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+        InMemoryOutboxSettings outboxSettings = new();
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
+
+        OutboxMessage outboxMessage1 = new(null, null, "test1");
+        OutboxMessage outboxMessage2 = new(null, null, "test2");
+        OutboxMessage outboxMessage3 = new(null, null, "test3");
+        await outboxWriter.AddAsync(outboxMessage1);
+        await outboxWriter.AddAsync([outboxMessage2]);
+        await outboxWriter.AddAsync(new[] { outboxMessage3 }.ToAsyncEnumerable());
+
+        InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
+        InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
+        outbox.Get(10).ShouldBe([outboxMessage1, outboxMessage2, outboxMessage3]);
+    }
+
+    [Fact]
     public async Task AddAsync_ShouldAddItemToCorrectStorage()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
