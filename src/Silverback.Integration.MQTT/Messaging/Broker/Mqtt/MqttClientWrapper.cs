@@ -229,6 +229,10 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             await Subscribed.InvokeAsync(this).ConfigureAwait(false);
             await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(callback => callback.OnClientConnectedAsync(Configuration)).ConfigureAwait(false);
         }
+        catch (Exception) when (cancellationToken.IsCancellationRequested)
+        {
+            // The client is being disconnected, nothing to report
+        }
         catch (Exception ex)
         {
             // This might happen if the client briefly connects and then immediately disconnects
@@ -256,6 +260,11 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
                 throw new MqttConnectException("The call to ConnectAsync returned but the client is not connected.");
 
             return true;
+        }
+        catch (Exception) when (cancellationToken.IsCancellationRequested)
+        {
+            // The connection attempt was aborted because the client is being disconnected
+            return false;
         }
         catch (Exception ex)
         {

@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using NSubstitute;
 using Shouldly;
@@ -17,6 +18,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker.Mqtt;
@@ -290,6 +292,30 @@ public class MqttClientWrapperTests
         harness.ConnectionAttempts.ShouldBe(2);
     }
 
+    [Fact]
+    public async Task DisconnectAsync_ShouldNotLogConnectError_WhenConnectionAttemptIsCanceled()
+    {
+        await using ProducerHarness harness = new();
+        harness.BlockConnection();
+        await harness.Client.ConnectAsync();
+        await harness.ConnectionStarted.Task.WaitAsync(Timeout);
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+        await harness.ConnectionCanceled.Task.WaitAsync(Timeout);
+
+        // Give the connection loop the time to handle the canceled attempt
+        await Task.Delay(100);
+
+        harness.Logger.DidNotReceive(
+            LogLevel.Warning,
+            typeof(OperationCanceledException),
+            eventId: MqttLogEvents.ConnectError.EventId.Id);
+        harness.Logger.DidNotReceive(
+            LogLevel.Debug,
+            typeof(OperationCanceledException),
+            eventId: MqttLogEvents.ConnectRetryError.EventId.Id);
+    }
+
     private static async Task WaitUntilAsync(Func<bool> condition)
     {
         using CancellationTokenSource cancellation = new(Timeout);
@@ -314,16 +340,27 @@ public class MqttClientWrapperTests
 
         private bool _connectionUnavailable;
 
+        private bool _connectionBlocked;
+
         private int _connectionAttempts;
 
         public ProducerHarness(TimeSpan? timeout = null)
         {
             _nativeClient.IsConnected.Returns(_ => Volatile.Read(ref _isConnected));
 
-            _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(call =>
+            _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(async call =>
             {
                 Interlocked.Increment(ref _connectionAttempts);
                 ConnectionCancellationToken = call.Arg<CancellationToken>();
+
+                if (Volatile.Read(ref _connectionBlocked))
+                {
+                    ConnectionStarted.TrySetResult(true);
+                    await Task.Delay(System.Threading.Timeout.Infinite, ConnectionCancellationToken)
+                        .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                    ConnectionCanceled.TrySetResult(true);
+                    ConnectionCancellationToken.ThrowIfCancellationRequested();
+                }
 
                 if (Volatile.Read(ref _connectionUnavailable))
                     throw new InvalidOperationException("The broker is unavailable.");
@@ -369,7 +406,7 @@ public class MqttClientWrapperTests
                 _nativeClient,
                 configuration,
                 Substitute.For<IBrokerClientCallbacksInvoker>(),
-                Substitute.For<ISilverbackLogger>());
+                Logger);
             IBrokerBehaviorsProvider<IProducerBehavior> behaviors = Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>();
             behaviors.GetBehaviorsList().Returns([]);
             Producer = new MqttProducer(
@@ -392,11 +429,17 @@ public class MqttClientWrapperTests
 
         public MqttProducer Producer { get; }
 
+        public SilverbackLoggerSubstitute<MqttClientWrapper> Logger { get; } = new();
+
         public ConcurrentQueue<byte> Published { get; } = new();
 
         public TaskCompletionSource<bool> PublishStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public TaskCompletionSource<bool> ReleasePublish { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> ConnectionStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> ConnectionCanceled { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public CancellationToken PublishCancellationToken { get; private set; }
 
@@ -422,6 +465,8 @@ public class MqttClientWrapperTests
         }
 
         public void RestoreConnection() => Volatile.Write(ref _connectionUnavailable, false);
+
+        public void BlockConnection() => Volatile.Write(ref _connectionBlocked, true);
 
         public Task ProduceAsync(byte number)
         {
