@@ -220,10 +220,11 @@ public class BatchProducingTests : KafkaTests
     }
 
     private List<string> GetProducedTraceIds<TMessage>() =>
-        Helper.Spy.OutboundEnvelopes
+    [
+        .. Helper.Spy.OutboundEnvelopes
             .OfType<IOutboundEnvelope<TMessage>>()
             .Select(envelope => ActivityContext.Parse(envelope.Headers[DefaultMessageHeaders.TraceId]!, null).TraceId.ToString())
-            .ToList();
+    ];
 
     // Note: Tests for batch producing via outbox are implemented in the Outbox*Tests
 }
