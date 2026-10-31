@@ -21,7 +21,7 @@ Silverback is maintained by **Sergio Aquilini**.
 
 - <i class="bi bi-github"></i> [BEagle1984 on GitHub](https://github.com/BEagle1984)
 - <i class="bi bi-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/sergio-aquilini-689764140/)
-- <i class="bi bi-envelope-at"></i> [silverback-project@outlook.com](mailto:silverback-project@outlook.com)
+- <i class="bi bi-envelope-at"></i> [contact@silverback-messaging.net](mailto:contact@silverback-messaging.net)
 
 For questions and ideas, please use the [GitHub Discussions](https://github.com/BEagle1984/silverback/discussions); to report a bug, open an [issue](https://github.com/BEagle1984/silverback/issues). See also <xref:contributing>.
 
