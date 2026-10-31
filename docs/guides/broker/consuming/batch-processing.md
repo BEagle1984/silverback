@@ -83,7 +83,11 @@ public async Task HandleAsync(IAsyncEnumerable<IInboundEnvelope<MyMessage>> enve
 > [!Note]
 > With Kafka, a batch per topic partition is created by default. You can decide to process all partitions together by calling `ProcessAllPartitionsTogether` on the consumer configuration and that will create a single batch for the whole topic.
 
+> [!Tip]
+> While the batch is enumerated, the current `Activity` continues the trace of the message being processed. Avoid buffering the batch (e.g. with `ToList()`) if the trace of each message must be preserved. See <xref:consuming-tracing> for details.
+
 ## Additional Resources
 
 - [API Reference](xref:Silverback)
+- <xref:consuming-tracing> guide
 - <xref:sample-kafka-batch> sample
