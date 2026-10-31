@@ -23,10 +23,16 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     public IClientSession GetClientSession(string clientId) =>
         _sessions.Single(sessionPair => sessionPair.Key.StartsWith($"{clientId}|", StringComparison.Ordinal)).Value;
 
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic, string? server = null) =>
-        (IReadOnlyList<MqttApplicationMessage>?)_messagesByTopic.FirstOrDefault(messagesByTopicPair => messagesByTopicPair
-            .Key.StartsWith($"{topic}|{server}", StringComparison.Ordinal)).Value ?? [];
+    public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic, string? server = null)
+    {
+        lock (_messagesByTopic)
+        {
+            List<MqttApplicationMessage>? messages = _messagesByTopic.FirstOrDefault(messagesByTopicPair => messagesByTopicPair
+                .Key.StartsWith($"{topic}|{server}", StringComparison.Ordinal)).Value;
+
+            return messages == null ? [] : [.. messages];
+        }
+    }
 
     public void Connect(MockedMqttClient client)
     {

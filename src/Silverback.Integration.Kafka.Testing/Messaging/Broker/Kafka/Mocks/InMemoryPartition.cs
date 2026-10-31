@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using Confluent.Kafka;
 using Silverback.Messaging.Messages;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
@@ -111,11 +110,18 @@ internal sealed class InMemoryPartition : IInMemoryPartition
         return false;
     }
 
-    public IReadOnlyCollection<Message<byte[]?, byte[]?>> GetAllMessages() =>
-        _messages
-            .Where(message => message.Status == StoredMessageStatus.Committed)
-            .Select(message => message.Message)
-            .AsReadOnlyCollection();
+    public IReadOnlyCollection<Message<byte[]?, byte[]?>> GetAllMessages()
+    {
+        lock (_messages)
+        {
+            return
+            [
+                .. _messages
+                    .Where(message => message.Status == StoredMessageStatus.Committed)
+                    .Select(message => message.Message)
+            ];
+        }
+    }
 
     public void CommitTransaction(Guid transactionUniqueId)
     {
