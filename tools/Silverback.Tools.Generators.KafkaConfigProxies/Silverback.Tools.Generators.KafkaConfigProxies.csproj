@@ -8,6 +8,9 @@
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka"/>
     <PackageReference Include="Confluent.SchemaRegistry"/>
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro"/>
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Json"/>
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Protobuf"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Tools.Generators.Common\Silverback.Tools.Generators.Common.csproj"/>

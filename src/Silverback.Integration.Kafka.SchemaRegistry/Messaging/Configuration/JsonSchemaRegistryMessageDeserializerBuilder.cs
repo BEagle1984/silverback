@@ -6,6 +6,7 @@ using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using NJsonSchema.Generation;
 using NJsonSchema.NewtonsoftJson.Generation;
+using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -35,6 +36,26 @@ public class JsonSchemaRegistryMessageDeserializerBuilder : SchemaRegistryDeseri
     protected override JsonSchemaRegistryMessageDeserializerBuilder This => this;
 
     /// <summary>
+    ///     Configures the <see cref="KafkaJsonDeserializerConfiguration" />.
+    /// </summary>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaJsonDeserializerConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="JsonSchemaRegistryMessageDeserializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public JsonSchemaRegistryMessageDeserializerBuilder Configure(Action<KafkaJsonDeserializerConfigurationBuilder> configurationBuilderAction)
+    {
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+
+        KafkaJsonDeserializerConfigurationBuilder builder = new();
+        configurationBuilderAction.Invoke(builder);
+        _jsonDeserializerConfig = builder.Build().ToConfluentConfig();
+
+        return this;
+    }
+
+    /// <summary>
     ///     Configures the <see cref="JsonDeserializerConfig" />.
     /// </summary>
     /// <param name="configureAction">
@@ -43,6 +64,7 @@ public class JsonSchemaRegistryMessageDeserializerBuilder : SchemaRegistryDeseri
     /// <returns>
     ///     The <see cref="JsonSchemaRegistryMessageDeserializerBuilder" /> so that additional calls can be chained.
     /// </returns>
+    [Obsolete("Use the Configure overload taking a KafkaJsonDeserializerConfigurationBuilder instead.")]
     public JsonSchemaRegistryMessageDeserializerBuilder Configure(Action<JsonDeserializerConfig> configureAction)
     {
         Check.NotNull(configureAction, nameof(configureAction));

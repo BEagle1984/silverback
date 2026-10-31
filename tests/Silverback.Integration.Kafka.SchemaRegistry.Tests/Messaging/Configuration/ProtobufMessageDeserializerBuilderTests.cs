@@ -49,8 +49,22 @@ public class ProtobufMessageDeserializerBuilderTests
     public void Configure_ShouldSetProtobufDeserializerConfig()
     {
         IMessageDeserializer serializer = GetValidBuilder()
+            .Configure(config => config.WithSubjectNameStrategy(SubjectNameStrategy.TopicRecord))
+            .Build();
+
+        ProtobufMessageDeserializer<ProtobufMessage> protobufMessageDeserializer = serializer.ShouldBeOfType<ProtobufMessageDeserializer<ProtobufMessage>>();
+        protobufMessageDeserializer.ProtobufDeserializerConfig.ShouldNotBeNull();
+        protobufMessageDeserializer.ProtobufDeserializerConfig.SubjectNameStrategy.ShouldBe(SubjectNameStrategy.TopicRecord);
+    }
+
+    [Fact]
+    public void Configure_ShouldSetProtobufDeserializerConfig_WhenConfiguringConfluentConfig()
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        IMessageDeserializer serializer = GetValidBuilder()
             .Configure(config => config.SubjectNameStrategy = SubjectNameStrategy.TopicRecord)
             .Build();
+#pragma warning restore CS0618 // Type or member is obsolete
 
         ProtobufMessageDeserializer<ProtobufMessage> protobufMessageDeserializer = serializer.ShouldBeOfType<ProtobufMessageDeserializer<ProtobufMessage>>();
         protobufMessageDeserializer.ProtobufDeserializerConfig.ShouldNotBeNull();

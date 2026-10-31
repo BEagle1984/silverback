@@ -30,10 +30,7 @@ public partial class SchemaRegistryTests
                     .Produce<AvroMessage>(endpoint => endpoint
                         .SerializeAsAvro(avro => avro
                             .ConnectToSchemaRegistry("http://e2e:4242")
-                            .Configure(config =>
-                            {
-                                config.AutoRegisterSchemas = false;
-                            }))
+                            .Configure(config => config.DisableSchemaAutoRegistration()))
                         .ProduceTo(DefaultTopicName)))
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
@@ -87,10 +84,7 @@ public partial class SchemaRegistryTests
                     .Produce<AvroMessage>(endpoint => endpoint
                         .SerializeAsAvro(avro => avro
                             .ConnectToSchemaRegistry("http://e2e:4242")
-                            .Configure(config =>
-                            {
-                                config.AutoRegisterSchemas = false;
-                            }))
+                            .Configure(config => config.DisableSchemaAutoRegistration()))
                         .ProduceTo(DefaultTopicName)))
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)

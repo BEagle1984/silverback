@@ -30,10 +30,7 @@ public partial class SchemaRegistryTests
                     .Produce<ProtobufMessage>(endpoint => endpoint
                         .SerializeAsProtobuf(protobuf => protobuf
                             .ConnectToSchemaRegistry("http://e2e:4242")
-                            .Configure(config =>
-                            {
-                                config.AutoRegisterSchemas = false;
-                            }))
+                            .Configure(config => config.DisableSchemaAutoRegistration()))
                         .ProduceTo(DefaultTopicName)))
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
@@ -112,20 +109,16 @@ public partial class SchemaRegistryTests
                     .Produce<ProtobufMessage>(endpoint => endpoint
                         .SerializeAsProtobuf(protobuf => protobuf
                             .ConnectToSchemaRegistry("http://e2e:4242")
-                            .Configure(config =>
-                            {
-                                config.AutoRegisterSchemas = false;
-                                config.UseLatestVersion = true;
-                            }))
+                            .Configure(config => config
+                                .DisableSchemaAutoRegistration()
+                                .UseLatestVersion()))
                         .ProduceTo(DefaultTopicName)))
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
                     .Consume<ProtobufMessage>(endpoint => endpoint
                         .DeserializeProtobuf(protobuf => protobuf
-                            .ConnectToSchemaRegistry("http://e2e:4242").Configure(config =>
-                            {
-                                config.UseLatestVersion = true;
-                            }))
+                            .ConnectToSchemaRegistry("http://e2e:4242")
+                            .Configure(config => config.UseLatestVersion()))
                         .ConsumeFrom(DefaultTopicName))))
             .AddIntegrationSpyAndSubscriber());
 

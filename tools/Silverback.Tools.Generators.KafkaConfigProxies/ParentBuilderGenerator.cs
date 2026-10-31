@@ -74,8 +74,15 @@ public class ParentBuilderGenerator : BuilderGenerator
             propertiesStringBuilder.AppendLine("    }");
             propertiesStringBuilder.AppendLine();
 
+            if (IsObsolete(property.Name))
+                interfaceStringBuilder.AppendLine("#pragma warning disable CS0618 // Type or member is obsolete");
+
             interfaceStringBuilder.Append($"    void IKafkaClientConfigurationBuilder.With{property.Name}({propertyType} {argument})");
             interfaceStringBuilder.AppendLine($" => With{property.Name}({argument});");
+
+            if (IsObsolete(property.Name))
+                interfaceStringBuilder.AppendLine("#pragma warning restore CS0618 // Type or member is obsolete");
+
             interfaceStringBuilder.AppendLine();
 
             if (property.Name == nameof(Config.CancellationDelayMaxMs))
@@ -125,6 +132,9 @@ public class ParentBuilderGenerator : BuilderGenerator
             or "SocketKeepaliveEnable"
             or "SocketNagleDisable"
             or "EnableMetricsPush";
+
+    // Public builder methods marked as obsolete in the hand-written declaration, to be made internal in the next major version
+    private static bool IsObsolete(string propertyName) => propertyName is "SaslOauthbearerAssertionClaimJtiInclude";
 
     private void GenerateInterfaceHeading()
     {

@@ -6,6 +6,7 @@ using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using NJsonSchema.Generation;
 using NJsonSchema.NewtonsoftJson.Generation;
+using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -35,6 +36,26 @@ public class JsonSchemaRegistryMessageSerializerBuilder : SchemaRegistrySerializ
     protected override JsonSchemaRegistryMessageSerializerBuilder This => this;
 
     /// <summary>
+    ///     Configures the <see cref="KafkaJsonSerializerConfiguration" />.
+    /// </summary>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaJsonSerializerConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="JsonSchemaRegistryMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public JsonSchemaRegistryMessageSerializerBuilder Configure(Action<KafkaJsonSerializerConfigurationBuilder> configurationBuilderAction)
+    {
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+
+        KafkaJsonSerializerConfigurationBuilder builder = new();
+        configurationBuilderAction.Invoke(builder);
+        _jsonSerializerConfig = builder.Build().ToConfluentConfig();
+
+        return this;
+    }
+
+    /// <summary>
     ///     Configures the <see cref="JsonSerializerConfig" />.
     /// </summary>
     /// <param name="configureAction">
@@ -43,6 +64,7 @@ public class JsonSchemaRegistryMessageSerializerBuilder : SchemaRegistrySerializ
     /// <returns>
     ///     The <see cref="JsonSchemaRegistryMessageSerializerBuilder" /> so that additional calls can be chained.
     /// </returns>
+    [Obsolete("Use the Configure overload taking a KafkaJsonSerializerConfigurationBuilder instead.")]
     public JsonSchemaRegistryMessageSerializerBuilder Configure(Action<JsonSerializerConfig> configureAction)
     {
         Check.NotNull(configureAction, nameof(configureAction));

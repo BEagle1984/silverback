@@ -83,11 +83,7 @@ services.AddSilverback()
                 .ConsumeFrom("my-topic")
                 .DeserializeJsonUsingSchemaRegistry(deserializer => deserializer
                     .ConnectToSchemaRegistry("http://localhost:4242")
-                    .Configure(
-                        config =>
-                        {
-                            config.UseLatestVersion = true;
-                        })))));
+                    .Configure(config => config.UseLatestVersion())))));
 ```
 
 > [!Note]

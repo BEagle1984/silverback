@@ -29,10 +29,8 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                                         avro => avro
                                             .ConnectToSchemaRegistry("localhost:8081")
                                             .Configure(
-                                                serializer =>
-                                                {
-                                                    serializer.AutoRegisterSchemas = false;
-                                                    serializer.UseLatestVersion = true;
-                                                })))));
+                                                serializer => serializer
+                                                    .DisableSchemaAutoRegistration()
+                                                    .UseLatestVersion())))));
     }
 }

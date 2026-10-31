@@ -72,8 +72,23 @@ public class JsonSchemaRegistryMessageSerializerBuilderTests
     {
         IMessageSerializer serializer = GetValidBuilder()
             .UseModel<TestEventOne>()
+            .Configure(config => config.DisableSchemaAutoRegistration())
+            .Build();
+
+        JsonSchemaRegistryMessageSerializer<TestEventOne> jsonUsingSchemaRegistryMessageSerializer = serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
+        jsonUsingSchemaRegistryMessageSerializer.JsonSerializerConfig.ShouldNotBeNull();
+        jsonUsingSchemaRegistryMessageSerializer.JsonSerializerConfig.AutoRegisterSchemas.ShouldBe(false);
+    }
+
+    [Fact]
+    public void Configure_ShouldSetJsonRegistrySerializerConfig_WhenConfiguringConfluentConfig()
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        IMessageSerializer serializer = GetValidBuilder()
+            .UseModel<TestEventOne>()
             .Configure(config => config.AutoRegisterSchemas = false)
             .Build();
+#pragma warning restore CS0618 // Type or member is obsolete
 
         JsonSchemaRegistryMessageSerializer<TestEventOne> jsonUsingSchemaRegistryMessageSerializer = serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
         jsonUsingSchemaRegistryMessageSerializer.JsonSerializerConfig.ShouldNotBeNull();

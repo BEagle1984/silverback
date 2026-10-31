@@ -48,6 +48,30 @@ public class KafkaClientsConfigurationBuilderTests
     }
 
     [Fact]
+    public async Task EnableSaslOauthbearerAssertionClaimJti_ShouldEnableJtiClaimForAllClients()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://unittest")
+                .EnableSaslOauthbearerAssertionClaimJti()
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("consumer1")
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1")))
+                .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))));
+
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
+
+        KafkaConsumer kafkaConsumer = serviceProvider.GetRequiredService<ConsumerCollection>().First().ShouldBeOfType<KafkaConsumer>();
+        kafkaConsumer.Configuration.SaslOauthbearerAssertionClaimJtiInclude.ShouldBe(true);
+
+        KafkaProducer kafkaProducer = serviceProvider.GetRequiredService<ProducerCollection>().First().ShouldBeOfType<KafkaProducer>();
+        kafkaProducer.Configuration.SaslOauthbearerAssertionClaimJtiInclude.ShouldBe(true);
+    }
+
+    [Fact]
     public async Task AddProducer_ShouldAddProducers()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services

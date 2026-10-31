@@ -4,6 +4,7 @@
 using System;
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
+using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -31,6 +32,26 @@ public class AvroMessageSerializerBuilder : SchemaRegistrySerializerBuilder<Avro
     protected override AvroMessageSerializerBuilder This => this;
 
     /// <summary>
+    ///     Configures the <see cref="KafkaAvroSerializerConfiguration" />.
+    /// </summary>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaAvroSerializerConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="AvroMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public AvroMessageSerializerBuilder Configure(Action<KafkaAvroSerializerConfigurationBuilder> configurationBuilderAction)
+    {
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+
+        KafkaAvroSerializerConfigurationBuilder builder = new();
+        configurationBuilderAction.Invoke(builder);
+        _avroSerializerConfig = builder.Build().ToConfluentConfig();
+
+        return this;
+    }
+
+    /// <summary>
     ///     Configures the <see cref="AvroSerializerConfig" />.
     /// </summary>
     /// <param name="configureAction">
@@ -39,6 +60,7 @@ public class AvroMessageSerializerBuilder : SchemaRegistrySerializerBuilder<Avro
     /// <returns>
     ///     The <see cref="AvroMessageSerializerBuilder" /> so that additional calls can be chained.
     /// </returns>
+    [Obsolete("Use the Configure overload taking a KafkaAvroSerializerConfigurationBuilder instead.")]
     public AvroMessageSerializerBuilder Configure(Action<AvroSerializerConfig> configureAction)
     {
         Check.NotNull(configureAction, nameof(configureAction));

@@ -48,10 +48,7 @@ public partial class SchemaRegistryTests
                     .Produce<TestEventOne>(endpoint => endpoint
                         .SerializeAsJsonUsingSchemaRegistry(json => json
                             .ConnectToSchemaRegistry("http://e2e:4242")
-                            .Configure(config =>
-                            {
-                                config.AutoRegisterSchemas = false;
-                            }))
+                            .Configure(config => config.DisableSchemaAutoRegistration()))
                         .ProduceTo(DefaultTopicName)))
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
@@ -113,11 +110,9 @@ public partial class SchemaRegistryTests
                     .Produce<TestEventOne>(endpoint => endpoint
                         .SerializeAsJsonUsingSchemaRegistry(json => json
                             .ConnectToSchemaRegistry("http://e2e:4242")
-                            .Configure(config =>
-                            {
-                                config.AutoRegisterSchemas = false;
-                                config.NormalizeSchemas = true;
-                            }))
+                            .Configure(config => config
+                                .DisableSchemaAutoRegistration()
+                                .EnableSchemaNormalization()))
                         .ProduceTo(DefaultTopicName)))
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)

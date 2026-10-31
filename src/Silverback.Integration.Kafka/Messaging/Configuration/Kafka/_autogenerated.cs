@@ -2961,7 +2961,9 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
 
     void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionClaimIss(string? saslOauthbearerAssertionClaimIss) => WithSaslOauthbearerAssertionClaimIss(saslOauthbearerAssertionClaimIss);
 
+#pragma warning disable CS0618 // Type or member is obsolete
     void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionClaimJtiInclude(bool? saslOauthbearerAssertionClaimJtiInclude) => WithSaslOauthbearerAssertionClaimJtiInclude(saslOauthbearerAssertionClaimJtiInclude);
+#pragma warning restore CS0618 // Type or member is obsolete
 
     void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionClaimNbfSeconds(int? saslOauthbearerAssertionClaimNbfSeconds) => WithSaslOauthbearerAssertionClaimNbfSeconds(saslOauthbearerAssertionClaimNbfSeconds);
 

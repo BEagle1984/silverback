@@ -31,10 +31,7 @@ services.AddSilverback()
                 .ProduceTo("my-topic")
                 .SerializeAsJsonUsingSchemaRegistry(json => json
                     .ConnectToSchemaRegistry("http://localhost:4242")
-                    .Configure(config =>
-                    {
-                        config.AutoRegisterSchemas = false;
-                    })))));
+                    .Configure(config => config.DisableSchemaAutoRegistration())))));
 ```
 
 > [!Note]
@@ -97,7 +94,7 @@ services.AddSilverback()
 
 In most setups, schemas are registered by producers.
 
-If you disable automatic schema registration (`AutoRegisterSchemas = false`), ensure schemas are registered before producing messages.
+If you disable automatic schema registration (`DisableSchemaAutoRegistration()`), ensure schemas are registered before producing messages.
 
 You can register schemas programmatically using <xref:Silverback.Messaging.Serialization.IConfluentSchemaRegistryClientFactory>:
 

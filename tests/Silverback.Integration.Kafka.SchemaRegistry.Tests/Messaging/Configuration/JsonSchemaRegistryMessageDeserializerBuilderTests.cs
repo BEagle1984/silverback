@@ -48,8 +48,22 @@ public class JsonSchemaRegistryMessageDeserializerBuilderTests
     public void Configure_ShouldSetJsonDeserializerConfig()
     {
         IMessageDeserializer serializer = GetValidBuilder()
+            .Configure(config => config.WithSubjectNameStrategy(SubjectNameStrategy.TopicRecord))
+            .Build();
+
+        JsonSchemaRegistryMessageDeserializer<TestEventThree> jsonUsingSchemaRegistryMessageDeserializer = serializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventThree>>();
+        jsonUsingSchemaRegistryMessageDeserializer.JsonDeserializerConfig.ShouldNotBeNull();
+        jsonUsingSchemaRegistryMessageDeserializer.JsonDeserializerConfig.SubjectNameStrategy.ShouldBe(SubjectNameStrategy.TopicRecord);
+    }
+
+    [Fact]
+    public void Configure_ShouldSetJsonDeserializerConfig_WhenConfiguringConfluentConfig()
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        IMessageDeserializer serializer = GetValidBuilder()
             .Configure(config => config.SubjectNameStrategy = SubjectNameStrategy.TopicRecord)
             .Build();
+#pragma warning restore CS0618 // Type or member is obsolete
 
         JsonSchemaRegistryMessageDeserializer<TestEventThree> jsonUsingSchemaRegistryMessageDeserializer = serializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventThree>>();
         jsonUsingSchemaRegistryMessageDeserializer.JsonDeserializerConfig.ShouldNotBeNull();

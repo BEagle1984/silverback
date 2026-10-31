@@ -48,8 +48,22 @@ public class AvroMessageDeserializerBuilderTests
     public void Configure_ShouldSetAvroDeserializerConfig()
     {
         IMessageDeserializer serializer = GetValidBuilder()
+            .Configure(config => config.WithSubjectNameStrategy(SubjectNameStrategy.TopicRecord))
+            .Build();
+
+        AvroMessageDeserializer<TestEventThree> avroMessageDeserializer = serializer.ShouldBeOfType<AvroMessageDeserializer<TestEventThree>>();
+        avroMessageDeserializer.AvroDeserializerConfig.ShouldNotBeNull();
+        avroMessageDeserializer.AvroDeserializerConfig.SubjectNameStrategy.ShouldBe(SubjectNameStrategy.TopicRecord);
+    }
+
+    [Fact]
+    public void Configure_ShouldSetAvroDeserializerConfig_WhenConfiguringConfluentConfig()
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        IMessageDeserializer serializer = GetValidBuilder()
             .Configure(config => config.SubjectNameStrategy = SubjectNameStrategy.TopicRecord)
             .Build();
+#pragma warning restore CS0618 // Type or member is obsolete
 
         AvroMessageDeserializer<TestEventThree> avroMessageDeserializer = serializer.ShouldBeOfType<AvroMessageDeserializer<TestEventThree>>();
         avroMessageDeserializer.AvroDeserializerConfig.ShouldNotBeNull();

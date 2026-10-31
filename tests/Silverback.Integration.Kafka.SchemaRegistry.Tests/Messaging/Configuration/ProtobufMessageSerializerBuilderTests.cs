@@ -51,8 +51,23 @@ public class ProtobufMessageSerializerBuilderTests
     {
         IMessageSerializer serializer = GetValidBuilder()
             .UseModel<ProtobufMessage>()
+            .Configure(config => config.DisableSchemaAutoRegistration())
+            .Build();
+
+        ProtobufMessageSerializer<ProtobufMessage> protobufMessageSerializer = serializer.ShouldBeOfType<ProtobufMessageSerializer<ProtobufMessage>>();
+        protobufMessageSerializer.ProtobufSerializerConfig.ShouldNotBeNull();
+        protobufMessageSerializer.ProtobufSerializerConfig.AutoRegisterSchemas.ShouldBe(false);
+    }
+
+    [Fact]
+    public void Configure_ShouldSetProtobufSerializerConfig_WhenConfiguringConfluentConfig()
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        IMessageSerializer serializer = GetValidBuilder()
+            .UseModel<ProtobufMessage>()
             .Configure(config => config.AutoRegisterSchemas = false)
             .Build();
+#pragma warning restore CS0618 // Type or member is obsolete
 
         ProtobufMessageSerializer<ProtobufMessage> protobufMessageSerializer = serializer.ShouldBeOfType<ProtobufMessageSerializer<ProtobufMessage>>();
         protobufMessageSerializer.ProtobufSerializerConfig.ShouldNotBeNull();

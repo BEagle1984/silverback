@@ -1173,7 +1173,37 @@ public partial class KafkaClientsConfigurationBuilder
     /// <returns>
     ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
+    [Obsolete("Use EnableSaslOauthbearerAssertionClaimJti or DisableSaslOauthbearerAssertionClaimJti instead.")]
     public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimJtiInclude(bool? saslOauthbearerAssertionClaimJtiInclude);
+
+    /// <summary>
+    ///     Enables the JWT ID claim, setting it to a random UUID. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion
+    ///     is needed.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaClientsConfigurationBuilder EnableSaslOauthbearerAssertionClaimJti()
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        WithSaslOauthbearerAssertionClaimJtiInclude(true);
+#pragma warning restore CS0618 // Type or member is obsolete
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables the JWT ID claim. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaClientsConfigurationBuilder DisableSaslOauthbearerAssertionClaimJti()
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        WithSaslOauthbearerAssertionClaimJtiInclude(false);
+#pragma warning restore CS0618 // Type or member is obsolete
+        return this;
+    }
 
     /// <summary>
     ///     Sets the assertion not before time in seconds. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.

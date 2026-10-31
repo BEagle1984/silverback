@@ -537,6 +537,29 @@ public class KafkaConsumerConfigurationBuilderTests
         configuration.PartitionAssignmentStrategy.ShouldBe(PartitionAssignmentStrategy.CooperativeSticky);
     }
 
+    [Fact]
+    public void EnableSaslOauthbearerAssertionClaimJti_ShouldSetSaslOauthbearerAssertionClaimJtiInclude()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.EnableSaslOauthbearerAssertionClaimJti();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.SaslOauthbearerAssertionClaimJtiInclude.ShouldBe(true);
+    }
+
+    [Fact]
+    public void DisableSaslOauthbearerAssertionClaimJti_ShouldSetSaslOauthbearerAssertionClaimJtiInclude()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.EnableSaslOauthbearerAssertionClaimJti();
+
+        builder.DisableSaslOauthbearerAssertionClaimJti();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.SaslOauthbearerAssertionClaimJtiInclude.ShouldBe(false);
+    }
+
     private static KafkaConsumerConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint() =>
         GetBuilderWithValidConfiguration().Consume(endpoint => endpoint.ConsumeFrom("topic"));
 

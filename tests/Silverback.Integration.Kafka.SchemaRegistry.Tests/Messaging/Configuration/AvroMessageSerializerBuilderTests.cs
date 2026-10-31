@@ -50,8 +50,23 @@ public class AvroMessageSerializerBuilderTests
     {
         IMessageSerializer serializer = GetValidBuilder()
             .UseModel<TestEventOne>()
+            .Configure(config => config.DisableSchemaAutoRegistration())
+            .Build();
+
+        AvroMessageSerializer<TestEventOne> avroMessageSerializer = serializer.ShouldBeOfType<AvroMessageSerializer<TestEventOne>>();
+        avroMessageSerializer.AvroSerializerConfig.ShouldNotBeNull();
+        avroMessageSerializer.AvroSerializerConfig.AutoRegisterSchemas.ShouldBe(false);
+    }
+
+    [Fact]
+    public void Configure_ShouldSetAvroSerializerConfig_WhenConfiguringConfluentConfig()
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        IMessageSerializer serializer = GetValidBuilder()
+            .UseModel<TestEventOne>()
             .Configure(config => config.AutoRegisterSchemas = false)
             .Build();
+#pragma warning restore CS0618 // Type or member is obsolete
 
         AvroMessageSerializer<TestEventOne> avroMessageSerializer = serializer.ShouldBeOfType<AvroMessageSerializer<TestEventOne>>();
         avroMessageSerializer.AvroSerializerConfig.ShouldNotBeNull();

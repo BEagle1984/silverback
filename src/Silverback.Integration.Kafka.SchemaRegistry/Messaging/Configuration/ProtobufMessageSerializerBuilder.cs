@@ -4,6 +4,7 @@
 using System;
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
+using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -31,6 +32,26 @@ public class ProtobufMessageSerializerBuilder : SchemaRegistrySerializerBuilder<
     protected override ProtobufMessageSerializerBuilder This => this;
 
     /// <summary>
+    ///     Configures the <see cref="KafkaProtobufSerializerConfiguration" />.
+    /// </summary>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaProtobufSerializerConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="ProtobufMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public ProtobufMessageSerializerBuilder Configure(Action<KafkaProtobufSerializerConfigurationBuilder> configurationBuilderAction)
+    {
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+
+        KafkaProtobufSerializerConfigurationBuilder builder = new();
+        configurationBuilderAction.Invoke(builder);
+        _protobufSerializerConfig = builder.Build().ToConfluentConfig();
+
+        return this;
+    }
+
+    /// <summary>
     ///     Configures the <see cref="ProtobufSerializerConfig" />.
     /// </summary>
     /// <param name="configureAction">
@@ -39,6 +60,7 @@ public class ProtobufMessageSerializerBuilder : SchemaRegistrySerializerBuilder<
     /// <returns>
     ///     The <see cref="ProtobufMessageSerializerBuilder" /> so that additional calls can be chained.
     /// </returns>
+    [Obsolete("Use the Configure overload taking a KafkaProtobufSerializerConfigurationBuilder instead.")]
     public ProtobufMessageSerializerBuilder Configure(Action<ProtobufSerializerConfig> configureAction)
     {
         Check.NotNull(configureAction, nameof(configureAction));

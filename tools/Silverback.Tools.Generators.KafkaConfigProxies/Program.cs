@@ -4,15 +4,38 @@
 using System;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry;
+using Confluent.SchemaRegistry.Serdes;
 using Silverback.Tools.Generators.KafkaConfigProxies;
 
 if (args.Length == 1 && (args[0] == "--schemaregistry" || args[0] == "-sr"))
 {
+    Type[] serdeConfigTypes =
+    [
+        typeof(AvroSerializerConfig),
+        typeof(AvroDeserializerConfig),
+        typeof(JsonSerializerConfig),
+        typeof(JsonDeserializerConfig),
+        typeof(ProtobufSerializerConfig),
+        typeof(ProtobufDeserializerConfig)
+    ];
+
     Console.Write(new SchemaRegistryProxyClassGenerator(typeof(SchemaRegistryConfig)).Generate());
+
+    foreach (Type serdeConfigType in serdeConfigTypes)
+    {
+        Console.WriteLine();
+        Console.Write(new SerdeProxyClassGenerator(serdeConfigType).Generate());
+    }
 
     Console.WriteLine();
 
     Console.Write(new SchemaRegistryBuilderGenerator(typeof(SchemaRegistryConfig)).Generate());
+
+    foreach (Type serdeConfigType in serdeConfigTypes)
+    {
+        Console.WriteLine();
+        Console.Write(new SerdeBuilderGenerator(serdeConfigType).Generate());
+    }
 }
 else
 {

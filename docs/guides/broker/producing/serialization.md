@@ -85,11 +85,7 @@ services.AddSilverback()
                 .ProduceTo("my-topic")
                 .SerializeAsJsonUsingSchemaRegistry(serializer => serializer
                     .ConnectToSchemaRegistry("http://localhost:4242")
-                    .Configure(
-                        config =>
-                        {
-                            config.AutoRegisterSchemas = false;
-                        })))));
+                    .Configure(config => config.DisableSchemaAutoRegistration())))));
 ```
 
 > [!Note]

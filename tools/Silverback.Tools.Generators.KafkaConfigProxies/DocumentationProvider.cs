@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry;
+using Confluent.SchemaRegistry.Serdes;
 
 namespace Silverback.Tools.Generators.KafkaConfigProxies;
 
@@ -33,6 +34,15 @@ public static class DocumentationProvider
                 break;
             case nameof(SchemaRegistryConfig):
                 AppendSummaryForSchemaRegistryConfig(builder, property);
+                break;
+            case nameof(SerdeConfig):
+                AppendSummaryForSerdeConfig(builder, property);
+                break;
+            case nameof(AvroSerializerConfig) or nameof(JsonSerializerConfig) or nameof(ProtobufSerializerConfig):
+                AppendSummaryForSerializerConfig(builder, property);
+                break;
+            case nameof(AvroDeserializerConfig) or nameof(JsonDeserializerConfig) or nameof(ProtobufDeserializerConfig):
+                AppendSummaryForDeserializerConfig(builder, property);
                 break;
         }
 
@@ -696,6 +706,116 @@ public static class DocumentationProvider
             case nameof(SchemaRegistryConfig.BearerAuthTokenEndpointQuery):
                 builder.AppendLine("    ///     Gets the token query parameters for the bearer token endpoint. Currently valid only when using the Azure Instance Metadata Service (IMDS)");
                 builder.AppendLine("    ///     for token retrieval.");
+                break;
+        }
+    }
+
+    private static void AppendSummaryForSerdeConfig(StringBuilder builder, PropertyInfo property)
+    {
+        switch (property.Name)
+        {
+            case nameof(SerdeConfig.ValidationRulesExecution):
+                builder.AppendLine("    ///     Gets a value specifying when the inline validation rules run, relative to the domain rule transformations. The default is");
+                builder.AppendLine("    ///     <see cref=\"Confluent.SchemaRegistry.ValidationRulesExecution.Disabled\" />.");
+                break;
+            case nameof(SerdeConfig.ValidationRulesFailFast):
+                builder.AppendLine("    ///     Gets a value indicating whether the validation stops at the first failed rule and reports only that violation.");
+                break;
+        }
+    }
+
+    private static void AppendSummaryForSerializerConfig(StringBuilder builder, PropertyInfo property)
+    {
+        switch (property.Name)
+        {
+            case nameof(JsonSerializerConfig.BufferBytes):
+                builder.AppendLine("    ///     Gets the initial size (in bytes) of the buffer used for the message serialization. Use a value high enough to avoid resizing the buffer,");
+                builder.AppendLine("    ///     but small enough to avoid excessive memory use. Each message is serialized into a new buffer. The default is <c>1024</c>.");
+                break;
+            case nameof(JsonSerializerConfig.AutoRegisterSchemas):
+                builder.AppendLine("    ///     Gets a value indicating whether the serializer should attempt to auto-register unrecognized schemas with the schema registry.");
+                builder.AppendLine("    ///     The default is <c>true</c>.");
+                break;
+            case nameof(JsonSerializerConfig.NormalizeSchemas):
+                builder.AppendLine("    ///     Gets a value indicating whether the schemas should be normalized, transforming them to have a consistent format, including ordering");
+                builder.AppendLine("    ///     properties and references.");
+                break;
+            case nameof(JsonSerializerConfig.UseSchemaId):
+                builder.AppendLine("    ///     Gets the ID of the schema to be used for serialization. Note that there is no check that the schema is backwards compatible with the");
+                builder.AppendLine("    ///     schema of the object being serialized.");
+                break;
+            case nameof(JsonSerializerConfig.UseLatestVersion) when property.DeclaringType == typeof(JsonSerializerConfig):
+                builder.AppendLine("    ///     Gets a value indicating whether the serializer should use the latest subject version for serialization. Note that by default there is");
+                builder.AppendLine("    ///     no check that the latest schema is compatible with the schema of the object being serialized: use");
+                builder.AppendLine("    ///     <see cref=\"LatestCompatibilityStrict\" /> to enable it.");
+                break;
+            case nameof(JsonSerializerConfig.UseLatestVersion):
+                builder.AppendLine("    ///     Gets a value indicating whether the serializer should use the latest subject version for serialization. Note that there is no check");
+                builder.AppendLine("    ///     that the latest schema is backwards compatible with the schema of the object being serialized.");
+                break;
+            case nameof(JsonSerializerConfig.LatestCompatibilityStrict):
+                builder.AppendLine("    ///     Gets a value indicating whether the serializer should check the backwards compatibility with the latest schema of the subject.");
+                break;
+            case nameof(JsonSerializerConfig.UseLatestWithMetadata):
+                builder.AppendLine("    ///     Gets the metadata to be used to select the latest subject version to be used for serialization. Note that there is no check that");
+                builder.AppendLine("    ///     the latest schema is backwards compatible with the schema of the object being serialized.");
+                break;
+            case nameof(JsonSerializerConfig.SubjectNameStrategy):
+                builder.AppendLine("    ///     Gets the subject name strategy. The default is <see cref=\"Confluent.SchemaRegistry.SubjectNameStrategy.Associated\" />.");
+                break;
+            case nameof(JsonSerializerConfig.SchemaIdStrategy):
+                builder.AppendLine("    ///     Gets the schema ID strategy. The default is <see cref=\"Confluent.SchemaRegistry.SchemaIdSerializerStrategy.Prefix\" />.");
+                break;
+            case nameof(JsonSerializerConfig.Validate):
+                builder.AppendLine("    ///     Gets a value indicating whether the serializer should validate the payload against the schema. The default is <c>true</c>.");
+                break;
+            case nameof(JsonSerializerConfig.ValidateBeforeDomainRules):
+                builder.AppendLine("    ///     Gets a value indicating whether the message should be validated against the schema before running the domain rules instead of after.");
+                break;
+            case nameof(ProtobufSerializerConfig.SkipKnownTypes):
+                builder.AppendLine("    ///     Gets a value indicating whether the serializer should skip the known types when resolving the dependencies. The default is");
+                builder.AppendLine("    ///     <c>true</c>.");
+                break;
+            case nameof(ProtobufSerializerConfig.UseDeprecatedFormat):
+                builder.AppendLine("    ///     Gets a value indicating whether the serializer should serialize the message indexes without zig-zag encoding.");
+                break;
+            case nameof(ProtobufSerializerConfig.ReferenceSubjectNameStrategy):
+                builder.AppendLine("    ///     Gets the reference subject name strategy. The default is");
+                builder.AppendLine("    ///     <see cref=\"Confluent.SchemaRegistry.ReferenceSubjectNameStrategy.ReferenceName\" />.");
+                break;
+            case nameof(ProtobufSerializerConfig.CustomReferenceSubjectNameStrategy):
+                builder.AppendLine("    ///     Gets the custom reference subject name strategy resolver. It is used only if the <see cref=\"ReferenceSubjectNameStrategy\" /> is set");
+                builder.AppendLine("    ///     to <see cref=\"Confluent.SchemaRegistry.ReferenceSubjectNameStrategy.Custom\" />.");
+                break;
+        }
+    }
+
+    private static void AppendSummaryForDeserializerConfig(StringBuilder builder, PropertyInfo property)
+    {
+        switch (property.Name)
+        {
+            case nameof(JsonDeserializerConfig.UseLatestVersion):
+                builder.AppendLine("    ///     Gets a value indicating whether the deserializer should use the latest subject version for deserialization. Note that there is no");
+                builder.AppendLine("    ///     check that the latest schema is backwards compatible with the schema of the message being deserialized.");
+                break;
+            case nameof(JsonDeserializerConfig.UseLatestWithMetadata):
+                builder.AppendLine("    ///     Gets the metadata to be used to select the latest subject version to be used for deserialization. Note that there is no check that");
+                builder.AppendLine("    ///     the latest schema is backwards compatible with the schema of the message being deserialized.");
+                break;
+            case nameof(JsonDeserializerConfig.SubjectNameStrategy):
+                builder.AppendLine("    ///     Gets the subject name strategy. The default is <see cref=\"Confluent.SchemaRegistry.SubjectNameStrategy.Associated\" />.");
+                break;
+            case nameof(JsonDeserializerConfig.SchemaIdStrategy):
+                builder.AppendLine("    ///     Gets the schema ID strategy. The default is <see cref=\"Confluent.SchemaRegistry.SchemaIdDeserializerStrategy.Dual\" />.");
+                break;
+            case nameof(JsonDeserializerConfig.Validate):
+                builder.AppendLine("    ///     Gets a value indicating whether the deserializer should validate the payload against the schema. The default is <c>true</c>.");
+                break;
+            case nameof(JsonDeserializerConfig.ValidateBeforeDomainRules):
+                builder.AppendLine("    ///     Gets a value indicating whether the message should be validated against the schema before running the domain rules instead of after.");
+                break;
+            case nameof(ProtobufDeserializerConfig.UseDeprecatedFormat):
+                builder.AppendLine("    ///     Gets a value indicating whether the deserializer should deserialize the message indexes without zig-zag encoding.");
                 break;
         }
     }
