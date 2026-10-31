@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
@@ -78,6 +79,59 @@ public class OutboxInMemoryTests : KafkaTests
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
             .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), true);
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldContinueTraceOfStoredMessage()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddInMemoryOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseMemory())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseMemory())))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        string expectedTraceId;
+
+        using (Activity activity = new("TestActivity"))
+        {
+            activity.SetIdFormat(ActivityIdFormat.W3C);
+            activity.Start();
+            expectedTraceId = activity.TraceId.ToString();
+
+            await publisher.PublishEventAsync(new TestEventOne());
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        ActivityContext storedContext = ActivityContext.Parse(Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.TraceId]!, null);
+        MessageHeader traceIdHeader = Helper.Spy.InboundEnvelopes[0].Headers
+            .Where(header => header.Name == DefaultMessageHeaders.TraceId)
+            .ShouldHaveSingleItem();
+        ActivityContext producedContext = ActivityContext.Parse(traceIdHeader.Value!, null);
+        storedContext.TraceId.ToString().ShouldBe(expectedTraceId);
+        producedContext.TraceId.ToString().ShouldBe(expectedTraceId);
+
+        // The worker produces the message with its own span, which continues the stored trace
+        producedContext.SpanId.ShouldNotBe(storedContext.SpanId);
     }
 
     [Fact]

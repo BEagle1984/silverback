@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -126,9 +128,13 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
 
             _pendingProduceCountdown.AddCount();
 
+            // The pipeline is bypassed, so the activity must be started here to continue the trace of the stored message
+            MessageHeaderCollection headers = [.. outboxMessage.Headers ?? []];
+            using Activity activity = Diagnostics.ActivitySources.StartProduceActivity(headers, producer.EndpointConfiguration.RawName);
+
             producer.RawProduce(
                 outboxMessage.Content,
-                outboxMessage.Headers,
+                headers,
                 OnProduceSuccess,
                 OnProduceError,
                 outboxMessage);

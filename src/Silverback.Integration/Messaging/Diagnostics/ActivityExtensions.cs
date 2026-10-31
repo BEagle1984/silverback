@@ -40,14 +40,14 @@ internal static class ActivityExtensions
             throw new InvalidOperationException("Activity.Id is null. Consider to start a new activity, before calling this method.");
         }
 
-        headers.Add(DefaultMessageHeaders.TraceId, activity.Id);
+        headers.AddOrReplace(DefaultMessageHeaders.TraceId, activity.Id);
 
         string? traceState = activity.TraceStateString;
         if (traceState != null)
-            headers.Add(DefaultMessageHeaders.TraceState, traceState);
+            headers.AddOrReplace(DefaultMessageHeaders.TraceState, traceState);
 
         if (activity.Baggage.Any())
-            headers.Add(DefaultMessageHeaders.TraceBaggage, ActivityBaggageSerializer.Serialize(activity.Baggage));
+            headers.AddOrReplace(DefaultMessageHeaders.TraceBaggage, ActivityBaggageSerializer.Serialize(activity.Baggage));
     }
 
     public static void SetTraceIdAndState(this Activity activity, string? traceId, string? traceState)

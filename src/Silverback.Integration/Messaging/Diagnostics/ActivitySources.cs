@@ -17,16 +17,26 @@ internal static class ActivitySources
 
     private static readonly ActivitySource ConsumeActivitySource = new(ConsumeActivityName);
 
-    public static Activity StartProduceActivity(IOutboundEnvelope envelope)
+    public static Activity StartProduceActivity(IOutboundEnvelope envelope) =>
+        StartProduceActivity(envelope.Headers, envelope.EndpointConfiguration.RawName);
+
+    public static Activity StartProduceActivity(MessageHeaderCollection headers, string endpointName)
     {
+        // The headers already contain the trace context when producing a message stored in the outbox
+        string? traceIdFromHeader = headers.GetValue(DefaultMessageHeaders.TraceId);
+        string? traceState = headers.GetValue(DefaultMessageHeaders.TraceState);
+
         Activity activity = ProduceActivitySource.ForceStartActivity(
             ProduceActivityName,
             ActivityKind.Producer,
-            null,
-            null);
+            traceIdFromHeader,
+            traceState);
 
-        activity.SetEndpointName(envelope.EndpointConfiguration.RawName);
-        activity.SetMessageHeaders(envelope.Headers);
+        if (traceIdFromHeader != null)
+            activity.AddBaggageFromHeaders(headers);
+
+        activity.SetEndpointName(endpointName);
+        activity.SetMessageHeaders(headers);
 
         return activity;
     }

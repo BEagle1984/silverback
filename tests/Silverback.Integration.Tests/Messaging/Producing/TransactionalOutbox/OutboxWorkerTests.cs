@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -101,6 +103,48 @@ public class OutboxWorkerTests
         result.ShouldBeTrue();
         AssertReceivedCalls(_producer1, 2);
         AssertReceivedCalls(_producer2, 1);
+    }
+
+    [Fact]
+    public async Task ProcessOutboxAsync_ShouldContinueTraceOfStoredMessage()
+    {
+        IReadOnlyCollection<MessageHeader>? producedHeaders = null;
+        _producer1
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>()))
+            .Do(callInfo =>
+            {
+                producedHeaders = callInfo.ArgAt<IReadOnlyCollection<MessageHeader>>(1);
+                callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2).Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
+            });
+
+        await _outboxWriter.AddAsync(
+            new OutboxMessage(
+                [0x01],
+                [
+                    new MessageHeader(DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"),
+                    new MessageHeader("x-custom", "value")
+                ],
+                "one"));
+
+        OutboxWorker outboxWorker = new(
+            new OutboxWorkerSettings(new InMemoryOutboxSettings()),
+            new InMemoryOutboxReader(_inMemoryOutbox),
+            _producerCollection,
+            _logger);
+
+        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+
+        producedHeaders.ShouldNotBeNull();
+        producedHeaders.ShouldContain(new MessageHeader("x-custom", "value"));
+        MessageHeader traceIdHeader = producedHeaders.Where(header => header.Name == DefaultMessageHeaders.TraceId).ShouldHaveSingleItem();
+        ActivityContext context = ActivityContext.Parse(traceIdHeader.Value!, null);
+        context.TraceId.ToString().ShouldBe("0af7651916cd43dd8448eb211c80319c");
+        context.SpanId.ToString().ShouldNotBe("b7ad6b7169203331");
     }
 
     [Fact]

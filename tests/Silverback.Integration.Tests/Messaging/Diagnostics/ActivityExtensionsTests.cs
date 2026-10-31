@@ -67,6 +67,31 @@ public class ActivityExtensionsTests
     }
 
     [Fact]
+    public void SetMessageHeaders_ShouldReplaceExistingTraceHeaders()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" },
+            { DefaultMessageHeaders.TraceState, "old-state" },
+            { DefaultMessageHeaders.TraceBaggage, "key1=old" }
+        };
+
+        Activity activity = new("test");
+        activity.Start();
+        activity.TraceStateString = "new-state";
+        activity.AddBaggage("key1", "new");
+        activity.SetMessageHeaders(headers);
+
+        headers.ShouldBe(
+            [
+                new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id),
+                new MessageHeader(DefaultMessageHeaders.TraceState, "new-state"),
+                new MessageHeader(DefaultMessageHeaders.TraceBaggage, "key1=new")
+            ],
+            true);
+    }
+
+    [Fact]
     public void SetMessageHeaders_ShouldSetTraceStateHeader()
     {
         MessageHeaderCollection headers = [];

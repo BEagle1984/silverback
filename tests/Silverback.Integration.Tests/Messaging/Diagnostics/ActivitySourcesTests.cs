@@ -20,6 +20,56 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics;
 public class ActivitySourcesTests
 {
     [Fact]
+    public void StartProduceActivity_ShouldContinueTraceFromHeaders()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" },
+            { DefaultMessageHeaders.TraceState, "my-state" }
+        };
+
+        IOutboundEnvelope envelope = CreateOutboundEnvelope(headers);
+        using Activity activity = ActivitySources.StartProduceActivity(envelope);
+
+        activity.TraceId.ToString().ShouldBe("0af7651916cd43dd8448eb211c80319c");
+        activity.ParentSpanId.ToString().ShouldBe("b7ad6b7169203331");
+        activity.TraceStateString.ShouldBe("my-state");
+        envelope.Headers.Where(header => header.Name == DefaultMessageHeaders.TraceId)
+            .ShouldBe([new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id)]);
+        envelope.Headers.Where(header => header.Name == DefaultMessageHeaders.TraceState)
+            .ShouldBe([new MessageHeader(DefaultMessageHeaders.TraceState, "my-state")]);
+    }
+
+    [Fact]
+    public void StartProduceActivity_ShouldRestoreBaggageFromHeaders()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" },
+            { DefaultMessageHeaders.TraceBaggage, "key1=value1" }
+        };
+
+        IOutboundEnvelope envelope = CreateOutboundEnvelope(headers);
+        using Activity activity = ActivitySources.StartProduceActivity(envelope);
+
+        activity.Baggage.ShouldContain(new KeyValuePair<string, string?>("key1", "value1"));
+        envelope.Headers.Where(header => header.Name == DefaultMessageHeaders.TraceBaggage)
+            .ShouldBe([new MessageHeader(DefaultMessageHeaders.TraceBaggage, "key1=value1")]);
+    }
+
+    [Fact]
+    public void StartProduceActivity_ShouldStartNewTrace_WhenHeadersNotSet()
+    {
+        IOutboundEnvelope envelope = CreateOutboundEnvelope([]);
+
+        using Activity activity = ActivitySources.StartProduceActivity(envelope);
+
+        activity.ParentSpanId.ShouldBe(default);
+        activity.Baggage.ShouldBeEmpty();
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
+    }
+
+    [Fact]
     public void StartConsumeActivity_ShouldStartActivity()
     {
         MessageHeaderCollection headers = new()
@@ -245,6 +295,9 @@ public class ActivitySourcesTests
 
         Activity.Current.ShouldBeNull();
     }
+
+    private static IOutboundEnvelope CreateOutboundEnvelope(MessageHeaderCollection headers) =>
+        new OutboundEnvelope(null, headers, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
     private static IRawInboundEnvelope CreateInboundEnvelope(MessageHeaderCollection headers) =>
         new RawInboundEnvelope(
