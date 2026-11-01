@@ -2,7 +2,8 @@
 
 **Simplicity at its core. Flexibility at its peak. Effortless messaging for .NET.**
 
-Silverback is a message bus and broker integration library to build event-driven architectures with first-class support for **Apache Kafka** and **MQTT**.
+Silverback is a message bus and broker integration library to build event-driven architectures with first-class support for **Apache Kafka**
+and **MQTT**.
 
 [![NuGet version](https://img.shields.io/nuget/v/Silverback.Core?label=NuGet&color=2f6fb3)](https://www.nuget.org/packages/Silverback.Core)
 [![NuGet downloads](https://img.shields.io/nuget/dt/Silverback.Core?label=downloads&color=2f6fb3)](https://www.nuget.org/packages/Silverback.Core)
@@ -12,7 +13,8 @@ Documentation, guides, and samples are available at **https://silverback-messagi
 
 ## Produce and Consume in a Few Lines
 
-Configure the broker connection, the producer and consumer endpoints, and a subscriber. Silverback takes care of serialization, headers, error handling and delivery.
+Configure the broker connection, the producer and consumer endpoints, and a subscriber. Silverback takes care of serialization, headers,
+error handling and delivery.
 
 ```csharp
 services.AddSilverback()
@@ -45,7 +47,8 @@ Follow the [Quickstart](https://silverback-messaging.net/guides/quickstart.html)
 
 ## Why Silverback
 
-- **Kafka-first, not Kafka-only** – a consistent, fluent API for Kafka and MQTT that still surfaces partitions, keys, tombstones and transactions.
+- **Kafka-first, not Kafka-only** – a consistent, fluent API for Kafka and MQTT that still surfaces partitions, keys, tombstones and
+  transactions.
 - **Reliable by design** – transactional outbox, error policies (retry, skip, move) and storage-backed offsets and locks.
 - **Built for throughput** – partition-based parallelism, batch processing, streaming and chunking of large payloads.
 - **Cross-cutting features** – serialization, Schema Registry (JSON, Avro, Protobuf), headers, validation and end-to-end encryption.
@@ -69,10 +72,12 @@ Broker integration:
 Optional features:
 
 - **[Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx/)** – Rx.NET integration.
-- **[Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/)** – Newtonsoft.Json serialization.
-- **[Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/)** – Confluent Schema Registry
-  integration (Avro, Protobuf and JSON).
-- **[Silverback.Integration.HealthChecks](https://www.nuget.org/packages/Silverback.Integration.HealthChecks/)** – health checks for the consumers and the outbox.
+- **[Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/)** – Newtonsoft.Json
+  serialization.
+- **[Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/)** – Confluent
+  Schema Registry integration (Avro, Protobuf and JSON).
+- **[Silverback.Integration.HealthChecks](https://www.nuget.org/packages/Silverback.Integration.HealthChecks/)** – health checks for the
+  consumers and the outbox.
 
 Storage (for outbox, client-side offsets, distributed locks):
 
@@ -89,7 +94,8 @@ Testing:
 
 ## Supported .NET Versions
 
-Starting with v5, Silverback targets the **latest .NET LTS** (Long-Term Support) version only. It can run on newer compatible .NET versions (including STS releases), but older frameworks are no longer targeted or supported.
+Starting with v5, Silverback targets the **latest .NET LTS** (Long-Term Support) version only. It can run on newer compatible .NET versions
+(including STS releases), but older frameworks are no longer targeted or supported.
 
 ## Documentation
 
@@ -140,39 +146,41 @@ The v4 documentation is still available at [silverback-messaging.net/v4](https:/
 
 ### Solutions
 
-| Solution | Contents |
-| --- | --- |
-| [Silverback.sln](Silverback.sln) | Library source projects, unit and E2E tests, and code/documentation generators |
-| [Silverback.Samples.sln](samples/Silverback.Samples.sln) | Runnable usage examples; see the [samples guide](samples/README.md) |
+| Solution                                                                      | Contents                                                                                                                                            |
+|-------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Silverback.sln](Silverback.sln)                                              | Library source projects, unit and E2E tests, and code/documentation generators                                                                      |
+| [Silverback.Samples.sln](samples/Silverback.Samples.sln)                      | Runnable usage examples; see the [samples guide](samples/README.md)                                                                                 |
 | [Silverback.Tests.Extended.sln](tests/extended/Silverback.Tests.Extended.sln) | Interactive testbench, real-broker integration and stress tests, general benchmarks and version comparisons, with references to the library sources |
 
 ### Testing and Development Tools
 
-| Tool | Purpose |
-| --- | --- |
-| [Interactive testbench](tests/extended/README.md#interactive-testbench) | Windows WPF application for producing messages and managing Docker consumers |
-| [Integration tests](tests/extended/README.md#integration-tests) | xUnit tests against real Kafka and MQTT brokers, including stress workloads and diagnostic controls |
-| [Benchmarks](tests/extended/README.md#benchmarks) | General performance benchmarks and current-versus-historical Silverback comparisons |
-| [UpdateOlderVersions.ps1](tests/extended/UpdateOlderVersions.ps1) | Scaffold another historical benchmark project |
-| [coverage.ps1](coverage.ps1) | Build and test the main solution with coverage, then generate and open an HTML report |
-| [docker-compose.yaml](docker-compose.yaml) | Local Kafka, Schema Registry, MQTT and PostgreSQL infrastructure, with administration UIs |
-| [nuget/Update.ps1](nuget/Update.ps1) | Build local Silverback packages for package-based development and samples |
-| [.NET tool manifest](.config/dotnet-tools.json) | Repository-local ReportGenerator installation used by the coverage script |
+| Tool                                                                    | Purpose                                                                                             |
+|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| [Interactive testbench](tests/extended/README.md#interactive-testbench) | Windows WPF application for producing messages and managing Docker consumers                        |
+| [Integration tests](tests/extended/README.md#integration-tests)         | xUnit tests against real Kafka and MQTT brokers, including stress workloads and diagnostic controls |
+| [Benchmarks](tests/extended/README.md#benchmarks)                       | General performance benchmarks and current-versus-historical Silverback comparisons                 |
+| [UpdateOlderVersions.ps1](tests/extended/UpdateOlderVersions.ps1)       | Scaffold another historical benchmark project                                                       |
+| [coverage.ps1](coverage.ps1)                                            | Build and test the main solution with coverage, then generate and open an HTML report               |
+| [docker-compose.yaml](docker-compose.yaml)                              | Local Kafka, Schema Registry, MQTT and PostgreSQL infrastructure, with administration UIs           |
+| [nuget/Update.ps1](nuget/Update.ps1)                                    | Build local Silverback packages for package-based development and samples                           |
+| [.NET tool manifest](.config/dotnet-tools.json)                         | Repository-local ReportGenerator installation used by the coverage script                           |
 
 ### Code and Documentation Generators
 
-The four generator applications are included in the main solution and write generated content to standard output. Shared generator support lives in [Silverback.Tools.Generators.Common](tools/Silverback.Tools.Generators.Common).
+The four generator applications are included in the main solution and write generated content to standard output. Shared generator support
+lives in [Silverback.Tools.Generators.Common](tools/Silverback.Tools.Generators.Common).
 
-| Tool | Purpose |
-| --- | --- |
+| Tool                                                                       | Purpose                                                                                         |
+|----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
 | [KafkaConfigProxies](tools/Silverback.Tools.Generators.KafkaConfigProxies) | Generate Kafka configuration wrappers and builders; also supports Schema Registry configuration |
-| [MqttConfigProxies](tools/Silverback.Tools.Generators.MqttConfigProxies) | Generate MQTT configuration wrappers and builders |
-| [Docs.Headers](tools/Silverback.Tools.Generators.Docs.Headers) | Generate message-header reference tables |
-| [Docs.LogEvents](tools/Silverback.Tools.Generators.Docs.LogEvents) | Generate log-event reference tables |
-| [docs/build.ps1](docs/build.ps1) | Build and serve the DocFX documentation locally; run from the docs directory |
-| [docs/publish.ps1](docs/publish.ps1) | Publish the generated site through a separate gh-pages checkout; supports -NoPush |
+| [MqttConfigProxies](tools/Silverback.Tools.Generators.MqttConfigProxies)   | Generate MQTT configuration wrappers and builders                                               |
+| [Docs.Headers](tools/Silverback.Tools.Generators.Docs.Headers)             | Generate message-header reference tables                                                        |
+| [Docs.LogEvents](tools/Silverback.Tools.Generators.Docs.LogEvents)         | Generate log-event reference tables                                                             |
+| [docs/build.ps1](docs/build.ps1)                                           | Build and serve the DocFX documentation locally; run from the docs directory                    |
+| [docs/publish.ps1](docs/publish.ps1)                                       | Publish the generated site through a separate gh-pages checkout; supports -NoPush               |
 
-Build automation is defined in [the main pipeline](azure-pipelines.yml), [the Sonar pipeline](azure-pipelines.sonar.yml), and [the samples/extended-tests pipeline](azure-pipelines.other-projects.yml).
+Build automation is defined in [the main pipeline](azure-pipelines.yml), [the Sonar pipeline](azure-pipelines.sonar.yml),
+and [the samples/extended-tests pipeline](azure-pipelines.other-projects.yml).
 
 ## Community
 
@@ -182,4 +190,5 @@ Build automation is defined in [the main pipeline](azure-pipelines.yml), [the So
 
 ## License
 
-Silverback is open source, licensed under the MIT License and maintained by Sergio Aquilini. See [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE).
+Silverback is open source, licensed under the MIT License and maintained by Sergio Aquilini.
+See [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE).
