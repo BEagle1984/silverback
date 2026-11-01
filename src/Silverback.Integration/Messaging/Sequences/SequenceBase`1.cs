@@ -250,17 +250,24 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     {
         if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
             return;
+
+        bool isAbortStarted;
+
         try
         {
-            if (!IsPending)
+            if (IsComplete)
                 return;
 
-            await AbortCoreAsync(SequenceAbortReason.IncompleteSequence, null).ConfigureAwait(false);
+            isAbortStarted = BeginAbortCore(SequenceAbortReason.IncompleteSequence, null);
         }
         finally
         {
             _completeSemaphoreSlim.Release();
         }
+
+        // Wait for an abort already in progress as well, to ensure that the sequence is fully aborted (rolled back and removed from the
+        // store) before the next sequence starts
+        await (isAbortStarted ? AbortCoreAsync(null) : _abortingTaskCompletionSource!.Task).ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="ISequence.AbortAsync" />
@@ -275,14 +282,20 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
             return;
 
+        bool isAbortStarted;
+
         try
         {
-            await AbortCoreAsync(reason, exception).ConfigureAwait(false);
+            isAbortStarted = BeginAbortCore(reason, exception);
         }
         finally
         {
             _completeSemaphoreSlim.Release();
         }
+
+        // Multiple calls to AbortAsync should wait until the sequence is aborted for real; otherwise the TransactionHandlerConsumerBehavior
+        // could continue before the abort is done, preventing the error policies to be correctly and successfully applied.
+        await (isAbortStarted ? AbortCoreAsync(exception) : _abortingTaskCompletionSource!.Task).ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="ISequence.GetCommitIdentifiers" />
@@ -471,10 +484,22 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _abortingTaskCompletionSource?.Task.SafeWait();
         _addCancellationTokenSource.Cancel();
 
-        _logger.LogTrace("Dispose is waiting add semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
-        _addSemaphoreSlim.Wait();
-        _logger.LogTrace("Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
-        _completeSemaphoreSlim.Wait();
+        WaitAddAndCompleteSemaphores();
+
+        // An abort that was already waiting for the complete semaphore might have started in the meantime: release the semaphores to
+        // let it complete (it needs the add semaphore) and acquire them again
+        if (_abortingTaskCompletionSource is { Task.IsCompleted: false })
+        {
+            _completeSemaphoreSlim.Release();
+            _addSemaphoreSlim.Release();
+
+            _logger.LogTrace(
+                "Dispose is waiting for the abort to complete ({sequenceType} '{sequenceId}')...",
+                () => [GetType().Name, SequenceId]);
+            _abortingTaskCompletionSource.Task.SafeWait();
+
+            WaitAddAndCompleteSemaphores();
+        }
 
         _streamProvider.Dispose();
         _sequences?.ForEach(sequence => sequence.Dispose());
@@ -509,6 +534,14 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             _sequences?.Remove(sequence);
             sequence.Dispose();
         }
+    }
+
+    private void WaitAddAndCompleteSemaphores()
+    {
+        _logger.LogTrace("Dispose is waiting add semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
+        _addSemaphoreSlim.Wait();
+        _logger.LogTrace("Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
+        _completeSemaphoreSlim.Wait();
     }
 
     private bool IsTimeoutElapsed() => DateTime.UtcNow > _timeoutExpiration;
@@ -587,18 +620,16 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             .FireAndForget();
     }
 
-    private async Task AbortCoreAsync(SequenceAbortReason reason, Exception? exception)
+    // Must be called holding the complete semaphore. Returns false if the sequence was already aborted, otherwise the caller has to
+    // complete the abort calling AbortCoreAsync after releasing the complete semaphore.
+    private bool BeginAbortCore(SequenceAbortReason reason, Exception? exception)
     {
         if (IsAborted)
-        {
-            // Multiple calls to AbortAsync should wait until the sequence is aborted for real; otherwise the TransactionHandlerConsumerBehavior
-            // could continue before the abort is done, preventing the error policies to be correctly and successfully applied.
-            await _abortingTaskCompletionSource!.Task.ConfigureAwait(false);
-            return;
-        }
+            return false;
 
-        _completeState = CompleteState.Aborted;
+        // Create the completion source before switching the state, for the readers checking IsAborted without the complete semaphore
         _abortingTaskCompletionSource = new TaskCompletionSource<bool>();
+        _completeState = CompleteState.Aborted;
 
         if (reason > AbortReason)
         {
@@ -611,9 +642,17 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             "Aborting {sequenceType} '{sequenceId}' ({abortReason})...",
             () => [GetType().Name, SequenceId, AbortReason]);
 
-        // Abort pending processing (if still pending) and wait for AddAsync to gracefully complete, ensuring that the identifiers
-        // are properly tracked in all cases (enumeration aborted included)
+        // Abort pending processing (if still pending), to let AddAsync gracefully complete
         _streamProvider.AbortIfPending();
+
+        return true;
+    }
+
+    // Must be called after releasing the complete semaphore, since AddAsync and Dispose acquire the add semaphore first
+    private async Task AbortCoreAsync(Exception? exception)
+    {
+        // Wait for AddAsync to gracefully complete, ensuring that the identifiers are properly tracked in all cases (enumeration
+        // aborted included)
         _logger.LogTrace("Aborting {sequenceType} '{sequenceId}' is waiting for add semaphore...", () => [GetType().Name, SequenceId]);
         await _addSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
