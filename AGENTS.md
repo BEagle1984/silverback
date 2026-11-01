@@ -18,6 +18,7 @@
 - Keep formatting and readability changes behavior-preserving; do not combine them with unrelated refactoring or bug fixes.
 - Do not add a trailing period to simple, single-sentence code comments.
 - Name internal implementation methods with the `Core` suffix, before `Async` when applicable: `Stop` -> `StopCore`, `StopAsync` -> `StopCoreAsync`.
+- Before considering a change done, check the changed C# files for the Rider inspection warnings, which the build does not report: `dotnet jb inspectcode Silverback.sln --no-build --include="<file>;<file>" --severity=WARNING --format=Text --output=<report>`, with the report in the operating system's temporary directory (it takes about 1.5 minutes). Fix the warnings, or suppress false positives with `[SuppressMessage("ReSharper", "<InspectionId>", Justification = "...")]`, as the surrounding code does.
 
 ## Test organization
 
