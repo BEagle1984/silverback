@@ -1,7 +1,7 @@
-﻿// Copyright (c) 2026 Sergio Aquilini
+// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -35,22 +35,32 @@ public class EnumerableSelectExtensionsTests
     public void ParallelSelect_ShouldInvokeActionWithLimitedParallelismAndReturnSelectedValues()
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-        CountdownEvent countdownEvent = new(3);
+        CountdownEvent countdownEvent = new(2);
+        ConcurrentBag<int> concurrencyLevels = [];
+        int startedCount = 0;
+        int concurrentCount = 0;
 
-        Action act = () => enumerable.ParallelSelect(
+        IEnumerable<int> result = enumerable.ParallelSelect(
             item =>
             {
-                countdownEvent.Signal();
-                countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
+                concurrencyLevels.Add(Interlocked.Increment(ref concurrentCount));
+
+                if (Interlocked.Increment(ref startedCount) <= 2)
+                {
+                    // Wait for both workers to be running, then give a third one the chance to (wrongly) start
+                    countdownEvent.Signal();
+                    countdownEvent.WaitOrThrow();
+                    Thread.Sleep(100);
+                }
+
+                Interlocked.Decrement(ref concurrentCount);
 
                 return item * 2;
             },
             2);
 
-        AggregateException aggregateException = act.ShouldThrow<AggregateException>();
-        aggregateException.InnerExceptions.Count.ShouldBe(2);
-        aggregateException.InnerExceptions.ShouldAllBe(exception => exception is TimeoutException);
-        countdownEvent.CurrentCount.ShouldBe(1);
+        result.ShouldBe([2, 4, 6], true);
+        concurrencyLevels.Max().ShouldBe(2);
     }
 
     [Fact]
