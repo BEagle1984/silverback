@@ -175,12 +175,58 @@ An [Activity](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.act
 * in the Producer when a message is being sent (submitting the `Activity.Id` in the `traceparent` header)
 * when a subscriber is being invoked (either internally or from a consumer)
 
-This allows tracing the message handling and follow it across different services (distributed tracing).
+This allows tracing the message handling and follow it across different services (distributed tracing). See <xref:producing-tracing> and <xref:consuming-tracing> for details about the trace propagation.
 
-The following table summarizes the activities and the information being tracked.
+The following table summarizes the activities and the tags being set (the tags in square brackets are set only when applicable).
 
-Id | Description / Tags
-:-- | :--
-`Silverback.Integration.Produce` | A message is being produced to a message broker.<br/><br/>Tags:<ul><li>`messaging.message_id`</li><li>`messaging.destination`</li><li>[`messaging.kafka.message_key`]</li><li>[`messaging.kafka.partition`]</li></ul>
-`Silverback.Integration.Consume` | A consumed message is being processed.<br/><br/>Tags: <ul><li>`messaging.message_id`</li><li>`messaging.destination`</li><li>[`messaging.sequence_id`]</li><li>[`messaging.kafka.message_key`]</li><li>[`messaging.kafka.partition`]</li></ul>
-`Silverback.Core.Subscribers.InvokeSubscriber` | A subscriber is being invoked to process a message.<br/><br/>Tags:<ul><li>`SubscriberType`</li><li>`SubscriberMethod`</li></ul>
+Source | Activity | Description / Tags
+:-- | :-- | :--
+`Silverback.Integration.Produce` | `Silverback.Integration.Produce` | A message is being produced to a message broker.<br/><br/>Tags:<ul><li>`messaging.destination`</li><li>[`messaging.kafka.message_key`]</li></ul>
+`Silverback.Integration.Consume` | `Silverback.Integration.Consume` | A consumed message is being processed.<br/><br/>Tags:<ul><li>`messaging.destination`</li><li>[`messaging.message_id`] (Kafka only, e.g. `my-topic[2]@42`)</li><li>[`messaging.sequence_id`]</li><li>[`messaging.kafka.message_key`]</li><li>[`messaging.kafka.partition`] (e.g. `my-topic[2]`)</li></ul>
+`Silverback.Core.Subscribers` | `Silverback.Core.Subscribers.InvokeSubscriber` | A subscriber is being invoked to process a message.<br/><br/>Tags:<ul><li>`SubscriberType`</li><li>`SubscriberMethod`</li></ul>
+
+> [!Note]
+> The produce and consume activities are always started, even if no listener is registered, so that the trace context is propagated and available in the logs. The subscriber activity is started only when the `Silverback.Core.Subscribers` source is listened to.
+
+### Exporting the Traces
+
+Register the Silverback sources to export the activities, for example with [OpenTelemetry](https://opentelemetry.io/docs/languages/dotnet/):
+
+```csharp
+services
+    .AddOpenTelemetry()
+    .WithTracing(tracing => tracing
+        .AddSource(
+            "Silverback.Integration.Produce",
+            "Silverback.Integration.Consume",
+            "Silverback.Core.Subscribers")
+        .AddOtlpExporter());
+```
+
+### Including the Trace in the Logs
+
+The generic host enables the `TraceId`, `SpanId` and `ParentId` [activity tracking options](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.activitytrackingoptions) by default, adding them to the logging scope. Enable the scopes in the logging provider to write them along with the log entries (including the Silverback ones):
+
+```csharp
+builder.Logging.AddSimpleConsole(options => options.IncludeScopes = true);
+```
+
+```
+info: Silverback.Messaging.Consuming.Transaction.TransactionHandlerConsumerBehavior[1001]
+      => SpanId:6b9a3e2c41f0d815, TraceId:4bf92f3577b34da6a3ce929d0e0e4736, ParentId:00f067aa0ba902b7
+      Processing consumed message | EndpointName: my-topic, BrokerMessageId: [2]@42
+```
+
+Outside the generic host, set the options explicitly:
+
+```csharp
+services.AddLogging(logging => logging
+    .Configure(options => options.ActivityTrackingOptions =
+        ActivityTrackingOptions.TraceId |
+        ActivityTrackingOptions.SpanId |
+        ActivityTrackingOptions.ParentId)
+    .AddSimpleConsole(options => options.IncludeScopes = true));
+```
+
+> [!Tip]
+> Serilog (3.1 or later) captures the `TraceId` and `SpanId` automatically, so they can be added to the output template (e.g. `{TraceId}`), while the OpenTelemetry logging provider correlates the logs with the traces out of the box.
