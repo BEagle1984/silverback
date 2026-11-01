@@ -23,6 +23,8 @@ steps:
         --no-build \
         --verbosity Normal \
         --logger trx \
+        --blame-hang-timeout 5m \
+        --blame-hang-dump-type mini \
         --filter "Type!=E2E&Dependency!=Docker&CI!=Skip"
     displayName: 'Run unit tests'
   - script: |
@@ -31,6 +33,8 @@ steps:
         --no-build \
         --verbosity Normal \
         --logger trx \
+        --blame-hang-timeout 5m \
+        --blame-hang-dump-type mini \
         --filter "Type=E2E&Dependency!=Docker&CI!=Skip"
     displayName: 'Run E2E tests'
   # Publish results
@@ -40,3 +44,11 @@ steps:
       testRunner: 'VSTest'
       testResultsFiles: '**/*.trx'
     displayName: 'Publish test results'
+  - script: |
+      mkdir -p $(Build.ArtifactStagingDirectory)/blame
+      find tests -path '*/TestResults/*' \( -name 'Sequence_*.xml' -o -name '*.dmp' \) -exec cp --parents {} $(Build.ArtifactStagingDirectory)/blame \;
+      if [ -n "$(ls -A $(Build.ArtifactStagingDirectory)/blame)" ]; then
+        echo "##vso[artifact.upload artifactname=blame-$(System.JobAttempt)]$(Build.ArtifactStagingDirectory)/blame"
+      fi
+    condition: failed()
+    displayName: 'Publish hang dumps'
