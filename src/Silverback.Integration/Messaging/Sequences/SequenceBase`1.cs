@@ -654,21 +654,29 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         // Wait for AddAsync to gracefully complete, ensuring that the identifiers are properly tracked in all cases (enumeration
         // aborted included)
         _logger.LogTrace("Aborting {sequenceType} '{sequenceId}' is waiting for add semaphore...", () => [GetType().Name, SequenceId]);
-        await _addSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
         try
         {
-            await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
-            if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
-                LogAbort();
+            await _addSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
+            try
+            {
+                await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+                if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
+                    LogAbort();
+            }
+            finally
+            {
+                _addSemaphoreSlim.Release();
+            }
+
+            await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
         }
         finally
         {
-            _addSemaphoreSlim.Release();
+            // Complete the abort even if it failed, not to block forever the callers waiting for it (e.g. Dispose)
+            _abortingTaskCompletionSource?.TrySetResult(true);
         }
-
-        await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
-        _abortingTaskCompletionSource?.SetResult(true);
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception notified")]

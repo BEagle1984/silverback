@@ -87,6 +87,21 @@ public class SequenceBaseTests
     }
 
     [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task Dispose_ShouldNotBlock_WhenAbortFailed()
+    {
+        ISequenceStore sequenceStore = Substitute.For<ISequenceStore>();
+        sequenceStore.RemoveAsync(Arg.Any<string>()).Returns(ValueTask.FromException(new InvalidOperationException("test")));
+        TestSequence sequence = CreateSequence(new HookLogger(), sequenceStore);
+
+        await Should.ThrowAsync<InvalidOperationException>(() => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted));
+
+        await Task.Run(sequence.Dispose).WaitAsync(Timeout);
+
+        sequence.IsAborted.ShouldBeTrue();
+    }
+
+    [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The hook and the tasks complete before the disposal")]
     public async Task AddAsync_ShouldNotDeadlock_WhenAbortedWhileCompletingSequence()
     {
