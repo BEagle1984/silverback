@@ -37,3 +37,7 @@
 - Link the related GitHub issue (e.g. `[[#272](https://github.com/BEagle1984/silverback/issues/272)]`), not the pull request, unless the pull request itself carries significant information. Add no link when there is no issue.
 - Entries are grouped by area (e.g. Kafka, mocked Kafka and testing, MQTT, locks), not in chronological order. Insert a new entry next to the existing entries for the same area.
 - Do not add entries for changes that only touch tests, such as flaky test fixes.
+
+## Git
+
+- Do not commit or push without the user's explicit approval, unless the user asked you to. An approval covers only the change it was given for, not later commits.
