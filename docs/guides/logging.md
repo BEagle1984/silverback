@@ -181,7 +181,7 @@ The following table summarizes the activities and the tags being set (the tags i
 
 Source | Activity | Description / Tags
 :-- | :-- | :--
-`Silverback.Integration.Produce` | `Silverback.Integration.Produce` | A message is being produced to a message broker.<br/><br/>Tags:<ul><li>`messaging.destination`</li><li>[`messaging.kafka.message_key`]</li></ul>
+`Silverback.Integration.Produce` | `Silverback.Integration.Produce` | A message is being produced to a message broker.<br/><br/>Tags:<ul><li>`messaging.destination`</li><li>[`messaging.message_id`] (Kafka only, e.g. `my-topic[2]@42`)</li><li>[`messaging.kafka.message_key`]</li><li>[`messaging.kafka.partition`] (e.g. `my-topic[2]`)</li></ul>
 `Silverback.Integration.Consume` | `Silverback.Integration.Consume` | A consumed message is being processed.<br/><br/>Tags:<ul><li>`messaging.destination`</li><li>[`messaging.message_id`] (Kafka only, e.g. `my-topic[2]@42`)</li><li>[`messaging.sequence_id`]</li><li>[`messaging.kafka.message_key`]</li><li>[`messaging.kafka.partition`] (e.g. `my-topic[2]`)</li></ul>
 `Silverback.Core.Subscribers` | `Silverback.Core.Subscribers.InvokeSubscriber` | A subscriber is being invoked to process a message.<br/><br/>Tags:<ul><li>`SubscriberType`</li><li>`SubscriberMethod`</li></ul>
 

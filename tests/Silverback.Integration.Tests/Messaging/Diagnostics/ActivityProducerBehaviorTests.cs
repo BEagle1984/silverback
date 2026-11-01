@@ -9,6 +9,7 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -63,5 +64,37 @@ public class ActivityProducerBehaviorTests
             CancellationToken.None);
 
         envelope.Headers.ShouldContain(header => header.Name == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(header.Value));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldEnrichActivityAfterProducing()
+    {
+        OutboundEnvelope envelope = new(null, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
+        bool isProduced = false;
+        bool? wasProducedWhenEnriched = null;
+
+        IBrokerActivityEnricher enricher = Substitute.For<IBrokerActivityEnricher>();
+        enricher
+            .When(activityEnricher => activityEnricher.EnrichOutboundActivity(Arg.Any<Activity>(), Arg.Any<ProducerPipelineContext>()))
+            .Do(_ => wasProducedWhenEnriched = isProduced);
+
+        IActivityEnricherFactory enricherFactory = Substitute.For<IActivityEnricherFactory>();
+        enricherFactory.GetEnricher(Arg.Any<EndpointConfiguration>(), Arg.Any<IServiceProvider>()).Returns(enricher);
+
+        await new ActivityProducerBehavior(enricherFactory).HandleAsync(
+            new ProducerPipelineContext(
+                envelope,
+                Substitute.For<IProducer>(),
+                [],
+                (_, _) => ValueTask.CompletedTask,
+                Substitute.For<IServiceProvider>()),
+            (_, _) =>
+            {
+                isProduced = true;
+                return default;
+            },
+            CancellationToken.None);
+
+        wasProducedWhenEnriched.ShouldBe(true);
     }
 }

@@ -38,9 +38,15 @@ public class ActivityProducerBehavior : IProducerBehavior
 
         using Activity activity = ActivitySources.StartProduceActivity(context.Envelope);
 
-        _activityEnricherFactory.GetEnricher(context.Envelope.EndpointConfiguration, context.ServiceProvider)
-            .EnrichOutboundActivity(activity, context);
-
-        await next(context, cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await next(context, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            // Enrich after producing, when the message key and the broker message identifier are known
+            _activityEnricherFactory.GetEnricher(context.Envelope.EndpointConfiguration, context.ServiceProvider)
+                .EnrichOutboundActivity(activity, context);
+        }
     }
 }
