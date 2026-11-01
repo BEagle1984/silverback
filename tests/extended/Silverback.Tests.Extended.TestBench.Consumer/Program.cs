@@ -25,6 +25,7 @@ builder.Services
     .WithConnectionToMessageBroker(options => options.AddKafka().AddMqtt())
     .AddBrokerClientsConfigurator<BrokerClientsConfigurator>()
     .AddSingletonSubscriber<Subscriber>()
+    .AddSingletonErrorPolicyCallback<SkippedMessagesLogger>()
     .WithLogLevels(levels => levels
         .SetLogLevel(
             IntegrationLogEvents.ProcessingConsumedMessageError.EventId,

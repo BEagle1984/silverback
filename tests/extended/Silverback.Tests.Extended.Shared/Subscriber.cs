@@ -122,9 +122,6 @@ public class Subscriber
         }
     }
 
-    public void OnMessageSkipped(MessageSkipped skipped) =>
-        _logger.LogInformation("Message {MessageId} from topic {TopicName} skipped via error policy", skipped.MessageId, skipped.TopicName);
-
     private async Task ProcessEnvelopeAsync(IInboundEnvelope<TestBenchMessage> envelope)
     {
         if (envelope.Message == null)

@@ -15,12 +15,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 
     private static readonly Action<IErrorPolicyBuilder> DefaultErrorPolicy = policy => policy
         .Retry(5)
-        .ThenSkip(skip => skip.Publish(envelope =>
-        {
-            string? messageId = envelope.Headers.GetValue("X-Failed-Message");
-
-            return messageId == null ? null : new MessageSkipped(messageId, envelope.Endpoint.RawName);
-        }));
+        .ThenSkip();
 
     public void Configure(BrokerClientsConfigurationBuilder builder) =>
         builder
