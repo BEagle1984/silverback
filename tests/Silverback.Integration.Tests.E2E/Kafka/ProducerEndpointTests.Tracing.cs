@@ -21,12 +21,10 @@ public partial class ProducerEndpointTests
     public async Task ProducerEndpoint_ShouldTagActivityWithKafkaKeyAndOffset()
     {
         ConcurrentQueue<Activity> stoppedActivities = [];
-        using ActivityListener listener = new()
-        {
-            ShouldListenTo = source => source.Name == "Silverback.Integration.Produce",
-            Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded,
-            ActivityStopped = stoppedActivities.Enqueue
-        };
+        using ActivityListener listener = new();
+        listener.ShouldListenTo = source => source.Name == "Silverback.Integration.Produce";
+        listener.Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded;
+        listener.ActivityStopped = stoppedActivities.Enqueue;
         ActivitySource.AddActivityListener(listener);
 
         await Host.ConfigureServicesAndRunAsync(services => services
