@@ -30,3 +30,10 @@
 - "Run the tests" means the main solution: `dotnet test Silverback.sln`. The Docker-dependent tests need the root `docker-compose.yaml` stack running.
 - Do not run the extended integration tests (`tests/extended`) unless the user asks for them. Offer them when a change affects broker client behavior, such as consumer or producer logic, rebalancing, or a Confluent.Kafka or MQTTnet upgrade. A run takes over 12 minutes and builds Docker images from the working tree, so do not edit files while it runs.
 - The extended tests build with the locally cached `mcr.microsoft.com/dotnet/sdk:10.0` image. If the build fails with "A compatible .NET SDK was not found", run `docker pull mcr.microsoft.com/dotnet/sdk:10.0` to satisfy the `global.json` minimum.
+
+## Release notes
+
+- Keep each entry in `docs/changelog/*.md` to one short line stating what changed or was fixed. Do not explain why or how, and do not turn it into a guide: the entry is only a hint, optionally pointing to the resolved issue or to the docs page with the details.
+- Link the related GitHub issue (e.g. `[[#272](https://github.com/BEagle1984/silverback/issues/272)]`), not the pull request, unless the pull request itself carries significant information. Add no link when there is no issue.
+- Entries are grouped by area (e.g. Kafka, mocked Kafka and testing, MQTT, locks), not in chronological order. Insert a new entry next to the existing entries for the same area.
+- Do not add entries for changes that only touch tests, such as flaky test fixes.
