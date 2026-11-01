@@ -16,6 +16,7 @@ using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -25,6 +26,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
 
 public class MoveMessageErrorPolicyTests
 {
+    private readonly TestErrorPolicyCallback _callback = new();
+
     private readonly IServiceProvider _serviceProvider;
 
     public MoveMessageErrorPolicyTests()
@@ -35,7 +38,8 @@ public class MoveMessageErrorPolicyTests
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
             .AddFakeLogger()
             .AddSilverback()
-            .WithConnectionToMessageBroker();
+            .WithConnectionToMessageBroker()
+            .AddSingletonErrorPolicyCallback(_callback);
 
         _serviceProvider = services.BuildServiceProvider();
     }
@@ -294,5 +298,31 @@ public class MoveMessageErrorPolicyTests
             new InvalidOperationException("test"));
 
         await transactionManager.Received(1).RollbackAsync(Arg.Any<InvalidOperationException>(), true);
+    }
+
+    [Fact]
+    public async Task HandleErrorAsync_ShouldInvokeCallbacks()
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+        InvalidOperationException exception = new("test");
+
+        await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            exception);
+
+        _callback.Invocations.ShouldBe([nameof(IMoveMessageErrorPolicyCallback.OnMovingMessageAsync)]);
+        _callback.Envelopes.ShouldBe([envelope]);
+        _callback.Exceptions.ShouldBe([exception]);
     }
 }

@@ -10,6 +10,7 @@ using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -227,5 +228,115 @@ public partial class ErrorPoliciesTests
         receivedBatches[1].Count.ShouldBe(5);
         completedBatches.ShouldBe(2);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(12);
+    }
+
+    [Fact]
+    public async Task SkipPolicy_ShouldInvokeCallbacks()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSingleton<SkippedMessagesStore>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Skip()))))
+            .AddScopedErrorPolicyCallback<SkippedMessagesCallback>()
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
+
+        static void HandleMessage(IIntegrationEvent message) => throw new InvalidOperationException("Skip!");
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        SkippedMessagesStore store = Host.ServiceProvider.GetRequiredService<SkippedMessagesStore>();
+        store.Entries.Select(entry => ((TestEventOne)((IInboundEnvelope)entry.Envelope).Message!).ContentEventOne)
+            .ShouldBe(["1", "2"], ignoreOrder: true);
+        store.Entries.ShouldAllBe(entry => entry.Exception.Message == "Skip!");
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task SkipPolicy_ShouldStopConsumerWithoutCommitting_WhenCallbackThrows()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Skip()))))
+            .AddSingletonErrorPolicyCallback<FailingSkipCallback>()
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
+
+        static void HandleMessage(IIntegrationEvent message) => throw new InvalidOperationException("Skip!");
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Stopped);
+
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+    }
+
+    private sealed class SkippedMessagesStore
+    {
+        private readonly List<(IRawInboundEnvelope Envelope, Exception Exception)> _entries = [];
+
+        public IReadOnlyList<(IRawInboundEnvelope Envelope, Exception Exception)> Entries
+        {
+            get
+            {
+                lock (_entries)
+                {
+                    return [.. _entries];
+                }
+            }
+        }
+
+        public void Add(IRawInboundEnvelope envelope, Exception exception)
+        {
+            lock (_entries)
+            {
+                _entries.Add((envelope, exception));
+            }
+        }
+    }
+
+    private sealed class SkippedMessagesCallback : ISkipMessageErrorPolicyCallback
+    {
+        private readonly SkippedMessagesStore _store;
+
+        public SkippedMessagesCallback(SkippedMessagesStore store)
+        {
+            _store = store;
+        }
+
+        public Task OnSkippingMessageAsync(IRawInboundEnvelope envelope, Exception exception)
+        {
+            _store.Add(envelope, exception);
+            return Task.CompletedTask;
+        }
+    }
+
+    private sealed class FailingSkipCallback : ISkipMessageErrorPolicyCallback
+    {
+        public Task OnSkippingMessageAsync(IRawInboundEnvelope envelope, Exception exception) =>
+            throw new InvalidOperationException("Callback failed!");
     }
 }

@@ -134,6 +134,12 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
         Check.NotNull(context, nameof(context));
         Check.NotNull(exception, nameof(exception));
 
+        await InvokePolicyCallbacksAsync(
+                _serviceProvider.GetRequiredService<ErrorPolicyCallbacksInvoker>(),
+                context.Envelope,
+                exception)
+            .ConfigureAwait(false);
+
         bool result = await ApplyPolicyAsync(context, exception).ConfigureAwait(false);
 
         if (_messageToPublishFactory == null)
@@ -148,6 +154,12 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
 
         return result;
     }
+
+    internal virtual ValueTask InvokePolicyCallbacksAsync(
+        ErrorPolicyCallbacksInvoker callbacksInvoker,
+        IRawInboundEnvelope envelope,
+        Exception exception) =>
+        ValueTask.CompletedTask;
 
     /// <summary>
     ///     Executes the current policy.

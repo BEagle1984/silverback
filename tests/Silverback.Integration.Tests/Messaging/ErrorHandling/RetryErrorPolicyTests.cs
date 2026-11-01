@@ -14,6 +14,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
@@ -22,6 +23,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
 
 public class RetryErrorPolicyTests
 {
+    private readonly TestErrorPolicyCallback _callback = new();
+
     private readonly ServiceProvider _serviceProvider;
 
     public RetryErrorPolicyTests()
@@ -32,7 +35,8 @@ public class RetryErrorPolicyTests
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
             .AddFakeLogger()
             .AddSilverback()
-            .WithConnectionToMessageBroker();
+            .WithConnectionToMessageBroker()
+            .AddSingletonErrorPolicyCallback(_callback);
 
         _serviceProvider = services.BuildServiceProvider();
     }
@@ -153,5 +157,27 @@ public class RetryErrorPolicyTests
             false,
             true,
             false);
+    }
+
+    [Fact]
+    public async Task HandleErrorAsync_ShouldInvokeCallbacks()
+    {
+        IErrorPolicyImplementation policy = new RetryErrorPolicy().Build(_serviceProvider);
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+        InvalidOperationException exception = new("test");
+
+        await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            exception);
+
+        _callback.Invocations.ShouldBe([nameof(IRetryErrorPolicyCallback.OnRetryingMessageAsync)]);
+        _callback.Envelopes.ShouldBe([envelope]);
+        _callback.Exceptions.ShouldBe([exception]);
     }
 }

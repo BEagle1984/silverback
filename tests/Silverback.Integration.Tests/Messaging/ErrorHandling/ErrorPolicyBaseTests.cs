@@ -9,11 +9,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Shouldly;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -221,8 +223,7 @@ public class ErrorPolicyBaseTests
     public async Task HandleErrorAsync_ShouldPublishMessage()
     {
         IPublisher? publisher = Substitute.For<IPublisher>();
-        ServiceProvider serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
-            .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+        ServiceProvider serviceProvider = BuildServiceProvider(services => services.AddScoped(_ => publisher));
 
         TestErrorPolicy policy = new()
         {
@@ -248,8 +249,7 @@ public class ErrorPolicyBaseTests
     public async Task HandleErrorAsync_ShouldNotPublishMessage_WhenFactoryReturnsNull()
     {
         IPublisher? publisher = Substitute.For<IPublisher>();
-        ServiceProvider serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
-            .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+        ServiceProvider serviceProvider = BuildServiceProvider(services => services.AddScoped(_ => publisher));
 
         TestErrorPolicy policy = new()
         {
@@ -271,5 +271,19 @@ public class ErrorPolicyBaseTests
             new ArgumentNullException());
 
         await publisher.DidNotReceive().PublishAsync(Arg.Any<object>());
+    }
+
+    private static ServiceProvider BuildServiceProvider(Action<IServiceCollection> configureServices)
+    {
+        ServiceCollection services = [];
+
+        services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker();
+
+        configureServices.Invoke(services);
+
+        return services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
     }
 }

@@ -10,6 +10,7 @@ using Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
@@ -63,6 +64,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .Services
             .AddTransient<IIntegrationPublisher, IntegrationPublisher>()
             .AddSingleton<IBrokerClientCallbacksInvoker, BrokerClientCallbacksInvoker>()
+            .AddSingleton<ErrorPolicyCallbacksInvoker>()
             .AddSingleton<IArgumentResolver, TombstoneMessageArgumentResolver>();
 
         BrokerOptionsBuilder optionsBuilder = new(builder);

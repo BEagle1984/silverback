@@ -139,6 +139,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
     /// </returns>
+    [Obsolete("Use the error policy callbacks (e.g. ISkipMessageErrorPolicyCallback) instead.")]
     public TBuilder Publish(Func<IRawInboundEnvelope, object?> factory)
     {
         Check.NotNull(factory, nameof(factory));
@@ -156,6 +157,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
     /// </returns>
+    [Obsolete("Use the error policy callbacks (e.g. ISkipMessageErrorPolicyCallback) instead.")]
     public TBuilder Publish(Func<IRawInboundEnvelope, Exception, object?> factory)
     {
         Check.NotNull(factory, nameof(factory));

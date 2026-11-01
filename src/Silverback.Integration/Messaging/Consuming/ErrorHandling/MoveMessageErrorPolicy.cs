@@ -117,6 +117,12 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             return base.CanHandle(context, exception);
         }
 
+        internal override ValueTask InvokePolicyCallbacksAsync(
+            ErrorPolicyCallbacksInvoker callbacksInvoker,
+            IRawInboundEnvelope envelope,
+            Exception exception) =>
+            callbacksInvoker.InvokeAsync<IMoveMessageErrorPolicyCallback>(callback => callback.OnMovingMessageAsync(envelope, exception));
+
         protected override async Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
         {
             Check.NotNull(context, nameof(context));

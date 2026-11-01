@@ -15,6 +15,7 @@ using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -961,5 +962,76 @@ public partial class ErrorPoliciesTests
 
         await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task RetryPolicy_ShouldInvokeStopCallbacks_WhenRetriesAreExhausted()
+    {
+        RetryAndStopCallback callback = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(2)))))
+            .AddSingletonErrorPolicyCallback(callback)
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
+
+        static void HandleMessage(IIntegrationEvent message) => throw new InvalidOperationException("Retry!");
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Stopped);
+
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        callback.RetryingCount.ShouldBe(2);
+        callback.StoppingExceptions.Count.ShouldBe(1);
+        callback.StoppingExceptions[0].Message.ShouldBe("Retry!");
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+    }
+
+    private sealed class RetryAndStopCallback : IRetryErrorPolicyCallback, IStopConsumerErrorPolicyCallback
+    {
+        private readonly List<Exception> _stoppingExceptions = [];
+
+        private int _retryingCount;
+
+        public int RetryingCount => _retryingCount;
+
+        public IReadOnlyList<Exception> StoppingExceptions
+        {
+            get
+            {
+                lock (_stoppingExceptions)
+                {
+                    return [.. _stoppingExceptions];
+                }
+            }
+        }
+
+        public Task OnRetryingMessageAsync(IRawInboundEnvelope envelope, Exception exception)
+        {
+            Interlocked.Increment(ref _retryingCount);
+            return Task.CompletedTask;
+        }
+
+        public Task OnStoppingConsumerAsync(IRawInboundEnvelope envelope, Exception exception)
+        {
+            lock (_stoppingExceptions)
+            {
+                _stoppingExceptions.Add(exception);
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }

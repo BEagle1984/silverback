@@ -98,6 +98,12 @@ public record RetryErrorPolicy : ErrorPolicyBase
             _logger = logger;
         }
 
+        internal override ValueTask InvokePolicyCallbacksAsync(
+            ErrorPolicyCallbacksInvoker callbacksInvoker,
+            IRawInboundEnvelope envelope,
+            Exception exception) =>
+            callbacksInvoker.InvokeAsync<IRetryErrorPolicyCallback>(callback => callback.OnRetryingMessageAsync(envelope, exception));
+
         protected override async Task<bool> ApplyPolicyAsync(
             ConsumerPipelineContext context,
             Exception exception)

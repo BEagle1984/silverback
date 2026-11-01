@@ -71,7 +71,7 @@ Explicitly configuring `Stop()` is only useful as the last element of a chain, o
 ```
 
 > [!Warning]
-> The skipped message is lost. Combine `Skip()` with logging or with the [Publish](#publish-events) feature if you need to keep track of the skipped messages, or use `MoveTo` to park them in a dead letter topic instead.
+> The skipped message is lost. Combine `Skip()` with logging or with the [callbacks](#callbacks) if you need to keep track of the skipped messages, or use `MoveTo` to park them in a dead letter topic instead.
 
 ### Retry
 
@@ -266,28 +266,74 @@ By default, a policy is applied to any exception. Use the methods inherited from
 In this example, only the transient errors are retried; all other errors (and the transient errors still failing after 5 retries) cause the message to be moved, unless it's a `MyFatalException` or the message carries the `x-do-not-move` header, in which case the consumer is stopped.
 
 > [!Note]
-> The `ApplyWhen` and `Publish` functions receive the <xref:Silverback.Messaging.Messages.IRawInboundEnvelope>, not the deserialized message, since the error could have occurred before or during the deserialization. Cast it to <xref:Silverback.Messaging.Messages.IInboundEnvelope> to access the deserialized message, when available.
+> The `ApplyWhen` function and the [callbacks](#callbacks) receive the <xref:Silverback.Messaging.Messages.IRawInboundEnvelope>, not the deserialized message, since the error could have occurred before or during the deserialization. Cast it to <xref:Silverback.Messaging.Messages.IInboundEnvelope> to access the deserialized message, when available.
 
-## Publish Events
+## Callbacks
 
-Each policy can publish a message to the internal <xref:bus> when it's applied, for example to raise an alert or to track the skipped messages. Use `Publish` with a factory function receiving the envelope (and optionally the exception). If the function returns `null`, nothing is published.
+You can execute custom code when a policy is about to be applied, for example to store the skipped messages, raise an alert or collect metrics. Implement one or more of the following interfaces and register the class with `AddSingletonErrorPolicyCallback`, `AddScopedErrorPolicyCallback` or `AddTransientErrorPolicyCallback`.
+
+- <xref:Silverback.Messaging.Consuming.ErrorHandling.ISkipMessageErrorPolicyCallback>\
+  Invoked when a message is about to be skipped.
+- <xref:Silverback.Messaging.Consuming.ErrorHandling.IRetryErrorPolicyCallback>\
+  Invoked when a message is about to be retried.
+- <xref:Silverback.Messaging.Consuming.ErrorHandling.IMoveMessageErrorPolicyCallback>\
+  Invoked when a message is about to be moved.
+- <xref:Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback>\
+  Invoked when the consumer is about to be stopped because of an error, either by the `Stop` policy or because no policy could handle the error (e.g. after the last retry of a `Retry` policy not followed by any other policy).
 
 ```csharp
-.OnError(policy => policy
-    .Retry(3, retryPolicy => retryPolicy.WithInterval(TimeSpan.FromSeconds(1)))
-    .ThenSkip(skipPolicy => skipPolicy
-        .Publish((envelope, exception) => new ProcessingFailedEvent(envelope, exception))))
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(...)
+    .AddScopedErrorPolicyCallback<SkippedMessagesTracker>();
 ```
 
 ```csharp
-public class ProcessingFailedEventHandler
+public class SkippedMessagesTracker : ISkipMessageErrorPolicyCallback
 {
-    public Task HandleAsync(ProcessingFailedEvent failedEvent) =>
-        _alertService.NotifyAsync(failedEvent);
+    private readonly IDeadLetterStore _store;
+
+    public SkippedMessagesTracker(IDeadLetterStore store)
+    {
+        _store = store;
+    }
+
+    public Task OnSkippingMessageAsync(IRawInboundEnvelope envelope, Exception exception)
+    {
+        if (envelope.Endpoint.RawName != "orders")
+            return Task.CompletedTask;
+
+        return _store.SaveAsync(envelope, exception);
+    }
 }
 ```
 
-The message is published in a new dependency injection scope, after the policy has been applied. It's published to the internal bus and is therefore produced to a broker only if an outbound endpoint is configured for its type.
+The callbacks receive the envelope and the exception that caused the policy to be applied. Since they are invoked for all consumers, use the envelope (e.g. the endpoint or the message type) to decide whether to act.
+
+The callbacks are invoked before the policy is applied: for example, before the skipped message is committed or before the message is moved. If a callback throws, the policy isn't applied, the message isn't committed and the consumer stops, so that the message will be consumed again once the consumer is restarted.
+
+The <xref:Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback> is invoked whenever the error handling results in the consumer being stopped, even without an explicit `ThenStop()`. It's also invoked when the error handling itself fails, for example because another callback throws or the message can't be moved; in that case, an exception thrown by the stop callback is logged but doesn't replace the original one.
+
+### Publish Events (Obsolete)
+
+The `Publish` method, used to publish a message to the internal <xref:bus> when the policy is applied, is obsolete and will be removed in the next major version. Use a callback instead, injecting the <xref:Silverback.Messaging.Publishing.IPublisher> if you need to publish a message:
+
+```csharp
+public class SkippedMessagesNotifier : ISkipMessageErrorPolicyCallback
+{
+    private readonly IPublisher _publisher;
+
+    public SkippedMessagesNotifier(IPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+
+    public Task OnSkippingMessageAsync(IRawInboundEnvelope envelope, Exception exception) =>
+        _publisher.PublishAsync(new ProcessingFailedEvent(envelope, exception));
+}
+```
+
+Note that the message passed to `Publish` was published after the policy had been applied, while the callbacks are invoked before it.
 
 ## Batches, Chunking and Sequences
 
@@ -295,7 +341,7 @@ When the consumed messages are part of a sequence (a batch, a chunked message, e
 
 - **Batch processing** (<xref:batch-processing>): if the subscriber throws, the whole batch is rolled back. `Retry` processes the whole batch again, and `Skip` skips all the messages in the batch.
 - **Chunking** (<xref:consuming-chunking>): all chunks belonging to the same message are retried or skipped together.
-- **MoveTo** can't move a sequence: the policy logs a warning and is skipped, falling back to the next policy in the chain (or stopping the consumer, if there is none). Don't rely on `MoveTo` with batch processing or chunked messages; use `Skip` with `Publish` instead.
+- **MoveTo** can't move a sequence: the policy logs a warning and is skipped, falling back to the next policy in the chain (or stopping the consumer, if there is none). Don't rely on `MoveTo` with batch processing or chunked messages; use `Skip` with a [callback](#callbacks) instead.
 
 > [!Warning]
 > Error policies aren't supported when streaming is enabled via `AllowStreaming()`. Silverback rejects any policy other than the default stop policy in that case.
@@ -375,7 +421,7 @@ public class MyErrorPolicy : IErrorPolicy
 
 `HandleErrorAsync` returns `true` if the error was handled, or `false` to rethrow the exception and stop the consumer. The implementation is responsible for completing the consumer transaction via the <xref:Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager>.
 
-Alternatively, derive from <xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase> and <xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyImplementation> to benefit from the built-in support for the apply rules, the maximum attempts and the published events.
+Alternatively, derive from <xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase> and <xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyImplementation> to benefit from the built-in support for the apply rules and the maximum attempts.
 
 > [!Tip]
 > Look at the built-in policies (for example <xref:Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy> and <xref:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy>) for a reference on how to interact with the transaction manager.

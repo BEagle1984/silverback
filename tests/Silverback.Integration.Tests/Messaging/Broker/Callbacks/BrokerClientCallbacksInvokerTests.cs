@@ -226,6 +226,24 @@ public class BrokerClientCallbacksInvokerTests
     }
 
     [Fact]
+    public async Task InvokeAsync_ShouldDisposeScopeAsynchronously()
+    {
+        AsyncDisposableCallbackOneHandlerAsync callbackOneHandlerOne = new();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddScopedBrokerClientCallback(_ => callbackOneHandlerOne));
+
+        IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
+
+        await invoker.InvokeAsync<ICallbackOneAsync>(handler => handler.HandleAsync());
+
+        callbackOneHandlerOne.CallCount.ShouldBe(1);
+        callbackOneHandlerOne.IsDisposed.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task InvokeAsync_ShouldResolvedUsingSpecifiedProvider()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
@@ -425,6 +443,25 @@ public class BrokerClientCallbacksInvokerTests
         {
             CallCount++;
             return Task.CompletedTask;
+        }
+    }
+
+    private sealed class AsyncDisposableCallbackOneHandlerAsync : ICallbackOneAsync, IAsyncDisposable
+    {
+        public int CallCount { get; private set; }
+
+        public bool IsDisposed { get; private set; }
+
+        public Task HandleAsync()
+        {
+            CallCount++;
+            return Task.CompletedTask;
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            IsDisposed = true;
+            return ValueTask.CompletedTask;
         }
     }
 

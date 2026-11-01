@@ -6,6 +6,9 @@ uid: broker-callbacks
 
 Broker callbacks let you react to lifecycle events raised by broker clients (Kafka consumers/producers, MQTT clients, etc.).
 
+> [!Tip]
+> To execute custom code when an error policy is applied, see the [error policy callbacks](xref:error-policies#callbacks).
+
 ## Register a Callback Handler
 
 To handle callbacks, implement one (or more) callback interfaces and register your handler as an `IBrokerClientCallback`.

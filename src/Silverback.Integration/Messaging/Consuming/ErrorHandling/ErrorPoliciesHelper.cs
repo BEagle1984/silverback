@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
@@ -10,7 +12,7 @@ namespace Silverback.Messaging.Consuming.ErrorHandling;
 
 internal static class ErrorPoliciesHelper
 {
-    public static Task<bool> ApplyErrorPoliciesAsync(
+    public static async Task<bool> ApplyErrorPoliciesAsync(
         ConsumerPipelineContext context,
         Exception exception)
     {
@@ -18,12 +20,53 @@ internal static class ErrorPoliciesHelper
 
         context.Envelope.Headers.AddOrReplace(DefaultMessageHeaders.FailedAttempts, failedAttempts);
 
+        ErrorPolicyCallbacksInvoker callbacksInvoker = context.ServiceProvider.GetRequiredService<ErrorPolicyCallbacksInvoker>();
         IErrorPolicyImplementation errorPolicyImplementation =
             context.Envelope.Endpoint.Configuration.ErrorPolicy.Build(context.ServiceProvider);
 
-        if (!errorPolicyImplementation.CanHandle(context, exception))
-            return Task.FromResult(false);
+        bool handled;
 
-        return errorPolicyImplementation.HandleErrorAsync(context, exception);
+        try
+        {
+            handled = errorPolicyImplementation.CanHandle(context, exception) &&
+                      await errorPolicyImplementation.HandleErrorAsync(context, exception).ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // The consumer will be stopped because the error handling failed
+            await TryInvokeStopCallbacksAsync(callbacksInvoker, context.Envelope, exception).ConfigureAwait(false);
+            throw;
+        }
+
+        if (handled)
+            return true;
+
+        // The consumer is stopped whenever the error isn't handled, either explicitly by the StopConsumerErrorPolicy
+        // or because no policy could handle it
+        await InvokeStopCallbacksAsync(callbacksInvoker, context.Envelope, exception).ConfigureAwait(false);
+
+        return false;
+    }
+
+    private static ValueTask InvokeStopCallbacksAsync(
+        ErrorPolicyCallbacksInvoker callbacksInvoker,
+        IRawInboundEnvelope envelope,
+        Exception exception) =>
+        callbacksInvoker.InvokeAsync<IStopConsumerErrorPolicyCallback>(callback => callback.OnStoppingConsumerAsync(envelope, exception));
+
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged by the invoker")]
+    private static async Task TryInvokeStopCallbacksAsync(
+        ErrorPolicyCallbacksInvoker callbacksInvoker,
+        IRawInboundEnvelope envelope,
+        Exception exception)
+    {
+        try
+        {
+            await InvokeStopCallbacksAsync(callbacksInvoker, envelope, exception).ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // Already logged by the invoker. The exception thrown by the error handling is rethrown instead.
+        }
     }
 }

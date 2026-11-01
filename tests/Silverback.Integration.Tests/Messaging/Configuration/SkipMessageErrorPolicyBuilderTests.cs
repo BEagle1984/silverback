@@ -118,7 +118,9 @@ public class SkipMessageErrorPolicyBuilderTests
     {
         SkipMessageErrorPolicyBuilder builder = new();
 
+#pragma warning disable CS0618 // Type or member is obsolete
         builder.Publish(_ => new TestEventOne());
+#pragma warning restore CS0618 // Type or member is obsolete
 
         SkipMessageErrorPolicy policy = (SkipMessageErrorPolicy)builder.Build();
         policy.MessageToPublishFactory.ShouldNotBeNull();
@@ -130,8 +132,10 @@ public class SkipMessageErrorPolicyBuilderTests
     {
         SkipMessageErrorPolicyBuilder builder = new();
 
+#pragma warning disable CS0618 // Type or member is obsolete
         Action act1 = () => builder.Publish((Func<IRawInboundEnvelope, object?>)null!);
         Action act2 = () => builder.Publish((Func<IRawInboundEnvelope, Exception, object?>)null!);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         act1.ShouldThrow<ArgumentNullException>();
         act2.ShouldThrow<ArgumentNullException>();
@@ -142,7 +146,9 @@ public class SkipMessageErrorPolicyBuilderTests
     {
         SkipMessageErrorPolicyBuilder builder = new();
 
+#pragma warning disable CS0618 // Type or member is obsolete
         builder.Publish((_, _) => new TestEventOne());
+#pragma warning restore CS0618 // Type or member is obsolete
 
         SkipMessageErrorPolicy policy = (SkipMessageErrorPolicy)builder.Build();
         policy.MessageToPublishFactory.ShouldNotBeNull();

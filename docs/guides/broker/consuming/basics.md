@@ -180,7 +180,7 @@ services.AddSilverback()
 
 ### Apply Rules
 
-Use `ApplyTo`, `Exclude`, and `ApplyWhen` to control which exceptions are handled and when. The `ApplyWhen` and `Publish` functions receive the `IRawInboundEnvelope` (and optionally the exception), not the deserialized message.
+Use `ApplyTo`, `Exclude`, and `ApplyWhen` to control which exceptions are handled and when. The `ApplyWhen` function receives the `IRawInboundEnvelope` (and optionally the exception), not the deserialized message.
 
 The `MoveTo` policy accepts either the name of a topic or the friendly name of an endpoint already configured in a producer.
 
@@ -194,16 +194,33 @@ The `MoveTo` policy accepts either the name of a topic or the friendly name of a
     .ThenSkip());
 ```
 
-### Publish Events
+### Callbacks
 
-You can publish a message when a policy is applied (for logging, alerts, etc.).
+You can execute custom code when a policy is about to be applied (for logging, alerts, etc.), registering a callback such as <xref:Silverback.Messaging.Consuming.ErrorHandling.ISkipMessageErrorPolicyCallback>.
 
 ```csharp
-.OnError(policy => policy
-    .Retry(3, retryPolicy => retryPolicy.WithInterval(TimeSpan.FromSeconds(1)))
-    .ThenSkip(skipPolicy => skipPolicy
-        .Publish(envelope => new ProcessingFailedEvent(envelope))));
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(...)
+    .AddScopedErrorPolicyCallback<SkippedMessagesAlerter>();
 ```
+
+```csharp
+public class SkippedMessagesAlerter : ISkipMessageErrorPolicyCallback
+{
+    private readonly IAlertService _alertService;
+
+    public SkippedMessagesAlerter(IAlertService alertService)
+    {
+        _alertService = alertService;
+    }
+
+    public Task OnSkippingMessageAsync(IRawInboundEnvelope envelope, Exception exception) =>
+        _alertService.NotifyAsync(exception);
+}
+```
+
+See [Callbacks](xref:error-policies#callbacks) for the available callbacks and details.
 
 ## Additional Resources
 

@@ -57,6 +57,12 @@ public record SkipMessageErrorPolicy : ErrorPolicyBase
             _logger = logger;
         }
 
+        internal override ValueTask InvokePolicyCallbacksAsync(
+            ErrorPolicyCallbacksInvoker callbacksInvoker,
+            IRawInboundEnvelope envelope,
+            Exception exception) =>
+            callbacksInvoker.InvokeAsync<ISkipMessageErrorPolicyCallback>(callback => callback.OnSkippingMessageAsync(envelope, exception));
+
         protected override async Task<bool> ApplyPolicyAsync(
             ConsumerPipelineContext context,
             Exception exception)
