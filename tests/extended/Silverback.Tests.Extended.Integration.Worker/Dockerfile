@@ -6,7 +6,11 @@ FROM ${SDK_IMAGE} AS build
 WORKDIR /src
 COPY . .
 RUN mkdir -p /src/nuget
-RUN --mount=type=cache,target=/root/.nuget/packages dotnet publish tests/extended/Silverback.Tests.Extended.Integration.Worker/Silverback.Tests.Extended.Integration.Worker.csproj -c Release -o /app /p:RunAnalyzers=false
+RUN --mount=type=cache,target=/root/.nuget/packages \
+    dotnet publish tests/extended/Silverback.Tests.Extended.Integration.Worker/Silverback.Tests.Extended.Integration.Worker.csproj \
+        -c Release \
+        -o /app \
+        /p:RunAnalyzers=false
 
 FROM ${SDK_IMAGE}
 WORKDIR /app

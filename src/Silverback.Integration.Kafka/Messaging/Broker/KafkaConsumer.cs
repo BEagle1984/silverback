@@ -215,14 +215,14 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 _offsets?.UntrackPartition(offset.TopicPartition);
             }
 
-            foreach (RollbackPartition partition in retained.Where(IsCurrentRollback))
+            foreach (TopicPartitionOffset rollbackOffset in retained.Where(IsCurrentRollback).Select(partition => partition.Offset))
             {
-                if (partition.Offset.Offset != Offset.Unset)
-                    Client.Seek(partition.Offset);
+                if (rollbackOffset.Offset != Offset.Unset)
+                    Client.Seek(rollbackOffset);
 
-                _channelsManager.StartReading(partition.Offset.TopicPartition);
-                Client.Resume([partition.Offset.TopicPartition]);
-                _rollingBackPartitions.Remove(partition.Offset.TopicPartition);
+                _channelsManager.StartReading(rollbackOffset.TopicPartition);
+                Client.Resume([rollbackOffset.TopicPartition]);
+                _rollingBackPartitions.Remove(rollbackOffset.TopicPartition);
             }
         }
     }
@@ -460,9 +460,9 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                         return;
                 }
 
-                foreach (RollbackPartition partition in current)
+                foreach (TopicPartitionOffset rollbackOffset in current.Select(partition => partition.Offset))
                 {
-                    TopicPartitionOffset offset = partition.Offset;
+                    TopicPartitionOffset offset = rollbackOffset;
 
                     // The pending poll may have discovered this shared partition's first record after rollback began
                     if (offset.Offset == Offset.Unset &&
@@ -479,10 +479,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                     }
 
                     // The old channel was removed by StopChannelAsync; no sequence disposal is performed under this lock
-                    _channelsManager.StartReading(partition.Offset.TopicPartition);
-                    Client.Resume([partition.Offset.TopicPartition]);
-                    _rollingBackPartitions.Remove(partition.Offset.TopicPartition);
-                    _logger.LogPartitionResumed(partition.Offset.TopicPartition, this);
+                    _channelsManager.StartReading(rollbackOffset.TopicPartition);
+                    Client.Resume([rollbackOffset.TopicPartition]);
+                    _rollingBackPartitions.Remove(rollbackOffset.TopicPartition);
+                    _logger.LogPartitionResumed(rollbackOffset.TopicPartition, this);
                 }
             }
         }

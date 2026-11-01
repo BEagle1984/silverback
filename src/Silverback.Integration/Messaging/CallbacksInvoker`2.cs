@@ -121,11 +121,7 @@ internal abstract class CallbacksInvoker<TCallbackBase, TException>
                 TryInvoke(service, action);
             }
         }
-        catch (TException)
-        {
-            throw;
-        }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not TException)
         {
             throw CreateInvocationException(
                 $"Error occurred invoking the callbacks of type {typeof(TCallback).Name}. " +
@@ -157,11 +153,7 @@ internal abstract class CallbacksInvoker<TCallbackBase, TException>
                 await TryInvokeAsync(service, action).ConfigureAwait(false);
             }
         }
-        catch (TException)
-        {
-            throw;
-        }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not TException)
         {
             throw CreateInvocationException(
                 $"Error occurred invoking the callbacks of type {typeof(TCallback).Name}. " +

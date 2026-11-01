@@ -7,7 +7,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet build "tests/extended/Silverback.Tests.Extended.TestBench.Consumer/Silverback.Tests.Extended.TestBench.Consumer.csproj" -c Release -o /app/build
+RUN dotnet build "tests/extended/Silverback.Tests.Extended.TestBench.Consumer/Silverback.Tests.Extended.TestBench.Consumer.csproj" \
+    -c Release \
+    -o /app/build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS tools
 RUN dotnet tool install --global dotnet-stack
@@ -17,7 +19,10 @@ RUN dotnet tool install --global dotnet-gcdump
 RUN dotnet tool install --global dotnet-monitor
 
 FROM build AS publish
-RUN dotnet publish "tests/extended/Silverback.Tests.Extended.TestBench.Consumer/Silverback.Tests.Extended.TestBench.Consumer.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "tests/extended/Silverback.Tests.Extended.TestBench.Consumer/Silverback.Tests.Extended.TestBench.Consumer.csproj" \
+    -c Release \
+    -o /app/publish \
+    /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

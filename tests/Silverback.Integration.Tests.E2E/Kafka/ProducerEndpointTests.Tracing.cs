@@ -24,7 +24,7 @@ public partial class ProducerEndpointTests
         using ActivityListener listener = new()
         {
             ShouldListenTo = source => source.Name == "Silverback.Integration.Produce",
-            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded,
             ActivityStopped = stoppedActivities.Enqueue
         };
         ActivitySource.AddActivityListener(listener);

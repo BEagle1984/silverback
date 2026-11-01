@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 namespace Silverback.Tests.Logging;
@@ -20,6 +21,7 @@ public class LoggerSubstitute<T> : ILogger<T>
         _logger = new LoggerSubstitute(new LoggerSubstituteFactory(minLevel));
     }
 
+    [AssertionMethod]
     public void Received(
         LogLevel logLevel,
         Type? exceptionType,
@@ -28,6 +30,7 @@ public class LoggerSubstitute<T> : ILogger<T>
         string? exceptionMessage = null) =>
         _logger.Received(logLevel, exceptionType, message, eventId, exceptionMessage);
 
+    [AssertionMethod]
     public void DidNotReceive(
         LogLevel logLevel,
         Type? exceptionType,

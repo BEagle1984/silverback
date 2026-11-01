@@ -24,6 +24,11 @@ steps:
       projectVersion: '5.0.0'
       extraProperties: |
         sonar.exclusions=**/obj/**,**/*.dll,docs/**
+        sonar.issue.ignore.multicriteria=primaryConstructor,conditionalExpression
+        sonar.issue.ignore.multicriteria.primaryConstructor.ruleKey=external_roslyn:IDE0290
+        sonar.issue.ignore.multicriteria.primaryConstructor.resourceKey=**/*.cs
+        sonar.issue.ignore.multicriteria.conditionalExpression.ruleKey=external_roslyn:IDE0046
+        sonar.issue.ignore.multicriteria.conditionalExpression.resourceKey=**/*.cs
         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.*.opencover.xml
         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
     displayName: 'Prepare code analysis on SonarCloud'

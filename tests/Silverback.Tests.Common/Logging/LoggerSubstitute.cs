@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 namespace Silverback.Tests.Logging;
@@ -21,6 +22,7 @@ public class LoggerSubstitute : ILogger
 
     public LogLevel MinLevel => _factory.MinLevel;
 
+    [AssertionMethod]
     public void Received(
         LogLevel logLevel,
         Type? exceptionType,
@@ -38,6 +40,7 @@ public class LoggerSubstitute : ILogger
         throw new LoggerSubstituteException($"No matching call received. Received calls: {receivedCallsDump}");
     }
 
+    [AssertionMethod]
     public void DidNotReceive(
         LogLevel logLevel,
         Type? exceptionType,

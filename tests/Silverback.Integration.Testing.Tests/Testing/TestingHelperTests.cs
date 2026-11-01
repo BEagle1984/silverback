@@ -38,7 +38,7 @@ public class TestingHelperTests
     {
         TestingHelper testingHelper = CreateTestingHelper(ConsumerStatus.Started);
 
-        return testingHelper.WaitUntilConnectedAsync(false, WaitTimeout).AsTask().WaitAsync(TestTimeout);
+        return Should.NotThrowAsync(testingHelper.WaitUntilConnectedAsync(false, WaitTimeout).AsTask().WaitAsync(TestTimeout));
     }
 
     private static TestingHelper CreateTestingHelper(ConsumerStatus consumerStatus)
