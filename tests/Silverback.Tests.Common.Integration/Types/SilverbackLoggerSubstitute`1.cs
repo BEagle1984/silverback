@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Tests.Logging;
@@ -16,6 +17,7 @@ public class SilverbackLoggerSubstitute<TCategory> : ISilverbackLogger<TCategory
 
     public bool IsEnabled(LogEvent logEvent) => _logger.IsEnabled(logEvent.Level);
 
+    [AssertionMethod]
     public void Received(
         LogLevel logLevel,
         Type? exceptionType,
@@ -24,6 +26,7 @@ public class SilverbackLoggerSubstitute<TCategory> : ISilverbackLogger<TCategory
         string? exceptionMessage = null) =>
         _logger.Received(logLevel, exceptionType, message, eventId, exceptionMessage);
 
+    [AssertionMethod]
     public void DidNotReceive(
         LogLevel logLevel,
         Type? exceptionType,

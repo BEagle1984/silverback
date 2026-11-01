@@ -6,6 +6,8 @@
     <RootNamespace>Silverback.Tests</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     <Nullable>enable</Nullable>
+    <!-- Emit the conditional JetBrains annotations, so Sonar recognizes the [AssertionMethod] helpers in other test projects -->
+    <DefineConstants>$(DefineConstants);JETBRAINS_ANNOTATIONS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild">
