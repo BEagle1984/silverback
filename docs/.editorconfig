@@ -12,3 +12,10 @@ max_line_length = 1000
 indent_size = 2
 tab_width = 2
 
+[*.md]
+indent_size = 2
+tab_width = 2
+
+# Generated documentation, excluded from the code cleanup
+[{v4/**,_site/**,api/**}]
+generated_code = true

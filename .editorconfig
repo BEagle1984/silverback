@@ -163,3 +163,7 @@ resharper_replace_conditional_expression_with_null_coalescing_highlighting = war
 
 [*.{csproj,props,yml,yaml,json,xml,config}]
 indent_size = 2
+
+[*.md]
+indent_size = 2
+tab_width = 2
