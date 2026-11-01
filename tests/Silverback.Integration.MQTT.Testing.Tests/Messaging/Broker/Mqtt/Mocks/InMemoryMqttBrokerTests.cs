@@ -44,11 +44,12 @@ public class InMemoryMqttBrokerTests
         using InMemoryMqttBroker broker = new();
         MockedMqttClient client = await CreateConnectedClientAsync(broker);
         using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(5));
+        CancellationToken cancellationToken = cancellationTokenSource.Token;
 
         Task producer = Task.Run(
             async () =>
             {
-                for (int i = 0; i < 10_000 && !cancellationTokenSource.IsCancellationRequested; i++)
+                for (int i = 0; i < 10_000 && !cancellationToken.IsCancellationRequested; i++)
                 {
                     // Publish to a new topic every few messages to also grow the dictionary
                     await client.PublishAsync(CreateMessage($"topic{i / 10}"));

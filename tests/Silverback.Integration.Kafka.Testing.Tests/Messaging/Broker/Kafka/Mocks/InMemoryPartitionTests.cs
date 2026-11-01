@@ -49,11 +49,12 @@ public class InMemoryPartitionTests
     {
         InMemoryPartition partition = new(0, new InMemoryTopic("topic", "server", 1));
         using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(5));
+        CancellationToken cancellationToken = cancellationTokenSource.Token;
 
         Task producer = Task.Run(
             () =>
             {
-                for (int i = 0; i < 10_000 && !cancellationTokenSource.IsCancellationRequested; i++)
+                for (int i = 0; i < 10_000 && !cancellationToken.IsCancellationRequested; i++)
                 {
                     partition.Add(CreateMessage((byte)i), Guid.Empty);
                 }
