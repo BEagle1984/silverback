@@ -59,6 +59,7 @@ public partial class BatchProcessingTests
         }
 
         await Helper.WaitUntilAllMessagesAreCommittedAsync();
+        await AsyncTestingUtil.WaitAsync(() => offsetCommittedCallback.CallsCount >= 5);
 
         receivedBatches.ShouldBe(5);
         offsetCommittedCallback.CallsCount.ShouldBe(5);
