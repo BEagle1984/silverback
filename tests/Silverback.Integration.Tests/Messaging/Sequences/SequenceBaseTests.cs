@@ -175,6 +175,110 @@ public class SequenceBaseTests
         await sequenceStore.Received(1).RemoveAsync(sequence.SequenceId);
     }
 
+    [Fact]
+    public async Task CompleteAsync_ShouldAbort_WhenProcessingAlreadyCompleted()
+    {
+        TestSequence sequence = CreateSequence(new HookLogger());
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        await using IAsyncEnumerator<IRawInboundEnvelope> enumerator = stream.GetAsyncEnumerator();
+        sequence.Context.ProcessingTask = Task.CompletedTask;
+
+        // Pull the message and stop enumerating: its push waits for the next pull, which never comes (and, being the first
+        // message, nothing but the sequencer monitor is watching the processing task yet)
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), null, true);
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        await sequence.CompleteFromTestAsync().WaitAsync(Timeout);
+        AddToSequenceResult addResult = await addTask.WaitAsync(Timeout);
+
+        sequence.IsAborted.ShouldBeTrue();
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.EnumerationAborted);
+        sequence.IsCompleting.ShouldBeFalse();
+        addResult.IsAborted.ShouldBeTrue();
+        sequence.Dispose();
+    }
+
+    [Fact]
+    public async Task CompleteAsync_ShouldNotSetCompleting_WhenAlreadyAborted()
+    {
+        TestSequence sequence = CreateSequence(new HookLogger());
+        await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted).WaitAsync(Timeout);
+
+        await sequence.CompleteFromTestAsync().WaitAsync(Timeout);
+
+        sequence.IsCompleting.ShouldBeFalse();
+        sequence.IsAborted.ShouldBeTrue();
+        sequence.Dispose();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The hook completes before the disposal")]
+    public async Task CompleteAsync_ShouldNotBlock_WhenProcessingCompletesWhileCompleting()
+    {
+        HookLogger logger = new();
+        TestSequence sequence = CreateSequence(logger);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        await using IAsyncEnumerator<IRawInboundEnvelope> enumerator = stream.GetAsyncEnumerator();
+        TaskCompletionSource processingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        sequence.Context.ProcessingTask = processingTaskCompletionSource.Task;
+        Task? earlyExitHandlingTask = null;
+
+        // Pull the message and stop enumerating: its push waits for the next pull, which never comes
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), null, true);
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        // Complete the processing while the completion is starting and handle the early exit as the TransactionHandlerConsumerBehavior
+        // does: abort unless completing, otherwise commit and dispose (which cancels the pending push)
+        logger.OnLog(
+            "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
+            () =>
+            {
+                processingTaskCompletionSource.SetResult();
+
+                earlyExitHandlingTask = sequence.IsCompleting || sequence.IsComplete
+                    ? Task.Run(
+                        () =>
+                        {
+                            ((ISequenceImplementation)sequence).NotifyProcessingCompleted();
+                            sequence.Dispose();
+                        })
+                    : Task.Run(() => sequence.AbortAsync(SequenceAbortReason.EnumerationAborted));
+            });
+
+        await sequence.CompleteFromTestAsync().WaitAsync(Timeout);
+        await earlyExitHandlingTask.ShouldNotBeNull().WaitAsync(Timeout);
+        await addTask.WaitAsync(Timeout);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldCompleteSequence_WhenLastMessageIsAddedAfterProcessingCompleted()
+    {
+        // E.g., a chunk sequence in a batch, whose processing task completes when the batch accepts the message
+        TestSequence sequence = CreateSequence(new HookLogger());
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        sequence.Context.ProcessingTask = Task.CompletedTask;
+
+        Task<int> enumerationTask = Task.Run(async () =>
+        {
+            int count = 0;
+
+            await foreach (IRawInboundEnvelope dummy in stream)
+            {
+                count++;
+            }
+
+            return count;
+        });
+        AddToSequenceResult addResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+
+        int enumeratedCount = await enumerationTask.WaitAsync(Timeout);
+
+        addResult.IsSuccess.ShouldBeTrue();
+        sequence.IsComplete.ShouldBeTrue();
+        enumeratedCount.ShouldBe(1);
+        sequence.Dispose();
+    }
+
     private static TestSequence CreateSequence(HookLogger logger, ISequenceStore? sequenceStore = null)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
@@ -209,6 +313,8 @@ public class SequenceBaseTests
         {
             TotalLength = 1;
         }
+
+        public Task CompleteFromTestAsync() => CompleteAsync();
     }
 
     // Runs the registered action (once) when the message with the specified template is logged, to deterministically reproduce
