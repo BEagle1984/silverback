@@ -46,7 +46,8 @@ steps:
     displayName: 'Publish test results'
   - script: |
       mkdir -p $(Build.ArtifactStagingDirectory)/blame
-      find tests -path '*/TestResults/*' \( -name 'Sequence_*.xml' -o -name '*.dmp' \) -exec cp --parents {} $(Build.ArtifactStagingDirectory)/blame \;
+      # Skip the copies attached to the TRX results (TestResults/<run>/In/<machine>/)
+      find tests -path '*/TestResults/*' -not -path '*/In/*' \( -name 'Sequence_*.xml' -o -name '*.dmp' \) -exec cp --parents {} $(Build.ArtifactStagingDirectory)/blame \;
       if [ -n "$(ls -A $(Build.ArtifactStagingDirectory)/blame)" ]; then
         echo "##vso[artifact.upload artifactname=blame-$(System.JobAttempt)]$(Build.ArtifactStagingDirectory)/blame"
       fi
