@@ -275,9 +275,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         lock (_assignmentLock)
         {
-            // The starting thread sets IsStarted and resets IsStarting without synchronization while this loop is already
-            // running: rely only on the stopping flag, which is set under this lock, and on the client status
-            if (IsStopping || Client.Status is not (ClientStatus.Initialized or ClientStatus.Initializing))
+            if (!IsStartedAndNotStopping())
                 return;
 
             IReadOnlyCollection<KafkaOffset> replayOffsets = _offsets.GetReplayOffsets();

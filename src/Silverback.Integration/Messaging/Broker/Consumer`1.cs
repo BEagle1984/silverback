@@ -38,6 +38,16 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
     private CancellationTokenSource _processingCancellationTokenSource = new();
 
+    // The start and stop flags are updated under the start/stop semaphore but read from any thread (e.g. by the consume loop and the
+    // broker callbacks). They are volatile and IsStartedAndNotStopping reads them in the reverse order of their updates (the start
+    // sets IsStarted before resetting IsStarting, the stop resets IsStarted before IsStopping): a starting consumer is never seen
+    // as stopped, nor a stopped consumer as started.
+    private volatile bool _isStarting;
+
+    private volatile bool _isStarted;
+
+    private volatile bool _isStopping;
+
     private bool _isReconnecting;
 
     private bool _isDisposed;
@@ -114,17 +124,29 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <summary>
     ///     Gets a value indicating whether the consumer is starting (or connecting to start).
     /// </summary>
-    protected bool IsStarting { get; private set; }
+    protected bool IsStarting
+    {
+        get => _isStarting;
+        private set => _isStarting = value;
+    }
 
     /// <summary>
     ///     Gets a value indicating whether the consumer is started.
     /// </summary>
-    protected bool IsStarted { get; private set; }
+    protected bool IsStarted
+    {
+        get => _isStarted;
+        private set => _isStarted = value;
+    }
 
     /// <summary>
     ///     Gets a value indicating whether the consumer is being stopped.
     /// </summary>
-    protected bool IsStopping { get; private set; }
+    protected bool IsStopping
+    {
+        get => _isStopping;
+        private set => _isStopping = value;
+    }
 
     /// <inheritdoc cref="IConsumer.TriggerReconnectAsync" />
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
@@ -195,6 +217,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
             await StartCoreAsync().ConfigureAwait(false);
 
+            // Set before resetting IsStarting, as IsStartedAndNotStopping requires
             IsStarted = true;
 
             _logger.LogConsumerTrace(this, "Consumer started.");
@@ -450,7 +473,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     ///     A value indicating whether the consumer is started and not being stopped.
     /// </returns>
     protected bool IsStartedAndNotStopping() =>
-        Client.Status is ClientStatus.Initialized or ClientStatus.Initializing && (IsStarting || IsStarted) && !IsStopping;
+        Client.Status is ClientStatus.Initialized or ClientStatus.Initializing && !IsStopping && (IsStarting || IsStarted);
 
     private static ValueTask ExecutePipelineAsync(ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
@@ -486,6 +509,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             if (waitUntilStopped)
                 await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
 
+            // Reset before IsStopping, as IsStartedAndNotStopping requires
             IsStarted = false;
         }
         catch (Exception ex)

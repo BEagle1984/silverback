@@ -103,6 +103,38 @@ public class ConsumerTests
     }
 
     [Fact]
+    public async Task StopAsync_ShouldNotBeStartedAndNotStopping_WhileStoppingAndOnceStopped()
+    {
+        using TestConsumer consumer = CreateConsumer();
+        TaskCompletionSource<bool> releaseStopCore = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        consumer.StopGate = releaseStopCore.Task;
+        await consumer.StartAsync();
+
+        consumer.StartedAndNotStopping.ShouldBeTrue();
+
+        Task stopping = consumer.StopAsync().AsTask();
+
+        try
+        {
+            consumer.Started.ShouldBeTrue();
+            consumer.Stopping.ShouldBeTrue();
+            consumer.StartedAndNotStopping.ShouldBeFalse();
+
+            releaseStopCore.TrySetResult(true);
+            await stopping.WaitAsync(Timeout);
+
+            consumer.Started.ShouldBeFalse();
+            consumer.Stopping.ShouldBeFalse();
+            consumer.StartedAndNotStopping.ShouldBeFalse();
+        }
+        finally
+        {
+            releaseStopCore.TrySetResult(true);
+            await stopping.WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
     public async Task StopAsync_ShouldStopReadingBeforeCancelingProcessing()
     {
         CancellationTokenCapturingBehavior behavior = new();
@@ -272,6 +304,8 @@ public class ConsumerTests
         public bool Started => IsStarted;
 
         public bool Stopping => IsStopping;
+
+        public bool StartedAndNotStopping => IsStartedAndNotStopping();
 
         public TestOffset CurrentIdentifier { get; set; } = new();
 
