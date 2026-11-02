@@ -34,6 +34,8 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private bool _isDisposed;
 
+    private volatile bool _isConnectedEventRaised;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttConsumer" /> class.
     /// </summary>
@@ -135,7 +137,15 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     /// <inheritdoc cref="Consumer{TIdentifier}.StartCoreAsync" />
     protected override ValueTask StartCoreAsync()
     {
+        // Resuming on a live connection doesn't raise the Connected event, which would otherwise restore the status
+        // (restored before reading, otherwise a buffered message could be consumed while the status is still Stopped)
+        // The native client connects before the Connected event is raised and disconnects before the Disconnected event is
+        // raised: if the Connected event is still pending or the connection was lost, the Connected event restores the status
+        if (_isConnectedEventRaised && Client.IsConnected)
+            EnsureConnectedStatus();
+
         _channelsManager.StartReading();
+
         return ValueTask.CompletedTask;
     }
 
@@ -195,8 +205,11 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private async ValueTask OnClientConnectedAsync(BrokerClient client)
     {
+        _isConnectedEventRaised = true;
+
         await StartAsync().ConfigureAwait(false);
-        SetConnectedStatus();
+
+        EnsureConnectedStatus();
     }
 
     private ValueTask OnClientSubscribedAsync(BrokerClient client)
@@ -215,6 +228,8 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private async ValueTask OnClientDisconnectedAsync(BrokerClient client)
     {
+        _isConnectedEventRaised = false;
+
         // Connection loss does not raise Disconnecting, so release pending native receive callbacks here too
         _channelsManager.CompleteAll();
 
@@ -226,6 +241,13 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         // Old deliveries belong to the disconnected session and must be replayed by the broker
         _channelsManager.ResetAll();
         RevertConnectedStatus();
+    }
+
+    private void EnsureConnectedStatus()
+    {
+        // Starting on a live connection and the Connected event both restore the status: don't record it twice
+        if (StatusInfo.Status < ConsumerStatus.Connected)
+            SetConnectedStatus();
     }
 
     private ConsumedApplicationMessage? PullPendingConsumedMessage(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)

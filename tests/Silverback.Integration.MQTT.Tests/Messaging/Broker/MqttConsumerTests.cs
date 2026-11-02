@@ -190,6 +190,154 @@ public class MqttConsumerTests
     }
 
     [Fact]
+    public async Task StartAsync_ShouldRestoreConnectedStatus_WhenConnectionWasNotClosed()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        await harness.ConnectAsync();
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
+
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+
+        await harness.Consumer.StartAsync();
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
+        harness.Consumer.StatusInfo.History
+            .TakeLast(2)
+            .Select(change => change.Status)
+            .ShouldBe([ConsumerStatus.Stopped, ConsumerStatus.Connected]);
+
+        await harness.DeliverAsync(2);
+        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
+    }
+
+    [Fact]
+    public async Task StartAsync_ShouldRestoreConnectedStatus_BeforeConsumingBufferedDeliveries()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        await harness.ConnectAsync();
+        await harness.DeliverAsync(0);
+        await harness.Behavior.FirstStarted.Task.WaitAsync(ReconnectTimeout);
+        await harness.DeliverAsync(1);
+
+        Task stopping = harness.Consumer.StopAsync().AsTask();
+
+        await harness.Behavior.Stopping.Task.WaitAsync(ReconnectTimeout);
+        harness.Behavior.ReleaseFirst.TrySetResult(true);
+        await stopping.WaitAsync(ReconnectTimeout);
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+
+        // Give the reader the chance to take the buffered delivery while the consumer is still starting: if the status is
+        // restored after the reading was started, the delivery is consumed while the status is still Stopped
+        TaskCompletionSource<bool> processingStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        harness.Behavior.BeforeProcessing = () =>
+        {
+            processingStarted.TrySetResult(true);
+
+            return Task.CompletedTask;
+        };
+        harness.BeforeIsConnectedRead = () => processingStarted.Task.Wait(TimeSpan.FromMilliseconds(250));
+
+        try
+        {
+            await harness.Consumer.StartAsync();
+        }
+        finally
+        {
+            harness.BeforeIsConnectedRead = null;
+        }
+
+        await harness.Behavior.BufferedMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
+    }
+
+    [Fact]
+    public async Task StartAsync_ShouldNotReportConnected_WhenClientIsNotConnectedYet()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        TaskCompletionSource<bool> connecting = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> subscribed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        harness.Client.Subscribed.AddHandler(_ =>
+        {
+            subscribed.TrySetResult(true);
+
+            return ValueTask.CompletedTask;
+        });
+
+        // Hold the native connection back: the client is initialized but not connected
+        harness.PendingReceive = connecting.Task;
+
+        try
+        {
+            await harness.Client.ConnectAsync().AsTask().WaitAsync(ReconnectTimeout);
+            await harness.Consumer.StartAsync();
+
+            harness.Client.IsConnected.ShouldBeFalse();
+            harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Started);
+
+            connecting.TrySetResult(true);
+            await subscribed.Task.WaitAsync(ReconnectTimeout);
+
+            harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
+        }
+        finally
+        {
+            connecting.TrySetResult(true);
+        }
+    }
+
+    [Fact]
+    public async Task StartAsync_ShouldNotReportConnected_WhenConnectedEventIsNotRaisedYet()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        TaskCompletionSource<bool> initialized = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> subscribed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        MqttConsumer consumer = harness.Consumer;
+        ConsumerStatus? statusAfterStart = null;
+
+        harness.Client.Subscribed.AddHandler(_ =>
+        {
+            subscribed.TrySetResult(true);
+
+            return ValueTask.CompletedTask;
+        });
+
+        // The native client is already connected, but the Connected event is not raised until the connection is completed
+        harness.BeforeConnected = async () =>
+        {
+            await initialized.Task.WaitAsync(ReconnectTimeout);
+            await consumer.StartAsync();
+
+            statusAfterStart = consumer.StatusInfo.Status;
+        };
+
+        try
+        {
+            await harness.Client.ConnectAsync().AsTask().WaitAsync(ReconnectTimeout);
+            initialized.TrySetResult(true);
+            await subscribed.Task.WaitAsync(ReconnectTimeout);
+
+            statusAfterStart.ShouldBe(ConsumerStatus.Started);
+            consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
+            consumer.StatusInfo.History
+                .Select(change => change.Status)
+                .ShouldBe([ConsumerStatus.Started, ConsumerStatus.Connected]);
+        }
+        finally
+        {
+            harness.BeforeConnected = null;
+            initialized.TrySetResult(true);
+        }
+    }
+
+    [Fact]
     public async Task StartAsync_ShouldRetryRolledBackDelivery_WhenStoppedBeforeRetrying()
     {
         await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
@@ -608,7 +756,12 @@ public class MqttConsumerTests
         public ReconnectConsumerHarness(MqttQualityOfServiceLevel qualityOfServiceLevel, int degreeOfParallelism = 1)
         {
             _qualityOfServiceLevel = qualityOfServiceLevel;
-            _nativeClient.IsConnected.Returns(_ => Volatile.Read(ref _isConnected));
+            _nativeClient.IsConnected.Returns(_ =>
+            {
+                BeforeIsConnectedRead?.Invoke();
+
+                return Volatile.Read(ref _isConnected);
+            });
 
             _nativeClient.When(client => client.ApplicationMessageReceivedAsync += Arg.Any<Func<MqttApplicationMessageReceivedEventArgs, Task>>())
                 .Do(call => _messageReceived = call.Arg<Func<MqttApplicationMessageReceivedEventArgs, Task>>());
@@ -689,13 +842,15 @@ public class MqttConsumerTests
 
         public Action? BeforeAcknowledge { get; set; }
 
+        public Action? BeforeIsConnectedRead { get; set; }
+
+        public Func<Task>? BeforeConnected { get; set; }
+
         public TaskCompletionSource<bool> Reconnecting { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public TaskCompletionSource<bool> Reconnected { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public int Disconnections { get; private set; }
-
-        private Func<Task>? BeforeConnected { get; set; }
 
         public void LoseConnection() => Volatile.Write(ref _isConnected, false);
 
