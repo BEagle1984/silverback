@@ -36,13 +36,13 @@ public class MessageStreamEnumerableTests
             success = true;
         });
 
-        await stream.PushAsync(new Message(1));
-        await stream.PushAsync(new Message(2));
-        await stream.PushAsync(new Message(3));
+        await stream.PushAsync(new Message(1)).WaitAsync(Timeout);
+        await stream.PushAsync(new Message(2)).WaitAsync(Timeout);
+        await stream.PushAsync(new Message(3)).WaitAsync(Timeout);
 
-        await stream.CompleteAsync();
+        await stream.CompleteAsync().WaitAsync(Timeout);
 
-        await enumerationTask;
+        await enumerationTask.WaitAsync(Timeout);
 
         success.ShouldBeTrue();
     }
@@ -66,13 +66,13 @@ public class MessageStreamEnumerableTests
             success = true;
         });
 
-        await stream.PushAsync(new Message(1));
-        await stream.PushAsync(new Message(2));
-        await stream.PushAsync(new Message(3));
+        await stream.PushAsync(new Message(1)).WaitAsync(Timeout);
+        await stream.PushAsync(new Message(2)).WaitAsync(Timeout);
+        await stream.PushAsync(new Message(3)).WaitAsync(Timeout);
 
-        await stream.CompleteAsync();
+        await stream.CompleteAsync().WaitAsync(Timeout);
 
-        await enumerationTask;
+        await enumerationTask.WaitAsync(Timeout);
 
         success.ShouldBeTrue();
     }
@@ -87,12 +87,12 @@ public class MessageStreamEnumerableTests
         Task pushTask2 = stream.PushAsync(new Message(2));
         Task pushTask3 = stream.PushAsync(new Message(3));
 
-        enumerator.MoveNext();
+        await MoveNextAsync(enumerator);
 
         await Task.Delay(100);
         pushTask1.IsCompleted.ShouldBeFalse();
 
-        enumerator.MoveNext();
+        await MoveNextAsync(enumerator);
 
         await AsyncTestingUtil.WaitAsync(() => pushTask1.IsCompleted);
         pushTask1.IsCompleted.ShouldBeTrue();
@@ -101,7 +101,7 @@ public class MessageStreamEnumerableTests
         pushTask2.IsCompleted.ShouldBeFalse();
         pushTask3.IsCompleted.ShouldBeFalse();
 
-        enumerator.MoveNext();
+        await MoveNextAsync(enumerator);
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
         pushTask2.IsCompleted.ShouldBeTrue();
@@ -118,12 +118,12 @@ public class MessageStreamEnumerableTests
         Task pushTask2 = stream.PushAsync(new Message(2));
         Task pushTask3 = stream.PushAsync(new Message(3));
 
-        await enumerator.MoveNextAsync();
+        await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout);
 
         await Task.Delay(100);
         pushTask1.IsCompleted.ShouldBeFalse();
 
-        await enumerator.MoveNextAsync();
+        await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout);
 
         await AsyncTestingUtil.WaitAsync(() => pushTask1.IsCompleted);
         pushTask1.IsCompleted.ShouldBeTrue();
@@ -132,7 +132,7 @@ public class MessageStreamEnumerableTests
         pushTask2.IsCompleted.ShouldBeFalse();
         pushTask3.IsCompleted.ShouldBeFalse();
 
-        await enumerator.MoveNextAsync();
+        await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout);
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
         pushTask2.IsCompleted.ShouldBeTrue();
@@ -190,26 +190,57 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
-    public async Task CompleteAsync_ShouldCompleteWhilePushing()
+    public async Task CompleteAsync_ShouldWaitForPendingPushWhileEnumerating()
     {
-        bool pushed = false;
         MessageStreamEnumerable<Message> stream = new();
+        using IEnumerator<Message> enumerator = stream.GetEnumerator();
 
-        Task pushTask = Task.Run(async () =>
-        {
-            await stream.PushAsync(new Message(42));
-            pushed = true;
-        });
+        // PushAsync takes the write semaphore before returning, so the push is guaranteed to be pending when the completion starts
+        Task pushTask = stream.PushAsync(new Message(42));
+        Task completeTask = stream.CompleteAsync();
 
-        pushed.ShouldBeFalse();
+        // The completion waits for the pending push, which in turn waits for the message to be processed
+        await Task.Delay(100);
+        pushTask.IsCompleted.ShouldBeFalse();
+        completeTask.IsCompleted.ShouldBeFalse();
 
-        await stream.CompleteAsync();
+        // The pending message is still delivered
+        (await MoveNextAsync(enumerator)).ShouldBeTrue();
+        enumerator.Current.Value.ShouldBe(42);
+        pushTask.IsCompleted.ShouldBeFalse();
+        completeTask.IsCompleted.ShouldBeFalse();
 
-        // Give the other thread a chance to exit the MoveNext
-        await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
+        // Moving forward acknowledges the message, then the enumeration ends
+        (await MoveNextAsync(enumerator)).ShouldBeFalse();
+        await pushTask.WaitAsync(Timeout);
+        await completeTask.WaitAsync(Timeout);
+    }
 
-        pushed.ShouldBeFalse();
-        pushTask.Status.ShouldBe(TaskStatus.Canceled);
+    [Fact]
+    public async Task CompleteAsync_ShouldWaitForPendingPushWhileAsyncEnumerating()
+    {
+        MessageStreamEnumerable<Message> stream = new();
+        await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
+
+        // PushAsync takes the write semaphore before returning, so the push is guaranteed to be pending when the completion starts
+        Task pushTask = stream.PushAsync(new Message(42));
+        Task completeTask = stream.CompleteAsync();
+
+        // The completion waits for the pending push, which in turn waits for the message to be processed
+        await Task.Delay(100);
+        pushTask.IsCompleted.ShouldBeFalse();
+        completeTask.IsCompleted.ShouldBeFalse();
+
+        // The pending message is still delivered
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+        enumerator.Current.Value.ShouldBe(42);
+        pushTask.IsCompleted.ShouldBeFalse();
+        completeTask.IsCompleted.ShouldBeFalse();
+
+        // Moving forward acknowledges the message, then the enumeration ends
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeFalse();
+        await pushTask.WaitAsync(Timeout);
+        await completeTask.WaitAsync(Timeout);
     }
 
     [Fact]
@@ -266,23 +297,17 @@ public class MessageStreamEnumerableTests
     [Fact]
     public async Task Abort_ShouldAbortWhilePushing()
     {
-        bool pushed = false;
         MessageStreamEnumerable<Message> stream = new();
 
-        Task pushTask = Task.Run(async () =>
-        {
-            await stream.PushAsync(new Message(42));
-            pushed = true;
-        });
-
-        pushed.ShouldBeFalse();
+        // PushAsync takes the write semaphore before returning, so the push is guaranteed to be pending when the stream is aborted
+        Task pushTask = stream.PushAsync(new Message(42));
+        pushTask.IsCompleted.ShouldBeFalse();
 
         stream.Abort();
 
-        // Give the other thread a chance to exit the MoveNext
-        await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
+        Exception? pushException = await Record.ExceptionAsync(() => pushTask.WaitAsync(Timeout));
 
-        pushed.ShouldBeFalse();
+        pushException.ShouldBeAssignableTo<OperationCanceledException>();
         pushTask.Status.ShouldBe(TaskStatus.Canceled);
     }
 
@@ -344,6 +369,10 @@ public class MessageStreamEnumerableTests
         Func<Task> act = async () => await stream.PushAsync(new Message(42));
         await act.ShouldThrowAsync<ObjectDisposedException>();
     }
+
+    // The synchronous enumeration blocks the calling thread, so it is run on the thread pool to be able to time out
+    private static Task<bool> MoveNextAsync(IEnumerator<Message> enumerator) =>
+        Task.Run(enumerator.MoveNext).WaitAsync(Timeout);
 
     private record Message(int Value);
 }
