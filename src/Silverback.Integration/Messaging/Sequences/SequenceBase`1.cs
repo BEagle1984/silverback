@@ -798,7 +798,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             _logger.LogTrace("Waiting for semaphore...");
 
-            Task waitTask = semaphore.WaitAsync();
+            Task waitTask = semaphore.WaitAsync(CancellationToken.None);
 
             // Stop waiting when the sequence is disposed, abandoning the wait instead of canceling it: a canceled waiter might not be
             // removed if the semaphore is disposed in the meantime and would then never complete

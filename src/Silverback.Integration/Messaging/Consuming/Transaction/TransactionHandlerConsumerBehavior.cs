@@ -79,31 +79,16 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             // (-> if the exception bubbled up till this point, it's because it failed to be handled, and it's safer to stop the consumer)
             if (context.Sequence != null)
             {
-                await context.Sequence.AbortAsync(StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken), exception)
+                bool isSequenceExceptionHandled = await HandleSequenceExceptionAsync(
+                        context,
+                        context.Sequence,
+                        exception,
+                        isSequenceProcessingAwaiterStarted,
+                        cancellationToken)
                     .ConfigureAwait(false);
 
-                if (context.Sequence.Length > 0)
-                {
-                    _logger.LogProcessingTrace(context.Envelope, "Awaiting sequence processing completed before rethrowing.");
-                    await context.Sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
-                }
-
-                // The cancellation requested by the consumer stop isn't a processing failure: the sequence was rolled back without
-                // applying the error policies. Rely on the abort reason, since the error policies applied by the abort might have
-                // stopped the consumer, canceling the token in the meantime.
-                bool isStopCancellation = StopCancellationHelper.IsStopCancellation(exception, context.Sequence);
-
-                // The processing takes place in the context of the first element, which is disposed with the sequence by the awaiter:
-                // start it now if the sequence start failed, not to leak the sequence whether the exception is rethrown or not
-                if (context.IsSequenceStart && !isSequenceProcessingAwaiterStarted)
-                    StartSequenceProcessingAwaiter(context, cancellationToken);
-
-                if (!isStopCancellation)
+                if (!isSequenceExceptionHandled)
                     throw;
-
-                // Rolled back to be consumed again
-                if (!context.IsSequenceStart)
-                    context.Dispose();
 
                 return;
             }
@@ -276,6 +261,42 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
                 "{sequenceType} '{sequenceId}' processing completed.",
                 () => [sequence.GetType().Name, sequence.SequenceId]);
         }
+    }
+
+    private async Task<bool> HandleSequenceExceptionAsync(
+        ConsumerPipelineContext context,
+        ISequence sequence,
+        Exception exception,
+        bool isSequenceProcessingAwaiterStarted,
+        CancellationToken cancellationToken)
+    {
+        await sequence.AbortAsync(StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken), exception)
+            .ConfigureAwait(false);
+
+        if (sequence.Length > 0)
+        {
+            _logger.LogProcessingTrace(context.Envelope, "Awaiting sequence processing completed before rethrowing.");
+            await sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
+        }
+
+        // The cancellation requested by the consumer stop isn't a processing failure: the sequence was rolled back without
+        // applying the error policies. Rely on the abort reason, since the error policies applied by the abort might have
+        // stopped the consumer, canceling the token in the meantime.
+        bool isStopCancellation = StopCancellationHelper.IsStopCancellation(exception, sequence);
+
+        // The processing takes place in the context of the first element, which is disposed with the sequence by the awaiter:
+        // start it now if the sequence start failed, not to leak the sequence whether the exception is rethrown or not
+        if (context.IsSequenceStart && !isSequenceProcessingAwaiterStarted)
+            StartSequenceProcessingAwaiter(context, cancellationToken);
+
+        if (!isStopCancellation)
+            return false;
+
+        // Rolled back to be consumed again
+        if (!context.IsSequenceStart)
+            context.Dispose();
+
+        return true;
     }
 
     private async Task RollbackStopCancellationAsync(ConsumerPipelineContext context, Exception exception)
