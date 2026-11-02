@@ -12,7 +12,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Messages;
 
 internal sealed class LazyMessageStreamEnumerable<TMessage>
-    : ILazyMessageStreamEnumerable<TMessage>, ILazyMessageStreamEnumerable, ILazyArgumentValue, IDisposable
+    : ILazyMessageStreamEnumerable<TMessage>, ILazyMessageStreamEnumerable, ILazyStreamArgumentValue, IDisposable
 {
     private readonly TaskCompletionSource<IMessageStreamEnumerable> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -111,6 +111,19 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
         }
 
         return stream.CompleteAsync(cancellationToken);
+    }
+
+    /// <inheritdoc cref="ILazyStreamArgumentValue.NotifySubscriberCompleted" />
+    public void NotifySubscriberCompleted()
+    {
+        MessageStreamEnumerable<TMessage>? stream;
+
+        lock (_syncRoot)
+        {
+            stream = _stream;
+        }
+
+        stream?.Abandon();
     }
 
     public void Dispose()

@@ -350,6 +350,50 @@ public class StreamPublisherTests
     }
 
     [Fact]
+    public async Task PublishAsync_ShouldCompleteStream_WhenObservableSubscriberThrowsWhileCompleting()
+    {
+        TaskCompletionSource invokedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource stopTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AsObservable()
+            .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(Handle));
+
+        // Throwing from OnNext stops the observable and makes Subscribe (and therefore the subscriber) rethrow
+        void Handle(IMessageStreamObservable<TestEventOne> observable) =>
+            observable.Subscribe(_ =>
+            {
+                invokedTaskCompletionSource.SetResult();
+                stopTaskCompletionSource.Task.WaitAsync(Timeout).SafeWait();
+                throw new TestException();
+            });
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider = new();
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
+
+        // The subscriber is invoked as soon as the first message creates the stream
+        Task<int> pushTask = streamProvider.PushAsync(new TestEventOne());
+        await invokedTaskCompletionSource.Task.WaitAsync(Timeout);
+
+        // The completion waits for the pending push, which completes only when the next message is pulled
+        Task completeTask = streamProvider.CompleteAsync().AsTask();
+        await Task.WhenAny(completeTask, Task.Delay(100));
+        completeTask.IsCompleted.ShouldBeFalse();
+
+        stopTaskCompletionSource.SetResult();
+
+        await completeTask.WaitAsync(Timeout);
+        (await pushTask.WaitAsync(Timeout)).ShouldBe(1);
+        Exception? processingException = await Record.ExceptionAsync(() => tasks.Single().WaitAsync(Timeout));
+        processingException.ShouldBeOfType<TestException>();
+    }
+
+    [Fact]
     public async Task Publish_ShouldStreamEnvelopes()
     {
         int receivedStreams = 0;

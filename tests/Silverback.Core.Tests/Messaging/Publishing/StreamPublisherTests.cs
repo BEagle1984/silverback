@@ -462,6 +462,63 @@ public class StreamPublisherTests
         tasks.All(task => task.IsCompleted).ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    public async Task PublishAsync_ShouldCompleteStream_WhenSubscriberStopsWhileCompleting(bool pullMessage, bool throwException)
+    {
+        TaskCompletionSource invokedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource stopTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(Handle));
+
+        // Return or throw after pulling the first message (like breaking out of the enumeration) or without pulling it
+        async Task Handle(IAsyncEnumerable<TestEventOne> enumerable)
+        {
+            await using IAsyncEnumerator<TestEventOne> enumerator = enumerable.GetAsyncEnumerator();
+
+            if (pullMessage)
+                await enumerator.MoveNextAsync();
+
+            invokedTaskCompletionSource.SetResult();
+            await stopTaskCompletionSource.Task;
+
+            if (throwException)
+                throw new TestException();
+        }
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider = new();
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
+
+        // The subscriber is invoked as soon as the first message creates the stream
+        Task<int> pushTask = streamProvider.PushAsync(new TestEventOne());
+        await invokedTaskCompletionSource.Task.WaitAsync(Timeout);
+
+        // The completion waits for the pending push, which completes only when the next message is pulled
+        Task completeTask = streamProvider.CompleteAsync().AsTask();
+        await Task.WhenAny(completeTask, Task.Delay(100));
+        completeTask.IsCompleted.ShouldBeFalse();
+
+        stopTaskCompletionSource.SetResult();
+
+        await completeTask.WaitAsync(Timeout);
+        (await pushTask.WaitAsync(Timeout)).ShouldBe(1);
+        Exception? processingException = await Record.ExceptionAsync(() => tasks.Single().WaitAsync(Timeout));
+
+        if (throwException)
+            processingException.ShouldBeOfType<TestException>();
+        else
+            processingException.ShouldBeNull();
+    }
+
     [Fact]
     public async Task PublishAsync_ShouldInvokeSubscribers_WhenStreamProviderOfEnvelopesIsPublished()
     {

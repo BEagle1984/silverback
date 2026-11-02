@@ -9,7 +9,7 @@ using Silverback.Messaging.Subscribers.ArgumentResolvers;
 namespace Silverback.Messaging.Subscribers;
 
 [SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Observable disposed by caller")]
-internal sealed class LazyMessageStreamObservable<TMessage> : ILazyArgumentValue
+internal sealed class LazyMessageStreamObservable<TMessage> : ILazyStreamArgumentValue
 {
     private readonly ILazyMessageStreamEnumerable<TMessage> _lazyStream;
 
@@ -32,4 +32,6 @@ internal sealed class LazyMessageStreamObservable<TMessage> : ILazyArgumentValue
     }
 
     public Task WaitUntilCreatedAsync() => _lazyStream.WaitUntilCreatedAsync();
+
+    public void NotifySubscriberCompleted() => (_lazyStream as ILazyStreamArgumentValue)?.NotifySubscriberCompleted();
 }

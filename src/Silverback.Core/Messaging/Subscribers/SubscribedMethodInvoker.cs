@@ -147,7 +147,15 @@ internal static class SubscribedMethodInvoker
                 return;
             }
 
-            await InvokeWithActivityWithoutBlockingAsync(subscribedMethod, target, arguments).ConfigureAwait(false);
+            try
+            {
+                await InvokeWithActivityWithoutBlockingAsync(subscribedMethod, target, arguments).ConfigureAwait(false);
+            }
+            finally
+            {
+                // The subscriber will not pull any further message: don't let the stream completion wait for it
+                (lazyStream as ILazyStreamArgumentValue)?.NotifySubscriberCompleted();
+            }
         });
     }
 

@@ -17,6 +17,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
@@ -156,15 +157,142 @@ public class TransactionHandlerConsumerBehaviorTests
             Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.ToHashSet().SetEquals(new[] { offset1, offset2 })));
     }
 
+    [Fact]
+    public async Task HandleAsync_ShouldCommitFirstMessage_WhenEnumerationStopsWhileSequenceIsCompleting()
+    {
+        TestOffset offset1 = new("test", "1");
+        TaskCompletionSource pulledTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource stopTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        async Task HandleBatchAsync(IAsyncEnumerable<IRawInboundEnvelope> batch)
+        {
+            await foreach (IRawInboundEnvelope dummy in batch)
+            {
+                pulledTaskCompletionSource.SetResult();
+                await stopTaskCompletionSource.Task;
+                break;
+            }
+        }
+
+        using ConsumerPipelineContext context = CreateContext(offset1, HandleBatchAsync);
+        TestSequence sequence = new(context, 10);
+        Task processingTask = await PublishSequenceAsync(sequence);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // The first message is pending until the next one is pulled, so the handler doesn't return yet (and its sequence processing
+        // awaiter isn't started)
+        AddToSequenceResult? addResult = null;
+        Task handleTask = behavior.HandleAsync(
+            context,
+            async (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                pipelineContext.ProcessingTask = processingTask;
+                addResult = await sequence.AddAsync(pipelineContext.Envelope, null, true);
+            },
+            default).AsTask();
+        await pulledTaskCompletionSource.Task.WaitAsync(Timeout);
+
+        // Complete the sequence (as the batch timeout does) while the subscriber is still processing the first message: the completion
+        // waits for the pending push
+        Task completeTask = sequence.CompleteFromTestAsync();
+        await Task.WhenAny(completeTask, Task.Delay(100));
+        completeTask.IsCompleted.ShouldBeFalse();
+
+        stopTaskCompletionSource.SetResult();
+
+        await completeTask.WaitAsync(Timeout);
+        await handleTask.WaitAsync(Timeout);
+        await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
+        await sequence.DisposedTask.WaitAsync(Timeout);
+
+        addResult.ShouldNotBeNull().IsSuccess.ShouldBeTrue();
+        sequence.IsComplete.ShouldBeTrue();
+        sequence.IsAborted.ShouldBeFalse();
+        await context.Consumer.Received(1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).CommitAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.ToHashSet().SetEquals(new[] { offset1 })));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldNotRedeliverLastPulledMessage_WhenEnumerationStopsWhileSequenceIsCompleting()
+    {
+        TestOffset offset1 = new("test", "1");
+        TestOffset offset2 = new("test", "2");
+        TaskCompletionSource pulledTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource stopTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        async Task HandleBatchAsync(IAsyncEnumerable<IRawInboundEnvelope> batch)
+        {
+            int count = 0;
+
+            await foreach (IRawInboundEnvelope dummy in batch)
+            {
+                if (++count < 2)
+                    continue;
+
+                pulledTaskCompletionSource.SetResult();
+                await stopTaskCompletionSource.Task;
+                break;
+            }
+        }
+
+        using ConsumerPipelineContext context = CreateContext(offset1, HandleBatchAsync);
+        TestSequence sequence = new(context, 10);
+        Task processingTask = await PublishSequenceAsync(sequence);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            async (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                pipelineContext.ProcessingTask = processingTask;
+                await sequence.AddAsync(pipelineContext.Envelope, null, true);
+            },
+            default).AsTask().WaitAsync(Timeout);
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(offset2), null, true);
+        await pulledTaskCompletionSource.Task.WaitAsync(Timeout);
+
+        // Complete the sequence (as the batch timeout does) while the subscriber is still processing the second message: the
+        // completion waits for the pending push
+        Task completeTask = sequence.CompleteFromTestAsync();
+        await Task.WhenAny(completeTask, Task.Delay(100));
+        completeTask.IsCompleted.ShouldBeFalse();
+
+        stopTaskCompletionSource.SetResult();
+
+        await completeTask.WaitAsync(Timeout);
+        AddToSequenceResult addResult = await addTask.WaitAsync(Timeout);
+        await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
+        await sequence.DisposedTask.WaitAsync(Timeout);
+
+        // Reported as successfully added, otherwise the sequencer would add the message to the next sequence (redelivering it)
+        addResult.IsSuccess.ShouldBeTrue();
+        sequence.IsComplete.ShouldBeTrue();
+
+        // The second message isn't asserted: its identifier is tracked concurrently with the commit and might be committed only with
+        // the next sequence
+        await context.Consumer.Received(1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).CommitAsync(Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Contains(offset1)));
+    }
+
     // Not using the ConsumerPipelineContextHelper, since the behavior initializes the transaction manager
-    private static ConsumerPipelineContext CreateContext(IBrokerMessageIdentifier identifier)
+    private static ConsumerPipelineContext CreateContext(
+        IBrokerMessageIdentifier identifier,
+        Func<IAsyncEnumerable<IRawInboundEnvelope>, Task>? batchSubscriber = null)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
-            services
+        {
+            SilverbackBuilder silverbackBuilder = services
                 .AddSingleton(Substitute.For<IHostApplicationLifetime>())
                 .AddFakeLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker());
+                .WithConnectionToMessageBroker();
+
+            if (batchSubscriber != null)
+                silverbackBuilder.AddDelegateSubscriber(batchSubscriber);
+        });
 
         return new ConsumerPipelineContext(
             CreateEnvelope(identifier),
@@ -182,6 +310,15 @@ public class TransactionHandlerConsumerBehaviorTests
             Substitute.For<IConsumer>(),
             identifier);
 
+    // Publish the sequence as the PublisherConsumerBehavior does, to invoke the subscriber like in the actual pipeline
+    private static async Task<Task> PublishSequenceAsync(ISequence sequence)
+    {
+        IStreamPublisher streamPublisher = sequence.Context.ServiceProvider.GetRequiredService<IStreamPublisher>();
+        IReadOnlyCollection<Task> processingTasks = await streamPublisher.PublishAsync(sequence.StreamProvider);
+
+        return processingTasks.Single();
+    }
+
     private sealed class TestSequence : SequenceBase<IRawInboundEnvelope>
     {
         private readonly TaskCompletionSource _disposedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -193,6 +330,8 @@ public class TransactionHandlerConsumerBehaviorTests
         }
 
         public Task DisposedTask => _disposedTaskCompletionSource.Task;
+
+        public Task CompleteFromTestAsync() => CompleteAsync();
 
         protected override void Dispose(bool disposing)
         {

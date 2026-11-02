@@ -12,6 +12,7 @@ using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
@@ -393,6 +394,59 @@ public partial class BatchProcessingTests
         completedBatches.ShouldBeGreaterThan(1);
         exitedSubscribers.ShouldBeGreaterThan(1);
         areOverlapping.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Batch_ShouldCommitAndConsumeNextBatch_WhenEnumerationIsAbortedWhileTimeoutIsCompletingBatch()
+    {
+        TestingCollection<string?> receivedMessages = [];
+        int receivedBatches = 0;
+        TestKafkaOffsetCommittedCallback offsetCommittedCallback = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(50)))))
+            .AddSingletonBrokerClientCallback(offsetCommittedCallback)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+
+        // Stop enumerating after processing the first message for longer than the timeout, which starts completing the batch meanwhile
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            Interlocked.Increment(ref receivedBatches);
+
+            await foreach (TestEventOne message in batch)
+            {
+                receivedMessages.Add(message.ContentEventOne);
+                await Task.Delay(300);
+                break;
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+        await AsyncTestingUtil.WaitAsync(() => offsetCommittedCallback.CallsCount >= 3);
+
+        // Each message is consumed and committed exactly once
+        receivedBatches.ShouldBe(3);
+        receivedMessages.ShouldBe(["1", "2", "3"]);
+        offsetCommittedCallback.CallsCount.ShouldBe(3);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
     }
 
     private sealed class SlowBatchSubscriber

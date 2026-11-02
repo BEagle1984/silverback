@@ -37,6 +37,8 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
     private CompleteState _completeState = CompleteState.NotComplete;
 
+    private bool _isAbandoned;
+
     private Action<object?>? _onPullAction;
 
     private object? _onPullActionArgument;
@@ -103,18 +105,51 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     /// <inheritdoc cref="IMessageStreamEnumerable.CompleteAsync" />
     public async Task CompleteAsync(CancellationToken cancellationToken = default)
     {
+        bool isAbandoned;
+
         lock (_completeLock)
         {
             if (_completeState != CompleteState.NotComplete)
                 return;
 
             _completeState = CompleteState.Complete;
+            isAbandoned = _isAbandoned;
         }
+
+        // Don't wait for the subscriber to pull the next message if it already stopped consuming the stream
+        if (isAbandoned)
+            AcknowledgePendingPush();
 
         await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         SafelyRelease(_readSemaphore);
+
+        // Cancel before releasing the write lock: no further push must acquire it and take a leftover acknowledgement
         await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
         _writeSemaphore.Release();
+    }
+
+    /// <summary>
+    ///     Signals that the subscriber stopped consuming the stream and will not pull any further message.
+    /// </summary>
+    /// <remarks>
+    ///     Once the stream is complete (immediately, if it's already complete), the pending push is acknowledged as if the message had
+    ///     been processed, since the next message will never be pulled. The pending push of a stream that isn't complete is instead left
+    ///     to the abort.
+    /// </remarks>
+    public void Abandon()
+    {
+        lock (_completeLock)
+        {
+            if (_isAbandoned)
+                return;
+
+            _isAbandoned = true;
+
+            if (_completeState != CompleteState.Complete)
+                return;
+        }
+
+        AcknowledgePendingPush();
     }
 
     /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
@@ -164,6 +199,23 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         catch (ObjectDisposedException)
         {
             // Ignore: the stream can be disposed as soon as it's aborted (e.g., when the push is canceled)
+        }
+    }
+
+    // Releases the pending push as the subscriber pulling the next message would do
+    private void AcknowledgePendingPush()
+    {
+        try
+        {
+            _processedSemaphore.Release();
+        }
+        catch (SemaphoreFullException)
+        {
+            // Ignore: the push was already acknowledged (or no push is pending)
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore: the stream was disposed after being completed
         }
     }
 
