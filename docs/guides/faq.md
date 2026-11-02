@@ -52,6 +52,8 @@ Kafka messages from the same partition are always processed sequentially, to pre
 
 Kafka and MQTT (with QoS 1) guarantee at-least-once delivery: a message can be redelivered after a crash, a rebalance or a reconnection, if its offset (or acknowledgment) wasn't committed yet. Make the subscribers idempotent, or use the client-side offset storage together with your database transaction to achieve exactly-once processing (see <xref:kafka-offset>).
 
+The same happens when multiple subscribers handle a message and one of them fails: the retry invokes all the subscribers again, including those that already succeeded (see <xref:consuming>).
+
 ## Serialization
 
 ### The Message Is Deserialized as the Wrong Type

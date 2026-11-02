@@ -72,10 +72,18 @@ public class MySubscriber
 }
 ```
 
-Subscriber methods can be synchronous or asynchronous (`Task`/`ValueTask`). A message is considered successfully processed when all matching subscribers complete without throwing.
+Subscriber methods can be synchronous or asynchronous (`Task`/`ValueTask`). A message is considered successfully processed when all matching subscribers complete without throwing, and is then committed (Kafka) or acknowledged (MQTT).
 
 > [!Warning]
-> The same message can be handled by multiple subscribers. If you do that, make sure handlers are idempotent: if any subscriber fails, the message is considered failed and the configured error policy is applied.
+> The same message can be handled by multiple subscribers, but they share a single outcome. If any subscriber throws, the error policy is applied to the message as a whole:
+>
+> - **Stop** (default): the message isn't committed, so all the subscribers process it again, including those that already completed successfully, once the consumer is restarted (with MQTT, only with QoS 1 or 2 and a persistent session).
+> - **Retry**: all the subscribers are invoked again, including those that already completed successfully.
+> - **Skip** or **Move**: the failed message is committed (or acknowledged) and isn't redelivered. By default the subscribers are invoked one after the other, so those following the failing subscriber weren't invoked at all. If the message is moved to a topic that is consumed again (for example the same topic, to retry it later), all the subscribers process it again, including those that already completed successfully.
+>
+> Prefer a single subscriber per consumed message type and, if several actions are needed, invoke them explicitly from that subscriber. In any case, make sure the handlers are idempotent.
+>
+> Batch processing has further limitations, see [Multiple Subscribers](xref:batch-processing#multiple-subscribers).
 
 For higher throughput, consider <xref:batch-processing>.
 
