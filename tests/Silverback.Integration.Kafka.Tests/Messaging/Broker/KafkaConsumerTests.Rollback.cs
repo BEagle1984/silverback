@@ -1,8 +1,10 @@
 // Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Shouldly;
@@ -200,15 +202,19 @@ public partial class KafkaConsumerTests
         harness.GetChannel(0).ShouldBeNull();
         harness.Completed.ShouldBeEmpty();
 
-        // The records polled and never committed are consumed again from the first one after the restart, while the
-        // defeated rollback must not seek
+        // The records polled and never committed are consumed again from the first one after the restart, which also resumes
+        // the partition paused by the rollback, while the defeated rollback must neither seek nor resume
         TopicPartitionOffset[] expectedSeeks = reconnect ? [new TopicPartitionOffset("topic", 0, 0)] : [];
+        TopicPartition[] expectedResumes = reconnect ? [new TopicPartition("topic", 0)] : [];
+
+        harness.Paused.ShouldBe([new TopicPartition("topic", 0)]);
 
         if (reconnect)
         {
             await harness.StartAsync(0);
 
             harness.Seeks.ShouldBe(expectedSeeks);
+            harness.Paused.ShouldBeEmpty();
 
             await harness.DeliverAsync([.. Enumerable.Range(0, 6).Select(offset => (0, (long)offset))]);
             await harness.WaitForCommitAsync(0, 6);
@@ -217,7 +223,77 @@ public partial class KafkaConsumerTests
         }
 
         harness.Seeks.ShouldBe(expectedSeeks);
-        harness.Resumes.ShouldBeEmpty();
+        harness.Resumes.ShouldBe(expectedResumes);
+        harness.UnsafeStores.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The rollback is awaited before the harness is disposed")]
+    public async Task Restart_ShouldResumePartitionPausedByRollback_WhenStopDefeatedRollbackRestart(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0, 1);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        await harness.DeliverAsync((0, 0), (0, 1));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        TaskCompletionSource<bool> entered = NewSignal();
+        TaskCompletionSource<bool> release = NewSignal();
+        int stoppingCount = 0;
+        active.OnReaderStopped = () =>
+        {
+            if (Interlocked.Increment(ref stoppingCount) != 1)
+                return;
+
+            entered.TrySetResult(true);
+
+            release.Task.Wait(Timeout).ShouldBeTrue();
+        };
+
+        Task rollback = Task.Run(async () => await harness.Consumer.RollbackAsync(active.Context!.Envelope.BrokerMessageIdentifier));
+
+        try
+        {
+            await entered.Task.WaitAsync(Timeout);
+            await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+
+            // A partition paused by the user must stay paused, even if the rollback paused it as well (when sharing one channel)
+            harness.Consumer.Pause([new TopicPartition("topic", 1)]);
+
+            release.TrySetResult(true);
+            await rollback.WaitAsync(Timeout);
+            await PollHarness.WaitUntilAsync(() => harness.Logs.Any(log => log.StartsWith("Skipping rollback restart", StringComparison.Ordinal)));
+
+            harness.Resumes.ShouldBeEmpty();
+            harness.Paused.ShouldBe([new TopicPartition("topic", 0), new TopicPartition("topic", 1)], true);
+        }
+        finally
+        {
+            release.TrySetResult(true);
+            active.Release.TrySetResult(true);
+            await rollback.WaitAsync(Timeout);
+        }
+
+        int mutationsBeforeRestart = harness.NativeMutations.Count;
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        // The partition paused by the defeated rollback is resumed once sought back to its first uncommitted record
+        harness.Seeks.ShouldContain(new TopicPartitionOffset("topic", 0, 0));
+        harness.NativeMutations.Skip(mutationsBeforeRestart).SkipWhile(mutation => mutation == "seek").ShouldBe(["resume"]);
+        harness.Resumes.ShouldBe([new TopicPartition("topic", 0)]);
+        harness.Paused.ShouldBe([new TopicPartition("topic", 1)]);
+
+        await harness.DeliverAsync((0, 0), (0, 1));
+        await harness.WaitForCommitAsync(0, 2);
+
+        harness.Completed.Select(delivery => delivery.Offset).ShouldBe([0L, 1L]);
         harness.UnsafeStores.ShouldBeEmpty();
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();

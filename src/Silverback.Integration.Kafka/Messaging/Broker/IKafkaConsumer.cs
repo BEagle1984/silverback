@@ -26,6 +26,11 @@ public interface IKafkaConsumer : IConsumer
     /// <summary>
     ///     Pauses the consumption of the specified partitions.
     /// </summary>
+    /// <remarks>
+    ///     The consumer pauses a partition itself while rolling back its processing (for example to retry a failed message) and
+    ///     resumes it once sought back to the first message to be processed again: this also resumes a partition that was paused
+    ///     through this method before the rollback.
+    /// </remarks>
     /// <param name="partitions">
     ///     The list of <see cref="TopicPartition" /> to be paused.
     /// </param>

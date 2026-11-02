@@ -153,8 +153,9 @@ internal sealed class ConsumeLoopHandler : IDisposable
         // Reset the last successful consume time to avoid false stall detection
         _lastSuccessfulConsume = DateTime.UtcNow;
 
-        // The records buffered when the consumer was stopped were discarded: seek back to consume them again before polling
-        bool continueConsuming = SeekToUncommittedOffsets(cancellationToken);
+        // The records buffered when the consumer was stopped were discarded: seek back to consume them again before polling, then
+        // resume the partitions paused by a rollback that the stop defeated
+        bool continueConsuming = RestorePartitions(cancellationToken);
 
         while (continueConsuming && !cancellationToken.IsCancellationRequested)
         {
@@ -216,7 +217,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    private bool SeekToUncommittedOffsets(CancellationToken cancellationToken)
+    private bool RestorePartitions(CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             return true;
@@ -224,6 +225,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
         try
         {
             _consumer.SeekToUncommittedOffsets();
+            _consumer.ResumeRollbackPausedPartitions();
             return true;
         }
         catch (Exception ex)

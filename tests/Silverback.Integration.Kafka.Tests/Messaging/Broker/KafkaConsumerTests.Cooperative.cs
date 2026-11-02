@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using NSubstitute;
@@ -187,6 +188,73 @@ public partial class KafkaConsumerTests
         harness.Completed.ShouldAllBe(delivery => delivery.Partition == 1 && delivery.Epoch == 1);
         harness.CompletedBatchSizes.ShouldBe([10, 10]);
         harness.CommittedOffset(1).ShouldBe(20);
+        harness.UnsafeStores.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The rebalance callback is awaited before the harness is disposed")]
+    public async Task CooperativeRebalance_ShouldResumeRetainedPartitionOnRestart_WhenStopDefeatsItsReplay()
+    {
+        await using PollHarness harness = new(false, true);
+        await harness.StartAsync(0, 1);
+
+        ProcessingGate active = harness.Block(1, 0);
+        await harness.DeliverAsync((1, 0), (1, 1));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        TaskCompletionSource<bool> entered = NewSignal();
+        TaskCompletionSource<bool> release = NewSignal();
+        int stoppingCount = 0;
+        active.OnReaderStopped = () =>
+        {
+            if (Interlocked.Increment(ref stoppingCount) != 1)
+                return;
+
+            entered.TrySetResult(true);
+
+            release.Task.Wait(Timeout).ShouldBeTrue();
+        };
+
+        // The retained partition is paused while the shared channel is rebuilt to replay it
+        Task rebalance = harness.PollAsync(() =>
+        {
+            harness.Revoke(0);
+
+            return null;
+        });
+
+        try
+        {
+            await entered.Task.WaitAsync(Timeout);
+
+            // The polling is blocked in the revocation callback until the channel stops: the stop can't wait for it
+            await harness.Consumer.StopAsync(false).AsTask().WaitAsync(Timeout);
+        }
+        finally
+        {
+            release.TrySetResult(true);
+            active.Release.TrySetResult(true);
+            await rebalance.WaitAsync(Timeout);
+        }
+
+        await harness.PollingStopped.WaitAsync(Timeout);
+
+        harness.Resumes.ShouldBeEmpty();
+        harness.Paused.ShouldBe([new TopicPartition("topic", 1)]);
+
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 1, 0)]);
+        harness.Resumes.ShouldBe([new TopicPartition("topic", 1)]);
+        harness.Paused.ShouldBeEmpty();
+
+        await harness.DeliverAsync((1, 0), (1, 1));
+        await harness.WaitForCommitAsync(1, 2);
+
+        harness.Completed.Select(delivery => delivery.Offset).ShouldBe([0L, 1L]);
         harness.UnsafeStores.ShouldBeEmpty();
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();

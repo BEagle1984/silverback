@@ -45,6 +45,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     private readonly HashSet<TopicPartition> _rollingBackPartitions = [];
 
+    // The partitions paused to roll back their records (or to replay the ones retained by a revocation) and not resumed yet:
+    // when a stop defeats the rollback restart, they are resumed by the next start
+    private readonly HashSet<TopicPartition> _rollbackPausedPartitions = [];
+
     private Task _channelsStopping = Task.CompletedTask;
 
     private int _messagesSinceCommit;
@@ -121,7 +125,19 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     public new IReadOnlyCollection<KafkaConsumerEndpointConfiguration> EndpointsConfiguration => Configuration.Endpoints;
 
     /// <inheritdoc cref="IKafkaConsumer.Pause" />
-    public void Pause(IEnumerable<TopicPartition> partitions) => Client.Pause(partitions);
+    public void Pause(IEnumerable<TopicPartition> partitions)
+    {
+        Check.NotNull(partitions, nameof(partitions));
+
+        lock (_assignmentLock)
+        {
+            TopicPartition[] pausedPartitions = [.. partitions];
+            Client.Pause(pausedPartitions);
+
+            // The partitions paused by the user must stay paused when a restart resumes the ones paused by a defeated rollback
+            _rollbackPausedPartitions.ExceptWith(pausedPartitions);
+        }
+    }
 
     /// <inheritdoc cref="IKafkaConsumer.Resume" />
     public void Resume(IEnumerable<TopicPartition> partitions) => Client.Resume(partitions);
@@ -162,6 +178,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
             foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
             {
+                // A partition paused by a defeated rollback stays in _rollbackPausedPartitions: the native pause survives the
+                // reassignment, so the next restart must still resume it
                 _rollingBackPartitions.Remove(topicPartitionOffset.TopicPartition);
                 IncrementAssignmentVersion(topicPartitionOffset.TopicPartition);
                 _revokedPartitions.Remove(topicPartitionOffset.TopicPartition);
@@ -208,7 +226,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 }
 
                 if (retained.Count > 0 && IsStartedAndNotStopping())
-                    Client.Pause(retained.Select(partition => partition.Offset.TopicPartition));
+                {
+                    TopicPartition[] pausedPartitions = [.. retained.Select(partition => partition.Offset.TopicPartition)];
+                    Client.Pause(pausedPartitions);
+                    _rollbackPausedPartitions.UnionWith(pausedPartitions);
+                }
             }
         }
 
@@ -235,6 +257,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
                 _channelsManager.StartReading(rollbackOffset.TopicPartition);
                 Client.Resume([rollbackOffset.TopicPartition]);
+                _rollbackPausedPartitions.Remove(rollbackOffset.TopicPartition);
                 _rollingBackPartitions.Remove(rollbackOffset.TopicPartition);
             }
         }
@@ -276,6 +299,44 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 TopicPartitionOffset topicPartitionOffset = offset.AsTopicPartitionOffset();
                 Client.Seek(topicPartitionOffset);
                 _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Resumes the assigned partitions that were paused by a rollback whose restart was defeated by a stop: they would
+    ///     otherwise never be fetched again.
+    /// </summary>
+    /// <remarks>
+    ///     Called by the consume loop before its first poll, after <see cref="SeekToUncommittedOffsets" />, so that nothing is
+    ///     fetched from the position preceding the seek. The partitions paused by the user after the rollback paused them are not
+    ///     resumed.
+    /// </remarks>
+    internal void ResumeRollbackPausedPartitions()
+    {
+        lock (_assignmentLock)
+        {
+            if (_rollbackPausedPartitions.Count == 0 || !IsStartedAndNotStopping() || Client.Status != ClientStatus.Initialized)
+                return;
+
+            HashSet<TopicPartition> assignment = [.. Client.Assignment];
+
+            // A partition being rolled back again is resumed by the rollback itself
+            TopicPartition[] partitions =
+            [
+                .. _rollbackPausedPartitions.Where(partition =>
+                    assignment.Contains(partition) && IsNotRevoked(partition) && !_rollingBackPartitions.Contains(partition))
+            ];
+
+            if (partitions.Length == 0)
+                return;
+
+            Client.Resume(partitions);
+            _rollbackPausedPartitions.ExceptWith(partitions);
+
+            foreach (TopicPartition partition in partitions)
+            {
+                _logger.LogPartitionResumed(partition, this);
             }
         }
     }
@@ -326,11 +387,14 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         lock (_assignmentLock)
         {
             // The client is initializing when the native consumer was just (re)created: nothing tracked before can be consumed
-            // again from it, the new consumer resumes from the committed offsets. A stop and start while the Initialized
-            // handlers are still running doesn't consume its discarded records again either: the client can neither seek nor
-            // store the offsets before it is initialized.
+            // again from it, the new consumer resumes from the committed offsets and none of its partitions is paused. A stop and
+            // start while the Initialized handlers are still running doesn't consume its discarded records again either: the
+            // client can neither seek nor store the offsets before it is initialized.
             if (Client.Status == ClientStatus.Initializing)
+            {
                 _offsets.Clear();
+                _rollbackPausedPartitions.Clear();
+            }
 
             foreach (TopicPartition partition in Client.Assignment)
             {
@@ -478,7 +542,9 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             if (partitions.Count == 0)
                 return ValueTask.CompletedTask;
 
-            Client.Pause(partitions.Select(partition => partition.Offset.TopicPartition));
+            TopicPartition[] pausedPartitions = [.. partitions.Select(partition => partition.Offset.TopicPartition)];
+            Client.Pause(pausedPartitions);
+            _rollbackPausedPartitions.UnionWith(pausedPartitions);
             pollCompleted = _consumeLoopHandler.WaitUntilCurrentPollCompletesAsync();
         }
 
@@ -548,6 +614,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                     // The old channel was removed by StopChannelAsync; no sequence disposal is performed under this lock
                     _channelsManager.StartReading(rollbackOffset.TopicPartition);
                     Client.Resume([rollbackOffset.TopicPartition]);
+                    _rollbackPausedPartitions.Remove(rollbackOffset.TopicPartition);
                     _rollingBackPartitions.Remove(rollbackOffset.TopicPartition);
                     _logger.LogPartitionResumed(rollbackOffset.TopicPartition, this);
                 }

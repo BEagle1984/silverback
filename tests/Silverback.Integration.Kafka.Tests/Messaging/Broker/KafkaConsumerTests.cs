@@ -818,9 +818,11 @@ public partial class KafkaConsumerTests
 
             release.TrySetResult(true);
             await rollback.WaitAsync(Timeout);
-            await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+            await PollHarness.WaitUntilAsync(() => harness.Logs.Any(log => log.StartsWith("Skipping rollback restart", StringComparison.Ordinal)));
 
-            harness.Resumes.ShouldBeEmpty();
+            // Only the restart resumes the partition paused by the defeated rollback
+            harness.Resumes.ShouldBe(reconnect ? [new TopicPartition("topic", 0)] : []);
+            harness.Paused.ShouldBe(reconnect ? [] : [new TopicPartition("topic", 0)]);
 
             if (reconnect)
             {
@@ -1258,6 +1260,74 @@ public partial class KafkaConsumerTests
         await harness.WaitForCommitAsync(0, 2);
 
         harness.Seeks.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The rollback is awaited before the harness is disposed")]
+    public async Task Restart_ShouldNotResumePartitionPausedByRollback_WhenClientWasInitializing()
+    {
+        await using PollHarness harness = new();
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        await harness.DeliverAsync((0, 0));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        TaskCompletionSource<bool> entered = NewSignal();
+        TaskCompletionSource<bool> release = NewSignal();
+        int stoppingCount = 0;
+        active.OnReaderStopped = () =>
+        {
+            if (Interlocked.Increment(ref stoppingCount) != 1)
+                return;
+
+            entered.TrySetResult(true);
+
+            release.Task.Wait(Timeout).ShouldBeTrue();
+        };
+
+        Task rollback = Task.Run(async () => await harness.Consumer.RollbackAsync(active.Context!.Envelope.BrokerMessageIdentifier));
+
+        try
+        {
+            await entered.Task.WaitAsync(Timeout);
+            await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+
+            release.TrySetResult(true);
+            await rollback.WaitAsync(Timeout);
+            await PollHarness.WaitUntilAsync(() => harness.Logs.Any(log => log.StartsWith("Skipping rollback restart", StringComparison.Ordinal)));
+        }
+        finally
+        {
+            release.TrySetResult(true);
+            active.Release.TrySetResult(true);
+            await rollback.WaitAsync(Timeout);
+        }
+
+        // The defeated rollback paused the partition on the previous native consumer, while none is paused on the new one
+        harness.Client.Status.Returns(ClientStatus.Initializing);
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Client.Status.Returns(ClientStatus.Initialized);
+        await harness.PollAsync(() =>
+        {
+            harness.Assign(0);
+
+            return harness.Record(0, 0);
+        });
+
+        await harness.WaitForCommitAsync(0, 1);
+
+        // Not even a later restart resumes it
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Resumes.ShouldBeEmpty();
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
     }
@@ -1949,6 +2019,8 @@ public partial class KafkaConsumerTests
 
         private readonly ConcurrentDictionary<(int Partition, long Offset), byte> _completed = new();
 
+        private readonly ConcurrentDictionary<TopicPartition, byte> _paused = new();
+
         private readonly bool _cooperative;
 
         private readonly ServiceProvider? _serviceProvider;
@@ -2011,6 +2083,11 @@ public partial class KafkaConsumerTests
             {
                 BeforePause?.Invoke();
 
+                foreach (TopicPartition partition in call.Arg<IEnumerable<TopicPartition>>())
+                {
+                    _paused[partition] = 0;
+                }
+
                 if (call.Arg<IEnumerable<TopicPartition>>().Any())
                     NativeMutations.Enqueue("pause");
             });
@@ -2019,6 +2096,7 @@ public partial class KafkaConsumerTests
             {
                 foreach (TopicPartition partition in call.Arg<IEnumerable<TopicPartition>>())
                 {
+                    _paused.TryRemove(partition, out _);
                     Resumes.Enqueue(partition);
                     NativeMutations.Enqueue("resume");
                 }
@@ -2097,10 +2175,16 @@ public partial class KafkaConsumerTests
 
         public ConcurrentQueue<TopicPartition> Resumes { get; } = new();
 
+        // The native pause state, which the scripted rebalances don't reset. The scripted polls still return the records of a
+        // paused partition: the tests assert that it isn't left paused.
+        public IReadOnlyCollection<TopicPartition> Paused => [.. _paused.Keys];
+
         public ConcurrentQueue<string> Errors { get; } = new();
 
         public ConcurrentQueue<string> Logs { get; } = new();
 
+        // Completed by the first skipped rollback restart or native resume, including the one issued by a restart: after a
+        // restart, wait for the expected log instead
         public TaskCompletionSource<bool> RollbackRestartObserved { get; } = NewSignal();
 
         public int SortIndex => 0;
