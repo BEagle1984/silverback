@@ -643,7 +643,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             {
                 int interval = (int)Math.Min(_timeout.TotalMilliseconds, 1000);
 
-                while (IsPending)
+                // Stop also when disposed, since a child sequence can be disposed by its parent while still pending
+                while (IsPending && !_isDisposed)
                 {
                     await Task.Delay(interval).ConfigureAwait(false);
 

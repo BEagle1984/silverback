@@ -157,6 +157,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         CancellationToken cancellationToken)
     {
         ISequence? sequence;
+        ISequence? failedSequence = null;
         AddToSequenceResult addToSequenceResult;
 
         // Loop to handle edge cases where the sequence gets completed (e.g., because of timeout) between the calls to GetSequenceAsync and AddAsync
@@ -185,6 +186,13 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                 await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
                 sequence.Dispose();
             }
+
+            // Remove the sequence if it refuses the message again without being aborted (e.g., a child sequence disposed by its parent
+            // while still pending), to prevent an endless loop and let the next iteration create a new sequence
+            if (addToSequenceResult is { IsSuccess: false, IsAborted: false } && sequence == failedSequence)
+                await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
+
+            failedSequence = addToSequenceResult.IsSuccess ? null : sequence;
         }
         while (addToSequenceResult is { IsSuccess: false, IsAborted: false });
 
