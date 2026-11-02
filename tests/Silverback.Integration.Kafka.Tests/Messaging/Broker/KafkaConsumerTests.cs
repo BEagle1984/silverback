@@ -286,9 +286,12 @@ public partial class KafkaConsumerTests
 
             releaseStop.TrySetResult(true);
             await rollback.WaitAsync(Timeout);
-            await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+            await PollHarness.WaitUntilAsync(() => harness.Logs.Any(log => log.StartsWith("Skipping rollback restart", StringComparison.Ordinal)));
 
-            harness.Resumes.ShouldBeEmpty();
+            // The defeated rollback neither seeks nor resumes: only the new assignment resumes the partition that it paused
+            harness.Seeks.ShouldBeEmpty();
+            harness.Resumes.ShouldBe(reassign ? [new TopicPartition("topic", 0)] : []);
+            harness.Paused.ShouldBe(reassign ? [] : [new TopicPartition("topic", 0)]);
 
             if (reassigned != null)
             {
@@ -716,9 +719,16 @@ public partial class KafkaConsumerTests
             await rebalance;
 
             int mutations = harness.NativeMutations.Count;
-            await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+
+            // The rollback paused the partition before the rebalance (whose new assignment resumes it) and its restart is skipped,
+            // or it restarted before the rebalance
+            if (boundary == "pause")
+                await PollHarness.WaitUntilAsync(() => harness.Logs.Any(log => log.StartsWith("Skipping rollback restart", StringComparison.Ordinal)));
+            else
+                await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
 
             harness.NativeMutations.Count.ShouldBe(mutations);
+            harness.Paused.ShouldBe(boundary == "pause" && !reassign ? [new TopicPartition("topic", 0)] : []);
 
             if (reassign)
             {
@@ -2235,8 +2245,8 @@ public partial class KafkaConsumerTests
 
         public ConcurrentQueue<string> Logs { get; } = new();
 
-        // Completed by the first skipped rollback restart or native resume, including the one issued by a restart: after a
-        // restart, wait for the expected log instead
+        // Completed by the first skipped rollback restart or native resume, including the one issued by a restart or a new
+        // assignment: after those, wait for the expected log instead
         public TaskCompletionSource<bool> RollbackRestartObserved { get; } = NewSignal();
 
         public int SortIndex => 0;
