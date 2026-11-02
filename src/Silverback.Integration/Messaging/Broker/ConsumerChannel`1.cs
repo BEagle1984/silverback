@@ -22,6 +22,10 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     private Channel<T> _overflowChannel; // Used to store messages when the main channel is full, to ensure nothing is lost
 
+    private T? _unreadMessage; // Put back by a stopped reader, read again before the buffered messages
+
+    private bool _hasUnreadMessage;
+
     private TaskCompletionSource<bool> _readTaskCompletionSource = new();
 
     private CancellationTokenSource _readCancellationTokenSource = new();
@@ -106,6 +110,16 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
             lock (_channelLock)
             {
+                // The unread message was taken before anything still buffered
+                if (_hasUnreadMessage)
+                {
+                    T unreadMessage = _unreadMessage!;
+                    _unreadMessage = default;
+                    _hasUnreadMessage = false;
+
+                    return unreadMessage;
+                }
+
                 // A canceled write enters overflow after records already buffered in the main channel
                 if (channel.Reader.TryRead(out T? message))
                     return message;
@@ -135,6 +149,26 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         }
     }
 
+    /// <summary>
+    ///     Puts back the message returned by the last <see cref="ReadAsync" />, when the reader stops before processing it, so
+    ///     that the next read returns it again before the buffered messages.
+    /// </summary>
+    /// <param name="message">
+    ///     The message to put back.
+    /// </param>
+    public void Unread(T message)
+    {
+        lock (_channelLock)
+        {
+            // Overwriting the message put back before would silently drop it
+            if (_hasUnreadMessage)
+                throw new InvalidOperationException("A message was already put back and not read again yet.");
+
+            _unreadMessage = message;
+            _hasUnreadMessage = true;
+        }
+    }
+
     public void Reset()
     {
         lock (_channelLock)
@@ -143,6 +177,8 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
             _overflowChannel.Writer.TryComplete();
             _channel = Channel.CreateBounded<T>(_capacity);
             _overflowChannel = Channel.CreateUnbounded<T>();
+            _unreadMessage = default;
+            _hasUnreadMessage = false;
         }
 
         SequenceStore.Dispose();

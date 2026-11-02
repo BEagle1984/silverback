@@ -189,6 +189,38 @@ public class MqttConsumerTests
         ]);
     }
 
+    [Fact]
+    public async Task StartAsync_ShouldRetryRolledBackDelivery_WhenStoppedBeforeRetrying()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        harness.Behavior.RollbackFirstAttempt = true;
+        await harness.ConnectAsync();
+        await harness.DeliverAsync(0);
+        await harness.Behavior.FirstStarted.Task.WaitAsync(ReconnectTimeout);
+        await harness.DeliverAsync(1);
+
+        Task stopping = harness.Consumer.StopAsync().AsTask();
+
+        // The reading is stopped before the processing is canceled, so the delivery is rolled back after the reader stopped
+        await harness.Behavior.Stopping.Task.WaitAsync(ReconnectTimeout);
+        harness.Behavior.ReleaseFirst.TrySetResult(true);
+        await stopping.WaitAsync(ReconnectTimeout);
+
+        harness.Behavior.Processed.ShouldBeEmpty();
+        harness.Acknowledged.ShouldBeEmpty();
+
+        await harness.Consumer.StartAsync();
+        await harness.Behavior.BufferedMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
+
+        harness.Behavior.Processed.ShouldBe([0, 1]);
+        harness.Acknowledged.ShouldBe(
+        [
+            new Acknowledgement(0, 1, 1),
+            new Acknowledgement(1, 1, 1)
+        ]);
+    }
+
     [Theory]
     [InlineData(MqttQualityOfServiceLevel.AtMostOnce, false)]
     [InlineData(MqttQualityOfServiceLevel.AtLeastOnce, false)]
@@ -732,9 +764,13 @@ public class MqttConsumerTests
 
     private sealed class ReconnectBlockingBehavior : IConsumerBehavior
     {
+        private int _isFirstAttemptRolledBack;
+
         public int SortIndex => 0;
 
         public Func<Task>? BeforeProcessing { get; set; }
+
+        public bool RollbackFirstAttempt { get; set; }
 
         public int ExpectedMessages { get; set; } = 3;
 
@@ -768,6 +804,13 @@ public class MqttConsumerTests
                     using CancellationTokenRegistration registration = cancellationToken.Register(() => Stopping.TrySetResult(true));
                     FirstStarted.TrySetResult(true);
                     await ReleaseFirst.Task.WaitAsync(ReconnectTimeout, CancellationToken.None);
+
+                    // Roll back like a retry error policy, to be processed again
+                    if (RollbackFirstAttempt && Interlocked.Exchange(ref _isFirstAttemptRolledBack, 1) == 0)
+                    {
+                        await context.Consumer.RollbackAsync(context.Envelope.BrokerMessageIdentifier);
+                        return;
+                    }
                 }
 
                 try

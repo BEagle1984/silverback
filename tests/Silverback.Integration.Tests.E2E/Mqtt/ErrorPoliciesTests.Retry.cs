@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -210,5 +211,50 @@ public partial class ErrorPoliciesTests
 
         await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task RetryPolicy_ShouldRetryAfterRestart_WhenStopCancelsProcessing()
+    {
+        int tryCount = 0;
+        TaskCompletionSource<bool> processingStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IIntegrationEvent, CancellationToken>(HandleMessageAsync)
+            .AddIntegrationSpy());
+
+        async Task HandleMessageAsync(IIntegrationEvent message, CancellationToken cancellationToken)
+        {
+            if (Interlocked.Increment(ref tryCount) > 1)
+                return;
+
+            processingStarted.TrySetResult(true);
+
+            // The first attempt fails because the stop cancels it
+            await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        await processingStarted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        await consumer.StopAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+        await consumer.StartAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromSeconds(10));
+
+        tryCount.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
     }
 }

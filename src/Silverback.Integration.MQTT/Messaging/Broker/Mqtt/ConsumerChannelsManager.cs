@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -60,20 +61,24 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
 
         ConsumedApplicationMessage consumedMessage = await channel.ReadAsync().ConfigureAwait(false);
 
-        channel.ReadCancellationToken.ThrowIfCancellationRequested();
-
         // Clear the current activity to ensure we don't propagate the previous traceId
         Activity.Current = null;
 
         // Retry locally until successfully processed (or skipped)
-        while (!channel.ReadCancellationToken.IsCancellationRequested)
+        while (true)
         {
+            if (channel.ReadCancellationToken.IsCancellationRequested)
+            {
+                // The message is neither processed nor acknowledged: put it back to process it when restarting
+                channel.Unread(consumedMessage);
+                throw new OperationCanceledException(channel.ReadCancellationToken);
+            }
+
             await _consumer.HandleMessageAsync(consumedMessage, channel.SequenceStore).ConfigureAwait(false);
 
             if (await consumedMessage.TaskCompletionSource.Task.ConfigureAwait(false))
-                break;
+                return;
 
-            channel.ReadCancellationToken.ThrowIfCancellationRequested();
             consumedMessage.TaskCompletionSource = new TaskCompletionSource<bool>();
         }
     }
