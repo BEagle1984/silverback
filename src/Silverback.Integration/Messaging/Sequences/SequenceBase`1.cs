@@ -44,6 +44,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly SemaphoreSlim _completeSemaphoreSlim = new(1, 1);
 
+    private readonly TaskCompletionSource _disposeTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     // Volatile because the state is also checked without holding the semaphores (e.g., when the processing completes)
     private volatile CompleteState _completeState = CompleteState.NotComplete;
 
@@ -535,6 +537,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             WaitAddAndCompleteSemaphores();
         }
 
+        // Stop the callers still waiting for the semaphores, since disposing them doesn't complete the pending waits. Do it only after
+        // acquiring the semaphores for the last time, since the abandoned waits must never be granted.
+        _disposeTaskCompletionSource.TrySetResult();
+
         _streamProvider.Dispose();
         _sequences?.ForEach(sequence => sequence.Dispose());
         _addSemaphoreSlim.Dispose();
@@ -687,7 +693,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     private async Task AbortCoreAsync(Exception? exception)
     {
         // Wait for AddAsync to gracefully complete, ensuring that the identifiers are properly tracked in all cases (enumeration
-        // aborted included)
+        // aborted included). Unlike WaitIfNotDisposedAsync, don't stop when disposing: Dispose waits for the started abort (releasing
+        // the semaphores if needed) before disposing the semaphores.
         _logger.LogTrace("Aborting {sequenceType} '{sequenceId}' is waiting for add semaphore...", () => [GetType().Name, SequenceId]);
 
         try
@@ -790,7 +797,18 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         try
         {
             _logger.LogTrace("Waiting for semaphore...");
-            await semaphore.WaitAsync().ConfigureAwait(false);
+
+            Task waitTask = semaphore.WaitAsync();
+
+            // Stop waiting when the sequence is disposed, abandoning the wait instead of canceling it: a canceled waiter might not be
+            // removed if the semaphore is disposed in the meantime and would then never complete
+            if (!waitTask.IsCompleted &&
+                await Task.WhenAny(waitTask, _disposeTaskCompletionSource.Task).ConfigureAwait(false) != waitTask)
+            {
+                _logger.LogTrace("Sequence disposed while waiting for semaphore");
+                return false;
+            }
+
             _logger.LogTrace("Semaphore acquired");
             return true;
         }

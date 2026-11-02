@@ -176,6 +176,97 @@ public class SequenceBaseTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The hooks complete before the disposal")]
+    public async Task Dispose_ShouldStopPendingAdd_WhenAddStartedBeforeDisposing()
+    {
+        HookLogger logger = new();
+        TestSequence sequence = CreateSequence(logger);
+        using ManualResetEventSlim disposeHoldsAddSemaphore = new();
+        using ManualResetEventSlim addIsWaiting = new();
+        Task? disposeTask = null;
+
+        // Pause the dispose while it holds the add semaphore and before it stops the pending waits, until the add is waiting for the
+        // add semaphore
+        logger.OnLog(
+            "Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...",
+            () =>
+            {
+                disposeHoldsAddSemaphore.Set();
+                addIsWaiting.Wait(Timeout);
+            });
+
+        // Dispose after the add checked whether the sequence is disposed and before it waits for the add semaphore
+        logger.OnLog(
+            "Waiting for semaphore...",
+            () =>
+            {
+                disposeTask = Task.Run(sequence.Dispose);
+                disposeHoldsAddSemaphore.Wait(Timeout);
+            });
+
+        // AddAsync returns the pending task as soon as it is waiting for the add semaphore
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), null, true);
+        bool isAddCompletedBeforeDisposeContinues = addTask.IsCompleted;
+        addIsWaiting.Set();
+
+        AddToSequenceResult addResult = await addTask.WaitAsync(Timeout);
+        await disposeTask.ShouldNotBeNull().WaitAsync(Timeout);
+
+        isAddCompletedBeforeDisposeContinues.ShouldBeFalse();
+        addResult.ShouldBe(AddToSequenceResult.Failed);
+        sequence.IsPending.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData(nameof(ISequence.AbortAsync))]
+    [InlineData(nameof(ISequence.AbortIfIncompleteAsync))]
+    [InlineData(nameof(TestSequence.CompleteFromTestAsync))]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The hooks complete before the disposal")]
+    public async Task Dispose_ShouldStopPendingCompleteOrAbort_WhenStartedBeforeDisposing(string operation)
+    {
+        HookLogger logger = new();
+        TestSequence sequence = CreateSequence(logger);
+        using ManualResetEventSlim disposeHoldsSemaphores = new();
+        using ManualResetEventSlim operationStarted = new();
+        Task? disposeTask = null;
+
+        // Pause the dispose while it holds the semaphores and before it disposes them (when it disposes the child sequences), until
+        // the operation started waiting for the complete semaphore. Nothing is logged between acquiring the complete semaphore and
+        // stopping the pending waits, so the operation starts waiting after the waits are stopped.
+        ISequence childSequence = Substitute.For<ISequence>();
+        childSequence.When(child => child.Dispose()).Do(
+            _ =>
+            {
+                disposeHoldsSemaphores.Set();
+                operationStarted.Wait(Timeout);
+            });
+        await sequence.AddAsync(CreateEnvelope(), childSequence, false).WaitAsync(Timeout);
+
+        // Dispose after the operation checked whether the sequence is disposed and before it waits for the complete semaphore
+        logger.OnLog(
+            "Waiting for semaphore...",
+            () =>
+            {
+                disposeTask = Task.Run(sequence.Dispose);
+                disposeHoldsSemaphores.Wait(Timeout);
+            });
+
+        Task operationTask = operation switch
+        {
+            nameof(ISequence.AbortAsync) => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted),
+            nameof(ISequence.AbortIfIncompleteAsync) => sequence.AbortIfIncompleteAsync(),
+            nameof(TestSequence.CompleteFromTestAsync) => sequence.CompleteFromTestAsync(),
+            _ => throw new ArgumentOutOfRangeException(nameof(operation), operation, null)
+        };
+        operationStarted.Set();
+
+        await operationTask.WaitAsync(Timeout);
+        await disposeTask.ShouldNotBeNull().WaitAsync(Timeout);
+
+        sequence.IsPending.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task CompleteAsync_ShouldAbort_WhenProcessingAlreadyCompleted()
     {
         TestSequence sequence = CreateSequence(new HookLogger());
