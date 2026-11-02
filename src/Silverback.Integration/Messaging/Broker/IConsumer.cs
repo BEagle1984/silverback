@@ -43,6 +43,7 @@ public interface IConsumer
     /// </summary>
     /// <remarks>
     ///     This is used to recover when the consumer is stuck in state where it's not able to rollback or commit anymore.
+    ///     The request is ignored if the consumer is stopped or being stopped, since reconnecting would restart it.
     /// </remarks>
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation. This <see cref="ValueTask" /> will complete as
@@ -78,6 +79,7 @@ public interface IConsumer
     ///     The original message identifier allows the broker implementation to ignore obsolete stop requests.
     ///     For example, delayed error handling for a Kafka message from an earlier partition assignment must not
     ///     stop consumption after reassignment. Use <see cref="StopAsync(bool)" /> to stop unconditionally.
+    ///     The request is ignored once the message processing is canceled, since the consumer is then already being stopped.
     /// </remarks>
     /// <param name="brokerMessageIdentifier">
     ///     The original identifier from the received message that caused the stop request.

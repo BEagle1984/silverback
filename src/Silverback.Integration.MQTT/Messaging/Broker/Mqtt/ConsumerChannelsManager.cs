@@ -67,7 +67,9 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
         // Retry locally until successfully processed (or skipped)
         while (true)
         {
-            if (channel.ReadCancellationToken.IsCancellationRequested)
+            // The stop cancels the reading before the processing, but a reader must never retry with the canceled processing, which
+            // is rolled back right away
+            if (channel.ReadCancellationToken.IsCancellationRequested || _consumer.IsProcessingCanceled)
             {
                 // The message is neither processed nor acknowledged: put it back to process it when restarting
                 channel.Unread(consumedMessage);

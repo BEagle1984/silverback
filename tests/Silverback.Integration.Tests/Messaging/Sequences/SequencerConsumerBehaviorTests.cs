@@ -3,8 +3,10 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
+using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -49,6 +51,50 @@ public class SequencerConsumerBehaviorTests
         await refusingSequence.Received(2).AddAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<ISequence?>(), Arg.Any<bool>());
         await sequenceStore.Received(1).RemoveAsync("refusing");
         await newSequence.Received(1).AddAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<ISequence?>(), Arg.Any<bool>());
+    }
+
+    [Theory]
+    [InlineData(true, SequenceAbortReason.ConsumerAborted)]
+    [InlineData(false, SequenceAbortReason.Error)]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task HandleAsync_ShouldAbortSequence_WhenProcessingIsCanceled(bool isConsumerStopping, SequenceAbortReason expectedReason)
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        using CancellationTokenSource cancellationTokenSource = new();
+        TaskCompletionSource processingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<SequenceAbortReason> abortReasonTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        ISequence sequence = CreateSequence("new", AddToSequenceResult.Success(1));
+        sequence.IsNew.Returns(true);
+        sequence.AbortAsync(Arg.Any<SequenceAbortReason>(), Arg.Any<Exception?>()).Returns(call =>
+        {
+            abortReasonTaskCompletionSource.TrySetResult(call.Arg<SequenceAbortReason>());
+            return Task.CompletedTask;
+        });
+
+        ISequenceReader sequenceReader = Substitute.For<ISequenceReader>();
+        sequenceReader.CanHandleAsync(context).Returns(true);
+        sequenceReader.GetSequenceAsync(context).Returns(sequence);
+
+        SequencerConsumerBehavior behavior = new([sequenceReader], Substitute.For<ISilverbackLogger<SequencerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.ProcessingTask = processingTaskCompletionSource.Task;
+                return ValueTask.CompletedTask;
+            },
+            cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        // The subscriber throws when the operation is canceled, either by the consumer stop or for another reason
+        if (isConsumerStopping)
+            await cancellationTokenSource.CancelAsync();
+
+        processingTaskCompletionSource.SetException(new OperationCanceledException());
+
+        SequenceAbortReason abortReason = await abortReasonTaskCompletionSource.Task.WaitAsync(Timeout);
+        abortReason.ShouldBe(expectedReason);
     }
 
     private static ISequence CreateSequence(string sequenceId, AddToSequenceResult addToSequenceResult)

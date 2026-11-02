@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -277,6 +278,265 @@ public class TransactionHandlerConsumerBehaviorTests
         await context.Consumer.Received(1).CommitAsync(Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Contains(offset1)));
     }
 
+    [Fact]
+    public async Task HandleAsync_ShouldRollBackWithoutApplyingErrorPolicies_WhenStopCancelsProcessing()
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(offset);
+        using CancellationTokenSource cancellationTokenSource = new();
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // The consumer stop cancels the token passed to the pipeline and the subscriber honoring it throws
+        await cancellationTokenSource.CancelAsync();
+
+        await behavior.HandleAsync(
+            context,
+            (_, cancellationToken) => throw new OperationCanceledException(cancellationToken),
+            cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        context.Consumer.DidNotReceive().IncrementFailedAttempts(Arg.Any<IRawInboundEnvelope>());
+        context.Envelope.Headers.Contains(DefaultMessageHeaders.FailedAttempts).ShouldBeFalse();
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+        await context.Consumer.DidNotReceive().StopAsync(Arg.Any<bool>());
+        await context.Consumer.Received(1).RollbackAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single().Equals(offset)));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldApplyErrorPolicies_WhenOperationIsCanceledWithoutStoppingConsumer()
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(offset);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // An operation canceled for another reason (e.g. an HTTP request timing out) is a processing failure
+        Task handling = behavior.HandleAsync(
+            context,
+            (_, _) => throw new OperationCanceledException(),
+            CancellationToken.None).AsTask();
+
+        await Should.ThrowAsync<OperationCanceledException>(handling.WaitAsync(Timeout));
+        context.Consumer.Received(1).IncrementFailedAttempts(context.Envelope);
+        context.Envelope.Headers.Contains(DefaultMessageHeaders.FailedAttempts).ShouldBeTrue();
+        await context.Consumer.Received(1).StopAsync(offset, false);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldAbortSequenceAsConsumerAborted_WhenStopCancelsProcessing()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        using CancellationTokenSource cancellationTokenSource = new();
+        TestSequence sequence = new(context, 10);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // The subscriber honors the token, which the consumer stop cancels while it's waiting for the next message
+        CancellationToken cancellationToken = cancellationTokenSource.Token;
+        Task processingTask = Task.Run(async () =>
+        {
+            await foreach (IRawInboundEnvelope dummy in stream.WithCancellation(cancellationToken))
+            {
+                // Just consume the stream
+            }
+        });
+
+        await behavior.HandleAsync(
+            context,
+            async (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                pipelineContext.ProcessingTask = processingTask;
+                await sequence.AddAsync(pipelineContext.Envelope, null, true);
+            },
+            cancellationToken).AsTask().WaitAsync(Timeout);
+
+        await cancellationTokenSource.CancelAsync();
+
+        await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
+        await sequence.DisposedTask.WaitAsync(Timeout);
+
+        sequence.IsAborted.ShouldBeTrue();
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.ConsumerAborted);
+        context.Consumer.DidNotReceive().IncrementFailedAttempts(Arg.Any<IRawInboundEnvelope>());
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldAbortSequenceAsConsumerAbortedWithoutRethrowing_WhenStopCancelsAddingToSequence()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        using CancellationTokenSource cancellationTokenSource = new();
+        TestSequence sequence = new(context, 10);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await cancellationTokenSource.CancelAsync();
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, cancellationToken) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                throw new OperationCanceledException(cancellationToken);
+            },
+            cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
+
+        // Disposed, even though the sequence start failed
+        await sequence.DisposedTask.WaitAsync(Timeout);
+
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.ConsumerAborted);
+        context.Consumer.DidNotReceive().IncrementFailedAttempts(Arg.Any<IRawInboundEnvelope>());
+        await context.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldDisposeSequenceAndRethrow_WhenProcessingFailsAddingFirstMessageToSequence()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        TestSequence sequence = new(context, 10);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // The subscriber failure aborts the sequence, applying the error policies, and is rethrown adding the first message
+        Task handling = behavior.HandleAsync(
+            context,
+            async (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test"));
+                await sequence.ProcessingCompletedTask;
+            },
+            CancellationToken.None).AsTask();
+
+        await Should.ThrowAsync<InvalidOperationException>(handling.WaitAsync(Timeout));
+
+        // Disposed, even though the sequence start failed
+        await sequence.DisposedTask.WaitAsync(Timeout);
+
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldRethrow_WhenOperationCanceledWithoutStoppingConsumerFailsSequence()
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(offset);
+        using CancellationTokenSource cancellationTokenSource = new();
+        TestSequence sequence = new(context, 10);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+        StopConsumerOnRequest(context, cancellationTokenSource);
+
+        // An operation canceled for another reason (e.g. an HTTP request timing out) aborts the sequence and the stop error policy
+        // stops the consumer, canceling the token, before the failure is rethrown adding the message to the sequence
+        Task handling = behavior.HandleAsync(
+            context,
+            async (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                await sequence.AbortAsync(SequenceAbortReason.Error, new TaskCanceledException("Unrelated timeout"));
+                await sequence.ProcessingCompletedTask;
+            },
+            cancellationTokenSource.Token).AsTask();
+
+        await Should.ThrowAsync<TaskCanceledException>(handling.WaitAsync(Timeout));
+        cancellationTokenSource.IsCancellationRequested.ShouldBeTrue();
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
+        await context.Consumer.Received(1).StopAsync(offset, false);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldRethrow_WhenOperationCanceledWithoutStoppingConsumerFailsUnboundedSequence()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        using CancellationTokenSource cancellationTokenSource = new();
+        TestSequence unboundedSequence = new(context, 10);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+        StopConsumerOnRequest(context, cancellationTokenSource);
+
+        // An operation canceled for another reason (e.g. an HTTP request timing out) aborts the unbounded sequence and the stop error
+        // policy stops the consumer, canceling the token, before the failure is rethrown pushing the message to the sequence
+        Task handling = behavior.HandleAsync(
+            context,
+            async (pipelineContext, _) =>
+            {
+                TaskCanceledException exception = new("Unrelated timeout");
+                pipelineContext.UnboundedSequence = unboundedSequence;
+                await unboundedSequence.AbortAsync(SequenceAbortReason.Error, exception);
+                throw exception;
+            },
+            cancellationTokenSource.Token).AsTask();
+
+        await Should.ThrowAsync<TaskCanceledException>(handling.WaitAsync(Timeout));
+        cancellationTokenSource.IsCancellationRequested.ShouldBeTrue();
+        unboundedSequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldRollBackWithoutApplyingErrorPolicies_WhenStopCancelsUnboundedSequenceProcessing()
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(offset);
+        using CancellationTokenSource cancellationTokenSource = new();
+        TestSequence unboundedSequence = new(context, 10);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await cancellationTokenSource.CancelAsync();
+
+        // The subscriber honoring the token canceled by the consumer stop aborts the unbounded sequence and the cancellation is rethrown
+        // pushing the message to the sequence
+        await behavior.HandleAsync(
+            context,
+            async (pipelineContext, cancellationToken) =>
+            {
+                OperationCanceledException exception = new(cancellationToken);
+                pipelineContext.UnboundedSequence = unboundedSequence;
+                await unboundedSequence.AbortAsync(SequenceAbortReason.ConsumerAborted, exception);
+                throw exception;
+            },
+            cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        context.Consumer.DidNotReceive().IncrementFailedAttempts(Arg.Any<IRawInboundEnvelope>());
+        context.Envelope.Headers.Contains(DefaultMessageHeaders.FailedAttempts).ShouldBeFalse();
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+        await context.Consumer.Received(1).RollbackAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single().Equals(offset)));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldRollBackWithoutApplyingErrorPolicies_WhenStopCancelsProcessingWhileUnboundedSequenceIsAborting()
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(offset);
+        using CancellationTokenSource cancellationTokenSource = new();
+        ISequence unboundedSequence = Substitute.For<ISequence>();
+        unboundedSequence.IsAborted.Returns(true);
+        unboundedSequence.AbortReason.Returns(SequenceAbortReason.None);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await cancellationTokenSource.CancelAsync();
+
+        // A subscriber honoring the token canceled by the consumer stop throws while the unbounded sequence is being aborted (e.g. by
+        // the stream subscriber honoring it as well), after its state is switched but before its abort reason is set
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, cancellationToken) =>
+            {
+                pipelineContext.UnboundedSequence = unboundedSequence;
+                throw new OperationCanceledException(cancellationToken);
+            },
+            cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        context.Consumer.DidNotReceive().IncrementFailedAttempts(Arg.Any<IRawInboundEnvelope>());
+        context.Envelope.Headers.Contains(DefaultMessageHeaders.FailedAttempts).ShouldBeFalse();
+        await context.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+        await context.Consumer.Received(1).RollbackAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single().Equals(offset)));
+    }
+
     // Not using the ConsumerPipelineContextHelper, since the behavior initializes the transaction manager
     private static ConsumerPipelineContext CreateContext(
         IBrokerMessageIdentifier identifier,
@@ -301,6 +561,15 @@ public class TransactionHandlerConsumerBehaviorTests
             [],
             serviceProvider);
     }
+
+    // The stop error policy stops the consumer, which cancels the token passed to the pipeline
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    private static void StopConsumerOnRequest(ConsumerPipelineContext context, CancellationTokenSource cancellationTokenSource) =>
+        context.Consumer.StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>()).Returns(_ =>
+        {
+            cancellationTokenSource.Cancel();
+            return ValueTask.CompletedTask;
+        });
 
     private static RawInboundEnvelope CreateEnvelope(IBrokerMessageIdentifier identifier) =>
         new(

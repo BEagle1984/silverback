@@ -21,6 +21,10 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
 
     private readonly ISilverbackLogger _logger;
 
+    private readonly System.Threading.Lock _stopGenerationLock = new();
+
+    private int _stopGeneration; // Incremented by every stop, to skip the restarts deferred before it
+
     private bool _isDisposed;
 
     protected ConsumerChannelsManager(IConsumer consumer, ISilverbackLogger logger)
@@ -48,6 +52,9 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
         // Clear the current activity to ensure we don't propagate the previous traceId (e.g. when restarting because of a rollback)
         Activity.Current = null;
 
+        // Captured before checking the reading state, so that any stop requested after this call skips the deferred restart
+        int stopGeneration = GetStopGeneration();
+
         if (channel.ReadCancellationToken.IsCancellationRequested && !channel.ReadTask.IsCompleted)
         {
             _logger.LogConsumerTrace(
@@ -56,18 +63,20 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
                 () => [channel.Id]);
 
             // If the cancellation is still pending, await it and restart after successful stop
-            Task.Run(async () =>
-                {
-                    await channel.ReadTask.ConfigureAwait(false);
-                    StartReading(channel);
-                })
-                .FireAndForget();
+            StartReadingAfterStopAsync(channel, stopGeneration).FireAndForget();
 
             return;
         }
 
         if (!channel.StartReading())
+        {
+            _logger.LogConsumerTrace(
+                _consumer,
+                "Ignoring processing loop startup of channel {Channel} (still reading)",
+                () => [channel.Id]);
+
             return;
+        }
 
         Task.Run(() => ReadChannelAsync(channel)).FireAndForget();
     }
@@ -76,6 +85,10 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
     protected virtual async Task StopReadingAsync(TChannel channel)
     {
         Check.ThrowObjectDisposedIf(_isDisposed, this);
+
+        // Incremented before canceling the reading, to skip the restarts deferred until now
+        lock (_stopGenerationLock)
+            _stopGeneration++;
 
         _logger.LogConsumerTrace(
             _consumer,
@@ -157,5 +170,33 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
 
         if (hasThrown)
             await _consumer.Client.DisconnectAsync().ConfigureAwait(false);
+    }
+
+    private int GetStopGeneration()
+    {
+        lock (_stopGenerationLock)
+            return _stopGeneration;
+    }
+
+    private async Task StartReadingAfterStopAsync(TChannel channel, int stopGeneration)
+    {
+        await channel.ReadTask.ConfigureAwait(false);
+
+        // A stop requested while the restart was pending wins, otherwise the restarted loop would keep reading while stopped. The
+        // check and the restart are atomic with respect to the stops, since a later stop must find the new read token to cancel it.
+        lock (_stopGenerationLock)
+        {
+            if (_stopGeneration != stopGeneration)
+            {
+                _logger.LogConsumerTrace(
+                    _consumer,
+                    "Skipping deferred processing loop startup of channel {Channel} (stopped in the meantime)",
+                    () => [channel.Id]);
+
+                return;
+            }
+
+            StartReading(channel);
+        }
     }
 }

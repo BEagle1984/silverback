@@ -369,6 +369,78 @@ public class MqttConsumerTests
         ]);
     }
 
+    [Fact]
+    public async Task StopAsync_ShouldNotWaitForStopRequestedByProcessing_WhenWaitingForThatProcessing()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        harness.Behavior.RollbackFirstAttempt = true;
+        harness.Behavior.StopBeforeRollback = true;
+        await harness.ConnectAsync();
+        await harness.DeliverAsync(0);
+        await harness.Behavior.FirstStarted.Task.WaitAsync(ReconnectTimeout);
+        await harness.DeliverAsync(1);
+
+        Task stopping = harness.Consumer.StopAsync().AsTask();
+
+        // The canceled processing stops the consumer and rolls back, as the error policies do, while the stop waits for it
+        await harness.Behavior.Stopping.Task.WaitAsync(ReconnectTimeout);
+        harness.Behavior.ReleaseFirst.TrySetResult(true);
+        await stopping.WaitAsync(ReconnectTimeout);
+
+        harness.Behavior.IsStopRequestCompleted.ShouldBeTrue();
+        harness.Behavior.Processed.ShouldBeEmpty();
+        harness.Acknowledged.ShouldBeEmpty();
+
+        await harness.Consumer.StartAsync();
+        await harness.Behavior.BufferedMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
+
+        harness.Behavior.Processed.ShouldBe([0, 1]);
+        harness.Acknowledged.ShouldBe(
+        [
+            new Acknowledgement(0, 1, 1),
+            new Acknowledgement(1, 1, 1)
+        ]);
+    }
+
+    [Fact]
+    public async Task StopAsync_ShouldSkipDeferredRestart_WhenStoppedAgainWhileReaderIsStillProcessing()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        harness.Behavior.RollbackCanceledProcessing = true;
+        await harness.ConnectAsync();
+        await harness.DeliverAsync(0);
+        await harness.Behavior.FirstStarted.Task.WaitAsync(ReconnectTimeout);
+        await harness.DeliverAsync(1);
+
+        // The restart is deferred until the reader stops handling the delivery, which ignores the cancellation
+        await harness.Consumer.StopAsync(false);
+        await harness.Consumer.StartAsync();
+
+        Task stopping = harness.Consumer.StopAsync().AsTask();
+        harness.Behavior.ReleaseFirst.TrySetResult(true);
+        await stopping.WaitAsync(ReconnectTimeout);
+
+        // A reader resumed by the deferred restart would retry the delivery with the canceled processing in a loop
+        await Task.WhenAny(harness.Behavior.CanceledProcessingRetried.Task, Task.Delay(TimeSpan.FromMilliseconds(250)));
+
+        harness.Behavior.CanceledAttempts.ShouldBe(1);
+        harness.Behavior.Processed.ShouldBeEmpty();
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+
+        await harness.Consumer.StartAsync();
+        await harness.Behavior.BufferedMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
+
+        harness.Behavior.CanceledAttempts.ShouldBe(1);
+        harness.Behavior.Processed.ShouldBe([0, 1]);
+        harness.Acknowledged.ShouldBe(
+        [
+            new Acknowledgement(0, 1, 1),
+            new Acknowledgement(1, 1, 1)
+        ]);
+    }
+
     [Theory]
     [InlineData(MqttQualityOfServiceLevel.AtMostOnce, false)]
     [InlineData(MqttQualityOfServiceLevel.AtLeastOnce, false)]
@@ -921,11 +993,23 @@ public class MqttConsumerTests
     {
         private int _isFirstAttemptRolledBack;
 
+        private int _canceledAttempts;
+
         public int SortIndex => 0;
 
         public Func<Task>? BeforeProcessing { get; set; }
 
         public bool RollbackFirstAttempt { get; set; }
+
+        public bool StopBeforeRollback { get; set; }
+
+        public bool RollbackCanceledProcessing { get; set; }
+
+        public bool IsStopRequestCompleted { get; private set; }
+
+        public int CanceledAttempts => Volatile.Read(ref _canceledAttempts);
+
+        public TaskCompletionSource<bool> CanceledProcessingRetried { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public int ExpectedMessages { get; set; } = 3;
 
@@ -963,9 +1047,22 @@ public class MqttConsumerTests
                     // Roll back like a retry error policy, to be processed again
                     if (RollbackFirstAttempt && Interlocked.Exchange(ref _isFirstAttemptRolledBack, 1) == 0)
                     {
+                        if (StopBeforeRollback)
+                            await RequestStopAsync(context);
+
                         await context.Consumer.RollbackAsync(context.Envelope.BrokerMessageIdentifier);
                         return;
                     }
+                }
+
+                // Roll back the processing canceled by the consumer stop, as the transaction handler does
+                if (RollbackCanceledProcessing && cancellationToken.IsCancellationRequested)
+                {
+                    if (Interlocked.Increment(ref _canceledAttempts) > 1)
+                        CanceledProcessingRetried.TrySetResult(true);
+
+                    await context.Consumer.RollbackAsync(context.Envelope.BrokerMessageIdentifier);
+                    return;
                 }
 
                 try
@@ -988,6 +1085,16 @@ public class MqttConsumerTests
                 else if (number == 2)
                     FreshMessageProcessed.TrySetResult(true);
             }
+        }
+
+        // Stop without waiting for the processing itself, as the error policies do when the processing fails
+        private async Task RequestStopAsync(ConsumerPipelineContext context)
+        {
+            Task stopRequest = context.Consumer.StopAsync(context.Envelope.BrokerMessageIdentifier, false).AsTask();
+
+            // Bounded, not to deadlock the test when the stop request waits for the stop in progress
+            await Task.WhenAny(stopRequest, Task.Delay(TimeSpan.FromSeconds(2), CancellationToken.None));
+            IsStopRequestCompleted = stopRequest.IsCompletedSuccessfully;
         }
     }
 

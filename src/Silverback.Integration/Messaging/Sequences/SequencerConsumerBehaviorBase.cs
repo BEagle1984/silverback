@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Consuming;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -115,37 +116,43 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     /// </returns>
     protected virtual ValueTask AwaitOtherBehaviorIfNeededAsync(ISequence sequence) => default;
 
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
-    private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
+    private static void MonitorProcessingTaskPrematureCompletion(
+        Task processingTask,
+        ISequence sequence,
+        CancellationToken cancellationToken)
     {
         if (sequence.ParentSequence != null)
             return;
 
-        Task.Run(async () =>
-            {
-                try
-                {
-                    await processingTask.ConfigureAwait(false);
+        // The token is only used to recognize the cancellation requested by the consumer stop, the monitor must run until completion
+        Task.Run(() => MonitorProcessingTaskAsync(processingTask, sequence, cancellationToken), CancellationToken.None).FireAndForget();
+    }
 
-                    // Abort only parent sequences and don't consider the enumeration as aborted if the
-                    // sequence is actually complete (check IsCompleting first, since it's reset only after the state is switched to complete)
-                    if (sequence.ParentSequence != null || sequence.IsCompleting || sequence.IsComplete)
-                        return;
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
+    private static async Task MonitorProcessingTaskAsync(Task processingTask, ISequence sequence, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await processingTask.ConfigureAwait(false);
 
-                    // Call AbortAsync to abort the uncompleted sequence to avoid unreleased locks.
-                    // The reason behind this call here may be counterintuitive, but with
-                    // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
-                    await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
-                }
-                catch (Exception exception)
-                {
-                    if (!sequence.IsPending || sequence.ParentSequence != null)
-                        return;
+            // Abort only parent sequences and don't consider the enumeration as aborted if the
+            // sequence is actually complete (check IsCompleting first, since it's reset only after the state is switched to complete)
+            if (sequence.ParentSequence != null || sequence.IsCompleting || sequence.IsComplete)
+                return;
 
-                    await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
-                }
-            })
-            .FireAndForget();
+            // Call AbortAsync to abort the uncompleted sequence to avoid unreleased locks.
+            // The reason behind this call here may be counterintuitive, but with
+            // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
+            await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            if (!sequence.IsPending || sequence.ParentSequence != null)
+                return;
+
+            await sequence.AbortAsync(StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken), exception)
+                .ConfigureAwait(false);
+        }
     }
 
     private async Task<ISequence?> AddMessageToSequenceAsync(
@@ -258,7 +265,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         await PublishSequenceAsync(context, next, cancellationToken).ConfigureAwait(false);
 
         if (context.ProcessingTask != null)
-            MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
+            MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence, cancellationToken);
 
         _logger.LogSequenceStarted(sequence);
     }

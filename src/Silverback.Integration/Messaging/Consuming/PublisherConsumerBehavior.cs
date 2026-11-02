@@ -68,6 +68,10 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
             {
                 UnboundedSequence unboundedSequence = await GetUnboundedSequenceAsync(context, cancellationToken).ConfigureAwait(false);
 
+                // Let the TransactionHandlerConsumerBehavior tell whether the exception rethrown from the sequence is the cancellation
+                // requested by the consumer stop: its abort might have applied the error policies already, stopping the consumer
+                context.UnboundedSequence = unboundedSequence;
+
                 AddToSequenceResult result = await unboundedSequence.AddAsync(envelope, null, false).ConfigureAwait(false);
 
                 if (unboundedSequence is { IsAborted: true, AbortException: not null })
@@ -193,7 +197,8 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                 }
                 catch (Exception exception)
                 {
-                    await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
+                    await sequence.AbortAsync(StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken), exception)
+                        .ConfigureAwait(false);
                     throw;
                 }
                 finally

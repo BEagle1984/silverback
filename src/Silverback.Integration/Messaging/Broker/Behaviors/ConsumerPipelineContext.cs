@@ -145,6 +145,12 @@ public sealed class ConsumerPipelineContext : IDisposable
     public int CurrentStepIndex { get; internal set; }
 
     /// <summary>
+    ///     Gets or sets the unbounded sequence that the message was pushed to when streaming, which isn't set as the
+    ///     <see cref="Sequence" /> since the message doesn't actually belong to a sequence.
+    /// </summary>
+    internal ISequence? UnboundedSequence { get; set; }
+
+    /// <summary>
     ///     Gets the identifiers to be used to commit after successful processing.
     /// </summary>
     /// <returns>

@@ -9,10 +9,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Mqtt.Mocks;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Testing;
@@ -187,5 +190,106 @@ public class BrokerClientsShutdownTests(ITestOutputHelper testOutputHelper) : E2
             if (shutdown != null)
                 await shutdown.WaitAsync(timeout);
         }
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task StopAsync_ShouldRollBackWithoutApplyingErrorPolicies_WhenShutdownCancelsProcessing(bool consumeMqtt, bool batchProcessing)
+    {
+        const string inputTopic = "shutdown-input";
+        TimeSpan timeout = TimeSpan.FromSeconds(15);
+        TaskCompletionSource<bool> started = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        ISkipMessageErrorPolicyCallback callback = Substitute.For<ISkipMessageErrorPolicyCallback, IStopConsumerErrorPolicyCallback>();
+
+        await Host.ConfigureServicesAndRunAsync(services =>
+        {
+            SilverbackBuilder silverback = services.AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options
+                    .AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(1))
+                    .AddMockedMqtt())
+                .AddSingletonErrorPolicyCallback(callback);
+
+            if (consumeMqtt)
+            {
+                silverback.AddMqttClients(clients => clients
+                    .ConnectViaTcp("e2e-mqtt-broker")
+                    .AddClient(client => client
+                        .WithClientId("shutdown-consumer")
+                        .Consume<TestEventOne>(endpoint =>
+                        {
+                            endpoint.ConsumeFrom(inputTopic).OnError(policy => policy.Skip());
+
+                            if (batchProcessing)
+                                endpoint.EnableBatchProcessing(1);
+                        })));
+            }
+            else
+            {
+                silverback.AddKafkaClients(clients => clients
+                    .WithBootstrapServers("PLAINTEXT://e2e")
+                    .AddConsumer(consumer => consumer
+                        .WithGroupId("shutdown-group")
+                        .DisableAutoCommit()
+                        .CommitOffsetEach(1)
+                        .Consume<TestEventOne>(endpoint =>
+                        {
+                            endpoint.ConsumeFrom(inputTopic).OnError(policy => policy.Skip());
+
+                            if (batchProcessing)
+                                endpoint.EnableBatchProcessing(1);
+                        })));
+            }
+
+            if (batchProcessing)
+                silverback.AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>, CancellationToken>(HandleBatchAsync);
+            else
+                silverback.AddDelegateSubscriber<TestEventOne, CancellationToken>(HandleEventAsync);
+        });
+
+        async Task HandleBatchAsync(IMessageStreamEnumerable<TestEventOne> batch, CancellationToken cancellationToken)
+        {
+            TestEventOne? receivedMessage = null;
+
+            await foreach (TestEventOne message in batch)
+            {
+                receivedMessage = message;
+            }
+
+            // Process the complete batch, which the skip policy would commit
+            await HandleEventAsync(receivedMessage!, cancellationToken);
+        }
+
+        async Task HandleEventAsync(TestEventOne message, CancellationToken cancellationToken)
+        {
+            started.TrySetResult(true);
+
+            // Canceled by the shutdown
+            await Task.Delay(timeout, cancellationToken);
+        }
+
+        IKafkaTestingHelper kafka = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
+        IMqttTestingHelper mqtt = Host.ServiceProvider.GetRequiredService<IMqttTestingHelper>();
+        ITestingHelper inputHelper = consumeMqtt ? mqtt : kafka;
+        IHost application = Host.ServiceProvider.GetRequiredService<IHost>();
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+
+        await inputHelper.GetProducerForEndpoint(inputTopic).ProduceAsync(new TestEventOne { ContentEventOne = "canceled-by-shutdown" });
+        await started.Task.WaitAsync(timeout);
+        IClientSession? mqttSession = consumeMqtt ? mqtt.GetClientSession("shutdown-consumer") : null;
+
+        await application.StopAsync().WaitAsync(timeout);
+
+        // Neither skipped nor committed, to be consumed again
+        callback.ReceivedCalls().ShouldBeEmpty();
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+
+        if (consumeMqtt)
+            mqttSession.ShouldNotBeNull().GetPendingMessagesCount().ShouldBe(1);
+        else
+            kafka.GetConsumerGroup("shutdown-group").GetCommittedOffsetsCount(inputTopic).ShouldBe(0);
     }
 }

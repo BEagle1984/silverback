@@ -1440,6 +1440,44 @@ public partial class KafkaConsumerTests
         }
     }
 
+    [Fact]
+    public async Task TransactionRollback_ShouldNotWaitForBlockingStop_WhenItsProcessingIsAwaitedByThatStop()
+    {
+        await using PollHarness harness = new();
+        await harness.StartAsync(0);
+
+        ProcessingGate first = harness.Block(0, 0);
+        first.SkipCommit = true;
+        first.IgnoreCancellation = true;
+        await harness.DeliverAsync((0, 0));
+        await first.Started.Task.WaitAsync(Timeout);
+
+        using ConsumerPipelineContext context = first.Context!.Clone();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        // The blocking stop waits for the processing, which completes only after rolling back its transaction and stopping the
+        // consumer, as the error policies do when the processing fails
+        Task stopping = harness.Consumer.StopAsync().AsTask();
+        await first.ReaderStopped.Task.WaitAsync(Timeout);
+        Task rollback = transaction.RollbackAsync(new InvalidOperationException("Processing failed."));
+
+        try
+        {
+            await Task.WhenAny(rollback, Task.Delay(TimeSpan.FromSeconds(2))).WaitAsync(Timeout);
+
+            rollback.IsCompletedSuccessfully.ShouldBeTrue();
+        }
+        finally
+        {
+            first.Release.TrySetResult(true);
+            await Task.WhenAll(stopping, rollback).WaitAsync(Timeout);
+        }
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        harness.Seeks.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
     private static TaskCompletionSource<bool> NewSignal() => new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Epoch is used by record equality in assignment assertions.")]

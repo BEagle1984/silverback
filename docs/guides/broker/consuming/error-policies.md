@@ -8,6 +8,9 @@ When a subscriber throws while processing a consumed message, or the message can
 
 This guide covers the built-in policies, how to combine them, and the caveats to be aware of.
 
+> [!Note]
+> Stopping the consumer (e.g. when the application shuts down) cancels the `CancellationToken` passed to the subscribers. If a subscriber throws an `OperationCanceledException` because of that cancellation, the error policies aren't applied: the message is rolled back, without being committed (Kafka) or acknowledged (MQTT), to be consumed again. Any other `OperationCanceledException` (e.g. a timed out HTTP request) is handled by the error policies like any other exception.
+
 ## Default Behavior
 
 If no error policy is configured, the <xref:Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy> is applied: the exception is logged and the consumer is stopped and disconnected. The failed message isn't committed (Kafka) or acknowledged (MQTT), so it will be consumed again once the consumer is restarted.

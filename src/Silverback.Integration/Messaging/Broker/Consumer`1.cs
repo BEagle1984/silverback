@@ -101,6 +101,12 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     public IConsumerStatusInfo StatusInfo => _statusInfo;
 
     /// <summary>
+    ///     Gets a value indicating whether the processing was canceled by stopping the consumer and the consumer wasn't restarted
+    ///     since.
+    /// </summary>
+    internal bool IsProcessingCanceled => _processingCancellationTokenSource.IsCancellationRequested;
+
+    /// <summary>
     ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </summary>
     protected IServiceProvider ServiceProvider { get; }
@@ -134,8 +140,14 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
         _logger.LogConsumerTrace(this, "Triggering reconnect.");
 
-        // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks
-        await StopAsync(false).ConfigureAwait(false);
+        // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks. Reconnecting restarts the consumer: a
+        // consumer that is stopped or being stopped (e.g. by StopAsync) is left stopped.
+        if (!await StopCoreAsync(null, waitUntilStopped: false, ignoreOnceCanceled: true).ConfigureAwait(false))
+        {
+            _isReconnecting = false;
+            _logger.LogConsumerTrace(this, "Ignoring the reconnect request: the consumer is stopped or being stopped.");
+            return;
+        }
 
         Task.Run(async () =>
             {
@@ -200,14 +212,15 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     }
 
     /// <inheritdoc cref="IConsumer.StopAsync(bool)" />
-    public ValueTask StopAsync(bool waitUntilStopped = true) => StopCoreAsync(null, waitUntilStopped);
+    public async ValueTask StopAsync(bool waitUntilStopped = true) =>
+        await StopCoreAsync(null, waitUntilStopped, ignoreOnceCanceled: false).ConfigureAwait(false);
 
     /// <inheritdoc cref="IConsumer.StopAsync(IBrokerMessageIdentifier, bool)" />
-    public ValueTask StopAsync(IBrokerMessageIdentifier brokerMessageIdentifier, bool waitUntilStopped = true)
+    public async ValueTask StopAsync(IBrokerMessageIdentifier brokerMessageIdentifier, bool waitUntilStopped = true)
     {
         Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
 
-        return StopCoreAsync((TIdentifier)brokerMessageIdentifier, waitUntilStopped);
+        await StopCoreAsync((TIdentifier)brokerMessageIdentifier, waitUntilStopped, ignoreOnceCanceled: true).ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />
@@ -454,14 +467,15 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             cancellationToken);
     }
 
-    private async ValueTask StopCoreAsync(TIdentifier? brokerMessageIdentifier, bool waitUntilStopped)
+    private async ValueTask<bool> StopCoreAsync(TIdentifier? brokerMessageIdentifier, bool waitUntilStopped, bool ignoreOnceCanceled)
     {
-        await _startStopSemaphore.WaitAsync().ConfigureAwait(false);
+        if (!await TryWaitStartStopSemaphoreAsync(ignoreOnceCanceled).ConfigureAwait(false))
+            return false;
 
         try
         {
             if (!TryBeginStop(brokerMessageIdentifier))
-                return;
+                return false;
 
             _logger.LogConsumerTrace(this, "Stopping consumer...");
 
@@ -487,6 +501,33 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         }
 
         _logger.LogConsumerTrace(this, "Consumer stopped.");
+
+        return true;
+    }
+
+    // A stop request for a specific message comes from its processing (e.g. from the error policies) and gives up as soon as the
+    // processing is canceled: the consumer is then already being stopped, and that stop might be holding the semaphore while waiting
+    // for this very processing to complete. The stop to reconnect, which may come from the processing as well, also gives up, since
+    // reconnecting would restart the consumer being stopped.
+    private async ValueTask<bool> TryWaitStartStopSemaphoreAsync(bool ignoreOnceCanceled)
+    {
+        if (!ignoreOnceCanceled)
+        {
+            await _startStopSemaphore.WaitAsync().ConfigureAwait(false);
+            return true;
+        }
+
+        try
+        {
+            await _startStopSemaphore.WaitAsync(_processingCancellationTokenSource.Token).ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException)
+        {
+            // Disposed only when restarting (after being canceled) or disposing the consumer: the request is obsolete in either case
+            _logger.LogConsumerTrace(this, "Ignoring the stop request: the processing was already canceled.");
+            return false;
+        }
     }
 
     private ValueTask OnClientConnectedAsync(BrokerClient client)

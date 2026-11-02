@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -118,6 +119,136 @@ public class ConsumerTests
         behavior.CancellationToken.IsCancellationRequested.ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task StopAsync_ShouldNotWaitForStopInProgress_WhenProcessingRequestsStop(
+        bool requestedBeforeCancellation,
+        bool triggerReconnect)
+    {
+        StopRequestingBehavior behavior = new(triggerReconnect);
+        using TestConsumer consumer = CreateConsumer(behavior);
+        TaskCompletionSource<bool> stopCoreReached = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseStopCore = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        consumer.StopCoreCallback = () => stopCoreReached.TrySetResult(true);
+        consumer.StopGate = releaseStopCore.Task;
+
+        // The blocking stop waits for the processing, which requests the stop like the error policies do
+        consumer.DrainGate = behavior.Completed.Task;
+        await consumer.StartAsync();
+        Task consuming = consumer.ConsumeAsync().AsTask();
+        await behavior.Started.Task.WaitAsync(Timeout);
+
+        Task stopping = consumer.StopAsync().AsTask();
+
+        try
+        {
+            await stopCoreReached.Task.WaitAsync(Timeout);
+
+            if (requestedBeforeCancellation)
+            {
+                // The stop holds the semaphore but didn't cancel the processing yet
+                behavior.RequestStop.TrySetResult(true);
+                await behavior.StopRequested.Task.WaitAsync(Timeout);
+                releaseStopCore.TrySetResult(true);
+            }
+            else
+            {
+                releaseStopCore.TrySetResult(true);
+                await behavior.Canceled.Task.WaitAsync(Timeout);
+                behavior.RequestStop.TrySetResult(true);
+            }
+
+            await Task.WhenAll(stopping, consuming).WaitAsync(Timeout);
+
+            behavior.IsStopRequestCompleted.ShouldBeTrue();
+            consumer.StopRequests.ShouldHaveSingleItem().ShouldBeNull();
+            consumer.Started.ShouldBeFalse();
+            consumer.Stopping.ShouldBeFalse();
+            await consumer.Client.DidNotReceive().ReconnectAsync();
+        }
+        finally
+        {
+            releaseStopCore.TrySetResult(true);
+            behavior.RequestStop.TrySetResult(true);
+            await Task.WhenAll(stopping, consuming).WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
+    public async Task TriggerReconnectAsync_ShouldNotReconnect_WhenStopping()
+    {
+        using TestConsumer consumer = CreateConsumer();
+        TaskCompletionSource<bool> releaseDrain = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        consumer.DrainGate = releaseDrain.Task;
+        await consumer.StartAsync();
+
+        Task stopping = consumer.StopAsync().AsTask();
+
+        try
+        {
+            // Triggered while stopping (e.g. by the Kafka poll timeout), the reconnect must neither wait for the stop nor restart the
+            // consumer
+            await consumer.TriggerReconnectAsync().AsTask().WaitAsync(Timeout);
+
+            releaseDrain.TrySetResult(true);
+            await stopping.WaitAsync(Timeout);
+
+            consumer.StopRequests.ShouldHaveSingleItem().ShouldBeNull();
+            consumer.Started.ShouldBeFalse();
+            await consumer.Client.DidNotReceive().ReconnectAsync();
+        }
+        finally
+        {
+            releaseDrain.TrySetResult(true);
+            await stopping.WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task TriggerReconnectAsync_ShouldNotReconnect_WhenStopped()
+    {
+        using TestConsumer consumer = CreateConsumer();
+        TaskCompletionSource<bool> reconnected = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        consumer.Client.ReconnectAsync().Returns(_ =>
+        {
+            reconnected.TrySetResult(true);
+
+            return ValueTask.CompletedTask;
+        });
+
+        await consumer.StartAsync();
+        await consumer.StopAsync();
+
+        // Block a pending reconnect while it waits for the consuming to stop, since any further request is ignored until then
+        TaskCompletionSource<bool> releaseDrain = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        consumer.DrainGate = releaseDrain.Task;
+
+        try
+        {
+            await consumer.TriggerReconnectAsync().AsTask().WaitAsync(Timeout);
+
+            // The ignored request must not prevent reconnecting the consumer once it is started again
+            await consumer.StartAsync();
+            await consumer.TriggerReconnectAsync().AsTask().WaitAsync(Timeout);
+
+            consumer.Started.ShouldBeFalse();
+
+            releaseDrain.TrySetResult(true);
+            await reconnected.Task.WaitAsync(Timeout);
+
+            consumer.StopRequests.ShouldBe([null, null]);
+            await consumer.Client.Received(1).ReconnectAsync();
+        }
+        finally
+        {
+            releaseDrain.TrySetResult(true);
+        }
+    }
+
     private static TestConsumer CreateConsumer(params IConsumerBehavior[] behaviors)
     {
         IBrokerClient client = Substitute.For<IBrokerClient>();
@@ -148,6 +279,8 @@ public class ConsumerTests
 
         public Task DrainGate { get; set; } = Task.CompletedTask;
 
+        public Task StopGate { get; set; } = Task.CompletedTask;
+
         public int StopCalls { get; private set; }
 
         public int DrainCalls { get; private set; }
@@ -167,14 +300,14 @@ public class ConsumerTests
                    base.TryBeginStop(brokerMessageIdentifier);
         }
 
-        protected override ValueTask StopCoreAsync()
+        protected override async ValueTask StopCoreAsync()
         {
             IsStopping.ShouldBeTrue();
 
             StopCalls++;
             StopCoreCallback?.Invoke();
 
-            return ValueTask.CompletedTask;
+            await StopGate;
         }
 
         protected override async ValueTask WaitUntilConsumingStoppedCoreAsync()
@@ -202,6 +335,51 @@ public class ConsumerTests
             CancellationToken = cancellationToken;
 
             return ValueTask.CompletedTask;
+        }
+    }
+
+    private sealed class StopRequestingBehavior(bool triggerReconnect) : IConsumerBehavior
+    {
+        private static readonly TimeSpan StopRequestTimeout = TimeSpan.FromSeconds(2);
+
+        public int SortIndex => 0;
+
+        public TaskCompletionSource<bool> Started { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> Canceled { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> RequestStop { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> StopRequested { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> Completed { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public bool IsStopRequestCompleted { get; private set; }
+
+        public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await using CancellationTokenRegistration registration = cancellationToken.Register(() => Canceled.TrySetResult(true));
+                Started.TrySetResult(true);
+                await RequestStop.Task.WaitAsync(Timeout, CancellationToken.None);
+
+                // Stop without waiting for the processing itself, as the error policies do when the processing fails, or reconnect, as
+                // they do when the rollback fails
+                Task stopRequest = triggerReconnect
+                    ? context.Consumer.TriggerReconnectAsync().AsTask()
+                    : context.Consumer.StopAsync(context.Envelope.BrokerMessageIdentifier, false).AsTask();
+                StopRequested.TrySetResult(true);
+
+                // Bounded, not to deadlock the test when the stop request waits for the stop in progress
+                await Task.WhenAny(stopRequest, Task.Delay(StopRequestTimeout, CancellationToken.None));
+                IsStopRequestCompleted = stopRequest.IsCompletedSuccessfully;
+            }
+            finally
+            {
+                context.Dispose();
+                Completed.TrySetResult(true);
+            }
         }
     }
 }
