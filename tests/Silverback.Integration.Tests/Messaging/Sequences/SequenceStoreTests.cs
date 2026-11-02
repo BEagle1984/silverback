@@ -186,4 +186,22 @@ public class SequenceStoreTests
 
         result.ShouldBeEmpty();
     }
+
+    [Fact]
+    public async Task GetEnumerator_ShouldEnumerateSnapshot_WhenSequenceIsAddedWhileEnumerating()
+    {
+        SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        await store.AddAsync(new FakeSequence("aaa", false, false, store));
+        await store.AddAsync(new FakeSequence("bbb", false, false, store));
+        List<string> enumeratedSequenceIds = [];
+
+        foreach (ISequence sequence in store)
+        {
+            enumeratedSequenceIds.Add(sequence.SequenceId);
+            await store.AddAsync(new FakeSequence(sequence.SequenceId + "-next", false, false, store));
+        }
+
+        enumeratedSequenceIds.ShouldBe(["aaa", "bbb"]);
+        store.Count.ShouldBe(4);
+    }
 }
