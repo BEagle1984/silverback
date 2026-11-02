@@ -42,6 +42,11 @@ public interface IKafkaConsumer : IConsumer
     /// <summary>
     ///     Seeks the specified partition to the specified offset.
     /// </summary>
+    /// <remarks>
+    ///     The new position also becomes the position from which the partition is consumed again when the consumer is restarted and,
+    ///     if the partitions are processed together (see <see cref="KafkaConsumerConfiguration.ProcessPartitionsIndependently" />), when
+    ///     the processing is rolled back. The records already fetched before the seek may still be processed.
+    /// </remarks>
     /// <param name="topicPartitionOffset">
     ///     The offset.
     /// </param>

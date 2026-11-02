@@ -33,7 +33,9 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     private readonly KafkaConsumerEndpointsCache _endpointsCache;
 
-    private readonly OffsetsTracker? _offsets; // tracked only when processing partitions together
+    // Tracks the polled and committed offsets of every partition: the first uncommitted offset is where a restart seeks back to.
+    // When processing the partitions together, it also drives the rollback and the cooperative revocation replay.
+    private readonly OffsetsTracker _offsets = new();
 
     private readonly System.Threading.Lock _assignmentLock = new(); // serializes partition state transitions and updates to the commit counter
 
@@ -100,9 +102,6 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
         _logger = Check.NotNull(logger, nameof(logger));
 
-        if (!Configuration.ProcessPartitionsIndependently)
-            _offsets = new OffsetsTracker();
-
         _channelsManager = new ConsumerChannelsManager(this, callbacksInvoker, logger);
         _consumeLoopHandler = new ConsumeLoopHandler(this, _channelsManager, _offsets, _logger);
 
@@ -128,7 +127,21 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     public void Resume(IEnumerable<TopicPartition> partitions) => Client.Resume(partitions);
 
     /// <inheritdoc cref="IKafkaConsumer.Seek" />
-    public void Seek(TopicPartitionOffset topicPartitionOffset) => Client.Seek(topicPartitionOffset);
+    public void Seek(TopicPartitionOffset topicPartitionOffset)
+    {
+        Check.NotNull(topicPartitionOffset, nameof(topicPartitionOffset));
+
+        lock (_assignmentLock)
+        {
+            Client.Seek(topicPartitionOffset);
+
+            // The new position replaces the tracked one, so that a restart doesn't seek back to the records skipped on purpose.
+            // A seek while the partition is being consumed mixes the two positions anyway: the records polled before it may
+            // still be tracked, processed and committed afterwards.
+            _offsets.UntrackPartition(topicPartitionOffset.TopicPartition);
+            _offsets.TrackOffset(topicPartitionOffset);
+        }
+    }
 
     /// <inheritdoc cref="IKafkaConsumer.GetOffsetsForTimestamps" />
     public IReadOnlyList<TopicPartitionOffset> GetOffsetsForTimestamps(IEnumerable<TopicPartitionTimestamp> topicPartitionTimestamps, TimeSpan timeout) =>
@@ -152,7 +165,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 _rollingBackPartitions.Remove(topicPartitionOffset.TopicPartition);
                 IncrementAssignmentVersion(topicPartitionOffset.TopicPartition);
                 _revokedPartitions.Remove(topicPartitionOffset.TopicPartition);
-                _offsets?.TrackOffset(topicPartitionOffset);
+                _offsets.TrackOffset(topicPartitionOffset);
                 _channelsManager.StartReading(topicPartitionOffset.TopicPartition);
             }
         }
@@ -184,7 +197,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             }
 
             // A shared channel also contains records from retained partitions. Rebuild it once and replay those records.
-            if (_offsets != null && topicPartitionOffsets.Count > 0)
+            if (!Configuration.ProcessPartitionsIndependently && topicPartitionOffsets.Count > 0)
             {
                 foreach (KafkaOffset offset in _offsets.GetRollbackOffSets().Where(offset => !revoked.Contains(offset.TopicPartition) &&
                                                                                              IsNotRevoked(offset.TopicPartition)))
@@ -212,7 +225,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
             foreach (TopicPartitionOffset offset in topicPartitionOffsets)
             {
-                _offsets?.UntrackPartition(offset.TopicPartition);
+                _offsets.UntrackPartition(offset.TopicPartition);
             }
 
             foreach (TopicPartitionOffset rollbackOffset in retained.Where(IsCurrentRollback).Select(partition => partition.Offset))
@@ -223,6 +236,46 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 _channelsManager.StartReading(rollbackOffset.TopicPartition);
                 Client.Resume([rollbackOffset.TopicPartition]);
                 _rollingBackPartitions.Remove(rollbackOffset.TopicPartition);
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Seeks every assigned partition back to its first uncommitted offset, so that the records discarded by a stop
+    ///     (buffered, being processed or belonging to an aborted sequence) are consumed again.
+    /// </summary>
+    /// <remarks>
+    ///     Called by the consume loop before its first poll. The offsets are determined when starting and not when stopping,
+    ///     because the stopping loop may still return one more record and the draining subscribers may still commit.
+    /// </remarks>
+    internal void SeekToUncommittedOffsets()
+    {
+        lock (_assignmentLock)
+        {
+            // The starting thread sets IsStarted and resets IsStarting without synchronization while this loop is already
+            // running: rely only on the stopping flag, which is set under this lock, and on the client status
+            if (IsStopping || Client.Status is not (ClientStatus.Initialized or ClientStatus.Initializing))
+                return;
+
+            IReadOnlyCollection<KafkaOffset> replayOffsets = _offsets.GetReplayOffsets();
+
+            if (replayOffsets.Count == 0)
+                return;
+
+            HashSet<TopicPartition> assignment = [.. Client.Assignment];
+
+            foreach (KafkaOffset offset in replayOffsets)
+            {
+                // A partition being rolled back is sought by the rollback itself
+                if (!assignment.Contains(offset.TopicPartition) || !IsNotRevoked(offset.TopicPartition) ||
+                    _rollingBackPartitions.Contains(offset.TopicPartition))
+                {
+                    continue;
+                }
+
+                TopicPartitionOffset topicPartitionOffset = offset.AsTopicPartitionOffset();
+                Client.Seek(topicPartitionOffset);
+                _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
             }
         }
     }
@@ -272,13 +325,22 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         lock (_assignmentLock)
         {
+            // The client is initializing when the native consumer was just (re)created: nothing tracked before can be consumed
+            // again from it, the new consumer resumes from the committed offsets. A stop and start while the Initialized
+            // handlers are still running doesn't consume its discarded records again either: the client can neither seek nor
+            // store the offsets before it is initialized.
+            if (Client.Status == ClientStatus.Initializing)
+                _offsets.Clear();
+
             foreach (TopicPartition partition in Client.Assignment)
             {
                 IncrementAssignmentVersion(partition);
                 _revokedPartitions.Remove(partition);
                 _rollingBackPartitions.Remove(partition);
-                _offsets?.UntrackPartition(partition);
-                _offsets?.TrackOffset(new KafkaOffset(partition, Offset.Unset));
+
+                // The offsets tracked before a stop are kept: the consume loop seeks back to the first uncommitted one before
+                // polling again
+                _offsets.TrackPartition(partition);
                 _channelsManager.StartReading(partition);
             }
 
@@ -338,8 +400,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
             foreach (KafkaOffset offset in brokerMessageIdentifiers.Where(IsOwnedOffset))
             {
-                _offsets?.Commit(offset);
+                // Tracked as committed only once stored: a record whose offset couldn't be stored must still be consumed again after
+                // a restart (or a shared rollback)
                 StoreOffset(new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1));
+                _offsets.Commit(offset);
                 stored = true;
             }
 
@@ -381,14 +445,17 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             ];
 
             // An old shared sequence must never expand its rollback to a replacement channel's offsets
-            if (currentOffsets.Length == 0 || _offsets != null && currentOffsets.Length != requestedOffsets.Length)
+            if (currentOffsets.Length == 0 ||
+                !Configuration.ProcessPartitionsIndependently && currentOffsets.Length != requestedOffsets.Length)
             {
                 _logger.LogConsumerTrace(this, "Skipping rollback restart for obsolete partition assignments");
 
                 return ValueTask.CompletedTask;
             }
 
-            IEnumerable<KafkaOffset> offsets = _offsets?.GetRollbackOffSets() ?? currentOffsets;
+            IEnumerable<KafkaOffset> offsets = Configuration.ProcessPartitionsIndependently
+                ? currentOffsets
+                : _offsets.GetRollbackOffSets();
 
             foreach (KafkaOffset offset in offsets)
             {
@@ -466,7 +533,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
                     // The pending poll may have discovered this shared partition's first record after rollback began
                     if (offset.Offset == Offset.Unset &&
-                        _offsets?.GetRollbackOffSets().FirstOrDefault(candidate => candidate.TopicPartition == offset.TopicPartition) is { } trackedOffset)
+                        _offsets.GetRollbackOffSets().FirstOrDefault(candidate => candidate.TopicPartition == offset.TopicPartition) is { } trackedOffset)
                     {
                         offset = trackedOffset.AsTopicPartitionOffset();
                     }

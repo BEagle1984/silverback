@@ -428,6 +428,35 @@ public partial class KafkaConsumerTests
     }
 
     [Fact]
+    public async Task Rollback_ShouldSeekToUserSeekTarget_WhenSharingOneChannel()
+    {
+        await using PollHarness harness = new(false);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        await harness.DeliverAsync((0, 0), (0, 1));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        harness.Consumer.Seek(new TopicPartitionOffset("topic", 0, 10));
+
+        // The shared rollback replays from the tracked offsets, which the user seek replaced
+        await harness.Consumer.RollbackAsync(active.Context!.Envelope.BrokerMessageIdentifier);
+        await active.ReaderStopped.Task.WaitAsync(Timeout);
+        active.Release.TrySetResult(true);
+        await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 10), new TopicPartitionOffset("topic", 0, 10)]);
+        harness.Resumes.ShouldBe([new TopicPartition("topic", 0)]);
+
+        await harness.DeliverAsync((0, 10));
+        await harness.WaitForCommitAsync(0, 11);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([10L]);
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Reconnect is awaited before disposing the harness.")]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task Rollback_ShouldTriggerRecovery_WhenResumingCurrentAssignmentFails()
@@ -821,7 +850,7 @@ public partial class KafkaConsumerTests
     [InlineData(false, true)]
     [InlineData(true, true)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
-    public async Task Shutdown_ShouldNotCommitPastBufferedRecords_WhenCanceledPollWriteOverflows(bool independent, bool autoCommit)
+    public async Task Shutdown_ShouldNotCommitPastBufferedRecords_WhenPollIsCanceledWhileWriting(bool independent, bool autoCommit)
     {
         await using PollHarness harness = new(independent, backpressure: 2, autoCommit: autoCommit);
         await harness.StartAsync(0);
@@ -861,7 +890,7 @@ public partial class KafkaConsumerTests
         {
             await stoppingReader.Task.WaitAsync(Timeout);
 
-            // The actual polling loop must finish its canceled write and enqueue the overflow record
+            // The actual polling loop must finish its canceled write and drop the record
             await harness.PollingStopped.WaitAsync(Timeout);
             active.Release.TrySetResult(true);
             await nextCommitted.Task.WaitAsync(Timeout);
@@ -918,6 +947,13 @@ public partial class KafkaConsumerTests
         await harness.Consumer.StopAsync(false).AsTask().WaitAsync(Timeout);
         await harness.Consumer.StartAsync().AsTask().WaitAsync(Timeout);
 
+        // A record returned by the last poll of the stopping loop is dropped: once that loop exited, the new one seeks back to
+        // the uncommitted record before its first poll
+        await PollHarness.WaitUntilAsync(() => harness.Logs.Any(log => log.StartsWith("Consume loop stopped", StringComparison.Ordinal)));
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 0)]);
+
         await harness.DeliverAsync((0, 0), (0, 1));
         await harness.WaitForCommitAsync(0, 2);
 
@@ -958,12 +994,366 @@ public partial class KafkaConsumerTests
         // The late completion of the old stop must not unregister the replacement
         harness.GetChannel(0).ShouldBeSameAs(replacement);
 
+        // A record returned by the last poll of the stopping loop is dropped: once that loop exited, the new one seeks back to
+        // the uncommitted record before its first poll
+        await PollHarness.WaitUntilAsync(() => harness.Logs.Any(log => log.StartsWith("Consume loop stopped", StringComparison.Ordinal)));
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 0)]);
+
         await harness.DeliverAsync((0, 0), (0, 1));
         await harness.WaitForCommitAsync(0, 2);
 
         harness.UnsafeStores.ShouldBeEmpty();
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Restart_ShouldSeekToFirstUncommittedOffset_WhenBufferedRecordsWereDiscarded(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.IgnoreCancellation = true;
+        await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        Task stop = harness.Consumer.StopAsync().AsTask();
+        await active.ReaderStopped.Task.WaitAsync(Timeout);
+        active.Release.TrySetResult(true);
+        await stop.WaitAsync(Timeout);
+
+        harness.CommittedOffset(0).ShouldBe(1);
+
+        // The buffered records were discarded with the channel and the native consumer is already past them
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 1)]);
+
+        await harness.DeliverAsync((0, 1), (0, 2));
+        await harness.WaitForCommitAsync(0, 3);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([0L, 1L, 2L]);
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Restart_ShouldSeekEveryPartitionWithUncommittedRecords_WhenSharingOneChannel()
+    {
+        await using PollHarness harness = new(false);
+        await harness.StartAsync(0, 1);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.IgnoreCancellation = true;
+        await harness.DeliverAsync((0, 0), (1, 0), (1, 1), (0, 1));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        Task stop = harness.Consumer.StopAsync().AsTask();
+        await active.ReaderStopped.Task.WaitAsync(Timeout);
+        active.Release.TrySetResult(true);
+        await stop.WaitAsync(Timeout);
+
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 1), new TopicPartitionOffset("topic", 1, 0)], true);
+
+        await harness.DeliverAsync((1, 0), (1, 1), (0, 1));
+        await harness.WaitForCommitAsync(0, 2);
+        await harness.WaitForCommitAsync(1, 2);
+
+        harness.Completed.Where(item => item.Partition == 0).Select(item => item.Offset).ShouldBe([0L, 1L]);
+        harness.Completed.Where(item => item.Partition == 1).Select(item => item.Offset).ShouldBe([0L, 1L]);
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The pending poll is released before the harness is disposed")]
+    public async Task Restart_ShouldDropRecordPolledByStoppingLoop_WhenChannelWasReplaced(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        await harness.DeliverAsync((0, 0));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        TaskCompletionSource<bool> recordPolled = NewSignal();
+        TaskCompletionSource<bool> releasePoll = NewSignal();
+        Task poll = harness.PollAsync(() =>
+        {
+            recordPolled.TrySetResult(true);
+            releasePoll.Task.WaitAsync(Timeout).GetAwaiter().GetResult();
+
+            return harness.Record(0, 5);
+        });
+
+        try
+        {
+            await recordPolled.Task.WaitAsync(Timeout);
+            await harness.Consumer.StopAsync(false).AsTask().WaitAsync(Timeout);
+            await active.ReaderStopped.Task.WaitAsync(Timeout);
+
+            // The new consume loop waits for the stopping one, whose pending poll returns into the replacement channel
+            await harness.Consumer.StartAsync().AsTask().WaitAsync(Timeout);
+        }
+        finally
+        {
+            releasePoll.TrySetResult(true);
+            await poll.WaitAsync(Timeout);
+        }
+
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 0)]);
+        harness.Starts.ShouldBe([new Delivery(0, 0, 1)]);
+        harness.Logs.ShouldContain(log => log.StartsWith("Dropping message (topic[0]@5)", StringComparison.Ordinal));
+
+        active.Release.TrySetResult(true);
+        await harness.DeliverAsync([.. Enumerable.Range(0, 6).Select(offset => (0, (long)offset))]);
+        await harness.WaitForCommitAsync(0, 6);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([0L, 1L, 2L, 3L, 4L, 5L]);
+        harness.UnsafeStores.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Restart_ShouldNotSeek_WhenAllPolledRecordsAreCommitted(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+        await harness.DeliverAsync((0, 0), (0, 1));
+        await harness.WaitForCommitAsync(0, 2);
+
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBeEmpty();
+
+        await harness.DeliverAsync((0, 2));
+        await harness.WaitForCommitAsync(0, 3);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([0L, 1L, 2L]);
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Restart_ShouldNotSeek_WhenEndOfPartitionFollowsCommittedRecords(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+        await harness.DeliverAsync((0, 0), (0, 1));
+        await harness.WaitForCommitAsync(0, 2);
+
+        // The end of partition reports the next offset: it's a position, not a record to be consumed again
+        await harness.DeliverEndOfPartitionAsync(0, 2);
+
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBeEmpty();
+
+        await harness.DeliverAsync((0, 2));
+        await harness.WaitForCommitAsync(0, 3);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([0L, 1L, 2L]);
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The revocation is awaited before the harness is disposed")]
+    public async Task Restart_ShouldNotSeekRevokedPartition_WhenRevocationOvertakesStop(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        Task revoke = harness.PollAsync(() =>
+        {
+            harness.Revoke(0);
+
+            return null;
+        });
+
+        await active.ReaderStopped.Task.WaitAsync(Timeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await revoke.WaitAsync(Timeout);
+
+        // The revoked partition replays from its committed offset when it is assigned again
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBeEmpty();
+
+        await harness.PollAsync(() =>
+        {
+            harness.Assign(0);
+
+            return harness.Record(0, 0);
+        });
+
+        await harness.DeliverAsync((0, 1), (0, 2));
+        await harness.WaitForCommitAsync(0, 3);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([0L, 1L, 2L]);
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Restart_ShouldNotSeek_WhenClientIsInitializing()
+    {
+        await using PollHarness harness = new();
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        await harness.DeliverAsync((0, 0));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+
+        // A start while the client is initializing is the first start on a new native consumer, which resumes from the
+        // committed offsets: the offsets polled by the previous native consumer must not be sought
+        harness.Client.Status.Returns(ClientStatus.Initializing);
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBeEmpty();
+
+        harness.Client.Status.Returns(ClientStatus.Initialized);
+        await harness.PollAsync(() =>
+        {
+            harness.Assign(0);
+
+            return harness.Record(0, 0);
+        });
+
+        await harness.DeliverAsync((0, 1));
+        await harness.WaitForCommitAsync(0, 2);
+
+        harness.Seeks.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Restart_ShouldSeekToUserSeekTarget_WhenSeekSkippedUncommittedRecords(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        await harness.DeliverAsync((0, 0), (0, 1));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        // The uncommitted records are skipped on purpose: the restart must not seek back to them
+        harness.Consumer.Seek(new TopicPartitionOffset("topic", 0, 10));
+
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 10), new TopicPartitionOffset("topic", 0, 10)]);
+
+        await harness.DeliverAsync((0, 10), (0, 11));
+        await harness.WaitForCommitAsync(0, 12);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([10L, 11L]);
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Restart_ShouldNotSeek_WhenUserSoughtToSpecialOffset(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        await harness.DeliverAsync((0, 0), (0, 1));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        // The actual position is unknown until a record is polled: the restart keeps the position set by the user seek
+        harness.Consumer.Seek(new TopicPartitionOffset("topic", 0, Offset.End));
+
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, Offset.End)]);
+
+        await harness.DeliverAsync((0, 20));
+        await harness.WaitForCommitAsync(0, 21);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([20L]);
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Restart_ShouldSeekToRecord_WhenStoringItsOffsetFailed(bool independent)
+    {
+        await using PollHarness harness = new(independent);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        active.SkipCommit = true;
+        await harness.DeliverAsync((0, 0));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        IBrokerMessageIdentifier offset = active.Context!.Envelope.BrokerMessageIdentifier;
+        harness.BeforeStore = _ => throw new KafkaException(ErrorCode.Local_State);
+
+        await Should.ThrowAsync<KafkaException>(() => harness.Consumer.CommitAsync(offset).AsTask());
+
+        harness.BeforeStore = null;
+        active.Release.TrySetResult(true);
+
+        // The record whose offset couldn't be stored isn't committed and must be consumed again
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 0)]);
+
+        await harness.DeliverAsync((0, 0));
+        await harness.WaitForCommitAsync(0, 1);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([0L]);
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldHaveSingleItem().ShouldStartWith("HarnessConsumer commit failed");
     }
 
     [Theory]
@@ -1222,6 +1612,10 @@ public partial class KafkaConsumerTests
 
             _output.WriteLine("Ownership transition completed.");
 
+            // The restart seeks back to the record discarded by the stop
+            TopicPartitionOffset[] transitionSeeks = transition == "reconnect" ? [new TopicPartitionOffset("topic", 0, 0)] : [];
+            harness.Seeks.ShouldBe(transitionSeeks);
+
             PartitionChannel? replacement = harness.GetChannel(0);
             releaseCleanup.TrySetResult(true);
             await cleanup.WaitAsync(Timeout);
@@ -1231,7 +1625,7 @@ public partial class KafkaConsumerTests
                 $"committed={harness.CommittedOffset(0)}, seeks={string.Join(", ", harness.Seeks)}, " +
                 $"resumes={string.Join(", ", harness.Resumes)}, replacement={replacement?.Id}, current={harness.GetChannel(0)?.Id}");
 
-            harness.Seeks.ShouldBeEmpty("Old sequence cleanup must not seek the replacement assignment");
+            harness.Seeks.ShouldBe(transitionSeeks, false, "Old sequence cleanup must not seek the replacement assignment");
             harness.Resumes.ShouldBeEmpty();
             harness.CommittedOffset(0).ShouldBe(0, "The partial old batch was never successfully handled");
             harness.GetChannel(0).ShouldBeSameAs(replacement);
@@ -1413,6 +1807,10 @@ public partial class KafkaConsumerTests
                 await harness.StartAsync(0);
             }
 
+            // The restart seeks back to the record discarded by the stop
+            TopicPartitionOffset[] transitionSeeks = transition == "reconnect" ? [new TopicPartitionOffset("topic", 0, 0)] : [];
+            harness.Seeks.ShouldBe(transitionSeeks);
+
             release.TrySetResult(true);
             await rollback.WaitAsync(Timeout);
 
@@ -1428,7 +1826,7 @@ public partial class KafkaConsumerTests
                 await harness.WaitForCommitAsync(0, 2);
             }
 
-            harness.Seeks.ShouldBeEmpty();
+            harness.Seeks.ShouldBe(transitionSeeks, false, "The old transaction rollback must not seek");
             harness.UnsafeCommits.ShouldBeEmpty();
             harness.Errors.ShouldBeEmpty();
         }
@@ -1578,6 +1976,7 @@ public partial class KafkaConsumerTests
             Client.When(client => client.StoreOffset(Arg.Any<TopicPartitionOffset>())).Do(call =>
             {
                 TopicPartitionOffset offset = call.Arg<TopicPartitionOffset>();
+                BeforeStore?.Invoke(offset);
                 _stored[offset.Partition.Value] = offset.Offset.Value;
 
                 for (long earlier = 0; earlier < offset.Offset.Value; earlier++)
@@ -1720,6 +2119,8 @@ public partial class KafkaConsumerTests
 
         public Action? BeforeSeek { get; set; }
 
+        public Action<TopicPartitionOffset>? BeforeStore { get; set; }
+
         public static async Task WaitUntilAsync(Func<bool> condition)
         {
             using CancellationTokenSource timeout = new(Timeout);
@@ -1798,6 +2199,18 @@ public partial class KafkaConsumerTests
             }
 
             // The next native Consume cannot execute until the previous returned record has been enqueued
+            await PollAsync(() => null);
+        }
+
+        public async Task DeliverEndOfPartitionAsync(int partition, long offset)
+        {
+            await PollAsync(() => new ConsumeResult<byte[]?, byte[]?>
+            {
+                IsPartitionEOF = true,
+                TopicPartitionOffset = new TopicPartitionOffset("topic", partition, offset)
+            });
+
+            // The next native Consume cannot execute until the previous returned result has been enqueued
             await PollAsync(() => null);
         }
 

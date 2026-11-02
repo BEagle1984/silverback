@@ -143,6 +143,111 @@ public class OffsetsTrackerTests
     }
 
     [Fact]
+    public void TrackPartition_ShouldTrackUnsetOffset_WhenPartitionIsNotTracked()
+    {
+        OffsetsTracker tracker = new();
+
+        tracker.TrackPartition(new TopicPartition("topic", 1));
+
+        tracker.GetRollbackOffSets().ShouldBe([new KafkaOffset("topic", 1, Offset.Unset)]);
+        tracker.GetCommitOffsets().ShouldBe([new KafkaOffset("topic", 1, Offset.Unset)]);
+    }
+
+    [Fact]
+    public void TrackPartition_ShouldKeepTrackedOffsets_WhenPartitionIsAlreadyTracked()
+    {
+        OffsetsTracker tracker = new();
+
+        tracker.TrackOffset(new KafkaOffset("topic", 1, 2));
+        tracker.TrackOffset(new KafkaOffset("topic", 1, 3));
+
+        tracker.TrackPartition(new TopicPartition("topic", 1));
+
+        tracker.GetRollbackOffSets().ShouldBe([new KafkaOffset("topic", 1, 2)]);
+        tracker.GetCommitOffsets().ShouldBe([new KafkaOffset("topic", 1, 3)]);
+    }
+
+    [Fact]
+    public void GetReplayOffsets_ShouldReturnFirstUncommittedOffset()
+    {
+        OffsetsTracker tracker = new();
+
+        for (int offset = 0; offset < 5; offset++)
+        {
+            tracker.TrackOffset(new KafkaOffset("topic", 1, offset));
+        }
+
+        tracker.Commit(new KafkaOffset("topic", 1, 0));
+        tracker.Commit(new KafkaOffset("topic", 1, 1));
+
+        tracker.GetReplayOffsets().ShouldBe([new KafkaOffset("topic", 1, 2)]);
+    }
+
+    [Fact]
+    public void GetReplayOffsets_ShouldReturnNothing_WhenAllTrackedOffsetsAreCommitted()
+    {
+        OffsetsTracker tracker = new();
+
+        for (int offset = 0; offset < 5; offset++)
+        {
+            tracker.TrackOffset(new KafkaOffset("topic", 1, offset));
+            tracker.Commit(new KafkaOffset("topic", 1, offset));
+        }
+
+        tracker.GetReplayOffsets().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void GetReplayOffsets_ShouldSkipPartition_WhenOnlySpecialOffsetIsTracked()
+    {
+        OffsetsTracker tracker = new();
+
+        tracker.TrackPartition(new TopicPartition("topic", 1));
+        tracker.TrackOffset(new KafkaOffset("topic", 2, Offset.End));
+
+        tracker.GetReplayOffsets().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void GetReplayOffsets_ShouldReturnOffsetPerPartition()
+    {
+        OffsetsTracker tracker = new();
+
+        tracker.TrackOffset(new KafkaOffset("topic", 1, 2));
+        tracker.TrackOffset(new KafkaOffset("topic", 1, 3));
+        tracker.TrackOffset(new KafkaOffset("topic", 2, 4));
+        tracker.TrackOffset(new KafkaOffset("topic", 2, 5));
+        tracker.TrackOffset(new KafkaOffset("topic", 3, 6));
+        tracker.TrackPartition(new TopicPartition("topic", 4));
+
+        tracker.Commit(new KafkaOffset("topic", 2, 4));
+        tracker.Commit(new KafkaOffset("topic", 3, 6));
+
+        tracker.GetReplayOffsets().ShouldBe(
+            [
+                new KafkaOffset("topic", 1, 2),
+                new KafkaOffset("topic", 2, 5)
+            ],
+            true);
+    }
+
+    [Fact]
+    public void Clear_ShouldRemoveAllOffsets()
+    {
+        OffsetsTracker tracker = new();
+
+        tracker.TrackOffset(new KafkaOffset("topic", 1, 2));
+        tracker.TrackOffset(new KafkaOffset("topic", 2, 4));
+        tracker.TrackPartition(new TopicPartition("topic", 3));
+
+        tracker.Clear();
+
+        tracker.GetRollbackOffSets().ShouldBeEmpty();
+        tracker.GetCommitOffsets().ShouldBeEmpty();
+        tracker.GetReplayOffsets().ShouldBeEmpty();
+    }
+
+    [Fact]
     public void GetCommitIdentifiers_ShouldReturnLastOffsetPerPartition()
     {
         IBrokerMessageIdentifiersTracker tracker = new OffsetsTracker();

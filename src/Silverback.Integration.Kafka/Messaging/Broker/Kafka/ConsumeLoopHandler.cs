@@ -23,7 +23,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private readonly ConsumerChannelsManager _channelsManager;
 
-    private readonly OffsetsTracker? _offsetsTracker;
+    private readonly OffsetsTracker _offsetsTracker;
 
     private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -38,12 +38,12 @@ internal sealed class ConsumeLoopHandler : IDisposable
     public ConsumeLoopHandler(
         KafkaConsumer consumer,
         ConsumerChannelsManager channelsManager,
-        OffsetsTracker? offsetsTracker,
+        OffsetsTracker offsetsTracker,
         ISilverbackLogger logger)
     {
         _consumer = Check.NotNull(consumer, nameof(consumer));
         _channelsManager = Check.NotNull(channelsManager, nameof(channelsManager));
-        _offsetsTracker = offsetsTracker;
+        _offsetsTracker = Check.NotNull(offsetsTracker, nameof(offsetsTracker));
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
@@ -153,13 +153,13 @@ internal sealed class ConsumeLoopHandler : IDisposable
         // Reset the last successful consume time to avoid false stall detection
         _lastSuccessfulConsume = DateTime.UtcNow;
 
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            bool continueConsuming = ConsumeOnce(cancellationToken);
-            NotifyPollCompleted();
+        // The records buffered when the consumer was stopped were discarded: seek back to consume them again before polling
+        bool continueConsuming = SeekToUncommittedOffsets(cancellationToken);
 
-            if (!continueConsuming)
-                break;
+        while (continueConsuming && !cancellationToken.IsCancellationRequested)
+        {
+            continueConsuming = ConsumeOnce(cancellationToken);
+            NotifyPollCompleted();
         }
 
         _logger.LogConsumerTrace(
@@ -191,7 +191,10 @@ internal sealed class ConsumeLoopHandler : IDisposable
             _lastSuccessfulConsume = DateTime.UtcNow;
             _logger.LogConsuming(consumeResult, _consumer);
 
-            _offsetsTracker?.TrackOffset(consumeResult.TopicPartitionOffset);
+            // The end of partition is a position, not a record to be consumed again after a restart
+            if (!consumeResult.IsPartitionEOF)
+                _offsetsTracker.TrackOffset(consumeResult.TopicPartitionOffset);
+
             _channelsManager.Write(consumeResult, cancellationToken);
         }
         catch (OperationCanceledException ex)
@@ -210,6 +213,31 @@ internal sealed class ConsumeLoopHandler : IDisposable
         }
 
         return true;
+    }
+
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    private bool SeekToUncommittedOffsets(CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+            return true;
+
+        try
+        {
+            _consumer.SeekToUncommittedOffsets();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // Handled like a failing poll
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _logger.LogConsumingCanceled(_consumer, ex);
+                return true;
+            }
+
+            AutoRecoveryIfEnabled(ex);
+            return false;
+        }
     }
 
     private void NotifyPollCompleted()

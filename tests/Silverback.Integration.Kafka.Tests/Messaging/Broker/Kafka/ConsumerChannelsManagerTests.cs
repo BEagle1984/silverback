@@ -83,6 +83,133 @@ public class ConsumerChannelsManagerTests
         }
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Write_ShouldDropRecord_WhenPollingIsCanceledAndChannelIsNotStopping(bool processPartitionsIndependently)
+    {
+        BlockingBehavior behavior = new();
+        using KafkaConsumer consumer = CreateConsumer(behavior, processPartitionsIndependently);
+        using ConsumerChannelsManager manager = new(
+            consumer,
+            Substitute.For<IBrokerClientCallbacksInvoker>(),
+            Substitute.For<ISilverbackLogger>());
+
+        TopicPartition partition = new("topic", 0);
+        using CancellationTokenSource pollingCancellation = new();
+        using CancellationTokenSource canceledPolling = new();
+        await canceledPolling.CancelAsync();
+
+        try
+        {
+            manager.StartReading(partition);
+
+            // A restarted channel must not buffer the record returned by the stopping poll ahead of the replayed records
+            manager.Write(CreateRecord(partition, 0), canceledPolling.Token);
+            await Task.WhenAny(behavior.FirstStarted.Task, Task.Delay(TimeSpan.FromMilliseconds(200)));
+
+            behavior.Offsets.ShouldBeEmpty();
+
+            manager.Write(CreateRecord(partition, 1), pollingCancellation.Token);
+            manager.Write(CreateRecord(partition, 2), pollingCancellation.Token);
+            manager.Write(CreateRecord(partition, 3), pollingCancellation.Token);
+            await behavior.LastProcessed.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            await manager.StopReadingAsync(partition).WaitAsync(TimeSpan.FromSeconds(5));
+
+            behavior.Offsets.ShouldBe([1L, 2L, 3L]);
+        }
+        finally
+        {
+            behavior.ReleaseFirst.TrySetResult(true);
+            await manager.StopReadingAsync().WaitAsync(TimeSpan.FromSeconds(5));
+        }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Write_ShouldForwardEndOfPartition_WhenPollingIsCanceledAndChannelIsNotStopping(bool processPartitionsIndependently)
+    {
+        BlockingBehavior behavior = new();
+        using KafkaConsumer consumer = CreateConsumer(behavior, processPartitionsIndependently);
+
+        TaskCompletionSource<bool> endOfPartitionReported = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        IBrokerClientCallbacksInvoker callbacksInvoker = Substitute.For<IBrokerClientCallbacksInvoker>();
+        callbacksInvoker
+            .When(invoker => invoker.Invoke(
+                Arg.Any<Action<IKafkaPartitionEofCallback>>(),
+                Arg.Any<IServiceProvider?>(),
+                Arg.Any<bool>()))
+            .Do(_ => endOfPartitionReported.TrySetResult(true));
+
+        using ConsumerChannelsManager manager = new(consumer, callbacksInvoker, Substitute.For<ISilverbackLogger>());
+
+        TopicPartition partition = new("topic", 0);
+        using CancellationTokenSource canceledPolling = new();
+        await canceledPolling.CancelAsync();
+
+        try
+        {
+            manager.StartReading(partition);
+
+            // Unlike a record, the end of partition isn't consumed again after the restart seek
+            manager.Write(
+                new ConsumeResult<byte[]?, byte[]?>
+                {
+                    IsPartitionEOF = true,
+                    TopicPartitionOffset = new TopicPartitionOffset(partition, 1)
+                },
+                canceledPolling.Token);
+
+            await endOfPartitionReported.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        }
+        finally
+        {
+            await manager.StopReadingAsync().WaitAsync(TimeSpan.FromSeconds(5));
+        }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Write_ShouldNotProcessRecord_WhenPollingIsCanceledAndChannelIsStopping(bool processPartitionsIndependently)
+    {
+        BlockingBehavior behavior = new();
+        using KafkaConsumer consumer = CreateConsumer(behavior, processPartitionsIndependently);
+        using ConsumerChannelsManager manager = new(
+            consumer,
+            Substitute.For<IBrokerClientCallbacksInvoker>(),
+            Substitute.For<ISilverbackLogger>());
+
+        TopicPartition partition = new("topic", 0);
+        using CancellationTokenSource pollingCancellation = new();
+
+        try
+        {
+            manager.StartReading(partition);
+            manager.Write(CreateRecord(partition, 0), pollingCancellation.Token);
+            await behavior.FirstStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+            Task stopping = manager.StopReadingAsync(partition);
+            await pollingCancellation.CancelAsync();
+
+            // The stopping channel takes the record returned by the canceled poll and discards it with its buffer
+            manager.Write(CreateRecord(partition, 1), pollingCancellation.Token);
+
+            stopping.IsCompleted.ShouldBeFalse();
+
+            behavior.ReleaseFirst.TrySetResult(true);
+            await stopping.WaitAsync(TimeSpan.FromSeconds(5));
+
+            behavior.Offsets.ShouldBe([0L]);
+        }
+        finally
+        {
+            behavior.ReleaseFirst.TrySetResult(true);
+            await manager.StopReadingAsync().WaitAsync(TimeSpan.FromSeconds(5));
+        }
+    }
+
     private static KafkaConsumer CreateConsumer(IConsumerBehavior behavior, bool processPartitionsIndependently)
     {
         IConfluentConsumerWrapper client = Substitute.For<IConfluentConsumerWrapper>();

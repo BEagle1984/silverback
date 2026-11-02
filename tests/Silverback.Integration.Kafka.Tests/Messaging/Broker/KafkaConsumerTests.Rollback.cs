@@ -200,16 +200,23 @@ public partial class KafkaConsumerTests
         harness.GetChannel(0).ShouldBeNull();
         harness.Completed.ShouldBeEmpty();
 
+        // The records polled and never committed are consumed again from the first one after the restart, while the
+        // defeated rollback must not seek
+        TopicPartitionOffset[] expectedSeeks = reconnect ? [new TopicPartitionOffset("topic", 0, 0)] : [];
+
         if (reconnect)
         {
             await harness.StartAsync(0);
+
+            harness.Seeks.ShouldBe(expectedSeeks);
+
             await harness.DeliverAsync([.. Enumerable.Range(0, 6).Select(offset => (0, (long)offset))]);
             await harness.WaitForCommitAsync(0, 6);
 
             harness.Completed.Select(delivery => delivery.Offset).ShouldBe([0L, 1L, 2L, 3L, 4L, 5L]);
         }
 
-        harness.Seeks.ShouldBeEmpty();
+        harness.Seeks.ShouldBe(expectedSeeks);
         harness.Resumes.ShouldBeEmpty();
         harness.UnsafeStores.ShouldBeEmpty();
         harness.UnsafeCommits.ShouldBeEmpty();

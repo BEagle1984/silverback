@@ -102,4 +102,60 @@ public sealed class OffsetsTracker : IBrokerMessageIdentifiersTracker
 
     /// <inheritdoc cref="IBrokerMessageIdentifiersTracker.GetRollbackIdentifiers" />
     IReadOnlyCollection<IBrokerMessageIdentifier> IBrokerMessageIdentifiersTracker.GetRollbackIdentifiers() => GetRollbackOffSets();
+
+    /// <summary>
+    ///     Tracks an assigned partition whose position is unknown, without altering the offsets already tracked for it.
+    /// </summary>
+    /// <remarks>
+    ///     Tracking <see cref="Offset.Unset" /> via <see cref="TrackOffset(KafkaOffset)" /> would instead reset the rollback
+    ///     offset of a tracked partition, since the special offset compares lower than any actual offset.
+    /// </remarks>
+    /// <param name="topicPartition">
+    ///     The partition to be tracked.
+    /// </param>
+    internal void TrackPartition(TopicPartition topicPartition)
+    {
+        KafkaOffset unset = new(topicPartition, Offset.Unset);
+        _commitOffsets.TryAdd(topicPartition, unset);
+        _rollbackOffsets.TryAdd(topicPartition, unset);
+    }
+
+    /// <summary>
+    ///     Gets the first uncommitted offset of each partition whose position is ahead of it, i.e. the offsets to seek to
+    ///     in order to consume the discarded records again.
+    /// </summary>
+    /// <returns>
+    ///     The offsets to seek to.
+    /// </returns>
+    internal IReadOnlyCollection<KafkaOffset> GetReplayOffsets()
+    {
+        List<KafkaOffset> replayOffsets = [];
+
+        foreach ((TopicPartition topicPartition, KafkaOffset rollbackOffset) in _rollbackOffsets)
+        {
+            if (rollbackOffset.IsSpecial ||
+                !_commitOffsets.TryGetValue(topicPartition, out KafkaOffset? lastOffset) ||
+                lastOffset.IsSpecial ||
+                rollbackOffset > lastOffset)
+            {
+                continue;
+            }
+
+            replayOffsets.Add(rollbackOffset);
+        }
+
+        return replayOffsets;
+    }
+
+    /// <summary>
+    ///     Removes all tracked offsets.
+    /// </summary>
+    /// <remarks>
+    ///     Used when a new native consumer is connected, since nothing tracked before can be consumed again from it.
+    /// </remarks>
+    internal void Clear()
+    {
+        _rollbackOffsets.Clear();
+        _commitOffsets.Clear();
+    }
 }

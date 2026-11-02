@@ -64,8 +64,10 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
         PartitionChannel? channel = GetChannel(consumeResult.TopicPartition);
 
+        // A stopped partition is replayed when a rollback or reassignment starts a new reader, or when the consumer restart seeks
+        // back to its first uncommitted offset
         if (channel == null)
-            return; // A stopped partition is replayed when rollback or reassignment starts a new reader
+            return;
 
         _logger.LogConsumerTrace(
             _consumer,
@@ -80,6 +82,21 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         }
         catch (OperationCanceledException)
         {
+            // The consume loop is stopping. A channel that is still reading is either about to be stopped as well or a
+            // replacement created by a restart: in both cases the record is dropped, since it is consumed again after the
+            // restart seek (or the reassignment) and must not be buffered ahead of the replayed records. The end of partition
+            // isn't consumed again, so it is still forwarded via the overflow. A stopping channel takes any result into the
+            // overflow, which is discarded with the channel.
+            if (!consumeResult.IsPartitionEOF && !channel.ReadCancellationToken.IsCancellationRequested)
+            {
+                _logger.LogConsumerTrace(
+                    _consumer,
+                    "Dropping message ({Topic}[{Partition}]@{Offset}) polled while stopping: it will be consumed again",
+                    () => [consumeResult.Topic, consumeResult.Partition.Value, consumeResult.Offset.Value]);
+
+                return;
+            }
+
             try
             {
                 channel.WriteOverflowAsync(consumeResult).SafeWait();
@@ -132,6 +149,8 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
         ConsumeResult<byte[]?, byte[]?> consumeResult = await channel.ReadAsync().ConfigureAwait(false);
 
+        // Like the buffered records, the record taken by a stopping reader is consumed again after the seek performed by a
+        // restart or rollback, or after the partition is reassigned
         channel.ReadCancellationToken.ThrowIfCancellationRequested();
 
         if (consumeResult.IsPartitionEOF)

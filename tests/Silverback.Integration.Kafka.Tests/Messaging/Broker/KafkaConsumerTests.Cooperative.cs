@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ public partial class KafkaConsumerTests
     [InlineData(false)]
     [InlineData(true)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The callback and polling stop are awaited before the harness is disposed")]
-    public async Task CooperativeRebalance_ShouldPreserveRetainedBufferOrder_WhenCanceledPollReturnsAnotherRecord(bool autoCommit)
+    public async Task CooperativeRebalance_ShouldDropAndReplayRecordReturnedByCanceledPoll_WhenRetainedReaderKeepsRunning(bool autoCommit)
     {
         await using PollHarness harness = new(true, true, backpressure: 2, autoCommit: autoCommit);
         await harness.StartAsync(0, 1);
@@ -33,14 +34,15 @@ public partial class KafkaConsumerTests
         Task pollingStopped = Task.CompletedTask;
         await harness.PollAsync(() =>
         {
-            // Force the canceled-poll boundary that the old cooperative rebalance path reached
+            // Force a canceled poll while the retained reader keeps running. This state isn't reachable in production, where the
+            // polling is only canceled together with every reader when stopping: the test only pins the drop semantics.
             pollingStopped = harness.StopPollingAsync();
             harness.Revoke(0);
 
             return harness.Record(1, 3);
         });
 
-        // The returned record must reach overflow before the retained reader is released
+        // The returned record must not be buffered behind the retained reader's records: it is consumed again after a seek
         await pollingStopped.WaitAsync(Timeout);
 
         harness.GetChannel(1).ShouldBeSameAs(retained);
@@ -50,19 +52,31 @@ public partial class KafkaConsumerTests
         active.ReaderStopped.Task.IsCompleted.ShouldBeFalse();
         harness.Completed.ShouldBeEmpty();
         harness.CommittedOffset(1).ShouldBe(0);
+        harness.Logs.ShouldContain(log => log.StartsWith("Dropping message (topic[1]@3)", StringComparison.Ordinal));
 
         active.Release.TrySetResult(true);
-        await PollHarness.WaitUntilAsync(() => harness.Completed.Count == 4);
+        await PollHarness.WaitUntilAsync(() => harness.Completed.Count == 3);
+        await PollHarness.WaitUntilAsync(() => harness.StoredOffset(1) == 3);
+        harness.Client.Commit();
+
+        harness.CommittedOffset(1).ShouldBe(3);
+        harness.Seeks.ShouldBeEmpty();
+
+        // The restart seeks back to the dropped record
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 1, 3)]);
+
+        await harness.DeliverAsync((1, 3));
+        await PollHarness.WaitUntilAsync(() => harness.StoredOffset(1) == 4);
+        harness.Client.Commit();
 
         _output.WriteLine($"Retained partition order: {string.Join(", ", harness.Completed.Select(delivery => delivery.Offset))}");
 
         harness.Completed.ShouldBe([new Delivery(1, 0, 1), new Delivery(1, 1, 1), new Delivery(1, 2, 1), new Delivery(1, 3, 1)]);
-
-        await PollHarness.WaitUntilAsync(() => harness.StoredOffset(1) == 4);
-        harness.Client.Commit();
-
         harness.CommittedOffset(1).ShouldBe(4);
-        harness.Seeks.ShouldBeEmpty();
         harness.UnsafeStores.ShouldBeEmpty();
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();

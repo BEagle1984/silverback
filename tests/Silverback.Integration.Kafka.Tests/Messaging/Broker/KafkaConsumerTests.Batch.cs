@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using Shouldly;
 using Silverback.Messaging.Broker.Kafka;
 using Xunit;
@@ -19,7 +20,7 @@ public partial class KafkaConsumerTests
     [InlineData(false, true)]
     [InlineData(true, true)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks and shutdown complete before the harness is disposed.")]
-    public async Task Batch_ShouldPreserveFirstProcessingOrder_WhenShutdownOverflowsAndPartialBatchReplays(bool independent, bool autoCommit)
+    public async Task Batch_ShouldPreserveFirstProcessingOrder_WhenShutdownCancelsPollWriteAndPartialBatchReplays(bool independent, bool autoCommit)
     {
         await using PollHarness harness = new(independent, backpressure: 2, autoCommit: autoCommit, batchPipeline: true);
         await harness.StartAsync(0);
@@ -121,6 +122,39 @@ public partial class KafkaConsumerTests
         harness.Completed.Where(delivery => delivery.Epoch == 2).Select(delivery => delivery.Offset).ShouldBe(expected.Skip(10));
         harness.CompletedBatchSizes.ShouldBe([10, 10]);
         harness.CommittedOffset(0).ShouldBe(20);
+        harness.UnsafeStores.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Restart_ShouldReplayPendingBatchFromItsFirstRecord(bool independent)
+    {
+        await using PollHarness harness = new(independent, batchPipeline: true);
+        await harness.StartAsync(0);
+        await harness.DeliverAsync([.. Enumerable.Range(0, 5).Select(offset => (0, (long)offset))]);
+        await PollHarness.WaitUntilAsync(() => harness.Starts.Count == 5);
+
+        // The stop aborts the pending batch, whose rollback is ignored while stopping
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+
+        harness.StoredOffset(0).ShouldBe(0);
+
+        await harness.Consumer.StartAsync();
+        await harness.PollAsync(() => null);
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 0)]);
+
+        await harness.DeliverAsync([.. Enumerable.Range(0, 10).Select(offset => (0, (long)offset))]);
+        await PollHarness.WaitUntilAsync(() => harness.StoredOffset(0) == 10);
+        harness.Client.Commit();
+
+        harness.CompletedBatchSizes.ShouldBe([10]);
+        harness.Completed.Select(delivery => delivery.Offset)
+            .ShouldBe(Enumerable.Range(0, 5).Concat(Enumerable.Range(0, 10)).Select(offset => (long)offset));
+        harness.CommittedOffset(0).ShouldBe(10);
         harness.UnsafeStores.ShouldBeEmpty();
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
