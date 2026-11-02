@@ -1014,6 +1014,58 @@ public partial class KafkaConsumerTests
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
+    public async Task Start_ShouldResumeConsumeLoop_WhenNonBlockingStopIsStillCancelingWrite(bool independent)
+    {
+        await using PollHarness harness = new(independent, backpressure: 1);
+        await harness.StartAsync(0);
+
+        ProcessingGate active = harness.Block(0, 0);
+        await harness.DeliverAsync((0, 0));
+        await active.Started.Task.WaitAsync(Timeout);
+
+        // The channel is full: the consume loop waits for room to write the next record
+        await harness.DeliverAsync((0, 1));
+        await harness.PollAsync(() => harness.Record(0, 2));
+
+        Task barrier = harness.PollAsync(() => null);
+
+        barrier.IsCompleted.ShouldBeFalse();
+
+        // The cancellation callbacks (e.g. of the waiting write) are still running when the consumer is restarted
+        TaskCompletionSource<bool> releaseCancellation = NewSignal();
+        harness.HoldConsumeLoopCancellation(releaseCancellation.Task);
+
+        try
+        {
+            await harness.Consumer.StopAsync(false).AsTask().WaitAsync(Timeout);
+            await harness.Consumer.StartAsync().AsTask().WaitAsync(Timeout);
+        }
+        finally
+        {
+            releaseCancellation.TrySetResult(true);
+        }
+
+        // A new loop polls once the stopping one exited, after seeking back to the record whose processing was canceled
+        await barrier;
+
+        harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 0)]);
+        harness.Logs
+            .Where(log => log.StartsWith("Starting consume loop", StringComparison.Ordinal) ||
+                          log.StartsWith("Consume loop stopped", StringComparison.Ordinal))
+            .Select(log => log[..log.IndexOf(" |", StringComparison.Ordinal)])
+            .ShouldBe(["Starting consume loop", "Consume loop stopped", "Starting consume loop"]);
+
+        await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
+        await harness.WaitForCommitAsync(0, 3);
+
+        harness.Completed.Select(item => item.Offset).ShouldBe([0L, 1L, 2L]);
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
     public async Task Restart_ShouldSeekToFirstUncommittedOffset_WhenBufferedRecordsWereDiscarded(bool independent)
     {
         await using PollHarness harness = new(independent);
@@ -2251,6 +2303,19 @@ public partial class KafkaConsumerTests
             ((ConsumeLoopHandler)typeof(KafkaConsumer)
                 .GetField("_consumeLoopHandler", BindingFlags.Instance | BindingFlags.NonPublic)!
                 .GetValue(Consumer)!).StopAsync();
+
+        // Keeps the cancellation of the current consume loop pending, as if its callbacks were still running
+        public void HoldConsumeLoopCancellation(Task release)
+        {
+            ConsumeLoopHandler consumeLoopHandler = (ConsumeLoopHandler)typeof(KafkaConsumer)
+                .GetField("_consumeLoopHandler", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetValue(Consumer)!;
+            CancellationTokenSource cancellationTokenSource = (CancellationTokenSource)typeof(ConsumeLoopHandler)
+                .GetField("_cancellationTokenSource", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetValue(consumeLoopHandler)!;
+
+            cancellationTokenSource.Token.Register(() => release.Wait(Timeout));
+        }
 
         public Task PollAsync(Func<ConsumeResult<byte[]?, byte[]?>?> poll)
         {

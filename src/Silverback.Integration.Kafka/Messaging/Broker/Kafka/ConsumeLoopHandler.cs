@@ -25,6 +25,8 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     private readonly OffsetsTracker _offsetsTracker;
 
+    private readonly System.Threading.Lock _lock = new(); // serializes the loop start and stop
+
     private CancellationTokenSource _cancellationTokenSource = new();
 
     private TaskCompletionSource<bool>? _consumeTaskCompletionSource;
@@ -57,22 +59,26 @@ internal sealed class ConsumeLoopHandler : IDisposable
     {
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
-        if (IsConsuming)
-            return;
-
-        IsConsuming = true;
-
-        if (_cancellationTokenSource.IsCancellationRequested)
-        {
-            _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = new CancellationTokenSource();
-        }
-
-        // A previous loop may still be inside Consume after a non-blocking stop, so the new loop must wait for it to exit
-        Task previousLoop = Stopping;
+        Task previousLoop;
         TaskCompletionSource<bool> taskCompletionSource = new();
-        _consumeTaskCompletionSource = taskCompletionSource;
-        CancellationToken cancellationToken = _cancellationTokenSource.Token;
+        CancellationToken cancellationToken;
+
+        lock (_lock)
+        {
+            if (IsConsuming)
+                return;
+
+            IsConsuming = true;
+
+            // The canceled source is disposed by the stop that canceled it, since its callbacks may still be running
+            if (_cancellationTokenSource.IsCancellationRequested)
+                _cancellationTokenSource = new CancellationTokenSource();
+
+            // A previous loop may still be inside Consume after a non-blocking stop, so the new loop must wait for it to exit
+            previousLoop = Stopping;
+            _consumeTaskCompletionSource = taskCompletionSource;
+            cancellationToken = _cancellationTokenSource.Token;
+        }
 
         Task.Factory.StartNew(
                 () => ConsumeAsync(previousLoop, taskCompletionSource, cancellationToken),
@@ -86,21 +92,35 @@ internal sealed class ConsumeLoopHandler : IDisposable
     {
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
-        if (!IsConsuming)
+        CancellationTokenSource? canceledTokenSource = null;
+        Task cancellation = Task.CompletedTask;
+        Task stopping;
+
+        lock (_lock)
         {
-            await Stopping.ConfigureAwait(false);
-            return;
+            stopping = Stopping;
+
+            // Flag the loop as stopped as soon as it is canceled, without waiting for the cancellation callbacks (e.g. of a write
+            // waiting for room in a full channel): a start following a non-blocking stop must create a new loop
+            if (IsConsuming)
+            {
+                IsConsuming = false;
+                canceledTokenSource = _cancellationTokenSource;
+                cancellation = canceledTokenSource.CancelAsync();
+            }
         }
 
-        _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler | InstanceId: {InstanceId}", () => [Id]);
+        if (canceledTokenSource != null)
+        {
+            _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler | InstanceId: {InstanceId}", () => [Id]);
 
-        await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+            await cancellation.ConfigureAwait(false);
+            canceledTokenSource.Dispose();
 
-        IsConsuming = false;
+            _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler, awaiting stopping token | InstanceId: {InstanceId}", () => [Id]);
+        }
 
-        _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler, awaiting stopping token | InstanceId: {InstanceId}", () => [Id]);
-
-        await Stopping.ConfigureAwait(false);
+        await stopping.ConfigureAwait(false);
     }
 
     public Task WaitUntilCurrentPollCompletesAsync()
