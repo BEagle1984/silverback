@@ -128,8 +128,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                     await processingTask.ConfigureAwait(false);
 
                     // Abort only parent sequences and don't consider the enumeration as aborted if the
-                    // sequence is actually complete
-                    if (sequence.ParentSequence != null || sequence.IsComplete || sequence.IsCompleting)
+                    // sequence is actually complete (check IsCompleting first, since it's reset only after the state is switched to complete)
+                    if (sequence.ParentSequence != null || sequence.IsCompleting || sequence.IsComplete)
                         return;
 
                     // Call AbortAsync to abort the uncompleted sequence to avoid unreleased locks.

@@ -44,7 +44,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly SemaphoreSlim _completeSemaphoreSlim = new(1, 1);
 
-    private CompleteState _completeState = CompleteState.NotComplete;
+    // Volatile because the state is also checked without holding the semaphores (e.g., when the processing completes)
+    private volatile CompleteState _completeState = CompleteState.NotComplete;
+
+    private volatile bool _isCompleting;
 
     private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
@@ -158,7 +161,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public bool IsNew { get; private set; } = true;
 
     /// <inheritdoc cref="ISequence.IsCompleting" />
-    public bool IsCompleting { get; private set; }
+    public bool IsCompleting => _isCompleting;
 
     /// <inheritdoc cref="ISequence.IsComplete" />
     public bool IsComplete => _completeState == CompleteState.Complete;
@@ -576,7 +579,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
             () => [GetType().Name, SequenceId, Length]);
 
-        IsCompleting = true;
+        _isCompleting = true;
 
         try
         {
@@ -586,7 +589,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         finally
         {
-            IsCompleting = false;
+            _isCompleting = false;
         }
     }
 
