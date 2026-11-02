@@ -316,6 +316,10 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <summary>
     ///     Stops consuming while staying connected to the message broker.
     /// </summary>
+    /// <remarks>
+    ///     Called before the processing is canceled, so that no further message is read when the subscribers react to the
+    ///     cancellation. It must therefore not wait for the pending processing to complete.
+    /// </remarks>
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
@@ -460,8 +464,10 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
                 return;
 
             _logger.LogConsumerTrace(this, "Stopping consumer...");
-            await _processingCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+
+            // Stop reading before notifying subscribers, which may finish as soon as their token is canceled
             await StopCoreAsync().ConfigureAwait(false);
+            await _processingCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
             if (waitUntilStopped)
                 await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);

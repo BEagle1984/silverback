@@ -3,12 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -99,17 +101,34 @@ public class ConsumerTests
         }
     }
 
-    private static TestConsumer CreateConsumer()
+    [Fact]
+    public async Task StopAsync_ShouldStopReadingBeforeCancelingProcessing()
+    {
+        CancellationTokenCapturingBehavior behavior = new();
+        using TestConsumer consumer = CreateConsumer(behavior);
+        bool? isCanceledWhenStoppingReading = null;
+        consumer.StopCoreCallback = () => isCanceledWhenStoppingReading = behavior.CancellationToken.IsCancellationRequested;
+        await consumer.StartAsync();
+        await consumer.ConsumeAsync();
+
+        await consumer.StopAsync().AsTask().WaitAsync(Timeout);
+
+        // A subscriber finishing as soon as its token is canceled must not let the reader start the next message
+        isCanceledWhenStoppingReading.ShouldBe(false);
+        behavior.CancellationToken.IsCancellationRequested.ShouldBeTrue();
+    }
+
+    private static TestConsumer CreateConsumer(params IConsumerBehavior[] behaviors)
     {
         IBrokerClient client = Substitute.For<IBrokerClient>();
         client.Initialized.Returns(new AsyncEvent<BrokerClient>());
         client.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
         client.Status.Returns(ClientStatus.Initialized);
 
-        IBrokerBehaviorsProvider<IConsumerBehavior> behaviors = Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>();
-        behaviors.GetBehaviorsList().Returns([]);
+        IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider = Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>();
+        behaviorsProvider.GetBehaviorsList().Returns(behaviors);
 
-        return new TestConsumer(client, behaviors);
+        return new TestConsumer(client, behaviorsProvider);
     }
 
     private sealed class TestConsumer(
@@ -133,6 +152,11 @@ public class ConsumerTests
 
         public int DrainCalls { get; private set; }
 
+        public Action? StopCoreCallback { get; set; }
+
+        public ValueTask ConsumeAsync() =>
+            HandleMessageAsync([], [], TestConsumerEndpoint.GetDefault(), CurrentIdentifier, Substitute.For<ISequenceStore>());
+
         protected override async ValueTask StartCoreAsync() => await StartGate;
 
         protected override bool TryBeginStop(TestOffset? brokerMessageIdentifier)
@@ -148,6 +172,7 @@ public class ConsumerTests
             IsStopping.ShouldBeTrue();
 
             StopCalls++;
+            StopCoreCallback?.Invoke();
 
             return ValueTask.CompletedTask;
         }
@@ -163,5 +188,20 @@ public class ConsumerTests
 
         protected override ValueTask RollbackCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers) =>
             ValueTask.CompletedTask;
+    }
+
+    private sealed class CancellationTokenCapturingBehavior : IConsumerBehavior
+    {
+        public int SortIndex => 0;
+
+        public CancellationToken CancellationToken { get; private set; }
+
+        public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
+        {
+            context.Dispose();
+            CancellationToken = cancellationToken;
+
+            return ValueTask.CompletedTask;
+        }
     }
 }
