@@ -18,6 +18,10 @@ public abstract class BrokerClient : IBrokerClient
 
     private CancellationTokenSource _disconnectCancellationTokenSource = new();
 
+    // Holds the ClientStatus: connect and disconnect enter Initializing and Disconnecting atomically, so concurrent calls can't
+    // both run their flow
+    private int _status;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="BrokerClient" /> class.
     /// </summary>
@@ -57,7 +61,11 @@ public abstract class BrokerClient : IBrokerClient
     public AsyncEvent<BrokerClient> Disconnected { get; } = new();
 
     /// <inheritdoc cref="IBrokerClient.Status" />
-    public ClientStatus Status { get; private set; }
+    public ClientStatus Status
+    {
+        get => (ClientStatus)Volatile.Read(ref _status);
+        private set => Volatile.Write(ref _status, (int)value);
+    }
 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()
@@ -76,14 +84,13 @@ public abstract class BrokerClient : IBrokerClient
     /// <inheritdoc cref="IBrokerClient.ConnectAsync" />
     public async ValueTask ConnectAsync()
     {
-        if (Status != ClientStatus.Disconnected)
+        if (!TryChangeStatus(ClientStatus.Disconnected, ClientStatus.Initializing))
             return;
-
-        _logger.LogBrokerClientInitializing(this);
 
         try
         {
-            Status = ClientStatus.Initializing;
+            _logger.LogBrokerClientInitializing(this);
+
             await Initializing.InvokeAsync(this).ConfigureAwait(false);
 
             if (_disconnectCancellationTokenSource.IsCancellationRequested)
@@ -169,14 +176,15 @@ public abstract class BrokerClient : IBrokerClient
         if (!isRestarting && !_disconnectCancellationTokenSource.IsCancellationRequested)
             await _disconnectCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
-        if (Status != ClientStatus.Initialized)
+        // A concurrent or reentrant call returns without waiting for the ongoing disconnect, which would deadlock when called
+        // from the Disconnecting handlers or from code they wait for
+        if (!TryChangeStatus(ClientStatus.Initialized, ClientStatus.Disconnecting))
             return;
-
-        _logger.LogBrokerClientDisconnecting(this);
 
         try
         {
-            Status = ClientStatus.Disconnecting;
+            _logger.LogBrokerClientDisconnecting(this);
+
             await Disconnecting.InvokeAsync(this).ConfigureAwait(false);
 
             await DisconnectCoreAsync().ConfigureAwait(false);
@@ -221,4 +229,7 @@ public abstract class BrokerClient : IBrokerClient
             return _disconnectCancellationTokenSource.Token.IsCancellationRequested;
         }
     }
+
+    private bool TryChangeStatus(ClientStatus fromStatus, ClientStatus toStatus) =>
+        Interlocked.CompareExchange(ref _status, (int)toStatus, (int)fromStatus) == (int)fromStatus;
 }
