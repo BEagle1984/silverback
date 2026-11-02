@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Shouldly;
 using Silverback.Messaging.Messages;
@@ -14,6 +15,8 @@ namespace Silverback.Tests.Core.Messaging.Messages;
 
 public class MessageStreamEnumerableTests
 {
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+
     [Fact]
     public async Task PushAsyncGetEnumeratorAndCompleteAsync_ShouldPush()
     {
@@ -281,6 +284,44 @@ public class MessageStreamEnumerableTests
 
         pushed.ShouldBeFalse();
         pushTask.Status.ShouldBe(TaskStatus.Canceled);
+    }
+
+    [Fact]
+    public async Task PushAsync_ShouldNotBlockCompletion_WhenCanceledWhileWaitingForProcessing()
+    {
+        MessageStreamEnumerable<int> stream = new();
+        await using IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
+        using CancellationTokenSource cancellationTokenSource = new();
+
+        Task pushTask = stream.PushAsync(1, cancellationToken: cancellationTokenSource.Token);
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+        await cancellationTokenSource.CancelAsync();
+
+        Exception? pushException = await Record.ExceptionAsync(() => pushTask.WaitAsync(Timeout));
+        pushException.ShouldBeAssignableTo<OperationCanceledException>();
+
+        await stream.CompleteAsync().WaitAsync(Timeout);
+    }
+
+    [Fact]
+    public async Task PushAsync_ShouldAbortStream_WhenCanceledWhileWaitingForProcessing()
+    {
+        MessageStreamEnumerable<int> stream = new();
+        await using IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
+        using CancellationTokenSource cancellationTokenSource = new();
+
+        Task pushTask = stream.PushAsync(1, cancellationToken: cancellationTokenSource.Token);
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+        await cancellationTokenSource.CancelAsync();
+        Exception? pushException = await Record.ExceptionAsync(() => pushTask.WaitAsync(Timeout));
+
+        // The late processed signal of the pulled message must not acknowledge the next push
+        Exception? nextPullException = await Record.ExceptionAsync(() => enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout));
+        Exception? nextPushException = await Record.ExceptionAsync(() => stream.PushAsync(2).WaitAsync(Timeout));
+
+        pushException.ShouldBeAssignableTo<OperationCanceledException>();
+        nextPullException.ShouldBeAssignableTo<OperationCanceledException>();
+        nextPushException.ShouldBeAssignableTo<OperationCanceledException>();
     }
 
     [Fact]

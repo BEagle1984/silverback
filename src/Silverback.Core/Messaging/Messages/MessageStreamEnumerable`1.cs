@@ -66,10 +66,24 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         _onPullActionArgument = onPullActionArgument;
         SafelyRelease(_readSemaphore);
 
-        await _processedSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
-        _current = default;
-        _hasCurrent = false;
-        _writeSemaphore.Release();
+        try
+        {
+            await _processedSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Abort the stream, since the message might have been pulled already: its late processed signal could otherwise be taken
+            // as the acknowledgement of the next pushed message
+            Abort();
+            throw;
+        }
+        finally
+        {
+            // Always release the write lock, otherwise CompleteAsync would wait for it forever
+            _current = default;
+            _hasCurrent = false;
+            ReleaseWriteLock();
+        }
     }
 
     /// <inheritdoc cref="IMessageStreamEnumerable.Abort" />
@@ -138,6 +152,18 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         catch (SemaphoreFullException)
         {
             // Ignore
+        }
+    }
+
+    private void ReleaseWriteLock()
+    {
+        try
+        {
+            _writeSemaphore.Release();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore: the stream can be disposed as soon as it's aborted (e.g., when the push is canceled)
         }
     }
 

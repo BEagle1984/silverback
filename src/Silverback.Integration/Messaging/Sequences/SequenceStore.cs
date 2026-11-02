@@ -16,7 +16,11 @@ internal sealed class SequenceStore : ISequenceStore
 {
     private readonly Guid _id = Guid.NewGuid();
 
+    // Locked because the store is also accessed outside the consume loop (e.g., when stopping or aborting), and enumerated through
+    // a snapshot, since a sequence can be added or removed while it is enumerated
     private readonly Dictionary<string, ISequence> _store = [];
+
+    private readonly System.Threading.Lock _storeLock = new();
 
     private readonly ISilverbackLogger _logger;
 
@@ -25,7 +29,16 @@ internal sealed class SequenceStore : ISequenceStore
         _logger = logger;
     }
 
-    public int Count => _store.Count;
+    public int Count
+    {
+        get
+        {
+            lock (_storeLock)
+            {
+                return _store.Count;
+            }
+        }
+    }
 
     public bool IsDisposed { get; private set; }
 
@@ -36,13 +49,16 @@ internal sealed class SequenceStore : ISequenceStore
 
         ISequence? sequence;
 
-        if (matchPrefix)
+        lock (_storeLock)
         {
-            sequence = _store.FirstOrDefault(keyValuePair => keyValuePair.Key.StartsWith(sequenceId, StringComparison.Ordinal)).Value;
-        }
-        else
-        {
-            _store.TryGetValue(sequenceId, out sequence);
+            if (matchPrefix)
+            {
+                sequence = _store.FirstOrDefault(keyValuePair => keyValuePair.Key.StartsWith(sequenceId, StringComparison.Ordinal)).Value;
+            }
+            else
+            {
+                _store.TryGetValue(sequenceId, out sequence);
+            }
         }
 
         if (sequence is ISequenceImplementation sequenceImpl)
@@ -61,10 +77,20 @@ internal sealed class SequenceStore : ISequenceStore
             "Adding {sequenceType} '{sequenceId}' to store '{sequenceStoreId}'.",
             () => [sequence.GetType().Name, sequence.SequenceId, _id]);
 
-        if (_store.TryGetValue(sequence.SequenceId, out ISequence? oldSequence))
+        ISequence? oldSequence;
+
+        lock (_storeLock)
+        {
+            _store.TryGetValue(sequence.SequenceId, out oldSequence);
+        }
+
+        if (oldSequence != null)
             await oldSequence.AbortAsync(SequenceAbortReason.IncompleteSequence).ConfigureAwait(false);
 
-        _store[sequence.SequenceId] = sequence;
+        lock (_storeLock)
+        {
+            _store[sequence.SequenceId] = sequence;
+        }
 
         return sequence;
     }
@@ -72,18 +98,23 @@ internal sealed class SequenceStore : ISequenceStore
     public ValueTask RemoveAsync(string sequenceId)
     {
         _logger.LogTrace("Removing sequence '{sequenceId}' from store '{sequenceStoreId}'.", () => [sequenceId, _id]);
-        _store.Remove(sequenceId);
+
+        lock (_storeLock)
+        {
+            _store.Remove(sequenceId);
+        }
+
         return default;
     }
 
     public IReadOnlyCollection<ISequence> GetPendingSequences(bool includeUnbounded = false, bool includeChildren = false) =>
     [
-        .. _store.Values.Where(sequence => sequence.IsPending &&
+        .. GetSnapshot().Where(sequence => sequence.IsPending &&
                                            (includeUnbounded || sequence is not UnboundedSequence) &&
                                            (includeChildren || sequence.ParentSequence == null))
     ];
 
-    public IEnumerator<ISequence> GetEnumerator() => _store.Values.GetEnumerator();
+    public IEnumerator<ISequence> GetEnumerator() => ((IEnumerable<ISequence>)GetSnapshot()).GetEnumerator();
 
     public void Dispose() => DisposeAsync().SafeWait();
 
@@ -94,10 +125,18 @@ internal sealed class SequenceStore : ISequenceStore
 
         _logger.LogTrace("Disposing sequence store {sequenceStoreId}", () => [_id]);
 
-        await _store.Values.AbortAllAsync(SequenceAbortReason.Disposing).ConfigureAwait(false);
+        await GetSnapshot().AbortAllAsync(SequenceAbortReason.Disposing).ConfigureAwait(false);
 
         IsDisposed = true;
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    private ISequence[] GetSnapshot()
+    {
+        lock (_storeLock)
+        {
+            return [.. _store.Values];
+        }
+    }
 }

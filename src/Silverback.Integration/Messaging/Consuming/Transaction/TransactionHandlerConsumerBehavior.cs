@@ -90,6 +90,9 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         }
     }
 
+    // Check IsCompleting first, since it's reset only after the state is switched to complete
+    private static bool IsCompletingOrComplete(ISequence sequence) => sequence.IsCompleting || sequence.IsComplete;
+
     private async Task AwaitProcessedIfNecessaryAsync(ConsumerPipelineContext context)
     {
         if (context.Sequence == null)
@@ -142,12 +145,23 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
             // Commit only if it is the start of the outer sequence (e.g., when combining batching and chunking), to avoid commits in the
             // middle of the outer sequence (batch).
-            if (context.IsSequenceStart && !sequence.IsAborted)
+            if (context.IsSequenceStart)
             {
-                await context.TransactionManager.CommitAsync().ConfigureAwait(false);
+                if (sequence.ParentSequence == null && !IsCompletingOrComplete(sequence))
+                {
+                    // The subscriber stopped enumerating before the end of the sequence (or the sequence is being aborted): abort it as
+                    // the SequencerConsumerBehaviorBase does, or await the abort already in progress, instead of committing directly.
+                    // This waits for the pending add, to commit the message being pushed when the enumeration stopped as well. The abort
+                    // also commits and notifies the processing completion.
+                    await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+                }
+                else if (!sequence.IsAborted)
+                {
+                    await context.TransactionManager.CommitAsync().ConfigureAwait(false);
 
-                if (context.Sequence is ISequenceImplementation sequenceImpl)
-                    sequenceImpl.NotifyProcessingCompleted();
+                    if (context.Sequence is ISequenceImplementation sequenceImpl)
+                        sequenceImpl.NotifyProcessingCompleted();
+                }
             }
         }
         catch (Exception exception)

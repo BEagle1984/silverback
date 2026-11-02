@@ -10,6 +10,7 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Sequences;
 using Silverback.Util;
 using Xunit;
@@ -423,6 +424,36 @@ public class ConsumerChannelTests
             await channel.NotifyReadingStoppedAsync(false);
             await channel.StopReadingAsync();
         }
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The stop completes before the disposal")]
+    public async Task StopReadingAsync_ShouldNotThrow_WhenSequenceIsAddedWhileAwaitingProcessing()
+    {
+        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: channel.SequenceStore);
+
+        // Simulate the consume loop adding a sequence while the stop is awaiting the processing of the pending ones
+        for (int i = 0; i < 10; i++)
+        {
+            ISequence sequence = Substitute.For<ISequence>();
+            sequence.SequenceId.Returns($"sequence-{i}");
+            sequence.Context.Returns(_ =>
+            {
+                ISequence addedSequence = Substitute.For<ISequence>();
+                addedSequence.SequenceId.Returns(Guid.NewGuid().ToString());
+                channel.SequenceStore.AddAsync(addedSequence).SafeWait();
+                return context;
+            });
+            await channel.SequenceStore.AddAsync(sequence);
+        }
+
+        channel.StartReading().ShouldBeTrue();
+
+        Task stop = channel.StopReadingAsync();
+        await channel.NotifyReadingStoppedAsync(false);
+
+        await stop.WaitAsync(TimeSpan.FromSeconds(2));
     }
 
     private record TestMessage;

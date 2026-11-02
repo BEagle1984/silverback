@@ -44,7 +44,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly SemaphoreSlim _completeSemaphoreSlim = new(1, 1);
 
-    private CompleteState _completeState = CompleteState.NotComplete;
+    // Volatile because the state is also checked without holding the semaphores (e.g., when the processing completes)
+    private volatile CompleteState _completeState = CompleteState.NotComplete;
+
+    private volatile bool _isCompleting;
 
     private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
@@ -158,7 +161,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public bool IsNew { get; private set; } = true;
 
     /// <inheritdoc cref="ISequence.IsCompleting" />
-    public bool IsCompleting { get; private set; }
+    public bool IsCompleting => _isCompleting;
 
     /// <inheritdoc cref="ISequence.IsComplete" />
     public bool IsComplete => _completeState == CompleteState.Complete;
@@ -453,14 +456,45 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
             return;
 
+        bool isAbortStarted = false;
+
         try
         {
-            await CompleteCoreAsync(cancellationToken).ConfigureAwait(false);
+            if (!IsPending)
+                return;
+
+            // Abort instead of completing if the subscriber already stopped enumerating (e.g., when the timeout elapses at the same
+            // time), as the early exit handling would do: completing the streams would wait forever for the pending push. This doesn't
+            // apply when the last message is added (AddCoreAsync), since its push just completed, nor to the child sequences, which the
+            // early exit handling doesn't abort.
+            // IsCompleting is set (with a full fence) before checking the processing task, so that the early exit handling either
+            // sees the sequence completing or aborted (and leaves it to this method) or completes the processing before this check.
+            _isCompleting = true;
+            Interlocked.MemoryBarrier();
+
+            if (ParentSequence == null && Context.ProcessingTask is { IsCompleted: true })
+            {
+                try
+                {
+                    isAbortStarted = BeginAbortCore(SequenceAbortReason.EnumerationAborted, null);
+                }
+                finally
+                {
+                    _isCompleting = false;
+                }
+            }
+            else
+            {
+                await CompleteCoreAsync(cancellationToken).ConfigureAwait(false);
+            }
         }
         finally
         {
             _completeSemaphoreSlim.Release();
         }
+
+        if (isAbortStarted)
+            await AbortCoreAsync(null).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -576,7 +610,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
             () => [GetType().Name, SequenceId, Length]);
 
-        IsCompleting = true;
+        _isCompleting = true;
 
         try
         {
@@ -586,7 +620,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         finally
         {
-            IsCompleting = false;
+            _isCompleting = false;
         }
     }
 
@@ -609,7 +643,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             {
                 int interval = (int)Math.Min(_timeout.TotalMilliseconds, 1000);
 
-                while (IsPending)
+                // Stop also when disposed, since a child sequence can be disposed by its parent while still pending
+                while (IsPending && !_isDisposed)
                 {
                     await Task.Delay(interval).ConfigureAwait(false);
 
