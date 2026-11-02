@@ -18,6 +18,7 @@
       <link rel="icon" href="../../../images/favicon.ico">
       <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="192x192" href="../../../images/icons/android-chrome-192x192.png">
       <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../../../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -109,17 +110,6 @@
 </figure>
 <h2 id="consumer-configuration">Consumer Configuration</h2>
 <p>Enable batch processing by calling <code>EnableBatchProcessing</code> on the consumer endpoint.</p>
-<div class="tabGroup" id="tabgroup_1">
-<ul role="tablist">
-<li role="presentation">
-<a href="#tabpanel_1_kafka" role="tab" aria-controls="tabpanel_1_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
-</li>
-<li role="presentation">
-<a href="#tabpanel_1_mqtt" role="tab" aria-controls="tabpanel_1_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
-</li>
-</ul>
-<section id="tabpanel_1_kafka" role="tabpanel" data-tab="kafka">
-
 <pre><code class="lang-csharp">services.AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
     .AddKafkaClients(clients =&gt; clients
@@ -129,20 +119,9 @@
                 .ConsumeFrom(&quot;my-topic&quot;)
                 .EnableBatchProcessing(1000, TimeSpan.FromSeconds(30)))));
 </code></pre>
-</section>
-<section id="tabpanel_1_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
-
-<pre><code class="lang-csharp">services.AddSilverback()
-    .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
-    .AddMqttClients(clients =&gt; clients
-        .ConnectViaTcp(&quot;localhost&quot;)
-        .AddClient(&quot;my-client&quot;, client =&gt; client
-            .WithClientId(&quot;client1&quot;)
-            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
-                .ConsumeFrom(&quot;messages/my&quot;)
-                .EnableBatchProcessing(1000, TimeSpan.FromSeconds(30)))));
-</code></pre>
-</section>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Batch processing is currently supported for Kafka only.</p>
 </div>
 <h2 id="subscribing-to-batches">Subscribing to Batches</h2>
 <p>Your subscriber can consume a batch of messages as an <code>IAsyncEnumerable&lt;T&gt;</code> (or <code>IEnumerable&lt;T&gt;</code> / <code>IMessageStreamEnumerable&lt;T&gt;</code>) of either the message type or the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a>.</p>
@@ -177,16 +156,35 @@
 </code></pre>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>All messages in the batch are acknowledged/committed once the subscriber successfully completes.
+<p>All messages in the batch are committed once the subscriber successfully completes.
 If the subscriber throws, the configured error policy applies to the whole batch.</p>
 </div>
 <div class="NOTE">
 <h5>Note</h5>
-<p>With Kafka, a batch per topic partition is created by default. You can decide to process all partitions together by calling <code>ProcessAllPartitionsTogether</code> on the consumer configuration and that will create a single batch for the whole topic.</p>
+<p>A batch per topic partition is created by default. You can decide to process all partitions together by calling <code>ProcessAllPartitionsTogether</code> on the consumer configuration and that will create a single batch for the whole topic.</p>
+</div>
+<div class="TIP">
+<h5>Tip</h5>
+<p>While the batch is enumerated, the current <code>Activity</code> continues the trace of the message being processed. Avoid buffering the batch (e.g. with <code>ToList()</code>) if the trace of each message must be preserved. See <a class="xref" href="tracing.html">Distributed Tracing and Consumers</a> for details.</p>
+</div>
+<h2 id="multiple-subscribers">Multiple Subscribers</h2>
+<p>When multiple subscribers handle the same batch (see also <a class="xref" href="basics.html">Consuming Messages</a>), each of them receives its own stream, with the messages of the batch that match its message type and filters:</p>
+<ul>
+<li>The messages are pushed to all the streams at once, so the slowest subscriber sets the pace.</li>
+<li>The batch is completed and committed only when all the subscribers have returned.</li>
+<li>If one subscriber throws while the batch is still being received, the enumeration of the others is canceled. If it throws afterwards (for example when saving the changes after the loop), the others aren't interrupted and run to completion.</li>
+<li>In both cases the error policy is applied to the whole batch (see <a class="xref" href="error-policies.html#batches-chunking-and-sequences">Batches, Chunking and Sequences</a>). A retry invokes all the subscribers again, with a new stream starting from the first message of the batch.</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Only one subscriber per batch is supported reliably. If a subscriber stops enumerating before the end of the batch (for example with a <code>break</code> or an early <code>return</code>) while another subscriber is still enumerating, the batch can neither be completed nor aborted.</p>
+<p>The partition then stalls and, once its buffer is full (see <code>LimitBackpressure</code> in <a class="xref" href="basics.html">Consuming Messages</a>), the consumer stops polling and no partition receives new messages. With <code>ProcessAllPartitionsTogether</code> there is a single batch for all the partitions, so the whole consumer stalls right away. The stalled partition also never releases its <code>LimitParallelism</code> slot: with <code>LimitParallelism(1)</code> and multiple partitions, none of the others is processed anymore. The max wait time doesn't reliably release the batch and stopping the consumer, including the graceful shutdown of the application, waits for it as well, so the process has to be terminated and restarted.</p>
+<p>If several actions are needed, use a single subscriber and invoke them explicitly from it.</p>
 </div>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
 <li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="tracing.html">Distributed Tracing and Consumers</a> guide</li>
 <li><a class="xref" href="../../../samples/kafka/batch.html">Kafka - Batch Processing</a> sample</li>
 </ul>
 

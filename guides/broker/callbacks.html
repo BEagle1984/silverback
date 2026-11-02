@@ -18,6 +18,7 @@
       <link rel="icon" href="../../images/favicon.ico">
       <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="192x192" href="../../images/icons/android-chrome-192x192.png">
       <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -103,6 +104,10 @@
 <h1 id="broker-callbacks">Broker Callbacks</h1>
 
 <p>Broker callbacks let you react to lifecycle events raised by broker clients (Kafka consumers/producers, MQTT clients, etc.).</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>To execute custom code when an error policy is applied, see the <a class="xref" href="consuming/error-policies.html#callbacks">error policy callbacks</a>.</p>
+</div>
 <h2 id="register-a-callback-handler">Register a Callback Handler</h2>
 <p>To handle callbacks, implement one (or more) callback interfaces and register your handler as an <code>IBrokerClientCallback</code>.</p>
 <p>You can register the handler with the desired lifetime:</p>

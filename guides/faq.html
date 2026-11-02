@@ -18,6 +18,7 @@
       <link rel="icon" href="../images/favicon.ico">
       <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="192x192" href="../images/icons/android-chrome-192x192.png">
       <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -133,6 +134,7 @@
 <p>Kafka messages from the same partition are always processed sequentially, to preserve their order. The parallelism is therefore bound by the number of assigned partitions (and by <code>LimitParallelism</code>). With MQTT, parallel processing must be enabled explicitly via <code>EnableParallelProcessing</code>. See <a class="xref" href="broker/consuming/basics.html">Consuming Messages</a>.</p>
 <h3 id="the-same-message-is-processed-more-than-once">The Same Message Is Processed More Than Once</h3>
 <p>Kafka and MQTT (with QoS 1) guarantee at-least-once delivery: a message can be redelivered after a crash, a rebalance or a reconnection, if its offset (or acknowledgment) wasn't committed yet. Make the subscribers idempotent, or use the client-side offset storage together with your database transaction to achieve exactly-once processing (see <a class="xref" href="broker/consuming/kafka/offset.html">Kafka Offset Storage</a>).</p>
+<p>The same happens when multiple subscribers handle a message and one of them fails: the retry invokes all the subscribers again, including those that already succeeded (see <a class="xref" href="broker/consuming/basics.html">Consuming Messages</a>).</p>
 <h2 id="serialization">Serialization</h2>
 <h3 id="the-message-is-deserialized-as-the-wrong-type">The Message Is Deserialized as the Wrong Type</h3>
 <p>When consuming with <code>Consume&lt;TMessage&gt;</code>, the JSON deserializer uses <code>TMessage</code> and ignores the <code>x-message-type</code> header by default. To consume different message types from the same topic, enable the message type header in the deserializer (e.g. <code>DeserializeJson(deserializer =&gt; deserializer.WithOptionalMessageTypeHeader())</code>) and make sure the producer sends it. See <a class="xref" href="broker/consuming/deserialization.html">Deserializing the Consumed Messages</a> and <a class="xref" href="broker/producing/serialization.html">Serializing the Produced Messages</a>.</p>

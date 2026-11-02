@@ -18,6 +18,7 @@
       <link rel="icon" href="../../../images/favicon.ico">
       <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="192x192" href="../../../images/icons/android-chrome-192x192.png">
       <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../../../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -104,6 +105,10 @@
 
 <p>When a subscriber throws while processing a consumed message, or the message cannot be deserialized, decrypted or validated, Silverback applies the error policy configured for the consumer endpoint. Error policies let you retry the processing, skip the message, move it to another topic, or stop the consumer.</p>
 <p>This guide covers the built-in policies, how to combine them, and the caveats to be aware of.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Stopping the consumer (e.g. when the application shuts down) cancels the <code>CancellationToken</code> passed to the subscribers. If a subscriber throws an <code>OperationCanceledException</code> because of that cancellation, the error policies aren't applied: the message is rolled back, without being committed (Kafka) or acknowledged (MQTT), to be consumed again. Any other <code>OperationCanceledException</code> (e.g. a timed out HTTP request) is handled by the error policies like any other exception.</p>
+</div>
 <h2 id="default-behavior">Default Behavior</h2>
 <p>If no error policy is configured, the <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a> is applied: the exception is logged and the consumer is stopped and disconnected. The failed message isn't committed (Kafka) or acknowledged (MQTT), so it will be consumed again once the consumer is restarted.</p>
 <p>This is a safe default, because no message is ever lost, but a single faulty message (a so-called <em>poison message</em>) will block the consumer until the issue is fixed. In most cases you will want to configure an explicit policy.</p>
@@ -189,7 +194,7 @@
 </code></pre>
 <div class="WARNING">
 <h5>Warning</h5>
-<p>The skipped message is lost. Combine <code>Skip()</code> with logging or with the <a href="#publish-events">Publish</a> feature if you need to keep track of the skipped messages, or use <code>MoveTo</code> to park them in a dead letter topic instead.</p>
+<p>The skipped message is lost. Combine <code>Skip()</code> with logging or with the <a href="#callbacks">callbacks</a> if you need to keep track of the skipped messages, or use <code>MoveTo</code> to park them in a dead letter topic instead.</p>
 </div>
 <h3 id="retry">Retry</h3>
 <pre><code class="lang-csharp">.OnError(policy =&gt; policy.Retry(5))
@@ -389,28 +394,68 @@
 <p>In this example, only the transient errors are retried; all other errors (and the transient errors still failing after 5 retries) cause the message to be moved, unless it's a <code>MyFatalException</code> or the message carries the <code>x-do-not-move</code> header, in which case the consumer is stopped.</p>
 <div class="NOTE">
 <h5>Note</h5>
-<p>The <code>ApplyWhen</code> and <code>Publish</code> functions receive the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>, not the deserialized message, since the error could have occurred before or during the deserialization. Cast it to <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> to access the deserialized message, when available.</p>
+<p>The <code>ApplyWhen</code> function and the <a href="#callbacks">callbacks</a> receive the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>, not the deserialized message, since the error could have occurred before or during the deserialization. Cast it to <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> to access the deserialized message, when available.</p>
 </div>
-<h2 id="publish-events">Publish Events</h2>
-<p>Each policy can publish a message to the internal <a class="xref" href="../../bus.html">Using the Message Bus</a> when it's applied, for example to raise an alert or to track the skipped messages. Use <code>Publish</code> with a factory function receiving the envelope (and optionally the exception). If the function returns <code>null</code>, nothing is published.</p>
-<pre><code class="lang-csharp">.OnError(policy =&gt; policy
-    .Retry(3, retryPolicy =&gt; retryPolicy.WithInterval(TimeSpan.FromSeconds(1)))
-    .ThenSkip(skipPolicy =&gt; skipPolicy
-        .Publish((envelope, exception) =&gt; new ProcessingFailedEvent(envelope, exception))))
+<h2 id="callbacks">Callbacks</h2>
+<p>You can execute custom code when a policy is about to be applied, for example to store the skipped messages, raise an alert or collect metrics. Implement one or more of the following interfaces and register the class with <code>AddSingletonErrorPolicyCallback</code>, <code>AddScopedErrorPolicyCallback</code> or <code>AddTransientErrorPolicyCallback</code>.</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.ISkipMessageErrorPolicyCallback.html">ISkipMessageErrorPolicyCallback</a><br>
+Invoked when a message is about to be skipped.</li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.IRetryErrorPolicyCallback.html">IRetryErrorPolicyCallback</a><br>
+Invoked when a message is about to be retried.</li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.IMoveMessageErrorPolicyCallback.html">IMoveMessageErrorPolicyCallback</a><br>
+Invoked when a message is about to be moved.</li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback.html">IStopConsumerErrorPolicyCallback</a><br>
+Invoked when the consumer is about to be stopped because of an error, either by the <code>Stop</code> policy or because no policy could handle the error (e.g. after the last retry of a <code>Retry</code> policy not followed by any other policy).</li>
+</ul>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(...)
+    .AddScopedErrorPolicyCallback&lt;SkippedMessagesTracker&gt;();
 </code></pre>
-<pre><code class="lang-csharp">public class ProcessingFailedEventHandler
+<pre><code class="lang-csharp">public class SkippedMessagesTracker : ISkipMessageErrorPolicyCallback
 {
-    public Task HandleAsync(ProcessingFailedEvent failedEvent) =&gt;
-        _alertService.NotifyAsync(failedEvent);
+    private readonly IDeadLetterStore _store;
+
+    public SkippedMessagesTracker(IDeadLetterStore store)
+    {
+        _store = store;
+    }
+
+    public Task OnSkippingMessageAsync(IRawInboundEnvelope envelope, Exception exception)
+    {
+        if (envelope.Endpoint.RawName != &quot;orders&quot;)
+            return Task.CompletedTask;
+
+        return _store.SaveAsync(envelope, exception);
+    }
 }
 </code></pre>
-<p>The message is published in a new dependency injection scope, after the policy has been applied. It's published to the internal bus and is therefore produced to a broker only if an outbound endpoint is configured for its type.</p>
+<p>The callbacks receive the envelope and the exception that caused the policy to be applied. Since they are invoked for all consumers, use the envelope (e.g. the endpoint or the message type) to decide whether to act.</p>
+<p>The callbacks are invoked before the policy is applied: for example, before the skipped message is committed or before the message is moved. If a callback throws, the policy isn't applied, the message isn't committed and the consumer stops, so that the message will be consumed again once the consumer is restarted.</p>
+<p>The <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback.html">IStopConsumerErrorPolicyCallback</a> is invoked whenever the error handling results in the consumer being stopped, even without an explicit <code>ThenStop()</code>. It's also invoked when the error handling itself fails, for example because another callback throws or the message can't be moved; in that case, an exception thrown by the stop callback is logged but doesn't replace the original one.</p>
+<h3 id="publish-events-obsolete">Publish Events (Obsolete)</h3>
+<p>The <code>Publish</code> method, used to publish a message to the internal <a class="xref" href="../../bus.html">Using the Message Bus</a> when the policy is applied, is obsolete and will be removed in the next major version. Use a callback instead, injecting the <a class="xref" href="../../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> if you need to publish a message:</p>
+<pre><code class="lang-csharp">public class SkippedMessagesNotifier : ISkipMessageErrorPolicyCallback
+{
+    private readonly IPublisher _publisher;
+
+    public SkippedMessagesNotifier(IPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+
+    public Task OnSkippingMessageAsync(IRawInboundEnvelope envelope, Exception exception) =&gt;
+        _publisher.PublishAsync(new ProcessingFailedEvent(envelope, exception));
+}
+</code></pre>
+<p>Note that the message passed to <code>Publish</code> was published after the policy had been applied, while the callbacks are invoked before it.</p>
 <h2 id="batches-chunking-and-sequences">Batches, Chunking and Sequences</h2>
 <p>When the consumed messages are part of a sequence (a batch, a chunked message, etc.), the error policy is applied to the whole sequence:</p>
 <ul>
 <li><strong>Batch processing</strong> (<a class="xref" href="batch-processing.html">Batch Processing Consumed Messages</a>): if the subscriber throws, the whole batch is rolled back. <code>Retry</code> processes the whole batch again, and <code>Skip</code> skips all the messages in the batch.</li>
 <li><strong>Chunking</strong> (<a class="xref" href="chunking.html">Consuming Chunked Messages</a>): all chunks belonging to the same message are retried or skipped together.</li>
-<li><strong>MoveTo</strong> can't move a sequence: the policy logs a warning and is skipped, falling back to the next policy in the chain (or stopping the consumer, if there is none). Don't rely on <code>MoveTo</code> with batch processing or chunked messages; use <code>Skip</code> with <code>Publish</code> instead.</li>
+<li><strong>MoveTo</strong> can't move a sequence: the policy logs a warning and is skipped, falling back to the next policy in the chain (or stopping the consumer, if there is none). Don't rely on <code>MoveTo</code> with batch processing or chunked messages; use <code>Skip</code> with a <a href="#callbacks">callback</a> instead.</li>
 </ul>
 <div class="WARNING">
 <h5>Warning</h5>
@@ -478,7 +523,7 @@
     .OnError(new MyErrorPolicy()))
 </code></pre>
 <p><code>HandleErrorAsync</code> returns <code>true</code> if the error was handled, or <code>false</code> to rethrow the exception and stop the consumer. The implementation is responsible for completing the consumer transaction via the <a class="xref" href="../../../api/Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.html">IConsumerTransactionManager</a>.</p>
-<p>Alternatively, derive from <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a> and <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyImplementation.html">ErrorPolicyImplementation</a> to benefit from the built-in support for the apply rules, the maximum attempts and the published events.</p>
+<p>Alternatively, derive from <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a> and <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyImplementation.html">ErrorPolicyImplementation</a> to benefit from the built-in support for the apply rules and the maximum attempts.</p>
 <div class="TIP">
 <h5>Tip</h5>
 <p>Look at the built-in policies (for example <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a> and <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>) for a reference on how to interact with the transaction manager.</p>

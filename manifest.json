@@ -3527,6 +3527,174 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroDeserializerConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroDeserializerConfiguration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroDeserializerConfiguration",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroDeserializerConfiguration.yml\" sourcestartlinenumber=\"1\">Wraps the <xref href=\"Confluent.SchemaRegistry.Serdes.AvroDeserializerConfig\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroDeserializerConfigurationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroDeserializerConfigurationBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroDeserializerConfigurationBuilder",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroDeserializerConfigurationBuilder.yml\" sourcestartlinenumber=\"1\">Builds the <xref href=\"Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroDeserializerConfiguration\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfiguration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfiguration",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfiguration.yml\" sourcestartlinenumber=\"1\">Wraps the <xref href=\"Confluent.SchemaRegistry.Serdes.AvroSerializerConfig\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.yml\" sourcestartlinenumber=\"1\">Builds the <xref href=\"Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfiguration\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonDeserializerConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonDeserializerConfiguration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonDeserializerConfiguration",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonDeserializerConfiguration.yml\" sourcestartlinenumber=\"1\">Wraps the <xref href=\"Confluent.SchemaRegistry.Serdes.JsonDeserializerConfig\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonDeserializerConfigurationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonDeserializerConfigurationBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonDeserializerConfigurationBuilder",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonDeserializerConfigurationBuilder.yml\" sourcestartlinenumber=\"1\">Builds the <xref href=\"Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonDeserializerConfiguration\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonSerializerConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonSerializerConfiguration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonSerializerConfiguration",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonSerializerConfiguration.yml\" sourcestartlinenumber=\"1\">Wraps the <xref href=\"Confluent.SchemaRegistry.Serdes.JsonSerializerConfig\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonSerializerConfigurationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonSerializerConfigurationBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonSerializerConfigurationBuilder",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonSerializerConfigurationBuilder.yml\" sourcestartlinenumber=\"1\">Builds the <xref href=\"Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaJsonSerializerConfiguration\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufDeserializerConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufDeserializerConfiguration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufDeserializerConfiguration",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufDeserializerConfiguration.yml\" sourcestartlinenumber=\"1\">Wraps the <xref href=\"Confluent.SchemaRegistry.Serdes.ProtobufDeserializerConfig\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufDeserializerConfigurationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufDeserializerConfigurationBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufDeserializerConfigurationBuilder",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufDeserializerConfigurationBuilder.yml\" sourcestartlinenumber=\"1\">Builds the <xref href=\"Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufDeserializerConfiguration\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufSerializerConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufSerializerConfiguration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufSerializerConfiguration",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufSerializerConfiguration.yml\" sourcestartlinenumber=\"1\">Wraps the <xref href=\"Confluent.SchemaRegistry.Serdes.ProtobufSerializerConfig\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufSerializerConfigurationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufSerializerConfigurationBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufSerializerConfigurationBuilder",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufSerializerConfigurationBuilder.yml\" sourcestartlinenumber=\"1\">Builds the <xref href=\"Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaProtobufSerializerConfiguration\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaSchemaRegistryConfiguration.yml",
       "output": {
         ".html": {
@@ -4451,6 +4619,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyCallbackInvocationException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyCallbackInvocationException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyCallbackInvocationException",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyCallbackInvocationException.yml\" sourcestartlinenumber=\"1\">The exception that wraps the exception thrown by an <xref href=\"Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicyCallback\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyChain.yml",
       "output": {
         ".html": {
@@ -4493,6 +4675,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicyCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicyCallback.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicyCallback",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicyCallback.yml\" sourcestartlinenumber=\"1\">The marker interface implemented by all interfaces declaring the error policy callbacks.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicyImplementation.yml",
       "output": {
         ".html": {
@@ -4504,6 +4700,62 @@
       "IsMRef": true,
       "Title": "Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicyImplementation",
       "Summary": "<p sourcefile=\"api/Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicyImplementation.yml\" sourcestartlinenumber=\"1\">An error policy is used to handle errors that may occur while processing the inbound messages.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.IMoveMessageErrorPolicyCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.IMoveMessageErrorPolicyCallback.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Consuming.ErrorHandling.IMoveMessageErrorPolicyCallback",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Consuming.ErrorHandling.IMoveMessageErrorPolicyCallback.yml\" sourcestartlinenumber=\"1\">Declares the <xref href=\"Silverback.Messaging.Consuming.ErrorHandling.IMoveMessageErrorPolicyCallback.OnMovingMessageAsync(Silverback.Messaging.Messages.IRawInboundEnvelope%2cSystem.Exception)\" data-throw-if-not-resolved=\"false\"></xref> callback.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.IRetryErrorPolicyCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.IRetryErrorPolicyCallback.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Consuming.ErrorHandling.IRetryErrorPolicyCallback",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Consuming.ErrorHandling.IRetryErrorPolicyCallback.yml\" sourcestartlinenumber=\"1\">Declares the <xref href=\"Silverback.Messaging.Consuming.ErrorHandling.IRetryErrorPolicyCallback.OnRetryingMessageAsync(Silverback.Messaging.Messages.IRawInboundEnvelope%2cSystem.Exception)\" data-throw-if-not-resolved=\"false\"></xref> callback.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.ISkipMessageErrorPolicyCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.ISkipMessageErrorPolicyCallback.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Consuming.ErrorHandling.ISkipMessageErrorPolicyCallback",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Consuming.ErrorHandling.ISkipMessageErrorPolicyCallback.yml\" sourcestartlinenumber=\"1\">Declares the <xref href=\"Silverback.Messaging.Consuming.ErrorHandling.ISkipMessageErrorPolicyCallback.OnSkippingMessageAsync(Silverback.Messaging.Messages.IRawInboundEnvelope%2cSystem.Exception)\" data-throw-if-not-resolved=\"false\"></xref> callback.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback.yml\" sourcestartlinenumber=\"1\">Declares the <xref href=\"Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback.OnStoppingConsumerAsync(Silverback.Messaging.Messages.IRawInboundEnvelope%2cSystem.Exception)\" data-throw-if-not-resolved=\"false\"></xref> callback.</p>\n"
     },
     {
       "type": "ManagedReference",

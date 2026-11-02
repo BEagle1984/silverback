@@ -18,6 +18,7 @@
       <link rel="icon" href="../../../images/favicon.ico">
       <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="192x192" href="../../../images/icons/android-chrome-192x192.png">
       <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../../../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -115,8 +116,21 @@
 <h5>Important</h5>
 <p>This works out of the box with Kafka and MQTT 5 (leveraging user properties), while previous MQTT versions don't support custom headers and therefore can't propagate the trace context.</p>
 </div>
+<h2 id="batch-processing">Batch Processing</h2>
+<p>When consuming a batch (see <a class="xref" href="batch-processing.html">Batch Processing Consumed Messages</a>), each message carries its own trace context. While the subscriber enumerates the batch, Silverback updates the current <code>Activity</code> to continue the trace of the message being enumerated, so that any work performed while handling that message becomes part of its trace.</p>
+<p>This also applies when the batch is streamed directly into <code>WrapAndPublishBatchAsync</code> (or <code>WrapAndPublishBatch</code>): each produced message continues the trace of the consumed message it was mapped from.</p>
+<pre><code class="lang-csharp">public Task HandleAsync(IAsyncEnumerable&lt;MyMessage&gt; messages) =&gt;
+    _publisher.WrapAndPublishBatchAsync(
+        messages,
+        message =&gt; new MyOtherMessage { Id = message.Id });
+</code></pre>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>The trace context follows the enumeration. If the batch is buffered before being processed (e.g. using <code>ToList()</code>, <code>ToArray()</code> or <code>Chunk()</code>), the current <code>Activity</code> continues the trace of the last enumerated message and all subsequent work, including the produced messages, is traced accordingly.</p>
+</div>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
+<li><a class="xref" href="batch-processing.html">Batch Processing Consumed Messages</a> guide</li>
 <li><a class="xref" href="../default-headers.html">Default Headers</a> guide</li>
 <li><a class="xref" href="../producing/tracing.html">Distributed Tracing and Producers</a> guide</li>
 <li><a href="https://www.w3.org/TR/trace-context/">Distributed Tracing</a> specification</li>

@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class KafkaAvroSerializerConfigurationBuilder | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class KafkaAvroSerializerConfigurationBuilder | Silverback ">
+      <meta name="description" content="Builds the .">
+      
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="Silverback">
+      <meta property="og:title" content="Class KafkaAvroSerializerConfigurationBuilder | Silverback ">
+      <meta property="og:description" content="Builds the .">
+      
+      <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="theme-color" content="#0d1117">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="192x192" href="../images/icons/android-chrome-192x192.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+      <link rel="manifest" href="../images/icons/site.webmanifest">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+      <link rel="stylesheet" href="../public/docfx.min.css?v=0186348073e7">
+      <link rel="stylesheet" href="../public/main.css?v=09bd4c4f064c">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js?v=28f6cae335c4"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'dark'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder">
+
+
+
+  <h1 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder" class="text-break">
+Class KafkaAvroSerializerConfigurationBuilder  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Messaging.Configuration.Kafka.html">Kafka</a>.<a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.html">SchemaRegistry</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Integration.Kafka.SchemaRegistry.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfiguration.html">KafkaAvroSerializerConfiguration</a>.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class KafkaAvroSerializerConfigurationBuilder</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">KafkaAvroSerializerConfigurationBuilder</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder__ctor_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.#ctor*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder__ctor" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.#ctor">
+  KafkaAvroSerializerConfigurationBuilder()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_Build_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.Build*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_Build" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.Build">
+  Build()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfiguration.html">KafkaAvroSerializerConfiguration</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfiguration Build()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfiguration.html">KafkaAvroSerializerConfiguration</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfiguration.html">KafkaAvroSerializerConfiguration</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_DisableLatestVersionUsage_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.DisableLatestVersionUsage*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_DisableLatestVersionUsage" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.DisableLatestVersionUsage">
+  DisableLatestVersionUsage()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Disables the usage of the latest subject version for serialization.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder DisableLatestVersionUsage()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_DisableSchemaAutoRegistration_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.DisableSchemaAutoRegistration*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_DisableSchemaAutoRegistration" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.DisableSchemaAutoRegistration">
+  DisableSchemaAutoRegistration()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Disables the automatic registration of the unrecognized schemas with the schema registry.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder DisableSchemaAutoRegistration()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_DisableSchemaNormalization_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.DisableSchemaNormalization*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_DisableSchemaNormalization" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.DisableSchemaNormalization">
+  DisableSchemaNormalization()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Disables the schema normalization.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder DisableSchemaNormalization()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_DisableValidationRulesFailFast_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.DisableValidationRulesFailFast*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_DisableValidationRulesFailFast" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.DisableValidationRulesFailFast">
+  DisableValidationRulesFailFast()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Disables the fail fast mode for the validation rules, reporting all the violations.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder DisableValidationRulesFailFast()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_EnableSchemaAutoRegistration_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.EnableSchemaAutoRegistration*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_EnableSchemaAutoRegistration" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.EnableSchemaAutoRegistration">
+  EnableSchemaAutoRegistration()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Enables the automatic registration of the unrecognized schemas with the schema registry. The schemas are registered
+automatically by default.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder EnableSchemaAutoRegistration()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_EnableSchemaNormalization_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.EnableSchemaNormalization*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_EnableSchemaNormalization" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.EnableSchemaNormalization">
+  EnableSchemaNormalization()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Enables the schema normalization, transforming the schemas to have a consistent format, including ordering properties and
+references.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder EnableSchemaNormalization()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_EnableValidationRulesFailFast_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.EnableValidationRulesFailFast*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_EnableValidationRulesFailFast" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.EnableValidationRulesFailFast">
+  EnableValidationRulesFailFast()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Enables the fail fast mode for the validation rules, stopping at the first failed rule and reporting only that violation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder EnableValidationRulesFailFast()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_UseLatestVersion_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.UseLatestVersion*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_UseLatestVersion" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.UseLatestVersion">
+  UseLatestVersion()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies that the latest subject version must be used for serialization. Note that there is no
+check that the latest schema is backwards compatible with the schema of the object being serialized.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder UseLatestVersion()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithBufferBytes_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithBufferBytes*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithBufferBytes_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithBufferBytes(System.Nullable{System.Int32})">
+  WithBufferBytes(int?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/_autogenerated.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the initial size (in bytes) of the buffer used for the message serialization. Use a value high enough to avoid resizing the buffer,
+but small enough to avoid excessive memory use. Each message is serialized into a new buffer. The default is <code>1024</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder WithBufferBytes(int? bufferBytes)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bufferBytes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd><p>The initial size (in bytes) of the buffer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithSchemaIdStrategy_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithSchemaIdStrategy*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithSchemaIdStrategy_System_Nullable_Confluent_SchemaRegistry_SchemaIdSerializerStrategy__" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithSchemaIdStrategy(System.Nullable{Confluent.SchemaRegistry.SchemaIdSerializerStrategy})">
+  WithSchemaIdStrategy(SchemaIdSerializerStrategy?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/_autogenerated.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the schema ID strategy. The default is <span class="xref">Confluent.SchemaRegistry.SchemaIdSerializerStrategy.Prefix</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder WithSchemaIdStrategy(SchemaIdSerializerStrategy? schemaIdStrategy)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>schemaIdStrategy</code> <span class="xref">SchemaIdSerializerStrategy</span>?</dt>
+    <dd><p>The schema ID strategy.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithSubjectNameStrategy_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithSubjectNameStrategy*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithSubjectNameStrategy_System_Nullable_Confluent_SchemaRegistry_SubjectNameStrategy__" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithSubjectNameStrategy(System.Nullable{Confluent.SchemaRegistry.SubjectNameStrategy})">
+  WithSubjectNameStrategy(SubjectNameStrategy?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/_autogenerated.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the subject name strategy. The default is <span class="xref">Confluent.SchemaRegistry.SubjectNameStrategy.Associated</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder WithSubjectNameStrategy(SubjectNameStrategy? subjectNameStrategy)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>subjectNameStrategy</code> <span class="xref">SubjectNameStrategy</span>?</dt>
+    <dd><p>The subject name strategy.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithUseLatestWithMetadata_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithUseLatestWithMetadata*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithUseLatestWithMetadata_System_Collections_Generic_IReadOnlyDictionary_System_String_System_String__" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithUseLatestWithMetadata(System.Collections.Generic.IReadOnlyDictionary{System.String,System.String})">
+  WithUseLatestWithMetadata(IReadOnlyDictionary&lt;string, string&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/_autogenerated.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the metadata to be used to select the latest subject version to be used for serialization. Note that there is no check that
+the latest schema is backwards compatible with the schema of the object being serialized.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder WithUseLatestWithMetadata(IReadOnlyDictionary&lt;string, string&gt;? useLatestWithMetadata)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>useLatestWithMetadata</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlydictionary-2">IReadOnlyDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd><p>The metadata to be used to select the latest subject version.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithUseSchemaId_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithUseSchemaId*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithUseSchemaId_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithUseSchemaId(System.Nullable{System.Int32})">
+  WithUseSchemaId(int?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/_autogenerated.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the ID of the schema to be used for serialization. Note that there is no check that the schema is backwards compatible with the
+schema of the object being serialized.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder WithUseSchemaId(int? useSchemaId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>useSchemaId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd><p>The ID of the schema to be used for serialization.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithValidationRulesExecution_" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithValidationRulesExecution*"></a>
+
+  <h3 id="Silverback_Messaging_Configuration_Kafka_SchemaRegistry_KafkaAvroSerializerConfigurationBuilder_WithValidationRulesExecution_System_Nullable_Confluent_SchemaRegistry_ValidationRulesExecution__" data-uid="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.WithValidationRulesExecution(System.Nullable{Confluent.SchemaRegistry.ValidationRulesExecution})">
+  WithValidationRulesExecution(ValidationRulesExecution?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/_autogenerated.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a value specifying when the inline validation rules run, relative to the domain rule transformations. The default is
+<span class="xref">Confluent.SchemaRegistry.ValidationRulesExecution.Disabled</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaAvroSerializerConfigurationBuilder WithValidationRulesExecution(ValidationRulesExecution? validationRulesExecution)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>validationRulesExecution</code> <span class="xref">ValidationRulesExecution</span>?</dt>
+    <dd><p>A value specifying when the inline validation rules run.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.SchemaRegistry.KafkaAvroSerializerConfigurationBuilder.html">KafkaAvroSerializerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+      </div>
+      
+      <div class="affix">
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/537fcb1fd972ac7d62d29a4ce283e051f06d9ba7/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Configuration/Kafka/SchemaRegistry/KafkaAvroSerializerConfigurationBuilder.cs" class="edit-link">Edit this page</a>
+        </div>
+
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill sb-footer">
+          <div>© 2026 Sergio Aquilini</div>
+          <nav class="sb-footer-links" aria-label="Footer">
+            <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
+            <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="../about.html">About</a>
+            <a href="../contributing.html">Contributing</a>
+            <a href="/v4/">v4 Docs</a>
+            <a href="https://dotnet.github.io/docfx">Built with docfx</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

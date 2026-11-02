@@ -18,6 +18,7 @@
       <link rel="icon" href="../../../images/favicon.ico">
       <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="192x192" href="../../../images/icons/android-chrome-192x192.png">
       <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../../../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -175,10 +176,17 @@
     }
 }
 </code></pre>
-<p>Subscriber methods can be synchronous or asynchronous (<code>Task</code>/<code>ValueTask</code>). A message is considered successfully processed when all matching subscribers complete without throwing.</p>
+<p>Subscriber methods can be synchronous or asynchronous (<code>Task</code>/<code>ValueTask</code>). A message is considered successfully processed when all matching subscribers complete without throwing, and is then committed (Kafka) or acknowledged (MQTT).</p>
 <div class="WARNING">
 <h5>Warning</h5>
-<p>The same message can be handled by multiple subscribers. If you do that, make sure handlers are idempotent: if any subscriber fails, the message is considered failed and the configured error policy is applied.</p>
+<p>The same message can be handled by multiple subscribers, but they share a single outcome. If any subscriber throws, the error policy is applied to the message as a whole:</p>
+<ul>
+<li><strong>Stop</strong> (default): the message isn't committed, so all the subscribers process it again, including those that already completed successfully, once the consumer is restarted (with MQTT, only with QoS 1 or 2 and a persistent session).</li>
+<li><strong>Retry</strong>: all the subscribers are invoked again, including those that already completed successfully.</li>
+<li><strong>Skip</strong> or <strong>Move</strong>: the failed message is committed (or acknowledged) and isn't redelivered. By default the subscribers are invoked one after the other, so those following the failing subscriber weren't invoked at all. If the message is moved to a topic that is consumed again (for example the same topic, to retry it later), all the subscribers process it again, including those that already completed successfully.</li>
+</ul>
+<p>Prefer a single subscriber per consumed message type and, if several actions are needed, invoke them explicitly from that subscriber. In any case, make sure the handlers are idempotent.</p>
+<p>Batch processing has further limitations, see <a class="xref" href="batch-processing.html#multiple-subscribers">Multiple Subscribers</a>.</p>
 </div>
 <p>For higher throughput, consider <a class="xref" href="batch-processing.html">Batch Processing Consumed Messages</a>.</p>
 <h2 id="parallelism">Parallelism</h2>
@@ -275,7 +283,7 @@
 <p><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> waits before retrying and may delay polling. With Kafka, ensure broker/client timeouts (for example <code>max.poll.interval.ms</code>) are configured accordingly.</p>
 </div>
 <h3 id="apply-rules">Apply Rules</h3>
-<p>Use <code>ApplyTo</code>, <code>Exclude</code>, and <code>ApplyWhen</code> to control which exceptions are handled and when. The <code>ApplyWhen</code> and <code>Publish</code> functions receive the <code>IRawInboundEnvelope</code> (and optionally the exception), not the deserialized message.</p>
+<p>Use <code>ApplyTo</code>, <code>Exclude</code>, and <code>ApplyWhen</code> to control which exceptions are handled and when. The <code>ApplyWhen</code> function receives the <code>IRawInboundEnvelope</code> (and optionally the exception), not the deserialized message.</p>
 <p>The <code>MoveTo</code> policy accepts either the name of a topic or the friendly name of an endpoint already configured in a producer.</p>
 <pre><code class="lang-csharp">.OnError(policy =&gt; policy
     .MoveTo(
@@ -285,13 +293,27 @@
             .ApplyWhen((envelope, exception) =&gt; envelope.Headers.Contains(&quot;x-move-on-error&quot;)))
     .ThenSkip());
 </code></pre>
-<h3 id="publish-events">Publish Events</h3>
-<p>You can publish a message when a policy is applied (for logging, alerts, etc.).</p>
-<pre><code class="lang-csharp">.OnError(policy =&gt; policy
-    .Retry(3, retryPolicy =&gt; retryPolicy.WithInterval(TimeSpan.FromSeconds(1)))
-    .ThenSkip(skipPolicy =&gt; skipPolicy
-        .Publish(envelope =&gt; new ProcessingFailedEvent(envelope))));
+<h3 id="callbacks">Callbacks</h3>
+<p>You can execute custom code when a policy is about to be applied (for logging, alerts, etc.), registering a callback such as <a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.ISkipMessageErrorPolicyCallback.html">ISkipMessageErrorPolicyCallback</a>.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(...)
+    .AddScopedErrorPolicyCallback&lt;SkippedMessagesAlerter&gt;();
 </code></pre>
+<pre><code class="lang-csharp">public class SkippedMessagesAlerter : ISkipMessageErrorPolicyCallback
+{
+    private readonly IAlertService _alertService;
+
+    public SkippedMessagesAlerter(IAlertService alertService)
+    {
+        _alertService = alertService;
+    }
+
+    public Task OnSkippingMessageAsync(IRawInboundEnvelope envelope, Exception exception) =&gt;
+        _alertService.NotifyAsync(exception);
+}
+</code></pre>
+<p>See <a class="xref" href="error-policies.html#callbacks">Callbacks</a> for the available callbacks and details.</p>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
 <li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
