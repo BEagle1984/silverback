@@ -4,3 +4,4 @@
 **/artifacts/
 **/TestResults/
 **/*.dmp
+.claude/
