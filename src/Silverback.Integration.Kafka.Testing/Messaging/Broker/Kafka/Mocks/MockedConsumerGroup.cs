@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -449,6 +450,7 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
                 topic.Partitions.Select(partition => new TopicPartition(topic.Name, partition.Partition)))
     ];
 
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "A failing callback must not affect the other consumers")]
     private void InvokePartitionsRevokedCallbacks(SubscribedConsumer[] consumers, RebalanceResult result)
     {
         foreach (SubscribedConsumer consumer in consumers)
@@ -460,7 +462,15 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
                 revokedPartitions.Count > 0 &&
                 IsSubscribed(consumer))
             {
-                consumer.Consumer.OnPartitionsRevoked(revokedPartitions);
+                try
+                {
+                    consumer.Consumer.OnPartitionsRevoked(revokedPartitions);
+                }
+                catch (Exception)
+                {
+                    // Like in the real Kafka, a failing callback (e.g. of a consumer being disconnected, which rejects the calls from
+                    // other threads) only affects its own consumer: the others are still revoked and the rebalance completes
+                }
             }
         }
     }

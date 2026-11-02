@@ -146,6 +146,36 @@ public partial class MockedConsumerGroupTests
     }
 
     [Fact]
+    public async Task Rebalance_ShouldRevokeOtherConsumersAndComplete_WhenPartitionsRevokedCallbackThrows()
+    {
+        await using GroupRaceFixture fixture = new();
+        MockedConfluentConsumer failing = fixture.CreateConsumer();
+        MockedConfluentConsumer other = fixture.CreateConsumer();
+        failing.Subscribe("topic");
+        other.Subscribe("topic");
+        await fixture.AssignAllAsync();
+
+        TaskCompletionSource otherRevoked = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        // Like a consumer being disconnected, which rejects the commit from the rebalance thread
+        failing.PartitionsRevokedHandler = (_, _) => throw new InvalidOperationException("The underlying consumer is not initialized.");
+
+        other.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            otherRevoked.TrySetResult();
+            return partitions;
+        };
+
+        MockedConfluentConsumer joining = fixture.CreateConsumer();
+        joining.Subscribe("topic");
+
+        await otherRevoked.Task.WaitAsync(RaceTimeout);
+        await fixture.WaitUntilAssignmentCanStartAsync();
+
+        fixture.Group.IsRebalancing.ShouldBeFalse();
+    }
+
+    [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The blocked read and removal complete before the gates and fixture are disposed")]
     public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldTolerateRemoval_DuringConsumerInspection()
     {

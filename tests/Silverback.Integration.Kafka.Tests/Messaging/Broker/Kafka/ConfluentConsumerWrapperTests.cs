@@ -2,9 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
@@ -25,6 +27,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker.Kafka;
 
 public class ConfluentConsumerWrapperTests
 {
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+
     private readonly IConfluentConsumerBuilder _consumerBuilder = Substitute.For<IConfluentConsumerBuilder>();
 
     private readonly IConsumer<byte[]?, byte[]?> _confluentConsumer = Substitute.For<IConsumer<byte[]?, byte[]?>>();
@@ -250,6 +254,34 @@ public class ConfluentConsumerWrapperTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The late call completes before the consumer is disposed")]
+    public async Task StoreOffsetAndCommit_ShouldThrowWithoutCallingClient_WhenClientIsReleased(bool commit)
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        TopicPartitionOffset offset = new("topic", 0, 2);
+        Action act = commit ? consumer.Commit : () => consumer.StoreOffset(offset);
+        Task lateCall = Task.CompletedTask;
+        bool lateCallCompleted = false;
+
+        // A late call from a processing thread racing the release of the native consumer
+        _confluentConsumer.When(native => native.Dispose()).Do(_ =>
+        {
+            lateCall = Task.Run(act);
+            lateCallCompleted = SpinWait.SpinUntil(() => lateCall.IsCompleted, Timeout);
+        });
+
+        await consumer.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        lateCallCompleted.ShouldBeTrue();
+        await Should.ThrowAsync<InvalidOperationException>(lateCall);
+        act.ShouldThrow<InvalidOperationException>();
+        _confluentConsumer.DidNotReceive().StoreOffset(Arg.Any<TopicPartitionOffset>());
+        _confluentConsumer.DidNotReceive().Commit();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task DisconnectAsync_ShouldCloseAndDisposeClient_WhenFinalCommitFails(bool partitionError)
     {
         await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync(false);
@@ -302,6 +334,78 @@ public class ConfluentConsumerWrapperTests
         await consumer.DisconnectAsync();
 
         consumer.Status.ShouldBe(ClientStatus.Disconnected);
+        _confluentConsumer.Received(1).Close();
+        _confluentConsumer.Received(1).Dispose();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The tasks are awaited before the consumer is disposed")]
+    public async Task DisconnectAsync_ShouldWaitForPendingStoreOffset_BeforeClosingClient()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        TopicPartitionOffset offset = new("topic", 0, 2);
+        ConcurrentQueue<string> nativeCalls = [];
+        TaskCompletionSource storeOffsetStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource releaseStoreOffset = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource disconnecting = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        _confluentConsumer.When(native => native.StoreOffset(offset)).Do(_ =>
+        {
+            storeOffsetStarted.TrySetResult();
+            releaseStoreOffset.Task.WaitAsync(Timeout).GetAwaiter().GetResult();
+            nativeCalls.Enqueue("StoreOffset");
+        });
+
+        _confluentConsumer.When(native => native.Close()).Do(_ => nativeCalls.Enqueue("Close"));
+        _confluentConsumer.When(native => native.Dispose()).Do(_ => nativeCalls.Enqueue("Dispose"));
+
+        consumer.Disconnecting.AddHandler(_ =>
+        {
+            disconnecting.TrySetResult();
+            return ValueTask.CompletedTask;
+        });
+
+        Task storeOffsetTask = Task.Run(() => consumer.StoreOffset(offset));
+        await storeOffsetStarted.Task.WaitAsync(Timeout);
+
+        Task disconnectTask = Task.Run(() => consumer.DisconnectAsync().AsTask());
+        await disconnecting.Task.WaitAsync(Timeout);
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
+
+        nativeCalls.ShouldBeEmpty();
+        disconnectTask.IsCompleted.ShouldBeFalse();
+
+        releaseStoreOffset.SetResult();
+        await Task.WhenAll(storeOffsetTask, disconnectTask).WaitAsync(Timeout);
+
+        nativeCalls.ShouldBe(["StoreOffset", "Close", "Dispose"]);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The late call completes before the consumer is disposed")]
+    public async Task DisconnectAsync_ShouldNotDeadlock_WhenCloseWaitsForStoreOffsetOrCommitFromAnotherThread(bool commit)
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        TopicPartitionOffset offset = new("topic", 0, 2);
+        Action act = commit ? consumer.Commit : () => consumer.StoreOffset(offset);
+        Task lateCall = Task.CompletedTask;
+        bool lateCallCompleted = false;
+
+        // Like the revocation callbacks waiting for the processing, which stores and commits the offsets
+        _confluentConsumer.When(native => native.Close()).Do(_ =>
+        {
+            lateCall = Task.Run(act);
+            lateCallCompleted = SpinWait.SpinUntil(() => lateCall.IsCompleted, Timeout);
+        });
+
+        await consumer.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        lateCallCompleted.ShouldBeTrue();
+        await Should.ThrowAsync<InvalidOperationException>(lateCall);
+        _confluentConsumer.DidNotReceive().StoreOffset(Arg.Any<TopicPartitionOffset>());
+        _confluentConsumer.DidNotReceive().Commit();
         _confluentConsumer.Received(1).Close();
         _confluentConsumer.Received(1).Dispose();
     }

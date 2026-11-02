@@ -29,8 +29,13 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     private readonly IConfluentAdminClientFactory _adminClientFactory;
 
+    // Guards the native calls that can run concurrently with the disconnect, which releases the native consumer
+    private readonly System.Threading.Lock _confluentConsumerLock = new();
+
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IConsumer<byte[]?, byte[]?>? _confluentConsumer;
+
+    private int _disconnectingThreadId;
 
     private IAdminClient? _adminClient;
 
@@ -59,7 +64,16 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     public KafkaConsumerConfiguration Configuration { get; }
 
-    public IReadOnlyList<TopicPartition> Assignment => (IReadOnlyList<TopicPartition>?)_confluentConsumer?.Assignment ?? [];
+    public IReadOnlyList<TopicPartition> Assignment
+    {
+        get
+        {
+            lock (_confluentConsumerLock)
+            {
+                return (IReadOnlyList<TopicPartition>?)GetConfluentConsumerOrDefault()?.Assignment ?? [];
+            }
+        }
+    }
 
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     public KafkaConsumer Consumer
@@ -73,10 +87,10 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (Status != ClientStatus.Initialized)
             throw new InvalidOperationException("The consumer is not connected.");
 
-        if (_confluentConsumer == null)
-            throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-        return _confluentConsumer.ConsumerGroupMetadata;
+        lock (_confluentConsumerLock)
+        {
+            return GetConfluentConsumer().ConsumerGroupMetadata;
+        }
     }
 
     public ConsumeResult<byte[]?, byte[]?>? Consume(TimeSpan timeout)
@@ -87,6 +101,8 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (_confluentConsumer == null)
             throw new InvalidOperationException("The underlying consumer is not initialized.");
 
+        // Not synchronized: only the consume loop polls and it's stopped before disconnecting. The poll blocks and runs the
+        // rebalance callbacks, which wait for the processing, so it must never hold the lock.
         return _confluentConsumer.Consume(timeout);
     }
 
@@ -95,10 +111,10 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (Status is not (ClientStatus.Initialized or ClientStatus.Disconnecting))
             throw new InvalidOperationException("The consumer is not connected.");
 
-        if (_confluentConsumer == null)
-            throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-        _confluentConsumer.StoreOffset(topicPartitionOffset);
+        lock (_confluentConsumerLock)
+        {
+            GetConfluentConsumer().StoreOffset(topicPartitionOffset);
+        }
     }
 
     public void Commit()
@@ -106,15 +122,20 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (Status is not ClientStatus.Initialized and not ClientStatus.Disconnecting)
             throw new InvalidOperationException("The consumer is not connected.");
 
-        if (_confluentConsumer == null)
-            throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-        if (!Configuration.CommitOffsets)
-            return;
-
         try
         {
-            List<TopicPartitionOffset>? offsets = _confluentConsumer.Commit();
+            List<TopicPartitionOffset> offsets;
+
+            // The commit blocks until the broker responds: holding the lock only delays a concurrent disconnect or native call
+            lock (_confluentConsumerLock)
+            {
+                IConsumer<byte[]?, byte[]?> confluentConsumer = GetConfluentConsumer();
+
+                if (!Configuration.CommitOffsets)
+                    return;
+
+                offsets = confluentConsumer.Commit();
+            }
 
             CommittedOffsets committedOffsets = new(
                 [.. offsets.Select(offset => new TopicPartitionOffsetError(offset, new Error(ErrorCode.NoError)))],
@@ -148,10 +169,10 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (Status != ClientStatus.Initialized)
             throw new InvalidOperationException("The consumer is not connected.");
 
-        if (_confluentConsumer == null)
-            throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-        _confluentConsumer.Seek(topicPartitionOffset);
+        lock (_confluentConsumerLock)
+        {
+            GetConfluentConsumer().Seek(topicPartitionOffset);
+        }
     }
 
     public void Pause(IEnumerable<TopicPartition> partitions)
@@ -159,10 +180,10 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (Status != ClientStatus.Initialized)
             throw new InvalidOperationException("The consumer is not connected.");
 
-        if (_confluentConsumer == null)
-            throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-        _confluentConsumer.Pause(partitions);
+        lock (_confluentConsumerLock)
+        {
+            GetConfluentConsumer().Pause(partitions);
+        }
     }
 
     public void Resume(IEnumerable<TopicPartition> partitions)
@@ -170,10 +191,10 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (Status != ClientStatus.Initialized)
             throw new InvalidOperationException("The consumer is not connected.");
 
-        if (_confluentConsumer == null)
-            throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-        _confluentConsumer.Resume(partitions);
+        lock (_confluentConsumerLock)
+        {
+            GetConfluentConsumer().Resume(partitions);
+        }
     }
 
     public IReadOnlyList<TopicPartitionOffset> OffsetsForTimes(IEnumerable<TopicPartitionTimestamp> timestampsToSearch, TimeSpan timeout)
@@ -181,10 +202,11 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (Status != ClientStatus.Initialized)
             throw new InvalidOperationException("The consumer is not connected.");
 
-        if (_confluentConsumer == null)
-            throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-        return _confluentConsumer.OffsetsForTimes(timestampsToSearch, timeout);
+        // The lookup blocks until the broker responds or times out: holding the lock only delays a concurrent disconnect or native call
+        lock (_confluentConsumerLock)
+        {
+            return GetConfluentConsumer().OffsetsForTimes(timestampsToSearch, timeout);
+        }
     }
 
     protected override async ValueTask ConnectCoreAsync()
@@ -199,8 +221,19 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     protected override ValueTask DisconnectCoreAsync()
     {
-        if (_confluentConsumer == null)
-            return default;
+        IConsumer<byte[]?, byte[]?> confluentConsumer;
+
+        // Close also releases the native handle, but it can't hold the lock: it runs the revocation callbacks, which wait for the
+        // processing, which may commit from other threads. Instead, from here on only this thread may use the native consumer: the
+        // pending native calls complete first and the calls from the other threads fail without reaching it.
+        lock (_confluentConsumerLock)
+        {
+            if (_confluentConsumer == null)
+                return default;
+
+            confluentConsumer = _confluentConsumer;
+            _disconnectingThreadId = Environment.CurrentManagedThreadId;
+        }
 
         try
         {
@@ -211,12 +244,18 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         {
             try
             {
-                _confluentConsumer.Close();
+                confluentConsumer.Close();
             }
             finally
             {
-                _confluentConsumer.Dispose();
-                _confluentConsumer = null;
+                lock (_confluentConsumerLock)
+                {
+                    _confluentConsumer = null;
+                    _disconnectingThreadId = 0;
+                }
+
+                // No other thread can reach the native consumer anymore (it's a no-op unless Close failed)
+                confluentConsumer.Dispose();
             }
         }
 
@@ -287,6 +326,13 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
         return await partitionOffsetsProvider.Invoke(availablePartitions).ConfigureAwait(false);
     }
+
+    // Must be called while holding the lock. While disconnecting, only the disconnecting thread can use the native consumer.
+    private IConsumer<byte[]?, byte[]?>? GetConfluentConsumerOrDefault() =>
+        _disconnectingThreadId == 0 || _disconnectingThreadId == Environment.CurrentManagedThreadId ? _confluentConsumer : null;
+
+    private IConsumer<byte[]?, byte[]?> GetConfluentConsumer() =>
+        GetConfluentConsumerOrDefault() ?? throw new InvalidOperationException("The underlying consumer is not initialized.");
 
     private void Subscribe() =>
         _confluentConsumer!.Subscribe(
