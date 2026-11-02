@@ -1271,6 +1271,102 @@ public partial class KafkaConsumerTests
 
     [Theory]
     [InlineData("rebalance")]
+    [InlineData("shutdown")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The stream reader is awaited before sequence disposal.")]
+    public async Task StopReading_ShouldAwaitSequence_WhenHandledRecordStartsItWhileStopping(string transition)
+    {
+        await using PollHarness harness = new();
+        await harness.StartAsync(0);
+
+        ProcessingGate first = harness.Block(0, 0);
+        first.SkipCommit = true;
+        first.IgnoreCancellation = true;
+        await harness.DeliverAsync((0, 0));
+        await first.Started.Task.WaitAsync(Timeout);
+
+        Task stopping = transition == "rebalance"
+            ? harness.PollAsync(() =>
+            {
+                harness.Revoke(0);
+
+                return null;
+            })
+            : harness.Consumer.StopAsync().AsTask();
+
+        // The stop has awaited the stored sequences: start a batch as the handled record might (e.g., the first one of an assignment)
+        await first.ReaderStopped.Task.WaitAsync(Timeout);
+
+        ConsumerPipelineContext original = first.Context!;
+        InboundEnvelope envelope = new(original.Envelope, new object());
+        using ConsumerPipelineContext services = ConsumerPipelineContextHelper.CreateSubstitute();
+        using ConsumerPipelineContext context = new(envelope, harness.Consumer, original.SequenceStore, [], services.ServiceProvider);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        context.TransactionManager = transaction;
+
+        using BatchSequence sequence = new("late", context);
+        context.SetSequence(sequence, true);
+        await context.SequenceStore.AddAsync(sequence);
+
+        TaskCompletionSource<bool> received = NewSignal();
+        TaskCompletionSource<bool> enumerationEnded = NewSignal();
+        TaskCompletionSource<bool> releaseProcessing = NewSignal();
+        IMessageStreamEnumerable<IInboundEnvelope> stream = sequence.CreateStream<IInboundEnvelope>();
+        Task processing = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IInboundEnvelope item in stream)
+                {
+                    item.BrokerMessageIdentifier.ShouldBe(envelope.BrokerMessageIdentifier);
+
+                    received.TrySetResult(true);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Aborting the sequence ends the pending stream enumeration
+            }
+
+            // Keep processing after the abort, like a subscriber still handling the messages it already pulled
+            enumerationEnded.TrySetResult(true);
+            await releaseProcessing.Task.WaitAsync(Timeout);
+        });
+
+        context.ProcessingTask = processing;
+
+        try
+        {
+            await sequence.AddAsync(envelope, null, true).WaitAsync(Timeout);
+            await received.Task.WaitAsync(Timeout);
+
+            // The handler returns and the read loop exits, aborting the batch
+            first.Release.TrySetResult(true);
+            await enumerationEnded.Task.WaitAsync(Timeout);
+
+            // Give a premature stop the time to complete
+            await Task.Delay(100);
+
+            stopping.IsCompleted.ShouldBeFalse();
+
+            releaseProcessing.TrySetResult(true);
+            await stopping.WaitAsync(Timeout);
+
+            sequence.IsAborted.ShouldBeTrue();
+            sequence.AbortReason.ShouldBe(SequenceAbortReason.ConsumerAborted);
+            harness.CommittedOffset(0).ShouldBe(0);
+            harness.Seeks.ShouldBeEmpty();
+            harness.Errors.ShouldBeEmpty();
+        }
+        finally
+        {
+            first.Release.TrySetResult(true);
+            releaseProcessing.TrySetResult(true);
+            await processing.WaitAsync(Timeout);
+        }
+    }
+
+    [Theory]
+    [InlineData("rebalance")]
     [InlineData("reconnect")]
     [InlineData("current")]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "All operations complete before disposing the harness.")]

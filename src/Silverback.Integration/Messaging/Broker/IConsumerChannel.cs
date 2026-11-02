@@ -22,7 +22,7 @@ internal interface IConsumerChannel
     CancellationToken ReadCancellationToken { get; }
 
     /// <summary>
-    ///     Gets the <see cref="Task" /> representing the reading process.
+    ///     Gets the <see cref="Task" /> representing the reading process, which completes after the pending sequences are aborted.
     /// </summary>
     Task ReadTask { get; }
 
@@ -41,7 +41,8 @@ internal interface IConsumerChannel
     /// </summary>
     /// <returns>
     ///     A value indicating whether the reading process has been started. Returns <c>false</c> if the reading process was already started
-    ///     before calling this method.
+    ///     before calling this method, including while the previous reading process is still aborting its pending sequences (see
+    ///     <see cref="NotifyReadingStoppedAsync" />). The reading can be restarted after the <see cref="ReadTask" /> completes.
     /// </returns>
     bool StartReading();
 
@@ -54,8 +55,8 @@ internal interface IConsumerChannel
     Task StopReadingAsync();
 
     /// <summary>
-    ///     Completes the <see cref="ReadTask" />, notifying that the reading process has stopped.
-    ///     A call to this method will also abort the pending sequences.
+    ///     Aborts the pending sequences, awaiting their processing, and then completes the <see cref="ReadTask" />, notifying that the
+    ///     reading process has stopped.
     /// </summary>
     /// <param name="hasThrown">
     ///     A value indicating whether the reading process has stopped because of an exception.

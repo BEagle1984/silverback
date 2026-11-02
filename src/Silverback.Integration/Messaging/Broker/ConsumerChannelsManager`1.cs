@@ -103,6 +103,8 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async Task ReadChannelAsync(TChannel channel)
     {
+        bool hasThrown = false;
+
         try
         {
             _logger.LogConsumerTrace(
@@ -141,9 +143,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
             if (ex is not ConsumerPipelineFatalException)
                 _logger.LogConsumerFatalError(_consumer, ex);
 
-            await channel.NotifyReadingStoppedAsync(true).ConfigureAwait(false);
-
-            await _consumer.Client.DisconnectAsync().ConfigureAwait(false);
+            hasThrown = true;
         }
 
         _logger.LogConsumerTrace(
@@ -151,6 +151,11 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
             "Exited processing loop of channel {Channel}",
             () => [channel.Id]);
 
-        await channel.NotifyReadingStoppedAsync(false).ConfigureAwait(false);
+        // Notify exactly once, since the channel can be restarted as soon as it's notified and the new loop must not be notified by this
+        // one. Notify before disconnecting, since the disconnection stops the channel and awaits its read task.
+        await channel.NotifyReadingStoppedAsync(hasThrown).ConfigureAwait(false);
+
+        if (hasThrown)
+            await _consumer.Client.DisconnectAsync().ConfigureAwait(false);
     }
 }

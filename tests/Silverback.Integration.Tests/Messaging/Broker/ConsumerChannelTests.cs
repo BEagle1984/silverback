@@ -19,6 +19,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker;
 
 public class ConsumerChannelTests
 {
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+
     [Fact]
     public void InstanceId_ShouldDistinguishChannelsWithSameId()
     {
@@ -541,6 +543,224 @@ public class ConsumerChannelTests
         await channel.NotifyReadingStoppedAsync(false);
 
         await stop.WaitAsync(TimeSpan.FromSeconds(2));
+    }
+
+    [Fact]
+    public async Task StopReadingAsync_ShouldAwaitSequenceAddedAfterAwaitingStoredSequences()
+    {
+        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
+        TaskCompletionSource<bool> lateProcessing = NewSignal();
+        TaskCompletionSource<bool> lateAborting = NewSignal();
+        ISequence lateSequence = CreatePendingSequence(channel, "late", lateProcessing.Task, () => lateAborting.TrySetResult(true));
+        TaskCompletionSource<bool> lateAdded = NewSignal();
+        await channel.SequenceStore.AddAsync(CreateSequenceAddingSequenceWhenAwaited(channel, lateSequence, lateAdded));
+
+        channel.StartReading().ShouldBeTrue();
+
+        try
+        {
+            // Simulate the read loop starting a new sequence (e.g., a batch) while the stop awaits the stored ones
+            Task stop = channel.StopReadingAsync();
+            await lateAdded.Task.WaitAsync(Timeout);
+
+            // Simulate the read loop exiting
+            Task notify = channel.NotifyReadingStoppedAsync(false);
+            await lateAborting.Task.WaitAsync(Timeout);
+
+            stop.IsCompleted.ShouldBeFalse();
+            channel.ReadTask.IsCompleted.ShouldBeFalse();
+
+            lateProcessing.TrySetResult(true);
+            await notify.WaitAsync(Timeout);
+            await stop.WaitAsync(Timeout);
+        }
+        finally
+        {
+            // Disposing the channel awaits the processing of the stored sequences
+            lateProcessing.TrySetResult(true);
+        }
+    }
+
+    [Fact]
+    public async Task NotifyReadingStoppedAsync_ShouldCompleteReadTaskAfterAbortingSequences_WhenReadingHasThrown()
+    {
+        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
+        TaskCompletionSource<bool> processing = NewSignal();
+        TaskCompletionSource<bool> aborting = NewSignal();
+        await channel.SequenceStore.AddAsync(CreatePendingSequence(channel, "pending", processing.Task, () => aborting.TrySetResult(true)));
+
+        channel.StartReading().ShouldBeTrue();
+
+        try
+        {
+            Task notify = channel.NotifyReadingStoppedAsync(true);
+            await aborting.Task.WaitAsync(Timeout);
+
+            channel.ReadTask.IsCompleted.ShouldBeFalse();
+
+            processing.TrySetResult(true);
+            await notify.WaitAsync(Timeout);
+            await channel.ReadTask.WaitAsync(Timeout);
+
+            // Then the read loop disconnects the client, which stops the channel
+            await channel.StopReadingAsync().WaitAsync(Timeout);
+        }
+        finally
+        {
+            processing.TrySetResult(true);
+        }
+    }
+
+    [Fact]
+    public async Task StopReadingAsync_ShouldComplete_WhenStoredSequenceIsProcessedOnlyAfterBeingAborted()
+    {
+        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
+        TaskCompletionSource<bool> processing = NewSignal();
+
+        // Like a batch waiting for further messages, which completes only when the read loop aborts it
+        await channel.SequenceStore.AddAsync(
+            CreatePendingSequence(channel, "pending", processing.Task, () => processing.TrySetResult(true)));
+
+        channel.StartReading().ShouldBeTrue();
+
+        try
+        {
+            Task stop = channel.StopReadingAsync();
+            await channel.NotifyReadingStoppedAsync(false).WaitAsync(Timeout);
+            await stop.WaitAsync(Timeout);
+
+            processing.Task.IsCompleted.ShouldBeTrue();
+        }
+        finally
+        {
+            processing.TrySetResult(true);
+        }
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The sequence is aborted before the disposal")]
+    public async Task NotifyReadingStoppedAsync_ShouldComplete_WhenAbortedSequenceStopsReadingWithoutWaiting()
+    {
+        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
+        TaskCompletionSource<bool> processing = NewSignal();
+        Task? nestedStop = null;
+
+        // Like an error policy stopping the consumer without waiting (ConsumerTransactionManager.RollbackAsync with stopConsuming)
+        await channel.SequenceStore.AddAsync(
+            CreatePendingSequence(
+                channel,
+                "pending",
+                processing.Task,
+                () =>
+                {
+                    nestedStop = channel.StopReadingAsync();
+                    processing.TrySetResult(true);
+                }));
+
+        channel.StartReading().ShouldBeTrue();
+
+        try
+        {
+            Task stop = channel.StopReadingAsync();
+            await channel.NotifyReadingStoppedAsync(false).WaitAsync(Timeout);
+            await stop.WaitAsync(Timeout);
+
+            await nestedStop.ShouldNotBeNull().WaitAsync(Timeout);
+        }
+        finally
+        {
+            processing.TrySetResult(true);
+        }
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The restart completes before the disposal")]
+    public async Task NotifyReadingStoppedAsync_ShouldAllowRestartFromReadTaskContinuation_AfterAbortingSequences()
+    {
+        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
+        TaskCompletionSource<bool> processing = NewSignal();
+        TaskCompletionSource<bool> aborting = NewSignal();
+        await channel.SequenceStore.AddAsync(CreatePendingSequence(channel, "pending", processing.Task, () => aborting.TrySetResult(true)));
+
+        channel.StartReading().ShouldBeTrue();
+
+        try
+        {
+            // Like the ConsumerChannelsManager deferring the restart of a channel until its read task completes
+            Task<bool> restart = channel.ReadTask.ContinueWith(
+                _ => channel.StartReading(),
+                CancellationToken.None,
+                TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Default);
+
+            Task notify = channel.NotifyReadingStoppedAsync(false);
+            await aborting.Task.WaitAsync(Timeout);
+
+            restart.IsCompleted.ShouldBeFalse();
+            channel.StartReading().ShouldBeFalse();
+
+            processing.TrySetResult(true);
+            await notify.WaitAsync(Timeout);
+
+            (await restart.WaitAsync(Timeout)).ShouldBeTrue();
+            channel.ReadTask.IsCompleted.ShouldBeFalse();
+
+            await channel.NotifyReadingStoppedAsync(false).WaitAsync(Timeout);
+            await channel.ReadTask.WaitAsync(Timeout);
+        }
+        finally
+        {
+            processing.TrySetResult(true);
+        }
+    }
+
+    private static TaskCompletionSource<bool> NewSignal() => new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    private static ISequence CreatePendingSequence(
+        ConsumerChannel<TestMessage> channel,
+        string sequenceId,
+        Task processingTask,
+        Action onConsumerAborted)
+    {
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: channel.SequenceStore);
+        context.ProcessingTask = processingTask;
+
+        ISequence sequence = Substitute.For<ISequence>();
+        sequence.SequenceId.Returns(sequenceId);
+        sequence.IsPending.Returns(true);
+        sequence.Context.Returns(context);
+        sequence.AbortAsync(SequenceAbortReason.ConsumerAborted, Arg.Any<Exception?>()).Returns(_ =>
+        {
+            onConsumerAborted.Invoke();
+
+            return Task.CompletedTask;
+        });
+
+        return sequence;
+    }
+
+    private static ISequence CreateSequenceAddingSequenceWhenAwaited(
+        ConsumerChannel<TestMessage> channel,
+        ISequence sequenceToAdd,
+        TaskCompletionSource<bool> addedSignal)
+    {
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: channel.SequenceStore);
+        int added = 0;
+
+        ISequence sequence = Substitute.For<ISequence>();
+        sequence.SequenceId.Returns("stored");
+        sequence.Context.Returns(_ =>
+        {
+            if (Interlocked.Exchange(ref added, 1) == 0)
+            {
+                channel.SequenceStore.AddAsync(sequenceToAdd).SafeWait();
+                addedSignal.TrySetResult(true);
+            }
+
+            return context;
+        });
+
+        return sequence;
     }
 
     private record TestMessage;

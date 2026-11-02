@@ -215,17 +215,28 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         if (Volatile.Read(ref _isReading) == 0)
             _readTaskCompletionSource.TrySetResult(true);
 
+        // Completed only after the sequences stored by the read loop in the meantime are aborted (see NotifyReadingStoppedAsync)
         await _readTaskCompletionSource.Task.ConfigureAwait(false);
     }
 
     public async Task NotifyReadingStoppedAsync(bool hasThrown)
     {
-        if (Interlocked.CompareExchange(ref _isReading, 0, 1) == 0)
+        if (Volatile.Read(ref _isReading) == 0)
             return;
 
-        _readTaskCompletionSource.TrySetResult(!hasThrown);
-
-        await SequenceStore.AbortAllAsync(SequenceAbortReason.ConsumerAborted).ConfigureAwait(false);
+        // Abort the pending sequences before completing the read task, since StopReadingAsync can't await the sequences added after its
+        // snapshot (e.g., a batch started by the message being handled when the stop was requested). The channel is still reading until
+        // then, so that it can't be restarted while its sequences are being aborted.
+        try
+        {
+            await SequenceStore.AbortAllAsync(SequenceAbortReason.ConsumerAborted).ConfigureAwait(false);
+        }
+        finally
+        {
+            // Reset the flag before completing the task, to allow the read task continuations to restart reading
+            if (Interlocked.CompareExchange(ref _isReading, 0, 1) == 1)
+                _readTaskCompletionSource.TrySetResult(!hasThrown);
+        }
     }
 
     public void Dispose()
