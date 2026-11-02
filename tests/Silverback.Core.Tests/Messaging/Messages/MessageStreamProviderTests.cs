@@ -17,6 +17,8 @@ namespace Silverback.Tests.Core.Messaging.Messages;
 
 public class MessageStreamProviderTests
 {
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+
     private interface IEvent : IMessage;
 
     [Fact]
@@ -57,7 +59,7 @@ public class MessageStreamProviderTests
 
         bool processed = false;
 
-        Task.Run(async () =>
+        Task enumerationTask = Task.Run(async () =>
         {
             await Task.Delay(50);
             using IEnumerator<IEvent> enumerator = stream.GetEnumerator();
@@ -66,11 +68,14 @@ public class MessageStreamProviderTests
             processed = true;
             using IEnumerator<IEvent> enumerator2 = stream.GetEnumerator();
             enumerator2.MoveNext();
-        }).FireAndForget();
+        });
 
         await provider.PushAsync(new TestEventOne());
 
         processed.ShouldBeTrue();
+
+        await provider.CompleteAsync().AsTask().WaitAsync(Timeout);
+        await enumerationTask.WaitAsync(Timeout);
     }
 
     [Fact]
@@ -79,12 +84,15 @@ public class MessageStreamProviderTests
         MessageStreamProvider<IMessage> provider = new();
         IMessageStreamEnumerable<TestEventOne> stream = provider.CreateStream<TestEventOne>();
 
-        Task.Run(() => stream.ToList()).FireAndForget();
+        Task enumerationTask = Task.Run(() => stream.ToList());
 
         await provider.PushAsync(new TestEventOne());
         Func<Task> act = () => provider.PushAsync(new TestEventTwo());
 
         await act.ShouldThrowAsync<UnhandledMessageException>();
+
+        await provider.CompleteAsync().AsTask().WaitAsync(Timeout);
+        await enumerationTask.WaitAsync(Timeout);
     }
 
     [Fact]
@@ -93,12 +101,15 @@ public class MessageStreamProviderTests
         MessageStreamProvider<IMessage> provider = new();
         IMessageStreamEnumerable<TestEventOne> stream = provider.CreateStream<TestEventOne>();
 
-        Task.Run(() => stream.ToList()).FireAndForget();
+        Task enumerationTask = Task.Run(() => stream.ToList());
 
         await provider.PushAsync(new TestEventOne());
         Func<Task> act = () => provider.PushAsync(new TestEventTwo(), false);
 
         await act.ShouldNotThrowAsync();
+
+        await provider.CompleteAsync().AsTask().WaitAsync(Timeout);
+        await enumerationTask.WaitAsync(Timeout);
     }
 
     [Fact]
@@ -158,12 +169,15 @@ public class MessageStreamProviderTests
         MessageStreamProvider<IEnvelope> provider = new();
         IMessageStreamEnumerable<TestEventOne> stream = provider.CreateStream<TestEventOne>();
 
-        Task.Run(() => stream.ToList()).FireAndForget();
+        Task enumerationTask = Task.Run(() => stream.ToList());
 
         await provider.PushAsync(new TestEnvelope(new TestEventOne()));
         Func<Task> act = () => provider.PushAsync(new TestEnvelope(new TestEventTwo()));
 
         await act.ShouldThrowAsync<UnhandledMessageException>();
+
+        await provider.CompleteAsync().AsTask().WaitAsync(Timeout);
+        await enumerationTask.WaitAsync(Timeout);
     }
 
     [Fact]
@@ -196,6 +210,8 @@ public class MessageStreamProviderTests
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
         pushTask2.IsCompleted.ShouldBeTrue();
         pushTask3.IsCompleted.ShouldBeFalse();
+
+        await AbortAndWaitForPendingPushAsync(provider, pushTask3);
     }
 
     [Fact]
@@ -228,6 +244,8 @@ public class MessageStreamProviderTests
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
         pushTask2.IsCompleted.ShouldBeTrue();
         pushTask3.IsCompleted.ShouldBeFalse();
+
+        await AbortAndWaitForPendingPushAsync(provider, pushTask3);
     }
 
     [Fact]
@@ -241,7 +259,7 @@ public class MessageStreamProviderTests
 
         Task<int> pushTask1 = provider.PushAsync(1);
         Task<int> pushTask2 = provider.PushAsync(2);
-        provider.PushAsync(3).FireAndForget();
+        Task<int> pushTask3 = provider.PushAsync(3);
 
         enumerator1.MoveNext();
         enumerator2.MoveNext();
@@ -271,6 +289,8 @@ public class MessageStreamProviderTests
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
         pushTask2.IsCompleted.ShouldBeTrue();
+
+        await AbortAndWaitForPendingPushAsync(provider, pushTask3);
     }
 
     [Fact]
@@ -284,7 +304,7 @@ public class MessageStreamProviderTests
 
         Task<int> pushTask1 = provider.PushAsync(1);
         Task<int> pushTask2 = provider.PushAsync(2);
-        provider.PushAsync(3).FireAndForget();
+        Task<int> pushTask3 = provider.PushAsync(3);
 
         await enumerator1.MoveNextAsync();
         await enumerator2.MoveNextAsync();
@@ -314,6 +334,8 @@ public class MessageStreamProviderTests
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
         pushTask2.IsCompleted.ShouldBeTrue();
+
+        await AbortAndWaitForPendingPushAsync(provider, pushTask3);
     }
 
     [Fact]
@@ -572,6 +594,14 @@ public class MessageStreamProviderTests
         IMessageStreamEnumerable<object> stream2 = provider.CreateStream<IEvent>();
 
         stream2.ShouldBeOfType(stream1.GetType());
+    }
+
+    private static async Task AbortAndWaitForPendingPushAsync(MessageStreamProvider provider, Task pendingPushTask)
+    {
+        provider.Abort();
+
+        Func<Task> act = () => pendingPushTask.WaitAsync(Timeout);
+        await act.ShouldThrowAsync<OperationCanceledException>();
     }
 
     private class TestEvent : IEvent;

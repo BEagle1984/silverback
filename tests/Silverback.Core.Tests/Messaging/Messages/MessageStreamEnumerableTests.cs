@@ -106,6 +106,8 @@ public class MessageStreamEnumerableTests
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
         pushTask2.IsCompleted.ShouldBeTrue();
         pushTask3.IsCompleted.ShouldBeFalse();
+
+        await AbortAndWaitForPendingPushAsync(stream, pushTask3);
     }
 
     [Fact]
@@ -137,6 +139,8 @@ public class MessageStreamEnumerableTests
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
         pushTask2.IsCompleted.ShouldBeTrue();
         pushTask3.IsCompleted.ShouldBeFalse();
+
+        await AbortAndWaitForPendingPushAsync(stream, pushTask3);
     }
 
     [Fact]
@@ -373,6 +377,14 @@ public class MessageStreamEnumerableTests
     // The synchronous enumeration blocks the calling thread, so it is run on the thread pool to be able to time out
     private static Task<bool> MoveNextAsync(IEnumerator<Message> enumerator) =>
         Task.Run(enumerator.MoveNext).WaitAsync(Timeout);
+
+    private static async Task AbortAndWaitForPendingPushAsync(MessageStreamEnumerable<Message> stream, Task pendingPushTask)
+    {
+        stream.Abort();
+
+        Func<Task> act = () => pendingPushTask.WaitAsync(Timeout);
+        await act.ShouldThrowAsync<OperationCanceledException>();
+    }
 
     private record Message(int Value);
 }

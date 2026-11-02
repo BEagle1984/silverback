@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
-using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Rx.Messaging;
@@ -15,6 +14,8 @@ namespace Silverback.Tests.Core.Rx.Messaging;
 [Collection("MessageObservable")]
 public sealed class MessageObservableTests : IDisposable
 {
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+
     private readonly MessageStreamProvider<int> _streamProvider;
 
     private readonly IMessageStreamObservable<int> _observable;
@@ -38,6 +39,8 @@ public sealed class MessageObservableTests : IDisposable
 
         count.ShouldBe(3);
         task.IsCompleted.ShouldBeFalse();
+
+        await CompleteAndWaitForSubscriberAsync(task);
     }
 
     [Fact]
@@ -51,9 +54,9 @@ public sealed class MessageObservableTests : IDisposable
         await _streamProvider.PushAsync(2);
         await _streamProvider.PushAsync(3);
 
-        await _streamProvider.CompleteAsync();
+        await _streamProvider.CompleteAsync().AsTask().WaitAsync(Timeout);
 
-        await subscribeTask;
+        await subscribeTask.WaitAsync(Timeout);
 
         count.ShouldBe(3);
     }
@@ -68,7 +71,7 @@ public sealed class MessageObservableTests : IDisposable
         await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted, TimeSpan.FromMilliseconds(100));
         pushTask.IsCompleted.ShouldBeFalse();
 
-        Task.Run(() => _observable.Subscribe(_ => count++)).FireAndForget();
+        Task subscribeTask = Task.Run(() => _observable.Subscribe(_ => count++));
 
         await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
         pushTask.IsCompleted.ShouldBeTrue();
@@ -77,6 +80,8 @@ public sealed class MessageObservableTests : IDisposable
         await _streamProvider.PushAsync(3);
 
         count.ShouldBe(3);
+
+        await CompleteAndWaitForSubscriberAsync(subscribeTask);
     }
 
     [Fact]
@@ -96,6 +101,8 @@ public sealed class MessageObservableTests : IDisposable
         await _streamProvider.PushAsync(3);
 
         count.ShouldBe(3);
+
+        await CompleteAndWaitForSubscriberAsync(firstSubscribe.IsFaulted ? secondSubscribe : firstSubscribe);
     }
 
     [Fact]
@@ -103,7 +110,7 @@ public sealed class MessageObservableTests : IDisposable
     {
         int count = 0;
 
-        Task.Run(() => _observable.Subscribe(_ => Interlocked.Increment(ref count))).FireAndForget();
+        Task subscribeTask = Task.Run(() => _observable.Subscribe(_ => Interlocked.Increment(ref count)));
 
         CountdownEvent countdownEvent = new(3);
 
@@ -128,7 +135,15 @@ public sealed class MessageObservableTests : IDisposable
             }));
 
         count.ShouldBe(3);
+
+        await CompleteAndWaitForSubscriberAsync(subscribeTask);
     }
 
     public void Dispose() => _streamProvider.Dispose();
+
+    private async Task CompleteAndWaitForSubscriberAsync(Task subscribeTask)
+    {
+        await _streamProvider.CompleteAsync().AsTask().WaitAsync(Timeout);
+        await subscribeTask.WaitAsync(Timeout);
+    }
 }

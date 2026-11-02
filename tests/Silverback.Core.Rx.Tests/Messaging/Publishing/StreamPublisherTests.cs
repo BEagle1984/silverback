@@ -22,6 +22,8 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing;
 
 public class StreamPublisherTests
 {
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+
     [Fact]
     public async Task Publish_ShouldPublishProviderAndReceiveStreamedMessages()
     {
@@ -53,8 +55,8 @@ public class StreamPublisherTests
         MessageStreamProvider<IEvent> streamProvider1 = new();
         MessageStreamProvider<IEvent> streamProvider2 = new();
 
-        streamPublisher.Publish(streamProvider1);
-        await streamPublisher.PublishAsync(streamProvider2);
+        IReadOnlyCollection<Task> tasks1 = streamPublisher.Publish(streamProvider1);
+        IReadOnlyCollection<Task> tasks2 = await streamPublisher.PublishAsync(streamProvider2);
 
         await streamProvider1.PushAsync(new TestEventOne());
         await streamProvider2.PushAsync(new TestEventOne());
@@ -66,6 +68,9 @@ public class StreamPublisherTests
         receivedStreams.ShouldBe(4);
         receivedEvents.ShouldBe(4);
         receivedTestEventOnes.ShouldBe(2);
+
+        await CompleteAndWaitForSubscribersAsync(streamProvider1, tasks1);
+        await CompleteAndWaitForSubscribersAsync(streamProvider2, tasks2);
     }
 
     [Fact]
@@ -183,8 +188,8 @@ public class StreamPublisherTests
         await Task.Delay(100);
         receivedStreams.ShouldBe(0);
 
-        streamPublisher.Publish(streamProvider1);
-        await streamPublisher.PublishAsync(streamProvider2);
+        IReadOnlyCollection<Task> tasks1 = streamPublisher.Publish(streamProvider1);
+        IReadOnlyCollection<Task> tasks2 = await streamPublisher.PublishAsync(streamProvider2);
 
         await streamProvider1.PushAsync(new TestEventTwo());
         await Task.Delay(100);
@@ -200,6 +205,9 @@ public class StreamPublisherTests
         await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 4);
 
         receivedStreams.ShouldBe(4);
+
+        await CompleteAndWaitForSubscribersAsync(streamProvider1, tasks1);
+        await CompleteAndWaitForSubscribersAsync(streamProvider2, tasks2);
     }
 
     [Fact]
@@ -246,6 +254,11 @@ public class StreamPublisherTests
         Func<Task> act = async () => await await Task.WhenAny(tasks);
 
         await act.ShouldThrowAsync<TestException>();
+
+        streamProvider.Abort();
+
+        await AsyncTestingUtil.WaitAsync(() => tasks.All(task => task.IsCompleted));
+        tasks.All(task => task.IsCompleted).ShouldBeTrue();
     }
 
     [Fact]
@@ -285,6 +298,11 @@ public class StreamPublisherTests
         Func<Task> act = async () => await await Task.WhenAny(tasks);
 
         await act.ShouldThrowAsync<TestException>();
+
+        streamProvider.Abort();
+
+        await AsyncTestingUtil.WaitAsync(() => tasks.All(task => task.IsCompleted));
+        tasks.All(task => task.IsCompleted).ShouldBeTrue();
     }
 
     [Fact]
@@ -361,7 +379,7 @@ public class StreamPublisherTests
 
         MessageStreamProvider<IEnvelope> streamProvider = new();
 
-        await streamPublisher.PublishAsync(streamProvider);
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
 
         await streamProvider.PushAsync(new TestEnvelope(new TestEventOne()));
         await streamProvider.PushAsync(new TestEnvelope(new TestEventTwo()));
@@ -371,6 +389,8 @@ public class StreamPublisherTests
         receivedStreams.ShouldBe(2);
         receivedEnvelopes.ShouldBe(2);
         receivedTestEnvelopes.ShouldBe(2);
+
+        await CompleteAndWaitForSubscribersAsync(streamProvider, tasks);
     }
 
     [Fact]
@@ -402,7 +422,7 @@ public class StreamPublisherTests
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEnvelope> stream = new();
-        await streamPublisher.PublishAsync(stream);
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(stream);
 
         await stream.PushAsync(new TestEnvelope(new TestEventOne()));
         await stream.PushAsync(new TestEnvelope(new TestEventTwo()));
@@ -414,5 +434,13 @@ public class StreamPublisherTests
         receivedStreams.ShouldBe(2);
         receivedTestEventOnes.ShouldBe(2);
         receivedTestEnvelopes.ShouldBe(4);
+
+        await CompleteAndWaitForSubscribersAsync(stream, tasks);
+    }
+
+    private static async Task CompleteAndWaitForSubscribersAsync(MessageStreamProvider streamProvider, IEnumerable<Task> subscriberTasks)
+    {
+        await streamProvider.CompleteAsync().AsTask().WaitAsync(Timeout);
+        await Task.WhenAll(subscriberTasks).WaitAsync(Timeout);
     }
 }
