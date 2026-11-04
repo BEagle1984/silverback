@@ -161,7 +161,7 @@ resharper_use_negated_pattern_in_is_expression_highlighting = warning
 resharper_condition_is_always_true_or_false_according_to_nullable_api_contract_highlighting = suggestion
 resharper_replace_conditional_expression_with_null_coalescing_highlighting = warning
 
-[*.{csproj,props,yml,yaml,json,xml,config}]
+[*.{csproj,props,slnx,yml,yaml,json,xml,config}]
 indent_size = 2
 
 [*.md]

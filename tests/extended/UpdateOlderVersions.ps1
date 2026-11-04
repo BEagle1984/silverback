@@ -49,5 +49,5 @@ foreach ($version in $Versions) {
         (Join-Path $targetFolder ".editorconfig"),
         "[*.cs]`r`n# Historical semantic version in the namespace and assembly name.`r`ndotnet_diagnostic.CA1707.severity = none`r`n")
 
-    Write-Host "Created $targetName. Adapt the workloads to this Silverback API before adding it to Silverback.Tests.Extended.sln."
+    Write-Host "Created $targetName. Adapt the workloads to this Silverback API before adding it to Silverback.Tests.Extended.slnx."
 }

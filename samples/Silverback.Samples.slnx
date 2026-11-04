@@ -1,0 +1,41 @@
+<Solution>
+  <Folder Name="/Kafka/">
+    <Project Path="Kafka/Avro.Common/Avro.Common.csproj" />
+    <Project Path="Kafka/Avro.Consumer/Avro.Consumer.csproj" />
+    <Project Path="Kafka/Avro.Producer/Avro.Producer.csproj" />
+    <Project Path="Kafka/Basic.Common/Basic.Common.csproj" />
+    <Project Path="Kafka/Basic.Consumer/Basic.Consumer.csproj" />
+    <Project Path="Kafka/Basic.Producer/Basic.Producer.csproj" />
+    <Project Path="Kafka/Batch.Common/Batch.Common.csproj" />
+    <Project Path="Kafka/Batch.Consumer/Batch.Consumer.csproj" />
+    <Project Path="Kafka/Batch.Producer/Batch.Producer.csproj" />
+    <Project Path="Kafka/BatchWithTombstone.Common/BatchWithTombstone.Common.csproj" />
+    <Project Path="Kafka/BatchWithTombstone.Consumer/BatchWithTombstone.Consumer.csproj" />
+    <Project Path="Kafka/BatchWithTombstone.Producer/BatchWithTombstone.Producer.csproj" />
+    <Project Path="Kafka/BinaryFileStreaming.Consumer/BinaryFileStreaming.Consumer.csproj" />
+    <Project Path="Kafka/BinaryFileStreaming.Producer/BinaryFileStreaming.Producer.csproj" />
+    <Project Path="Kafka/JsonSchemaRegistry.Common/JsonSchemaRegistry.Common.csproj" />
+    <Project Path="Kafka/JsonSchemaRegistry.Consumer/JsonSchemaRegistry.Consumer.csproj" />
+    <Project Path="Kafka/JsonSchemaRegistry.Producer/JsonSchemaRegistry.Producer.csproj" />
+    <Project Path="Kafka/TransactionalProducer.Common/TransactionalProducer.Common.csproj" />
+    <Project Path="Kafka/TransactionalProducer.Consumer/TransactionalProducer.Consumer.csproj" />
+    <Project Path="Kafka/TransactionalProducer.Producer/TransactionalProducer.Producer.csproj" />
+  </Folder>
+  <Folder Name="/MQTT/">
+    <Project Path="MQTT/Basic.Common/Basic.Common.csproj" />
+    <Project Path="MQTT/Basic.Consumer/Basic.Consumer.csproj" />
+    <Project Path="MQTT/Basic.ConsumerV3/Basic.ConsumerV3.csproj" />
+    <Project Path="MQTT/Basic.Producer/Basic.Producer.csproj" />
+    <Project Path="MQTT/Basic.ProducerV3/Basic.ProducerV3.csproj" />
+    <Project Path="MQTT/BinaryFileStreaming.Consumer/BinaryFileStreaming.Consumer.csproj" />
+    <Project Path="MQTT/BinaryFileStreaming.Producer/BinaryFileStreaming.Producer.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+    <File Path="Silverback.Samples.slnx.DotSettings" />
+    <File Path="stylecop.json" />
+  </Folder>
+  <Project Path="Samples.Common/Samples.Common.csproj" />
+</Solution>

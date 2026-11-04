@@ -18,7 +18,7 @@
 - Keep formatting and readability changes behavior-preserving; do not combine them with unrelated refactoring or bug fixes.
 - Do not add a trailing period to simple, single-sentence code comments.
 - Name internal implementation methods with the `Core` suffix, before `Async` when applicable: `Stop` -> `StopCore`, `StopAsync` -> `StopCoreAsync`.
-- Before considering a change done, check the changed C# files for the Rider inspection warnings, which the build does not report: `dotnet jb inspectcode Silverback.sln --no-build --include="<file>;<file>" --severity=WARNING --format=Text --output=<report>`, with the report in the operating system's temporary directory (it takes about 1.5 minutes). Fix the warnings, or suppress false positives with `[SuppressMessage("ReSharper", "<InspectionId>", Justification = "...")]`, as the surrounding code does.
+- Before considering a change done, check the changed C# files for the Rider inspection warnings, which the build does not report: `dotnet jb inspectcode Silverback.slnx --no-build --include="<file>;<file>" --severity=WARNING --format=Text --output=<report>`, with the report in the operating system's temporary directory (it takes about 1.5 minutes). Fix the warnings, or suppress false positives with `[SuppressMessage("ReSharper", "<InspectionId>", Justification = "...")]`, as the surrounding code does.
 
 ## Test organization
 
@@ -28,7 +28,7 @@
 
 ## Running tests
 
-- "Run the tests" means the main solution: `dotnet test Silverback.sln`. The Docker-dependent tests need the root `docker-compose.yaml` stack running.
+- "Run the tests" means the main solution: `dotnet test Silverback.slnx`. The Docker-dependent tests need the root `docker-compose.yaml` stack running.
 - Do not run the extended integration tests (`tests/extended`) unless the user asks for them. Offer them when a change affects broker client behavior, such as consumer or producer logic, rebalancing, or a Confluent.Kafka or MQTTnet upgrade. A run takes over 12 minutes and builds Docker images from the working tree, so do not edit files while it runs.
 - The extended tests build with the locally cached `mcr.microsoft.com/dotnet/sdk:10.0` image. If the build fails with "A compatible .NET SDK was not found", run `docker pull mcr.microsoft.com/dotnet/sdk:10.0` to satisfy the `global.json` minimum.
 
@@ -41,4 +41,5 @@
 
 ## Git
 
+- Write short Conventional Commits subjects, without articles or filler words: `chore: migrate solutions to slnx`, not `chore: migrate the solutions to the slnx format`.
 - Do not commit or push without the user's explicit approval, unless the user asked you to. An approval covers only the change it was given for, not later commits.

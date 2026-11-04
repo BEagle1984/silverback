@@ -146,11 +146,11 @@ The v4 documentation is still available at [silverback-messaging.net/v4](https:/
 
 ### Solutions
 
-| Solution                                                                      | Contents                                                                                                                                            |
-|-------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| [Silverback.sln](Silverback.sln)                                              | Library source projects, unit and E2E tests, and code/documentation generators                                                                      |
-| [Silverback.Samples.sln](samples/Silverback.Samples.sln)                      | Runnable usage examples; see the [samples guide](samples/README.md)                                                                                 |
-| [Silverback.Tests.Extended.sln](tests/extended/Silverback.Tests.Extended.sln) | Interactive testbench, real-broker integration and stress tests, general benchmarks and version comparisons, with references to the library sources |
+| Solution                                                                        | Contents                                                                                                                                            |
+|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Silverback.slnx](Silverback.slnx)                                              | Library source projects, unit and E2E tests, and code/documentation generators                                                                      |
+| [Silverback.Samples.slnx](samples/Silverback.Samples.slnx)                      | Runnable usage examples; see the [samples guide](samples/README.md)                                                                                 |
+| [Silverback.Tests.Extended.slnx](tests/extended/Silverback.Tests.Extended.slnx) | Interactive testbench, real-broker integration and stress tests, general benchmarks and version comparisons, with references to the library sources |
 
 ### Testing and Development Tools
 

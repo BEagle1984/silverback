@@ -32,10 +32,10 @@ jobs:
         displayName: 'Set package source'
       # Build
       - script: |
-          dotnet build ./samples/Silverback.Samples.sln --configuration $(buildConfiguration) | tee build.log && grep -q 'Build succeeded' build.log
+          dotnet build ./samples/Silverback.Samples.slnx --configuration $(buildConfiguration) | tee build.log && grep -q 'Build succeeded' build.log
         displayName: 'Build Samples ($(buildConfiguration))'
       - pwsh: |
-          dotnet build ./tests/extended/Silverback.Tests.Extended.sln --configuration $(buildConfiguration) -warnaserror
+          dotnet build ./tests/extended/Silverback.Tests.Extended.slnx --configuration $(buildConfiguration) -warnaserror
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         displayName: 'Build Extended Tests ($(buildConfiguration))'
 

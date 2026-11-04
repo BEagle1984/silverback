@@ -1,6 +1,6 @@
 # Extended tests
 
-Open **Silverback.Tests.Extended.sln** on Windows to build the interactive testbench, benchmarks and real-broker integration tests together. Project directories sit directly beside the solution, matching its flat structure. The solution includes all source projects from the main solution under **Src**. **Solution Items** exposes shared configuration, documentation and scripts directly in the IDE.
+Open **Silverback.Tests.Extended.slnx** on Windows to build the interactive testbench, benchmarks and real-broker integration tests together. Project directories sit directly beside the solution, matching its flat structure. The solution includes all source projects from the main solution under **Src**. **Solution Items** exposes shared configuration, documentation and scripts directly in the IDE.
 
 ## Projects
 
@@ -23,7 +23,7 @@ Current-version projects reference the repository sources; no C# sources are lin
 Run commands from the repository root:
 
 ```shell
-dotnet build tests/extended/Silverback.Tests.Extended.sln -c Release
+dotnet build tests/extended/Silverback.Tests.Extended.slnx -c Release
 ```
 
 The WPF application requires Windows. The integration runner and worker also run on Linux. The other-projects Azure pipeline builds the extended solution; its optional `runIntegrationTests` parameter runs the integration project tests on a Linux agent and publishes TRX results and evidence.

@@ -28,10 +28,10 @@ steps:
         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
     displayName: 'Prepare code analysis on SonarCloud'
   - script: |
-      dotnet build Silverback.sln --configuration $(buildConfiguration)
+      dotnet build Silverback.slnx --configuration $(buildConfiguration)
     displayName: 'Build ($(buildConfiguration))'
   - script: |
-      dotnet test Silverback.sln \
+      dotnet test Silverback.slnx \
         --configuration $(buildConfiguration) \
         --no-build \
         --verbosity Normal \
@@ -45,7 +45,7 @@ steps:
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
     displayName: 'Run unit tests'
   - script: |
-      dotnet test Silverback.sln \
+      dotnet test Silverback.slnx \
         --configuration $(buildConfiguration) \
         --no-build \
         --verbosity Normal \

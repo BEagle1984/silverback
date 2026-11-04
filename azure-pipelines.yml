@@ -15,10 +15,10 @@ steps:
     displayName: 'Install SDK 10.0.x'
   # Build and test
   - script: |
-      dotnet build Silverback.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
+      dotnet build Silverback.slnx --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
     displayName: 'Build ($(buildConfiguration))'
   - script: |
-      dotnet test Silverback.sln \
+      dotnet test Silverback.slnx \
         --configuration $(buildConfiguration) \
         --no-build \
         --verbosity Normal \
@@ -28,7 +28,7 @@ steps:
         --filter "Type!=E2E&Dependency!=Docker&CI!=Skip"
     displayName: 'Run unit tests'
   - script: |
-      dotnet test Silverback.sln \
+      dotnet test Silverback.slnx \
         --configuration $(buildConfiguration) \
         --no-build \
         --verbosity Normal \

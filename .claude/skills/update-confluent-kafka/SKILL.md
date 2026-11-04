@@ -39,7 +39,7 @@ The serializer/deserializer configs (`AvroSerializerConfig`, `JsonDeserializerCo
    - Drop the `default:`/`importance:` lines unless the default is useful; wrap lines like the neighboring entries.
    Then run `regenerate.sh` again.
 
-5. **Build**: `dotnet build Silverback.sln -c Release -warnaserror`. Expected findings:
+5. **Build**: `dotnet build Silverback.slnx -c Release -warnaserror`. Expected findings:
    - `CS0759` (no defining declaration for a partial method): add the documented declaration to the builder file listed above, in the same order the generator emits the methods, mirroring the property summary. `ClientConfig` settings need it in both client builders. A URL setting needs `[SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "Declared as string in the underlying library")]`.
    - A declaration without implementation: the setting was removed or renamed in Confluent; remove or rename the declaration.
    - Anything else in hand-written code (e.g. an enum or type change): fix it, ask if the impact on the public API is unclear.
@@ -49,7 +49,7 @@ The serializer/deserializer configs (`AvroSerializerConfig`, `JsonDeserializerCo
      `diff <(ext old.xml) <(ext new.xml)` with `ext() { tr -d '\r' < "$1" | awk '/<member name="P:Confluent\.(Kafka|SchemaRegistry)\.[A-Za-z]*Config\./{f=1} f{print} /<\/member>/{f=0}'; }`. Update the affected `DocumentationProvider.cs` entries and builder declarations.
    - Run `.claude/skills/update-confluent-kafka/check-summaries.sh`: it lists the builder methods whose summary doesn't match the property summary (copy-paste errors). `IsolationLevel` is a known, harmless wording difference. Spot-check any new or changed entry against the Confluent text.
 
-7. **Test**: `dotnet test Silverback.sln -c Release --no-build` (the Docker-dependent tests need the root `docker-compose.yaml` stack running). Then offer the user the extended Kafka integration tests (`tests/extended/README.md`, over 12 minutes, see "Running tests" in `AGENTS.md`); run them only if they accept, and run them once, without editing files meanwhile. Keep the log until you have read it, then delete the TRX files and the `tests/extended/artifacts` folders created by passing runs.
+7. **Test**: `dotnet test Silverback.slnx -c Release --no-build` (the Docker-dependent tests need the root `docker-compose.yaml` stack running). Then offer the user the extended Kafka integration tests (`tests/extended/README.md`, over 12 minutes, see "Running tests" in `AGENTS.md`); run them only if they accept, and run them once, without editing files meanwhile. Keep the log until you have read it, then delete the TRX files and the `tests/extended/artifacts` folders created by passing runs.
 
 8. **Changelog**: in the topmost section of the current major version changelog, update (or add, under `### What's New`) the line `* Upgrade to [Confluent.Kafka <version>](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v<version>)` and add a line for newly exposed settings. If the topmost version is already released (`git tag -l v<version>`), ask the user which version to add (the `BaseVersion` in `Directory.Build.props` may need a bump too).
 

@@ -94,12 +94,12 @@ public abstract class DockerTestsFixture : IAsyncLifetime
 
         while (directory != null)
         {
-            if (File.Exists(Path.Combine(directory.FullName, "Silverback.sln")))
+            if (File.Exists(Path.Combine(directory.FullName, "Silverback.slnx")))
                 return directory.FullName;
 
             directory = directory.Parent;
         }
 
-        throw new DirectoryNotFoundException("Cannot find Silverback.sln above the test output directory.");
+        throw new DirectoryNotFoundException("Cannot find Silverback.slnx above the test output directory.");
     }
 }
