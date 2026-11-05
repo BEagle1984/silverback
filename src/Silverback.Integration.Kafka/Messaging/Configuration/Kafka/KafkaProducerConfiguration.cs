@@ -28,8 +28,9 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
 
     /// <summary>
     ///     Gets a value indicating whether the producer has to be disposed and recreated if a <see cref="KafkaException" />
-    ///     is thrown. The default is <c>true</c>.
+    ///     is thrown. This setting is ignored: the producer is disposed and recreated only after a fatal error.
     /// </summary>
+    [Obsolete("This setting is ignored: the producer is disposed and recreated only after a fatal error. It will be removed in the next major version.")]
     public bool DisposeOnException { get; init; } = true;
 
     /// <summary>

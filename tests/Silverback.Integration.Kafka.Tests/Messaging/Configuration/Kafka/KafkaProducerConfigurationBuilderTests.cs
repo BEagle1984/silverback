@@ -169,6 +169,7 @@ public class KafkaProducerConfigurationBuilderTests
         configuration.ThrowIfNotAcknowledged.ShouldBe(false);
     }
 
+#pragma warning disable CS0618 // Type or member is obsolete
     [Fact]
     public void DisposeOnException_ShouldSetDisposeOnException()
     {
@@ -192,6 +193,7 @@ public class KafkaProducerConfigurationBuilderTests
         configuration.ShouldNotBeNull();
         configuration.DisposeOnException.ShouldBe(false);
     }
+#pragma warning restore CS0618 // Type or member is obsolete
 
     [Fact]
     public void WithFlushTimeout_ShouldSetFlushTimeout()

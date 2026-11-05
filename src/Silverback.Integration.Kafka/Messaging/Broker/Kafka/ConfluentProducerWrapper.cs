@@ -20,6 +20,8 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
 
     private readonly ISilverbackLogger<ConfluentProducerWrapper> _logger;
 
+    private readonly System.Threading.Lock _confluentProducerLock = new();
+
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IProducer<byte[]?, byte[]?>? _confluentProducer;
 
@@ -59,10 +61,9 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         {
             confluentProducer.Produce(topicPartition, message, deliveryHandler);
         }
-        catch (KafkaException)
+        catch (KafkaException exception) when (exception.Error.IsFatal)
         {
-            if (Configuration.DisposeOnException)
-                DisposeConfluentProducer();
+            DisposeFailedConfluentProducer(confluentProducer);
 
             throw;
         }
@@ -79,10 +80,9 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         {
             return await confluentProducer.ProduceAsync(topicPartition, message, cancellationToken).ConfigureAwait(false);
         }
-        catch (KafkaException)
+        catch (KafkaException exception) when (exception.Error.IsFatal)
         {
-            if (Configuration.DisposeOnException)
-                DisposeConfluentProducer();
+            DisposeFailedConfluentProducer(confluentProducer);
 
             throw;
         }
@@ -101,10 +101,9 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
             _logger.LogTransactionsInitialized(this);
             _hasInitializedTransactions = true;
         }
-        catch (KafkaException)
+        catch (KafkaException exception) when (exception.Error.IsFatal)
         {
-            if (Configuration.DisposeOnException)
-                DisposeConfluentProducer();
+            DisposeFailedConfluentProducer(confluentProducer);
 
             throw;
         }
@@ -120,10 +119,9 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
             _hasInitializedTransactions = true;
             _logger.LogTransactionStarted(this);
         }
-        catch (KafkaException)
+        catch (KafkaException exception) when (exception.Error.IsFatal)
         {
-            if (Configuration.DisposeOnException)
-                DisposeConfluentProducer();
+            DisposeFailedConfluentProducer(confluentProducer);
 
             throw;
         }
@@ -138,10 +136,9 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
             confluentProducer.CommitTransaction(Configuration.TransactionCommitTimeout);
             _logger.LogTransactionCommitted(this);
         }
-        catch (KafkaException)
+        catch (KafkaException exception) when (exception.Error.IsFatal)
         {
-            if (Configuration.DisposeOnException)
-                DisposeConfluentProducer();
+            DisposeFailedConfluentProducer(confluentProducer);
 
             throw;
         }
@@ -156,10 +153,9 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
             confluentProducer.AbortTransaction(Configuration.TransactionAbortTimeout);
             _logger.LogTransactionAborted(this);
         }
-        catch (KafkaException)
+        catch (KafkaException exception) when (exception.Error.IsFatal)
         {
-            if (Configuration.DisposeOnException)
-                DisposeConfluentProducer();
+            DisposeFailedConfluentProducer(confluentProducer);
 
             throw;
         }
@@ -178,10 +174,9 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
                 _logger.LogOffsetSentToTransaction(this, offset);
             }
         }
-        catch (KafkaException)
+        catch (KafkaException exception) when (exception.Error.IsFatal)
         {
-            if (Configuration.DisposeOnException)
-                DisposeConfluentProducer();
+            DisposeFailedConfluentProducer(confluentProducer);
 
             throw;
         }
@@ -189,33 +184,65 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
 
     protected override ValueTask ConnectCoreAsync()
     {
-        _confluentProducer = _producerBuilder.Build();
+        lock (_confluentProducerLock)
+        {
+            _confluentProducer = _producerBuilder.Build();
+        }
+
         return default;
     }
 
     protected override ValueTask DisconnectCoreAsync()
     {
-        _confluentProducer?.Flush();
-        DisposeConfluentProducer();
+        IProducer<byte[]?, byte[]?>? confluentProducer;
+
+        lock (_confluentProducerLock)
+        {
+            confluentProducer = _confluentProducer;
+            _confluentProducer = null;
+            _hasInitializedTransactions = false;
+        }
+
+        confluentProducer?.Flush();
+        confluentProducer?.Dispose();
 
         return default;
     }
 
+    [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "The status can change concurrently")]
     private IProducer<byte[]?, byte[]?> EnsureConnected()
     {
         if (Status != ClientStatus.Initialized)
             throw new InvalidOperationException("The producer is not connected.");
 
-        if (_confluentProducer == null)
-            throw new InvalidOperationException("The underlying producer is not initialized.");
+        IProducer<byte[]?, byte[]?>? confluentProducer = Volatile.Read(ref _confluentProducer);
 
-        return _confluentProducer;
+        if (confluentProducer != null)
+            return confluentProducer;
+
+        lock (_confluentProducerLock)
+        {
+            // Check again inside the lock, to avoid recreating the producer while disconnecting
+            if (Status != ClientStatus.Initialized)
+                throw new InvalidOperationException("The producer is not connected.");
+
+            // Recreate the producer disposed after a fatal error
+            return _confluentProducer ??= _producerBuilder.Build();
+        }
     }
 
-    private void DisposeConfluentProducer()
+    private void DisposeFailedConfluentProducer(IProducer<byte[]?, byte[]?> confluentProducer)
     {
-        _confluentProducer?.Dispose();
-        _confluentProducer = null;
-        _hasInitializedTransactions = false;
+        lock (_confluentProducerLock)
+        {
+            // Another call already disposed this instance and possibly recreated the producer
+            if (_confluentProducer != confluentProducer)
+                return;
+
+            _confluentProducer = null;
+            _hasInitializedTransactions = false;
+        }
+
+        confluentProducer.Dispose();
     }
 }

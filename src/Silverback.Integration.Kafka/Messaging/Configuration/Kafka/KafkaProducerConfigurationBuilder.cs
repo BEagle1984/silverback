@@ -153,11 +153,12 @@ public partial class KafkaProducerConfigurationBuilder
 
     /// <summary>
     ///     Specifies that the producer has to be disposed and recreated if a <see cref="KafkaException" /> is thrown.
-    ///     This is the default.
+    ///     This setting is ignored: the producer is disposed and recreated only after a fatal error.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
+    [Obsolete("This setting is ignored: the producer is disposed and recreated only after a fatal error. It will be removed in the next major version.")]
     public KafkaProducerConfigurationBuilder DisposeOnException()
     {
         _disposeOnException = true;
@@ -165,11 +166,13 @@ public partial class KafkaProducerConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies tjat the producer don't have to be disposed and recreated if a <see cref="KafkaException" /> is thrown.
+    ///     Specifies that the producer doesn't have to be disposed and recreated if a <see cref="KafkaException" /> is thrown.
+    ///     This setting is ignored: the producer is disposed and recreated only after a fatal error.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
+    [Obsolete("This setting is ignored: the producer is disposed and recreated only after a fatal error. It will be removed in the next major version.")]
     public KafkaProducerConfigurationBuilder DisableDisposeOnException()
     {
         _disposeOnException = false;
@@ -365,7 +368,9 @@ public partial class KafkaProducerConfigurationBuilder
         configuration = configuration with
         {
             ThrowIfNotAcknowledged = _throwIfNotAcknowledged ?? configuration.ThrowIfNotAcknowledged,
+#pragma warning disable CS0618 // Type or member is obsolete
             DisposeOnException = _disposeOnException ?? configuration.DisposeOnException,
+#pragma warning restore CS0618 // Type or member is obsolete
             FlushTimeout = _flushTimeout ?? configuration.FlushTimeout,
             TransactionsInitTimeout = _transactionsInitTimeout ?? configuration.TransactionsInitTimeout,
             TransactionCommitTimeout = _transactionCommitTimeout ?? configuration.TransactionCommitTimeout,
