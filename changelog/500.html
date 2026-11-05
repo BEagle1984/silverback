@@ -22,9 +22,9 @@
       <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
-      <link rel="stylesheet" href="../public/docfx.min.css?v=0186348073e7">
+      <link rel="stylesheet" href="../public/docfx.min.css?v=88c2420eafef">
       <link rel="stylesheet" href="../public/main.css?v=09bd4c4f064c">
       <meta name="docfx:navrel" content="../toc.html">
       <meta name="docfx:tocrel" content="toc.html">
@@ -46,7 +46,7 @@
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
 
-      <script type="module" src="./../public/docfx.min.js?v=28f6cae335c4"></script>
+      <script type="module" src="./../public/docfx.min.js?v=965bdcc9fac2"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'dark'
@@ -70,7 +70,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -103,6 +103,12 @@
         <article data-uid="releases-500">
 <h1 id="silverback-5-release-notes">Silverback 5 Release Notes</h1>
 
+<h1 id="571"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.7.1">5.7.1</a></h1>
+<p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-11-05</p>
+<h3 id="fixes">Fixes</h3>
+<ul>
+<li>Recreate the Kafka producer after a fatal error, the <code>DisposeOnException</code> setting is now obsolete and ignored</li>
+</ul>
 <h2 id="570"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.7.0">5.7.0</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-11-02</p>
 <h3 id="whats-new">What's New</h3>
@@ -111,7 +117,7 @@
 <li>Add <code>EnableSaslOauthbearerAssertionClaimJti</code> and <code>DisableSaslOauthbearerAssertionClaimJti</code> to the Kafka client configuration builders, consistently with the other boolean settings</li>
 <li>Execute custom code when an error policy is about to be applied (see <a class="xref" href="../guides/broker/consuming/error-policies.html#callbacks">Error Handling Policies</a>)</li>
 </ul>
-<h3 id="fixes">Fixes</h3>
+<h3 id="fixes-1">Fixes</h3>
 <ul>
 <li>Mark the parent of the consume activity as remote when the trace context is restored from the message headers [<a href="https://github.com/BEagle1984/silverback/issues/267">#267</a>]</li>
 <li>Start the produce activity when the outbox worker produces the stored messages, continuing the trace stored in the message headers</li>
@@ -154,7 +160,7 @@
 <li>Add <code>WaitUntilAllMessagesAreCommittedAsync</code> to the Kafka testing helper to explicitly wait for broker offset commits</li>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.16.0">Confluent.Kafka 2.16.0</a></li>
 </ul>
-<h3 id="fixes-1">Fixes</h3>
+<h3 id="fixes-2">Fixes</h3>
 <ul>
 <li>Prevent <code>ObjectDisposedException</code> in <a class="xref" href="../api/Silverback.Messaging.Broker.IBrokerClientsConnector.html">IBrokerClientsConnector</a> when application shutdown calls overlap</li>
 <li>Fix a race condition that could cause Kafka consumers to stall and exceed the maximum poll interval after a rebalance</li>
@@ -184,13 +190,13 @@
 </ul>
 <h2 id="552"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.5.2">5.5.2</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-09-10</p>
-<h3 id="fixes-2">Fixes</h3>
+<h3 id="fixes-3">Fixes</h3>
 <ul>
 <li>Make <a class="xref" href="../api/Silverback.Messaging.Broker.IBrokerClientsConnector.html">IBrokerClientsConnector</a> idempotent and safe to call concurrently</li>
 </ul>
 <h2 id="551"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.5.1">5.5.1</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-08-26</p>
-<h3 id="fixes-3">Fixes</h3>
+<h3 id="fixes-4">Fixes</h3>
 <ul>
 <li>Restore the <a class="xref" href="../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a> stream position after deserialization for backward compatibility</li>
 </ul>
@@ -200,19 +206,19 @@
 <ul>
 <li>Reduce <a class="xref" href="../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> and <a class="xref" href="../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a> allocations</li>
 </ul>
-<h3 id="fixes-4">Fixes</h3>
+<h3 id="fixes-5">Fixes</h3>
 <ul>
 <li>Prevent lazy message stream pushes from hanging when the provider is completed or aborted before the stream is created</li>
 </ul>
 <h2 id="542"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.4.2">5.4.2</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-08-04</p>
-<h3 id="fixes-5">Fixes</h3>
+<h3 id="fixes-6">Fixes</h3>
 <ul>
 <li>Correctly route tombstones and regular messages to their respective subscribers regardless of which message is consumed first</li>
 </ul>
 <h2 id="541"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.4.1">5.4.1</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-07-29</p>
-<h3 id="fixes-6">Fixes</h3>
+<h3 id="fixes-7">Fixes</h3>
 <ul>
 <li>Prevent a race condition that could cause the <a class="xref" href="../api/Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a> constructor to throw an <code>ObjectDisposedException</code></li>
 </ul>
@@ -223,7 +229,7 @@
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.15.0">Confluent.Kafka 2.15.0</a></li>
 <li>Upgrade to <a href="https://github.com/dotnet/MQTTnet/releases/tag/v5.2.0">MQTTnet 5.2.0</a></li>
 </ul>
-<h3 id="fixes-7">Fixes</h3>
+<h3 id="fixes-8">Fixes</h3>
 <ul>
 <li>Optimize the shutdown process by stopping consumers in parallel</li>
 <li>Correctly handle subscriber tasks completion</li>
@@ -231,19 +237,19 @@
 </ul>
 <h2 id="533"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.3.3">5.3.3</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-06-01</p>
-<h3 id="fixes-8">Fixes</h3>
+<h3 id="fixes-9">Fixes</h3>
 <ul>
 <li>Ensure the batch sequences are completed before disconnecting (a further step in preventing the producer not connected exception during shutdown)</li>
 </ul>
 <h2 id="532"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.3.2">5.3.2</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-06-01</p>
-<h3 id="fixes-9">Fixes</h3>
+<h3 id="fixes-10">Fixes</h3>
 <ul>
 <li>Prevent deadlock in the disconnect process</li>
 </ul>
 <h2 id="531"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.3.1">5.3.1</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-05-25</p>
-<h3 id="fixes-10">Fixes</h3>
+<h3 id="fixes-11">Fixes</h3>
 <ul>
 <li>Prevent null messages (tombstones) from being forwarded to regular subscribers (subscribing the message type)</li>
 <li>Postpone disconnect to the application stopped lifecycle event to prevent potential issues with the Kafka producer when the application is shutting down</li>
@@ -254,19 +260,19 @@
 <ul>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.14.0">Confluent.Kafka 2.14.0</a></li>
 </ul>
-<h3 id="fixes-11">Fixes</h3>
+<h3 id="fixes-12">Fixes</h3>
 <ul>
 <li>Remove the <code>chunk-message-id</code> header, which was added by mistake in v5 and introduced an unintended break</li>
 </ul>
 <h2 id="522"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.2.2">5.2.2</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-04-24</p>
-<h3 id="fixes-12">Fixes</h3>
+<h3 id="fixes-13">Fixes</h3>
 <ul>
 <li>Handle some potential race conditions in the batch completion and timeout handling</li>
 </ul>
 <h2 id="521"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.2.1">5.2.1</a></h2>
 <p class="release-date"><i class="bi bi-calendar3"></i> Released on 2026-03-25</p>
-<h3 id="fixes-13">Fixes</h3>
+<h3 id="fixes-14">Fixes</h3>
 <ul>
 <li>Fix a potential deadlock in the batch sequence completion</li>
 </ul>
@@ -277,7 +283,7 @@
 <li>Add <code>WithKafkaTopic</code> and <code>WithMqttTopic</code> extension methods for the <a class="xref" href="../api/Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> (see <a class="xref" href="../guides/broker/testing.html">Testing</a>)</li>
 <li>Add <a class="xref" href="../api/Silverback.Messaging.Publishing.IIntegrationPublisher.html">IIntegrationPublisher</a> as an alternative to the <code>WrapAndPublish</code> extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (see <a class="xref" href="../guides/broker/producing/basics.html">Producing Messages</a>)</li>
 </ul>
-<h3 id="fixes-14">Fixes</h3>
+<h3 id="fixes-15">Fixes</h3>
 <ul>
 <li>Ensure that the Kafka AdminClient is initialized with a clean configuration to prevent warnings from being logged</li>
 <li>Fix a race condition potentially preventing the batch sequence from completing successfully when the timeout is reached</li>
@@ -289,7 +295,7 @@
 <li>Add <a class="xref" href="../api/Silverback.Messaging.Publishing.IApplicationPublisher.html">IApplicationPublisher</a> as an alternative to the extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (see <a class="xref" href="../guides/bus.html">Using the Message Bus</a>)</li>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.13.2">Confluent.Kafka 2.13.2</a></li>
 </ul>
-<h3 id="fixes-15">Fixes</h3>
+<h3 id="fixes-16">Fixes</h3>
 <ul>
 <li>Correctly bind the error handler to the Kafka producer to prevent uncontrolled logging to stderr</li>
 </ul>
