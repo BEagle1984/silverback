@@ -31,7 +31,7 @@ The message being exchanged and its JSON schema are defined in a common project.
 
 [!code-csharp[Common.Message](../../../samples/Kafka/JsonSchemaRegistry.Common/SampleMessage.cs)]
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/JsonSchemaRegistry.Common_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/JsonSchemaRegistry.Common_
 
 ## Producer
 
@@ -45,7 +45,7 @@ The producer uses a hosted service to register the schema and then publish some 
 [!code-csharp[Producer.BackgroundService](../../../samples/Kafka/JsonSchemaRegistry.Producer/ProducerBackgroundService.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/JsonSchemaRegistry.Producer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/JsonSchemaRegistry.Producer_
 
 ## Consumer
 
@@ -59,7 +59,7 @@ The consumer processes the messages and outputs their value to the standard outp
 [!code-csharp[Consumer.Subscriber](../../../samples/Kafka/JsonSchemaRegistry.Consumer/SampleMessageSubscriber.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/JsonSchemaRegistry.Consumer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/JsonSchemaRegistry.Consumer_
 
 ## Additional Resources
 

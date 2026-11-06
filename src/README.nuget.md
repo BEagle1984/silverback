@@ -105,4 +105,4 @@ The quickstart, guides, samples, FAQ and API reference are available at **https:
 ## License
 
 Silverback is open source, licensed under the MIT License and maintained by Sergio Aquilini.
-See [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE).
+See [LICENSE](https://github.com/BEagle1984/silverback/blob/main/LICENSE).

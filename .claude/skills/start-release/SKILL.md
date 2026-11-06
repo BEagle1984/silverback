@@ -5,7 +5,7 @@ description: Open a new Silverback release (for example 5.7.0) by bumping the ve
 
 # Start a new release
 
-Opening a release touches two files. Work on `master` from the repository root unless told otherwise.
+Opening a release touches two files. Work on `main` from the repository root unless told otherwise.
 
 Start with a patch version (5.6.1) when the release begins with a fix, and a minor version (5.7.0) when it begins with a feature. If a feature lands later in a patch release, promote it to the next minor version by repeating both steps on the existing chapter instead of adding a new one.
 

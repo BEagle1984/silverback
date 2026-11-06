@@ -13,7 +13,7 @@ Silverback is an open-source message bus and broker integration library for .NET
 
 ## License
 
-Silverback is licensed under the [MIT License](https://github.com/BEagle1984/silverback/blob/master/LICENSE): you are free to use it in both open-source and commercial projects.
+Silverback is licensed under the [MIT License](https://github.com/BEagle1984/silverback/blob/main/LICENSE): you are free to use it in both open-source and commercial projects.
 
 ## Contact
 

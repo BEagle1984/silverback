@@ -43,7 +43,7 @@ The producer exposes two REST API that receive the path of a local file to be st
 [!code-csharp[Producer.ProducerController](../../../samples/MQTT/BinaryFileStreaming.Producer/Controllers/ProducerController.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/BinaryFileStreaming.Producer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/MQTT/BinaryFileStreaming.Producer_
 
 ## Consumer
 
@@ -59,7 +59,7 @@ The consumer simply streams the file to a temporary folder in the local file sys
 [!code-csharp[Consumer.BinaryFileSubscriber](../../../samples/MQTT/BinaryFileStreaming.Consumer/Subscribers/BinaryFileSubscriber.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/BinaryFileStreaming.Consumer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/MQTT/BinaryFileStreaming.Consumer_
 
 ## Additional Resources
 

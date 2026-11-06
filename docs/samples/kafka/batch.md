@@ -29,7 +29,7 @@ The message being exchanged is defined in a common project.
 
 [!code-csharp[Common.Message](../../../samples/Kafka/Batch.Common/SampleMessage.cs)]
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Batch.Common_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/Batch.Common_
 
 
 ## Producer
@@ -44,7 +44,7 @@ The producer uses a hosted service to publish some messages in the background.
 [!code-csharp[Producer.BackgroundService](../../../samples/Kafka/Batch.Producer/ProducerBackgroundService.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Batch.Producer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/Batch.Producer_
 
 ## Consumer
 
@@ -58,7 +58,7 @@ The consumer processes the messages in batch and outputs the batch sum to the st
 [!code-csharp[Consumer.Subscriber](../../../samples/Kafka/Batch.Consumer/SampleMessageBatchSubscriber.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Batch.Consumer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/Batch.Consumer_
 
 ## Additional Resources
 

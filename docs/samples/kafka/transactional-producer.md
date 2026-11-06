@@ -31,7 +31,7 @@ The message being exchanged is defined in a common project.
 
 [!code-csharp[Common.Message](../../../samples/Kafka/TransactionalProducer.Common/SampleMessage.cs)]
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/TransactionalProducer.Common_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/TransactionalProducer.Common_
 
 ## Producer
 
@@ -47,7 +47,7 @@ The producer uses two hosted services to publish the messages in the background,
 [!code-csharp[Producer.BackgroundService2](../../../samples/Kafka/TransactionalProducer.Producer/ProducerBackgroundService2.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/TransactionalProducer.Producer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/TransactionalProducer.Producer_
 
 ## Consumer
 
@@ -61,7 +61,7 @@ The consumer processes the messages and outputs their value to the standard outp
 [!code-csharp[Consumer.Subscriber](../../../samples/Kafka/TransactionalProducer.Consumer/SampleMessageSubscriber.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/TransactionalProducer.Consumer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/TransactionalProducer.Consumer_
 
 ## Additional Resources
 

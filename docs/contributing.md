@@ -6,7 +6,7 @@ uid: contributing
 
 Contributions are welcome. Start with the upstream contribution guidelines:
 
-- https://github.com/BEagle1984/silverback/blob/master/CONTRIBUTING.md
+- https://github.com/BEagle1984/silverback/blob/main/CONTRIBUTING.md
 
 ## Source Code
 

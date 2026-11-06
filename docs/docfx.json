@@ -80,7 +80,7 @@
       "_enableSearch": "true",
       "_gitContribute": {
         "repo": "https://github.com/beagle1984/silverback",
-        "branch": "master",
+        "branch": "main",
         "apiSpecFolder": "docs-ref-overwrite"
       }
     },

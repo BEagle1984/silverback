@@ -30,7 +30,7 @@ The message being exchanged is defined in a common project.
 
 [!code-csharp[Common.Message](../../../samples/Kafka/BatchWithTombstone.Common/SampleMessage.cs)]
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BatchWithTombstone.Common_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/BatchWithTombstone.Common_
 
 ## Producer
 
@@ -44,7 +44,7 @@ The producer uses a hosted service to publish batches of 100 messages in the bac
 [!code-csharp[Producer.BackgroundService](../../../samples/Kafka/BatchWithTombstone.Producer/ProducerBackgroundService.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BatchWithTombstone.Producer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/BatchWithTombstone.Producer_
 
 ## Consumer
 
@@ -58,7 +58,7 @@ The consumer processes the messages in batch, logging the key of each tombstone 
 [!code-csharp[Consumer.Subscriber](../../../samples/Kafka/BatchWithTombstone.Consumer/SampleMessageBatchSubscriber.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BatchWithTombstone.Consumer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/BatchWithTombstone.Consumer_
 
 ## Additional Resources
 

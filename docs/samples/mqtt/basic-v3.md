@@ -30,7 +30,7 @@ The message being exchanged is defined in a common project.
 
 [!code-csharp[Common.Message](../../../samples/MQTT/Basic.Common/SampleMessage.cs)]
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/Basic.Common_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/MQTT/Basic.Common_
 
 
 ## Producer
@@ -45,7 +45,7 @@ The producer uses a hosted service to publish some messages in the background.
 [!code-csharp[Producer.BackgroundService](../../../samples/MQTT/Basic.ProducerV3/ProducerBackgroundService.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/Basic.ProducerV3_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/MQTT/Basic.ProducerV3_
 
 ## Consumer
 
@@ -59,7 +59,7 @@ The consumer processes the messages and outputs their value to the standard outp
 [!code-csharp[Consumer.Subscriber](../../../samples/MQTT/Basic.ConsumerV3/SampleMessageSubscriber.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/MQTT/Basic.ConsumerV3_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/MQTT/Basic.ConsumerV3_
 
 ## Additional Resources
 

@@ -31,7 +31,7 @@ The message being exchanged is defined in a common project.
 
 [!code-csharp[Common.Message](../../../samples/Kafka/Avro.Common/AvroMessage.cs)]
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Avro.Common_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/Avro.Common_
 
 
 ## Producer
@@ -46,7 +46,7 @@ The producer uses a hosted service to publish some messages in the background.
 [!code-csharp[Producer.BackgroundService](../../../samples/Kafka/Avro.Producer/ProducerBackgroundService.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Avro.Producer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/Avro.Producer_
 
 ## Consumer
 
@@ -60,7 +60,7 @@ The consumer processes the messages and outputs their value to the standard outp
 [!code-csharp[Consumer.Subscriber](../../../samples/Kafka/Avro.Consumer/AvroMessageSubscriber.cs)]
 ***
 
-_Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Avro.Consumer_
+_Full source code: https://github.com/BEagle1984/silverback/tree/main/samples/Kafka/Avro.Consumer_
 
 ## Additional Resources
 

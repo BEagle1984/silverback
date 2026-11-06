@@ -7,7 +7,7 @@ title: Samples
 
 Short, runnable examples that demonstrate core Silverback concepts and common integration scenarios. Each sample consists of a producer and a consumer application (plus a common project, where the message contract is shared) and focuses on a single feature.
 
-The source code of all samples is available in the [samples folder](https://github.com/BEagle1984/silverback/tree/master/samples) of the repository, grouped into the `Silverback.Samples.slnx` solution.
+The source code of all samples is available in the [samples folder](https://github.com/BEagle1984/silverback/tree/main/samples) of the repository, grouped into the `Silverback.Samples.slnx` solution.
 
 ## Running the Samples
 

@@ -7,7 +7,7 @@ and **MQTT**.
 
 [![NuGet version](https://img.shields.io/nuget/v/Silverback.Core?label=NuGet&color=2f6fb3)](https://www.nuget.org/packages/Silverback.Core)
 [![NuGet downloads](https://img.shields.io/nuget/dt/Silverback.Core?label=downloads&color=2f6fb3)](https://www.nuget.org/packages/Silverback.Core)
-[![License: MIT](https://img.shields.io/github/license/BEagle1984/silverback?color=2f6fb3)](https://github.com/BEagle1984/silverback/blob/master/LICENSE)
+[![License: MIT](https://img.shields.io/github/license/BEagle1984/silverback?color=2f6fb3)](https://github.com/BEagle1984/silverback/blob/main/LICENSE)
 
 Documentation, guides, and samples are available at **https://silverback-messaging.net**.
 
@@ -112,12 +112,12 @@ The v4 documentation is still available at [silverback-messaging.net/v4](https:/
 
 ### Continuous Build
 
-[![Continuous Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
-[![Tests Status (release/5.0.0)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
+[![Continuous Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=main)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=main)
+[![Tests Status (release/5.0.0)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/main)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=main)
 
 ### Sonar Build
 
-[![Sonar Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/sonar?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=6&branchName=master)
+[![Sonar Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/sonar?branchName=main)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=6&branchName=main)
 
 #### Quality Metrics
 
@@ -191,4 +191,4 @@ and [the samples/extended-tests pipeline](azure-pipelines.other-projects.yml).
 ## License
 
 Silverback is open source, licensed under the MIT License and maintained by Sergio Aquilini.
-See [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE).
+See [LICENSE](https://github.com/BEagle1984/silverback/blob/main/LICENSE).

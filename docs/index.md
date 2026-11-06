@@ -21,7 +21,7 @@ _disableContribution: true
   <div class="sb-badges">
     <a href="https://www.nuget.org/packages/Silverback.Core"><img alt="NuGet version" src="https://img.shields.io/nuget/v/Silverback.Core?label=NuGet&color=2f6fb3"></a>
     <a href="https://www.nuget.org/packages/Silverback.Core"><img alt="NuGet downloads" src="https://img.shields.io/nuget/dt/Silverback.Core?label=downloads&color=2f6fb3"></a>
-    <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/BEagle1984/silverback?color=2f6fb3"></a>
+    <a href="https://github.com/BEagle1984/silverback/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/BEagle1984/silverback?color=2f6fb3"></a>
   </div>
 </div>
 
