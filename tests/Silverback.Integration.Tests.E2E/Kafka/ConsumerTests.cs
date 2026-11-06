@@ -90,6 +90,61 @@ public class ConsumerTests : KafkaTests
     }
 
     [Fact]
+    public async Task ConnectAsync_ShouldStoreOffsets_WhenInitializedHandlerIsPendingAndCommitIsDisabled()
+    {
+        TaskCompletionSource<bool> release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5))
+                .ManuallyConnect())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(
+                    "producer",
+                    producer => producer.Produce<TestEventWithKafkaKey>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(
+                    "consumer",
+                    consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .DisableOffsetsCommit()
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IBrokerClientCollection clients = Host.ServiceProvider.GetRequiredService<IBrokerClientCollection>();
+        await clients["producer"].ConnectAsync();
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 15; i++)
+        {
+            await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = i });
+        }
+
+        IBrokerClient consumerClient = clients["consumer"];
+        consumerClient.Initialized.AddHandler(async _ => await release.Task);
+
+        Task connect = consumerClient.ConnectAsync().AsTask();
+
+        try
+        {
+            await Helper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromSeconds(10));
+
+            Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+            consumerClient.Status.ShouldBe(ClientStatus.Initialized);
+        }
+        finally
+        {
+            release.TrySetResult(true);
+        }
+
+        await connect.WaitAsync(TimeSpan.FromSeconds(10));
+    }
+
+    [Fact]
     public async Task ConnectAsync_ShouldDisconnectClient_WhenProcessingFailsWhileInitializedHandlerIsPending()
     {
         TaskCompletionSource<bool> release = new(TaskCreationOptions.RunContinuationsAsynchronously);
