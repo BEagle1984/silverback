@@ -30,6 +30,33 @@ public class StoredOffsetLoaderTests
         _storeFactory.AddFactory<InMemoryKafkaOffsetStoreSettings>((_, _) => new InMemoryKafkaOffsetStore());
     }
 
+    [Fact]
+    public void LoadStoredOffsets_ShouldNotReadStoreAgain_WhenApplyingOffsets()
+    {
+        IKafkaOffsetStore store = Substitute.For<IKafkaOffsetStore>();
+        store.GetStoredOffsets("test-group").Returns([new KafkaOffset("test-topic", 42, 5)]);
+        KafkaOffsetStoreFactory storeFactory = new();
+        storeFactory.AddFactory<InMemoryKafkaOffsetStoreSettings>((_, _) => store);
+
+        StoredOffsetsLoader loader = new(storeFactory, _consumerConfiguration, _serviceProvider);
+        loader.LoadStoredOffsets();
+
+        TopicPartitionOffset result = loader.ApplyStoredOffset(new TopicPartitionOffset("test-topic", 42, 3));
+
+        result.Offset.Value.ShouldBe(6);
+        store.Received(1).GetStoredOffsets("test-group");
+    }
+
+    [Fact]
+    public void LoadStoredOffsets_ShouldDoNothing_WhenOffsetStoreIsNotConfigured()
+    {
+        StoredOffsetsLoader loader = new(_storeFactory, new KafkaConsumerConfiguration { GroupId = "test-group" }, _serviceProvider);
+
+        loader.LoadStoredOffsets();
+
+        loader.ApplyStoredOffset(new TopicPartitionOffset("test-topic", 42, 3)).Offset.Value.ShouldBe(3);
+    }
+
     [Theory]
     [InlineData(10, 5)]
     [InlineData(5, 5)]

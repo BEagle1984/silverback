@@ -49,6 +49,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     // a stop or a rebalance defeats the rollback restart, they are resumed by the next start or when they are assigned again
     private readonly HashSet<TopicPartition> _rollbackPausedPartitions = [];
 
+    // The last offset whose commit failed in each partition, when a client side offset store is used: the offsets are stored before
+    // committing, so the rollback must not consume those records again
+    private readonly Dictionary<TopicPartition, Offset> _commitFailedOffsets = [];
+
     private Task _channelsStopping = Task.CompletedTask;
 
     private int _messagesSinceCommit;
@@ -168,6 +172,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             // still be tracked, processed and committed afterwards.
             _offsets.UntrackPartition(topicPartitionOffset.TopicPartition);
             _offsets.TrackOffset(topicPartitionOffset);
+            _commitFailedOffsets.Remove(topicPartitionOffset.TopicPartition);
         }
     }
 
@@ -231,6 +236,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             {
                 _revokedPartitions.Add(partition);
                 _rollingBackPartitions.Remove(partition);
+                _commitFailedOffsets.Remove(partition);
                 IncrementAssignmentVersion(partition);
             }
 
@@ -456,17 +462,29 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             // Channel ownership remains valid until draining removes the channel.
             bool stored = false;
 
-            foreach (KafkaOffset offset in brokerMessageIdentifiers.Where(IsOwnedOffset))
+            try
             {
-                // Tracked as committed only once stored: a record whose offset couldn't be stored must still be consumed again after
-                // a restart (or a shared rollback)
-                StoreOffset(new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1));
-                _offsets.Commit(offset);
-                stored = true;
-            }
+                foreach (KafkaOffset offset in brokerMessageIdentifiers.Where(IsOwnedOffset))
+                {
+                    // Tracked as committed only once stored: a record whose offset couldn't be stored must still be consumed again
+                    // after a restart (or a shared rollback)
+                    StoreOffset(new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1));
+                    _offsets.Commit(offset);
+                    stored = true;
+                }
 
-            if (stored)
-                CommitOffsetsIfNeeded();
+                if (stored)
+                    CommitOffsetsIfNeeded();
+            }
+            catch (Exception) when (Configuration.ClientSideOffsetStore != null)
+            {
+                foreach (KafkaOffset offset in brokerMessageIdentifiers.Where(IsOwnedOffset))
+                {
+                    _commitFailedOffsets[offset.TopicPartition] = offset.Offset;
+                }
+
+                throw;
+            }
         }
 
         return default;
@@ -574,6 +592,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         {
             _offsets.Clear();
             _rollbackPausedPartitions.Clear();
+            _commitFailedOffsets.Clear();
         }
 
         return StartAsync();
@@ -585,6 +604,18 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         try
         {
             await stopping.ConfigureAwait(false);
+
+            StoredOffsetsLoader storedOffsetsLoader = new(_offsetStoreFactory, Configuration, ServiceProvider);
+            bool hasFailedCommit;
+
+            lock (_assignmentLock)
+            {
+                hasFailedCommit = partitions.Any(partition => _commitFailedOffsets.ContainsKey(partition.Offset.TopicPartition));
+            }
+
+            // Loaded before taking the lock again, since the store is usually a database
+            if (hasFailedCommit)
+                storedOffsetsLoader.LoadStoredOffsets();
 
             lock (_assignmentLock)
             {
@@ -612,6 +643,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                     // A record fetched before Pause must finish dispatching before Seek and channel replacement
                     if (offset.Offset != Offset.Unset)
                     {
+                        offset = SkipStoredOffsetsCore(offset, storedOffsetsLoader);
                         Client.Seek(offset);
                         _logger.LogPartitionOffsetReset(offset, this);
                     }
@@ -636,6 +668,26 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             _logger.LogConsumerStartError(this, ex);
             await TriggerReconnectAsync().ConfigureAwait(false);
         }
+    }
+
+    // Must be called while holding the assignment lock. After a failed commit the records in the client side offset store are already
+    // processed: like when reassigning the partition, they must not be consumed again. This doesn't apply to the other rollbacks, where
+    // an offset may be stored by a subscriber while the processing failed afterwards, and the message must be retried: the rollback of
+    // a later record is one of those, even if the failed commit wasn't rolled back (e.g. an error policy committed it again).
+    private TopicPartitionOffset SkipStoredOffsetsCore(TopicPartitionOffset offset, StoredOffsetsLoader storedOffsetsLoader)
+    {
+        if (!_commitFailedOffsets.Remove(offset.TopicPartition, out Offset failedOffset) || failedOffset < offset.Offset)
+            return offset;
+
+        TopicPartitionOffset nextOffset = storedOffsetsLoader.ApplyStoredOffset(offset);
+
+        if (nextOffset.Offset != offset.Offset)
+        {
+            _offsets.UntrackPartition(offset.TopicPartition);
+            _offsets.TrackOffset(nextOffset);
+        }
+
+        return nextOffset;
     }
 
     // Must be called while holding the assignment lock

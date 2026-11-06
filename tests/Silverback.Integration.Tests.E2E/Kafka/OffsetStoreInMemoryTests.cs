@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -164,6 +165,151 @@ public class OffsetStoreInMemoryTests : KafkaTests
     }
 
     [Fact]
+    public async Task OffsetStore_ShouldRetryProcessing_WhenCommitOfPreviousMessageFailed()
+    {
+        int tryCount = 0;
+        FailingOffsetCommittedCallback callback = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                .AddInMemoryKafkaOffsetStore())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory())
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy
+                            .Skip(skipPolicy => skipPolicy.ApplyTo<BrokerClientCallbackInvocationException>())
+                            .ThenRetry(1)))))
+            .AddSingletonBrokerClientCallback(callback)
+            .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleMessageAsync));
+
+        // The failed commit of the first message is committed again by the skip policy, not rolled back
+        async Task HandleMessageAsync(TestEventOne message, KafkaOffsetStoreScope offsetStoreScope)
+        {
+            if (Interlocked.Increment(ref tryCount) != 2)
+                return;
+
+            await offsetStoreScope.StoreOffsetsAsync();
+
+            throw new InvalidOperationException("Retry!");
+        }
+
+        // A reconnect would apply the stored offsets as well, without proving anything
+        int disconnections = 0;
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        consumer.Client.Disconnecting.AddHandler(_ =>
+        {
+            Interlocked.Increment(ref disconnections);
+            return ValueTask.CompletedTask;
+        });
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        tryCount.ShouldBe(3);
+        disconnections.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task OffsetStore_ShouldRetryProcessing_WhenSeekingBackAfterFailedCommit()
+    {
+        int tryCount = 0;
+        FailingOffsetCommittedCallback callback = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                .AddInMemoryKafkaOffsetStore())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory())
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy
+                            .Skip(skipPolicy => skipPolicy.ApplyTo<BrokerClientCallbackInvocationException>())
+                            .ThenRetry(1)))))
+            .AddSingletonBrokerClientCallback(callback)
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage));
+
+        // The first attempt after seeking back fails
+        void HandleMessage(TestEventOne message)
+        {
+            if (Interlocked.Increment(ref tryCount) == 2)
+                throw new InvalidOperationException("Retry!");
+        }
+
+        KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        consumer.Seek(new TopicPartitionOffset(DefaultTopicName, 0, 0));
+        await AsyncTestingUtil.WaitAsync(() => tryCount >= 3, TimeSpan.FromSeconds(2));
+
+        tryCount.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task OffsetStore_ShouldNotConsumeAgain_WhenCommitFailsAfterStoringOffsets()
+    {
+        int received = 0;
+        int disconnections = 0;
+        FailingOffsetCommittedCallback callback = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                .AddInMemoryKafkaOffsetStore())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory())
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(1)))))
+            .AddSingletonBrokerClientCallback(callback)
+            .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received)));
+
+        KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
+        consumer.Client.Disconnecting.AddHandler(_ =>
+        {
+            Interlocked.Increment(ref disconnections);
+            return ValueTask.CompletedTask;
+        });
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        received.ShouldBe(2);
+        disconnections.ShouldBe(0);
+    }
+
+    [Fact]
     public async Task OffsetStore_ShouldStoreManuallyAssignedPartitionsOffsets()
     {
         int received = 0;
@@ -210,5 +356,16 @@ public class OffsetStoreInMemoryTests : KafkaTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         received.ShouldBe(8);
+    }
+
+    private sealed class FailingOffsetCommittedCallback : IKafkaOffsetCommittedCallback
+    {
+        private int _commitCount;
+
+        public void OnOffsetsCommitted(CommittedOffsets offsets, IKafkaConsumer consumer)
+        {
+            if (Interlocked.Increment(ref _commitCount) == 1)
+                throw new InvalidOperationException("Commit failed.");
+        }
     }
 }

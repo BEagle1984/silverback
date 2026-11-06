@@ -31,6 +31,15 @@ internal class StoredOffsetsLoader
         _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
     }
 
+    public void LoadStoredOffsets()
+    {
+        if (_configuration.ClientSideOffsetStore == null)
+            return;
+
+        _storedOffsets ??= _offsetStoreFactory.GetStore(_configuration.ClientSideOffsetStore, _serviceProvider)
+            .GetStoredOffsets(_configuration.GroupId ?? throw new InvalidOperationException("GroupId not set."));
+    }
+
     public IReadOnlyCollection<TopicPartitionOffset> ApplyStoredOffsets(IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets) =>
         _configuration.ClientSideOffsetStore == null
             ? topicPartitionOffsets
@@ -41,10 +50,9 @@ internal class StoredOffsetsLoader
         if (_configuration.ClientSideOffsetStore == null)
             return topicPartitionOffset;
 
-        _storedOffsets ??= _offsetStoreFactory.GetStore(_configuration.ClientSideOffsetStore, _serviceProvider)
-            .GetStoredOffsets(_configuration.GroupId ?? throw new InvalidOperationException("GroupId not set."));
+        LoadStoredOffsets();
 
-        KafkaOffset? storedOffset = _storedOffsets.FirstOrDefault(offset => offset.TopicPartition == topicPartitionOffset.TopicPartition);
+        KafkaOffset? storedOffset = _storedOffsets!.FirstOrDefault(offset => offset.TopicPartition == topicPartitionOffset.TopicPartition);
 
         if (storedOffset != null && storedOffset.Offset >= topicPartitionOffset.Offset)
             return new TopicPartitionOffset(storedOffset.TopicPartition, storedOffset.Offset + 1); // Kafka works with the next offset (+1)
