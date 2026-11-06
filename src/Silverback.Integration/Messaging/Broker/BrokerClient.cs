@@ -119,12 +119,12 @@ public abstract class BrokerClient : IBrokerClient
         {
             _logger.LogBrokerClientInitializeError(this, ex);
 
-            // Nothing else changes the status while initializing, but a failing Initialized handler must not override the status of a
-            // concurrent disconnect or reconnect
+            // Nothing else changes the status while initializing. After that the client is really connected, unless a concurrent
+            // disconnect or reconnect already took over.
             if (!isStatusInitialized)
                 Status = ClientStatus.Disconnected;
             else if (connectionId == _connectionId)
-                TryChangeStatus(ClientStatus.Initialized, ClientStatus.Disconnected);
+                await DisconnectAfterFailedConnectAsync().ConfigureAwait(false);
 
             throw;
         }
@@ -215,6 +215,21 @@ public abstract class BrokerClient : IBrokerClient
 
             Status = ClientStatus.Initialized;
             throw;
+        }
+    }
+
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged by DisconnectAsync")]
+    private async ValueTask DisconnectAfterFailedConnectAsync()
+    {
+        try
+        {
+            // Not canceling the reconnection, since the failed connect can be retried
+            await DisconnectAsync(true).ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // The connect failure is the one to be rethrown and the client must still be able to retry
+            TryChangeStatus(ClientStatus.Initialized, ClientStatus.Disconnected);
         }
     }
 

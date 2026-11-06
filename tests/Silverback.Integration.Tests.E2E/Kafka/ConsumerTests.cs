@@ -195,6 +195,61 @@ public class ConsumerTests : KafkaTests
     }
 
     [Fact]
+    public async Task ConnectAsync_ShouldStopConsumerAndConsumeAfterRetry_WhenInitializedHandlerFails()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                .ManuallyConnect())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(
+                    "producer",
+                    producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(
+                    "consumer",
+                    consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .DisableAutoRecovery()
+                        .DisableAutoCommit()
+                        .CommitOffsetEach(1)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IBrokerClientCollection clients = Host.ServiceProvider.GetRequiredService<IBrokerClientCollection>();
+        await clients["producer"].ConnectAsync();
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne());
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        int initializedCount = 0;
+        consumer.Client.Initialized.AddHandler(_ =>
+        {
+            if (Interlocked.Increment(ref initializedCount) == 1)
+                throw new InvalidOperationException("Handler failed.");
+
+            return ValueTask.CompletedTask;
+        });
+
+        await Should.ThrowAsync<InvalidOperationException>(() => consumer.Client.ConnectAsync().AsTask());
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+
+        await consumer.Client.ConnectAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+    }
+
+    [Fact]
     public async Task PauseAndResume_ShouldPauseAndResumeConsuming()
     {
         int[] receivedMessages = [0, 0, 0];

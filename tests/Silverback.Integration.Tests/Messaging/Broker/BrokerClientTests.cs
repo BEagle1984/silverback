@@ -88,17 +88,60 @@ public class BrokerClientTests
         await Should.ThrowAsync<InvalidOperationException>(() => client.ConnectAsync().AsTask());
 
         client.ConnectCount.ShouldBe(0);
+        client.DisconnectCount.ShouldBe(0);
         client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
     [Fact]
-    public async Task ConnectAsync_ShouldResetStatus_WhenInitializedHandlerFails()
+    public async Task ConnectAsync_ShouldDisconnect_WhenInitializedHandlerFails()
     {
         await using TestBrokerClient client = new(new HookLogger());
+        int disconnectingCount = 0;
         client.Initialized.AddHandler(_ => throw new InvalidOperationException("Test"));
+        client.Disconnecting.AddHandler(_ =>
+        {
+            Interlocked.Increment(ref disconnectingCount);
+            return ValueTask.CompletedTask;
+        });
 
         await Should.ThrowAsync<InvalidOperationException>(() => client.ConnectAsync().AsTask());
 
+        disconnectingCount.ShouldBe(1);
+        client.DisconnectCount.ShouldBe(1);
+        client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldBeAbleToConnectAgain_WhenInitializedHandlerFailed()
+    {
+        await using TestBrokerClient client = new(new HookLogger());
+        int initializedCount = 0;
+        client.Initialized.AddHandler(_ =>
+        {
+            if (Interlocked.Increment(ref initializedCount) == 1)
+                throw new InvalidOperationException("Test");
+
+            return ValueTask.CompletedTask;
+        });
+
+        await Should.ThrowAsync<InvalidOperationException>(() => client.ConnectAsync().AsTask());
+        await client.ConnectAsync();
+
+        client.ConnectCount.ShouldBe(2);
+        client.DisconnectCount.ShouldBe(1);
+        client.Status.ShouldBe(ClientStatus.Initialized);
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldRethrowHandlerException_WhenDisconnectFailsAfterInitializedHandlerFailed()
+    {
+        await using TestBrokerClient client = new(new HookLogger());
+        client.Initialized.AddHandler(_ => throw new InvalidOperationException("Handler failed."));
+        client.Disconnecting.AddHandler(_ => throw new NotSupportedException("Disconnect failed."));
+
+        InvalidOperationException exception = await Should.ThrowAsync<InvalidOperationException>(() => client.ConnectAsync().AsTask());
+
+        exception.Message.ShouldBe("Handler failed.");
         client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
