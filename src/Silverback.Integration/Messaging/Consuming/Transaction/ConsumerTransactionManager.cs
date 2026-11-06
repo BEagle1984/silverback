@@ -22,6 +22,8 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
     private Task<bool>? _abortTask;
 
+    private bool _isConsumerCommitted;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerTransactionManager" /> class.
     /// </summary>
@@ -82,7 +84,8 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
                 return _abortTask;
             }
 
-            if (_commitTask != null)
+            // A commit that failed before reaching the consumer doesn't complete the transaction: it can still be rolled back
+            if (_commitTask != null && (_isConsumerCommitted || !_commitTask.IsCompleted))
             {
                 if (throwIfAlreadyCommitted)
                     throw new InvalidOperationException("The transaction already completed.");
@@ -100,6 +103,12 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         await Committing.InvokeAsync(_context).ConfigureAwait(false);
         await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
+
+        lock (_syncLock)
+        {
+            _isConsumerCommitted = true;
+        }
+
         await Committed.InvokeAsync(_context).ConfigureAwait(false);
 
         _logger.LogProcessingTrace(_context.Envelope, "Consumer transaction committed.");

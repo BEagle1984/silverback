@@ -1,9 +1,15 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
+using Shouldly;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.Transaction;
 using Xunit;
@@ -24,5 +30,104 @@ public class ConsumerTransactionManagerTests
 
         await context.Consumer.Received(stopConsuming ? 1 : 0).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
         await context.Consumer.DidNotReceive().StopAsync(Arg.Any<bool>());
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task RollbackAsync_ShouldRollback_WhenCommitFailed()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        context.Consumer.CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>())
+            .Returns(_ => ValueTask.FromException(new InvalidOperationException("Commit failed.")));
+
+        await Should.ThrowAsync<InvalidOperationException>(transaction.CommitAsync);
+
+        bool rolledBack = await transaction.RollbackAsync(null);
+
+        rolledBack.ShouldBeTrue();
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task RollbackAsync_ShouldRollback_WhenCommitCanceled()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        context.Consumer.CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>())
+            .Returns(_ => ValueTask.FromCanceled(new CancellationToken(true)));
+
+        await Should.ThrowAsync<OperationCanceledException>(transaction.CommitAsync);
+
+        bool rolledBack = await transaction.RollbackAsync(null);
+
+        rolledBack.ShouldBeTrue();
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task RollbackAsync_ShouldThrow_WhenCommittedHandlerFailed()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        transaction.Committed.AddHandler(_ => throw new InvalidOperationException("Test"));
+
+        await Should.ThrowAsync<InvalidOperationException>(transaction.CommitAsync);
+
+        Task<bool> Act() => transaction.RollbackAsync(null);
+
+        InvalidOperationException exception = await Should.ThrowAsync<InvalidOperationException>(Act);
+
+        exception.Message.ShouldBe("The transaction already completed.");
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task RollbackAsync_ShouldThrow_WhenCommitIsPending()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        TaskCompletionSource releaseCommit = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        context.Consumer.CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>())
+            .Returns(_ => new ValueTask(releaseCommit.Task));
+
+        Task commit = transaction.CommitAsync();
+
+        Task<bool> Act() => transaction.RollbackAsync(null);
+
+        await Should.ThrowAsync<InvalidOperationException>(Act);
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+
+        releaseCommit.SetResult();
+        await commit;
+    }
+
+    [Fact]
+    public async Task RollbackAsync_ShouldThrow_WhenAlreadyCommitted()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        await transaction.CommitAsync();
+
+        Task<bool> Act() => transaction.RollbackAsync(null);
+
+        await Should.ThrowAsync<InvalidOperationException>(Act);
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task RollbackAsync_ShouldReturnFalse_WhenAlreadyCommittedAndNotThrowing()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        await transaction.CommitAsync();
+
+        bool rolledBack = await transaction.RollbackAsync(null, throwIfAlreadyCommitted: false);
+
+        rolledBack.ShouldBeFalse();
     }
 }

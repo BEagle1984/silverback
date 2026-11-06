@@ -31,6 +31,23 @@ public class TransactionHandlerConsumerBehaviorTests
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
     [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task HandleAsync_ShouldRollbackAndRethrowCommitException_WhenCommitFails()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        context.Consumer.CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>())
+            .Returns(_ => ValueTask.FromException(new InvalidOperationException("Commit failed.")));
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        Task Act() => behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, default).AsTask();
+
+        InvalidOperationException exception = await Should.ThrowAsync<InvalidOperationException>(Act);
+
+        exception.Message.ShouldBe("Commit failed.");
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
     public async Task HandleAsync_ShouldCommitLastPulledMessage_WhenEnumerationStopsBeforeSequenceIsComplete()
     {
         TestOffset offset1 = new("test", "1");

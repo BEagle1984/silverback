@@ -16,6 +16,7 @@ using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -62,6 +63,49 @@ public partial class ErrorPoliciesTests
         tryCount.ShouldBe(11);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(11);
         Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeEquivalentTo(message));
+    }
+
+    [Fact]
+    public async Task RetryPolicy_ShouldRetryProcessing_WhenCommitFails()
+    {
+        int tryCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(1)))))
+            .AddDelegateSubscriber<IIntegrationEvent, ISilverbackContext>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message, ISilverbackContext context)
+        {
+            if (Interlocked.Increment(ref tryCount) == 1)
+                context.GetConsumerPipelineContext().TransactionManager.Committing.AddHandler(_ => throw new InvalidOperationException("Commit failed."));
+        }
+
+        // A failed rollback would make the error policy reconnect the consumer, which would consume the message again as well
+        int disconnectionsCount = 0;
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        consumer.Client.Disconnecting.AddHandler(_ =>
+        {
+            Interlocked.Increment(ref disconnectionsCount);
+            return ValueTask.CompletedTask;
+        });
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        tryCount.ShouldBe(2);
+        disconnectionsCount.ShouldBe(0);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
     }
 
     [Fact]
