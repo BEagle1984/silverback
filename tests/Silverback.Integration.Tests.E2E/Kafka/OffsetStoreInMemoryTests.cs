@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -71,6 +73,94 @@ public class OffsetStoreInMemoryTests : KafkaTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         received.ShouldBe(8);
+    }
+
+    [Fact]
+    public async Task OffsetStore_ShouldStoreOffsets_WhenProcessingIsRetried()
+    {
+        int tryCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                .AddInMemoryKafkaOffsetStore())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableOffsetsCommit()
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory())
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(2)))))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage));
+
+        void HandleMessage(TestEventOne message)
+        {
+            if (Interlocked.Increment(ref tryCount) == 2)
+                throw new InvalidOperationException("Retry!");
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        // The second message fails with the first one already in the store
+        tryCount.ShouldBe(3);
+        consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
+
+        await consumer.Client.DisconnectAsync();
+        await consumer.Client.ConnectAsync();
+        await Helper.WaitUntilConnectedAsync();
+
+        await producer.ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        // Both offsets were stored: only the new message is consumed after reconnecting
+        tryCount.ShouldBe(4);
+    }
+
+    [Fact]
+    public async Task OffsetStore_ShouldRetryProcessing_WhenSubscriberFailsAfterStoringOffsets()
+    {
+        int tryCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                .AddInMemoryKafkaOffsetStore())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableOffsetsCommit()
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory())
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(1)))))
+            .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleMessageAsync));
+
+        async Task HandleMessageAsync(TestEventOne message, KafkaOffsetStoreScope offsetStoreScope)
+        {
+            await offsetStoreScope.StoreOffsetsAsync();
+
+            if (Interlocked.Increment(ref tryCount) == 1)
+                throw new InvalidOperationException("Retry!");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        tryCount.ShouldBe(2);
     }
 
     [Fact]

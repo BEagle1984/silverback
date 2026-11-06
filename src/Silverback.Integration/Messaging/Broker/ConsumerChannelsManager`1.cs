@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
@@ -78,7 +79,12 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
             return;
         }
 
-        Task.Run(() => ReadChannelAsync(channel)).FireAndForget();
+        // The loop outlives the caller, which may be processing the message being rolled back: it must not inherit its async context,
+        // or the objects stored in the SilverbackContext would leak into the messages read by the new loop
+        using (ExecutionContext.SuppressFlow())
+        {
+            Task.Run(() => ReadChannelAsync(channel)).FireAndForget();
+        }
     }
 
     [SuppressMessage("Usage", "VSTHRD202:Return Task directly instead of awaiting", Justification = "The disposed check must fault the returned task instead of throwing synchronously")]
