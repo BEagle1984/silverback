@@ -1,0 +1,100 @@
+name: sonar
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BUILD_CONFIGURATION: Release
+
+jobs:
+  sonar:
+    # SONAR_TOKEN isn't available to fork and Dependabot pull requests
+    if: ${{ !github.event.pull_request.head.repo.fork && github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      # SonarCloud needs the full history to assign the new code and the issues
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      # Install .NET SDK
+      - name: Install SDK 10.0.x
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      - name: Install SonarScanner
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+      # Build, test and analyze
+      - name: Prepare code analysis on SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          version=$(dotnet msbuild src/Silverback.Core/Silverback.Core.csproj -getProperty:BaseVersion)
+          dotnet sonarscanner begin \
+            /k:silverback \
+            /o:silverback \
+            /n:silverback \
+            /v:"$version" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.exclusions="**/obj/**,**/*.dll,docs/**" \
+            /d:sonar.cs.opencover.reportsPaths="$GITHUB_WORKSPACE/**/coverage.*.opencover.xml" \
+            /d:sonar.cs.vstest.reportsPaths="$GITHUB_WORKSPACE/tests/**/TestResults/*.trx"
+      - name: Build (${{ env.BUILD_CONFIGURATION }})
+        run: |
+          dotnet build Silverback.slnx --configuration "$BUILD_CONFIGURATION"
+      - name: Run unit tests
+        run: |
+          dotnet test Silverback.slnx \
+            --configuration "$BUILD_CONFIGURATION" \
+            --no-build \
+            --verbosity Normal \
+            --logger trx \
+            --blame-hang-timeout 5m \
+            --blame-hang-dump-type mini \
+            --filter "Type!=E2E&Dependency!=Docker&CI!=Skip" \
+            --collect "Code coverage" \
+            -p:CollectCoverage=true \
+            -p:CoverletOutputFormat=opencover%2ccobertura \
+            -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
+      - name: Run E2E tests
+        run: |
+          dotnet test Silverback.slnx \
+            --configuration "$BUILD_CONFIGURATION" \
+            --no-build \
+            --verbosity Normal \
+            --logger trx \
+            --blame-hang-timeout 5m \
+            --blame-hang-dump-type mini \
+            --filter "Type=E2E&Dependency!=Docker&CI!=Skip" \
+            --collect "Code coverage" \
+            -p:CollectCoverage=true \
+            -p:CoverletOutputFormat=opencover%2ccobertura \
+            -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
+      - name: Run SonarCloud analysis
+        if: ${{ !cancelled() }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
+      # Publish results
+      - name: Collect hang dumps
+        if: failure()
+        run: |
+          mkdir -p "$RUNNER_TEMP/blame"
+          # Skip the copies attached to the TRX results (TestResults/<run>/In/<machine>/)
+          find tests -path '*/TestResults/*' -not -path '*/In/*' \( -name 'Sequence_*.xml' -o -name '*.dmp' \) -exec cp --parents {} "$RUNNER_TEMP/blame" \;
+      - name: Publish hang dumps
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: blame-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/blame
+          if-no-files-found: ignore

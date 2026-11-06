@@ -112,12 +112,11 @@ The v4 documentation is still available at [silverback-messaging.net/v4](https:/
 
 ### Continuous Build
 
-[![Continuous Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=main)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=main)
-[![Tests Status (release/5.0.0)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/main)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=main)
+[![Continuous Build Status](https://github.com/BEagle1984/silverback/actions/workflows/continuous.yml/badge.svg?branch=main)](https://github.com/BEagle1984/silverback/actions/workflows/continuous.yml?query=branch%3Amain)
 
 ### Sonar Build
 
-[![Sonar Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/sonar?branchName=main)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=6&branchName=main)
+[![Sonar Build Status](https://github.com/BEagle1984/silverback/actions/workflows/sonar.yml/badge.svg?branch=main)](https://github.com/BEagle1984/silverback/actions/workflows/sonar.yml?query=branch%3Amain)
 
 #### Quality Metrics
 
@@ -179,8 +178,8 @@ lives in [Silverback.Tools.Generators.Common](tools/Silverback.Tools.Generators.
 | [docs/build.ps1](docs/build.ps1)                                           | Build and serve the DocFX documentation locally; run from the docs directory                    |
 | [docs/publish.ps1](docs/publish.ps1)                                       | Publish the generated site through a separate gh-pages checkout; supports -NoPush               |
 
-Build automation is defined in [the main pipeline](azure-pipelines.yml), [the Sonar pipeline](azure-pipelines.sonar.yml),
-and [the samples/extended-tests pipeline](azure-pipelines.other-projects.yml).
+Build automation is defined in [the main workflow](.github/workflows/continuous.yml), [the Sonar workflow](.github/workflows/sonar.yml),
+and [the samples/extended-tests workflow](.github/workflows/other-projects.yml).
 
 ## Community
 

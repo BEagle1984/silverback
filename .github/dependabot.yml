@@ -10,3 +10,9 @@ updates:
     commit-message:
       prefix: "chore"
     open-pull-requests-limit: 10
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"

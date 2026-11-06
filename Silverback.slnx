@@ -2,9 +2,6 @@
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
-    <File Path="azure-pipelines.other-projects.yml" />
-    <File Path="azure-pipelines.sonar.yml" />
-    <File Path="azure-pipelines.yml" />
     <File Path="CONTRIBUTING.md" />
     <File Path="coverage.ps1" />
     <File Path="Directory.Build.props" />
@@ -17,6 +14,11 @@
     <File Path="README.md" />
     <File Path="Silverback.slnx.DotSettings" />
     <File Path="stylecop.json" />
+  </Folder>
+  <Folder Name="/Solution Items/GitHub Workflows/">
+    <File Path=".github/workflows/continuous.yml" />
+    <File Path=".github/workflows/other-projects.yml" />
+    <File Path=".github/workflows/sonar.yml" />
   </Folder>
   <Folder Name="/Solution Items/src/">
     <File Path="src/Directory.Build.props" />
