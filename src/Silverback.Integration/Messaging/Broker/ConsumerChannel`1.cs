@@ -212,7 +212,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
         await SequenceStore.AwaitAllProcessingAsync().ConfigureAwait(false);
 
-        if (Volatile.Read(ref _isReading) == 0)
+        if (_isReading == 0)
             _readTaskCompletionSource.TrySetResult(true);
 
         // Completed only after the sequences stored by the read loop in the meantime are aborted (see NotifyReadingStoppedAsync)
@@ -221,7 +221,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     public async Task NotifyReadingStoppedAsync(bool hasThrown)
     {
-        if (Volatile.Read(ref _isReading) == 0)
+        if (_isReading == 0)
             return;
 
         // Abort the pending sequences before completing the read task, since StopReadingAsync can't await the sequences added after its

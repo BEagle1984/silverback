@@ -346,14 +346,14 @@ public class MqttClientWrapperTests
 
         public ProducerHarness(TimeSpan? timeout = null)
         {
-            _nativeClient.IsConnected.Returns(_ => Volatile.Read(ref _isConnected));
+            _nativeClient.IsConnected.Returns(_ => _isConnected);
 
             _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(async call =>
             {
                 Interlocked.Increment(ref _connectionAttempts);
                 ConnectionCancellationToken = call.Arg<CancellationToken>();
 
-                if (Volatile.Read(ref _connectionBlocked))
+                if (_connectionBlocked)
                 {
                     ConnectionStarted.TrySetResult(true);
                     await Task.Delay(System.Threading.Timeout.Infinite, ConnectionCancellationToken)
@@ -362,10 +362,10 @@ public class MqttClientWrapperTests
                     ConnectionCancellationToken.ThrowIfCancellationRequested();
                 }
 
-                if (Volatile.Read(ref _connectionUnavailable))
+                if (_connectionUnavailable)
                     throw new InvalidOperationException("The broker is unavailable.");
 
-                Volatile.Write(ref _isConnected, true);
+                _isConnected = true;
 
                 return new MqttClientConnectResult();
             });
@@ -389,7 +389,7 @@ public class MqttClientWrapperTests
             _nativeClient.DisconnectAsync(Arg.Any<MqttClientDisconnectOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
             {
                 PublishedBeforeDisconnect = _published;
-                Volatile.Write(ref _isConnected, false);
+                _isConnected = false;
 
                 return Task.CompletedTask;
             });
@@ -449,7 +449,7 @@ public class MqttClientWrapperTests
 
         public bool FailFirstPublish { get; set; }
 
-        public int ConnectionAttempts => Volatile.Read(ref _connectionAttempts);
+        public int ConnectionAttempts => _connectionAttempts;
 
         public async Task ConnectAsync()
         {
@@ -460,13 +460,13 @@ public class MqttClientWrapperTests
 
         public void LoseConnection()
         {
-            Volatile.Write(ref _connectionUnavailable, true);
-            Volatile.Write(ref _isConnected, false);
+            _connectionUnavailable = true;
+            _isConnected = false;
         }
 
-        public void RestoreConnection() => Volatile.Write(ref _connectionUnavailable, false);
+        public void RestoreConnection() => _connectionUnavailable = false;
 
-        public void BlockConnection() => Volatile.Write(ref _connectionBlocked, true);
+        public void BlockConnection() => _connectionBlocked = true;
 
         public Task ProduceAsync(byte number)
         {

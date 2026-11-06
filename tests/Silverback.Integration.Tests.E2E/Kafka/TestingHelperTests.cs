@@ -79,7 +79,7 @@ public class TestingHelperTests : KafkaTests
         try
         {
             await Should.ThrowAsync<TimeoutException>(() => wait.WaitAsync(TimeSpan.FromMilliseconds(100)));
-            Volatile.Read(ref processed).ShouldBe(0);
+            processed.ShouldBe(0);
         }
         finally
         {
@@ -88,7 +88,7 @@ public class TestingHelperTests : KafkaTests
 
         await wait;
 
-        Volatile.Read(ref processed).ShouldBe(1);
+        processed.ShouldBe(1);
         DefaultConsumerGroup.CommittedOffsets.ShouldBeEmpty();
 
         await Should.ThrowAsync<TimeoutException>(() =>

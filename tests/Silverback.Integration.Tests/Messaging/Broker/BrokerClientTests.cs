@@ -182,9 +182,9 @@ public class BrokerClientTests
         {
         }
 
-        public int ConnectCount => Volatile.Read(ref _connectCount);
+        public int ConnectCount => _connectCount;
 
-        public int DisconnectCount => Volatile.Read(ref _disconnectCount);
+        public int DisconnectCount => _disconnectCount;
 
         protected override ValueTask ConnectCoreAsync()
         {

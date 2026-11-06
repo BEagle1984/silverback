@@ -167,8 +167,8 @@ public class ShutdownTests(MqttFixture fixture)
             await stopping.Task.WaitAsync(Timeout);
             await keepAliveReceived.Task.WaitAsync(Timeout);
 
-            Volatile.Read(ref disconnects).ShouldBe(0);
-            Volatile.Read(ref pingResponses).ShouldBeGreaterThanOrEqualTo(2);
+            disconnects.ShouldBe(0);
+            pingResponses.ShouldBeGreaterThanOrEqualTo(2);
             shutdown.IsCompleted.ShouldBeFalse();
             clientFactory.Client.IsConnected.ShouldBeTrue();
 

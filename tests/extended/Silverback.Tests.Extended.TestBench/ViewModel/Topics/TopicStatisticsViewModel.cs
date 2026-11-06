@@ -75,7 +75,7 @@ public class TopicStatisticsViewModel : ViewModelBase
 
     private void UpdateLagCount()
     {
-        LagCount = Volatile.Read(ref _producedCount) - Volatile.Read(ref _processedCount) - Volatile.Read(ref _lostCount);
+        LagCount = _producedCount - _processedCount - _lostCount;
         NotifyPropertyChanged(nameof(LagCount));
     }
 }

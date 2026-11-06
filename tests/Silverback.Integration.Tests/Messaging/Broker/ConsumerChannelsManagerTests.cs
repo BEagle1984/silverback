@@ -184,7 +184,7 @@ public class ConsumerChannelsManagerTests
 
         public TaskCompletionSource<bool> FirstReadStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        public int ReadCount => Volatile.Read(ref _readCount);
+        public int ReadCount => _readCount;
 
         public void StartReading() => StartReading(_channel);
 

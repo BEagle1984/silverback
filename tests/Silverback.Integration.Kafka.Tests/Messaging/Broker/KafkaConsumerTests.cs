@@ -538,7 +538,7 @@ public partial class KafkaConsumerTests
                     return null;
                 });
 
-                await PollHarness.WaitUntilAsync(() => Volatile.Read(ref stopCount) >= 2);
+                await PollHarness.WaitUntilAsync(() => stopCount >= 2);
                 active.Release.TrySetResult(true);
                 await rebalance;
 

@@ -37,7 +37,7 @@ public class MockedConfluentConsumerTests
         consumer.PartitionsAssignedHandler = (_, partitions) =>
         {
             assignedCallbacks.Add([.. partitions]);
-            Volatile.Write(ref connected, 1);
+            connected = 1;
 
             if (assignedCallbacks.Count == 1)
                 return GetPausedPartitionOffsets(partitions, assignmentCallbackCompleted, resumeAssignmentCompletion);
@@ -47,7 +47,7 @@ public class MockedConfluentConsumerTests
         consumer.PartitionsRevokedHandler = (_, partitions) =>
         {
             Interlocked.Increment(ref revokedCallbacks);
-            Volatile.Write(ref connected, 0);
+            connected = 0;
             return partitions;
         };
 
@@ -56,7 +56,7 @@ public class MockedConfluentConsumerTests
 
         try
         {
-            Volatile.Read(ref connected).ShouldBe(1);
+            connected.ShouldBe(1);
             consumer.OnRebalancing();
             consumerGroup.Assignment = [Partition1];
             consumer.OnPartitionsRevoked([Partition0]);
@@ -70,8 +70,8 @@ public class MockedConfluentConsumerTests
 
         consumer.PartitionsAssigned.ShouldBeFalse();
         consumer.Assignment.ShouldBeEmpty();
-        Volatile.Read(ref connected).ShouldBe(0);
-        Volatile.Read(ref revokedCallbacks).ShouldBe(1);
+        connected.ShouldBe(0);
+        revokedCallbacks.ShouldBe(1);
         consumerGroup.AssignmentCompleteCount.ShouldBe(0);
 
         consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
@@ -80,7 +80,7 @@ public class MockedConfluentConsumerTests
         assignedCallbacks[1].ShouldBe([Partition1]);
         consumer.PartitionsAssigned.ShouldBeTrue();
         consumer.Assignment.ShouldBe(consumerGroup.Assignment);
-        Volatile.Read(ref connected).ShouldBe(1);
+        connected.ShouldBe(1);
         consumerGroup.AssignmentCompleteCount.ShouldBe(1);
     }
 
@@ -106,13 +106,13 @@ public class MockedConfluentConsumerTests
                 consumer.OnPartitionsRevoked([Partition0]);
             }
 
-            Volatile.Write(ref connected, 1);
+            connected = 1;
             return partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Unset));
         };
         consumer.PartitionsRevokedHandler = (_, partitions) =>
         {
             Interlocked.Increment(ref revokedCallbacks);
-            Volatile.Write(ref connected, 0);
+            connected = 0;
             return partitions;
         };
 
@@ -120,8 +120,8 @@ public class MockedConfluentConsumerTests
 
         consumer.PartitionsAssigned.ShouldBeFalse();
         consumer.Assignment.ShouldBeEmpty();
-        Volatile.Read(ref connected).ShouldBe(0);
-        Volatile.Read(ref revokedCallbacks).ShouldBe(1);
+        connected.ShouldBe(0);
+        revokedCallbacks.ShouldBe(1);
         consumerGroup.AssignmentCompleteCount.ShouldBe(0);
 
         consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
@@ -130,7 +130,7 @@ public class MockedConfluentConsumerTests
         assignedCallbacks[1].ShouldBe([Partition1]);
         consumer.PartitionsAssigned.ShouldBeTrue();
         consumer.Assignment.ShouldBe(consumerGroup.Assignment);
-        Volatile.Read(ref connected).ShouldBe(1);
+        connected.ShouldBe(1);
         consumerGroup.AssignmentCompleteCount.ShouldBe(1);
     }
 
@@ -149,7 +149,7 @@ public class MockedConfluentConsumerTests
             if (Interlocked.Increment(ref assignedCallbacks) == 1)
                 consumer.OnRebalancing();
 
-            Volatile.Write(ref connected, 1);
+            connected = 1;
             return partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Unset));
         };
 
@@ -157,16 +157,16 @@ public class MockedConfluentConsumerTests
 
         consumer.PartitionsAssigned.ShouldBeFalse();
         consumer.Assignment.ShouldBeEmpty();
-        Volatile.Read(ref connected).ShouldBe(1);
-        Volatile.Read(ref assignedCallbacks).ShouldBe(1);
+        connected.ShouldBe(1);
+        assignedCallbacks.ShouldBe(1);
         consumerGroup.AssignmentCompleteCount.ShouldBe(0);
 
         consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
 
         consumer.PartitionsAssigned.ShouldBeTrue();
         consumer.Assignment.ShouldBe(consumerGroup.Assignment);
-        Volatile.Read(ref connected).ShouldBe(1);
-        Volatile.Read(ref assignedCallbacks).ShouldBe(1);
+        connected.ShouldBe(1);
+        assignedCallbacks.ShouldBe(1);
         consumerGroup.AssignmentCompleteCount.ShouldBe(1);
     }
 

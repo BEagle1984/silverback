@@ -65,7 +65,7 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
         _stopping.Dispose();
     }
 
-    private static double Age(ref long timestamp) => Stopwatch.GetElapsedTime(Volatile.Read(ref timestamp)).TotalSeconds;
+    private static double Age(ref long timestamp) => Stopwatch.GetElapsedTime(timestamp).TotalSeconds;
 
     private void Record<TState>(
         string category,
@@ -79,7 +79,7 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
 
         if (eventId.Id == 2041)
         {
-            Volatile.Write(ref _lastStatistics, now);
+            _lastStatistics = now;
 
             return;
         }
@@ -87,7 +87,7 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
         if (eventId.Id == 2011)
         {
             Interlocked.Increment(ref _consumed);
-            Volatile.Write(ref _lastConsumed, now);
+            _lastConsumed = now;
         }
 
         if (eventId.Id == 2032)
@@ -101,7 +101,7 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
         if (category == typeof(Subscriber).FullName && text.StartsWith("Successfully processed", StringComparison.Ordinal))
         {
             Interlocked.Increment(ref _processed);
-            Volatile.Write(ref _lastProcessed, now);
+            _lastProcessed = now;
         }
 
         string entry = $"{DateTime.UtcNow:O} [{level}] {category} {eventId.Id} {text}";

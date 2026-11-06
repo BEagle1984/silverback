@@ -76,7 +76,7 @@ public class ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
         {
             int number = JsonSerializer.Deserialize<ReconnectMessage>(args.ApplicationMessage.Payload.ToArray())!.Number;
 
-            if (number == 2 && Volatile.Read(ref connection) == 1)
+            if (number == 2 && connection == 1)
                 blocked.TrySetResult(true);
 
             return Task.CompletedTask;
@@ -108,7 +108,7 @@ public class ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
                 }))
             .AddDelegateSubscriber<ReconnectMessage, IPublisher, CancellationToken>(async Task (message, publisher, cancellationToken) =>
             {
-                int receivedConnection = Volatile.Read(ref connection);
+                int receivedConnection = connection;
 
                 if (message.Number == 0 && receivedConnection == 1)
                 {
@@ -151,7 +151,7 @@ public class ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
         {
             subscribed.TrySetResult(true);
 
-            if (Volatile.Read(ref connection) > 1)
+            if (connection > 1)
                 reconnected.TrySetResult(true);
 
             return ValueTask.CompletedTask;
@@ -161,7 +161,7 @@ public class ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
         {
             int number = JsonSerializer.Deserialize<ReconnectMessage>(args.ApplicationMessage.Payload.ToArray())!.Number;
 
-            if (number == 1 && Volatile.Read(ref connection) == 1)
+            if (number == 1 && connection == 1)
                 buffered.TrySetResult(true);
 
             return Task.CompletedTask;

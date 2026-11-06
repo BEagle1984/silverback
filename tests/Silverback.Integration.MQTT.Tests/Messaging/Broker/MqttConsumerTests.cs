@@ -648,14 +648,14 @@ public class MqttConsumerTests
         public BackpressureConsumerHarness(int degreeOfParallelism, int? backpressureLimit)
         {
             Behavior = new BackpressureBlockingBehavior(degreeOfParallelism);
-            _nativeClient.IsConnected.Returns(_ => Volatile.Read(ref _isConnected));
+            _nativeClient.IsConnected.Returns(_ => _isConnected);
 
             _nativeClient.When(client => client.ApplicationMessageReceivedAsync += Arg.Any<Func<MqttApplicationMessageReceivedEventArgs, Task>>())
                 .Do(call => _messageReceived = call.Arg<Func<MqttApplicationMessageReceivedEventArgs, Task>>());
 
             _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
             {
-                Volatile.Write(ref _isConnected, true);
+                _isConnected = true;
 
                 return new MqttClientConnectResult();
             });
@@ -663,7 +663,7 @@ public class MqttConsumerTests
             _nativeClient.DisconnectAsync(Arg.Any<MqttClientDisconnectOptions>(), Arg.Any<CancellationToken>()).Returns(async _ =>
             {
                 await PendingReceive;
-                Volatile.Write(ref _isConnected, false);
+                _isConnected = false;
             });
 
             MqttClientConfigurationBuilder builder = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
@@ -832,7 +832,7 @@ public class MqttConsumerTests
             {
                 BeforeIsConnectedRead?.Invoke();
 
-                return Volatile.Read(ref _isConnected);
+                return _isConnected;
             });
 
             _nativeClient.When(client => client.ApplicationMessageReceivedAsync += Arg.Any<Func<MqttApplicationMessageReceivedEventArgs, Task>>())
@@ -840,12 +840,12 @@ public class MqttConsumerTests
 
             _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(async _ =>
             {
-                if (Volatile.Read(ref _connection) > 0)
+                if (_connection > 0)
                     Reconnecting.TrySetResult(true);
 
                 await PendingReceive;
                 Interlocked.Increment(ref _connection);
-                Volatile.Write(ref _isConnected, true);
+                _isConnected = true;
 
                 if (BeforeConnected != null)
                     await BeforeConnected();
@@ -855,7 +855,7 @@ public class MqttConsumerTests
 
             _nativeClient.DisconnectAsync(Arg.Any<MqttClientDisconnectOptions>(), Arg.Any<CancellationToken>()).Returns(async _ =>
             {
-                Volatile.Write(ref _isConnected, false);
+                _isConnected = false;
                 await PendingReceive;
             });
 
@@ -876,7 +876,7 @@ public class MqttConsumerTests
             {
                 _subscribed.TrySetResult(true);
 
-                if (Volatile.Read(ref _connection) > 1)
+                if (_connection > 1)
                     Reconnected.TrySetResult(true);
 
                 return ValueTask.CompletedTask;
@@ -924,7 +924,7 @@ public class MqttConsumerTests
 
         public int Disconnections { get; private set; }
 
-        public void LoseConnection() => Volatile.Write(ref _isConnected, false);
+        public void LoseConnection() => _isConnected = false;
 
         public void LoseConnectionDuringAcknowledgement() => BeforeAcknowledge = () =>
         {
@@ -951,7 +951,7 @@ public class MqttConsumerTests
 
         public Task DeliverAsync(byte number)
         {
-            int connection = Volatile.Read(ref _connection);
+            int connection = _connection;
             MqttApplicationMessageReceivedEventArgs eventArgs = new(
                 "reconnect-test",
                 new MqttApplicationMessage
@@ -963,11 +963,11 @@ public class MqttConsumerTests
                 new MqttPublishPacket { QualityOfServiceLevel = _qualityOfServiceLevel },
                 (_, _) =>
                 {
-                    if (!Volatile.Read(ref _isConnected))
+                    if (!_isConnected)
                         throw new InvalidOperationException("The connection was lost before acknowledging the delivery.");
 
                     BeforeAcknowledge?.Invoke();
-                    Acknowledged.Enqueue(new Acknowledgement(number, connection, Volatile.Read(ref _connection)));
+                    Acknowledged.Enqueue(new Acknowledgement(number, connection, _connection));
 
                     return Task.CompletedTask;
                 });
@@ -1007,7 +1007,7 @@ public class MqttConsumerTests
 
         public bool IsStopRequestCompleted { get; private set; }
 
-        public int CanceledAttempts => Volatile.Read(ref _canceledAttempts);
+        public int CanceledAttempts => _canceledAttempts;
 
         public TaskCompletionSource<bool> CanceledProcessingRetried { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 

@@ -130,7 +130,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
         if (stopping.IsCompleted)
             return Task.CompletedTask;
 
-        TaskCompletionSource<bool>? completion = Volatile.Read(ref _pendingPollTaskCompletionSource);
+        TaskCompletionSource<bool>? completion = _pendingPollTaskCompletionSource;
 
         if (completion == null)
         {
@@ -264,7 +264,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     private void NotifyPollCompleted()
     {
-        if (Volatile.Read(ref _pendingPollTaskCompletionSource) != null)
+        if (_pendingPollTaskCompletionSource != null)
             Interlocked.Exchange(ref _pendingPollTaskCompletionSource, null)?.TrySetResult(true);
     }
 

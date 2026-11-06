@@ -13,7 +13,7 @@ internal sealed class DynamicCountdownEvent : IDisposable
 
     private int _currentCount;
 
-    public int CurrentCount => Volatile.Read(ref _currentCount);
+    public int CurrentCount => _currentCount;
 
     public void Reset(int count = 0)
     {
@@ -41,7 +41,7 @@ internal sealed class DynamicCountdownEvent : IDisposable
 
     public async Task WaitAsync(CancellationToken cancellationToken = default)
     {
-        while (Volatile.Read(ref _currentCount) > 0)
+        while (_currentCount > 0)
         {
             await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         }

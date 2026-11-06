@@ -215,7 +215,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         if (Status != ClientStatus.Initialized)
             throw new InvalidOperationException("The producer is not connected.");
 
-        IProducer<byte[]?, byte[]?>? confluentProducer = Volatile.Read(ref _confluentProducer);
+        IProducer<byte[]?, byte[]?>? confluentProducer = _confluentProducer;
 
         if (confluentProducer != null)
             return confluentProducer;

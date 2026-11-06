@@ -63,8 +63,8 @@ public abstract class BrokerClient : IBrokerClient
     /// <inheritdoc cref="IBrokerClient.Status" />
     public ClientStatus Status
     {
-        get => (ClientStatus)Volatile.Read(ref _status);
-        private set => Volatile.Write(ref _status, (int)value);
+        get => (ClientStatus)_status;
+        private set => _status = (int)value;
     }
 
     /// <inheritdoc cref="IDisposable.Dispose" />

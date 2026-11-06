@@ -40,10 +40,6 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
     // Serializes the rebalances, since the subscriptions semaphore is released while the revoked callbacks run
     private readonly SemaphoreSlim _rebalanceSemaphore = new(1, 1);
 
-    private volatile bool _isRebalancing = true;
-
-    private volatile bool _isRebalanceScheduled;
-
     // Invalidate drain checks that inspected an older group snapshot
     private long _stateVersion;
 
@@ -60,9 +56,9 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
     public IReadOnlyCollection<TopicPartitionOffset> CommittedOffsets => _committedOffsets.Values.AsReadOnlyCollection();
 
-    public bool IsRebalancing => _isRebalancing;
+    public bool IsRebalancing { get; private set; } = true;
 
-    public bool IsRebalanceScheduled => _isRebalanceScheduled;
+    public bool IsRebalanceScheduled { get; private set; }
 
     public void Subscribe(IMockedConfluentConsumer consumer, IEnumerable<string> topics)
     {
@@ -199,10 +195,10 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
     {
         lock (_stateLock)
         {
-            if (_isRebalanceScheduled)
+            if (IsRebalanceScheduled)
                 return;
 
-            _isRebalanceScheduled = true;
+            IsRebalanceScheduled = true;
         }
 
         // Rebalance asynchronously to mimic the real Kafka
@@ -278,7 +274,7 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
                 lock (_stateLock)
                 {
                     if (stateVersion == _stateVersion &&
-                        (consumers.Length == 0 || !_isRebalancing && !_isRebalanceScheduled))
+                        (consumers.Length == 0 || !IsRebalancing && !IsRebalanceScheduled))
                     {
                         return;
                     }
@@ -323,13 +319,13 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
             lock (_stateLock)
             {
-                _isRebalanceScheduled = false;
-                _isRebalancing = true;
+                IsRebalanceScheduled = false;
+                IsRebalancing = true;
                 _stateVersion++;
 
                 if (_subscriptions.Count == 0)
                 {
-                    _isRebalancing = false;
+                    IsRebalancing = false;
                     return null;
                 }
 
@@ -385,7 +381,7 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
             // Give the MockedConfluentConsumers time to realize the partitions have been revoked and return from the Consume
             await Task.Delay(20).ConfigureAwait(false);
 
-            _isRebalancing = false;
+            IsRebalancing = false;
 
             await WaitUntilPartitionsAssignedAsync().ConfigureAwait(false);
         }

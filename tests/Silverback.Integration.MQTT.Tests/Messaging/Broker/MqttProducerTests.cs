@@ -32,10 +32,10 @@ public class MqttProducerTests
         ConcurrentQueue<byte> published = new();
         bool isConnected = false;
 
-        nativeClient.IsConnected.Returns(_ => Volatile.Read(ref isConnected));
+        nativeClient.IsConnected.Returns(_ => isConnected);
         nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
         {
-            Volatile.Write(ref isConnected, true);
+            isConnected = true;
 
             return new MqttClientConnectResult();
         });

@@ -34,7 +34,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private bool _isDisposed;
 
-    private volatile bool _isConnectedEventRaised;
+    private bool _isConnectedEventRaised;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttConsumer" /> class.

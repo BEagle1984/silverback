@@ -46,7 +46,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly TaskCompletionSource _disposeTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-    // Volatile because the state is also checked without holding the semaphores (e.g., when the processing completes)
+    // The state and the completing flag are also read without holding the semaphores (e.g., when the processing completes). They are
+    // volatile because the readers rely on the order of the updates: IsCompleting is reset only after the state is switched to complete
+    // and _abortingTaskCompletionSource is set before the state is switched to aborted.
     private volatile CompleteState _completeState = CompleteState.NotComplete;
 
     private volatile bool _isCompleting;

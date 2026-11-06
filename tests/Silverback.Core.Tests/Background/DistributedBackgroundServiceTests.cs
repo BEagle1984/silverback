@@ -100,7 +100,7 @@ public class DistributedBackgroundServiceTests
             {
                 execute.Invoke();
 
-                if (Volatile.Read(ref executingCount) > 1)
+                if (executingCount > 1)
                     executedInParallel = true;
 
                 await Task.Delay(100, stoppingToken);

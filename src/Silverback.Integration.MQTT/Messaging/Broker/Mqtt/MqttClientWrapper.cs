@@ -47,7 +47,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
     private bool _pendingReconnect;
 
-    private volatile bool _isHandlingConnectionLoss;
+    private bool _isHandlingConnectionLoss;
 
     public MqttClientWrapper(
         string name,

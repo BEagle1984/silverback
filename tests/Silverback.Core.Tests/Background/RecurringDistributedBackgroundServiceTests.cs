@@ -123,7 +123,7 @@ public class RecurringDistributedBackgroundServiceTests
                 await service2.StopAsync(CancellationToken.None).WaitAsync(timeout);
 
             await Task.WhenAll(started1.Task, started2.Task).WaitAsync(timeout);
-            Volatile.Read(ref executedInParallel).ShouldBe(0);
+            executedInParallel.ShouldBe(0);
         }
         finally
         {
@@ -132,7 +132,7 @@ public class RecurringDistributedBackgroundServiceTests
                 service2.StopAsync(CancellationToken.None)).WaitAsync(timeout);
         }
 
-        Volatile.Read(ref executingCount).ShouldBe(0);
+        executingCount.ShouldBe(0);
     }
 
     [Fact]
