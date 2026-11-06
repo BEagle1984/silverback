@@ -281,6 +281,25 @@ public class ConsumerTests
         }
     }
 
+    [Fact]
+    public async Task ClientDisconnecting_ShouldStopConsumer_WhenStartIsPending()
+    {
+        using TestConsumer consumer = CreateConsumer();
+        TaskCompletionSource<bool> releaseStart = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        consumer.StartGate = releaseStart.Task;
+
+        Task starting = consumer.StartAsync().AsTask();
+        Task disconnecting = consumer.Client.Disconnecting.InvokeAsync(Substitute.For<BrokerClient>("client", Substitute.For<ISilverbackLogger>())).AsTask();
+
+        disconnecting.IsCompleted.ShouldBeFalse();
+
+        releaseStart.TrySetResult(true);
+        await Task.WhenAll(starting, disconnecting).WaitAsync(Timeout);
+
+        consumer.Started.ShouldBeFalse();
+        consumer.StopCalls.ShouldBe(1);
+    }
+
     private static TestConsumer CreateConsumer(params IConsumerBehavior[] behaviors)
     {
         IBrokerClient client = Substitute.For<IBrokerClient>();

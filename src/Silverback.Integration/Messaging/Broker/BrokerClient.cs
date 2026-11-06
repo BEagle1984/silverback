@@ -22,6 +22,8 @@ public abstract class BrokerClient : IBrokerClient
     // both run their flow
     private int _status;
 
+    private int _connectionId; // Incremented by every connect, to recognize a failing connect outdated by a reconnect
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="BrokerClient" /> class.
     /// </summary>
@@ -87,6 +89,9 @@ public abstract class BrokerClient : IBrokerClient
         if (!TryChangeStatus(ClientStatus.Disconnected, ClientStatus.Initializing))
             return;
 
+        int connectionId = Interlocked.Increment(ref _connectionId);
+        bool isStatusInitialized = false;
+
         try
         {
             _logger.LogBrokerClientInitializing(this);
@@ -101,8 +106,12 @@ public abstract class BrokerClient : IBrokerClient
 
             await ConnectCoreAsync().ConfigureAwait(false);
 
-            await Initialized.InvokeAsync(this).ConfigureAwait(false);
+            // Set before raising the event: its handlers start consuming and can take arbitrarily long, while the messages being
+            // processed already need a fully working client (e.g. to commit or to disconnect after a fatal error)
             Status = ClientStatus.Initialized;
+            isStatusInitialized = true;
+
+            await Initialized.InvokeAsync(this).ConfigureAwait(false);
 
             _logger.LogBrokerClientInitialized(this);
         }
@@ -110,7 +119,13 @@ public abstract class BrokerClient : IBrokerClient
         {
             _logger.LogBrokerClientInitializeError(this, ex);
 
-            Status = ClientStatus.Disconnected;
+            // Nothing else changes the status while initializing, but a failing Initialized handler must not override the status of a
+            // concurrent disconnect or reconnect
+            if (!isStatusInitialized)
+                Status = ClientStatus.Disconnected;
+            else if (connectionId == _connectionId)
+                TryChangeStatus(ClientStatus.Initialized, ClientStatus.Disconnected);
+
             throw;
         }
     }

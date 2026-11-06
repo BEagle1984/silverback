@@ -34,6 +34,112 @@ public class ConsumerTests : KafkaTests
     }
 
     [Fact]
+    public async Task ConnectAsync_ShouldConsumeAndCommit_WhenInitializedHandlerIsPending()
+    {
+        TaskCompletionSource<bool> release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                .ManuallyConnect())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(
+                    "producer",
+                    producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(
+                    "consumer",
+                    consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .DisableAutoCommit()
+                        .CommitOffsetEach(1)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IBrokerClientCollection clients = Host.ServiceProvider.GetRequiredService<IBrokerClientCollection>();
+        await clients["producer"].ConnectAsync();
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne());
+        }
+
+        IBrokerClient consumerClient = clients["consumer"];
+        consumerClient.Initialized.AddHandler(async _ => await release.Task);
+
+        Task connect = consumerClient.ConnectAsync().AsTask();
+
+        try
+        {
+            await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) == 3);
+
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+            Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+            consumerClient.Status.ShouldBe(ClientStatus.Initialized);
+        }
+        finally
+        {
+            release.TrySetResult(true);
+        }
+
+        await connect.WaitAsync(TimeSpan.FromSeconds(10));
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldDisconnectClient_WhenProcessingFailsWhileInitializedHandlerIsPending()
+    {
+        TaskCompletionSource<bool> release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                .ManuallyConnect())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(
+                    "producer",
+                    producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(
+                    "consumer",
+                    consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<TestEventOne>(HandleEvent));
+
+        static void HandleEvent(TestEventOne message) => throw new InvalidOperationException("Processing failed.");
+
+        IBrokerClientCollection clients = Host.ServiceProvider.GetRequiredService<IBrokerClientCollection>();
+        await clients["producer"].ConnectAsync();
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventOne());
+
+        IBrokerClient consumerClient = clients["consumer"];
+        consumerClient.Initialized.AddHandler(async _ => await release.Task);
+
+        Task connect = consumerClient.ConnectAsync().AsTask();
+
+        try
+        {
+            await AsyncTestingUtil.WaitAsync(() => consumerClient.Status == ClientStatus.Disconnected);
+
+            consumerClient.Status.ShouldBe(ClientStatus.Disconnected);
+        }
+        finally
+        {
+            release.TrySetResult(true);
+        }
+
+        await connect.WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumerClient.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
     public async Task PauseAndResume_ShouldPauseAndResumeConsuming()
     {
         int[] receivedMessages = [0, 0, 0];

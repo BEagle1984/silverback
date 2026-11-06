@@ -197,13 +197,17 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             return;
         }
 
+        // Set before reading the status, with a full fence between the write and the read: the disconnect changes the status and then
+        // reads IsStarting, so at least one of the two sides must see the other and a pending start is never missed
+        IsStarting = true;
+        Interlocked.MemoryBarrier();
+
         if (Client.Status is not (ClientStatus.Initialized or ClientStatus.Initializing))
         {
+            IsStarting = false;
             _startStopSemaphore.Release();
             throw new InvalidOperationException("The underlying client is not connected.");
         }
-
-        IsStarting = true;
 
         _logger.LogConsumerTrace(this, "Starting consumer...");
 
@@ -562,7 +566,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
     private async ValueTask OnClientDisconnectingAsync(BrokerClient client)
     {
-        if (IsStarted && !IsStopping)
+        // A pending start (e.g. from the Initialized handlers) must be awaited, otherwise it would leave the consumer started
+        if (IsStarting || IsStarted && !IsStopping)
             await StopAsync(false).ConfigureAwait(false);
         else
             await StopCoreAsync().ConfigureAwait(false);

@@ -64,6 +64,125 @@ public class BrokerClientTests
     }
 
     [Fact]
+    public async Task ConnectAsync_ShouldSetInitializedStatusBeforeInvokingInitializedHandlers()
+    {
+        await using TestBrokerClient client = new(new HookLogger());
+        ClientStatus? statusInHandler = null;
+        client.Initialized.AddHandler(brokerClient =>
+        {
+            statusInHandler = brokerClient.Status;
+            return ValueTask.CompletedTask;
+        });
+
+        await client.ConnectAsync();
+
+        statusInHandler.ShouldBe(ClientStatus.Initialized);
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldResetStatus_WhenInitializingHandlerFails()
+    {
+        await using TestBrokerClient client = new(new HookLogger());
+        client.Initializing.AddHandler(_ => throw new InvalidOperationException("Test"));
+
+        await Should.ThrowAsync<InvalidOperationException>(() => client.ConnectAsync().AsTask());
+
+        client.ConnectCount.ShouldBe(0);
+        client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldResetStatus_WhenInitializedHandlerFails()
+    {
+        await using TestBrokerClient client = new(new HookLogger());
+        client.Initialized.AddHandler(_ => throw new InvalidOperationException("Test"));
+
+        await Should.ThrowAsync<InvalidOperationException>(() => client.ConnectAsync().AsTask());
+
+        client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldNotResetStatus_WhenInitializedHandlerFailsWhileDisconnecting()
+    {
+        await using TestBrokerClient client = new(new HookLogger());
+        TaskCompletionSource failInitializedHandler = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource releaseDisconnecting = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        client.Initialized.AddHandler(async _ =>
+        {
+            await failInitializedHandler.Task;
+
+            throw new InvalidOperationException("Test");
+        });
+
+        client.Disconnecting.AddHandler(async _ => await releaseDisconnecting.Task);
+
+        Task connectTask = client.ConnectAsync().AsTask();
+        Task disconnectTask = client.DisconnectAsync().AsTask();
+
+        client.Status.ShouldBe(ClientStatus.Disconnecting);
+
+        failInitializedHandler.SetResult();
+        await Should.ThrowAsync<AggregateException>(() => connectTask.WaitAsync(Timeout));
+
+        client.Status.ShouldBe(ClientStatus.Disconnecting);
+
+        releaseDisconnecting.SetResult();
+        await disconnectTask.WaitAsync(Timeout);
+
+        client.DisconnectCount.ShouldBe(1);
+        client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldNotResetStatus_WhenInitializedHandlerFailsAfterReconnect()
+    {
+        await using TestBrokerClient client = new(new HookLogger());
+        TaskCompletionSource failInitializedHandler = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int initializedCount = 0;
+        client.Initialized.AddHandler(async _ =>
+        {
+            // Only the first connect fails
+            if (Interlocked.Increment(ref initializedCount) > 1)
+                return;
+
+            await failInitializedHandler.Task;
+
+            throw new InvalidOperationException("Test");
+        });
+
+        Task connectTask = client.ConnectAsync().AsTask();
+
+        await client.ReconnectAsync().AsTask().WaitAsync(Timeout);
+
+        failInitializedHandler.SetResult();
+        await Should.ThrowAsync<AggregateException>(() => connectTask.WaitAsync(Timeout));
+
+        client.ConnectCount.ShouldBe(2);
+        client.Status.ShouldBe(ClientStatus.Initialized);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldDisconnect_WhenInitializedHandlerIsPending()
+    {
+        await using TestBrokerClient client = new(new HookLogger());
+        TaskCompletionSource releaseInitializedHandler = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        client.Initialized.AddHandler(async _ => await releaseInitializedHandler.Task);
+
+        Task connectTask = client.ConnectAsync().AsTask();
+
+        await client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        client.DisconnectCount.ShouldBe(1);
+        client.Status.ShouldBe(ClientStatus.Disconnected);
+
+        releaseInitializedHandler.SetResult();
+        await connectTask.WaitAsync(Timeout);
+
+        client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The hook and the first call complete before the disposal")]
     public async Task DisconnectAsync_ShouldDisconnectOnce_WhenCalledConcurrently()
     {

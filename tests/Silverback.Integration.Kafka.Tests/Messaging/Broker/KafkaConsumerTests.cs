@@ -1290,7 +1290,7 @@ public partial class KafkaConsumerTests
     }
 
     [Fact]
-    public async Task Restart_ShouldNotSeek_WhenClientIsInitializing()
+    public async Task Restart_ShouldNotSeek_WhenClientIsReconnected()
     {
         await using PollHarness harness = new();
         await harness.StartAsync(0);
@@ -1302,15 +1302,13 @@ public partial class KafkaConsumerTests
 
         await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
 
-        // A start while the client is initializing is the first start on a new native consumer, which resumes from the
-        // committed offsets: the offsets polled by the previous native consumer must not be sought
-        harness.Client.Status.Returns(ClientStatus.Initializing);
-        await harness.Consumer.StartAsync();
+        // The start following a reconnect is the first start on a new native consumer, which resumes from the committed offsets:
+        // the offsets polled by the previous native consumer must not be sought
+        await harness.RaiseClientInitializedAsync();
         await harness.PollAsync(() => null);
 
         harness.Seeks.ShouldBeEmpty();
 
-        harness.Client.Status.Returns(ClientStatus.Initialized);
         await harness.PollAsync(() =>
         {
             harness.Assign(0);
@@ -1328,7 +1326,7 @@ public partial class KafkaConsumerTests
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The rollback is awaited before the harness is disposed")]
-    public async Task Restart_ShouldNotResumePartitionPausedByRollback_WhenClientWasInitializing()
+    public async Task Restart_ShouldNotResumePartitionPausedByRollback_WhenClientIsReconnected()
     {
         await using PollHarness harness = new();
         await harness.StartAsync(0);
@@ -1370,11 +1368,9 @@ public partial class KafkaConsumerTests
         }
 
         // The defeated rollback paused the partition on the previous native consumer, while none is paused on the new one
-        harness.Client.Status.Returns(ClientStatus.Initializing);
-        await harness.Consumer.StartAsync();
+        await harness.RaiseClientInitializedAsync();
         await harness.PollAsync(() => null);
 
-        harness.Client.Status.Returns(ClientStatus.Initialized);
         await harness.PollAsync(() =>
         {
             harness.Assign(0);
@@ -2288,6 +2284,9 @@ public partial class KafkaConsumerTests
                     ? new TopicPartition("topic", partition)
                     : new TopicPartition("single", Partition.Any));
         }
+
+        public ValueTask RaiseClientInitializedAsync() =>
+            Client.Initialized.InvokeAsync(Substitute.For<BrokerClient>("client", Substitute.For<ISilverbackLogger>()));
 
         public async Task StartAsync(params int[] partitions)
         {

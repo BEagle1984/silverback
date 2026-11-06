@@ -390,16 +390,6 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         lock (_assignmentLock)
         {
-            // The client is initializing when the native consumer was just (re)created: nothing tracked before can be consumed
-            // again from it, the new consumer resumes from the committed offsets and none of its partitions is paused. A stop and
-            // start while the Initialized handlers are still running doesn't consume its discarded records again either: the
-            // client can neither seek nor store the offsets before it is initialized.
-            if (Client.Status == ClientStatus.Initializing)
-            {
-                _offsets.Clear();
-                _rollbackPausedPartitions.Clear();
-            }
-
             foreach (TopicPartition partition in Client.Assignment)
             {
                 IncrementAssignmentVersion(partition);
@@ -576,7 +566,18 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         _isDisposed = true;
     }
 
-    private ValueTask OnClientConnectedAsync(BrokerClient client) => StartAsync();
+    private ValueTask OnClientConnectedAsync(BrokerClient client)
+    {
+        // The native consumer was just (re)created: nothing tracked before can be consumed again from it, the new consumer resumes
+        // from the committed offsets and none of its partitions is paused
+        lock (_assignmentLock)
+        {
+            _offsets.Clear();
+            _rollbackPausedPartitions.Clear();
+        }
+
+        return StartAsync();
+    }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async Task RestartChannelsAfterRollbackAsync(Task stopping, IReadOnlyCollection<RollbackPartition> partitions)
