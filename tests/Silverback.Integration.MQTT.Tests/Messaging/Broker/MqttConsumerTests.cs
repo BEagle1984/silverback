@@ -539,6 +539,26 @@ public class MqttConsumerTests
     }
 
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CommitAsync_ShouldDisconnect_WhenQoS2AcknowledgementFailureIsHandled(bool timeout)
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.ExactlyOnce);
+        harness.Behavior.ReleaseFirst.TrySetResult(true);
+        harness.Behavior.RollbackFailedCommit = true;
+        harness.BeforeAcknowledge = () => throw (timeout
+            ? new OperationCanceledException("Acknowledgement timed out.")
+            : new InvalidOperationException("Acknowledgement failed while still connected."));
+        await harness.ConnectAsync();
+
+        await harness.DeliverAsync(0);
+        await AsyncTestingUtil.WaitAsync(() => harness.Client.Status == ClientStatus.Disconnected, ReconnectTimeout);
+
+        harness.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        harness.Acknowledged.ShouldBeEmpty();
+    }
+
+    [Theory]
     [InlineData(1, null, 2)]
     [InlineData(3, null, 2)]
     [InlineData(1, 1, 1)]
@@ -1001,6 +1021,8 @@ public class MqttConsumerTests
 
         public bool RollbackFirstAttempt { get; set; }
 
+        public bool RollbackFailedCommit { get; set; }
+
         public bool StopBeforeRollback { get; set; }
 
         public bool RollbackCanceledProcessing { get; set; }
@@ -1072,6 +1094,14 @@ public class MqttConsumerTests
                 catch (Exception ex)
                 {
                     CommitFailure.TrySetResult(ex);
+
+                    // Handle the failure like a retry error policy
+                    if (RollbackFailedCommit)
+                    {
+                        await context.Consumer.RollbackAsync(context.Envelope.BrokerMessageIdentifier);
+                        return;
+                    }
+
                     throw;
                 }
 

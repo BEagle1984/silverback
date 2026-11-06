@@ -171,7 +171,19 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         if (consumedMessage == null)
             return;
 
-        await AcknowledgeAsync(consumedMessage).ConfigureAwait(false);
+        try
+        {
+            await AcknowledgeAsync(consumedMessage).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            // A delivery can't be acknowledged twice and only a new connection replays it: the failure must stop the channel reader
+            // like a fatal error, even if an error policy handles it, or the reader would wait forever. Wrapped because the reader
+            // would mistake an acknowledgment timeout for a cancellation and exit without disconnecting.
+            consumedMessage.TaskCompletionSource.SetException(new MqttAcknowledgeException("The message couldn't be acknowledged.", ex));
+            throw;
+        }
+
         consumedMessage.TaskCompletionSource.SetResult(true);
     }
 
