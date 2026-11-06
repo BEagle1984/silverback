@@ -17,10 +17,6 @@ jobs:
   # The job name is the status check required by the branch ruleset
   continuous:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: read
-      checks: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -53,9 +49,9 @@ jobs:
             --blame-hang-timeout 5m \
             --blame-hang-dump-type mini \
             --filter "Type=E2E&Dependency!=Docker&CI!=Skip"
-      # Publish results (the token of fork and Dependabot pull requests is read-only and can't create check runs)
+      # Publish results
       - name: Publish test results
-        if: ${{ !cancelled() && !github.event.pull_request.head.repo.fork && github.actor != 'dependabot[bot]' }}
+        if: ${{ !cancelled() }}
         uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
         with:
           name: Test results
