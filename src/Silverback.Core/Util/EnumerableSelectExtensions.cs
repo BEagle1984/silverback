@@ -2,31 +2,20 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Silverback.Util;
 
 internal static class EnumerableSelectExtensions
 {
-    public static IEnumerable<TResult> ParallelSelect<T, TResult>(
-        this IEnumerable<T> source,
-        Func<T, TResult> selector,
-        int? maxDegreeOfParallelism = null)
-    {
-        ConcurrentBag<TResult> values = [];
-        Parallel.ForEach(
-            source,
-            new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism ?? -1 },
-            value => values.Add(selector(value)));
-        return values;
-    }
-
     public static ValueTask<IReadOnlyCollection<TResult>> ParallelSelectAsync<T, TResult>(
         this IEnumerable<T> source,
         Func<T, ValueTask<TResult>> selector) =>
-        source.ParallelSelect(selector).AwaitAllAsync();
+        source
+            .Select(item => new ValueTask<TResult>(Task.Run(() => selector(item).AsTask())))
+            .AwaitAllAsync();
 
     public static async ValueTask<IEnumerable<TResult>> SelectAsync<T, TResult>(
         this IEnumerable<T> source,

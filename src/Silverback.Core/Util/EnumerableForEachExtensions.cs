@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Silverback.Util;
@@ -42,14 +43,8 @@ internal static class EnumerableForEachExtensions
         }
     }
 
-    public static async ValueTask ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, ValueTask> action)
-    {
-        async ValueTask<int> InvokeActionAsync(T item)
-        {
-            await action(item).ConfigureAwait(false);
-            return 0;
-        }
-
-        await source.ParallelSelectAsync(InvokeActionAsync).ConfigureAwait(false);
-    }
+    public static ValueTask ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, ValueTask> action) =>
+        source
+            .Select(item => new ValueTask(Task.Run(() => action(item).AsTask())))
+            .AwaitAllAsync();
 }

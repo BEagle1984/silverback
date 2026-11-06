@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -106,5 +107,49 @@ public class EnumerableForEachExtensionsTests
         });
 
         total.ShouldBe(15);
+    }
+
+    [Fact]
+    public async Task ParallelForEachAsync_ShouldInvokeSynchronousPartInParallel()
+    {
+        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
+        CountdownEvent countdownEvent = new(3);
+
+        await enumerable.ParallelForEachAsync(_ =>
+        {
+            countdownEvent.Signal();
+            countdownEvent.WaitOrThrow();
+
+            return ValueTask.CompletedTask;
+        });
+
+        countdownEvent.CurrentCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task ParallelForEachAsync_ShouldAwaitAllAndAggregateExceptions_WhenActionThrowsSynchronously()
+    {
+        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
+        TaskCompletionSource asyncItemCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        async ValueTask ThrowAsync()
+        {
+            await asyncItemCompletionSource.Task;
+
+            throw new InvalidOperationException("async");
+        }
+
+        ValueTask task = enumerable.ParallelForEachAsync(item =>
+            item == 2
+                ? ThrowAsync()
+                : throw new ArgumentException("sync"));
+
+        await Task.Delay(100);
+        task.IsCompleted.ShouldBeFalse();
+
+        asyncItemCompletionSource.SetResult();
+
+        AggregateException exception = await Should.ThrowAsync<AggregateException>(async () => await task);
+        exception.InnerExceptions.Select(innerException => innerException.Message).ShouldBe(["sync", "async", "sync"]);
     }
 }

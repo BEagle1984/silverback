@@ -278,6 +278,8 @@ public class BrokerClientsConnectorServiceTests
 
         appStartedTokenSource.Cancel();
 
+        await AsyncTestingUtil.WaitAsync(() => clients.All(client => client.ReceivedCalls().Any(call => call.GetMethodInfo().Name == nameof(IBrokerClient.ConnectAsync))));
+
         foreach (IBrokerClient client in clients)
         {
             await client.Received(1).ConnectAsync();
