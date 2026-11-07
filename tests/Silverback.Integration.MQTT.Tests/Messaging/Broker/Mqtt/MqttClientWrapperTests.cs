@@ -60,7 +60,11 @@ public class MqttClientWrapperTests
     public async Task DisconnectAsync_ShouldFlushQueuedMessagesInOrder_AndRejectNewMessages()
     {
         await using ProducerHarness harness = new();
-        await harness.ConnectAsync();
+
+        // Keep the attempt pending, since its linked token stops being canceled once it completes
+        harness.BlockConnection(reportConnected: true);
+        await harness.Client.ConnectAsync();
+        await harness.ConnectionStarted.Task.WaitAsync(Timeout);
 
         TaskCompletionSource<bool> cancellationStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
         using ManualResetEventSlim releaseCancellation = new();
@@ -316,6 +320,25 @@ public class MqttClientWrapperTests
             eventId: MqttLogEvents.ConnectRetryError.EventId.Id);
     }
 
+    [Fact]
+    public async Task ConnectAsync_ShouldLogErrorAndRetry_WhenConnectionAttemptTimesOut()
+    {
+        await using ProducerHarness harness = new(TimeSpan.FromMilliseconds(100));
+        harness.BlockConnection();
+        Task connecting = harness.ConnectAsync();
+
+        await harness.ConnectionCanceled.Task.WaitAsync(Timeout);
+        harness.UnblockConnection();
+        await connecting;
+
+        harness.Client.IsConnected.ShouldBeTrue();
+        harness.ConnectionAttempts.ShouldBeGreaterThanOrEqualTo(2);
+        harness.Logger.Received(
+            LogLevel.Warning,
+            typeof(OperationCanceledException),
+            eventId: MqttLogEvents.ConnectError.EventId.Id);
+    }
+
     private static async Task WaitUntilAsync(Func<bool> condition)
     {
         using CancellationTokenSource cancellation = new(Timeout);
@@ -342,6 +365,8 @@ public class MqttClientWrapperTests
 
         private bool _connectionBlocked;
 
+        private bool _reportConnectedWhileBlocked;
+
         private int _connectionAttempts;
 
         public ProducerHarness(TimeSpan? timeout = null)
@@ -355,6 +380,7 @@ public class MqttClientWrapperTests
 
                 if (_connectionBlocked)
                 {
+                    _isConnected = _reportConnectedWhileBlocked;
                     ConnectionStarted.TrySetResult(true);
                     await Task.Delay(System.Threading.Timeout.Infinite, ConnectionCancellationToken)
                         .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
@@ -466,7 +492,13 @@ public class MqttClientWrapperTests
 
         public void RestoreConnection() => _connectionUnavailable = false;
 
-        public void BlockConnection() => _connectionBlocked = true;
+        public void BlockConnection(bool reportConnected = false)
+        {
+            _reportConnectedWhileBlocked = reportConnected;
+            _connectionBlocked = true;
+        }
+
+        public void UnblockConnection() => _connectionBlocked = false;
 
         public Task ProduceAsync(byte number)
         {

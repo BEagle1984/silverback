@@ -365,6 +365,22 @@ public class MqttClientConfigurationTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenTimeoutIsLessThanOrEqualToZero(int value)
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            Timeout = TimeSpan.FromSeconds(value)
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("Timeout must be greater than zero.");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
     public void Validate_ShouldThrow_WhenAcknowledgmentTimeoutIsLessThanOrEqualToZero(int value)
     {
         MqttClientConfiguration configuration = GetValidConfiguration() with

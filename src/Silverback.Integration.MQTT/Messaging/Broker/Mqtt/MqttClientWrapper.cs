@@ -247,7 +247,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
     {
         try
         {
-            await _mqttClient.ConnectAsync(Configuration.GetMqttClientOptions(), cancellationToken).ConfigureAwait(false);
+            await ConnectClientCoreAsync(cancellationToken).ConfigureAwait(false);
             _mqttClientWasConnected = true;
 
             // The client might briefly connect and then disconnect immediately (e.g., when connecting with
@@ -275,6 +275,15 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
             return false;
         }
+    }
+
+    private async Task ConnectClientCoreAsync(CancellationToken cancellationToken)
+    {
+        // MQTTnet applies the configured timeout only when the token cannot be canceled
+        using CancellationTokenSource timeoutCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutCancellationTokenSource.CancelAfter(Configuration.Timeout);
+
+        await _mqttClient.ConnectAsync(Configuration.GetMqttClientOptions(), timeoutCancellationTokenSource.Token).ConfigureAwait(false);
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception forwarded")]

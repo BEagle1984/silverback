@@ -127,6 +127,9 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         if (BackpressureLimit < 1)
             throw new BrokerConfigurationException($"{nameof(BackpressureLimit)} must be greater or equal to 1.");
 
+        if (Timeout <= TimeSpan.Zero)
+            throw new BrokerConfigurationException($"{nameof(Timeout)} must be greater than zero.");
+
         if (AcknowledgmentTimeout <= TimeSpan.Zero)
             throw new BrokerConfigurationException($"{nameof(AcknowledgmentTimeout)} must be greater than zero.");
     }

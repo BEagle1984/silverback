@@ -239,7 +239,7 @@ public partial class MqttClientConfigurationBuilder
     /// </returns>
     public partial MqttClientConfigurationBuilder WithTimeout(TimeSpan value)
     {
-        Check.Range(value, nameof(value), TimeSpan.Zero, TimeSpan.MaxValue);
+        Check.GreaterThan(value, nameof(value), TimeSpan.Zero);
 
         _configuration = _configuration with { Timeout = value };
         return this;
