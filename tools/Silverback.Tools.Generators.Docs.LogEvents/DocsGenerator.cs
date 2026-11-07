@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +13,6 @@ namespace Silverback.Tools.Generators.Docs.LogEvents;
 
 internal static class DocsGenerator
 {
-    [SuppressMessage("ReSharper", "CollectionNeverQueried.Local", Justification = "Used to ensure id uniqueness")]
     private static readonly HashSet<int> EventIdSet = [];
 
     public static void GenerateDocsTable(Type logEventsType, string outputFilePath)
@@ -28,7 +26,8 @@ internal static class DocsGenerator
         {
             LogEvent logEvent = (LogEvent)property.GetValue(null)!;
 
-            EventIdSet.Add(logEvent.EventId.Id);
+            if (!EventIdSet.Add(logEvent.EventId.Id))
+                throw new InvalidOperationException($"Duplicate event id {logEvent.EventId.Id} ({logEventsType.Name}.{property.Name}).");
 
             string apiReferenceLink =
                 $"[{property.Name}]" +
