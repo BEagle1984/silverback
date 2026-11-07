@@ -23,8 +23,6 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
 
     private readonly BrokerClientCollection _clients;
 
-    private readonly ProducerCollection _producers;
-
     private readonly ISilverbackLogger<KafkaProducer> _producerLogger;
 
     private readonly IBrokerBehaviorsProvider<IProducerBehavior> _behaviorsProvider;
@@ -36,14 +34,12 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
     public KafkaTransactionalProducerCollection(
         IConfluentProducerWrapperFactory factory,
         BrokerClientCollection clients,
-        ProducerCollection producers,
         ISilverbackLogger<KafkaProducer> producerLogger,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
         RootServiceProvider rootServiceProvider)
     {
         _factory = Check.NotNull(factory, nameof(factory));
         _clients = Check.NotNull(clients, nameof(clients));
-        _producers = Check.NotNull(producers, nameof(producers));
         _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
         _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
 
@@ -67,7 +63,6 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
             FactoryArguments factoryArgument = new(
                 _factory,
                 _clients,
-                _producers,
                 configuration with
                 {
                     TransactionalId = $"{configuration.TransactionalId}|{transaction.TransactionalIdSuffix}"
@@ -83,16 +78,13 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
                     IConfluentProducerWrapper client = args.ClientFactory.Create(nameKey, args.Configuration);
                     args.Clients.Add(client);
 
-                    KafkaProducer producer = new(
+                    return new KafkaProducer(
                         nameKey,
                         client,
                         args.Configuration,
                         args.BehaviorsProvider,
                         args.ServiceProvider,
                         args.ProducerLogger);
-                    args.Producers.Add(producer, false);
-
-                    return producer;
                 },
                 factoryArgument);
 
@@ -112,7 +104,6 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
     private record struct FactoryArguments(
         IConfluentProducerWrapperFactory ClientFactory,
         BrokerClientCollection Clients,
-        ProducerCollection Producers,
         KafkaProducerConfiguration Configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> BehaviorsProvider,
         IServiceProvider ServiceProvider,

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -61,6 +62,77 @@ public class KafkaTransactionsTests : KafkaTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task KafkaTransactions_ShouldProduceInTransaction_WhenEndpointHasFriendlyName()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<IIntegrationEvent>("friendly", endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        using (IKafkaTransaction transaction = publisher.InitKafkaTransaction())
+        {
+            await publisher.PublishEventAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
+
+            transaction.Commit();
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task KafkaTransactions_ShouldProduceInTransaction_WhenEndpointHasFriendlyNameAndTransactionalIdSuffix()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<IIntegrationEvent>("friendly", endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        using (IKafkaTransaction transaction = publisher.InitKafkaTransaction("suffix-1"))
+        {
+            await publisher.PublishEventAsync(new TestEventOne());
+
+            transaction.Commit();
+        }
+
+        using (IKafkaTransaction transaction = publisher.InitKafkaTransaction("suffix-2"))
+        {
+            await publisher.PublishEventAsync(new TestEventOne());
+
+            transaction.Commit();
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+
+        Host.ServiceProvider.GetRequiredService<IProducerCollection>().ShouldHaveSingleItem();
+        Helper.GetProducerForEndpoint("friendly").ShouldBeOfType<KafkaTransactionalProducer>();
     }
 
     [Fact]
