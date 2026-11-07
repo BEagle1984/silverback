@@ -57,6 +57,7 @@
     <Project Path="tools/Silverback.Tools.Generators.Common/Silverback.Tools.Generators.Common.csproj" />
     <Project Path="tools/Silverback.Tools.Generators.Docs.Headers/Silverback.Tools.Generators.Docs.Headers.csproj" />
     <Project Path="tools/Silverback.Tools.Generators.Docs.LogEvents/Silverback.Tools.Generators.Docs.LogEvents.csproj" />
+    <Project Path="tools/Silverback.Tools.Generators.LogEvents/Silverback.Tools.Generators.LogEvents.csproj" />
     <Project Path="tools/Silverback.Tools.Generators.KafkaConfigProxies/Silverback.Tools.Generators.KafkaConfigProxies.csproj" />
     <Project Path="tools/Silverback.Tools.Generators.MqttConfigProxies/Silverback.Tools.Generators.MqttConfigProxies.csproj" />
   </Folder>

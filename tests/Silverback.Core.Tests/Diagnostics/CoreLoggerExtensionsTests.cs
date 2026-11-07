@@ -2,10 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Shouldly;
 using Silverback.Background;
 using Silverback.Diagnostics;
 using Silverback.Lock;
@@ -37,6 +40,18 @@ public class CoreLoggerExtensionsTests
             LogLevel.Debug,
             null,
             "Discarding result of type TypeName because doesn't match expected return type ExpectedTypeName",
+            11);
+    }
+
+    [Fact]
+    public void LogSubscriberResultDiscarded_ShouldLog_WhenResultTypeNameIsNull()
+    {
+        _silverbackLogger.LogSubscriberResultDiscarded(null, "ExpectedTypeName");
+
+        _logger.Received(
+            LogLevel.Debug,
+            null,
+            "Discarding result of type (null) because doesn't match expected return type ExpectedTypeName",
             11);
     }
 
@@ -138,6 +153,28 @@ public class CoreLoggerExtensionsTests
         _silverbackLogger.LogReleaseLockFailed("my-lock", new ArithmeticException());
 
         _logger.Received(LogLevel.Error, typeof(ArithmeticException), "Failed to release lock my-lock", 66);
+    }
+
+    [Fact]
+    public void LoggerMessages_ShouldMatchLogEvents()
+    {
+        (int Id, string? Name, LogLevel Level, string? Message)[] loggerMessages =
+        [
+            .. typeof(CoreLoggerExtensions)
+                .GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+                .Select(method => method.GetCustomAttribute<LoggerMessageAttribute>())
+                .OfType<LoggerMessageAttribute>()
+                .Select(attribute => (attribute.EventId, attribute.EventName, attribute.Level, (string?)attribute.Message))
+        ];
+        (int Id, string? Name, LogLevel Level, string? Message)[] logEvents =
+        [
+            .. typeof(CoreLogEvents)
+                .GetProperties(BindingFlags.Public | BindingFlags.Static)
+                .Select(property => (LogEvent)property.GetValue(null)!)
+                .Select(logEvent => (logEvent.EventId.Id, logEvent.EventId.Name, logEvent.Level, (string?)logEvent.Message))
+        ];
+
+        loggerMessages.ShouldBe(logEvents, ignoreOrder: true);
     }
 
     private sealed class FakeBackgroundService : DistributedBackgroundService
