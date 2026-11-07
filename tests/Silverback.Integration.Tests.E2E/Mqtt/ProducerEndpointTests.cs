@@ -5,8 +5,10 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MQTTnet;
 using MQTTnet.Packets;
 using Shouldly;
@@ -263,5 +265,43 @@ public partial class ProducerEndpointTests : MqttTests
         await producer.ProduceAsync(new TestEventOne());
 
         GetDefaultTopicMessages().Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduce_WhenMessageTypeWasPublishedBeforeClientsInitialization()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddHostedService<PublishOnStartHostedService>()
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne());
+
+        GetDefaultTopicMessages().Count.ShouldBe(1);
+    }
+
+    private sealed class PublishOnStartHostedService : IHostedService
+    {
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        public PublishOnStartHostedService(IServiceScopeFactory serviceScopeFactory)
+        {
+            _serviceScopeFactory = serviceScopeFactory;
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            using IServiceScope scope = _serviceScopeFactory.CreateScope();
+            await scope.ServiceProvider.GetRequiredService<IPublisher>().PublishEventAsync(new TestEventOne(), cancellationToken);
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     }
 }

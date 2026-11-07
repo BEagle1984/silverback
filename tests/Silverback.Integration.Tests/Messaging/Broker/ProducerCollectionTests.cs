@@ -231,4 +231,107 @@ public class ProducerCollectionTests
 
         eventTwoProducers.ShouldBeEmpty();
     }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldReturnProducer_WhenAddedAfterEmptyResultWasReturned()
+    {
+        ProducerCollection producerCollection = [];
+
+        producerCollection.GetProducersForMessage(typeof(TestEventOne)).ShouldBeEmpty();
+
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer);
+
+        producerCollection.GetProducersForMessage(typeof(TestEventOne)).ShouldBe([producer]);
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldReturnAllProducers_WhenAddedAfterPartialResultWasReturned()
+    {
+        ProducerCollection producerCollection = [];
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        producerCollection.GetProducersForMessage(typeof(TestEventOne)).ShouldBe([producer1]);
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer2);
+
+        producerCollection.GetProducersForMessage(typeof(TestEventOne)).ShouldBe([producer1, producer2], ignoreOrder: true);
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldRetainCachedResult_WhenNonRoutingProducerAdded()
+    {
+        ProducerCollection producerCollection = [];
+
+        IProducer routingProducer = Substitute.For<IProducer>();
+        routingProducer.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(routingProducer);
+
+        IReadOnlyCollection<IProducer> producers = producerCollection.GetProducersForMessage(typeof(TestEventOne));
+
+        IProducer nonRoutingProducer = Substitute.For<IProducer>();
+        nonRoutingProducer.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(nonRoutingProducer, false);
+
+        producerCollection.GetProducersForMessage(typeof(TestEventOne)).ShouldBeSameAs(producers);
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldNotRetainStaleResult_WhenProducerAddedDuringLookup()
+    {
+        ProducerCollection producerCollection = [];
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+
+        TestProducerEndpointConfiguration producer1Configuration = new("topic1")
+        {
+            MessageType = typeof(TestEventOne)
+        };
+        Queue<IProducer> producersToAddDuringLookup = new();
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(_ =>
+        {
+            if (producersToAddDuringLookup.TryDequeue(out IProducer? producer))
+                producerCollection.Add(producer);
+
+            return producer1Configuration;
+        });
+        producerCollection.Add(producer1);
+
+        producersToAddDuringLookup.Enqueue(producer2);
+        producerCollection.GetProducersForMessage(typeof(TestEventOne)).ShouldBe([producer1]);
+
+        producerCollection.GetProducersForMessage(typeof(TestEventOne)).ShouldBe([producer1, producer2], ignoreOrder: true);
+    }
 }

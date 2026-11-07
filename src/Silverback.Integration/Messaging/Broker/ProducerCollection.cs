@@ -16,11 +16,11 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 {
     private readonly ConcurrentBag<ProducerItem> _producers = [];
 
-    private readonly ConcurrentDictionary<Type, IReadOnlyCollection<IProducer>> _producersByMessageType = new();
-
     private readonly ConcurrentDictionary<string, IProducer> _producersByEndpointName = new();
 
     private readonly ConcurrentDictionary<string, IProducer> _producersByEndpointFriendlyName = new();
+
+    private ConcurrentDictionary<Type, IReadOnlyCollection<IProducer>> _producersByMessageType = new();
 
     public int Count => _producers.Count;
 
@@ -29,6 +29,12 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
         Check.NotNull(producer, nameof(producer));
 
         _producers.Add(new ProducerItem(producer, routing));
+
+        // Replace the cache after updating the bag: a lookup in progress can only store its stale result in the discarded
+        // instance, while a lookup using the new instance sees the added producer
+        if (routing)
+            _producersByMessageType = new ConcurrentDictionary<Type, IReadOnlyCollection<IProducer>>();
+
         _producersByEndpointName.TryAdd(producer.EndpointConfiguration.RawName, producer);
 
         if (!string.IsNullOrEmpty(producer.EndpointConfiguration.FriendlyName) &&
