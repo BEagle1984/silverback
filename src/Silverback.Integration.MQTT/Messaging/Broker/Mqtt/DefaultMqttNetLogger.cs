@@ -16,7 +16,11 @@ internal class DefaultMqttNetLogger : IMqttNetLogger
         _logger = logger;
     }
 
-    public bool IsEnabled => true;
+    public bool IsEnabled =>
+        _logger.IsEnabled(MqttLogEvents.MqttClientLogError) ||
+        _logger.IsEnabled(MqttLogEvents.MqttClientLogWarning) ||
+        _logger.IsEnabled(MqttLogEvents.MqttClientLogInformation) ||
+        _logger.IsEnabled(MqttLogEvents.MqttClientLogVerbose);
 
     public void Publish(
         MqttNetLogLevel level,
