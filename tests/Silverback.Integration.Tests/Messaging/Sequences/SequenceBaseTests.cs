@@ -114,7 +114,7 @@ public class SequenceBaseTests
         // Pause the AddAsync while it holds the add semaphore and is about to acquire the complete semaphore, until the
         // abort acquired the complete semaphore
         logger.OnLog(
-            "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
+            "{SequenceType} '{SequenceId}' is completing (total length {SequenceLength})...",
             () =>
             {
                 addIsCompletingTaskCompletionSource.SetResult();
@@ -163,7 +163,7 @@ public class SequenceBaseTests
                 abortHoldsCompleteSemaphoreTaskCompletionSource.SetResult();
                 disposeHoldsAddSemaphore.Wait(Timeout);
             });
-        logger.OnLog("Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...", disposeHoldsAddSemaphore.Set);
+        logger.OnLog("Dispose is waiting complete semaphore ({SequenceType} '{SequenceId}')...", disposeHoldsAddSemaphore.Set);
 
         Task abortTask = Task.Run(() => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted));
         await abortHoldsCompleteSemaphoreTaskCompletionSource.Task.WaitAsync(Timeout);
@@ -188,7 +188,7 @@ public class SequenceBaseTests
         // Pause the dispose while it holds the add semaphore and before it stops the pending waits, until the add is waiting for the
         // add semaphore
         logger.OnLog(
-            "Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...",
+            "Dispose is waiting complete semaphore ({SequenceType} '{SequenceId}')...",
             () =>
             {
                 disposeHoldsAddSemaphore.Set();
@@ -321,7 +321,7 @@ public class SequenceBaseTests
         // Complete the processing while the completion is starting and handle the early exit as the TransactionHandlerConsumerBehavior
         // does: abort unless completing, otherwise commit and dispose (which cancels the pending push)
         logger.OnLog(
-            "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
+            "Completing {SequenceType} '{SequenceId}' (length {SequenceLength})...",
             () =>
             {
                 processingTaskCompletionSource.SetResult();

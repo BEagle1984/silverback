@@ -264,7 +264,7 @@ internal static partial class MqttLoggerExtensions
     [LoggerMessage(
         4041,
         LogLevel.Information,
-        "Consumer subscribed to {topicPattern} | ClientName: {ClientName}, ClientId: {ClientId}, ConsumerName: {ConsumerName}",
+        "Consumer subscribed to {TopicPattern} | ClientName: {ClientName}, ClientId: {ClientId}, ConsumerName: {ConsumerName}",
         EventName = "Silverback.Integration.MQTT_ConsumerSubscribed")]
     private static partial void ConsumerSubscribed(
         ILogger logger,

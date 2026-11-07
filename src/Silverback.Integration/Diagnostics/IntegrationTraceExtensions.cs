@@ -690,7 +690,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "The {policyType} will be skipped because the current failed attempts ({failedAttempts}) exceeds the configured maximum attempts ({maxFailedAttempts}). | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "The {PolicyType} will be skipped because the current failed attempts ({FailedAttempts}) exceeds the configured maximum attempts ({MaxFailedAttempts}). | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_ErrorPolicySkippedMaxFailedAttempts")]
     private static partial void ErrorPolicySkippedMaxFailedAttempts(
         ILogger logger,
@@ -703,7 +703,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "The {policyType} will be skipped because the {exceptionType} is not in the list of handled exceptions. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "The {PolicyType} will be skipped because the {ExceptionType} is not in the list of handled exceptions. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_ErrorPolicySkippedExceptionNotIncluded")]
     private static partial void ErrorPolicySkippedExceptionNotIncluded(
         ILogger logger,
@@ -715,7 +715,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "The {policyType} will be skipped because the {exceptionType} is in the list of excluded exceptions. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "The {PolicyType} will be skipped because the {ExceptionType} is in the list of excluded exceptions. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_ErrorPolicySkippedExceptionExcluded")]
     private static partial void ErrorPolicySkippedExceptionExcluded(
         ILogger logger,
@@ -727,21 +727,21 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "The {policyType} will be skipped because the apply rule evaluated to false. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "The {PolicyType} will be skipped because the apply rule evaluated to false. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_ErrorPolicySkippedApplyRule")]
     private static partial void ErrorPolicySkippedApplyRule(ILogger logger, string policyType, string endpointName, string brokerMessageId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Waiting {delay} milliseconds before retrying to process the message(s). | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "Waiting {Delay} milliseconds before retrying to process the message(s). | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_RetryDelayWaiting")]
     private static partial void RetryDelayWaiting(ILogger logger, double delay, string endpointName, string brokerMessageId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Publishing {sequenceType} '{sequenceId}'... | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "Publishing {SequenceType} '{SequenceId}'... | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_SequencePublishing")]
     private static partial void SequencePublishing(
         ILogger logger,
@@ -753,7 +753,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Published {sequenceType} '{sequenceId}' (ProcessingTask.Id={processingTaskId}). | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "Published {SequenceType} '{SequenceId}' (ProcessingTask.Id={ProcessingTaskId}). | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_SequencePublished")]
     private static partial void SequencePublished(
         ILogger logger,
@@ -766,7 +766,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "No subscribers for {sequenceType} '{sequenceId}'. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "No subscribers for {SequenceType} '{SequenceId}'. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_SequenceNoSubscribers")]
     private static partial void SequenceNoSubscribers(
         ILogger logger,
@@ -778,7 +778,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "All {sequenceType} '{sequenceId}' subscribers completed. (sequence.IsCompleted={completed}, faultedTasks={faultedCount}/{tasksCount}).",
+        "All {SequenceType} '{SequenceId}' subscribers completed. (sequence.IsCompleted={Completed}, faultedTasks={FaultedCount}/{TasksCount}).",
         EventName = "Silverback.Integration_Tracing_SequenceSubscribersCompleted")]
     private static partial void SequenceSubscribersCompleted(
         ILogger logger,
@@ -791,7 +791,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "{sequenceType} '{sequenceId}' processing completed. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "{SequenceType} '{SequenceId}' processing completed. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_SequenceProcessingCompleted")]
     private static partial void SequenceProcessingCompleted(
         ILogger logger,
@@ -803,7 +803,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "{sequenceType} '{sequenceId}' processing has completed but it's not the beginning of the outer sequence. No action will be performed. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "{SequenceType} '{SequenceId}' processing has completed but it's not the beginning of the outer sequence. No action will be performed. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_SequenceProcessingCompletedNotOuterStart")]
     private static partial void SequenceProcessingCompletedNotOuterStart(
         ILogger logger,
@@ -815,7 +815,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "{sequenceType} '{sequenceId}' processing seems completed but the sequence is still pending: ProcessingTask.Status={processingTaskStatus}, ProcessingTask.Id={processingTaskId}) | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "{SequenceType} '{SequenceId}' processing seems completed but the sequence is still pending: ProcessingTask.Status={ProcessingTaskStatus}, ProcessingTask.Id={ProcessingTaskId}) | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_SequenceStillPending")]
     private static partial void SequenceStillPending(
         ILogger logger,
@@ -843,7 +843,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Awaiting {sequenceType} '{sequenceId}' processing task. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "Awaiting {SequenceType} '{SequenceId}' processing task. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_SequenceProcessingTaskAwaiting")]
     private static partial void SequenceProcessingTaskAwaiting(
         ILogger logger,
@@ -855,7 +855,7 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Successfully awaited {sequenceType} '{sequenceId}' processing task. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        "Successfully awaited {SequenceType} '{SequenceId}' processing task. | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_SequenceProcessingTaskAwaited")]
     private static partial void SequenceProcessingTaskAwaited(
         ILogger logger,
@@ -874,28 +874,28 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Operation canceled, skipping add to {sequenceType} '{sequenceId}' and waiting until it is completed.",
+        "Operation canceled, skipping add to {SequenceType} '{SequenceId}' and waiting until it is completed.",
         EventName = "Silverback.Integration_Tracing_SequenceAddCanceled")]
     private static partial void SequenceAddCanceled(ILogger logger, string sequenceType, string sequenceId, Exception exception);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Error occurred adding message to {sequenceType} '{sequenceId}'.",
+        "Error occurred adding message to {SequenceType} '{SequenceId}'.",
         EventName = "Silverback.Integration_Tracing_SequenceAddFailed")]
     private static partial void SequenceAddFailed(ILogger logger, string sequenceType, string sequenceId, Exception exception);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
+        "Completing {SequenceType} '{SequenceId}' (length {SequenceLength})...",
         EventName = "Silverback.Integration_Tracing_SequenceCompleting")]
     private static partial void SequenceCompleting(ILogger logger, string sequenceType, string sequenceId, int sequenceLength);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
+        "{SequenceType} '{SequenceId}' is completing (total length {SequenceLength})...",
         EventName = "Silverback.Integration_Tracing_SequenceCompletingWithTotalLength")]
     private static partial void SequenceCompletingWithTotalLength(
         ILogger logger,
@@ -906,14 +906,14 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Timeout was elapsed for {sequenceType} '{sequenceId}', executing timeout logic...",
+        "Timeout was elapsed for {SequenceType} '{SequenceId}', executing timeout logic...",
         EventName = "Silverback.Integration_Tracing_SequenceTimeoutElapsed")]
     private static partial void SequenceTimeoutElapsed(ILogger logger, string sequenceType, string sequenceId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Aborting {sequenceType} '{sequenceId}' ({abortReason})...",
+        "Aborting {SequenceType} '{SequenceId}' ({AbortReason})...",
         EventName = "Silverback.Integration_Tracing_SequenceAborting")]
     private static partial void SequenceAborting(
         ILogger logger,
@@ -925,42 +925,42 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Aborting {sequenceType} '{sequenceId}' is waiting for add semaphore...",
+        "Aborting {SequenceType} '{SequenceId}' is waiting for add semaphore...",
         EventName = "Silverback.Integration_Tracing_SequenceAbortAwaitingAddSemaphore")]
     private static partial void SequenceAbortAwaitingAddSemaphore(ILogger logger, string sequenceType, string sequenceId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Disposing {sequenceType} '{sequenceId}'...",
+        "Disposing {SequenceType} '{SequenceId}'...",
         EventName = "Silverback.Integration_Tracing_SequenceDisposing")]
     private static partial void SequenceDisposing(ILogger logger, string sequenceType, string sequenceId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "{sequenceType} '{sequenceId}' disposed.",
+        "{SequenceType} '{SequenceId}' disposed.",
         EventName = "Silverback.Integration_Tracing_SequenceDisposed")]
     private static partial void SequenceDisposed(ILogger logger, string sequenceType, string sequenceId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Dispose is waiting for the abort to complete ({sequenceType} '{sequenceId}')...",
+        "Dispose is waiting for the abort to complete ({SequenceType} '{SequenceId}')...",
         EventName = "Silverback.Integration_Tracing_SequenceDisposeAwaitingAbort")]
     private static partial void SequenceDisposeAwaitingAbort(ILogger logger, string sequenceType, string sequenceId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Dispose is waiting add semaphore ({sequenceType} '{sequenceId}')...",
+        "Dispose is waiting add semaphore ({SequenceType} '{SequenceId}')...",
         EventName = "Silverback.Integration_Tracing_SequenceDisposeAwaitingAddSemaphore")]
     private static partial void SequenceDisposeAwaitingAddSemaphore(ILogger logger, string sequenceType, string sequenceId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...",
+        "Dispose is waiting complete semaphore ({SequenceType} '{SequenceId}')...",
         EventName = "Silverback.Integration_Tracing_SequenceDisposeAwaitingCompleteSemaphore")]
     private static partial void SequenceDisposeAwaitingCompleteSemaphore(ILogger logger, string sequenceType, string sequenceId);
 
@@ -1002,21 +1002,21 @@ internal static partial class IntegrationTraceExtensions
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Adding {sequenceType} '{sequenceId}' to store '{sequenceStoreId}'.",
+        "Adding {SequenceType} '{SequenceId}' to store '{SequenceStoreId}'.",
         EventName = "Silverback.Integration_Tracing_SequenceAddedToStore")]
     private static partial void SequenceAddedToStore(ILogger logger, string sequenceType, string sequenceId, Guid sequenceStoreId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Removing sequence '{sequenceId}' from store '{sequenceStoreId}'.",
+        "Removing sequence '{SequenceId}' from store '{SequenceStoreId}'.",
         EventName = "Silverback.Integration_Tracing_SequenceRemovedFromStore")]
     private static partial void SequenceRemovedFromStore(ILogger logger, string sequenceId, Guid sequenceStoreId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
         LogLevel.Trace,
-        "Disposing sequence store {sequenceStoreId}",
+        "Disposing sequence store {SequenceStoreId}",
         EventName = "Silverback.Integration_Tracing_SequenceStoreDisposing")]
     private static partial void SequenceStoreDisposing(ILogger logger, Guid sequenceStoreId);
 }
