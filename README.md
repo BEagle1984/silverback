@@ -166,7 +166,8 @@ The v4 documentation is still available at [silverback-messaging.net/v4](https:/
 
 ### Code and Documentation Generators
 
-The four generator applications are included in the main solution and write generated content to standard output. Shared generator support
+The four generator applications are included in the main solution. The configuration proxy generators write to standard output, while the
+documentation generators write Markdown tables to the directory passed as argument and are run by `docs/build.ps1`. Shared generator support
 lives in [Silverback.Tools.Generators.Common](tools/Silverback.Tools.Generators.Common).
 
 | Tool                                                                       | Purpose                                                                                         |

@@ -129,6 +129,15 @@ if ($siteItems.Count -eq 0) {
     throw "The generated site at '$sitePath' is empty."
 }
 
+# docfx only warns about a missing include and leaves its raw markup in the page: the generated tables exist only after build.ps1
+$unresolvedIncludes = @(
+    Get-ChildItem -LiteralPath (Join-Path $sitePath "guides") -Filter "*.html" -Recurse -File |
+        Select-String -Pattern "[!include[" -SimpleMatch -List
+)
+if ($unresolvedIncludes.Count -gt 0) {
+    throw "The generated site contains unresolved includes (e.g. '$($unresolvedIncludes[0].Path)'). Build it with build.ps1."
+}
+
 Write-Step "Checking the documentation publishing repository"
 if (Test-Path -LiteralPath $publishRepositoryPath) {
     Write-Host "The publishing repository already exists at '$publishRepositoryPath'."

@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using Silverback.Diagnostics;
 
 namespace Silverback.Tools.Generators.Docs.LogEvents;
@@ -14,10 +16,12 @@ internal static class DocsGenerator
     [SuppressMessage("ReSharper", "CollectionNeverQueried.Local", Justification = "Used to ensure id uniqueness")]
     private static readonly HashSet<int> EventIdSet = [];
 
-    public static void GenerateDocsTable(Type logEventsType)
+    public static void GenerateDocsTable(Type logEventsType, string outputFilePath)
     {
-        Console.WriteLine("Id | Level | Message | Reference");
-        Console.WriteLine(":-- | :-- | :-- | :--");
+        StringBuilder builder = new();
+
+        builder.AppendLine("Id | Level | Message | Reference");
+        builder.AppendLine(":-- | :-- | :-- | :--");
 
         foreach (PropertyInfo property in logEventsType.GetProperties())
         {
@@ -33,7 +37,9 @@ internal static class DocsGenerator
 
             string message = logEvent.Message.Replace("|", "&#124;", StringComparison.Ordinal);
 
-            Console.WriteLine($"{logEvent.EventId.Id} | {logEvent.Level} | {message} | {apiReferenceLink}");
+            builder.AppendLine($"{logEvent.EventId.Id} | {logEvent.Level} | {message} | {apiReferenceLink}");
         }
+
+        File.WriteAllText(outputFilePath, builder.ToString());
     }
 }

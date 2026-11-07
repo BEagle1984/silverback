@@ -11,35 +11,17 @@ The static classes <xref:Silverback.Messaging.Messages.DefaultMessageHeaders> an
 
 ## Default
 
-Header | Name
-:-- | :--
-[MessageType](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_MessageType) | `x-message-type`
-[FailedAttempts](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_FailedAttempts) | `x-failed-attempts`
-[ChunkIndex](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_ChunkIndex) | `x-chunk-index`
-[ChunksCount](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_ChunksCount) | `x-chunk-count`
-[IsLastChunk](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_IsLastChunk) | `x-chunk-last`
-[TraceId](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_TraceId) | `traceparent`
-[TraceState](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_TraceState) | `tracestate`
-[TraceBaggage](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_TraceBaggage) | `tracebaggage`
-[ContentType](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_ContentType) | `content-type`
-[EncryptionKeyId](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId) | `x-encryption-key-id`
-[FailureReason](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_FailureReason) | `x-failure-reason`
+[!INCLUDE [Default headers](../../build/generated/headers-default.md)]
 
 ## Kafka
 
-Header | Name
-:-- | :--
-[Timestamp](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_Timestamp) | `x-kafka-message-timestamp`
-[SourceConsumerGroupId](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_SourceConsumerGroupId) | `x-source-consumer-group-id`
-[SourceTopic](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_SourceTopic) | `x-source-topic`
-[SourcePartition](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_SourcePartition) | `x-source-partition`
-[SourceOffset](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_SourceOffset) | `x-source-offset`
-[SourceTimestamp](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_SourceTimestamp) | `x-source-timestamp`
-[FirstChunkOffset](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_FirstChunkOffset) | `x-chunk-first-offset`
+[!INCLUDE [Kafka headers](../../build/generated/headers-kafka.md)]
 
 ## MQTT
 
-MQTT doesn't add any additional header to the produced messages. The constants in <xref:Silverback.Messaging.Messages.MqttMessageHeaders> are used internally to map some envelope headers to the corresponding MQTT 5 properties (response topic and correlation data) and to set the dynamic destination topic.
+[!INCLUDE [MQTT headers](../../build/generated/headers-mqtt.md)]
+
+The constants in <xref:Silverback.Messaging.Messages.MqttMessageHeaders> are used internally to map some envelope headers to the corresponding MQTT 5 properties (response topic and correlation data) and to set the dynamic destination topic.
 
 ## Customizing Default Header Names
 
