@@ -33,6 +33,40 @@ public partial class ProducerEndpointTests : MqttTests
     }
 
     [Fact]
+    public async Task ProducerEndpoint_ShouldKeepProducerName_WhenSingleEndpoint()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient("client", client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+
+        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Single().Name.ShouldBe("client");
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldAppendIndexToProducerName_WhenMultipleEndpoints()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient("client", client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
+
+        IProducerCollection producers = Host.ServiceProvider.GetRequiredService<IProducerCollection>();
+        producers.Select(producer => producer.Name).ShouldBe(["client-1", "client-2"], ignoreOrder: true);
+    }
+
+    [Fact]
     public async Task ProducerEndpoint_ShouldSerializeAndProduce()
     {
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };

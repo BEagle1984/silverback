@@ -76,7 +76,7 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
             };
 
             KafkaProducer producer = new(
-                configuration.Endpoints.Count > 0 ? $"{name}-{++i}" : name,
+                configuration.Endpoints.Count > 1 ? $"{name}-{++i}" : name,
                 confluentProducerWrapper,
                 trimmedConfiguration,
                 _behaviorsProvider,

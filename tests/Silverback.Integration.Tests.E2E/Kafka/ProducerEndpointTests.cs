@@ -28,6 +28,38 @@ public partial class ProducerEndpointTests : KafkaTests
     }
 
     [Fact]
+    public async Task ProducerEndpoint_ShouldKeepProducerName_WhenSingleEndpoint()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer("producer", producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+
+        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Single().Name.ShouldBe("producer");
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldAppendIndexToProducerName_WhenMultipleEndpoints()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer("producer", producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
+
+        IProducerCollection producers = Host.ServiceProvider.GetRequiredService<IProducerCollection>();
+        producers.Select(producer => producer.Name).ShouldBe(["producer-1", "producer-2"], ignoreOrder: true);
+    }
+
+    [Fact]
     public async Task ProducerEndpoint_ShouldSerializeAndProduce()
     {
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };

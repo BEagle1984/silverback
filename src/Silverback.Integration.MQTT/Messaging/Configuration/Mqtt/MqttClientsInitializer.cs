@@ -114,7 +114,7 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
             };
 
             MqttProducer producer = new(
-                configuration.ProducerEndpoints.Count > 0 ? $"{name}-{++i}" : name,
+                configuration.ProducerEndpoints.Count > 1 ? $"{name}-{++i}" : name,
                 mqttClientWrapper,
                 producerConfiguration,
                 _producerBehaviorsProvider,
