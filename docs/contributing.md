@@ -39,4 +39,4 @@ The main solution contains unit tests. There are also runnable <xref:samples> in
 
 Thanks to all the [contributors](https://github.com/BEagle1984/silverback/graphs/contributors)!
 
-<iframe src="https://leereilly.net/github-high-scores/?beagle1984/silverback" style="width: 100%;height: 1000px"></iframe>
+[![Silverback contributors](https://contrib.rocks/image?repo=BEagle1984/silverback)](https://github.com/BEagle1984/silverback/graphs/contributors)
