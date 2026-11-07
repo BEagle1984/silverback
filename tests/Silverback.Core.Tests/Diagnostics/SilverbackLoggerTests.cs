@@ -38,7 +38,7 @@ public class SilverbackLoggerTests
     {
         LogLevelDictionary logLevels = new()
         {
-            { CoreLogEvents.BackgroundServiceStarting.EventId, (_, _, _) => LogLevel.Error }
+            { CoreLogEvents.BackgroundServiceStarting.EventId, new LogLevelOverride((_, _, _) => LogLevel.Error) }
         };
         LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Information);
         MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
@@ -57,7 +57,7 @@ public class SilverbackLoggerTests
     {
         LogLevelDictionary logLevels = new()
         {
-            { CoreLogEvents.LockAcquired.EventId, (_, _, _) => LogLevel.Error }
+            { CoreLogEvents.LockAcquired.EventId, new LogLevelOverride((_, _, _) => LogLevel.Error) }
         };
         LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Information);
         MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
@@ -78,13 +78,13 @@ public class SilverbackLoggerTests
         {
             {
                 CoreLogEvents.BackgroundServiceException.EventId,
-                (exception, originalLogLevel, _) =>
+                new LogLevelOverride((exception, originalLogLevel, _) =>
                 {
                     if (exception is InvalidOperationException)
                         return LogLevel.Warning;
 
                     return originalLogLevel;
-                }
+                })
             }
         };
         LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Warning);
@@ -111,13 +111,13 @@ public class SilverbackLoggerTests
         {
             {
                 CoreLogEvents.BackgroundServiceException.EventId,
-                (_, originalLogLevel, message) =>
+                new LogLevelOverride((_, originalLogLevel, message) =>
                 {
                     if (message.Value.Contains("TestOtherService", StringComparison.Ordinal))
                         return LogLevel.Warning;
 
                     return originalLogLevel;
-                }
+                })
             }
         };
         LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Warning);
@@ -138,7 +138,22 @@ public class SilverbackLoggerTests
     }
 
     [Fact]
-    public void IsEnabled_ShouldEnableAccordingToMappedLevel()
+    public void IsEnabled_ShouldReturnFalse_WhenDefaultLevelIsDisabledAndEventIsNotMapped()
+    {
+        LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Critical);
+        LogEvent logEvent = CoreLogEvents.BackgroundServiceStarting;
+        logger.IsEnabled(logEvent.Level).ShouldBeFalse();
+
+        MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new([], logger);
+        SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
+
+        bool result = silverbackLogger.IsEnabled(logEvent);
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void IsEnabled_ShouldReturnFalse_WhenFixedLevelIsDisabled()
     {
         LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Information);
         LogEvent logEvent = CoreLogEvents.BackgroundServiceStarting;
@@ -146,7 +161,7 @@ public class SilverbackLoggerTests
 
         LogLevelDictionary logLevels = new()
         {
-            { logEvent.EventId, (_, _, _) => LogLevel.Trace }
+            { logEvent.EventId, new LogLevelOverride(LogLevel.Trace) }
         };
         MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
         SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
@@ -154,6 +169,25 @@ public class SilverbackLoggerTests
         bool result = silverbackLogger.IsEnabled(logEvent);
 
         result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void IsEnabled_ShouldReturnTrue_WhenDefaultLevelIsDisabledAndLevelIsDeterminedByDelegate()
+    {
+        LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Critical);
+        LogEvent logEvent = CoreLogEvents.BackgroundServiceStarting;
+        logger.IsEnabled(logEvent.Level).ShouldBeFalse();
+
+        LogLevelDictionary logLevels = new()
+        {
+            { logEvent.EventId, new LogLevelOverride((exception, logLevel, _) => exception == null ? logLevel : LogLevel.Critical) }
+        };
+        MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
+        SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
+
+        bool result = silverbackLogger.IsEnabled(logEvent);
+
+        result.ShouldBeTrue();
     }
 
     private class TestService : DistributedBackgroundService

@@ -39,7 +39,7 @@ public class MappedLevelsLoggerTests
     {
         LogLevelDictionary logLevels = new()
         {
-            { MappedEventId, (_, _, _) => LogLevel.Error }
+            { MappedEventId, new LogLevelOverride((_, _, _) => LogLevel.Error) }
         };
         LoggerSubstitute<MappedLevelsLoggerTests> logger = new(LogLevel.Information);
         MappedLevelsLogger<MappedLevelsLoggerTests> mappedLevelsLogger = new(logLevels, logger);
@@ -56,55 +56,55 @@ public class MappedLevelsLoggerTests
     {
         LogLevelDictionary logLevels = new()
         {
-            { MappedEventId, (_, _, _) => LogLevel.Error }
+            { MappedEventId, new LogLevelOverride((_, _, _) => LogLevel.Error) }
         };
         LoggerSubstitute<MappedLevelsLoggerTests> logger = new(LogLevel.Information);
         MappedLevelsLogger<MappedLevelsLoggerTests> mappedLevelsLogger = new(logLevels, logger);
 
-        bool result = mappedLevelsLogger.IsEnabled(logLevel, OtherEventId, "message");
+        bool result = mappedLevelsLogger.IsEnabled(logLevel, OtherEventId);
 
         result.ShouldBe(expected);
     }
 
     [Fact]
-    public void IsEnabled_ShouldUseMappedLevel_WhenEventIdIsMapped()
+    public void IsEnabled_ShouldReturnTrueWithoutInvokingMapping_WhenEventIdIsMapped()
     {
-        LogLevelDictionary logLevels = new()
-        {
-            { MappedEventId, (_, _, _) => LogLevel.Error }
-        };
-        LoggerSubstitute<MappedLevelsLoggerTests> logger = new(LogLevel.Information);
-        MappedLevelsLogger<MappedLevelsLoggerTests> mappedLevelsLogger = new(logLevels, logger);
-
-        bool result = mappedLevelsLogger.IsEnabled(LogLevel.Debug, MappedEventId, "message");
-
-        result.ShouldBeTrue();
-    }
-
-    [Fact]
-    public void IsEnabled_ShouldPassLevelAndMessageToMapping()
-    {
-        LogLevel? receivedLevel = null;
-        string? receivedMessage = null;
+        bool isMappingInvoked = false;
         LogLevelDictionary logLevels = new()
         {
             {
-                MappedEventId, (_, originalLogLevel, message) =>
+                MappedEventId, new LogLevelOverride((_, originalLogLevel, _) =>
                 {
-                    receivedLevel = originalLogLevel;
-                    receivedMessage = message.Value;
+                    isMappingInvoked = true;
 
                     return originalLogLevel;
-                }
+                })
             }
         };
         LoggerSubstitute<MappedLevelsLoggerTests> logger = new(LogLevel.Information);
         MappedLevelsLogger<MappedLevelsLoggerTests> mappedLevelsLogger = new(logLevels, logger);
 
-        mappedLevelsLogger.IsEnabled(LogLevel.Warning, MappedEventId, "message");
+        bool result = mappedLevelsLogger.IsEnabled(LogLevel.Debug, MappedEventId);
 
-        receivedLevel.ShouldBe(LogLevel.Warning);
-        receivedMessage.ShouldBe("message");
+        result.ShouldBeTrue();
+        isMappingInvoked.ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(LogLevel.Debug, LogLevel.Warning, true)]
+    [InlineData(LogLevel.Warning, LogLevel.Debug, false)]
+    public void IsEnabled_ShouldUseFixedLevel_WhenEventIdHasFixedLevel(LogLevel logLevel, LogLevel fixedLevel, bool expected)
+    {
+        LogLevelDictionary logLevels = new()
+        {
+            { MappedEventId, new LogLevelOverride(fixedLevel) }
+        };
+        LoggerSubstitute<MappedLevelsLoggerTests> logger = new(LogLevel.Information);
+        MappedLevelsLogger<MappedLevelsLoggerTests> mappedLevelsLogger = new(logLevels, logger);
+
+        bool result = mappedLevelsLogger.IsEnabled(logLevel, MappedEventId);
+
+        result.ShouldBe(expected);
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class MappedLevelsLoggerTests
     {
         LogLevelDictionary logLevels = new()
         {
-            { CoreLogEvents.SubscriberResultDiscarded.EventId, (_, _, _) => LogLevel.Warning }
+            { CoreLogEvents.SubscriberResultDiscarded.EventId, new LogLevelOverride((_, _, _) => LogLevel.Warning) }
         };
         LoggerSubstitute<MappedLevelsLoggerTests> logger = new(LogLevel.Information);
         MappedLevelsLogger<MappedLevelsLoggerTests> mappedLevelsLogger = new(logLevels, logger);
@@ -140,7 +140,7 @@ public class MappedLevelsLoggerTests
     {
         LogLevelDictionary logLevels = new()
         {
-            { MappedEventId, (_, _, _) => LogLevel.Error }
+            { MappedEventId, new LogLevelOverride((_, _, _) => LogLevel.Error) }
         };
         ILogger<MappedLevelsLoggerTests> logger = Substitute.For<ILogger<MappedLevelsLoggerTests>>();
         MappedLevelsLogger<MappedLevelsLoggerTests> mappedLevelsLogger = new(logLevels, logger);
@@ -165,7 +165,7 @@ public class MappedLevelsLoggerTests
     {
         LogLevelDictionary logLevels = new()
         {
-            { MappedEventId, (_, _, _) => LogLevel.Error }
+            { MappedEventId, new LogLevelOverride((_, _, _) => LogLevel.Error) }
         };
         ILogger<MappedLevelsLoggerTests> logger = Substitute.For<ILogger<MappedLevelsLoggerTests>>();
         MappedLevelsLogger<MappedLevelsLoggerTests> mappedLevelsLogger = new(logLevels, logger);
@@ -194,13 +194,13 @@ public class MappedLevelsLoggerTests
         LogLevelDictionary logLevels = new()
         {
             {
-                MappedEventId, (mappedException, originalLogLevel, message) =>
+                MappedEventId, new LogLevelOverride((mappedException, originalLogLevel, message) =>
                 {
                     receivedException = mappedException;
                     receivedMessage = message.Value;
 
                     return originalLogLevel;
-                }
+                })
             }
         };
         LoggerSubstitute<MappedLevelsLoggerTests> logger = new(LogLevel.Information);

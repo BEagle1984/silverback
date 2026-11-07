@@ -12,8 +12,9 @@ namespace Silverback.Diagnostics;
 internal interface IMappedLevelsLogger : ILogger
 {
     /// <summary>
-    ///     Checks if the given <see cref="EventId" /> is enabled according to its default or overridden
-    ///     <see cref="LogLevel" />.
+    ///     Checks if the given <see cref="EventId" /> is enabled according to its default or overridden <see cref="LogLevel" />. An
+    ///     event whose <see cref="LogLevel" /> is determined by a delegate is always enabled, because the delegate is invoked when
+    ///     the event is logged.
     /// </summary>
     /// <param name="logLevel">
     ///     Entry will be written on this level.
@@ -21,11 +22,8 @@ internal interface IMappedLevelsLogger : ILogger
     /// <param name="eventId">
     ///     Id of the event.
     /// </param>
-    /// <param name="message">
-    ///     The raw message format string.
-    /// </param>
     /// <returns>
     ///     <c>true</c> if enabled.
     /// </returns>
-    bool IsEnabled(LogLevel logLevel, EventId eventId, string message);
+    bool IsEnabled(LogLevel logLevel, EventId eventId);
 }

@@ -20,8 +20,9 @@ public class LogLevelConfiguratorTests
         configurator.SetLogLevel(eventId, LogLevel.Warning);
 
         configurator.LogLevelDictionary[eventId]
-            .Invoke(null, LogLevel.None, new Lazy<string>())
+            .GetLogLevel(null, LogLevel.None, new Lazy<string>())
             .ShouldBe(LogLevel.Warning);
+        configurator.LogLevelDictionary[eventId].FixedLevel.ShouldBe(LogLevel.Warning);
     }
 
     [Fact]
@@ -35,11 +36,12 @@ public class LogLevelConfiguratorTests
             (exception, _) => exception is InvalidOperationException ? LogLevel.Critical : LogLevel.Error);
 
         configurator.LogLevelDictionary[eventId]
-            .Invoke(new InvalidOperationException(), LogLevel.None, new Lazy<string>())
+            .GetLogLevel(new InvalidOperationException(), LogLevel.None, new Lazy<string>())
             .ShouldBe(LogLevel.Critical);
         configurator.LogLevelDictionary[eventId]
-            .Invoke(new ArithmeticException(), LogLevel.None, new Lazy<string>())
+            .GetLogLevel(new ArithmeticException(), LogLevel.None, new Lazy<string>())
             .ShouldBe(LogLevel.Error);
+        configurator.LogLevelDictionary[eventId].FixedLevel.ShouldBeNull();
     }
 
     [Fact]
@@ -53,10 +55,11 @@ public class LogLevelConfiguratorTests
             (exception, _, _) => exception is InvalidOperationException ? LogLevel.Critical : LogLevel.Error);
 
         configurator.LogLevelDictionary[eventId]
-            .Invoke(new InvalidOperationException(), LogLevel.None, new Lazy<string>())
+            .GetLogLevel(new InvalidOperationException(), LogLevel.None, new Lazy<string>())
             .ShouldBe(LogLevel.Critical);
         configurator.LogLevelDictionary[eventId]
-            .Invoke(new ArithmeticException(), LogLevel.None, new Lazy<string>())
+            .GetLogLevel(new ArithmeticException(), LogLevel.None, new Lazy<string>())
             .ShouldBe(LogLevel.Error);
+        configurator.LogLevelDictionary[eventId].FixedLevel.ShouldBeNull();
     }
 }

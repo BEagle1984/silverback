@@ -105,6 +105,19 @@ public class IntegrationTraceExtensionsTests
     }
 
     [Fact]
+    public void LogConsumerTransactionCommitting_ShouldNotEvaluateArguments_WhenFixedLogLevelIsDisabled()
+    {
+        (_, ISilverbackLogger silverbackLogger) = CreateLogger(
+            LogLevel.Information,
+            levels => levels.SetLogLevel(IntegrationLogEvents.Tracing.EventId, LogLevel.Debug));
+        IRawInboundEnvelope envelope = Substitute.For<IRawInboundEnvelope>();
+
+        silverbackLogger.LogConsumerTransactionCommitting(envelope);
+
+        _ = envelope.DidNotReceive().BrokerMessageIdentifier;
+    }
+
+    [Fact]
     public void LogSemaphoreAcquired_ShouldApplyTracingLogLevelOverride()
     {
         (LoggerSubstitute<IntegrationTraceExtensionsTests> logger, ISilverbackLogger silverbackLogger) = CreateLogger(
@@ -114,6 +127,43 @@ public class IntegrationTraceExtensionsTests
         silverbackLogger.LogSemaphoreAcquired();
 
         logger.Received(LogLevel.Warning, null, "Semaphore acquired", 1999);
+    }
+
+    [Fact]
+    public void LogConsumerTransactionAborting_ShouldApplyLogLevelOverrideBasedOnException()
+    {
+        (LoggerSubstitute<IntegrationTraceExtensionsTests> logger, ISilverbackLogger silverbackLogger) = CreateLogger(
+            LogLevel.Information,
+            levels => levels.SetLogLevel(
+                IntegrationLogEvents.Tracing.EventId,
+                (exception, logLevel) => exception is InvalidOperationException ? LogLevel.Warning : logLevel));
+
+        silverbackLogger.LogConsumerTransactionAborting(CreateEnvelope(), new InvalidOperationException());
+
+        logger.Received(
+            LogLevel.Warning,
+            typeof(InvalidOperationException),
+            "Aborting consumer transaction... | EndpointName: test, BrokerMessageId: 42",
+            1999);
+    }
+
+    [Fact]
+    public void LogConsumerTransactionCommitting_ShouldApplyLogLevelOverrideBasedOnMessage()
+    {
+        (LoggerSubstitute<IntegrationTraceExtensionsTests> logger, ISilverbackLogger silverbackLogger) = CreateLogger(
+            LogLevel.Information,
+            levels => levels.SetLogLevel(
+                IntegrationLogEvents.Tracing.EventId,
+                (_, logLevel, message) =>
+                    message.Value.Contains("BrokerMessageId: 42", StringComparison.Ordinal) ? LogLevel.Warning : logLevel));
+
+        silverbackLogger.LogConsumerTransactionCommitting(CreateEnvelope());
+
+        logger.Received(
+            LogLevel.Warning,
+            null,
+            "Committing consumer transaction... | EndpointName: test, BrokerMessageId: 42",
+            1999);
     }
 
     [Fact]

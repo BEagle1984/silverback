@@ -27,7 +27,7 @@ public sealed class LogLevelConfigurator
     /// </returns>
     public LogLevelConfigurator SetLogLevel(EventId eventId, LogLevel logLevel)
     {
-        LogLevelDictionary[eventId] = (_, _, _) => logLevel;
+        LogLevelDictionary[eventId] = new LogLevelOverride(logLevel);
         return this;
     }
 
@@ -46,7 +46,7 @@ public sealed class LogLevelConfigurator
     /// </returns>
     public LogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception?, LogLevel, LogLevel> logLevelFunc)
     {
-        LogLevelDictionary[eventId] = (exception, originalLogLevel, _) => logLevelFunc(exception, originalLogLevel);
+        LogLevelDictionary[eventId] = new LogLevelOverride((exception, originalLogLevel, _) => logLevelFunc(exception, originalLogLevel));
         return this;
     }
 
@@ -66,7 +66,7 @@ public sealed class LogLevelConfigurator
     /// </returns>
     public LogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception?, LogLevel, Lazy<string>, LogLevel> logLevelFunc)
     {
-        LogLevelDictionary[eventId] = logLevelFunc;
+        LogLevelDictionary[eventId] = new LogLevelOverride(logLevelFunc);
         return this;
     }
 }

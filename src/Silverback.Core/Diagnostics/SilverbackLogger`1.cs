@@ -17,6 +17,5 @@ internal class SilverbackLogger<TCategoryName> : ISilverbackLogger<TCategoryName
 
     public ILogger InnerLogger => _mappedLevelsLogger;
 
-    public bool IsEnabled(LogEvent logEvent) =>
-        _mappedLevelsLogger.IsEnabled(logEvent.Level, logEvent.EventId, logEvent.Message);
+    public bool IsEnabled(LogEvent logEvent) => _mappedLevelsLogger.IsEnabled(logEvent.Level, logEvent.EventId);
 }

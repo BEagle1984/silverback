@@ -16,8 +16,9 @@ public interface ISilverbackLogger
     ILogger InnerLogger { get; }
 
     /// <summary>
-    ///     Checks if the given <see cref="LogEvent" /> is enabled according to its default or overridden
-    ///     <see cref="LogLevel" />.
+    ///     Checks if the given <see cref="LogEvent" /> is enabled according to its default or overridden <see cref="LogLevel" />. An
+    ///     event whose <see cref="LogLevel" /> is determined by a delegate is always enabled, because the delegate can depend on the
+    ///     exception and the message, which are known only when the event is logged.
     /// </summary>
     /// <param name="logEvent">
     ///     The <see cref="LogEvent" /> to be checked.

@@ -31,8 +31,8 @@ internal sealed class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TC
         Exception? exception,
         Func<TState, Exception?, string> formatter)
     {
-        if (_logLevelDictionary.TryGetValue(eventId, out Func<Exception?, LogLevel, Lazy<string>, LogLevel>? logLevelFunc))
-            logLevel = GetMappedLogLevel(logLevelFunc, logLevel, state, exception, formatter);
+        if (_logLevelDictionary.TryGetValue(eventId, out LogLevelOverride? logLevelOverride))
+            logLevel = GetMappedLogLevel(logLevelOverride.GetLogLevel, logLevel, state, exception, formatter);
 
         _innerLogger.Log(logLevel, eventId, state, exception, formatter);
     }
@@ -40,12 +40,13 @@ internal sealed class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TC
     // The event isn't known here and a mapped one could be uplifted, so the level can be trusted only without mappings
     public bool IsEnabled(LogLevel logLevel) => _logLevelDictionary.Count > 0 || _innerLogger.IsEnabled(logLevel);
 
-    public bool IsEnabled(LogLevel logLevel, EventId eventId, string message)
+    public bool IsEnabled(LogLevel logLevel, EventId eventId)
     {
-        if (_logLevelDictionary.TryGetValue(eventId, out Func<Exception?, LogLevel, Lazy<string>, LogLevel>? logLevelFunc))
-            logLevel = logLevelFunc(null, logLevel, new Lazy<string>(message));
+        if (!_logLevelDictionary.TryGetValue(eventId, out LogLevelOverride? logLevelOverride))
+            return _innerLogger.IsEnabled(logLevel);
 
-        return _innerLogger.IsEnabled(logLevel);
+        // A delegate can depend on the exception and the message, which are known only when logging
+        return logLevelOverride.FixedLevel == null || _innerLogger.IsEnabled(logLevelOverride.FixedLevel.Value);
     }
 
     public IDisposable? BeginScope<TState>(TState state)
