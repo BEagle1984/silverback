@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -170,6 +171,144 @@ public class MockedConfluentConsumerTests
         consumerGroup.AssignmentCompleteCount.ShouldBe(1);
     }
 
+    [Fact]
+    public void Unsubscribe_ShouldRevokeAssignment()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0, Partition1] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+        List<TopicPartition> revokedPartitions = [];
+
+        consumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            revokedPartitions.AddRange(partitions.Select(partition => partition.TopicPartition));
+            return partitions;
+        };
+
+        consumer.Subscribe("topic");
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+
+        consumer.Unsubscribe();
+
+        revokedPartitions.ShouldBe([Partition0, Partition1], ignoreOrder: true);
+        consumer.Assignment.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Unsubscribe_ShouldNotRevokeManualAssignment()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new();
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+        int revokedCallbacks = 0;
+
+        consumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            revokedCallbacks++;
+            return partitions;
+        };
+
+        consumer.Assign([new TopicPartitionOffset(Partition0, Offset.Unset)]);
+
+        consumer.Unsubscribe();
+
+        revokedCallbacks.ShouldBe(0);
+        consumer.Assignment.ShouldBe([Partition0]);
+    }
+
+    [Fact]
+    public void Unsubscribe_ShouldReleaseAssignment_WhenRevokedHandlerFails()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+
+        consumer.PartitionsRevokedHandler = (_, _) => throw new InvalidOperationException("test");
+
+        consumer.Subscribe("topic");
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+
+        Action act = consumer.Unsubscribe;
+
+        act.ShouldThrow<InvalidOperationException>();
+        consumer.Assignment.ShouldBeEmpty();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Not an issue")]
+    public async Task Unsubscribe_ShouldNotRevokeAgain_WhenRebalanceIsRevokingPartitions()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0, Partition1] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+        TaskCompletionSource revoking = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        using ManualResetEventSlim releaseRevocation = new();
+        ConcurrentQueue<TopicPartition> revokedPartitions = new();
+
+        consumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            revoking.TrySetResult();
+            releaseRevocation.Wait(TimeSpan.FromSeconds(5));
+            partitions.ForEach(partition => revokedPartitions.Enqueue(partition.TopicPartition));
+            return partitions;
+        };
+
+        consumer.Subscribe("topic");
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+
+        // A rebalance revoking a partition on the group's thread
+        Task rebalance = Task.Run(() => consumer.OnPartitionsRevoked([Partition0]));
+        await revoking.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        consumer.Unsubscribe();
+        releaseRevocation.Set();
+        await rebalance.WaitAsync(TimeSpan.FromSeconds(5));
+
+        revokedPartitions.ShouldBe([Partition0, Partition1]);
+        consumer.Assignment.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void OnPartitionsRevoked_ShouldAutoCommit_WhenRevokedHandlerFails()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
+        using MockedConfluentConsumer consumer = GetConsumer(consumerGroup, true);
+
+        consumer.PartitionsRevokedHandler = (_, _) => throw new InvalidOperationException("test");
+
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+        consumer.StoreOffset(new TopicPartitionOffset(Partition0, 5));
+
+        Action act = () => consumer.OnPartitionsRevoked([Partition0]);
+
+        act.ShouldThrow<InvalidOperationException>();
+        consumerGroup.Commits.ShouldBe([new TopicPartitionOffset(Partition0, 5)]);
+        consumer.Assignment.ShouldBeEmpty();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Not an issue")]
+    public void OnPartitionsRevoked_ShouldProcessQueuedRevocation_WhenRevokedHandlerFails()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0, Partition1] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+        int revokedCallbacks = 0;
+
+        consumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            if (++revokedCallbacks > 1)
+                return partitions;
+
+            // Queued until this callback returns
+            consumer.OnPartitionsRevoked([Partition1]);
+            throw new InvalidOperationException("test");
+        };
+
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+
+        Action act = () => consumer.OnPartitionsRevoked([Partition0]);
+
+        act.ShouldThrow<InvalidOperationException>();
+        revokedCallbacks.ShouldBe(2);
+        consumer.Assignment.ShouldBeEmpty();
+    }
+
     private static IEnumerable<TopicPartitionOffset> GetPausedPartitionOffsets(
         IEnumerable<TopicPartition> partitions,
         TaskCompletionSource assignmentCallbackCompleted,
@@ -184,7 +323,7 @@ public class MockedConfluentConsumerTests
         }
     }
 
-    private static MockedConfluentConsumer GetConsumer(FakeInternalMockedConsumerGroup consumerGroup)
+    private static MockedConfluentConsumer GetConsumer(FakeInternalMockedConsumerGroup consumerGroup, bool enableAutoCommit = false)
     {
         MockedKafkaOptions options = new()
         {
@@ -195,7 +334,7 @@ public class MockedConfluentConsumerTests
             new ConsumerConfig
             {
                 BootstrapServers = "PLAINTEXT://mock",
-                EnableAutoCommit = false,
+                EnableAutoCommit = enableAutoCommit,
                 GroupId = "group"
             },
             new InMemoryTopicCollection(options),
@@ -214,6 +353,8 @@ public class MockedConfluentConsumerTests
         public IReadOnlyCollection<TopicPartition> Assignment { get; set; } = [];
 
         public int AssignmentCompleteCount { get; private set; }
+
+        public List<TopicPartitionOffset> Commits { get; } = [];
 
         public bool IsRebalancing { get; set; }
 
@@ -252,9 +393,7 @@ public class MockedConfluentConsumerTests
         {
         }
 
-        public void Commit(IEnumerable<TopicPartitionOffset> offsets)
-        {
-        }
+        public void Commit(IEnumerable<TopicPartitionOffset> offsets) => Commits.AddRange(offsets);
 
         public IReadOnlyCollection<TopicPartition> GetAssignment(IMockedConfluentConsumer consumer) => Assignment;
 

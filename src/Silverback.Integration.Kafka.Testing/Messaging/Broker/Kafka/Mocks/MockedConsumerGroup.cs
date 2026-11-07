@@ -164,11 +164,23 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
             lock (_stateLock)
             {
+                bool removed = false;
+
                 if (_manuallyAssignedConsumers.Contains(consumer))
+                {
                     UnassignCore(consumer);
+                    removed = true;
+                }
 
                 if (_subscribedConsumers.Exists(subscribedConsumer => subscribedConsumer.Consumer == consumer))
+                {
                     UnsubscribeCore(consumer);
+                    removed = true;
+                }
+
+                // A consumer that already left the group (e.g. unsubscribed before closing) doesn't trigger another rebalance
+                if (!removed)
+                    return;
 
                 _stateVersion++;
                 Rebalance();

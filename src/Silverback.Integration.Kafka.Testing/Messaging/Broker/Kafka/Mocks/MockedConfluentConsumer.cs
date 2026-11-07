@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -36,6 +37,10 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     private readonly List<TopicPartition> _pausedPartitions = [];
 
     private readonly HashSet<TopicPartition> _pendingRevocations = [];
+
+    private readonly List<TopicPartition> _assignment = [];
+
+    private IReadOnlyCollection<TopicPartition> _revokingPartitions = [];
 
     private IReadOnlyCollection<TopicPartitionOffset>? _pendingAssignment;
 
@@ -98,7 +103,17 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public ConsumerConfig Config { get; }
 
-    public List<TopicPartition> Assignment { get; } = [];
+    // A copy, like the one returned by Confluent.Kafka, that the concurrent revocations can't modify
+    public List<TopicPartition> Assignment
+    {
+        get
+        {
+            lock (_assignmentStateLock)
+            {
+                return [.. _assignment];
+            }
+        }
+    }
 
     public List<string> Subscription { get; } = [];
 
@@ -199,8 +214,22 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         Check.ThrowObjectDisposedIf(IsDisposed, GetType());
         CheckGroupIdNotEmpty();
 
+        bool subscribed = Subscription.Count > 0;
+
         _consumerGroup.Unsubscribe(this);
         Subscription.Clear();
+
+        // Like librdkafka, revoke the assignment of the consumer leaving the group, which the group's rebalance doesn't include. A
+        // manual assignment isn't revoked, nor are the partitions that a concurrent rebalance is already revoking.
+        List<TopicPartition> assignment;
+
+        lock (_assignmentStateLock)
+        {
+            assignment = [.. _assignment.Where(partition => !_revokingPartitions.Contains(partition))];
+        }
+
+        if (subscribed && assignment.Count > 0)
+            OnPartitionsRevoked(assignment);
     }
 
     public void Assign(TopicPartition partition) =>
@@ -219,11 +248,11 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             assignmentGeneration = _rebalanceGeneration;
             _pendingAssignment = null;
             _partitionsAssigned = false;
-            Assignment.Clear();
+            _assignment.Clear();
 
             foreach (TopicPartitionOffset topicPartitionOffset in partitionsList)
             {
-                Assignment.Add(topicPartitionOffset.TopicPartition);
+                _assignment.Add(topicPartitionOffset.TopicPartition);
                 Seek(GetStartingOffset(topicPartitionOffset));
             }
         }
@@ -233,7 +262,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         lock (_assignmentStateLock)
         {
             if (assignmentGeneration == _rebalanceGeneration &&
-                Assignment.ToHashSet().SetEquals(_consumerGroup.GetAssignment(this)))
+                _assignment.ToHashSet().SetEquals(_consumerGroup.GetAssignment(this)))
             {
                 _partitionsAssigned = true;
             }
@@ -257,7 +286,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         lock (_assignmentStateLock)
         {
             _pendingAssignment = null;
-            Assignment.Clear();
+            _assignment.Clear();
             _partitionsAssigned = false;
             _rebalanceGeneration++;
         }
@@ -369,7 +398,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         lock (_assignmentStateLock)
         {
-            assignment = _partitionsAssigned ? [.. Assignment] : [];
+            assignment = _partitionsAssigned ? [.. _assignment] : [];
 
             return _partitionsAssigned;
         }
@@ -431,11 +460,12 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             if (_options.PartitionsAssignmentDelay > TimeSpan.Zero)
                 Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken).SafeWait();
 
+            List<TopicPartition> currentAssignment = Assignment;
             IReadOnlyCollection<TopicPartition> assignedPartitions =
             [
                 .. _consumerGroup
                     .GetAssignment(this)
-                    .Where(topicPartition => !Assignment.Contains(topicPartition))
+                    .Where(topicPartition => !currentAssignment.Contains(topicPartition))
             ];
 
             // Never hold the assignment-state lock across callbacks. A concurrent or reentrant revocation is queued
@@ -472,32 +502,52 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private void RevokePartitions(IReadOnlyCollection<TopicPartition> topicPartitions)
     {
-        PartitionsRevokedHandler?.Invoke(
-            this,
-            [
-                .. topicPartitions.Select(topicPartition => _currentOffsets.GetValueOrDefault(
-                    topicPartition,
-                    new TopicPartitionOffset(topicPartition, Offset.Unset)))
-            ]);
+        try
+        {
+            PartitionsRevokedHandler?.Invoke(
+                this,
+                [
+                    .. topicPartitions.Select(topicPartition => _currentOffsets.GetValueOrDefault(
+                        topicPartition,
+                        new TopicPartitionOffset(topicPartition, Offset.Unset)))
+                ]);
+        }
+        finally
+        {
+            try
+            {
+                // Like librdkafka, which commits the revoked partitions even if the handler fails
+                if (Config.EnableAutoCommit != false && !string.IsNullOrEmpty(Config.GroupId))
+                    Commit();
+            }
+            finally
+            {
+                // Like Confluent.Kafka, which unassigns the partitions even if the handler fails
+                lock (_assignmentStateLock)
+                {
+                    foreach (TopicPartition topicPartition in topicPartitions)
+                    {
+                        _assignment.Remove(topicPartition);
+                        _currentOffsets.Remove(topicPartition);
 
-        if (Config.EnableAutoCommit != false && !string.IsNullOrEmpty(Config.GroupId))
-            Commit();
+                        lock (_storedOffsets)
+                        {
+                            _storedOffsets.Remove(topicPartition);
+                            _pendingCommitOffsets.Remove(topicPartition);
+                        }
 
+                        _lastEofOffsets.Remove(topicPartition);
+                    }
+                }
+            }
+        }
+    }
+
+    private bool IsAssigned(TopicPartition topicPartition)
+    {
         lock (_assignmentStateLock)
         {
-            foreach (TopicPartition topicPartition in topicPartitions)
-            {
-                Assignment.Remove(topicPartition);
-                _currentOffsets.Remove(topicPartition);
-
-                lock (_storedOffsets)
-                {
-                    _storedOffsets.Remove(topicPartition);
-                    _pendingCommitOffsets.Remove(topicPartition);
-                }
-
-                _lastEofOffsets.Remove(topicPartition);
-            }
+            return _assignment.Contains(topicPartition);
         }
     }
 
@@ -531,7 +581,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (!Assignment.Contains(topicPartitionOffset.TopicPartition))
+            if (!IsAssigned(topicPartitionOffset.TopicPartition))
                 continue;
 
             if (pulled)
@@ -560,7 +610,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             IReadOnlyCollection<TopicPartition> groupAssignment = _consumerGroup.GetAssignment(this);
             HashSet<TopicPartition> resultingAssignment =
             [
-                .. Assignment,
+                .. _assignment,
                 .. partitionOffsets.Select(partitionOffset => partitionOffset.TopicPartition)
             ];
 
@@ -630,7 +680,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
         HashSet<TopicPartition> resultingAssignment =
         [
-            .. Assignment,
+            .. _assignment,
             .. pendingAssignment.Select(partitionOffset => partitionOffset.TopicPartition)
         ];
 
@@ -645,8 +695,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         foreach (TopicPartitionOffset partitionOffset in partitionOffsets)
         {
-            if (!Assignment.Contains(partitionOffset.TopicPartition))
-                Assignment.Add(partitionOffset.TopicPartition);
+            if (!_assignment.Contains(partitionOffset.TopicPartition))
+                _assignment.Add(partitionOffset.TopicPartition);
 
             Seek(GetStartingOffset(partitionOffset));
         }
@@ -667,13 +717,16 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         _pendingRevocations.Clear();
         _revocationPending = false;
         _revocationInProgress = true;
+        _revokingPartitions = topicPartitions;
 
         return true;
     }
 
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Rethrown after the queued revocations")]
     private void ProcessRevocations(IReadOnlyCollection<TopicPartition> topicPartitions)
     {
         IReadOnlyCollection<TopicPartition>? nextRevocation = topicPartitions;
+        ExceptionDispatchInfo? firstException = null;
 
         while (nextRevocation != null)
         {
@@ -681,15 +734,21 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             {
                 RevokePartitions(nextRevocation);
             }
-            finally
+            catch (Exception ex)
             {
-                lock (_assignmentStateLock)
-                {
-                    _revocationInProgress = false;
-                    TryStartRevocation(out nextRevocation);
-                }
+                // A failing callback doesn't prevent the revocations queued meanwhile
+                firstException ??= ExceptionDispatchInfo.Capture(ex);
+            }
+
+            lock (_assignmentStateLock)
+            {
+                _revocationInProgress = false;
+                _revokingPartitions = [];
+                TryStartRevocation(out nextRevocation);
             }
         }
+
+        firstException?.Throw();
     }
 
     private TopicPartitionOffset GetStartingOffset(TopicPartitionOffset topicPartitionOffset)

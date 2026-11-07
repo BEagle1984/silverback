@@ -96,6 +96,60 @@ public partial class MockedConsumerGroupTests
         observation.FinalAssignment.ShouldBe(observation.InitialAssignment, true);
     }
 
+    [Fact]
+    public async Task Remove_ShouldNotRebalance_WhenConsumerAlreadyUnsubscribed()
+    {
+        MockedKafkaOptions options = new()
+        {
+            PartitionsAssignmentDelay = TimeSpan.Zero
+        };
+
+        options.TopicPartitionsCount.Add("topic", 2);
+
+        InMemoryTopicCollection topics = new(options);
+        using MockedConsumerGroup consumerGroup = new("group", BootstrapServers, topics);
+        MockedConfluentConsumer leavingConsumer = GetConsumer(consumerGroup, topics, options, PartitionAssignmentStrategy.RoundRobin);
+        MockedConfluentConsumer remainingConsumer = GetConsumer(consumerGroup, topics, options, PartitionAssignmentStrategy.RoundRobin);
+        int revokedCallbacks = 0;
+
+        remainingConsumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            Interlocked.Increment(ref revokedCallbacks);
+            return partitions;
+        };
+
+        leavingConsumer.Subscribe("topic");
+        remainingConsumer.Subscribe("topic");
+
+        using CancellationTokenSource consumerCancellationTokenSource = new();
+        List<Task> consumerTasks =
+        [
+            StartConsumer(leavingConsumer, consumerCancellationTokenSource.Token),
+            StartConsumer(remainingConsumer, consumerCancellationTokenSource.Token)
+        ];
+
+        try
+        {
+            await WaitUntilAllPartitionsAreAssignedAsync(consumerGroup);
+
+            leavingConsumer.Unsubscribe();
+            await WaitUntilAllPartitionsAreAssignedAsync(consumerGroup);
+            int revokedCallbacksBeforeClose = revokedCallbacks;
+
+            leavingConsumer.Close();
+            consumerGroup.IsRebalanceScheduled.ShouldBeFalse();
+            await WaitUntilAllPartitionsAreAssignedAsync(consumerGroup);
+
+            revokedCallbacks.ShouldBe(revokedCallbacksBeforeClose);
+            remainingConsumer.Assignment.Count.ShouldBe(2);
+        }
+        finally
+        {
+            await consumerCancellationTokenSource.CancelAsync();
+            await Task.WhenAll(consumerTasks);
+        }
+    }
+
     private static async Task<RebalanceObservation> ObserveDisjointConsumerDuringJoinAsync(PartitionAssignmentStrategy assignmentStrategy)
     {
         MockedKafkaOptions options = new()
