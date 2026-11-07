@@ -55,6 +55,7 @@
   </Folder>
   <Folder Name="/Tools/">
     <Project Path="tools/Silverback.Tools.Generators.Common/Silverback.Tools.Generators.Common.csproj" />
+    <Project Path="tools/Silverback.Tools.Generators.Docs.Contributors/Silverback.Tools.Generators.Docs.Contributors.csproj" />
     <Project Path="tools/Silverback.Tools.Generators.Docs.Headers/Silverback.Tools.Generators.Docs.Headers.csproj" />
     <Project Path="tools/Silverback.Tools.Generators.Docs.LogEvents/Silverback.Tools.Generators.Docs.LogEvents.csproj" />
     <Project Path="tools/Silverback.Tools.Generators.LogEvents/Silverback.Tools.Generators.LogEvents.csproj" />

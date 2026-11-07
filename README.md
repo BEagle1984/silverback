@@ -166,8 +166,8 @@ The v4 documentation is still available at [silverback-messaging.net/v4](https:/
 
 ### Code and Documentation Generators
 
-The four generator applications are included in the main solution. The configuration proxy generators write to standard output, while the
-documentation generators write Markdown tables to the directory passed as argument and are run by `docs/build.ps1`. Shared generator support
+The generator applications are included in the main solution. The configuration proxy generators write to standard output, while the
+documentation generators write Markdown files to the directory passed as argument and are run by `docs/build.ps1`. Shared generator support
 lives in [Silverback.Tools.Generators.Common](tools/Silverback.Tools.Generators.Common).
 
 | Tool                                                                       | Purpose                                                                                         |
@@ -176,6 +176,7 @@ lives in [Silverback.Tools.Generators.Common](tools/Silverback.Tools.Generators.
 | [MqttConfigProxies](tools/Silverback.Tools.Generators.MqttConfigProxies)   | Generate MQTT configuration wrappers and builders                                               |
 | [Docs.Headers](tools/Silverback.Tools.Generators.Docs.Headers)             | Generate message-header reference tables                                                        |
 | [Docs.LogEvents](tools/Silverback.Tools.Generators.Docs.LogEvents)         | Generate log-event reference tables                                                             |
+| [Docs.Contributors](tools/Silverback.Tools.Generators.Docs.Contributors)   | Generate the contributors grid from the GitHub API                                              |
 | [docs/build.ps1](docs/build.ps1)                                           | Build and serve the DocFX documentation locally; run from the docs directory                    |
 | [docs/publish.ps1](docs/publish.ps1)                                       | Publish the generated site through a separate gh-pages checkout; supports -NoPush               |
 

@@ -39,4 +39,4 @@ The main solution contains unit tests. There are also runnable <xref:samples> in
 
 Thanks to all the [contributors](https://github.com/BEagle1984/silverback/graphs/contributors)!
 
-[![Silverback contributors](https://contrib.rocks/image?repo=BEagle1984/silverback)](https://github.com/BEagle1984/silverback/graphs/contributors)
+[!INCLUDE [Contributors](build/generated/contributors.md)]

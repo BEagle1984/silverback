@@ -27,6 +27,10 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 dotnet build/Silverback.Tools.Generators.Docs.LogEvents.dll build/generated
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+# Generate the contributors grid included by the contributing page
+dotnet build/Silverback.Tools.Generators.Docs.Contributors.dll build/generated
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
 dotnet tool restore
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 

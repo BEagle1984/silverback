@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(ToolsTargetFramework)</TargetFramework>
+    <RootNamespace>Silverback.Tools.Generators.Docs.Contributors</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+  </PropertyGroup>
+
+</Project>

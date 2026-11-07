@@ -129,9 +129,10 @@ if ($siteItems.Count -eq 0) {
     throw "The generated site at '$sitePath' is empty."
 }
 
-# docfx only warns about a missing include and leaves its raw markup in the page: the generated tables exist only after build.ps1
+# docfx only warns about a missing include and leaves its raw markup in the page: the generated files exist only after build.ps1
 $unresolvedIncludes = @(
-    Get-ChildItem -LiteralPath (Join-Path $sitePath "guides") -Filter "*.html" -Recurse -File |
+    Get-ChildItem -LiteralPath $sitePath -Filter "*.html" -Recurse -File |
+        Where-Object { -not $_.FullName.StartsWith((Join-Path $sitePath "v4\"), [StringComparison]::OrdinalIgnoreCase) } |
         Select-String -Pattern "[!include[" -SimpleMatch -List
 )
 if ($unresolvedIncludes.Count -gt 0) {
