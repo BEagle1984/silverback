@@ -43,4 +43,5 @@
 ## Git
 
 - Write short Conventional Commits subjects, without articles or filler words: `chore: migrate solutions to slnx`, not `chore: migrate the solutions to the slnx format`.
+- When a commit resolves a GitHub issue, end the message with a `Fixes #123` line in the body, so that the issue is linked and closed when the commit reaches `main`. Use `Refs #123` for a commit that only partially addresses the issue.
 - Do not commit or push without the user's explicit approval, unless the user asked you to. An approval covers only the change it was given for, not later commits.
