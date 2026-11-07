@@ -130,7 +130,9 @@ function Remove-ProjectReference([string] $projectFilePath, [string]$projectToRe
 
 function Test-ProjectReferenceReplaced([string]$projectFilePath)
 {
-    $result = Select-String -Path $projectFilePath -Pattern ".csproj"
+    # Private analyzer references are build-time only and don't become package dependencies
+    $result = Select-String -Path $projectFilePath -Pattern ".csproj" |
+        Where-Object { $_.Line -notmatch 'OutputItemType="Analyzer".*PrivateAssets="all"' }
 
     if ($result -ne $null)
     {
