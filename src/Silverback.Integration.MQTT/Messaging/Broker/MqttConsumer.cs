@@ -34,7 +34,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private bool _isDisposed;
 
-    private bool _isConnectedEventRaised;
+    private bool _isSubscribed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttConsumer" /> class.
@@ -139,9 +139,9 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     {
         // Resuming on a live connection doesn't raise the Connected event, which would otherwise restore the status
         // (restored before reading, otherwise a buffered message could be consumed while the status is still Stopped)
-        // The native client connects before the Connected event is raised and disconnects before the Disconnected event is
-        // raised: if the Connected event is still pending or the connection was lost, the Connected event restores the status
-        if (_isConnectedEventRaised && Client.IsConnected)
+        // The native client connects before the topics are subscribed and disconnects before the Disconnected event is raised:
+        // if the subscription is still pending or the connection was lost, the Subscribed event restores the status
+        if (_isSubscribed && Client.IsConnected)
             EnsureConnectedStatus();
 
         _channelsManager.StartReading();
@@ -215,18 +215,18 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         _pendingMessagesCountdown.Dispose();
     }
 
-    private async ValueTask OnClientConnectedAsync(BrokerClient client)
-    {
-        _isConnectedEventRaised = true;
-
-        await StartAsync().ConfigureAwait(false);
-
-        EnsureConnectedStatus();
-    }
+    private ValueTask OnClientConnectedAsync(BrokerClient client) => StartAsync();
 
     private ValueTask OnClientSubscribedAsync(BrokerClient client)
     {
         Client.SubscribedTopicsFilters.ForEach(topicFilter => _logger.LogConsumerSubscribed(topicFilter.Topic, this));
+
+        _isSubscribed = true;
+
+        // The consumer isn't ready until now: the broker doesn't deliver what is published before the subscription
+        if (IsStartedAndNotStopping())
+            EnsureConnectedStatus();
+
         return ValueTask.CompletedTask;
     }
 
@@ -240,7 +240,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private async ValueTask OnClientDisconnectedAsync(BrokerClient client)
     {
-        _isConnectedEventRaised = false;
+        _isSubscribed = false;
 
         // Connection loss does not raise Disconnecting, so release pending native receive callbacks here too
         _channelsManager.CompleteAll();

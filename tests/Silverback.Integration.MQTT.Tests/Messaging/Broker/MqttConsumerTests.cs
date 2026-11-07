@@ -338,6 +338,62 @@ public class MqttConsumerTests
     }
 
     [Fact]
+    public async Task ConnectAsync_ShouldReportConnected_WhenTopicsAreSubscribed()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        TaskCompletionSource<bool> subscribing = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseSubscribe = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        harness.BeforeSubscribe = async () =>
+        {
+            subscribing.TrySetResult(true);
+            await releaseSubscribe.Task.WaitAsync(ReconnectTimeout);
+        };
+
+        Task connecting = harness.ConnectAsync();
+
+        await subscribing.Task.WaitAsync(ReconnectTimeout);
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Started);
+
+        releaseSubscribe.TrySetResult(true);
+        await connecting;
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
+        harness.Consumer.StatusInfo.History
+            .Select(change => change.Status)
+            .ShouldBe([ConsumerStatus.Started, ConsumerStatus.Connected]);
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldNotReportConnected_WhenStoppedBeforeTopicsAreSubscribed()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        TaskCompletionSource<bool> subscribing = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseSubscribe = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        harness.BeforeSubscribe = async () =>
+        {
+            subscribing.TrySetResult(true);
+            await releaseSubscribe.Task.WaitAsync(ReconnectTimeout);
+        };
+
+        Task connecting = harness.ConnectAsync();
+
+        await subscribing.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
+
+        releaseSubscribe.TrySetResult(true);
+        await connecting;
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+
+        await harness.Consumer.StartAsync();
+
+        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
+    }
+
+    [Fact]
     public async Task StartAsync_ShouldRetryRolledBackDelivery_WhenStoppedBeforeRetrying()
     {
         await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
@@ -879,6 +935,14 @@ public class MqttConsumerTests
                 await PendingReceive;
             });
 
+            _nativeClient.SubscribeAsync(Arg.Any<MqttClientSubscribeOptions>(), Arg.Any<CancellationToken>()).Returns(async _ =>
+            {
+                if (BeforeSubscribe != null)
+                    await BeforeSubscribe();
+
+                return new MqttClientSubscribeResult(0, [], string.Empty, []);
+            });
+
             MqttClientConfiguration configuration = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
                 .ConnectViaTcp("reconnect-test-broker")
                 .WithClientId("reconnect-test")
@@ -892,15 +956,6 @@ public class MqttConsumerTests
                 configuration,
                 Substitute.For<IBrokerClientCallbacksInvoker>(),
                 Substitute.For<ISilverbackLogger>());
-            Client.Subscribed.AddHandler(_ =>
-            {
-                _subscribed.TrySetResult(true);
-
-                if (_connection > 1)
-                    Reconnected.TrySetResult(true);
-
-                return ValueTask.CompletedTask;
-            });
 
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviors = Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>();
             behaviors.GetBehaviorsList().Returns([Behavior]);
@@ -918,6 +973,17 @@ public class MqttConsumerTests
                 behaviors,
                 Substitute.For<IServiceProvider>(),
                 Substitute.For<ISilverbackLogger<MqttConsumer>>());
+
+            // Added after the consumer, which updates its status in its own handler
+            Client.Subscribed.AddHandler(_ =>
+            {
+                _subscribed.TrySetResult(true);
+
+                if (_connection > 1)
+                    Reconnected.TrySetResult(true);
+
+                return ValueTask.CompletedTask;
+            });
         }
 
         public MqttClientWrapper Client { get; }
@@ -937,6 +1003,8 @@ public class MqttConsumerTests
         public Action? BeforeIsConnectedRead { get; set; }
 
         public Func<Task>? BeforeConnected { get; set; }
+
+        public Func<Task>? BeforeSubscribe { get; set; }
 
         public TaskCompletionSource<bool> Reconnecting { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
