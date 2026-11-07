@@ -15,4 +15,6 @@ dotnet build -c Release $solutionFilter --no-incremental -o build
 
 Remove-Item $solutionFilter
 
-docfx --serve --port 4242
+dotnet tool restore
+
+dotnet docfx --serve --port 4242

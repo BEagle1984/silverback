@@ -56,18 +56,34 @@ function Add-AssetVersions {
     $publicPath = Join-Path $Path "public"
     $utf8 = [Text.UTF8Encoding]::new($false)
 
-    # docfx.min.js imports main.js, so main.js has to be versioned first to make the change flow into the docfx.min.js hash
-    $docfxScriptPath = Join-Path $publicPath "docfx.min.js"
-    $docfxScript = [IO.File]::ReadAllText($docfxScriptPath)
+    # A shared chunk imports main.js, so main.js has to be versioned first to make the change flow into the chunk hash
+    $scriptPaths = @(Get-ChildItem -LiteralPath $publicPath -Filter "*.js" -File | Select-Object -ExpandProperty FullName)
     $mainScriptImport = 'import("./main.js")'
-    if (-not $docfxScript.Contains($mainScriptImport)) {
-        throw "The main.js import was not found in '$docfxScriptPath'."
+    $chunkPaths = @($scriptPaths | Where-Object { [IO.File]::ReadAllText($_).Contains($mainScriptImport) })
+    if ($chunkPaths.Count -ne 1) {
+        throw "Expected the main.js import in exactly one script in '$publicPath', but found $($chunkPaths.Count)."
     }
 
+    $chunkPath = $chunkPaths[0]
     $mainScriptHash = Get-ContentHash (Join-Path $publicPath "main.js")
-    $docfxScript = $docfxScript.Replace($mainScriptImport, "import(`"./main.js?v=$mainScriptHash`")")
-    [IO.File]::WriteAllText($docfxScriptPath, $docfxScript, $utf8)
+    $chunk = [IO.File]::ReadAllText($chunkPath).Replace($mainScriptImport, "import(`"./main.js?v=$mainScriptHash`")")
+    [IO.File]::WriteAllText($chunkPath, $chunk, $utf8)
     Write-Host "Versioned 'main.js' as '$mainScriptHash'."
+
+    # The chunk keeps its name when main.js changes, so it gets a version too. Every reference has to use it, otherwise the
+    # browser would load the chunk twice as separate modules. docfx.min.js references it, so the change reaches its hash too
+    $chunkName = Split-Path -Leaf $chunkPath
+    $chunkHash = Get-ContentHash $chunkPath
+    foreach ($scriptPath in $scriptPaths) {
+        $script = [IO.File]::ReadAllText($scriptPath)
+        $updatedScript = $script.Replace("`"./$chunkName`"", "`"./${chunkName}?v=$chunkHash`"")
+
+        if ($updatedScript -ne $script) {
+            [IO.File]::WriteAllText($scriptPath, $updatedScript, $utf8)
+        }
+    }
+
+    Write-Host "Versioned '$chunkName' as '$chunkHash'."
 
     $assetHashes = @{}
     foreach ($assetName in @("docfx.min.css", "main.css", "docfx.min.js")) {
