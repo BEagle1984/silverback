@@ -58,7 +58,7 @@ public sealed class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IE
 
     /// <inheritdoc cref="object.Equals(object)" />
     public override bool Equals(object? obj) =>
-        obj is { } && (ReferenceEquals(this, obj) || obj is ValueReadOnlyCollection<T> coll && Equals(coll));
+        obj != null && (ReferenceEquals(this, obj) || obj is ValueReadOnlyCollection<T> coll && Equals(coll));
 
     /// <inheritdoc cref="object.GetHashCode" />
     public override int GetHashCode() =>
