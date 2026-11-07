@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Silverback.Util;
@@ -25,48 +24,40 @@ internal sealed class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TC
         _logLevelDictionary = logLevelDictionary;
     }
 
-    [SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging", Justification = "Not trivial")]
     public void Log<TState>(
         LogLevel logLevel,
         EventId eventId,
         TState state,
         Exception? exception,
-        Func<TState, Exception?, string> formatter) =>
-        _innerLogger.Log(
-            GetActualLogLevel(
-                logLevel,
-                eventId,
-                exception,
-                new Lazy<string>(() => formatter(state, exception))),
-            eventId,
-            state,
-            exception,
-            formatter);
+        Func<TState, Exception?, string> formatter)
+    {
+        if (_logLevelDictionary.TryGetValue(eventId, out Func<Exception?, LogLevel, Lazy<string>, LogLevel>? logLevelFunc))
+            logLevel = GetMappedLogLevel(logLevelFunc, logLevel, state, exception, formatter);
 
-    // Always return true to prevent uplifted logs to be prematurely ignored
-    public bool IsEnabled(LogLevel logLevel) => true;
+        _innerLogger.Log(logLevel, eventId, state, exception, formatter);
+    }
 
-    public bool IsEnabled(LogLevel logLevel, EventId eventId, string message) =>
-        _innerLogger.IsEnabled(
-            GetActualLogLevel(
-                logLevel,
-                eventId,
-                null,
-                new Lazy<string>(message)));
+    // The event isn't known here and a mapped one could be uplifted, so the level can be trusted only without mappings
+    public bool IsEnabled(LogLevel logLevel) => _logLevelDictionary.Count > 0 || _innerLogger.IsEnabled(logLevel);
+
+    public bool IsEnabled(LogLevel logLevel, EventId eventId, string message)
+    {
+        if (_logLevelDictionary.TryGetValue(eventId, out Func<Exception?, LogLevel, Lazy<string>, LogLevel>? logLevelFunc))
+            logLevel = logLevelFunc(null, logLevel, new Lazy<string>(message));
+
+        return _innerLogger.IsEnabled(logLevel);
+    }
 
     public IDisposable? BeginScope<TState>(TState state)
         where TState : notnull =>
         _innerLogger.BeginScope(state);
 
-    private LogLevel GetActualLogLevel(
+    // Kept apart from Log because the closure is allocated on entry of the method declaring the captured parameters
+    private static LogLevel GetMappedLogLevel<TState>(
+        Func<Exception?, LogLevel, Lazy<string>, LogLevel> logLevelFunc,
         LogLevel logLevel,
-        EventId eventId,
+        TState state,
         Exception? exception,
-        Lazy<string> lazyMessage)
-    {
-        Func<Exception?, LogLevel, Lazy<string>, LogLevel> logLevelFunc =
-            _logLevelDictionary.GetValueOrDefault(eventId, (_, _, _) => logLevel);
-
-        return logLevelFunc(exception, logLevel, lazyMessage);
-    }
+        Func<TState, Exception?, string> formatter) =>
+        logLevelFunc(exception, logLevel, new Lazy<string>(() => formatter(state, exception)));
 }
