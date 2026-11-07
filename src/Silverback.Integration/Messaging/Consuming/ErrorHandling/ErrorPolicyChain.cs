@@ -98,9 +98,7 @@ public class ErrorPolicyChain : IErrorPolicy
             if (nextPolicy != null)
                 return nextPolicy.HandleErrorAsync(context, exception);
 
-            _logger.LogProcessingTrace(
-                context.Envelope,
-                "All policies have been applied but the message(s) couldn't be successfully processed. The client will be disconnected.");
+            _logger.LogAllErrorPoliciesApplied(context.Envelope);
 
             return Task.FromResult(false);
         }

@@ -73,9 +73,7 @@ internal sealed class SequenceStore : ISequenceStore
         Check.NotNull(sequence, nameof(sequence));
         Check.ThrowObjectDisposedIf(IsDisposed, this);
 
-        _logger.LogTrace(
-            "Adding {sequenceType} '{sequenceId}' to store '{sequenceStoreId}'.",
-            () => [sequence.GetType().Name, sequence.SequenceId, _id]);
+        _logger.LogSequenceAddedToStore(sequence, _id);
 
         ISequence? oldSequence;
 
@@ -97,7 +95,7 @@ internal sealed class SequenceStore : ISequenceStore
 
     public ValueTask RemoveAsync(string sequenceId)
     {
-        _logger.LogTrace("Removing sequence '{sequenceId}' from store '{sequenceStoreId}'.", () => [sequenceId, _id]);
+        _logger.LogSequenceRemovedFromStore(sequenceId, _id);
 
         lock (_storeLock)
         {
@@ -123,7 +121,7 @@ internal sealed class SequenceStore : ISequenceStore
         if (IsDisposed)
             return;
 
-        _logger.LogTrace("Disposing sequence store {sequenceStoreId}", () => [_id]);
+        _logger.LogSequenceStoreDisposing(_id);
 
         await GetSnapshot().AbortAllAsync(SequenceAbortReason.Disposing).ConfigureAwait(false);
 

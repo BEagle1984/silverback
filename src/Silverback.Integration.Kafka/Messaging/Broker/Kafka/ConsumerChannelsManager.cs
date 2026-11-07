@@ -69,10 +69,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         if (channel == null)
             return;
 
-        _logger.LogConsumerTrace(
-            _consumer,
-            "Writing message ({Topic}[{Partition}]@{Offset}) to channel {Channel}",
-            () => [consumeResult.Topic, consumeResult.Partition.Value, consumeResult.Offset.Value, channel.Id]);
+        _logger.LogMessageWritingToChannel(_consumer, consumeResult, channel);
 
         try
         {
@@ -89,10 +86,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             // overflow, which is discarded with the channel.
             if (!consumeResult.IsPartitionEOF && !channel.ReadCancellationToken.IsCancellationRequested)
             {
-                _logger.LogConsumerTrace(
-                    _consumer,
-                    "Dropping message ({Topic}[{Partition}]@{Offset}) polled while stopping: it will be consumed again",
-                    () => [consumeResult.Topic, consumeResult.Partition.Value, consumeResult.Offset.Value]);
+                _logger.LogPolledMessageDropped(_consumer, consumeResult);
 
                 return;
             }
@@ -103,10 +97,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             }
             catch (ChannelClosedException)
             {
-                _logger.LogConsumerTrace(
-                    _consumer,
-                    "Failed to write message ({Topic}[{Partition}]@{Offset}) to overflow channel {Channel}",
-                    () => [consumeResult.Topic, consumeResult.Partition.Value, consumeResult.Offset.Value, channel.Id]);
+                _logger.LogMessageWriteToOverflowChannelFailed(_consumer, consumeResult, channel);
             }
         }
     }

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
@@ -730,82 +729,6 @@ public class IntegrationLoggerExtensionsTests
             typeof(BrokerConfigurationException),
             "Failed to configure endpoint test",
             1104);
-    }
-
-    [Fact]
-    public void LogTrace_ShouldLog()
-    {
-        string expectedMessage = "Message A 42 True";
-
-        _silverbackLogger.LogTrace("Message {string} {int} {bool}", () => ["A", 42, true]);
-
-        _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 1999);
-    }
-
-    [Fact]
-    public void LogTrace_ShouldLog_WhenExceptionSpecified()
-    {
-        _silverbackLogger.LogTrace(new InvalidComObjectException(), "Message {string} {int} {bool}", () => ["A", 42, true]);
-
-        _loggerSubstitute.Received(
-            LogLevel.Trace,
-            typeof(InvalidComObjectException),
-            "Message A 42 True",
-            1999);
-    }
-
-    [Fact]
-    public void LogConsumerTrace_ShouldLog()
-    {
-        _silverbackLogger.LogConsumerTrace(new TestConsumer(), "Message {string} {int} {bool}", () => ["A", 42, true]);
-
-        _loggerSubstitute.Received(
-            LogLevel.Trace,
-            null,
-            "Message A 42 True | ConsumerName: consumer1",
-            1999);
-    }
-
-    [Fact]
-    public void LogProcessingTrace_ShouldLog()
-    {
-        RawInboundEnvelope envelope = new(
-            Stream.Null,
-            null,
-            TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
-            new TestOffset("a", "42"));
-
-        _silverbackLogger.LogProcessingTrace(envelope, "Message {string} {int} {bool}", () => ["A", 42, true]);
-
-        _loggerSubstitute.Received(
-            LogLevel.Trace,
-            null,
-            "Message A 42 True | EndpointName: test, BrokerMessageId: 42",
-            1999);
-    }
-
-    [Fact]
-    public void LogProcessingTrace_ShouldLog_WhenExceptionSpecified()
-    {
-        RawInboundEnvelope envelope = new(
-            Stream.Null,
-            null,
-            TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
-            new TestOffset("a", "42"));
-
-        _silverbackLogger.LogProcessingTrace(
-            envelope,
-            new InvalidComObjectException(),
-            "Message {string} {int} {bool}",
-            () => ["A", 42, true]);
-
-        _loggerSubstitute.Received(
-            LogLevel.Trace,
-            typeof(InvalidComObjectException),
-            "Message A 42 True | EndpointName: test, BrokerMessageId: 42",
-            1999);
     }
 
     [Fact]

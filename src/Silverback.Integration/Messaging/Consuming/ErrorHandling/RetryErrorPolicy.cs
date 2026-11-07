@@ -149,10 +149,7 @@ public record RetryErrorPolicy : ErrorPolicyBase
             if (delay <= TimeSpan.Zero)
                 return Task.CompletedTask;
 
-            _logger.LogProcessingTrace(
-                context.Envelope,
-                "Waiting {delay} milliseconds before retrying to process the message(s).",
-                () => [delay]);
+            _logger.LogRetryDelayWaiting(context.Envelope, delay);
 
             return Task.Delay(delay);
         }

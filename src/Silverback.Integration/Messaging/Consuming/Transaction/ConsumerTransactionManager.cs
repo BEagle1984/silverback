@@ -58,7 +58,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         {
             if (_commitTask != null)
             {
-                _logger.LogProcessingTrace(_context.Envelope, "Not committing consumer transaction because it was already committed.");
+                _logger.LogConsumerTransactionAlreadyCommitted(_context.Envelope);
                 return _commitTask;
             }
 
@@ -80,7 +80,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         {
             if (_abortTask != null)
             {
-                _logger.LogProcessingTrace(_context.Envelope, "Not aborting consumer transaction because it was already aborted.");
+                _logger.LogConsumerTransactionAlreadyAborted(_context.Envelope);
                 return _abortTask;
             }
 
@@ -99,7 +99,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
     private async Task CommitCoreAsync()
     {
-        _logger.LogProcessingTrace(_context.Envelope, "Committing consumer transaction...");
+        _logger.LogConsumerTransactionCommitting(_context.Envelope);
 
         await Committing.InvokeAsync(_context).ConfigureAwait(false);
         await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
@@ -111,12 +111,12 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         await Committed.InvokeAsync(_context).ConfigureAwait(false);
 
-        _logger.LogProcessingTrace(_context.Envelope, "Consumer transaction committed.");
+        _logger.LogConsumerTransactionCommitted(_context.Envelope);
     }
 
     private async Task<bool> RollbackCoreAsync(Exception? exception, bool commitConsumer, bool stopConsuming)
     {
-        _logger.LogProcessingTrace(_context.Envelope, exception, "Aborting consumer transaction...");
+        _logger.LogConsumerTransactionAborting(_context.Envelope, exception);
 
         await Aborting.InvokeAsync(_context).ConfigureAwait(false);
 
@@ -137,7 +137,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         await Aborted.InvokeAsync(_context).ConfigureAwait(false);
 
-        _logger.LogProcessingTrace(_context.Envelope, "Consumer transaction aborted.");
+        _logger.LogConsumerTransactionAborted(_context.Envelope);
 
         return true;
     }

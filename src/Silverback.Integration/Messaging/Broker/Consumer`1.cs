@@ -160,14 +160,14 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             _isReconnecting = true;
         }
 
-        _logger.LogConsumerTrace(this, "Triggering reconnect.");
+        _logger.LogConsumerReconnectTriggered(this);
 
         // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks. Reconnecting restarts the consumer: a
         // consumer that is stopped or being stopped (e.g. by StopAsync) is left stopped.
         if (!await StopCoreAsync(null, waitUntilStopped: false, ignoreOnceCanceled: true).ConfigureAwait(false))
         {
             _isReconnecting = false;
-            _logger.LogConsumerTrace(this, "Ignoring the reconnect request: the consumer is stopped or being stopped.");
+            _logger.LogConsumerReconnectIgnored(this);
             return;
         }
 
@@ -209,7 +209,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             throw new InvalidOperationException("The underlying client is not connected.");
         }
 
-        _logger.LogConsumerTrace(this, "Starting consumer...");
+        _logger.LogConsumerStarting(this);
 
         try
         {
@@ -224,7 +224,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             // Set before resetting IsStarting, as IsStartedAndNotStopping requires
             IsStarted = true;
 
-            _logger.LogConsumerTrace(this, "Consumer started.");
+            _logger.LogConsumerStarted(this);
         }
         catch (Exception ex)
         {
@@ -504,7 +504,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             if (!TryBeginStop(brokerMessageIdentifier))
                 return false;
 
-            _logger.LogConsumerTrace(this, "Stopping consumer...");
+            _logger.LogConsumerStopping(this);
 
             // Stop reading before notifying subscribers, which may finish as soon as their token is canceled
             await StopCoreAsync().ConfigureAwait(false);
@@ -528,7 +528,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             _startStopSemaphore.Release();
         }
 
-        _logger.LogConsumerTrace(this, "Consumer stopped.");
+        _logger.LogConsumerStopped(this);
 
         return true;
     }
@@ -553,7 +553,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException)
         {
             // Disposed only when restarting (after being canceled) or disposing the consumer: the request is obsolete in either case
-            _logger.LogConsumerTrace(this, "Ignoring the stop request: the processing was already canceled.");
+            _logger.LogConsumerStopIgnored(this);
             return false;
         }
     }
@@ -577,7 +577,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
     private async ValueTask WaitUntilConsumingStoppedAsync()
     {
-        _logger.LogConsumerTrace(this, "Waiting until consumer stops...");
+        _logger.LogWaitingUntilConsumerStops(this);
 
         try
         {
@@ -587,7 +587,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         }
         finally
         {
-            _logger.LogConsumerTrace(this, "Consumer stopped.");
+            _logger.LogConsumerStopped(this);
         }
     }
 }

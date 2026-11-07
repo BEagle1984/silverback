@@ -224,10 +224,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogTrace(
-                ex,
-                "Operation canceled, skipping add to {sequenceType} '{sequenceId}' and waiting until it is completed.",
-                () => [GetType().Name, SequenceId]);
+            _logger.LogSequenceAddCanceled(this, ex);
 
             _addSemaphoreSlim.Release(); // Release the semaphore to allow the abort to complete and avoid deadlocks
             lockReleased = true;
@@ -238,10 +235,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         catch (Exception ex)
         {
-            _logger.LogTrace(
-                ex,
-                "Error occurred adding message to {sequenceType} '{sequenceId}'.",
-                () => [GetType().Name, SequenceId]);
+            _logger.LogSequenceAddFailed(this, ex);
 
             throw;
         }
@@ -415,9 +409,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             TotalLength = Length;
 
-            _logger.LogTrace(
-                "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
-                () => [GetType().Name, SequenceId, TotalLength]);
+            _logger.LogSequenceCompletingWithTotalLength(this, TotalLength);
 
             await _completeSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
@@ -517,7 +509,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _isDisposed = true;
 
-        _logger.LogTrace("Disposing {sequenceType} '{sequenceId}'...", () => [GetType().Name, SequenceId]);
+        _logger.LogSequenceDisposing(this);
 
         _abortingTaskCompletionSource?.Task.SafeWait();
         _addCancellationTokenSource.Cancel();
@@ -531,9 +523,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             _completeSemaphoreSlim.Release();
             _addSemaphoreSlim.Release();
 
-            _logger.LogTrace(
-                "Dispose is waiting for the abort to complete ({sequenceType} '{sequenceId}')...",
-                () => [GetType().Name, SequenceId]);
+            _logger.LogSequenceDisposeAwaitingAbort(this);
             _abortingTaskCompletionSource.Task.SafeWait();
 
             WaitAddAndCompleteSemaphores();
@@ -553,7 +543,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (!SequencerBehaviorsTask.IsCompleted)
             _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
 
-        _logger.LogTrace("{sequenceType} '{sequenceId}' disposed.", () => [GetType().Name, SequenceId]);
+        _logger.LogSequenceDisposed(this);
 
         Context.Dispose();
     }
@@ -580,9 +570,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private void WaitAddAndCompleteSemaphores()
     {
-        _logger.LogTrace("Dispose is waiting add semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
+        _logger.LogSequenceDisposeAwaitingAddSemaphore(this);
         _addSemaphoreSlim.Wait();
-        _logger.LogTrace("Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
+        _logger.LogSequenceDisposeAwaitingCompleteSemaphore(this);
         _completeSemaphoreSlim.Wait();
     }
 
@@ -596,9 +586,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         try
         {
-            _logger.LogTrace(
-                "Timeout was elapsed for {sequenceType} '{sequenceId}', executing timeout logic...",
-                () => [GetType().Name, SequenceId]);
+            _logger.LogSequenceTimeoutElapsed(this);
             await OnTimeoutElapsedAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -614,9 +602,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (!IsPending)
             return;
 
-        _logger.LogTrace(
-            "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
-            () => [GetType().Name, SequenceId, Length]);
+        _logger.LogSequenceCompleting(this, Length);
 
         _isCompleting = true;
 
@@ -680,10 +666,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             AbortException = exception;
         }
 
-        _logger.LogTrace(
-            AbortException,
-            "Aborting {sequenceType} '{sequenceId}' ({abortReason})...",
-            () => [GetType().Name, SequenceId, AbortReason]);
+        _logger.LogSequenceAborting(this, AbortReason, AbortException);
 
         // Abort pending processing (if still pending), to let AddAsync gracefully complete
         _streamProvider.AbortIfPending();
@@ -697,7 +680,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         // Wait for AddAsync to gracefully complete, ensuring that the identifiers are properly tracked in all cases (enumeration
         // aborted included). Unlike WaitIfNotDisposedAsync, don't stop when disposing: Dispose waits for the started abort (releasing
         // the semaphores if needed) before disposing the semaphores.
-        _logger.LogTrace("Aborting {sequenceType} '{sequenceId}' is waiting for add semaphore...", () => [GetType().Name, SequenceId]);
+        _logger.LogSequenceAbortAwaitingAddSemaphore(this);
 
         try
         {
@@ -792,13 +775,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     {
         if (_isDisposed)
         {
-            _logger.LogTrace("Sequence is disposed, no need to wait for semaphore");
+            _logger.LogSemaphoreWaitSkippedSequenceDisposed();
             return false;
         }
 
         try
         {
-            _logger.LogTrace("Waiting for semaphore...");
+            _logger.LogSemaphoreWaiting();
 
             Task waitTask = semaphore.WaitAsync(CancellationToken.None);
 
@@ -807,16 +790,16 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             if (!waitTask.IsCompleted &&
                 await Task.WhenAny(waitTask, _disposeTaskCompletionSource.Task).ConfigureAwait(false) != waitTask)
             {
-                _logger.LogTrace("Sequence disposed while waiting for semaphore");
+                _logger.LogSemaphoreWaitInterruptedSequenceDisposed();
                 return false;
             }
 
-            _logger.LogTrace("Semaphore acquired");
+            _logger.LogSemaphoreAcquired();
             return true;
         }
         catch (ObjectDisposedException)
         {
-            _logger.LogTrace("Object disposed exception while waiting for semaphore");
+            _logger.LogSemaphoreObjectDisposed();
             return false;
         }
     }

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
@@ -397,122 +396,6 @@ internal static partial class IntegrationLoggerExtensions
 
     public static void LogEndpointBuilderError(this ISilverbackLogger logger, string? endpointName, Exception exception) =>
         EndpointBuilderError(logger.InnerLogger, endpointName, exception);
-
-    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging", Justification = "Optimized via IsEnabled")]
-    public static void LogTrace(this ISilverbackLogger logger, string message, Func<object[]>? argumentsProvider = null)
-    {
-        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
-            return;
-
-        logger.InnerLogger.Log(
-            IntegrationLogEvents.Tracing.Level,
-            IntegrationLogEvents.Tracing.EventId,
-            message,
-            argumentsProvider?.Invoke() ?? []);
-    }
-
-    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging", Justification = "Optimized via IsEnabled")]
-    public static void LogTrace(
-        this ISilverbackLogger logger,
-        Exception? exception,
-        string message,
-        Func<object[]>? argumentsProvider = null)
-    {
-        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
-            return;
-
-        logger.InnerLogger.Log(
-            IntegrationLogEvents.Tracing.Level,
-            IntegrationLogEvents.Tracing.EventId,
-            exception,
-            message,
-            argumentsProvider?.Invoke() ?? []);
-    }
-
-    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
-    public static void LogConsumerTrace(
-        this ISilverbackLogger logger,
-        IConsumer? consumer,
-        string message,
-        Func<object?[]>? argumentsProvider = null)
-    {
-        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
-            return;
-
-        object?[] args =
-        [
-            .. argumentsProvider?.Invoke() ?? [],
-            consumer?.DisplayName ?? string.Empty
-        ];
-
-        logger.InnerLogger.Log(
-            IntegrationLogEvents.Tracing.Level,
-            IntegrationLogEvents.Tracing.EventId,
-            message + " | ConsumerName: {ConsumerName}",
-            args);
-    }
-
-    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
-    public static void LogProcessingTrace(
-        this ISilverbackLogger logger,
-        IRawInboundEnvelope envelope,
-        string message,
-        Func<object?[]>? argumentsProvider = null)
-    {
-        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
-            return;
-
-        object?[] args =
-        [
-            .. argumentsProvider?.Invoke() ?? [],
-            envelope.Endpoint.DisplayName,
-            envelope.BrokerMessageIdentifier.ToLogString()
-        ];
-
-        logger.InnerLogger.Log(
-            IntegrationLogEvents.Tracing.Level,
-            IntegrationLogEvents.Tracing.EventId,
-            message + " | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
-            args);
-    }
-
-    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
-    public static void LogProcessingTrace(
-        this ISilverbackLogger logger,
-        IRawInboundEnvelope envelope,
-        Exception? exception,
-        string message,
-        Func<object?[]>? argumentsProvider = null)
-    {
-        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
-            return;
-
-        object?[] args =
-        [
-            .. argumentsProvider?.Invoke() ?? [],
-            envelope.Endpoint.DisplayName,
-            envelope.BrokerMessageIdentifier.ToLogString()
-        ];
-
-        logger.InnerLogger.Log(
-            IntegrationLogEvents.Tracing.Level,
-            IntegrationLogEvents.Tracing.EventId,
-            exception,
-            message + " | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
-            args);
-    }
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a consumed message is being processed.

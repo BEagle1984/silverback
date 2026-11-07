@@ -103,9 +103,9 @@ internal sealed class BrokerClientsConnector : IBrokerClientsConnector, IDisposa
     /// <inheritdoc cref="IBrokerClientsConnector.StopConsumersAsync" />
     public async ValueTask StopConsumersAsync()
     {
-        _logger.LogTrace("Stopping all consumers");
+        _logger.LogStoppingAllConsumers();
         await _consumers.StopAllAsync().ConfigureAwait(false);
-        _logger.LogTrace("All consumers stopped");
+        _logger.LogAllConsumersStopped();
     }
 
     /// <inheritdoc cref="IBrokerClientsConnector.DisconnectAsync" />
@@ -114,9 +114,9 @@ internal sealed class BrokerClientsConnector : IBrokerClientsConnector, IDisposa
         await _connectSemaphore.WaitAsync().ConfigureAwait(false);
         try
         {
-            _logger.LogTrace("Disconnecting all clients");
+            _logger.LogDisconnectingAllClients();
             await _brokerClients.DisconnectAllAsync().ConfigureAwait(false);
-            _logger.LogTrace("All clients disconnected");
+            _logger.LogAllClientsDisconnected();
 
             _hasConnected = false;
         }

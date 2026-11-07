@@ -12,11 +12,13 @@ namespace Silverback.Diagnostics;
 // The other properties are generated from the [LoggerMessage] methods declared in IntegrationLoggerExtensions
 public static partial class IntegrationLogEvents
 {
+    internal const int TracingEventId = 1999;
+
     /// <summary>
     ///     Gets the <see cref="EventId" /> of the unspecific tracing logs.
     /// </summary>
     public static LogEvent Tracing { get; } = new(
         LogLevel.Trace,
-        new EventId(1999, "Silverback.Integration_Tracing"),
+        new EventId(TracingEventId, "Silverback.Integration_Tracing"),
         "The actual message will vary");
 }

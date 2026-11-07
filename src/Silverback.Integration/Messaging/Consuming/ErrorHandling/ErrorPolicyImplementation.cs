@@ -87,40 +87,28 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
 
         if (failedAttempts > _maxFailedAttempts)
         {
-            _logger.LogProcessingTrace(
-                context.Envelope,
-                "The {policyType} will be skipped because the current failed attempts ({failedAttempts}) exceeds the configured maximum attempts ({maxFailedAttempts}).",
-                () => [GetType().Name, failedAttempts, _maxFailedAttempts]);
+            _logger.LogErrorPolicySkippedMaxFailedAttempts(context.Envelope, GetType().Name, failedAttempts, _maxFailedAttempts);
 
             return false;
         }
 
         if (_includedExceptions.Count != 0 && _includedExceptions.All(type => !type.IsInstanceOfType(exception)))
         {
-            _logger.LogProcessingTrace(
-                context.Envelope,
-                "The {policyType} will be skipped because the {exceptionType} is not in the list of handled exceptions.",
-                () => [GetType().Name, exception.GetType().Name]);
+            _logger.LogErrorPolicySkippedExceptionNotIncluded(context.Envelope, GetType().Name, exception.GetType().Name);
 
             return false;
         }
 
         if (_excludedExceptions.Any(type => type.IsInstanceOfType(exception)))
         {
-            _logger.LogProcessingTrace(
-                context.Envelope,
-                "The {policyType} will be skipped because the {exceptionType} is in the list of excluded exceptions.",
-                () => [GetType().Name, exception.GetType().Name]);
+            _logger.LogErrorPolicySkippedExceptionExcluded(context.Envelope, GetType().Name, exception.GetType().Name);
 
             return false;
         }
 
         if (_applyRule != null && !_applyRule.Invoke(context.Envelope, exception))
         {
-            _logger.LogProcessingTrace(
-                context.Envelope,
-                "The {policyType} will be skipped because the apply rule evaluated to false.",
-                () => [GetType().Name]);
+            _logger.LogErrorPolicySkippedApplyRule(context.Envelope, GetType().Name);
 
             return false;
         }

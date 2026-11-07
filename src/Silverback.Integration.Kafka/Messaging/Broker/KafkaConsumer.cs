@@ -524,7 +524,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             if (currentOffsets.Length == 0 ||
                 !Configuration.ProcessPartitionsIndependently && currentOffsets.Length != requestedOffsets.Length)
             {
-                _logger.LogConsumerTrace(this, "Skipping rollback restart for obsolete partition assignments");
+                _logger.LogRollbackRestartSkipped(this);
 
                 return ValueTask.CompletedTask;
             }
@@ -623,7 +623,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
                 if (current.Length != partitions.Count)
                 {
-                    _logger.LogConsumerTrace(this, "Skipping rollback restart for obsolete partition assignments");
+                    _logger.LogRollbackRestartSkipped(this);
 
                     if (!Configuration.ProcessPartitionsIndependently)
                         return;
@@ -727,43 +727,30 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         _consumeLoopHandler.Start();
 
-        _logger.LogConsumerTrace(
-            this,
-            "ConsumeLoopHandler started | InstanceId: {InstanceId}, TaskId: {TaskId}",
-            () => [_consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id]);
+        _logger.LogConsumeLoopHandlerStarted(this, _consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id);
     }
 
-    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Synchronously called")]
     private async Task WaitUntilConsumeLoopHandlerStopsAsync()
     {
-        _logger.LogConsumerTrace(
-            this,
-            "Waiting ConsumeLoopHandler stop | InstanceId: {InstanceId}, TaskId: {TaskId}",
-            () => [_consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id]);
+        _logger.LogConsumeLoopHandlerStopAwaiting(this, _consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id);
 
         await _consumeLoopHandler.Stopping.ConfigureAwait(false);
 
-        _logger.LogConsumerTrace(
-            this,
-            "ConsumeLoopHandler stopped | InstanceId: {InstanceId}, TaskId: {TaskId}.",
-            () => [_consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id]);
+        _logger.LogConsumeLoopHandlerStopped(this, _consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id);
     }
 
     private async Task WaitUntilChannelsManagerStopsAsync()
     {
-        _logger.LogConsumerTrace(this, "Waiting ChannelsManager stop");
+        _logger.LogChannelsManagerStopAwaiting(this);
 
         await _channelsStopping.ConfigureAwait(false);
 
-        _logger.LogConsumerTrace(this, "ChannelsManager stopped");
+        _logger.LogChannelsManagerStopped(this);
     }
 
     private void StoreOffset(TopicPartitionOffset offset)
     {
-        _logger.LogConsumerTrace(
-            this,
-            "Storing offset {Topic}[{Partition}]@{Offset}",
-            () => [offset.Topic, offset.Partition.Value, offset.Offset.Value]);
+        _logger.LogOffsetStoring(this, offset);
 
         Client.StoreOffset(offset);
     }

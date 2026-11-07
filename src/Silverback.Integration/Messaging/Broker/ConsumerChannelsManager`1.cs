@@ -58,10 +58,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
 
         if (channel.ReadCancellationToken.IsCancellationRequested && !channel.ReadTask.IsCompleted)
         {
-            _logger.LogConsumerTrace(
-                _consumer,
-                "Deferring processing loop startup of channel {Channel}",
-                () => [channel.Id]);
+            _logger.LogChannelProcessingLoopStartupDeferred(_consumer, channel);
 
             // If the cancellation is still pending, await it and restart after successful stop
             StartReadingAfterStopAsync(channel, stopGeneration).FireAndForget();
@@ -71,10 +68,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
 
         if (!channel.StartReading())
         {
-            _logger.LogConsumerTrace(
-                _consumer,
-                "Ignoring processing loop startup of channel {Channel} (still reading)",
-                () => [channel.Id]);
+            _logger.LogChannelProcessingLoopStartupIgnored(_consumer, channel);
 
             return;
         }
@@ -96,10 +90,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
         lock (_stopGenerationLock)
             _stopGeneration++;
 
-        _logger.LogConsumerTrace(
-            _consumer,
-            "Stopping processing loop of channel {Channel}",
-            () => [channel.Id]);
+        _logger.LogChannelProcessingLoopStopping(_consumer, channel);
 
         await channel.StopReadingAsync().ConfigureAwait(false);
     }
@@ -112,7 +103,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
         StopReadingAsync().SafeWait();
         GetChannels().OfType<IDisposable>().ForEach(channel => channel.Dispose());
 
-        _logger.LogConsumerTrace(_consumer, "All channels disposed");
+        _logger.LogAllChannelsDisposed(_consumer);
 
         _isDisposed = true;
     }
@@ -126,36 +117,24 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
 
         try
         {
-            _logger.LogConsumerTrace(
-                _consumer,
-                "Starting processing loop of channel {Channel}",
-                () => [channel.Id]);
+            _logger.LogChannelProcessingLoopStarting(_consumer, channel);
 
             while (!channel.ReadCancellationToken.IsCancellationRequested)
             {
-                _logger.LogConsumerTrace(
-                    _consumer,
-                    "Reading channel {Channel}",
-                    () => [channel.Id]);
+                _logger.LogChannelReading(_consumer, channel);
 
                 await ReadChannelOnceAsync(channel).ConfigureAwait(false);
             }
         }
         catch (OperationCanceledException)
         {
-            _logger.LogConsumerTrace(
-                _consumer,
-                "Exiting processing loop of channel {Channel} (operation canceled)",
-                () => [channel.Id]);
+            _logger.LogChannelProcessingLoopCanceled(_consumer, channel);
         }
         catch (ChannelClosedException)
         {
             // Ignore the ChannelClosedException as it might be thrown because of a race condition during retry and in any case
             // it means that operation is being canceled
-            _logger.LogConsumerTrace(
-                _consumer,
-                "Exiting processing loop of channel {Channel} (channel closed)",
-                () => [channel.Id]);
+            _logger.LogChannelProcessingLoopClosed(_consumer, channel);
         }
         catch (Exception ex)
         {
@@ -165,10 +144,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
             hasThrown = true;
         }
 
-        _logger.LogConsumerTrace(
-            _consumer,
-            "Exited processing loop of channel {Channel}",
-            () => [channel.Id]);
+        _logger.LogChannelProcessingLoopExited(_consumer, channel);
 
         // Notify exactly once, since the channel can be restarted as soon as it's notified and the new loop must not be notified by this
         // one. Notify before disconnecting, since the disconnection stops the channel and awaits its read task.
@@ -194,10 +170,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
         {
             if (_stopGeneration != stopGeneration)
             {
-                _logger.LogConsumerTrace(
-                    _consumer,
-                    "Skipping deferred processing loop startup of channel {Channel} (stopped in the meantime)",
-                    () => [channel.Id]);
+                _logger.LogChannelProcessingLoopStartupSkipped(_consumer, channel);
 
                 return;
             }

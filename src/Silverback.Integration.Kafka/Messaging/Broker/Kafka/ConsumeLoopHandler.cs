@@ -112,12 +112,12 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
         if (canceledTokenSource != null)
         {
-            _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler | InstanceId: {InstanceId}", () => [Id]);
+            _logger.LogConsumeLoopHandlerStopping(_consumer, Id);
 
             await cancellation.ConfigureAwait(false);
             canceledTokenSource.Dispose();
 
-            _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler, awaiting stopping token | InstanceId: {InstanceId}", () => [Id]);
+            _logger.LogConsumeLoopHandlerAwaitingStoppingToken(_consumer, Id);
         }
 
         await stopping.ConfigureAwait(false);
@@ -147,12 +147,12 @@ internal sealed class ConsumeLoopHandler : IDisposable
         if (_isDisposed)
             return;
 
-        _logger.LogConsumerTrace(_consumer, "Disposing ConsumeLoopHandler | InstanceId: {InstanceId}", () => [Id]);
+        _logger.LogConsumeLoopHandlerDisposing(_consumer, Id);
 
         StopAsync().SafeWait();
         _cancellationTokenSource.Dispose();
 
-        _logger.LogConsumerTrace(_consumer, "ConsumeLoopHandler disposed | InstanceId: {InstanceId}", () => [Id]);
+        _logger.LogConsumeLoopHandlerDisposed(_consumer, Id);
 
         _isDisposed = true;
     }
@@ -165,10 +165,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
         // Clear the current activity to ensure we don't propagate the previous traceId
         Activity.Current = null;
-        _logger.LogConsumerTrace(
-            _consumer,
-            "Starting consume loop | InstanceId: {InstanceId}, TaskId: {TaskId}",
-            () => [Id, taskCompletionSource.Task.Id]);
+        _logger.LogConsumeLoopStarting(_consumer, Id, taskCompletionSource.Task.Id);
 
         // Reset the last successful consume time to avoid false stall detection
         _lastSuccessfulConsume = DateTime.UtcNow;
@@ -183,10 +180,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
             NotifyPollCompleted();
         }
 
-        _logger.LogConsumerTrace(
-            _consumer,
-            "Consume loop stopped | InstanceId: {InstanceId}, TaskId: {TaskId}",
-            () => [Id, taskCompletionSource.Task.Id]);
+        _logger.LogConsumeLoopStopped(_consumer, Id, taskCompletionSource.Task.Id);
 
         taskCompletionSource.TrySetResult(true);
         NotifyPollCompleted();

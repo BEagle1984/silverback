@@ -103,10 +103,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
         context.ProcessingTask = processingTask;
 
-        _logger.LogProcessingTrace(
-            context.Envelope,
-            "Published {sequenceType} '{sequenceId}' (ProcessingTask.Id={processingTaskId}).",
-            () => [sequence.GetType().Name, sequence.SequenceId, processingTask.Id]);
+        _logger.LogSequencePublished(context.Envelope, sequence, processingTask.Id);
     }
 
     private async Task<UnboundedSequence> GetUnboundedSequenceAsync(ConsumerPipelineContext context, CancellationToken cancellationToken)
@@ -126,14 +123,11 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to log and forward")]
-    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Logging is synchronous")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The tasks are enumerated synchronously, inside the using scope")]
     [SuppressMessage("Reliability", "CA2025:Do not pass \'IDisposable\' instances into unawaited tasks", Justification = "The task is awaited via Task.WhenAll")]
     private async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
-        _logger.LogProcessingTrace(
-            context.Envelope,
-            "Publishing {sequenceType} '{sequenceId}'...",
-            () => [sequence.GetType().Name, sequence.SequenceId]);
+        _logger.LogSequencePublishing(context.Envelope, sequence);
 
         IStreamPublisher publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
 
@@ -141,10 +135,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
         if (processingTasks.Count == 0)
         {
-            _logger.LogProcessingTrace(
-                context.Envelope,
-                "No subscribers for {sequenceType} '{sequenceId}'.",
-                () => [sequence.GetType().Name, sequence.SequenceId]);
+            _logger.LogSequenceNoSubscribers(context.Envelope, sequence);
 
             return Task.CompletedTask;
         }
@@ -184,16 +175,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
                     await Task.WhenAll(processingTasks).ConfigureAwait(false);
 
-                    _logger.LogTrace(
-                        "All {sequenceType} '{sequenceId}' subscribers completed. (sequence.IsCompleted={completed}, faultedTasks={faultedCount}/{tasksCount}).",
-                        () =>
-                        [
-                            sequence.GetType().Name,
-                            sequence.SequenceId,
-                            sequence.IsComplete,
-                            processingTasks.Count(task => task.IsFaulted),
-                            processingTasks.Count
-                        ]);
+                    _logger.LogSequenceSubscribersCompleted(sequence, processingTasks);
                 }
                 catch (Exception exception)
                 {
@@ -203,10 +185,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                 }
                 finally
                 {
-                    _logger.LogProcessingTrace(
-                        context.Envelope,
-                        "{sequenceType} '{sequenceId}' processing completed.",
-                        () => [sequence.GetType().Name, sequence.SequenceId]);
+                    _logger.LogSequenceProcessingCompleted(context.Envelope, sequence);
                 }
             },
             CancellationToken.None); // Let this task run until completion
