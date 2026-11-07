@@ -80,6 +80,20 @@ public class IntegrationTraceExtensionsTests
     }
 
     [Fact]
+    public void LogRetryDelayWaiting_ShouldLogMilliseconds()
+    {
+        (LoggerSubstitute<IntegrationTraceExtensionsTests> logger, ISilverbackLogger silverbackLogger) = CreateLogger(LogLevel.Trace);
+
+        silverbackLogger.LogRetryDelayWaiting(CreateEnvelope(), TimeSpan.FromSeconds(1.5));
+
+        logger.Received(
+            LogLevel.Trace,
+            null,
+            "Waiting 1500 milliseconds before retrying to process the message(s). | EndpointName: test, BrokerMessageId: 42",
+            1999);
+    }
+
+    [Fact]
     public void LogConsumerTransactionCommitting_ShouldNotEvaluateArguments_WhenTracingIsDisabled()
     {
         (_, ISilverbackLogger silverbackLogger) = CreateLogger(LogLevel.Debug);

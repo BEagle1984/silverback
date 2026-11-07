@@ -230,7 +230,11 @@ internal static partial class IntegrationTraceExtensions
         if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
             return;
 
-        RetryDelayWaiting(logger.InnerLogger, delay, envelope.Endpoint.DisplayName, envelope.BrokerMessageIdentifier.ToLogString());
+        RetryDelayWaiting(
+            logger.InnerLogger,
+            delay.TotalMilliseconds,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString());
     }
 
     public static void LogSequencePublishing(this ISilverbackLogger logger, IRawInboundEnvelope envelope, ISequence sequence)
@@ -732,7 +736,7 @@ internal static partial class IntegrationTraceExtensions
         LogLevel.Trace,
         "Waiting {delay} milliseconds before retrying to process the message(s). | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_Tracing_RetryDelayWaiting")]
-    private static partial void RetryDelayWaiting(ILogger logger, TimeSpan delay, string endpointName, string brokerMessageId);
+    private static partial void RetryDelayWaiting(ILogger logger, double delay, string endpointName, string brokerMessageId);
 
     [LoggerMessage(
         IntegrationLogEvents.TracingEventId,
