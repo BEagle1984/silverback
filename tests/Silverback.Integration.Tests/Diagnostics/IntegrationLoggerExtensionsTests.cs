@@ -808,6 +808,10 @@ public class IntegrationLoggerExtensionsTests
             1999);
     }
 
+    [Fact]
+    public void LoggerMessages_ShouldMatchLogEvents() =>
+        LoggerMessagesAssert.ShouldMatchLogEvents(typeof(IntegrationLoggerExtensions), typeof(IntegrationLogEvents), IntegrationLogEvents.Tracing);
+
     private class TestClient : IBrokerClient
     {
         public string Name => "client1-name";

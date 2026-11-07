@@ -282,4 +282,8 @@ public sealed class MqttLoggerExtensionsTests : IDisposable
         _consumer.Dispose();
         _producer.Dispose();
     }
+
+    [Fact]
+    public void LoggerMessages_ShouldMatchLogEvents() =>
+        LoggerMessagesAssert.ShouldMatchLogEvents(typeof(MqttLoggerExtensions), typeof(MqttLogEvents));
 }

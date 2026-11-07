@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Silverback.Diagnostics;
@@ -23,7 +24,7 @@ internal static class DocsGenerator
         builder.AppendLine("Id | Level | Message | Reference");
         builder.AppendLine(":-- | :-- | :-- | :--");
 
-        foreach (PropertyInfo property in logEventsType.GetProperties())
+        foreach (PropertyInfo property in logEventsType.GetProperties().OrderBy(property => ((LogEvent)property.GetValue(null)!).EventId.Id))
         {
             LogEvent logEvent = (LogEvent)property.GetValue(null)!;
 

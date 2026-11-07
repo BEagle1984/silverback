@@ -22,6 +22,7 @@
     <PackageReference Include="MQTTnet"/>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\tools\Silverback.Tools.Generators.LogEvents\Silverback.Tools.Generators.LogEvents.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all"/>
     <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
   </ItemGroup>
   <ItemGroup>

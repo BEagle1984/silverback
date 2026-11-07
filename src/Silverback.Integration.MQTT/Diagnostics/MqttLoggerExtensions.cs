@@ -5,52 +5,15 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
+using MQTTnet;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt;
 
 namespace Silverback.Diagnostics;
 
-internal static class MqttLoggerExtensions
+// The MqttLogEvents properties are generated from the [LoggerMessage] methods, including their documentation
+internal static partial class MqttLoggerExtensions
 {
-    private static readonly Action<ILogger, string, string, string, Exception?> ConsumingMessage =
-        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConsumingMessage);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> AcknowledgeFailed =
-        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.AcknowledgeFailed);
-
-    private static readonly Action<ILogger, string, Exception?> NoMatchingSubscribers =
-        SilverbackLoggerMessage.Define<string>(MqttLogEvents.NoMatchingSubscribers);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> ConnectError =
-        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConnectError);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> ConnectRetryError =
-        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConnectRetryError);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> ConnectionLost =
-        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConnectionLost);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> Reconnected =
-        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.Reconnected);
-
-    private static readonly Action<ILogger, string, string, Exception?> ProducerQueueProcessingCanceled =
-        SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.ProducerQueueProcessingCanceled);
-
-    private static readonly Action<ILogger, string, string, string, string, Exception?> ConsumerSubscribed =
-        SilverbackLoggerMessage.Define<string, string, string, string>(MqttLogEvents.ConsumerSubscribed);
-
-    private static readonly Action<ILogger, string, string, Exception?> MqttClientLogError =
-        SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.MqttClientLogError);
-
-    private static readonly Action<ILogger, string, string, Exception?> MqttClientLogWarning =
-        SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.MqttClientLogWarning);
-
-    private static readonly Action<ILogger, string, string, Exception?> MqttClientLogInformation =
-        SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.MqttClientLogInformation);
-
-    private static readonly Action<ILogger, string, string, Exception?> MqttClientLogVerbose =
-        SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.MqttClientLogVerbose);
-
     public static void LogConsuming(
         this ISilverbackLogger logger,
         ConsumedApplicationMessage applicationMessage,
@@ -59,8 +22,7 @@ internal static class MqttLoggerExtensions
             logger.InnerLogger,
             applicationMessage.Id,
             applicationMessage.ApplicationMessage.Topic,
-            consumer.DisplayName,
-            null);
+            consumer.DisplayName);
 
     public static void LogAcknowledgeFailed(
         this ISilverbackLogger logger,
@@ -75,7 +37,7 @@ internal static class MqttLoggerExtensions
             exception);
 
     public static void LogNoMatchingSubscribers(this ISilverbackLogger logger, string topic) =>
-        NoMatchingSubscribers(logger.InnerLogger, topic, null);
+        NoMatchingSubscribers(logger.InnerLogger, topic);
 
     public static void LogConnectError(
         this ISilverbackLogger logger,
@@ -104,19 +66,17 @@ internal static class MqttLoggerExtensions
             logger.InnerLogger,
             client.DisplayName,
             client.Configuration.ClientId,
-            client.Configuration.Channel?.ToString() ?? string.Empty,
-            null);
+            client.Configuration.Channel?.ToString() ?? string.Empty);
 
     public static void LogReconnected(this ISilverbackLogger logger, MqttClientWrapper client) =>
         Reconnected(
             logger.InnerLogger,
             client.DisplayName,
             client.Configuration.ClientId,
-            client.Configuration.Channel?.ToString() ?? string.Empty,
-            null);
+            client.Configuration.Channel?.ToString() ?? string.Empty);
 
     public static void LogProducerQueueProcessingCanceled(this ISilverbackLogger logger, MqttClientWrapper client) =>
-        ProducerQueueProcessingCanceled(logger.InnerLogger, client.DisplayName, client.Configuration.ClientId, null);
+        ProducerQueueProcessingCanceled(logger.InnerLogger, client.DisplayName, client.Configuration.ClientId);
 
     public static void LogConsumerSubscribed(this ISilverbackLogger logger, string topicPattern, MqttConsumer consumer) =>
         ConsumerSubscribed(
@@ -124,8 +84,7 @@ internal static class MqttLoggerExtensions
             topicPattern,
             consumer.Client.DisplayName,
             consumer.Client.Configuration.ClientId,
-            consumer.DisplayName,
-            null);
+            consumer.DisplayName);
 
     public static void LogMqttClientError(
         this ISilverbackLogger logger,
@@ -209,4 +168,164 @@ internal static class MqttLoggerExtensions
             return message;
         }
     }
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message is consumed from a MQTT topic.
+    /// </summary>
+    [LoggerMessage(
+        4011,
+        LogLevel.Debug,
+        "Consuming message {BrokerMessageId} from topic {Topic} | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.MQTT_ConsumingMessage")]
+    private static partial void ConsumingMessage(ILogger logger, string brokerMessageId, string topic, string consumerName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be acknowledged.
+    /// </summary>
+    [LoggerMessage(
+        4012,
+        LogLevel.Warning,
+        "Failed to acknowledge message {BrokerMessageId} from topic {Topic} | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.MQTT_AcknowledgeFailed")]
+    private static partial void AcknowledgeFailed(
+        ILogger logger,
+        string brokerMessageId,
+        string topic,
+        string consumerName,
+        Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when no matching subscribers are found for a produced message.
+    /// </summary>
+    [LoggerMessage(
+        4013,
+        LogLevel.Warning,
+        "No matching subscribers found for the produced message | Topic: {Topic}",
+        EventName = "Silverback.Integration.MQTT_NoMatchingSubscribers")]
+    private static partial void NoMatchingSubscribers(ILogger logger, string topic);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while connecting to the MQTT broker.
+    /// </summary>
+    [LoggerMessage(
+        4021,
+        LogLevel.Warning,
+        "Error occurred connecting to MQTT | ClientName: {ClientName}, ClientId: {ClientId}, Broker: {Broker}",
+        EventName = "Silverback.Integration.MQTT_ConnectError")]
+    private static partial void ConnectError(ILogger logger, string clientName, string clientId, string broker, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while retrying to connect to the
+    ///     MQTT broker.
+    /// </summary>
+    [LoggerMessage(
+        4022,
+        LogLevel.Debug,
+        "Error occurred retrying to connect to MQTT | ClientName: {ClientName}, ClientId: {ClientId}, Broker: {Broker}",
+        EventName = "Silverback.Integration.MQTT_ConnectRetryError")]
+    private static partial void ConnectRetryError(ILogger logger, string clientName, string clientId, string broker, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT
+    ///     broker is lost.
+    /// </summary>
+    [LoggerMessage(
+        4023,
+        LogLevel.Warning,
+        "Connection to MQTT lost; the client will try to reconnect | ClientName: {ClientName}, ClientId: {ClientId}, Broker: {Broker}",
+        EventName = "Silverback.Integration.MQTT_ConnectionLost")]
+    private static partial void ConnectionLost(ILogger logger, string clientName, string clientId, string broker);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT
+    ///     broker is established again after it was lost.
+    /// </summary>
+    [LoggerMessage(
+        4024,
+        LogLevel.Information,
+        "Connection to MQTT reestablished | ClientName: {ClientName}, ClientId: {ClientId}, Broker: {Broker}",
+        EventName = "Silverback.Integration.MQTT_Reconnected")]
+    private static partial void Reconnected(ILogger logger, string clientName, string clientId, string broker);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of the producer
+    ///     queue is being stopped (usually because the application is exiting).
+    /// </summary>
+    [LoggerMessage(
+        4031,
+        LogLevel.Debug,
+        "Producer queue processing canceled | ClientName: {ClientName}, ClientId: {ClientId}",
+        EventName = "Silverback.Integration.MQTT_ProducerQueueProcessingCanceled")]
+    private static partial void ProducerQueueProcessingCanceled(ILogger logger, string clientName, string clientId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer subscribes to a topic or pattern.
+    /// </summary>
+    [LoggerMessage(
+        4041,
+        LogLevel.Information,
+        "Consumer subscribed to {topicPattern} | ClientName: {ClientName}, ClientId: {ClientId}, ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.MQTT_ConsumerSubscribed")]
+    private static partial void ConsumerSubscribed(
+        ILogger logger,
+        string topicPattern,
+        string clientName,
+        string clientId,
+        string consumerName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+    ///     the underlying <see cref="MqttClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     A different event id is used per each log level.
+    /// </remarks>
+    [LoggerMessage(
+        4101,
+        LogLevel.Error,
+        "Error from MqttClient ({Source}): '{LogMessage}'",
+        EventName = "Silverback.Integration.MQTT_MqttClientLogError")]
+    private static partial void MqttClientLogError(ILogger logger, string source, string logMessage, Exception? exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+    ///     the underlying <see cref="MqttClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     A different event id is used per each log level.
+    /// </remarks>
+    [LoggerMessage(
+        4102,
+        LogLevel.Warning,
+        "Warning from MqttClient ({Source}): '{LogMessage}'",
+        EventName = "Silverback.Integration.MQTT_MqttClientLogWarning")]
+    private static partial void MqttClientLogWarning(ILogger logger, string source, string logMessage, Exception? exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+    ///     the underlying <see cref="MqttClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     A different event id is used per each log level.
+    /// </remarks>
+    [LoggerMessage(
+        4103,
+        LogLevel.Information,
+        "Information from MqttClient ({Source}): '{LogMessage}'",
+        EventName = "Silverback.Integration.MQTT_MqttClientLogInformation")]
+    private static partial void MqttClientLogInformation(ILogger logger, string source, string logMessage, Exception? exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+    ///     the underlying <see cref="MqttClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     A different event id is used per each log level.
+    /// </remarks>
+    [LoggerMessage(
+        4104,
+        LogLevel.Trace,
+        "Verbose from MqttClient ({Source}): '{LogMessage}'",
+        EventName = "Silverback.Integration.MQTT_MqttClientLogVerbose")]
+    private static partial void MqttClientLogVerbose(ILogger logger, string source, string logMessage, Exception? exception);
 }

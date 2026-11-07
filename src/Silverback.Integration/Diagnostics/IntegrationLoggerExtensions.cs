@@ -8,158 +8,20 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Messaging.Validation;
 
 namespace Silverback.Diagnostics;
 
-internal static class IntegrationLoggerExtensions
+// The IntegrationLogEvents properties are generated from the [LoggerMessage] methods, including their documentation
+internal static partial class IntegrationLoggerExtensions
 {
-    private static readonly Action<ILogger, string, string, Exception?> ProcessingConsumedMessage =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ProcessingConsumedMessage);
-
-    private static readonly Action<ILogger, string, string, Exception?> ProcessingConsumedMessageError =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ProcessingConsumedMessageError);
-
-    private static readonly Action<ILogger, string, string, Exception?> ProcessingConsumedMessageFatalError =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ProcessingConsumedMessageFatalError);
-
-    private static readonly Action<ILogger, string, Exception?> ConsumerFatalError =
-        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.ConsumerFatalError);
-
-    private static readonly Action<ILogger, string, string?, Exception?> MessageProduced =
-        SilverbackLoggerMessage.Define<string, string?>(IntegrationLogEvents.MessageProduced);
-
-    private static readonly Action<ILogger, string, Exception?> ErrorProducingMessage =
-        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.ErrorProducingMessage);
-
-    private static readonly Action<ILogger, string, Exception?> OutboundMessageFiltered =
-        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.OutboundMessageFiltered);
-
-    private static readonly Action<ILogger, string?, string, string, int, Exception?> MessageAddedToSequence =
-        SilverbackLoggerMessage.Define<string?, string, string, int>(IntegrationLogEvents.MessageAddedToSequence);
-
-    private static readonly Action<ILogger, string, string, Exception?> SequenceStarted =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.SequenceStarted);
-
-    private static readonly Action<ILogger, string, string, int, Exception?> SequenceCompleted =
-        SilverbackLoggerMessage.Define<string, string, int>(IntegrationLogEvents.SequenceCompleted);
-
-    private static readonly Action<ILogger, string, string, int, SequenceAbortReason, Exception?> SequenceProcessingAborted =
-        SilverbackLoggerMessage.Define<string, string, int, SequenceAbortReason>(IntegrationLogEvents.SequenceProcessingAborted);
-
-    private static readonly Action<ILogger, string, string, int, Exception?> SequenceProcessingError =
-        SilverbackLoggerMessage.Define<string, string, int>(IntegrationLogEvents.SequenceProcessingError);
-
-    private static readonly Action<ILogger, string, string, int, Exception?> IncompleteSequenceAborted =
-        SilverbackLoggerMessage.Define<string, string, int>(IntegrationLogEvents.IncompleteSequenceAborted);
-
-    private static readonly Action<ILogger, string, Exception?> IncompleteSequenceSkipped =
-        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.IncompleteSequenceSkipped);
-
-    private static readonly Action<ILogger, string, string, Exception?> SequenceTimeoutError =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.SequenceTimeoutError);
-
-    private static readonly Action<ILogger, Exception?> BrokerClientsInitializationError =
-        SilverbackLoggerMessage.Define(IntegrationLogEvents.BrokerClientsInitializationError);
-
-    private static readonly Action<ILogger, string, string, Exception?> BrokerClientInitializing =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.BrokerClientInitializing);
-
-    private static readonly Action<ILogger, string, string, Exception?> BrokerClientInitialized =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.BrokerClientInitialized);
-
-    private static readonly Action<ILogger, string, string, Exception?> BrokerClientDisconnecting =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.BrokerClientDisconnecting);
-
-    private static readonly Action<ILogger, string, string, Exception?> BrokerClientDisconnected =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.BrokerClientDisconnected);
-
-    private static readonly Action<ILogger, string, string, Exception?> BrokerClientInitializeError =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.BrokerClientInitializeError);
-
-    private static readonly Action<ILogger, string, string, Exception?> BrokerClientDisconnectError =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.BrokerClientDisconnectError);
-
-    private static readonly Action<ILogger, string, double, string, Exception?> BrokerClientReconnectError =
-        SilverbackLoggerMessage.Define<string, double, string>(IntegrationLogEvents.BrokerClientReconnectError);
-
-    private static readonly Action<ILogger, string, string, Exception?> ConsumerStartError =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ConsumerStartError);
-
-    private static readonly Action<ILogger, string, string, Exception?> ConsumerStopError =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ConsumerStopError);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> ConsumerCommitError =
-        SilverbackLoggerMessage.Define<string, string, string>(IntegrationLogEvents.ConsumerCommitError);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> ConsumerRollbackError =
-        SilverbackLoggerMessage.Define<string, string, string>(IntegrationLogEvents.ConsumerRollbackError);
-
-    private static readonly Action<ILogger, string, string, Exception?> BrokerClientCreated =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.BrokerClientCreated);
-
-    private static readonly Action<ILogger, string, string, Exception?> ConsumerCreated =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ConsumerCreated);
-
-    private static readonly Action<ILogger, string, string, Exception?> ProducerCreated =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ProducerCreated);
-
-    private static readonly Action<ILogger, string, string, Exception?> RetryMessageProcessing =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.RetryMessageProcessing);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> MessageMoved =
-        SilverbackLoggerMessage.Define<string, string, string>(IntegrationLogEvents.MessageMoved);
-
-    private static readonly Action<ILogger, string, string, Exception?> MessageSkipped =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.MessageSkipped);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> CannotMoveSequences =
-        SilverbackLoggerMessage.Define<string, string, string>(IntegrationLogEvents.CannotMoveSequence);
-
-    private static readonly Action<ILogger, string, string, Exception?> RollbackToRetryFailed =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.RollbackToRetryFailed);
-
-    private static readonly Action<ILogger, string, string, Exception?> RollbackToSkipFailed =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.RollbackToSkipFailed);
-
-    private static readonly Action<ILogger, string, Exception?> StoringIntoOutbox =
-        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.StoringIntoOutbox);
-
-    private static readonly Action<ILogger, int, Exception?> ReadingMessagesFromOutbox =
-        SilverbackLoggerMessage.Define<int>(IntegrationLogEvents.ReadingMessagesFromOutbox);
-
-    private static readonly Action<ILogger, Exception?> OutboxEmpty =
-        SilverbackLoggerMessage.Define(IntegrationLogEvents.OutboxEmpty);
-
-    private static readonly Action<ILogger, int, Exception?> ProcessingOutboxStoredMessage =
-        SilverbackLoggerMessage.Define<int>(IntegrationLogEvents.ProcessingOutboxStoredMessage);
-
-    private static readonly Action<ILogger, string, Exception?> ErrorProducingOutboxStoredMessage =
-        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.ErrorProducingOutboxStoredMessage);
-
-    private static readonly Action<ILogger, Exception?> ErrorProcessingOutbox =
-        SilverbackLoggerMessage.Define(IntegrationLogEvents.ErrorProcessingOutbox);
-
-    private static readonly Action<ILogger, string, string, Exception?> InvalidMessageProduced =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.InvalidMessageProduced);
-
-    private static readonly Action<ILogger, string, string, string, Exception?> InvalidMessageConsumed =
-        SilverbackLoggerMessage.Define<string, string, string>(IntegrationLogEvents.InvalidMessageConsumed);
-
-    private static readonly Action<ILogger, string, Exception?> InvalidEndpointConfiguration =
-        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.InvalidEndpointConfiguration);
-
-    private static readonly Action<ILogger, string, Exception?> EndpointConfiguratorError =
-        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.EndpointConfiguratorError);
-
-    private static readonly Action<ILogger, Exception?> CallbackError =
-        SilverbackLoggerMessage.Define(IntegrationLogEvents.CallbackError);
-
-    private static readonly Action<ILogger, string?, Exception?> EndpointBuilderError =
-        SilverbackLoggerMessage.Define<string?>(IntegrationLogEvents.EndpointBuilderError);
-
     public static void LogProcessing(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessage))
@@ -168,8 +30,7 @@ internal static class IntegrationLoggerExtensions
         ProcessingConsumedMessage(
             logger.InnerLogger,
             envelope.Endpoint.DisplayName,
-            envelope.BrokerMessageIdentifier.ToLogString(),
-            null);
+            envelope.BrokerMessageIdentifier.ToLogString());
     }
 
     public static void LogProcessingError(this ISilverbackLogger logger, IRawInboundEnvelope envelope, Exception exception)
@@ -210,8 +71,7 @@ internal static class IntegrationLoggerExtensions
         MessageProduced(
             logger.InnerLogger,
             envelope.GetEndpoint().DisplayName,
-            envelope.BrokerMessageIdentifier?.ToLogString(),
-            null);
+            envelope.BrokerMessageIdentifier?.ToLogString());
     }
 
     public static void LogProduceError(this ISilverbackLogger logger, IOutboundEnvelope envelope, Exception exception) =>
@@ -221,7 +81,7 @@ internal static class IntegrationLoggerExtensions
         ErrorProducingMessage(logger.InnerLogger, endpointConfiguration.DisplayName, exception);
 
     public static void LogOutboundMessageFiltered(this ISilverbackLogger logger, IOutboundEnvelope envelope) =>
-        OutboundMessageFiltered(logger.InnerLogger, envelope.EndpointConfiguration.DisplayName, null);
+        OutboundMessageFiltered(logger.InnerLogger, envelope.EndpointConfiguration.DisplayName);
 
     public static void LogMessageAddedToSequence(
         this ISilverbackLogger logger,
@@ -236,8 +96,7 @@ internal static class IntegrationLoggerExtensions
             envelope.BrokerMessageIdentifier.ToLogString(),
             sequence.GetType().Name,
             sequence.SequenceId,
-            sequence.Length,
-            null);
+            sequence.Length);
     }
 
     public static void LogSequenceStarted(
@@ -250,8 +109,7 @@ internal static class IntegrationLoggerExtensions
         SequenceStarted(
             logger.InnerLogger,
             sequence.GetType().Name,
-            sequence.SequenceId,
-            null);
+            sequence.SequenceId);
     }
 
     public static void LogSequenceCompleted(
@@ -265,8 +123,7 @@ internal static class IntegrationLoggerExtensions
             logger.InnerLogger,
             sequence.GetType().Name,
             sequence.SequenceId,
-            sequence.Length,
-            null);
+            sequence.Length);
     }
 
     public static void LogSequenceAborted(
@@ -282,8 +139,7 @@ internal static class IntegrationLoggerExtensions
             sequence.GetType().Name,
             sequence.SequenceId,
             sequence.Length,
-            reason,
-            null);
+            reason);
     }
 
     public static void LogSequenceProcessingError(this ISilverbackLogger logger, ISequence sequence, Exception exception)
@@ -308,12 +164,11 @@ internal static class IntegrationLoggerExtensions
             logger.InnerLogger,
             sequence.GetType().Name,
             sequence.SequenceId,
-            sequence.Length,
-            null);
+            sequence.Length);
     }
 
     public static void LogIncompleteSequenceSkipped(this ISilverbackLogger logger, IncompleteSequence sequence) =>
-        IncompleteSequenceSkipped(logger.InnerLogger, sequence.SequenceId, null);
+        IncompleteSequenceSkipped(logger.InnerLogger, sequence.SequenceId);
 
     public static void LogSequenceTimeoutError(this ISilverbackLogger logger, ISequence sequence, Exception exception)
     {
@@ -327,16 +182,16 @@ internal static class IntegrationLoggerExtensions
         BrokerClientsInitializationError(logger.InnerLogger, exception);
 
     public static void LogBrokerClientInitializing(this ISilverbackLogger logger, IBrokerClient brokerClient) =>
-        BrokerClientInitializing(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName, null);
+        BrokerClientInitializing(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName);
 
     public static void LogBrokerClientInitialized(this ISilverbackLogger logger, IBrokerClient brokerClient) =>
-        BrokerClientInitialized(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName, null);
+        BrokerClientInitialized(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName);
 
     public static void LogBrokerClientDisconnecting(this ISilverbackLogger logger, IBrokerClient brokerClient) =>
-        BrokerClientDisconnecting(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName, null);
+        BrokerClientDisconnecting(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName);
 
     public static void LogBrokerClientDisconnected(this ISilverbackLogger logger, IBrokerClient brokerClient) =>
-        BrokerClientDisconnected(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName, null);
+        BrokerClientDisconnected(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName);
 
     public static void LogBrokerClientInitializeError(this ISilverbackLogger logger, IBrokerClient brokerClient, Exception exception) =>
         BrokerClientInitializeError(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName, exception);
@@ -397,13 +252,13 @@ internal static class IntegrationLoggerExtensions
     }
 
     public static void LogBrokerClientCreated(this ISilverbackLogger logger, IBrokerClient brokerClient) =>
-        BrokerClientCreated(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName, null);
+        BrokerClientCreated(logger.InnerLogger, brokerClient.GetType().Name, brokerClient.DisplayName);
 
     public static void LogConsumerCreated(this ISilverbackLogger logger, IConsumer consumer) =>
-        ConsumerCreated(logger.InnerLogger, consumer.GetType().Name, consumer.DisplayName, null);
+        ConsumerCreated(logger.InnerLogger, consumer.GetType().Name, consumer.DisplayName);
 
     public static void LogProducerCreated(this ISilverbackLogger logger, IProducer producer) =>
-        ProducerCreated(logger.InnerLogger, producer.GetType().Name, producer.DisplayName, null);
+        ProducerCreated(logger.InnerLogger, producer.GetType().Name, producer.DisplayName);
 
     public static void LogRetryProcessing(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
     {
@@ -413,8 +268,7 @@ internal static class IntegrationLoggerExtensions
         RetryMessageProcessing(
             logger.InnerLogger,
             envelope.Endpoint.DisplayName,
-            envelope.BrokerMessageIdentifier.ToLogString(),
-            null);
+            envelope.BrokerMessageIdentifier.ToLogString());
     }
 
     public static void LogMessageMoved(
@@ -429,8 +283,7 @@ internal static class IntegrationLoggerExtensions
             logger.InnerLogger,
             destinationEndpoint.DisplayName,
             envelope.Endpoint.DisplayName,
-            envelope.BrokerMessageIdentifier.ToLogString(),
-            null);
+            envelope.BrokerMessageIdentifier.ToLogString());
     }
 
     public static void LogMessageSkipped(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
@@ -441,8 +294,7 @@ internal static class IntegrationLoggerExtensions
         MessageSkipped(
             logger.InnerLogger,
             envelope.Endpoint.DisplayName,
-            envelope.BrokerMessageIdentifier.ToLogString(),
-            null);
+            envelope.BrokerMessageIdentifier.ToLogString());
     }
 
     public static void LogCannotMoveSequence(this ISilverbackLogger logger, IRawInboundEnvelope envelope, ISequence sequence)
@@ -450,12 +302,11 @@ internal static class IntegrationLoggerExtensions
         if (!logger.IsEnabled(IntegrationLogEvents.CannotMoveSequence))
             return;
 
-        CannotMoveSequences(
+        CannotMoveSequence(
             logger.InnerLogger,
             sequence.GetType().Name,
             envelope.Endpoint.DisplayName,
-            envelope.BrokerMessageIdentifier.ToLogString(),
-            null);
+            envelope.BrokerMessageIdentifier.ToLogString());
     }
 
     public static void LogRollbackToRetryFailed(this ISilverbackLogger logger, IRawInboundEnvelope envelope, Exception exception)
@@ -485,17 +336,16 @@ internal static class IntegrationLoggerExtensions
     public static void LogStoringIntoOutbox(this ISilverbackLogger logger, IOutboundEnvelope envelope) =>
         StoringIntoOutbox(
             logger.InnerLogger,
-            envelope.EndpointConfiguration.DisplayName,
-            null);
+            envelope.EndpointConfiguration.DisplayName);
 
     public static void LogReadingMessagesFromOutbox(this ISilverbackLogger logger, int packageSize) =>
-        ReadingMessagesFromOutbox(logger.InnerLogger, packageSize, null);
+        ReadingMessagesFromOutbox(logger.InnerLogger, packageSize);
 
     public static void LogOutboxEmpty(this ISilverbackLogger logger) =>
-        OutboxEmpty(logger.InnerLogger, null);
+        OutboxEmpty(logger.InnerLogger);
 
     public static void LogProcessingOutboxStoredMessage(this ISilverbackLogger logger, int currentIndex) =>
-        ProcessingOutboxStoredMessage(logger.InnerLogger, currentIndex, null);
+        ProcessingOutboxStoredMessage(logger.InnerLogger, currentIndex);
 
     public static void LogErrorProducingOutboxStoredMessage(
         this ISilverbackLogger logger,
@@ -513,8 +363,7 @@ internal static class IntegrationLoggerExtensions
         InvalidMessageProduced(
             logger.InnerLogger,
             validationErrors,
-            envelope.EndpointConfiguration.DisplayName,
-            null);
+            envelope.EndpointConfiguration.DisplayName);
 
     public static void LogInvalidMessageConsumed(
         this ISilverbackLogger logger,
@@ -528,8 +377,7 @@ internal static class IntegrationLoggerExtensions
             logger.InnerLogger,
             validationErrors,
             envelope.Endpoint.DisplayName,
-            envelope.BrokerMessageIdentifier.ToLogString(),
-            null);
+            envelope.BrokerMessageIdentifier.ToLogString());
     }
 
     public static void LogInvalidEndpointConfiguration(
@@ -665,4 +513,571 @@ internal static class IntegrationLoggerExtensions
             message + " | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
             args);
     }
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a consumed message is being processed.
+    /// </summary>
+    [LoggerMessage(
+        1001,
+        LogLevel.Information,
+        "Processing consumed message | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_ProcessingConsumedMessage")]
+    private static partial void ProcessingConsumedMessage(ILogger logger, string endpointName, string brokerMessageId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs processing the consumed message.
+    /// </summary>
+    /// <remarks>
+    ///     If the message belongs to a sequence the <see cref="SequenceProcessingError" /> event is logged instead.
+    /// </remarks>
+    [LoggerMessage(
+        1002,
+        LogLevel.Error,
+        "Error occurred processing consumed message | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_ProcessingConsumedMessageError")]
+    private static partial void ProcessingConsumedMessageError(
+        ILogger logger,
+        string endpointName,
+        string brokerMessageId,
+        Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an unhandled error occurs processing the
+    ///     consumed message and the consumer will be stopped.
+    /// </summary>
+    [LoggerMessage(
+        1003,
+        LogLevel.Critical,
+        "Fatal error occurred processing consumed message; the client will be disconnected | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_ProcessingConsumedMessageFatalError")]
+    private static partial void ProcessingConsumedMessageFatalError(
+        ILogger logger,
+        string endpointName,
+        string brokerMessageId,
+        Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log written when an error occurs processing the consumed message, and
+    ///     it isn't handled even by the <see cref="FatalExceptionLoggerConsumerBehavior" /> (which should never happen).
+    /// </summary>
+    [LoggerMessage(
+        1004,
+        LogLevel.Critical,
+        "Fatal error occurred processing consumed message; the client will be disconnected | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration_ConsumerFatalError")]
+    private static partial void ConsumerFatalError(ILogger logger, string consumerName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message is produced.
+    /// </summary>
+    [LoggerMessage(
+        1005,
+        LogLevel.Information,
+        "Message produced | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_MessageProduced")]
+    private static partial void MessageProduced(ILogger logger, string endpointName, string? brokerMessageId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs producing a message.
+    /// </summary>
+    [LoggerMessage(
+        1006,
+        LogLevel.Warning,
+        "Error occurred producing message | EndpointName: {EndpointName}",
+        EventName = "Silverback.Integration_ErrorProducingMessage")]
+    private static partial void ErrorProducingMessage(ILogger logger, string endpointName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an outbound message is filtered out.
+    /// </summary>
+    [LoggerMessage(
+        1007,
+        LogLevel.Debug,
+        "Message filtered | EndpointName: {EndpointName}",
+        EventName = "Silverback.Integration_OutboundMessageFiltered")]
+    private static partial void OutboundMessageFiltered(ILogger logger, string endpointName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an inbound message is added to
+    ///     a sequence (e.g. <see cref="ChunkSequence" /> or a <see cref="BatchSequence" />).
+    /// </summary>
+    [LoggerMessage(
+        1011,
+        LogLevel.Debug,
+        "Message {BrokerMessageId} added to {SequenceType} {SequenceId} | Length: {SequenceLength}",
+        EventName = "Silverback.Integration_MessageAddedToSequence")]
+    private static partial void MessageAddedToSequence(
+        ILogger logger,
+        string? brokerMessageId,
+        string sequenceType,
+        string sequenceId,
+        int sequenceLength);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the first message of a new
+    ///     sequence is consumed.
+    /// </summary>
+    [LoggerMessage(
+        1012,
+        LogLevel.Debug,
+        "Started new {SequenceType} {SequenceId}",
+        EventName = "Silverback.Integration_SequenceStarted")]
+    private static partial void SequenceStarted(ILogger logger, string sequenceType, string sequenceId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when all messages belonging to the
+    ///     sequence have been consumed and published via the message bus.
+    /// </summary>
+    [LoggerMessage(
+        1013,
+        LogLevel.Debug,
+        "{SequenceType} {SequenceId} completed | Length: {SequenceLength}",
+        EventName = "Silverback.Integration_SequenceCompleted")]
+    private static partial void SequenceCompleted(ILogger logger, string sequenceType, string sequenceId, int sequenceLength);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of a sequence is aborted,
+    ///     but not because of an error (an <see cref="SequenceProcessingError" /> is logged instead) or an incomplete sequence that gets
+    ///     discarded (an <see cref="IncompleteSequenceAborted" /> or an <see cref="IncompleteSequenceSkipped" /> is logged instead).
+    /// </summary>
+    [LoggerMessage(
+        1014,
+        LogLevel.Debug,
+        "{SequenceType} {SequenceId} processing has been aborted | Length: {SequenceLength}, Reason: {Reason}",
+        EventName = "Silverback.Integration_SequenceProcessingAborted")]
+    private static partial void SequenceProcessingAborted(
+        ILogger logger,
+        string sequenceType,
+        string sequenceId,
+        int sequenceLength,
+        SequenceAbortReason reason);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs processing an inbound sequence.
+    /// </summary>
+    [LoggerMessage(
+        1015,
+        LogLevel.Error,
+        "Error occurred processing {SequenceType} {SequenceId} | Length: {SequenceLength}",
+        EventName = "Silverback.Integration_SequenceProcessingError")]
+    private static partial void SequenceProcessingError(
+        ILogger logger,
+        string sequenceType,
+        string sequenceId,
+        int sequenceLength,
+        Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log written when a sequence is aborted because a new one starts before it
+    ///     completes, or because it times out before completion.
+    /// </summary>
+    [LoggerMessage(
+        1016,
+        LogLevel.Warning,
+        "Aborted incomplete {SequenceType} {SequenceId} | Length: {SequenceLength}",
+        EventName = "Silverback.Integration_IncompleteSequenceAborted")]
+    private static partial void IncompleteSequenceAborted(ILogger logger, string sequenceType, string sequenceId, int sequenceLength);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an incomplete sequence is  skipped because the first
+    ///     consumed message of that sequence doesn't correspond to the actual sequence beginning (e.g., the first chunk).
+    /// </summary>
+    [LoggerMessage(
+        1017,
+        LogLevel.Warning,
+        "Skipped incomplete sequence {SequenceId} (missing first message)",
+        EventName = "Silverback.Integration_IncompleteSequenceSkipped")]
+    private static partial void IncompleteSequenceSkipped(ILogger logger, string sequenceId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs executing the timeout action on a
+    ///     sequence.
+    /// </summary>
+    [LoggerMessage(
+        1018,
+        LogLevel.Warning,
+        "Error occurred executing timeout for {SequenceType} {SequenceId}",
+        EventName = "Silverback.Integration_SequenceTimeoutError")]
+    private static partial void SequenceTimeoutError(ILogger logger, string sequenceType, string sequenceId, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown when initializing the
+    ///     broker clients.
+    /// </summary>
+    [LoggerMessage(
+        1021,
+        LogLevel.Error,
+        "Error occurred initializing broker clients",
+        EventName = "Silverback.Integration_BrokerClientsInitializationError")]
+    private static partial void BrokerClientsInitializationError(ILogger logger, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the broker client is initializing.
+    /// </summary>
+    [LoggerMessage(
+        1022,
+        LogLevel.Debug,
+        "{ClientType} initializing | ClientName: {ClientName}",
+        EventName = "Silverback.Integration_BrokerClientInitializing")]
+    private static partial void BrokerClientInitializing(ILogger logger, string clientType, string clientName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the broker client has been successfully initialized.
+    ///     The connection with the broker will eventually be established.
+    /// </summary>
+    [LoggerMessage(
+        1023,
+        LogLevel.Debug,
+        "{ClientType} initialized | ClientName: {ClientName}",
+        EventName = "Silverback.Integration_BrokerClientInitialized")]
+    private static partial void BrokerClientInitialized(ILogger logger, string clientType, string clientName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when disconnecting from the message
+    ///     broker.
+    /// </summary>
+    [LoggerMessage(
+        1024,
+        LogLevel.Debug,
+        "{ClientType} disconnecting | ClientName: {ClientName}",
+        EventName = "Silverback.Integration_BrokerClientDisconnecting")]
+    private static partial void BrokerClientDisconnecting(ILogger logger, string clientType, string clientName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when disconnected from the message
+    ///     broker.
+    /// </summary>
+    [LoggerMessage(
+        1025,
+        LogLevel.Information,
+        "{ClientType} disconnected | ClientName: {ClientName}",
+        EventName = "Silverback.Integration_BrokerClientDisconnected")]
+    private static partial void BrokerClientDisconnected(ILogger logger, string clientType, string clientName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown when initializing the broker
+    ///     client.
+    /// </summary>
+    [LoggerMessage(
+        1026,
+        LogLevel.Error,
+        "Error occurred initializing {ClientType} | ClientName: {ClientName}",
+        EventName = "Silverback.Integration_BrokerClientInitializeError")]
+    private static partial void BrokerClientInitializeError(ILogger logger, string clientType, string clientName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown when disconnecting the broker
+    ///     client.
+    /// </summary>
+    [LoggerMessage(
+        1027,
+        LogLevel.Error,
+        "Error occurred disconnecting {ClientType} | ClientName: {ClientName}",
+        EventName = "Silverback.Integration_BrokerClientDisconnectError")]
+    private static partial void BrokerClientDisconnectError(ILogger logger, string clientType, string clientName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown reconnecting the broker client
+    ///     (auto recovery from errors).
+    /// </summary>
+    [LoggerMessage(
+        1028,
+        LogLevel.Warning,
+        "Failed to reconnect {ClientType}; retry in {RetryDelay} ms | ClientName: {ClientName}",
+        EventName = "Silverback.Integration_BrokerClientReconnectError")]
+    private static partial void BrokerClientReconnectError(
+        ILogger logger,
+        string clientType,
+        double retryDelay,
+        string clientName,
+        Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
+    ///     starting the consumer.
+    /// </summary>
+    [LoggerMessage(
+        1031,
+        LogLevel.Error,
+        "Error occurred (re)starting {ConsumerType} | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration_ConsumerStartError")]
+    private static partial void ConsumerStartError(ILogger logger, string consumerType, string consumerName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
+    ///     stopping the consumer.
+    /// </summary>
+    [LoggerMessage(
+        1032,
+        LogLevel.Error,
+        "Error occurred stopping {ConsumerType} | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration_ConsumerStopError")]
+    private static partial void ConsumerStopError(ILogger logger, string consumerType, string consumerName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs in the
+    ///     consumer during the commit operation.
+    /// </summary>
+    [LoggerMessage(
+        1033,
+        LogLevel.Error,
+        "{ConsumerType} commit failed | ConsumerName: {ConsumerName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_ConsumerCommitError")]
+    private static partial void ConsumerCommitError(
+        ILogger logger,
+        string consumerType,
+        string consumerName,
+        string brokerMessageId,
+        Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs in the
+    ///     consumer during the rollback operation.
+    /// </summary>
+    [LoggerMessage(
+        1034,
+        LogLevel.Error,
+        "{ConsumerType} rollback failed | ConsumerName: {ConsumerName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_ConsumerRollbackError")]
+    private static partial void ConsumerRollbackError(
+        ILogger logger,
+        string consumerType,
+        string consumerName,
+        string brokerMessageId,
+        Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a new broker client is instantiated.
+    /// </summary>
+    [LoggerMessage(
+        1041,
+        LogLevel.Debug,
+        "Created {ClientType} | ClientName: {ClientName}",
+        EventName = "Silverback.Integration_BrokerClientCreated")]
+    private static partial void BrokerClientCreated(ILogger logger, string clientType, string clientName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a new consumer is instantiated.
+    /// </summary>
+    [LoggerMessage(
+        1042,
+        LogLevel.Debug,
+        "Created {ConsumerType} | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration_ConsumerCreated")]
+    private static partial void ConsumerCreated(ILogger logger, string consumerType, string consumerName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a new consumer is instantiated.
+    /// </summary>
+    [LoggerMessage(
+        1043,
+        LogLevel.Debug,
+        "Created {ProducerType} | ProducerName: {ProducerName}",
+        EventName = "Silverback.Integration_ProducerCreated")]
+    private static partial void ProducerCreated(ILogger logger, string producerType, string producerName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be processed and the
+    ///     <see cref="RetryErrorPolicy" /> is applied.
+    /// </summary>
+    [LoggerMessage(
+        1051,
+        LogLevel.Information,
+        "The message(s) will be processed again | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_RetryMessageProcessing")]
+    private static partial void RetryMessageProcessing(ILogger logger, string endpointName, string brokerMessageId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be
+    ///     processed and is moved to another endpoint. This event occurs when the
+    ///     <see cref="MoveMessageErrorPolicy" /> is applied.
+    /// </summary>
+    [LoggerMessage(
+        1052,
+        LogLevel.Information,
+        "The message will be moved to {TargetEndpointName} | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_MessageMoved")]
+    private static partial void MessageMoved(ILogger logger, string targetEndpointName, string endpointName, string brokerMessageId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be
+    ///     processed and is skipped. This event occurs when the <see cref="SkipMessageErrorPolicy" /> is applied.
+    /// </summary>
+    [LoggerMessage(
+        1053,
+        LogLevel.Information,
+        "The message(s) will be skipped | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_MessageSkipped")]
+    private static partial void MessageSkipped(ILogger logger, string endpointName, string brokerMessageId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
+    ///     <see cref="MoveMessageErrorPolicy" /> cannot be applied because the failing message belongs to a
+    ///     sequence (it's either chunked, being processed in batch, etc.).
+    /// </summary>
+    [LoggerMessage(
+        1054,
+        LogLevel.Warning,
+        "The message belongs to a {SequenceType} and cannot be moved | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_CannotMoveSequence")]
+    private static partial void CannotMoveSequence(ILogger logger, string sequenceType, string endpointName, string brokerMessageId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a rollback initiated by
+    ///     the <see cref="RetryErrorPolicy" /> fails with an exception. This will cause the consumer to be
+    ///     disconnected and reconnected.
+    /// </summary>
+    [LoggerMessage(
+        1061,
+        LogLevel.Warning,
+        "Error occurred rolling back, retry error policy cannot be applied; the consumer will be reconnected " +
+        "| EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_RollbackToRetryFailed")]
+    private static partial void RollbackToRetryFailed(ILogger logger, string endpointName, string brokerMessageId, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a rollback initiated by
+    ///     the <see cref="SkipMessageErrorPolicy" /> fails with an exception. This will cause the consumer to be
+    ///     disconnected and reconnected.
+    /// </summary>
+    [LoggerMessage(
+        1062,
+        LogLevel.Warning,
+        "Error occurred rolling back transaction or committing offset, skip error policy cannot be applied; " +
+        "the consumer will be reconnected | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_RollbackToSkipFailed")]
+    private static partial void RollbackToSkipFailed(ILogger logger, string endpointName, string brokerMessageId, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is being written
+    ///     to the outbox.
+    /// </summary>
+    [LoggerMessage(
+        1071,
+        LogLevel.Debug,
+        "Storing message into outbox | EndpointName: {EndpointName}",
+        EventName = "Silverback.Integration_StoringIntoOutbox")]
+    private static partial void StoringIntoOutbox(ILogger logger, string endpointName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
+    ///     <see cref="IOutboxWorker" /> loads a batch of enqueued messages.
+    /// </summary>
+    [LoggerMessage(
+        1072,
+        LogLevel.Trace,
+        "Reading batch of {ReadBatchSize} messages from outbox",
+        EventName = "Silverback.Integration_ReadingMessagesFromOutbox")]
+    private static partial void ReadingMessagesFromOutbox(ILogger logger, int readBatchSize);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
+    ///     <see cref="IOutboxWorker" /> doesn't find any message in the outbox.
+    /// </summary>
+    [LoggerMessage(
+        1073,
+        LogLevel.Trace,
+        "Outbox empty",
+        EventName = "Silverback.Integration_OutboxEmpty")]
+    private static partial void OutboxEmpty(ILogger logger);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message stored in the outbox is being processed.
+    /// </summary>
+    [LoggerMessage(
+        1074,
+        LogLevel.Debug,
+        "Processing outbox message {CurrentMessageIndex}",
+        EventName = "Silverback.Integration_ProcessingOutboxStoredMessage")]
+    private static partial void ProcessingOutboxStoredMessage(ILogger logger, int currentMessageIndex);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs  producing the message stored in the
+    ///     outbox.
+    /// </summary>
+    [LoggerMessage(
+        1075,
+        LogLevel.Error,
+        "Failed to produce message from outbox | EndpointName: {EndpointName}",
+        EventName = "Silverback.Integration_ErrorProducingOutboxStoredMessage")]
+    private static partial void ErrorProducingOutboxStoredMessage(ILogger logger, string endpointName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while the <see cref="IOutboxWorker" />
+    ///     processes the outbox queue.
+    /// </summary>
+    [LoggerMessage(
+        1076,
+        LogLevel.Error,
+        "Error occurred processing outbox",
+        EventName = "Silverback.Integration_ErrorProcessingOutbox")]
+    private static partial void ErrorProcessingOutbox(ILogger logger, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an invalid message
+    ///     has been produced (see <see cref="MessageValidationMode" />).
+    /// </summary>
+    [LoggerMessage(
+        1081,
+        LogLevel.Warning,
+        "Invalid message produced: {ValidationErrors} | EndpointName: {EndpointName}",
+        EventName = "Silverback.Integration_InvalidMessageProduced")]
+    private static partial void InvalidMessageProduced(ILogger logger, string validationErrors, string endpointName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an invalid message
+    ///     has been consumed (see <see cref="MessageValidationMode" />).
+    /// </summary>
+    [LoggerMessage(
+        1082,
+        LogLevel.Warning,
+        "Invalid message consumed: {ValidationErrors} | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_InvalidMessageConsumed")]
+    private static partial void InvalidMessageConsumed(
+        ILogger logger,
+        string validationErrors,
+        string endpointName,
+        string brokerMessageId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when trying to connect an endpoint
+    ///     with an invalid configuration.
+    /// </summary>
+    [LoggerMessage(
+        1101,
+        LogLevel.Critical,
+        "Invalid configuration for endpoint {EndpointName}",
+        EventName = "Silverback.Integration_InvalidEndpointConfiguration")]
+    private static partial void InvalidEndpointConfiguration(ILogger logger, string endpointName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown from
+    ///     within an <see cref="IBrokerClientsConfigurator" />.
+    /// </summary>
+    [LoggerMessage(
+        1102,
+        LogLevel.Critical,
+        "Error occurred configuring endpoints | Configurator: {EndpointsConfiguratorName}",
+        EventName = "Silverback.Integration_EndpointConfiguratorError")]
+    private static partial void EndpointConfiguratorError(ILogger logger, string endpointsConfiguratorName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown by a client callback handler.
+    /// </summary>
+    [LoggerMessage(
+        1103,
+        LogLevel.Error,
+        "Error occurred invoking callback handlers",
+        EventName = "Silverback.Integration_CallbackError")]
+    private static partial void CallbackError(ILogger logger, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown by the endpoint builder action.
+    /// </summary>
+    [LoggerMessage(
+        1104,
+        LogLevel.Critical,
+        "Failed to configure endpoint {EndpointName}",
+        EventName = "Silverback.Integration_EndpointBuilderError")]
+    private static partial void EndpointBuilderError(ILogger logger, string? endpointName, Exception exception);
 }
