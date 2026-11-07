@@ -19,5 +19,6 @@ DocsGenerator.GenerateDocsTable(typeof(CoreLogEvents), Path.Combine(outputDirect
 DocsGenerator.GenerateDocsTable(typeof(IntegrationLogEvents), Path.Combine(outputDirectory, "log-events-integration.md"));
 DocsGenerator.GenerateDocsTable(typeof(KafkaLogEvents), Path.Combine(outputDirectory, "log-events-kafka.md"));
 DocsGenerator.GenerateDocsTable(typeof(MqttLogEvents), Path.Combine(outputDirectory, "log-events-mqtt.md"));
+DocsGenerator.GenerateDocsTable(typeof(StorageMemoryLogEvents), Path.Combine(outputDirectory, "log-events-storage-memory.md"));
 
 return 0;

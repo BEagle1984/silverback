@@ -12,6 +12,7 @@
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
     <ProjectReference Include="..\..\src\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj"/>
     <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj"/>
   </ItemGroup>
 
 </Project>

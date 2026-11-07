@@ -28,6 +28,10 @@ Silverback logs several events that can be used to monitor the application and t
 
 [!INCLUDE [MQTT log events](../build/generated/log-events-mqtt.md)]
 
+### In-Memory Storage
+
+[!INCLUDE [In-memory storage log events](../build/generated/log-events-storage-memory.md)]
+
 ## Customizing the Log Levels
 
 The level of each Silverback log event can be overridden using `WithLogLevels`. The level can be set statically or determined dynamically, for example depending on the exception type.
@@ -42,7 +46,7 @@ services
             (exception, defaultLevel) => exception is TimeoutException ? LogLevel.Warning : defaultLevel));
 ```
 
-The event ids are exposed by the <xref:Silverback.Diagnostics.CoreLogEvents>, <xref:Silverback.Diagnostics.IntegrationLogEvents>, <xref:Silverback.Diagnostics.KafkaLogEvents> and <xref:Silverback.Diagnostics.MqttLogEvents> static classes.
+The event ids are exposed by the <xref:Silverback.Diagnostics.CoreLogEvents>, <xref:Silverback.Diagnostics.IntegrationLogEvents>, <xref:Silverback.Diagnostics.KafkaLogEvents>, <xref:Silverback.Diagnostics.MqttLogEvents> and <xref:Silverback.Diagnostics.StorageMemoryLogEvents> static classes.
 
 > [!Tip]
 > To reduce the noise, you can also use the standard logging filters to change the minimum level of the `Silverback` categories.
