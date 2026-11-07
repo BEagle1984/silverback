@@ -138,7 +138,7 @@ public partial class KafkaConsumerTests
     [InlineData(false)]
     [InlineData(true)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
-    public async Task Shutdown_ShouldRejectAssignmentAndLeaveUnfinishedRecordsReplayable(bool cooperative)
+    public async Task Shutdown_ShouldAcceptAssignmentWithoutReadingItAndLeaveUnfinishedRecordsReplayable(bool cooperative)
     {
         await using PollHarness harness = new(true, cooperative);
         await harness.StartAsync(0);
@@ -160,24 +160,66 @@ public partial class KafkaConsumerTests
         await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
         await rebalance.WaitAsync(Timeout);
 
-        assignedDuringStop.ShouldBe(0);
+        assignedDuringStop.ShouldBe(1);
+        harness.Starts.ShouldBe([new Delivery(0, 0, 1)]);
         harness.Completed.ShouldBeEmpty();
         harness.CommittedOffset(0).ShouldBe(0);
 
+        // The restart reads the partition assigned while stopping
         await harness.Consumer.StartAsync();
-        await harness.PollAsync(() =>
-        {
-            harness.Assign(0);
-
-            return harness.Record(0, 0);
-        });
-
-        await harness.DeliverAsync((0, 1), (0, 2));
+        await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
         await harness.WaitForCommitAsync(0, 3);
 
         harness.Completed.Select(item => item.Offset).ShouldBe([0L, 1L, 2L]);
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(ClientStatus.Initialized, 6)]
+    [InlineData(ClientStatus.Disconnecting, 3)]
+    public void Rebalance_ShouldAcceptAssignmentApplyingStoredOffsetsUnlessDisconnecting_WhenConsumerIsNotStarted(
+        ClientStatus clientStatus,
+        long expectedOffset)
+    {
+        IConfluentConsumerWrapper client = Substitute.For<IConfluentConsumerWrapper>();
+        client.Initialized.Returns(new AsyncEvent<BrokerClient>());
+        client.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
+        client.Status.Returns(clientStatus);
+
+        IKafkaOffsetStore store = Substitute.For<IKafkaOffsetStore>();
+        store.GetStoredOffsets("group").Returns([new KafkaOffset("topic", 0, 5)]);
+
+        KafkaOffsetStoreFactory storeFactory = new();
+        storeFactory.AddFactory<InMemoryKafkaOffsetStoreSettings>((_, _) => store);
+
+        using KafkaConsumer consumer = new(
+            "consumer",
+            client,
+            new KafkaConsumerConfiguration
+            {
+                GroupId = "group",
+                ClientSideOffsetStore = new InMemoryKafkaOffsetStoreSettings(),
+                Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+                [
+                    new KafkaConsumerEndpointConfiguration
+                    {
+                        TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                            [new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)])
+                    }
+                ])
+            },
+            Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+            Substitute.For<IBrokerClientCallbacksInvoker>(),
+            storeFactory,
+            Substitute.For<IServiceProvider>(),
+            Substitute.For<ISilverbackLogger<KafkaConsumer>>());
+
+        IReadOnlyCollection<TopicPartitionOffset> accepted = consumer.OnPartitionsAssigned([new TopicPartitionOffset("topic", 0, 3)]);
+
+        // The disconnect revokes the assignment right away, so the offset store isn't read
+        accepted.ShouldBe([new TopicPartitionOffset("topic", 0, expectedOffset)]);
+        store.Received(clientStatus == ClientStatus.Disconnecting ? 0 : 1).GetStoredOffsets("group");
     }
 
     [Fact]
@@ -971,6 +1013,61 @@ public partial class KafkaConsumerTests
 
         harness.Logs.Count(log => log.StartsWith("Consume loop stopped", StringComparison.Ordinal)).ShouldBe(1);
         harness.UnsafeStores.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
+    public async Task Start_ShouldReadPartitionAssignedByNonBlockingStop_WhenAssignmentIsAppliedAfterStart(bool cooperative)
+    {
+        await using PollHarness harness = new(true, cooperative);
+        await harness.StartAsync(0);
+
+        TaskCompletionSource<bool> polling = NewSignal();
+        TaskCompletionSource<bool> stopped = NewSignal();
+        TaskCompletionSource<bool> assigned = NewSignal();
+        TaskCompletionSource<bool> restarted = NewSignal();
+
+        harness.BeforeAssignmentApplied = () =>
+        {
+            assigned.TrySetResult(true);
+            restarted.Task.Wait(Timeout);
+        };
+
+        // The last poll of the stopping loop accepts a partition, which is applied only after the restart read the assignment
+        Task lastPoll = harness.PollAsync(() =>
+        {
+            polling.TrySetResult(true);
+            stopped.Task.Wait(Timeout);
+
+            if (cooperative)
+            {
+                harness.Assign(1);
+            }
+            else
+            {
+                harness.Revoke(0);
+                harness.Assign(0, 1);
+            }
+
+            return null;
+        });
+
+        await polling.Task.WaitAsync(Timeout);
+        await harness.Consumer.StopAsync(false).AsTask().WaitAsync(Timeout);
+        stopped.TrySetResult(true);
+        await assigned.Task.WaitAsync(Timeout);
+        await harness.Consumer.StartAsync().AsTask().WaitAsync(Timeout);
+        restarted.TrySetResult(true);
+        await lastPoll;
+
+        await harness.DeliverAsync((1, 0), (1, 1));
+        await harness.WaitForCommitAsync(1, 2);
+
+        harness.Completed.Select(item => (item.Partition, item.Offset)).ShouldBe([(1, 0L), (1, 1L)]);
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
     }
@@ -2251,6 +2348,9 @@ public partial class KafkaConsumerTests
 
         public Action? BeforeChannelStop { get; set; }
 
+        // Runs after the assignment callback returned, before the assignment is applied, like Confluent.Kafka does
+        public Action? BeforeAssignmentApplied { get; set; }
+
         public Action? AfterConsume { get; set; }
 
         public Func<Delivery, Task>? AfterCommit { get; set; }
@@ -2378,6 +2478,16 @@ public partial class KafkaConsumerTests
         public int AssignOffsets(IReadOnlyCollection<TopicPartitionOffset> offsets)
         {
             IReadOnlyCollection<TopicPartitionOffset> accepted = Consumer.OnPartitionsAssigned(offsets);
+
+            // Like Confluent.Kafka, which rejects a changed cooperative assignment
+            HashSet<TopicPartition> acceptedPartitions = [.. accepted.Select(offset => offset.TopicPartition)];
+            bool changed = accepted.Count != offsets.Count ||
+                           !acceptedPartitions.SetEquals(offsets.Select(offset => offset.TopicPartition));
+
+            if (_cooperative && changed)
+                throw new InvalidOperationException("The cooperative assignment must be returned unchanged.");
+
+            BeforeAssignmentApplied?.Invoke();
 
             foreach (TopicPartitionOffset offset in accepted)
             {

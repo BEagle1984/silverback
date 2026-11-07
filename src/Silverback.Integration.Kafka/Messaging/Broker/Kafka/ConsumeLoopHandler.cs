@@ -170,8 +170,8 @@ internal sealed class ConsumeLoopHandler : IDisposable
         // Reset the last successful consume time to avoid false stall detection
         _lastSuccessfulConsume = DateTime.UtcNow;
 
-        // The records buffered when the consumer was stopped were discarded: seek back to consume them again before polling, then
-        // resume the partitions paused by a rollback that the stop defeated
+        // Before polling: read the partitions assigned while the previous loop was stopping, seek back to consume the records discarded
+        // by the stop again, then resume the partitions paused by a rollback that the stop defeated
         bool continueConsuming = RestorePartitions(cancellationToken);
 
         while (continueConsuming && !cancellationToken.IsCancellationRequested)
@@ -238,6 +238,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
         try
         {
+            _consumer.StartReadingAssignment();
             _consumer.SeekToUncommittedOffsets();
             _consumer.ResumeRollbackPausedPartitions();
             return true;

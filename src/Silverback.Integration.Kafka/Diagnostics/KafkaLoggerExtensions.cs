@@ -147,6 +147,12 @@ internal static partial class KafkaLoggerExtensions
         PollTimeoutNoAutoRecovery(logger.InnerLogger, logMessage.Level.ToString(), logMessage.Message, consumer.DisplayName);
     }
 
+    public static void LogConsumerLeaveGroupError(this ISilverbackLogger logger, KafkaConsumer consumer, Exception exception) =>
+        ConsumerLeaveGroupError(logger.InnerLogger, consumer.DisplayName, exception);
+
+    public static void LogConsumerLeaveGroupTimeout(this ISilverbackLogger logger, TimeSpan timeout, KafkaConsumer consumer) =>
+        ConsumerLeaveGroupTimeout(logger.InnerLogger, timeout, consumer.DisplayName);
+
     public static void LogTransactionsInitialized(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
         TransactionsInitialized(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId);
 
@@ -579,6 +585,28 @@ internal static partial class KafkaLoggerExtensions
         "Statistics JSON couldn't be deserialized",
         EventName = "Silverback.Integration.Kafka_StatisticsDeserializationError")]
     private static partial void StatisticsDeserializationError(ILogger logger, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while the consumer leaves the
+    ///     group, before being closed.
+    /// </summary>
+    [LoggerMessage(
+        2044,
+        LogLevel.Warning,
+        "Error occurred leaving the consumer group before closing the consumer | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.Kafka_ConsumerLeaveGroupError")]
+    private static partial void ConsumerLeaveGroupError(ILogger logger, string consumerName, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer doesn't release its assignment
+    ///     within the timeout while leaving the group, before being closed.
+    /// </summary>
+    [LoggerMessage(
+        2045,
+        LogLevel.Warning,
+        "The consumer group wasn't left within {Timeout}; the consumer will be closed anyway | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.Kafka_ConsumerLeaveGroupTimeout")]
+    private static partial void ConsumerLeaveGroupTimeout(ILogger logger, TimeSpan timeout, string consumerName);
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a poll timeout is notified.

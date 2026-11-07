@@ -372,8 +372,9 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
+        // Committed before leaving the group and again by the revocation, which has nothing left to commit
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
-        offsetCommittedCallback.CallsCount.ShouldBe(1);
+        offsetCommittedCallback.CallsCount.ShouldBe(2);
     }
 
     [Fact]

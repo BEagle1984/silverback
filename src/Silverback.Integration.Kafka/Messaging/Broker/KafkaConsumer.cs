@@ -182,16 +182,19 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     internal IReadOnlyCollection<TopicPartitionOffset> OnPartitionsAssigned(IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets)
     {
-        if (!IsStartedAndNotStopping())
-            return [];
+        // The assignment is never rejected: Confluent.Kafka requires the cooperative one to be returned unchanged, and a rejected
+        // eager one would remain unconsumed until the next rebalance. The disconnect revokes it right away.
+        if (Client.Status == ClientStatus.Disconnecting)
+            return topicPartitionOffsets;
 
         topicPartitionOffsets = new StoredOffsetsLoader(_offsetStoreFactory, Configuration, ServiceProvider)
             .ApplyStoredOffsets(topicPartitionOffsets);
 
         lock (_assignmentLock)
         {
+            // Accepted without being read: the next start reads the whole assignment
             if (!IsStartedAndNotStopping())
-                return [];
+                return topicPartitionOffsets;
 
             foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
             {
@@ -286,6 +289,26 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 _rollbackPausedPartitions.Remove(rollbackOffset.TopicPartition);
                 _rollingBackPartitions.Remove(rollbackOffset.TopicPartition);
             }
+        }
+    }
+
+    /// <summary>
+    ///     Starts reading the assigned partitions again, including the ones the start missed.
+    /// </summary>
+    /// <remarks>
+    ///     Called by the consume loop before its first poll, once the previous loop exited, and before
+    ///     <see cref="SeekToUncommittedOffsets" />. An assignment accepted by the last poll of a stopping loop is applied by
+    ///     Confluent.Kafka only after the callback returns, possibly after the start read the assignment. The partitions already
+    ///     being read are unaffected, since no record was polled since the start.
+    /// </remarks>
+    internal void StartReadingAssignment()
+    {
+        lock (_assignmentLock)
+        {
+            if (!IsStartedAndNotStopping())
+                return;
+
+            StartReadingAssignmentCore();
         }
     }
 
@@ -396,20 +419,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         lock (_assignmentLock)
         {
-            foreach (TopicPartition partition in Client.Assignment)
-            {
-                IncrementAssignmentVersion(partition);
-                _revokedPartitions.Remove(partition);
-                _rollingBackPartitions.Remove(partition);
-
-                // The offsets tracked before a stop are kept: the consume loop seeks back to the first uncommitted one before
-                // polling again
-                _offsets.TrackPartition(partition);
-                _channelsManager.StartReading(partition);
-            }
-
-            if (Client.Assignment.Count > 0)
-                SetConnectedStatus();
+            StartReadingAssignmentCore();
         }
 
         // Assignment callbacks are delivered by Consume, so polling must start before assignment
@@ -777,6 +787,27 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     }
 
     private bool IsNotRevoked(TopicPartition topicPartition) => !_revokedPartitions.Contains(topicPartition);
+
+    // Must be called while holding the assignment lock
+    private void StartReadingAssignmentCore()
+    {
+        IReadOnlyList<TopicPartition> assignment = Client.Assignment;
+
+        foreach (TopicPartition partition in assignment)
+        {
+            IncrementAssignmentVersion(partition);
+            _revokedPartitions.Remove(partition);
+            _rollingBackPartitions.Remove(partition);
+
+            // The offsets tracked before a stop are kept: the consume loop seeks back to the first uncommitted one before polling
+            // again
+            _offsets.TrackPartition(partition);
+            _channelsManager.StartReading(partition);
+        }
+
+        if (assignment.Count > 0)
+            SetConnectedStatus();
+    }
 
     private sealed record RollbackPartition(TopicPartitionOffset Offset, long Version);
 }

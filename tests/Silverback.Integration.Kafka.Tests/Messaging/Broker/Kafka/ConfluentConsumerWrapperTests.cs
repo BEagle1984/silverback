@@ -53,6 +53,7 @@ public class ConfluentConsumerWrapperTests
         _consumerBuilder.SetConfig(Arg.Any<ConsumerConfig>()).Returns(_consumerBuilder);
         _consumerBuilder.SetErrorHandler(Arg.Any<Action<IConsumer<byte[]?, byte[]?>, Error>>()).Returns(_consumerBuilder);
         _consumerBuilder.Build().Returns(_confluentConsumer);
+        _confluentConsumer.Assignment.Returns(_ => []);
     }
 
     [Fact]
@@ -356,6 +357,8 @@ public class ConfluentConsumerWrapperTests
             nativeCalls.Enqueue("StoreOffset");
         });
 
+        _confluentConsumer.When(native => native.Pause(Arg.Any<IEnumerable<TopicPartition>>())).Do(_ => nativeCalls.Enqueue("Pause"));
+        _confluentConsumer.When(native => native.Unsubscribe()).Do(_ => nativeCalls.Enqueue("Unsubscribe"));
         _confluentConsumer.When(native => native.Close()).Do(_ => nativeCalls.Enqueue("Close"));
         _confluentConsumer.When(native => native.Dispose()).Do(_ => nativeCalls.Enqueue("Dispose"));
 
@@ -378,27 +381,50 @@ public class ConfluentConsumerWrapperTests
         releaseStoreOffset.SetResult();
         await Task.WhenAll(storeOffsetTask, disconnectTask).WaitAsync(Timeout);
 
-        nativeCalls.ShouldBe(["StoreOffset", "Close", "Dispose"]);
+        nativeCalls.ShouldBe(["StoreOffset", "Pause", "Unsubscribe", "Close", "Dispose"]);
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The late call completes before the consumer is disposed")]
-    public async Task DisconnectAsync_ShouldNotDeadlock_WhenCloseWaitsForStoreOffsetOrCommitFromAnotherThread(bool commit)
+    public async Task DisconnectAsync_ShouldNotDeadlock_WhenCallbacksWaitForStoreOffsetOrCommitFromAnotherThread(bool commit, bool leavingGroup)
     {
         await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
         TopicPartitionOffset offset = new("topic", 0, 2);
         Action act = commit ? consumer.Commit : () => consumer.StoreOffset(offset);
+        ConcurrentQueue<string> nativeCalls = [];
         Task lateCall = Task.CompletedTask;
         bool lateCallCompleted = false;
 
-        // Like the revocation callbacks waiting for the processing, which stores and commits the offsets
-        _confluentConsumer.When(native => native.Close()).Do(_ =>
+        // Like the revocation callbacks waiting for the processing, which stores and commits the offsets. They run in the polls while
+        // leaving the group, or in Close.
+        void RunLateCall()
         {
             lateCall = Task.Run(act);
             lateCallCompleted = SpinWait.SpinUntil(() => lateCall.IsCompleted, Timeout);
-        });
+        }
+
+        _confluentConsumer.When(native => native.Unsubscribe()).Do(_ => nativeCalls.Enqueue("Unsubscribe"));
+
+        if (leavingGroup)
+        {
+            _confluentConsumer.When(native => native.Consume(Arg.Any<TimeSpan>())).Do(_ =>
+            {
+                // The consume loop polls until the disconnect stops it
+                if (!nativeCalls.Contains("Unsubscribe") || nativeCalls.Contains("LateCall"))
+                    return;
+
+                nativeCalls.Enqueue("LateCall");
+                RunLateCall();
+            });
+        }
+        else
+        {
+            _confluentConsumer.When(native => native.Close()).Do(_ => RunLateCall());
+        }
 
         await consumer.DisconnectAsync().AsTask().WaitAsync(Timeout);
 
@@ -408,6 +434,163 @@ public class ConfluentConsumerWrapperTests
         _confluentConsumer.DidNotReceive().Commit();
         _confluentConsumer.Received(1).Close();
         _confluentConsumer.Received(1).Dispose();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The callbacks run before the consumer is disposed")]
+    public async Task DisconnectAsync_ShouldLeaveGroupAndRunPendingCallbacks_BeforeClosing()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        ConcurrentQueue<string> nativeCalls = [];
+        List<TopicPartition> assignment = [new("topic", 0)];
+
+        _confluentConsumer.Assignment.Returns(_ => assignment);
+        _confluentConsumer.Commit().Returns(_ => []);
+
+        _confluentConsumer.When(native => native.Pause(Arg.Any<IEnumerable<TopicPartition>>())).Do(call =>
+        {
+            IEnumerable<int> partitions = call.Arg<IEnumerable<TopicPartition>>().Select(partition => partition.Partition.Value);
+            nativeCalls.Enqueue($"Pause {string.Join(',', partitions)}");
+        });
+
+        _confluentConsumer.When(native => native.Unsubscribe()).Do(_ => nativeCalls.Enqueue("Unsubscribe"));
+        _confluentConsumer.When(native => native.Close()).Do(_ => nativeCalls.Enqueue("Close"));
+
+        // A pending assignment, a prefetched record and then the revocation following the unsubscribe
+        _confluentConsumer.Consume(Arg.Any<TimeSpan>()).Returns(_ =>
+        {
+            // The consume loop polls until the disconnect stops it
+            if (!nativeCalls.Contains("Unsubscribe"))
+                return null;
+
+            nativeCalls.Enqueue("Consume");
+
+            switch (nativeCalls.Count(call => call == "Consume"))
+            {
+                case 1:
+                    assignment.Add(new TopicPartition("topic", 1));
+                    return null;
+                case 2:
+                    return new ConsumeResult<byte[]?, byte[]?>();
+                default:
+                    // The revocation commits from the disconnecting thread
+                    consumer.Commit();
+                    assignment.Clear();
+                    return null;
+            }
+        });
+
+        await consumer.DisconnectAsync();
+
+        nativeCalls.ShouldBe(["Pause 0", "Unsubscribe", "Consume", "Consume", "Consume", "Close"]);
+        _confluentConsumer.Received(1).Consume(TimeSpan.Zero);
+        _confluentConsumer.Received(1).Commit();
+        _confluentConsumer.DidNotReceive().StoreOffset(Arg.Any<TopicPartitionOffset>());
+        _confluentConsumer.DidNotReceive().StoreOffset(Arg.Any<ConsumeResult<byte[]?, byte[]?>>());
+        consumer.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldCloseWithoutLeavingGroup_WhenPartitionsAreStaticallyAssigned()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync(staticAssignment: true);
+
+        await consumer.DisconnectAsync();
+
+        _confluentConsumer.DidNotReceive().Pause(Arg.Any<IEnumerable<TopicPartition>>());
+        _confluentConsumer.DidNotReceive().Unsubscribe();
+        _confluentConsumer.Received(1).Close();
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldLogAndClose_WhenAssignmentIsNotReleasedWithinTimeout()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        consumer.LeaveGroupTimeout = TimeSpan.FromMilliseconds(100);
+        _confluentConsumer.Assignment.Returns(_ => [new TopicPartition("topic", 0)]);
+
+        await consumer.DisconnectAsync();
+
+        _loggerSubstitute.Received(LogLevel.Warning, null, eventId: 2045);
+        _confluentConsumer.Received(1).Close();
+        consumer.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldLogAndLeaveGroup_WhenPauseFails()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        KafkaException exception = new(new Error(ErrorCode.Local_Fail));
+        _confluentConsumer.When(native => native.Pause(Arg.Any<IEnumerable<TopicPartition>>())).Do(_ => throw exception);
+
+        await consumer.DisconnectAsync();
+
+        _loggerSubstitute.Received(LogLevel.Warning, typeof(KafkaException), eventId: 2044, exceptionMessage: exception.Message);
+        _confluentConsumer.Received(1).Unsubscribe();
+        _confluentConsumer.Received(1).Close();
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldLogAndClose_WhenUnsubscribeFails()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        KafkaException exception = new(new Error(ErrorCode.Local_Fail));
+        ConcurrentQueue<string> nativeCalls = [];
+
+        _confluentConsumer.When(native => native.Unsubscribe()).Do(_ =>
+        {
+            nativeCalls.Enqueue("Unsubscribe");
+            throw exception;
+        });
+
+        // The consume loop polls until the disconnect stops it
+        _confluentConsumer.When(native => native.Consume(Arg.Any<TimeSpan>())).Do(_ =>
+        {
+            if (nativeCalls.Contains("Unsubscribe"))
+                nativeCalls.Enqueue("Consume");
+        });
+
+        _confluentConsumer.When(native => native.Close()).Do(_ => nativeCalls.Enqueue("Close"));
+
+        await consumer.DisconnectAsync();
+
+        _loggerSubstitute.Received(LogLevel.Warning, typeof(KafkaException), eventId: 2044, exceptionMessage: exception.Message);
+        nativeCalls.ShouldBe(["Unsubscribe", "Close"]);
+        consumer.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DisconnectAsync_ShouldLogPollErrorAndStopLeavingGroupOnlyIfFatal(bool fatal)
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        KafkaException exception = new(new Error(ErrorCode.Local_Fail, "poll failed", fatal));
+        ConcurrentQueue<string> nativeCalls = [];
+        List<TopicPartition> assignment = [new("topic", 0)];
+
+        _confluentConsumer.Assignment.Returns(_ => assignment);
+        _confluentConsumer.When(native => native.Unsubscribe()).Do(_ => nativeCalls.Enqueue("Unsubscribe"));
+        _confluentConsumer.Consume(Arg.Any<TimeSpan>()).Returns<ConsumeResult<byte[]?, byte[]?>?>(_ =>
+        {
+            // The consume loop polls until the disconnect stops it
+            if (!nativeCalls.Contains("Unsubscribe"))
+                return null;
+
+            nativeCalls.Enqueue("Consume");
+
+            if (nativeCalls.Count(call => call == "Consume") == 1)
+                throw exception;
+
+            assignment.Clear();
+            return null;
+        });
+
+        await consumer.DisconnectAsync();
+
+        _loggerSubstitute.Received(LogLevel.Warning, typeof(KafkaException), eventId: 2044, exceptionMessage: exception.Message);
+        nativeCalls.Count(call => call == "Consume").ShouldBe(fatal ? 1 : 2);
+        _confluentConsumer.Received(1).Close();
     }
 
     private static KafkaConsumer GetKafkaConsumer(IConfluentConsumerWrapper consumerWrapper) => new(
@@ -420,7 +603,10 @@ public class ConfluentConsumerWrapperTests
         Substitute.For<IServiceProvider>(),
         Substitute.For<ISilverbackLogger<KafkaConsumer>>());
 
-    private async Task<ConfluentConsumerWrapper> GetConnectedConsumerAsync(bool enableAutoCommit = true, bool commitOffsets = true)
+    private async Task<ConfluentConsumerWrapper> GetConnectedConsumerAsync(
+        bool enableAutoCommit = true,
+        bool commitOffsets = true,
+        bool staticAssignment = false)
     {
         KafkaConsumerConfiguration configuration = new()
         {
@@ -434,7 +620,7 @@ public class ConfluentConsumerWrapperTests
                 {
                     TopicPartitions = new[]
                     {
-                        new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)
+                        new TopicPartitionOffset("topic", staticAssignment ? 0 : Partition.Any, Offset.Unset)
                     }.AsValueReadOnlyCollection()
                 }
             }.AsValueReadOnlyCollection()

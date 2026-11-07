@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +18,8 @@ namespace Silverback.Messaging.Broker.Kafka;
 
 internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrapper
 {
+    private static readonly TimeSpan LeaveGroupPollTimeout = TimeSpan.FromMilliseconds(100);
+
     private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
 
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
@@ -81,6 +84,9 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         get => field ?? throw new InvalidOperationException("The consumer is not initialized yet.");
         set => field = Check.NotNull(value, nameof(value));
     }
+
+    // Bounds the polls running the rebalance callbacks before closing, in case the assignment is never released
+    internal TimeSpan LeaveGroupTimeout { get; set; } = TimeSpan.FromSeconds(10);
 
     public IConsumerGroupMetadata GetConsumerGroupMetadata()
     {
@@ -223,9 +229,9 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     {
         IConsumer<byte[]?, byte[]?> confluentConsumer;
 
-        // Close also releases the native handle, but it can't hold the lock: it runs the revocation callbacks, which wait for the
-        // processing, which may commit from other threads. Instead, from here on only this thread may use the native consumer: the
-        // pending native calls complete first and the calls from the other threads fail without reaching it.
+        // Close also releases the native handle, but neither it nor leaving the group can hold the lock: they run the revocation
+        // callbacks, which wait for the processing, which may commit from other threads. Instead, from here on only this thread may use
+        // the native consumer: the pending native calls complete first and the calls from the other threads fail without reaching it.
         lock (_confluentConsumerLock)
         {
             if (_confluentConsumer == null)
@@ -244,6 +250,9 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         {
             try
             {
+                if (!Configuration.IsStaticAssignment)
+                    LeaveGroup(confluentConsumer);
+
                 confluentConsumer.Close();
             }
             finally
@@ -260,6 +269,65 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         }
 
         return default;
+    }
+
+    // Close runs the pending rebalance callbacks while the consumer is terminating, when librdkafka can hang on an assignment and
+    // Confluent.Kafka rejects a changed one. Leaving the group first runs them while the group is still alive. Once unsubscribed, only
+    // the queued callbacks and the revocation of the partitions they assign remain, except during a rebalance: librdkafka then defers
+    // the unsubscribe until the rebalance completes, and an assignment arriving between the last poll and Close is still run by Close.
+    // If the assignment isn't released within the timeout (e.g. a cooperative rebalance waiting for another member), Close revokes it
+    // as it did before leaving the group was introduced, while discarding the assignments arriving afterwards.
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged, the consumer is closed anyway")]
+    private void LeaveGroup(IConsumer<byte[]?, byte[]?> confluentConsumer)
+    {
+        try
+        {
+            // The pause discards the prefetched records, which would otherwise be polled one by one
+            confluentConsumer.Pause(confluentConsumer.Assignment);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConsumerLeaveGroupError(Consumer, ex);
+        }
+
+        try
+        {
+            confluentConsumer.Unsubscribe();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConsumerLeaveGroupError(Consumer, ex);
+            return;
+        }
+
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        TimeSpan pollTimeout = TimeSpan.Zero;
+
+        while (stopwatch.Elapsed < LeaveGroupTimeout)
+        {
+            try
+            {
+                // A poll returns early only with a record, which is discarded without being stored and will be consumed again. An
+                // empty poll ran every callback queued until its timeout.
+                if (confluentConsumer.Consume(pollTimeout) == null && confluentConsumer.Assignment.Count == 0)
+                    return;
+            }
+            catch (KafkaException ex) when (ex.Error.IsFatal)
+            {
+                _logger.LogConsumerLeaveGroupError(Consumer, ex);
+                return;
+            }
+            catch (Exception ex)
+            {
+                // A failed callback or record doesn't prevent the next ones from running
+                _logger.LogConsumerLeaveGroupError(Consumer, ex);
+            }
+
+            // A poll waits for its whole timeout after running the callbacks
+            pollTimeout = Configuration.PollingTimeout < LeaveGroupPollTimeout ? Configuration.PollingTimeout : LeaveGroupPollTimeout;
+        }
+
+        _logger.LogConsumerLeaveGroupTimeout(LeaveGroupTimeout, Consumer);
     }
 
     private async ValueTask PerformStaticAssignmentAsync()
