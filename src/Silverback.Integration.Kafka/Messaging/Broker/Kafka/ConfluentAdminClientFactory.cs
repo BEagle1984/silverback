@@ -10,23 +10,33 @@ namespace Silverback.Messaging.Broker.Kafka;
 /// <summary>
 ///     Wraps the <see cref="Confluent.Kafka.AdminClientBuilder" />.
 /// </summary>
-public class ConfluentAdminClientFactory : IConfluentAdminClientFactory
+public class ConfluentAdminClientFactory : ConfluentAdminClientFactoryBase
 {
     private readonly ISilverbackLogger _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConfluentAdminClientFactory" /> class.
     /// </summary>
+    /// <param name="producers">
+    ///     The <see cref="IProducerCollection" />.
+    /// </param>
+    /// <param name="consumers">
+    ///     The <see cref="IConsumerCollection" />.
+    /// </param>
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.
     /// </param>
-    public ConfluentAdminClientFactory(ISilverbackLogger<ConfluentAdminClientFactory> logger)
+    public ConfluentAdminClientFactory(
+        IProducerCollection producers,
+        IConsumerCollection consumers,
+        ISilverbackLogger<ConfluentAdminClientFactory> logger)
+        : base(producers, consumers)
     {
         _logger = logger;
     }
 
-    /// <inheritdoc cref="IConfluentAdminClientFactory.GetClient" />
-    public IAdminClient GetClient(AdminClientConfig config) =>
+    /// <inheritdoc cref="ConfluentAdminClientFactoryBase.GetClient(AdminClientConfig)" />
+    public override IAdminClient GetClient(AdminClientConfig config) =>
         new AdminClientBuilder(config)
             .SetErrorHandler((_, error) => OnError(error, _logger))
             .SetLogHandler((_, logMessage) => OnLog(logMessage, _logger))

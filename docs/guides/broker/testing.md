@@ -200,6 +200,12 @@ var group = Helper.GetConsumerGroup("test-group");
 // group.Consumers / group.CommittedOffsets ...
 ```
 
+### Use the Admin Client
+
+The <xref:Silverback.Messaging.Broker.Kafka.IConfluentAdminClientFactory> returns a mocked admin client (see <xref:kafka-admin-client>) that works on the in-memory topics. It supports `GetMetadata` and `CreateTopicsAsync` (without the `ValidateOnly` option), while the other methods throw a `NotSupportedException`.
+
+`CreateTopicsAsync` throws a `CreateTopicsException` if the topic already exists. The in-memory topics are created on the fly, so a topic might already exist with the default number of partitions if it has been used before.
+
 ### Create a Producer On-the-Fly
 
 Sometimes you want to produce to Kafka without going through the application’s publisher (e.g., to simulate an external producer).

@@ -38,4 +38,21 @@ public interface IInMemoryTopicCollection : IReadOnlyCollection<IInMemoryTopic>
     ///     The in-memory topic.
     /// </returns>
     IInMemoryTopic Get(string name, string bootstrapServers);
+
+    /// <summary>
+    ///     Creates the topic with the specified name, unless it already exists.
+    /// </summary>
+    /// <param name="name">
+    ///     The name of the topic.
+    /// </param>
+    /// <param name="bootstrapServers">
+    ///     The bootstrap servers string used to identify the target broker.
+    /// </param>
+    /// <param name="partitions">
+    ///     The number of partitions, or <c>null</c> to use the number configured in the mock options.
+    /// </param>
+    /// <returns>
+    ///     <c>true</c> if the topic has been created, <c>false</c> if it already exists.
+    /// </returns>
+    bool TryCreate(string name, string bootstrapServers, int? partitions = null);
 }

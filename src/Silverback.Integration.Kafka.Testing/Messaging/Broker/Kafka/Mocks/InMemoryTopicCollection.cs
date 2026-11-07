@@ -28,16 +28,23 @@ internal sealed class InMemoryTopicCollection : IInMemoryTopicCollection
 
     public IInMemoryTopic Get(string name, string bootstrapServers) =>
         _topics.GetOrAdd(
-            $"{bootstrapServers.ToUpperInvariant()}|{name}",
-            static (_, args) => new InMemoryTopic(
-                args.Name,
-                args.BootstrapServers,
-                args.Options.TopicPartitionsCount.TryGetValue(args.Name, out int partitionsCount) ? partitionsCount : args.Options.DefaultPartitionsCount),
+            GetKey(name, bootstrapServers),
+            static (_, args) => new InMemoryTopic(args.Name, args.BootstrapServers, GetPartitionsCount(args.Name, args.Options)),
             (Name: name, BootstrapServers: bootstrapServers, Options: _options));
+
+    public bool TryCreate(string name, string bootstrapServers, int? partitions = null) =>
+        _topics.TryAdd(
+            GetKey(name, bootstrapServers),
+            new InMemoryTopic(name, bootstrapServers, partitions ?? GetPartitionsCount(name, _options)));
 
     [MustDisposeResource]
     public IEnumerator<IInMemoryTopic> GetEnumerator() => _topics.Values.GetEnumerator();
 
     [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    private static string GetKey(string name, string bootstrapServers) => $"{bootstrapServers.ToUpperInvariant()}|{name}";
+
+    private static int GetPartitionsCount(string name, IMockedKafkaOptions options) =>
+        options.TopicPartitionsCount.TryGetValue(name, out int partitionsCount) ? partitionsCount : options.DefaultPartitionsCount;
 }

@@ -48,6 +48,8 @@ public class MyCallbackHandler : IBrokerClientsConfiguredCallback
 }
 ```
 
+This callback runs before the clients connect, so it can be used to create the Kafka topics (see <xref:kafka-admin-client#create-topics-at-startup>).
+
 ## Kafka-Specific Callbacks
 
 [Confluent.Kafka](https://github.com/confluentinc/confluent-kafka-dotnet) (used by the Kafka integration) exposes events for partition assignments, errors, statistics, and more. Silverback surfaces those events as callbacks.

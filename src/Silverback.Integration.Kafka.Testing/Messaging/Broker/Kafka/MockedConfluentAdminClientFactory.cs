@@ -3,7 +3,6 @@
 
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Kafka.Mocks;
-using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka;
@@ -11,22 +10,29 @@ namespace Silverback.Messaging.Broker.Kafka;
 /// <summary>
 ///     The builder for the <see cref="MockedConfluentAdminClient" />.
 /// </summary>
-public class MockedConfluentAdminClientFactory : IConfluentAdminClientFactory
+public class MockedConfluentAdminClientFactory : ConfluentAdminClientFactoryBase
 {
-    private readonly IMockedKafkaOptions _options;
+    private readonly IInMemoryTopicCollection _topics;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MockedConfluentAdminClientFactory" /> class.
     /// </summary>
-    /// <param name="options">
-    ///     The <see cref="IMockedKafkaOptions" />.
+    /// <param name="topics">
+    ///     The <see cref="IInMemoryTopicCollection" />.
     /// </param>
-    public MockedConfluentAdminClientFactory(IMockedKafkaOptions options)
+    /// <param name="producers">
+    ///     The <see cref="IProducerCollection" />.
+    /// </param>
+    /// <param name="consumers">
+    ///     The <see cref="IConsumerCollection" />.
+    /// </param>
+    public MockedConfluentAdminClientFactory(IInMemoryTopicCollection topics, IProducerCollection producers, IConsumerCollection consumers)
+        : base(producers, consumers)
     {
-        _options = Check.NotNull(options, nameof(options));
+        _topics = Check.NotNull(topics, nameof(topics));
     }
 
-    /// <inheritdoc cref="IConfluentAdminClientFactory.GetClient" />
-    public IAdminClient GetClient(AdminClientConfig config) =>
-        new MockedConfluentAdminClient(Check.NotNull(config, nameof(config)), _options);
+    /// <inheritdoc cref="ConfluentAdminClientFactoryBase.GetClient(AdminClientConfig)" />
+    public override IAdminClient GetClient(AdminClientConfig config) =>
+        new MockedConfluentAdminClient(Check.NotNull(config, nameof(config)), _topics);
 }

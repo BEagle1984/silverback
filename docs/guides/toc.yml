@@ -74,6 +74,8 @@
               href: broker/consuming/kafka/offset.md
             - name: Schema Registry
               href: broker/consuming/kafka/schema-registry.md
+    - name: Kafka Admin Client
+      href: broker/kafka-admin-client.md
     - name: MQTT Specifics
       href: broker/mqtt.md
     - name: Default Headers
