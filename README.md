@@ -110,15 +110,13 @@ The v4 documentation is still available at [silverback-messaging.net/v4](https:/
 
 ## Project Status
 
-### Continuous Build
+### Build Pipelines
 
 [![Continuous Build Status](https://github.com/BEagle1984/silverback/actions/workflows/continuous.yml/badge.svg?branch=main)](https://github.com/BEagle1984/silverback/actions/workflows/continuous.yml?query=branch%3Amain)
-
-### Sonar Build
-
 [![Sonar Build Status](https://github.com/BEagle1984/silverback/actions/workflows/sonar.yml/badge.svg?branch=main)](https://github.com/BEagle1984/silverback/actions/workflows/sonar.yml?query=branch%3Amain)
+[![Extended Integration Tests Status](https://github.com/BEagle1984/silverback/actions/workflows/extended-integration-tests.yml/badge.svg?branch=main)](https://github.com/BEagle1984/silverback/actions/workflows/extended-integration-tests.yml?query=branch%3Amain)
 
-#### Quality Metrics
+### Quality Metrics
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=silverback&metric=alert_status)](https://sonarcloud.io/dashboard?id=silverback)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=silverback&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=silverback)
