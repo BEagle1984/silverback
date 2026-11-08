@@ -26,7 +26,7 @@ Run commands from the repository root:
 dotnet build tests/extended/Silverback.Tests.Extended.slnx -c Release
 ```
 
-The WPF application requires Windows. The integration runner and worker also run on Linux. The other-projects Azure pipeline builds the extended solution; its optional `runIntegrationTests` parameter runs the integration project tests on a Linux agent and publishes TRX results and evidence.
+The WPF application requires Windows. The integration runner and worker also run on Linux. The `other-projects` GitHub workflow builds the extended solution on the pushes to main and on the pull requests, to verify that it compiles. The `extended-integration-tests` workflow runs the integration project tests on a Linux runner every night and on demand, with an optional test filter, and publishes the TRX results and the evidence. It isn't a required check.
 
 The deterministic Kafka ownership tests remain in the main solution and do not require Docker. Extended tests are separate from the default main-suite run.
 
@@ -63,7 +63,7 @@ Traits describe the dependency, broker and purpose independently:
 
 Use `--filter "Type=Integration&Category!=Stress&Category!=Diagnostics"` for the functional broker cases, `--filter "Category=Stress"` for load/rebalance workloads, or `--filter "Type=Unit"` for the local verifier. Combine traits, for example `--filter "Type=Integration&Broker=MQTT"`. Omitting the filter runs every case, including the diagnostic control.
 
-Filter `FullyQualifiedName~StaticAssignmentTests` for explicit partition assignment and offset-commit diagnostics or `FullyQualifiedName~RebalanceTests` for finite reconciliation cases. The CI `runIntegrationTests` option runs the complete project, including its local verifier tests.
+Filter `FullyQualifiedName~StaticAssignmentTests` for explicit partition assignment and offset-commit diagnostics or `FullyQualifiedName~RebalanceTests` for finite reconciliation cases. The scheduled CI run executes the complete project, including its local verifier tests.
 
 The xUnit project follows the E2E layout: broker-specific cases in `Kafka/` and `Mqtt/`, reusable container support in `TestHost/`, and infrastructure in `TestHost/Kafka/` and `TestHost/Mqtt/`.
 

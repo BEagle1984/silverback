@@ -181,7 +181,8 @@ lives in [Silverback.Tools.Generators.Common](tools/Silverback.Tools.Generators.
 | [docs/publish.ps1](docs/publish.ps1)                                       | Publish the generated site through a separate gh-pages checkout; supports -NoPush               |
 
 Build automation is defined in [the main workflow](.github/workflows/continuous.yml), [the Sonar workflow](.github/workflows/sonar.yml),
-and [the samples/extended-tests workflow](.github/workflows/other-projects.yml).
+[the samples and extended tests build workflow](.github/workflows/other-projects.yml) and
+[the nightly extended integration tests workflow](.github/workflows/extended-integration-tests.yml).
 
 ## Community
 

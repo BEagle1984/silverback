@@ -20,6 +20,7 @@
     <File Path="UpdateOlderVersions.ps1" />
   </Folder>
   <Folder Name="/Solution Items/GitHub Workflows/">
+    <File Path="../../.github/workflows/extended-integration-tests.yml" />
     <File Path="../../.github/workflows/other-projects.yml" />
   </Folder>
   <Folder Name="/Src/">

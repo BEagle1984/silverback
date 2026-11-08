@@ -1,0 +1,92 @@
+name: extended-integration-tests
+
+# Runs the extended integration tests against the real brokers of the root docker-compose.yaml. They take several minutes and
+# depend on real broker timings, so they run nightly and on demand rather than on each push, and aren't a required check.
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      filter:
+        description: Test filter (e.g. "Broker=Kafka" or "Category!=Stress&Category!=Diagnostics"), empty to run all the tests
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: extended-integration-tests-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  BUILD_CONFIGURATION: Release
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install SDK 10.0.x
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      # Pull the broker images up front, so that the download time doesn't count against the test fixtures' startup timeouts
+      - name: Pull broker images
+        run: docker compose --project-name silverback pull kafka-1 kafka-2 emqx1 emqx2 haproxy
+      - name: Build
+        run: |
+          dotnet build tests/extended/Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj \
+            --configuration "$BUILD_CONFIGURATION"
+      - name: Run extended integration tests
+        env:
+          TEST_FILTER: ${{ inputs.filter }}
+        run: |
+          filter_args=()
+          if [ -n "$TEST_FILTER" ]; then
+            filter_args=(--filter "$TEST_FILTER")
+          fi
+
+          dotnet test tests/extended/Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj \
+            --configuration "$BUILD_CONFIGURATION" \
+            --no-build \
+            "${filter_args[@]}" \
+            --logger trx \
+            --logger "console;verbosity=normal" \
+            --blame-hang-timeout 15m \
+            --blame-hang-dump-type mini \
+            --results-directory "$RUNNER_TEMP/integration" \
+            -- RunConfiguration.TreatNoTestsAsError=true
+      - name: Capture broker logs
+        if: failure()
+        run: |
+          mkdir -p "$RUNNER_TEMP/broker-logs"
+          for container in silverback-kafka-1 silverback-kafka-2 silverback-emqx1 silverback-emqx2 silverback-haproxy; do
+            docker logs "$container" > "$RUNNER_TEMP/broker-logs/$container.log" 2>&1 || true
+          done
+      # The worker containers run as root and createdump writes the dumps with mode 0600, so give the evidence files back to the
+      # runner user, to be able to upload them
+      - name: Fix evidence ownership
+        if: always()
+        run: |
+          if [ -d tests/extended/artifacts ]; then
+            sudo chown -R "$(id -u):$(id -g)" tests/extended/artifacts
+          fi
+      - name: Publish test results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: integration-test-results
+          path: ${{ runner.temp }}/integration
+          if-no-files-found: ignore
+      - name: Publish evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: integration-evidence
+          path: |
+            tests/extended/artifacts
+            ${{ runner.temp }}/broker-logs
+          if-no-files-found: ignore

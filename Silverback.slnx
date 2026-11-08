@@ -17,6 +17,7 @@
   </Folder>
   <Folder Name="/Solution Items/GitHub Workflows/">
     <File Path=".github/workflows/continuous.yml" />
+    <File Path=".github/workflows/extended-integration-tests.yml" />
     <File Path=".github/workflows/other-projects.yml" />
     <File Path=".github/workflows/sonar.yml" />
   </Folder>
