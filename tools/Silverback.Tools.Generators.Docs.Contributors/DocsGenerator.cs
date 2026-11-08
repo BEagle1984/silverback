@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -17,6 +18,7 @@ namespace Silverback.Tools.Generators.Docs.Contributors;
 
 internal static class DocsGenerator
 {
+    [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Fixed endpoint of this repository")]
     private const string ContributorsUrl = "https://api.github.com/repos/BEagle1984/silverback/contributors?per_page=100";
 
     private const string UserAccountType = "User";

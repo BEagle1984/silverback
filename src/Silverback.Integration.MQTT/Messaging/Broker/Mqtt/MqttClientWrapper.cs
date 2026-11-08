@@ -104,11 +104,13 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         if (_subscribedTopicsFilters.Length == 0)
             return;
 
+        // MQTTnet applies the configured timeout only when the token cannot be canceled
         MqttClientSubscribeResult result = await _mqttClient.SubscribeAsync(
                 new MqttClientSubscribeOptions
                 {
                     TopicFilters = [.. _subscribedTopicsFilters]
-                })
+                },
+                CancellationToken.None)
             .ConfigureAwait(false);
 
         // The broker rejects the single topic filters (e.g. if not authorized) through the result codes, without failing

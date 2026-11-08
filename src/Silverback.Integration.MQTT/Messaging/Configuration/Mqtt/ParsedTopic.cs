@@ -60,6 +60,7 @@ internal class ParsedTopic
     public bool IsMatch(string topic) => Regex?.IsMatch(topic) ?? Topic == topic;
 
     // Builds the regex level by level, assuming a valid filter (each wildcard occupying an entire level and '#' being the last)
+    [SuppressMessage("Security", "S6444:Not specifying a timeout for regular expressions is security-sensitive", Justification = "The levels are escaped and the wildcards can't cause catastrophic backtracking")]
     private static Regex? GetRegex(string topic)
     {
         if (!topic.Contains('+', StringComparison.Ordinal) && !topic.Contains('#', StringComparison.Ordinal))

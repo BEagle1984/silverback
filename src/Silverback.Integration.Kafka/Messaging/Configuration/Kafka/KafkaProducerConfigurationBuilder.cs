@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 using Silverback.Collections;
 using Silverback.Util;
@@ -159,6 +160,7 @@ public partial class KafkaProducerConfigurationBuilder
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     [Obsolete("This setting is ignored: the producer is disposed and recreated only after a fatal error. It will be removed in the next major version.")]
+    [SuppressMessage("Info Code Smell", "S1133:Deprecated code should be removed", Justification = "Kept for backward compatibility until the next major version")]
     public KafkaProducerConfigurationBuilder DisposeOnException()
     {
         _disposeOnException = true;
@@ -173,6 +175,7 @@ public partial class KafkaProducerConfigurationBuilder
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     [Obsolete("This setting is ignored: the producer is disposed and recreated only after a fatal error. It will be removed in the next major version.")]
+    [SuppressMessage("Info Code Smell", "S1133:Deprecated code should be removed", Justification = "Kept for backward compatibility until the next major version")]
     public KafkaProducerConfigurationBuilder DisableDisposeOnException()
     {
         _disposeOnException = false;

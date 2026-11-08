@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -99,7 +100,10 @@ public class MqttToKafkaTests : KafkaTests
 
         IMqttTestingHelper mqttTestingHelper = Host.ServiceProvider.GetRequiredService<IMqttTestingHelper>();
 
-        await mqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync("^kafka-[a-z]+$");
-        await Helper.WaitUntilAllMessagesAreConsumedAsync("mqtt/+/topic");
+        Func<Task> actMqtt = () => mqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync("^kafka-[a-z]+$").AsTask();
+        Func<Task> actKafka = () => Helper.WaitUntilAllMessagesAreConsumedAsync("mqtt/+/topic").AsTask();
+
+        await actMqtt.ShouldNotThrowAsync();
+        await actKafka.ShouldNotThrowAsync();
     }
 }

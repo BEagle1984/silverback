@@ -19,16 +19,16 @@ dotnet_diagnostic.CS0067.severity = none
 # Style
 # IDE0010: Add missing cases to switch statement
 dotnet_diagnostic.IDE0010.severity = none
-# IDE0046: Use conditional expression for assignments 
-dotnet_diagnostic.IDE0045.severity = suggestion
-# IDE0046: Use conditional expression for return 
-dotnet_diagnostic.IDE0046.severity = suggestion
+# IDE0045: Use conditional expression for assignments (silent: not followed by convention, but the refactoring stays available)
+dotnet_diagnostic.IDE0045.severity = silent
+# IDE0046: Use conditional expression for return (silent: not followed by convention, but the refactoring stays available)
+dotnet_diagnostic.IDE0046.severity = silent
 # IDE0058: Computed value is never used 
 dotnet_diagnostic.IDE0058.severity = none
 # IDE0072: Add missing cases to switch expression
 dotnet_diagnostic.IDE0072.severity = none
-# IDE0290: Use primary constructor
-dotnet_diagnostic.IDE0290.severity = suggestion
+# IDE0290: Use primary constructor (silent: not followed by convention, but the refactoring stays available)
+dotnet_diagnostic.IDE0290.severity = silent
 
 # StyleCop.Analyzers
 # SA1101: A call to an instance member of the local class or a base class is not prefixed with ‘this.’, within a C# code file
@@ -57,8 +57,8 @@ dotnet_diagnostic.CA1852.severity = none
 dotnet_diagnostic.VSTHRD003.severity = none
 
 # xUnit
-# xUnit1045: xUnit1045 : The type argument TestValidationMessage might not be serializable...
-dotnet_diagnostic.xUnit1045.severity = suggestion
+# xUnit1045: The type argument might not be serializable (silent: the theory rows are not enumerated individually, which is fine)
+dotnet_diagnostic.xUnit1045.severity = silent
 
 # C#/.NET style rules
 csharp_new_line_before_members_in_object_initializers = false
@@ -160,6 +160,10 @@ resharper_arrange_object_creation_when_type_not_evident_highlighting = warning
 resharper_use_negated_pattern_in_is_expression_highlighting = warning
 resharper_condition_is_always_true_or_false_according_to_nullable_api_contract_highlighting = suggestion
 resharper_replace_conditional_expression_with_null_coalescing_highlighting = warning
+
+[*TraceExtensions.cs]
+# SYSLIB1006: Multiple logging methods are using the same event id (the tracing events intentionally share IntegrationLogEvents.TracingEventId)
+dotnet_diagnostic.SYSLIB1006.severity = none
 
 [*.{csproj,props,slnx,yml,yaml,json,xml,config}]
 indent_size = 2

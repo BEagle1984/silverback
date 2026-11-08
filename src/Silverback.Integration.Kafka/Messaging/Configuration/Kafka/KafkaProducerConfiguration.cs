@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 using Silverback.Collections;
 using Silverback.Configuration;
@@ -31,6 +32,7 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
     ///     is thrown. This setting is ignored: the producer is disposed and recreated only after a fatal error.
     /// </summary>
     [Obsolete("This setting is ignored: the producer is disposed and recreated only after a fatal error. It will be removed in the next major version.")]
+    [SuppressMessage("Info Code Smell", "S1133:Deprecated code should be removed", Justification = "Kept for backward compatibility until the next major version")]
     public bool DisposeOnException { get; init; } = true;
 
     /// <summary>

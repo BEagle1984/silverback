@@ -8,7 +8,7 @@ using Silverback.Tools.Generators.Docs.Headers;
 
 if (args.Length != 1 || string.IsNullOrWhiteSpace(args[0]))
 {
-    Console.Error.WriteLine("Usage: Silverback.Tools.Generators.Docs.Headers <output directory>");
+    await Console.Error.WriteLineAsync("Usage: Silverback.Tools.Generators.Docs.Headers <output directory>").ConfigureAwait(false);
     return 1;
 }
 

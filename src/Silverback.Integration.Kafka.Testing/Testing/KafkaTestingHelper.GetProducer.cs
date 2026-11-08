@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
@@ -109,6 +110,7 @@ public partial class KafkaTestingHelper
         endpoint.ProduceTo(topicPartition);
     }
 
+    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "TODO tracked in the IDE")]
     private IProducer CreateProducer(
         KafkaConsumerConfiguration consumerConfiguration,
         KafkaConsumerEndpointConfiguration endpointConfiguration,

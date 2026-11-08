@@ -8,7 +8,7 @@ using Silverback.Tools.Generators.Docs.LogEvents;
 
 if (args.Length != 1 || string.IsNullOrWhiteSpace(args[0]))
 {
-    Console.Error.WriteLine("Usage: Silverback.Tools.Generators.Docs.LogEvents <output directory>");
+    await Console.Error.WriteLineAsync("Usage: Silverback.Tools.Generators.Docs.LogEvents <output directory>").ConfigureAwait(false);
     return 1;
 }
 
