@@ -2,14 +2,14 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>MQTT Specifics | Silverback </title>
+      <title>MQTT Client Configuration | Silverback </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="MQTT Specifics | Silverback ">
+      <meta name="title" content="MQTT Client Configuration | Silverback ">
       
       <meta name="description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
       <meta property="og:type" content="website">
       <meta property="og:site_name" content="Silverback">
-      <meta property="og:title" content="MQTT Specifics | Silverback ">
+      <meta property="og:title" content="MQTT Client Configuration | Silverback ">
       
       <meta property="og:description" content="Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.">
       <meta property="og:image" content="https://silverback-messaging.net/images/og-card.png">
@@ -22,17 +22,17 @@
       <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
-      <link rel="stylesheet" href="../../public/docfx.min.css?v=88c2420eafef">
-      <link rel="stylesheet" href="../../public/main.css?v=09bd4c4f064c">
+      <link rel="stylesheet" href="../../public/docfx.min.css?v=0186348073e7">
+      <link rel="stylesheet" href="../../public/main.css?v=27c7f4c3c45b">
       <meta name="docfx:navrel" content="../../toc.html">
       <meta name="docfx:tocrel" content="../toc.html">
       
       <meta name="docfx:rel" content="../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/mqtt.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/main/docs/guides/broker/mqtt.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -46,7 +46,7 @@
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
 
-      <script type="module" src="./../../public/docfx.min.js?v=965bdcc9fac2"></script>
+      <script type="module" src="./../../public/docfx.min.js?v=c33471879c4c"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'dark'
@@ -70,7 +70,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -101,9 +101,9 @@
         </div>
 
         <article data-uid="mqtt">
-<h1 id="mqtt-specifics">MQTT Specifics</h1>
+<h1 id="mqtt-client-configuration">MQTT Client Configuration</h1>
 
-<p>This guide covers the features and configuration options that are specific to the MQTT integration. It complements the general guides on <a class="xref" href="connecting.html">Connecting to a Message Broker</a>, <a class="xref" href="producing/basics.html">Producing Messages</a> and <a class="xref" href="consuming/basics.html">Consuming Messages</a>.</p>
+<p>This guide covers the configuration of the MQTT clients: the connection, the sessions and the other settings shared by the producer and consumer endpoints. It complements the general guides on <a class="xref" href="connecting.html">Connecting to a Message Broker</a>, <a class="xref" href="producing/basics.html">Producing Messages</a> and <a class="xref" href="consuming/basics.html">Consuming Messages</a>. The MQTT-specific endpoint options are described in <a class="xref" href="producing/mqtt/message-properties.html">MQTT Message Properties</a> (producing) and <a class="xref" href="consuming/mqtt/subscription.html">MQTT Subscription and Processing</a> (consuming).</p>
 <p>Silverback uses <a href="https://github.com/dotnet/MQTTnet">MQTTnet</a> under the hood. Reference the <code>Silverback.Integration.MQTT</code> package and register the broker with <code>AddMqtt()</code>.</p>
 <pre><code class="lang-csharp">services.AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
@@ -129,7 +129,7 @@
         .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
             .ConsumeFrom(&quot;messages/my&quot;))))
 </code></pre>
-<p>Many features described in this guide, such as headers (user properties), message expiration, response topic and correlation data, session expiration and last will delay, are only available with MQTT 5. See <a href="#mqtt-311-limitations">MQTT 3.1.1 Limitations</a>.</p>
+<p>Many features, such as headers (user properties), message expiration, response topic and correlation data, session expiration and last will delay, are only available with MQTT 5. See <a href="#mqtt-311-limitations">MQTT 3.1.1 Limitations</a>.</p>
 <h2 id="connection">Connection</h2>
 <h3 id="transport">Transport</h3>
 <p>Connect via TCP, specifying the host and optionally the port (the default MQTT port is used if omitted):</p>
@@ -184,7 +184,7 @@
 <p>If not specified, a random identifier is generated each time the application starts.</p>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>The broker allows a single connection per client id: when a second client connects with the same identifier, the first one is disconnected. If you scale out your application, make sure that each instance uses a unique client id (and see <a href="#shared-subscriptions">Shared Subscriptions</a> to distribute the load).</p>
+<p>The broker allows a single connection per client id: when a second client connects with the same identifier, the first one is disconnected. If you scale out your application, make sure that each instance uses a unique client id (and see <a class="xref" href="consuming/mqtt/subscription.html#shared-subscriptions">Shared Subscriptions</a> to distribute the load).</p>
 <p>On the other hand, the client id must be stable across restarts to resume a <a href="#persistent-sessions">persistent session</a>.</p>
 </div>
 <h3 id="other-connection-settings">Other Connection Settings</h3>
@@ -219,111 +219,8 @@
 <h5>Important</h5>
 <p>The default QoS is 0 (at most once), which provides no delivery guarantees. Use QoS 1 or 2 if you can't afford to lose messages, especially in combination with <a href="#persistent-sessions">persistent sessions</a> and <a class="xref" href="consuming/error-policies.html">error policies</a>.</p>
 </div>
-<h2 id="producing">Producing</h2>
-<h3 id="retain">Retain</h3>
-<p>Use <code>Retain()</code> to set the retain flag on the produced messages. The broker stores the last retained message of each topic and delivers it to any client subscribing later.</p>
-<pre><code class="lang-csharp">.Produce&lt;DeviceStatus&gt;(&quot;status&quot;, endpoint =&gt; endpoint
-    .ProduceTo(&quot;devices/status&quot;)
-    .WithAtLeastOnceQoS()
-    .Retain())
-</code></pre>
-<h3 id="message-expiration">Message Expiration</h3>
-<p>In MQTT 5, use <code>WithMessageExpiration(TimeSpan)</code> to let the broker discard the message if it hasn't been delivered within the specified interval.</p>
-<pre><code class="lang-csharp">.Produce&lt;MyMessage&gt;(&quot;producer-endpoint&quot;, endpoint =&gt; endpoint
-    .ProduceTo(&quot;messages/my&quot;)
-    .WithMessageExpiration(TimeSpan.FromMinutes(5)))
-</code></pre>
-<h3 id="no-matching-subscribers">No Matching Subscribers</h3>
-<p>An MQTT 5 broker can notify the client when a QoS 1 or 2 message was published to a topic without any matching subscriber. By default, Silverback ignores this notification. You can configure the behavior per endpoint:</p>
-<ul>
-<li><code>IgnoreNoMatchingSubscribers()</code>: ignores the notification (default).</li>
-<li><code>LogNoMatchingSubscribersWarning()</code>: logs a warning.</li>
-<li><code>ThrowNoMatchingSubscribersError()</code>: throws an <code>MqttProduceException</code>, causing the produce operation to fail.</li>
-</ul>
-<pre><code class="lang-csharp">.Produce&lt;MyMessage&gt;(&quot;producer-endpoint&quot;, endpoint =&gt; endpoint
-    .ProduceTo(&quot;messages/my&quot;)
-    .WithAtLeastOnceQoS()
-    .ThrowNoMatchingSubscribersError())
-</code></pre>
-<h3 id="dynamic-topics">Dynamic Topics</h3>
-<p>As with Kafka, the destination topic can be computed per message, using a function, a resolver class (<code>UseEndpointResolver&lt;TResolver&gt;()</code>) or the <code>SetMqttDestinationTopic</code> envelope extension in combination with <code>ProduceToDynamicTopic()</code>. See the routing section in <a class="xref" href="producing/basics.html">Producing Messages</a>.</p>
-<pre><code class="lang-csharp">.Produce&lt;SensorReading&gt;(&quot;readings&quot;, endpoint =&gt; endpoint
-    .ProduceTo(reading =&gt; $&quot;sensors/{reading?.SensorId}/readings&quot;)
-    .WithAtLeastOnceQoS())
-</code></pre>
-<h2 id="consuming">Consuming</h2>
-<h3 id="topic-filters-and-wildcards">Topic Filters and Wildcards</h3>
-<p><code>ConsumeFrom</code> accepts one or more topics or topic filters, including the MQTT wildcards:</p>
-<ul>
-<li><code>+</code> matches exactly one topic level (e.g. <code>sensors/+/readings</code> matches <code>sensors/1/readings</code>, but not <code>sensors/1/2/readings</code>).</li>
-<li><code>#</code> matches any number of levels and must be the last character (e.g. <code>sensors/#</code>).</li>
-</ul>
-<pre><code class="lang-csharp">.Consume&lt;SensorReading&gt;(&quot;readings&quot;, endpoint =&gt; endpoint
-    .ConsumeFrom(&quot;sensors/+/readings&quot;, &quot;legacy/sensors/#&quot;)
-    .WithAtLeastOnceQoS())
-</code></pre>
-<p>Each received message is matched to the endpoint whose topic filters match its topic. The actual topic of a message consumed through a wildcard subscription is available via the envelope endpoint:</p>
-<pre><code class="lang-csharp">public Task HandleAsync(IInboundEnvelope&lt;SensorReading&gt; envelope)
-{
-    string topic = envelope.Endpoint.RawName;
-    // ...
-}
-</code></pre>
-<div class="NOTE">
-<h5>Note</h5>
-<p>The same topic can't be subscribed by multiple endpoints in the same client. Use separate clients if you need to subscribe the same topic with a different configuration.</p>
-</div>
-<h3 id="shared-subscriptions">Shared Subscriptions</h3>
-<p>MQTT 5 shared subscriptions allow multiple clients to share the load of a subscription: each message is delivered to only one of the clients in the group. Use the <code>$share/{group}/{filter}</code> syntax:</p>
-<pre><code class="lang-csharp">.AddClient(&quot;my-client&quot;, client =&gt; client
-    .WithClientId($&quot;my-service-{instanceId}&quot;)
-    .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
-        .ConsumeFrom(&quot;$share/my-service/messages/my&quot;)
-        .WithAtLeastOnceQoS()))
-</code></pre>
-<p>Silverback strips the <code>$share/{group}/</code> prefix when matching the received messages to the endpoint.</p>
-<h3 id="parallel-processing-and-backpressure">Parallel Processing and Backpressure</h3>
-<p>By default, the messages consumed by a client are processed sequentially, one at a time. Use <code>EnableParallelProcessing</code> to process multiple messages concurrently.</p>
-<pre><code class="lang-csharp">.AddClient(&quot;my-client&quot;, client =&gt; client
-    .WithClientId(&quot;client1&quot;)
-    .EnableParallelProcessing(10)
-    .LimitBackpressure(5)
-    .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
-        .ConsumeFrom(&quot;messages/topic1&quot;, &quot;messages/topic2&quot;)
-        .WithAtLeastOnceQoS()))
-</code></pre>
-<p>Use <code>LimitBackpressure(n)</code> to limit how many incoming messages Silverback buffers per parallel execution. The total buffer capacity per client is <code>n × MaxDegreeOfParallelism</code>, excluding the messages already being processed. The default backpressure limit is 2. This setting controls Silverback's processing buffers, not the buffers in MQTTnet or in the broker.</p>
-<div class="WARNING">
-<h5>Warning</h5>
-<p>With parallel processing enabled, the messages are distributed across the parallel executions and the processing order is no longer guaranteed, not even for messages coming from the same topic.</p>
-</div>
-<p>Both settings apply to the whole client, not to a single endpoint. Use <code>DisableParallelProcessing()</code> to restore the sequential processing.</p>
 <h2 id="headers-user-properties">Headers (User Properties)</h2>
-<p>In MQTT 5, the message headers are mapped to user properties. This includes the headers set via <code>AddHeader</code> or the <code>[Header]</code> attribute and the headers added by Silverback itself (e.g. <code>x-message-type</code> or the tracing headers). See <a class="xref" href="producing/headers.html">Setting Headers</a>, <a class="xref" href="consuming/headers.html">Reading Headers</a> and <a class="xref" href="default-headers.html">Default Headers</a>.</p>
-<h3 id="response-topic-and-correlation-data">Response Topic and Correlation Data</h3>
-<p>MQTT 5 defines a response topic and correlation data as first-class message properties, to implement request-response patterns. Silverback maps them to the internal headers defined in <a class="xref" href="../../api/Silverback.Messaging.Messages.MqttMessageHeaders.html">MqttMessageHeaders</a>, which aren't sent as user properties.</p>
-<p>Set them statically or per message in the producer endpoint configuration:</p>
-<pre><code class="lang-csharp">.Produce&lt;MyRequest&gt;(&quot;requests&quot;, endpoint =&gt; endpoint
-    .ProduceTo(&quot;requests/my&quot;)
-    .SetResponseTopic(&quot;responses/my-service&quot;)
-    .SetCorrelationData(request =&gt; request?.RequestId.ToString()))
-</code></pre>
-<p>Or via the envelope extensions when publishing:</p>
-<pre><code class="lang-csharp">await publisher.WrapAndPublishAsync(
-    new MyRequest(),
-    envelope =&gt; envelope
-        .SetMqttResponseTopic(&quot;responses/my-service&quot;)
-        .SetMqttCorrelationData(correlationId));
-</code></pre>
-<p>On the consumer side, read them with the <code>GetMqttResponseTopic</code>, <code>GetMqttCorrelationData</code> and <code>GetMqttCorrelationDataAsString</code> envelope extensions:</p>
-<pre><code class="lang-csharp">public async Task HandleAsync(IInboundEnvelope&lt;MyRequest&gt; envelope)
-{
-    string? responseTopic = envelope.GetMqttResponseTopic();
-    byte[]? correlationData = envelope.GetMqttCorrelationData();
-    // ...
-}
-</code></pre>
-<p>See also <a class="xref" href="../practical/mqtt-request-response.html">MQTT 5 Request-Response</a>.</p>
+<p>In MQTT 5, the message headers are mapped to user properties. This includes the headers set via <code>AddHeader</code> or the <code>[Header]</code> attribute and the headers added by Silverback itself (e.g. <code>x-message-type</code> or the tracing headers). See <a class="xref" href="producing/headers.html">Setting Headers</a>, <a class="xref" href="consuming/headers.html">Reading Headers</a> and <a class="xref" href="default-headers.html">Default Headers</a>. The response topic and the correlation data are mapped to the corresponding MQTT 5 properties instead, see <a class="xref" href="producing/mqtt/message-properties.html#response-topic-and-correlation-data">Response Topic and Correlation Data</a>.</p>
 <h2 id="last-will-message">Last Will Message</h2>
 <p>The last will (or testament) message is sent by the broker on behalf of the client when it disconnects ungracefully (e.g. on network failure or if the keep alive expires). Configure it with <code>SendLastWillMessage</code>:</p>
 <pre><code class="lang-csharp">.AddClient(&quot;my-client&quot;, client =&gt; client
@@ -358,8 +255,6 @@
 <p><code>WithSessionExpiration(TimeSpan.Zero)</code> explicitly ends the session on disconnect, even when used with <code>RequestPersistentSession()</code>. <code>TimeSpan.MaxValue</code> requests no expiration. Finite durations are rounded up to whole seconds, up to 4,294,967,294 seconds. The broker can override the requested expiration. MQTT 3.1.1 uses its persistent-session flag and does not support a client-configured expiration.</p>
 <p><code>RequestCleanSession()</code> discards any existing session and requests a nonpersistent session. In MQTT 5, <code>RequestCleanStart()</code> discards the existing session but preserves the configured expiration, so the new session can persist after disconnect.</p>
 <p>Unread messages buffered locally are discarded on disconnect. Broker replay requires a persistent session and QoS 1 or 2; QoS 0 does not provide replay guarantees. Subscribers must still tolerate repeated processing when an unfinished message is redelivered.</p>
-<h2 id="error-handling">Error Handling</h2>
-<p>The error policies work with MQTT as with Kafka, with some differences: MQTT can't re-read a message from the broker, so the retry policy reprocesses the message held locally, which is acknowledged only once it has been successfully processed, skipped or moved. See <a class="xref" href="consuming/error-policies.html">Error Handling Policies</a> for the details.</p>
 <h2 id="mqtt-311-limitations">MQTT 3.1.1 Limitations</h2>
 <p>MQTT 3.1.1 doesn't support user properties, therefore no headers are transmitted with the messages. This has some consequences:</p>
 <ul>
@@ -378,6 +273,8 @@
 <li><a class="xref" href="connecting.html">Connecting to a Message Broker</a></li>
 <li><a class="xref" href="producing/basics.html">Producing Messages</a></li>
 <li><a class="xref" href="consuming/basics.html">Consuming Messages</a></li>
+<li><a class="xref" href="producing/mqtt/message-properties.html">MQTT Message Properties</a></li>
+<li><a class="xref" href="consuming/mqtt/subscription.html">MQTT Subscription and Processing</a></li>
 <li><a class="xref" href="consuming/error-policies.html">Error Handling Policies</a></li>
 <li><a class="xref" href="default-headers.html">Default Headers</a></li>
 <li><a class="xref" href="../practical/mqtt-request-response.html">MQTT 5 Request-Response</a></li>
@@ -392,7 +289,7 @@
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/mqtt.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/beagle1984/silverback/blob/main/docs/guides/broker/mqtt.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -408,7 +305,7 @@
           <nav class="sb-footer-links" aria-label="Footer">
             <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
             <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
-            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/main/LICENSE">MIT License</a>
             <a href="../../about.html">About</a>
             <a href="../../contributing.html">Contributing</a>
             <a href="/v4/">v4 Docs</a>

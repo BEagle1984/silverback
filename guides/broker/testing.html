@@ -22,17 +22,17 @@
       <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
-      <link rel="stylesheet" href="../../public/docfx.min.css?v=88c2420eafef">
-      <link rel="stylesheet" href="../../public/main.css?v=09bd4c4f064c">
+      <link rel="stylesheet" href="../../public/docfx.min.css?v=0186348073e7">
+      <link rel="stylesheet" href="../../public/main.css?v=27c7f4c3c45b">
       <meta name="docfx:navrel" content="../../toc.html">
       <meta name="docfx:tocrel" content="../toc.html">
       
       <meta name="docfx:rel" content="../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/testing.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/main/docs/guides/broker/testing.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -46,7 +46,7 @@
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
 
-      <script type="module" src="./../../public/docfx.min.js?v=965bdcc9fac2"></script>
+      <script type="module" src="./../../public/docfx.min.js?v=c33471879c4c"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'dark'
@@ -70,7 +70,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -258,6 +258,10 @@ Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 <h3 id="auto-commit-interval">Auto-Commit Interval</h3>
 <p><code>WaitUntilAllMessagesAreConsumedAsync()</code> uses locally stored offsets, so it does not depend on the auto-commit interval or require broker commits to be enabled. Use <code>WaitUntilAllMessagesAreCommittedAsync()</code> when asserting committed offsets.</p>
 <p>Mocked Kafka automatically overrides the auto-commit interval to <strong>50 milliseconds</strong> to speed up commit waits when auto-commit is enabled. No explicit configuration is needed. Use <a class="xref" href="../../api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder_OverrideAutoCommitIntervalMs_System_Nullable_System_Int32__">OverrideAutoCommitIntervalMs(int?)</a> only when a test requires different commit timing. Passing <code>null</code> disables the override and uses the consumer's configured interval, or 5 seconds if no interval is configured.</p>
+<h3 id="topic-patterns">Topic Patterns</h3>
+<p>The mocked Kafka supports the <a class="xref" href="consuming/kafka/subscription.html#subscribe-by-pattern">pattern subscriptions</a>, matching them as .NET regular expressions against the in-memory topics (requiring the pattern to match the entire topic name with the consumer group protocol, like the broker), and rebalances as soon as a matching topic is created, without waiting for a metadata refresh. Without committed offsets, the mocked consumers always start from the beginning of the partitions, regardless of the offset reset setting.</p>
+<p><code>WaitUntilAllMessagesAreConsumedAsync</code> and <code>WaitUntilAllMessagesAreCommittedAsync</code> accept the name of an endpoint subscribing patterns, as well as a single topic matching them. The waits apply to whole topics: waiting for an endpoint subscribing a pattern also waits for the matching topics routed to other endpoints.</p>
+<p><code>GetTopic</code> creates the topic if it doesn't exist yet, triggering the rebalance of the consumers subscribing a matching pattern. Specify the bootstrap servers if no topic exists yet, as with consumers subscribing only patterns.</p>
 <h3 id="access-in-memory-topics">Access In-Memory Topics</h3>
 <p>When using the mocked Kafka broker you can inspect the internal topics via <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_GetTopic_System_String_System_String_">GetTopic(string, string?)</a>.</p>
 <pre><code class="lang-csharp">var topic = Helper.GetTopic(&quot;test-topic&quot;);
@@ -271,6 +275,9 @@ Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 <pre><code class="lang-csharp">var group = Helper.GetConsumerGroup(&quot;test-group&quot;);
 // group.Consumers / group.CommittedOffsets ...
 </code></pre>
+<h3 id="use-the-admin-client">Use the Admin Client</h3>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Broker.Kafka.IConfluentAdminClientFactory.html">IConfluentAdminClientFactory</a> returns a mocked admin client (see <a class="xref" href="kafka-admin-client.html">Kafka Admin Client</a>) that works on the in-memory topics. It supports <code>GetMetadata</code> and <code>CreateTopicsAsync</code> (without the <code>ValidateOnly</code> option), while the other methods throw a <code>NotSupportedException</code>.</p>
+<p><code>CreateTopicsAsync</code> throws a <code>CreateTopicsException</code> if the topic already exists. The in-memory topics are created on the fly, so a topic might already exist with the default number of partitions if it has been used before.</p>
 <h3 id="create-a-producer-on-the-fly">Create a Producer On-the-Fly</h3>
 <p>Sometimes you want to produce to Kafka without going through the application’s publisher (e.g., to simulate an external producer).</p>
 <pre><code class="lang-csharp">IProducer producer = Helper.GetProducer(
@@ -321,7 +328,7 @@ await producer.ProduceAsync(new SomeMessage());
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/testing.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/beagle1984/silverback/blob/main/docs/guides/broker/testing.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -337,7 +344,7 @@ await producer.ProduceAsync(new SomeMessage());
           <nav class="sb-footer-links" aria-label="Footer">
             <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
             <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
-            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/main/LICENSE">MIT License</a>
             <a href="../../about.html">About</a>
             <a href="../../contributing.html">Contributing</a>
             <a href="/v4/">v4 Docs</a>

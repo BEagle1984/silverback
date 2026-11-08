@@ -22,17 +22,17 @@
       <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../../../../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
-      <link rel="stylesheet" href="../../../../public/docfx.min.css?v=88c2420eafef">
-      <link rel="stylesheet" href="../../../../public/main.css?v=09bd4c4f064c">
+      <link rel="stylesheet" href="../../../../public/docfx.min.css?v=0186348073e7">
+      <link rel="stylesheet" href="../../../../public/main.css?v=27c7f4c3c45b">
       <meta name="docfx:navrel" content="../../../../toc.html">
       <meta name="docfx:tocrel" content="../../../toc.html">
       
       <meta name="docfx:rel" content="../../../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/consuming/kafka/subscription.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/main/docs/guides/broker/consuming/kafka/subscription.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -46,7 +46,7 @@
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
 
-      <script type="module" src="./../../../../public/docfx.min.js?v=965bdcc9fac2"></script>
+      <script type="module" src="./../../../../public/docfx.min.js?v=c33471879c4c"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'dark'
@@ -70,7 +70,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -114,6 +114,57 @@
             .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
                 .ConsumeFrom(&quot;my-topic&quot;))));
 </code></pre>
+<h2 id="subscribe-by-pattern">Subscribe by Pattern</h2>
+<p>A topic starting with <code>^</code> is a regular expression: the consumer subscribes all the topics matching it, and Kafka balances their partitions across the consumer group, as it does for the topics subscribed by name.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .WithGroupId(&quot;my-group&quot;)
+            .Consume&lt;OrderEvent&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;^orders-[a-z]+$&quot;))));
+</code></pre>
+<p>Topic names and patterns can be mixed, in the same endpoint or across the endpoints of the same consumer. Each message is routed to the endpoint subscribing its topic by name, if any, and otherwise to the first endpoint (in configuration order) with a matching pattern.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .WithGroupId(&quot;my-group&quot;)
+            .Consume&lt;PaymentEvent&gt;(&quot;payments&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;payments&quot;, &quot;^payments-[a-z]+$&quot;))
+            .Consume&lt;LegacyOrderEvent&gt;(&quot;legacy-orders&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;orders-legacy&quot;))
+            .Consume&lt;OrderEvent&gt;(&quot;orders&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;^orders-[a-z]+$&quot;))));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>In the example above, the messages from <code>orders-legacy</code> are routed to the <code>legacy-orders</code> endpoint, even though the topic also matches <code>^orders-[a-z]+$</code>.</p>
+</div>
+<p>With the classic group protocol, the topics created or deleted after the consumer started are picked up at the next topic metadata refresh, which happens every 5 minutes by default and triggers a rebalance. Use <code>WithTopicMetadataRefreshIntervalMs</code> to change the interval. With the consumer group protocol (<code>WithGroupProtocol(GroupProtocol.Consumer)</code>), the broker evaluates the pattern and updates the assignment itself.</p>
+<p>With the default offset reset (<code>latest</code>), the messages written to a new topic before the consumer picks it up are skipped. Use <code>AutoResetOffsetToEarliest()</code> to consume them.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .WithGroupId(&quot;my-group&quot;)
+            .WithTopicMetadataRefreshIntervalMs(60000)
+            .AutoResetOffsetToEarliest()
+            .Consume&lt;OrderEvent&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;^orders-[a-z]+$&quot;))));
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>The subscribed topics are selected by librdkafka (classic group protocol) or by the broker (consumer group protocol, which requires Apache Kafka 4.0 or later), but Silverback routes the messages by evaluating the same pattern as a .NET regular expression. The consumer fails if it receives a message from a topic that the .NET regular expression doesn't match, so keep the patterns simple and use only syntax that all engines interpret the same way: for example <code>[0-9]</code> instead of <code>\d</code>, and no lookarounds or lazy quantifiers.</p>
+<p>Write the patterns to match the whole topic name, as in <code>^orders-.*</code> or <code>^orders-[a-z]+$</code>. With the classic group protocol, librdkafka accepts a match at the beginning of the name (<code>^orders-</code> matches <code>orders-eu</code>), while with the consumer group protocol the broker requires the pattern to match the entire name (<code>^orders-</code> only matches a topic named <code>orders-</code>). Silverback routes the messages (and the mocked Kafka assigns the topics) following the same rule, according to the configured group protocol.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>A pattern can only be subscribed: it can't be combined with the static assignment of specific partitions or with a partitions provider (see below).</p>
+</div>
 <h2 id="static-assignment">Static Assignment</h2>
 <p>You can manage partition assignment manually by specifying the partitions to consume.</p>
 <pre><code class="lang-csharp">services.AddSilverback()
@@ -171,7 +222,7 @@
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/consuming/kafka/subscription.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/beagle1984/silverback/blob/main/docs/guides/broker/consuming/kafka/subscription.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -187,7 +238,7 @@
           <nav class="sb-footer-links" aria-label="Footer">
             <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
             <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
-            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/main/LICENSE">MIT License</a>
             <a href="../../../../about.html">About</a>
             <a href="../../../../contributing.html">Contributing</a>
             <a href="/v4/">v4 Docs</a>

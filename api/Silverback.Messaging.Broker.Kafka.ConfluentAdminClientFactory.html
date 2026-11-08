@@ -22,10 +22,10 @@
       <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
-      <link rel="stylesheet" href="../public/docfx.min.css?v=88c2420eafef">
-      <link rel="stylesheet" href="../public/main.css?v=09bd4c4f064c">
+      <link rel="stylesheet" href="../public/docfx.min.css?v=0186348073e7">
+      <link rel="stylesheet" href="../public/main.css?v=27c7f4c3c45b">
       <meta name="docfx:navrel" content="../toc.html">
       <meta name="docfx:tocrel" content="toc.html">
       
@@ -46,7 +46,7 @@
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
 
-      <script type="module" src="./../public/docfx.min.js?v=965bdcc9fac2"></script>
+      <script type="module" src="./../public/docfx.min.js?v=c33471879c4c"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'dark'
@@ -70,7 +70,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -105,7 +105,7 @@
 
 
   <h1 id="Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactory" data-uid="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory" class="text-break">
-Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/ConfluentAdminClientFactory.cs"><i class="bi bi-code-slash"></i></a>
+Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/ConfluentAdminClientFactory.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -118,7 +118,7 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ConfluentAdminClientFactory : IConfluentAdminClientFactory</code></pre>
+    <pre><code class="lang-csharp hljs">public class ConfluentAdminClientFactory : ConfluentAdminClientFactoryBase, IConfluentAdminClientFactory</code></pre>
   </div>
 
 
@@ -128,6 +128,7 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html">ConfluentAdminClientFactoryBase</a></div>
       <div><span class="xref">ConfluentAdminClientFactory</span></div>
     </dd>
   </dl>
@@ -143,6 +144,36 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
   <dl class="typelist inheritedMembers">
     <dt>Inherited Members</dt>
     <dd>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClient_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder__">ConfluentAdminClientFactoryBase.GetClient(Action&lt;KafkaClientConfigurationBuilder&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClient_Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_">ConfluentAdminClientFactoryBase.GetClient(KafkaClientConfiguration)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClient_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_">ConfluentAdminClientFactoryBase.GetClient(KafkaProducerConfiguration)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClient_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_">ConfluentAdminClientFactoryBase.GetClient(KafkaConsumerConfiguration)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClient_Silverback_Messaging_Broker_IProducer_">ConfluentAdminClientFactoryBase.GetClient(IProducer)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClient_Silverback_Messaging_Broker_IConsumer_">ConfluentAdminClientFactoryBase.GetClient(IConsumer)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClientForProducer_System_String_">ConfluentAdminClientFactoryBase.GetClientForProducer(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClientForProducerEndpoint_System_String_">ConfluentAdminClientFactoryBase.GetClientForProducerEndpoint(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClientForConsumer_System_String_">ConfluentAdminClientFactoryBase.GetClientForConsumer(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryBase.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryBase_GetClientForConsumerEndpoint_System_String_">ConfluentAdminClientFactoryBase.GetClientForConsumerEndpoint(string)</a>
+    </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -166,22 +197,6 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
     </div>
   </dd></dl>
 
-  <dl class="typelist extensionMethods">
-    <dt>Extension Methods</dt>
-    <dd>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryExtensions.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryExtensions_GetClient_Silverback_Messaging_Broker_Kafka_IConfluentAdminClientFactory_Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_">ConfluentAdminClientFactoryExtensions.GetClient(IConfluentAdminClientFactory, KafkaClientConfiguration)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryExtensions.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryExtensions_GetClient_Silverback_Messaging_Broker_Kafka_IConfluentAdminClientFactory_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_">ConfluentAdminClientFactoryExtensions.GetClient(IConfluentAdminClientFactory, KafkaConsumerConfiguration)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryExtensions.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryExtensions_GetClient_Silverback_Messaging_Broker_Kafka_IConfluentAdminClientFactory_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_">ConfluentAdminClientFactoryExtensions.GetClient(IConfluentAdminClientFactory, KafkaProducerConfiguration)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryExtensions.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactoryExtensions_GetClient_Silverback_Messaging_Broker_Kafka_IConfluentAdminClientFactory_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder__">ConfluentAdminClientFactoryExtensions.GetClient(IConfluentAdminClientFactory, Action&lt;KafkaClientConfigurationBuilder&gt;)</a>
-  </div>
-  </dd></dl>
 
 
 
@@ -193,9 +208,9 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
 
   <a id="Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactory__ctor_" data-uid="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory.#ctor*"></a>
 
-  <h3 id="Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactory__ctor_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactory__" data-uid="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory.#ctor(Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory})">
-  ConfluentAdminClientFactory(ISilverbackLogger&lt;ConfluentAdminClientFactory&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/ConfluentAdminClientFactory.cs"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactory__ctor_Silverback_Messaging_Broker_IProducerCollection_Silverback_Messaging_Broker_IConsumerCollection_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactory__" data-uid="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory.#ctor(Silverback.Messaging.Broker.IProducerCollection,Silverback.Messaging.Broker.IConsumerCollection,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory})">
+  ConfluentAdminClientFactory(IProducerCollection, IConsumerCollection, ISilverbackLogger&lt;ConfluentAdminClientFactory&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/ConfluentAdminClientFactory.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory.html">ConfluentAdminClientFactory</a> class.</p>
@@ -203,12 +218,18 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ConfluentAdminClientFactory(ISilverbackLogger&lt;ConfluentAdminClientFactory&gt; logger)</code></pre>
+    <pre><code class="lang-csharp hljs">public ConfluentAdminClientFactory(IProducerCollection producers, IConsumerCollection consumers, ISilverbackLogger&lt;ConfluentAdminClientFactory&gt; logger)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>logger</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Core/Diagnostics/ISilverbackLogger%601.cs">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory.html">ConfluentAdminClientFactory</a>&gt;</dt>
+    <dt><code>producers</code> <a class="xref" href="Silverback.Messaging.Broker.IProducerCollection.html">IProducerCollection</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Broker.IProducerCollection.html">IProducerCollection</a>.</p>
+</dd>
+    <dt><code>consumers</code> <a class="xref" href="Silverback.Messaging.Broker.IConsumerCollection.html">IConsumerCollection</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Broker.IConsumerCollection.html">IConsumerCollection</a>.</p>
+</dd>
+    <dt><code>logger</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Core/Diagnostics/ISilverbackLogger%601.cs">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory.html">ConfluentAdminClientFactory</a>&gt;</dt>
     <dd><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
 </dd>
   </dl>
@@ -232,7 +253,7 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
 
   <h3 id="Silverback_Messaging_Broker_Kafka_ConfluentAdminClientFactory_GetClient_Confluent_Kafka_AdminClientConfig_" data-uid="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory.GetClient(Confluent.Kafka.AdminClientConfig)">
   GetClient(AdminClientConfig)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/ConfluentAdminClientFactory.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/ConfluentAdminClientFactory.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns an <span class="xref">Confluent.Kafka.IAdminClient</span> instance for the specified configuration.</p>
@@ -240,7 +261,7 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IAdminClient GetClient(AdminClientConfig config)</code></pre>
+    <pre><code class="lang-csharp hljs">public override IAdminClient GetClient(AdminClientConfig config)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -275,7 +296,7 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/ConfluentAdminClientFactory.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/ConfluentAdminClientFactory.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -291,7 +312,7 @@ Class ConfluentAdminClientFactory  <a class="header-action link-secondary" title
           <nav class="sb-footer-links" aria-label="Footer">
             <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
             <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
-            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/main/LICENSE">MIT License</a>
             <a href="../about.html">About</a>
             <a href="../contributing.html">Contributing</a>
             <a href="/v4/">v4 Docs</a>

@@ -22,10 +22,10 @@
       <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
-      <link rel="stylesheet" href="../public/docfx.min.css?v=88c2420eafef">
-      <link rel="stylesheet" href="../public/main.css?v=09bd4c4f064c">
+      <link rel="stylesheet" href="../public/docfx.min.css?v=0186348073e7">
+      <link rel="stylesheet" href="../public/main.css?v=27c7f4c3c45b">
       <meta name="docfx:navrel" content="../toc.html">
       <meta name="docfx:tocrel" content="toc.html">
       
@@ -46,7 +46,7 @@
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
 
-      <script type="module" src="./../public/docfx.min.js?v=965bdcc9fac2"></script>
+      <script type="module" src="./../public/docfx.min.js?v=c33471879c4c"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'dark'
@@ -70,7 +70,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -106,7 +106,7 @@
 
 
   <h1 id="Silverback_Messaging_Sequences_SequenceAbortReason" data-uid="Silverback.Messaging.Sequences.SequenceAbortReason" class="text-break">
-Enum SequenceAbortReason  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Integration/Messaging/Sequences/SequenceAbortReason.cs"><i class="bi bi-code-slash"></i></a>
+Enum SequenceAbortReason  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Integration/Messaging/Sequences/SequenceAbortReason.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -134,22 +134,28 @@ Enum SequenceAbortReason  <a class="header-action link-secondary" title="View so
 </h2>
   <dl class="parameters">
     <dt id="Silverback_Messaging_Sequences_SequenceAbortReason_ConsumerAborted"><code>ConsumerAborted = 3</code></dt>
-    <dd><p>The consumer aborted the sequence because it is disconnecting (or rebalancing).</p>
+  
+  <dd><p>The consumer aborted the sequence because it is disconnecting (or rebalancing).</p>
 </dd>
     <dt id="Silverback_Messaging_Sequences_SequenceAbortReason_Disposing"><code>Disposing = 4</code></dt>
-    <dd><p>The sequence is being disposed before it could complete.</p>
+  
+  <dd><p>The sequence is being disposed before it could complete.</p>
 </dd>
     <dt id="Silverback_Messaging_Sequences_SequenceAbortReason_EnumerationAborted"><code>EnumerationAborted = 1</code></dt>
-    <dd><p>The subscriber prematurely exited the enumeration loop.</p>
+  
+  <dd><p>The subscriber prematurely exited the enumeration loop.</p>
 </dd>
     <dt id="Silverback_Messaging_Sequences_SequenceAbortReason_Error"><code>Error = 5</code></dt>
-    <dd><p>The sequence was aborted because of an exception thrown either by the consumer pipeline or the subscriber.</p>
+  
+  <dd><p>The sequence was aborted because of an exception thrown either by the consumer pipeline or the subscriber.</p>
 </dd>
     <dt id="Silverback_Messaging_Sequences_SequenceAbortReason_IncompleteSequence"><code>IncompleteSequence = 2</code></dt>
-    <dd><p>The sequence was incomplete.</p>
+  
+  <dd><p>The sequence was incomplete.</p>
 </dd>
     <dt id="Silverback_Messaging_Sequences_SequenceAbortReason_None"><code>None = 0</code></dt>
-    <dd><p>The sequence isn't aborted.</p>
+  
+  <dd><p>The sequence isn't aborted.</p>
 </dd>
   </dl>
 
@@ -162,7 +168,7 @@ Enum SequenceAbortReason  <a class="header-action link-secondary" title="View so
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Integration/Messaging/Sequences/SequenceAbortReason.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Integration/Messaging/Sequences/SequenceAbortReason.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -178,7 +184,7 @@ Enum SequenceAbortReason  <a class="header-action link-secondary" title="View so
           <nav class="sb-footer-links" aria-label="Footer">
             <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
             <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
-            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/main/LICENSE">MIT License</a>
             <a href="../about.html">About</a>
             <a href="../contributing.html">Contributing</a>
             <a href="/v4/">v4 Docs</a>

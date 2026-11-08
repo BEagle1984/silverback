@@ -22,17 +22,17 @@
       <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../../../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
-      <link rel="stylesheet" href="../../../public/docfx.min.css?v=88c2420eafef">
-      <link rel="stylesheet" href="../../../public/main.css?v=09bd4c4f064c">
+      <link rel="stylesheet" href="../../../public/docfx.min.css?v=0186348073e7">
+      <link rel="stylesheet" href="../../../public/main.css?v=27c7f4c3c45b">
       <meta name="docfx:navrel" content="../../../toc.html">
       <meta name="docfx:tocrel" content="../../toc.html">
       
       <meta name="docfx:rel" content="../../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/consuming/error-policies.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/beagle1984/silverback/blob/main/docs/guides/broker/consuming/error-policies.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -46,7 +46,7 @@
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
 
-      <script type="module" src="./../../../public/docfx.min.js?v=965bdcc9fac2"></script>
+      <script type="module" src="./../../../public/docfx.min.js?v=c33471879c4c"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'dark'
@@ -70,7 +70,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -370,7 +370,7 @@
 </ul>
 <div class="NOTE">
 <h5>Note</h5>
-<p>MQTT 3.1.1 doesn't support headers, so the <code>x-failed-attempts</code> header can't be transferred with the moved message. For this reason, Silverback rejects a configuration that sets a maximum number of attempts on a policy other than <code>Retry</code> when using MQTT 3.1.1. See <a class="xref" href="../mqtt.html">MQTT Specifics</a>.</p>
+<p>MQTT 3.1.1 doesn't support headers, so the <code>x-failed-attempts</code> header can't be transferred with the moved message. For this reason, Silverback rejects a configuration that sets a maximum number of attempts on a policy other than <code>Retry</code> when using MQTT 3.1.1. See <a class="xref" href="../mqtt.html">MQTT Client Configuration</a>.</p>
 </div>
 <h2 id="apply-rules">Apply Rules</h2>
 <p>By default, a policy is applied to any exception. Use the methods inherited from <a class="xref" href="../../../api/Silverback.Messaging.Configuration.ErrorPolicyBaseBuilder-1.html">ErrorPolicyBaseBuilder&lt;TBuilder&gt;</a> to restrict it:</p>
@@ -482,7 +482,7 @@ Invoked when the consumer is about to be stopped because of an error, either by 
 <h2 id="mqtt-considerations">MQTT Considerations</h2>
 <p>MQTT can't re-read messages from the broker: the retry policy reprocesses the message that is held locally, and the message is acknowledged only after it has been successfully processed, skipped or moved.</p>
 <ul>
-<li>While a message is being retried, the processing channel it belongs to is blocked. With the default sequential processing, this means that the whole client stops processing messages; consider <code>EnableParallelProcessing</code> (see <a class="xref" href="../mqtt.html">MQTT Specifics</a>).</li>
+<li>While a message is being retried, the processing channel it belongs to is blocked. With the default sequential processing, this means that the whole client stops processing messages. With parallel processing, the other channels keep processing only until the buffer of the blocked channel is full, since the messages are distributed round-robin; consider <code>EnableParallelProcessing</code> (see <a class="xref" href="mqtt/subscription.html#parallel-processing-and-backpressure">Parallel Processing and Backpressure</a>).</li>
 <li>The broker only delivers a limited number of unacknowledged QoS 1/2 messages (<em>Receive Maximum</em>, configurable via <code>LimitUnacknowledgedPublications</code>), so new messages stop flowing until the failed message is acknowledged.</li>
 <li>If the client disconnects while retrying, the unacknowledged message is redelivered by the broker only if a persistent session and QoS 1 or 2 are used.</li>
 <li>With MQTT 3.1.1, headers aren't supported, so the failed attempts count can't be transferred with moved messages (see <a href="#failed-attempts-header">Failed Attempts Header</a>).</li>
@@ -536,7 +536,8 @@ Invoked when the consumer is about to be stopped because of an error, either by 
 <li><a class="xref" href="chunking.html">Consuming Chunked Messages</a></li>
 <li><a class="xref" href="validation.html">Validating the Consumed Messages</a></li>
 <li><a class="xref" href="../default-headers.html">Default Headers</a></li>
-<li><a class="xref" href="../mqtt.html">MQTT Specifics</a></li>
+<li><a class="xref" href="../mqtt.html">MQTT Client Configuration</a></li>
+<li><a class="xref" href="mqtt/subscription.html">MQTT Subscription and Processing</a></li>
 </ul>
 
 </article>
@@ -547,7 +548,7 @@ Invoked when the consumer is about to be stopped because of an error, either by 
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/consuming/error-policies.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/beagle1984/silverback/blob/main/docs/guides/broker/consuming/error-policies.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -563,7 +564,7 @@ Invoked when the consumer is about to be stopped because of an error, either by 
           <nav class="sb-footer-links" aria-label="Footer">
             <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
             <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
-            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/main/LICENSE">MIT License</a>
             <a href="../../../about.html">About</a>
             <a href="../../../contributing.html">Contributing</a>
             <a href="/v4/">v4 Docs</a>

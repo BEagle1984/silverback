@@ -22,10 +22,10 @@
       <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
       <link rel="manifest" href="../images/icons/site.webmanifest">
       <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
-      <link rel="stylesheet" href="../public/docfx.min.css?v=88c2420eafef">
-      <link rel="stylesheet" href="../public/main.css?v=09bd4c4f064c">
+      <link rel="stylesheet" href="../public/docfx.min.css?v=0186348073e7">
+      <link rel="stylesheet" href="../public/main.css?v=27c7f4c3c45b">
       <meta name="docfx:navrel" content="../toc.html">
       <meta name="docfx:tocrel" content="toc.html">
       
@@ -46,7 +46,7 @@
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
 
-      <script type="module" src="./../public/docfx.min.js?v=965bdcc9fac2"></script>
+      <script type="module" src="./../public/docfx.min.js?v=c33471879c4c"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'dark'
@@ -70,7 +70,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -105,7 +105,7 @@
 
 
   <h1 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback" class="text-break">
-Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs"><i class="bi bi-code-slash"></i></a>
+Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -141,7 +141,7 @@ Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-seconda
 
   <h3 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__Silverback_Messaging_Broker_IKafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.OnPartitionsAssigned(System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},Silverback.Messaging.Broker.IKafkaConsumer)">
   OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt;, IKafkaConsumer)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Called when a new consumer group partition assignment has been received by the consumer.</p>
@@ -166,17 +166,17 @@ Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-seconda
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">TopicPartitionOffset</span>&gt;</dt>
     <dd><p>
-                Optionally returns the actual partitions to consume from and start offsets are specified by the
-                return value of the this set of partitions is not required to match the assignment provided by the
-                consumer group, but typically will. Partition offsets may be a specific offset, or special value (
-                <code>Beginning</code>, <code>End</code> or <code>Unset</code>). If <code>Unset</code>, consumption will resume from the last
-                committed offset for each partition, or if there is no committed offset, in accordance with the
-                <code>auto.offset.reset</code> configuration property.
-            </p>
+    Optionally returns the actual partitions to consume from and start offsets are specified by the
+    return value of the this set of partitions is not required to match the assignment provided by the
+    consumer group, but typically will. Partition offsets may be a specific offset, or special value (
+    <code>Beginning</code>, <code>End</code> or <code>Unset</code>). If <code>Unset</code>, consumption will resume from the last
+    committed offset for each partition, or if there is no committed offset, in accordance with the
+    <code>auto.offset.reset</code> configuration property.
+</p>
 <p>
-                When <code>null</code> the partitions assignment from the broker is taken and all offsets will be
-                considered <code>Unset</code>.
-            </p>
+    When <code>null</code> the partitions assignment from the broker is taken and all offsets will be
+    considered <code>Unset</code>.
+</p>
 </dd>
   </dl>
 
@@ -198,7 +198,7 @@ Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-seconda
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/de1420158583d6c96817f244e5e3e54d39ed230e/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/ba2cc1ba5bf76f77c3cb2e26d92d827502b611f4/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
@@ -214,7 +214,7 @@ Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-seconda
           <nav class="sb-footer-links" aria-label="Footer">
             <a href="https://github.com/BEagle1984/silverback"><i class="bi bi-github"></i> GitHub</a>
             <a href="https://www.nuget.org/packages?q=Silverback"><i class="bi bi-box-seam"></i> NuGet</a>
-            <a href="https://github.com/BEagle1984/silverback/blob/master/LICENSE">MIT License</a>
+            <a href="https://github.com/BEagle1984/silverback/blob/main/LICENSE">MIT License</a>
             <a href="../about.html">About</a>
             <a href="../contributing.html">Contributing</a>
             <a href="/v4/">v4 Docs</a>
