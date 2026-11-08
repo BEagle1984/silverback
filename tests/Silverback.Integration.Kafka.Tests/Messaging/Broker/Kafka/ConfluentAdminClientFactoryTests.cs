@@ -342,6 +342,58 @@ public class ConfluentAdminClientFactoryTests
     }
 
     [Fact]
+    public void GetClientForConsumerEndpoint_ShouldReturnClientForConsumerSubscribingMatchingPattern()
+    {
+        SetConsumers(
+            GetConsumer("client1", GetConsumerEndpoint("topic1")),
+            GetConsumer("client2", GetConsumerEndpoint("^orders-[a-z]+$")));
+
+        using IAdminClient client = _factory.GetClientForConsumerEndpoint("orders-eu");
+
+        client.Name.ShouldStartWith("client2");
+    }
+
+    [Fact]
+    public void GetClientForConsumerEndpoint_ShouldRequirePatternToMatchEntireName_WhenUsingConsumerProtocol()
+    {
+        IKafkaConsumer prefixConsumer = GetConsumer("client1", GetConsumerEndpoint("^orders"));
+        prefixConsumer.Configuration.Returns(
+            new KafkaConsumerConfiguration
+            {
+                BootstrapServers = "PLAINTEXT://test:9092",
+                ClientId = "client1",
+                GroupProtocol = GroupProtocol.Consumer
+            });
+        SetConsumers(prefixConsumer, GetConsumer("client2", GetConsumerEndpoint("^orders-.*")));
+
+        using IAdminClient client = _factory.GetClientForConsumerEndpoint("orders-eu");
+
+        client.Name.ShouldStartWith("client2");
+    }
+
+    [Fact]
+    public void GetClientForConsumerEndpoint_ShouldThrow_WhenEndpointNameIsPatternMatchingItself()
+    {
+        SetConsumers(GetConsumer("client1", GetConsumerEndpoint("other", new TopicPartitionOffset("^.*", Partition.Any, Offset.Unset))));
+
+        Action act = () => _factory.GetClientForConsumerEndpoint("^.+");
+
+        act.ShouldThrow<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void GetClientForConsumerEndpoint_ShouldPreferTopicName_WhenMatchingBothTopicNameAndPattern()
+    {
+        SetConsumers(
+            GetConsumer("client1", GetConsumerEndpoint("^orders-")),
+            GetConsumer("client2", GetConsumerEndpoint("orders-eu")));
+
+        using IAdminClient client = _factory.GetClientForConsumerEndpoint("orders-eu");
+
+        client.Name.ShouldStartWith("client2");
+    }
+
+    [Fact]
     public void GetClientForConsumerEndpoint_ShouldIgnoreOtherBrokersConsumers()
     {
         IConsumer otherBrokerConsumer = Substitute.For<IConsumer>();

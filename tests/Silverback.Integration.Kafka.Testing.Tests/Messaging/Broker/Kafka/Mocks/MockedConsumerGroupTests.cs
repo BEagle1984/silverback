@@ -150,6 +150,174 @@ public partial class MockedConsumerGroupTests
         }
     }
 
+    [Fact]
+    public async Task Subscribe_ShouldAssignPartitionsOfExistingTopicsMatchingPattern()
+    {
+        MockedKafkaOptions options = new()
+        {
+            DefaultPartitionsCount = 2,
+            PartitionsAssignmentDelay = TimeSpan.Zero
+        };
+        InMemoryTopicCollection topics = new(options);
+        topics.Get("topic-a", BootstrapServers);
+        topics.Get("topic-b", BootstrapServers);
+        topics.Get("other", BootstrapServers);
+        topics.Get("topic-c", "PLAINTEXT://other-cluster");
+        using MockedConsumerGroup consumerGroup = new("group", BootstrapServers, topics);
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup, topics, options, PartitionAssignmentStrategy.RoundRobin);
+
+        consumer.Subscribe("^topic-");
+
+        using CancellationTokenSource consumerCancellationTokenSource = new();
+        Task consumerTask = StartConsumer(consumer, consumerCancellationTokenSource.Token);
+
+        try
+        {
+            await WaitUntilAllPartitionsAreAssignedAsync(consumerGroup);
+
+            consumer.Assignment.ShouldBe(
+                [
+                    new TopicPartition("topic-a", 0),
+                    new TopicPartition("topic-a", 1),
+                    new TopicPartition("topic-b", 0),
+                    new TopicPartition("topic-b", 1)
+                ],
+                true);
+            topics.Count.ShouldBe(4);
+        }
+        finally
+        {
+            await consumerCancellationTokenSource.CancelAsync();
+            await consumerTask;
+        }
+    }
+
+    [Fact]
+    public async Task Subscribe_ShouldAssignPartitionsOfTopicsMatchingEntirePattern_WhenUsingConsumerProtocol()
+    {
+        MockedKafkaOptions options = new()
+        {
+            DefaultPartitionsCount = 1,
+            PartitionsAssignmentDelay = TimeSpan.Zero
+        };
+        InMemoryTopicCollection topics = new(options);
+        topics.Get("topic", BootstrapServers);
+        topics.Get("topic-a", BootstrapServers);
+        using MockedConsumerGroup consumerGroup = new("group", BootstrapServers, topics);
+        MockedConfluentConsumer consumer = new(
+            new ConsumerConfig
+            {
+                BootstrapServers = BootstrapServers,
+                EnableAutoCommit = false,
+                GroupId = "group",
+                GroupProtocol = GroupProtocol.Consumer
+            },
+            topics,
+            consumerGroup,
+            options);
+
+        consumer.Subscribe("^topic");
+
+        using CancellationTokenSource consumerCancellationTokenSource = new();
+        Task consumerTask = StartConsumer(consumer, consumerCancellationTokenSource.Token);
+
+        try
+        {
+            await WaitUntilAllPartitionsAreAssignedAsync(consumerGroup);
+
+            // Like the broker, the consumer protocol requires the pattern to match the entire topic name
+            consumer.Assignment.ShouldBe([new TopicPartition("topic", 0)]);
+
+            consumerGroup.OnTopicCreated(topics.Get("topic-b", BootstrapServers));
+
+            consumerGroup.IsRebalanceScheduled.ShouldBeFalse();
+        }
+        finally
+        {
+            await consumerCancellationTokenSource.CancelAsync();
+            await consumerTask;
+        }
+    }
+
+    [Fact]
+    public async Task OnTopicCreated_ShouldAssignPartitionsOfNewTopic_WhenMatchingPattern()
+    {
+        MockedKafkaOptions options = new()
+        {
+            DefaultPartitionsCount = 1,
+            PartitionsAssignmentDelay = TimeSpan.Zero
+        };
+        InMemoryTopicCollection topics = new(options);
+        topics.Get("topic-a", BootstrapServers);
+        using MockedConsumerGroup consumerGroup = new("group", BootstrapServers, topics);
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup, topics, options, PartitionAssignmentStrategy.RoundRobin);
+
+        consumer.Subscribe(["other", "^topic-"]);
+
+        using CancellationTokenSource consumerCancellationTokenSource = new();
+        Task consumerTask = StartConsumer(consumer, consumerCancellationTokenSource.Token);
+
+        try
+        {
+            await WaitUntilAllPartitionsAreAssignedAsync(consumerGroup);
+
+            consumer.Assignment.ShouldBe([new TopicPartition("other", 0), new TopicPartition("topic-a", 0)], true);
+
+            consumerGroup.OnTopicCreated(topics.Get("unrelated", BootstrapServers));
+            consumerGroup.OnTopicCreated(topics.Get("topic-b", "PLAINTEXT://other-cluster"));
+
+            consumerGroup.IsRebalanceScheduled.ShouldBeFalse();
+
+            consumerGroup.OnTopicCreated(topics.Get("topic-b", BootstrapServers));
+            await WaitUntilAllPartitionsAreAssignedAsync(consumerGroup);
+
+            consumer.Assignment.ShouldBe(
+                [
+                    new TopicPartition("other", 0),
+                    new TopicPartition("topic-a", 0),
+                    new TopicPartition("topic-b", 0)
+                ],
+                true);
+        }
+        finally
+        {
+            await consumerCancellationTokenSource.CancelAsync();
+            await consumerTask;
+        }
+    }
+
+    [Fact]
+    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldWaitForTopicsMatchingPattern()
+    {
+        MockedKafkaOptions options = new()
+        {
+            DefaultPartitionsCount = 1,
+            PartitionsAssignmentDelay = TimeSpan.Zero
+        };
+        InMemoryTopicCollection topics = new(options);
+        using MockedConsumerGroup group = new("group", BootstrapServers, topics);
+        using MockedConfluentConsumer consumer = GetConsumer(group, topics, options, PartitionAssignmentStrategy.RoundRobin);
+        TopicPartition patternPartition = new("topic-a", 0);
+        TopicPartition otherPartition = new("other", 0);
+        topics.Get("topic-a", consumer.Config).Push(0, new Message<byte[]?, byte[]?> { Value = [1] }, Guid.Empty);
+        topics.Get("other", consumer.Config).Push(0, new Message<byte[]?, byte[]?> { Value = [2] }, Guid.Empty);
+        consumer.Assign([new TopicPartitionOffset(patternPartition, 0), new TopicPartitionOffset(otherPartition, 0)]);
+        consumer.Consume(TimeSpan.FromSeconds(1)).ShouldNotBeNull();
+        consumer.Consume(TimeSpan.FromSeconds(1)).ShouldNotBeNull();
+
+        using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(5));
+        consumer.StoreOffset(new TopicPartitionOffset(otherPartition, 1));
+        await group.WaitUntilAllMessagesAreConsumedAsync(["other"], timeout.Token);
+
+        // The group is settled: the wait would complete synchronously if the pattern didn't match the pending partition
+        Task patternWait = group.WaitUntilAllMessagesAreConsumedAsync(["^topic-"], timeout.Token).AsTask();
+
+        patternWait.IsCompleted.ShouldBeFalse();
+
+        consumer.StoreOffset(new TopicPartitionOffset(patternPartition, 1));
+        await patternWait;
+    }
+
     private static async Task<RebalanceObservation> ObserveDisjointConsumerDuringJoinAsync(PartitionAssignmentStrategy assignmentStrategy)
     {
         MockedKafkaOptions options = new()

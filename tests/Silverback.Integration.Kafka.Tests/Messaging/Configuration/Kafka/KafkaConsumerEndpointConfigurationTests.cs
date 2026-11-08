@@ -238,6 +238,77 @@ public class KafkaConsumerEndpointConfigurationTests
     }
 
     [Fact]
+    public void Validate_ShouldNotThrow_WhenSubscribingTopicPattern()
+    {
+        KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+            [
+                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
+                new TopicPartitionOffset("^topic-[a-z]+$", Partition.Any, Offset.Unset)
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenAssigningPartitionOfTopicPattern()
+    {
+        KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+            [
+                new TopicPartitionOffset("^topic-[a-z]+$", 1, Offset.Unset)
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldStartWith("Cannot assign the partitions of the topic pattern '^topic-[a-z]+$'.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenSettingPartitionOffsetsProviderForTopicPattern()
+    {
+        KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+            [
+                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
+                new TopicPartitionOffset("^topic-[a-z]+$", Partition.Any, Offset.Unset)
+            ]),
+            PartitionOffsetsProvider = _ => ValueTask.FromResult(Enumerable.Empty<TopicPartitionOffset>())
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldStartWith("Cannot assign the partitions of the topic pattern '^topic-[a-z]+$'.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenTopicPatternIsInvalid()
+    {
+        KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+            [
+                new TopicPartitionOffset("^topic-[a-z", Partition.Any, Offset.Unset)
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The topic pattern '^topic-[a-z' is not a valid regular expression.");
+        exception.InnerException.ShouldBeAssignableTo<ArgumentException>();
+    }
+
+    [Fact]
     public void Validate_ShouldThrow_WhenDeserializerIsNull()
     {
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with

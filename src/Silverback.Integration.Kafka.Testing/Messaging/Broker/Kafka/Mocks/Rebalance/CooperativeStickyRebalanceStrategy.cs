@@ -22,7 +22,7 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
 
         foreach (IGrouping<string, TopicPartition> topicPartitions in partitionsByTopic)
         {
-            List<SubscriptionPartitionAssignment> partitionAssignmentsForTopic = [.. partitionAssignments.Where(assignment => assignment.Consumer.Subscription.Contains(topicPartitions.Key))];
+            List<SubscriptionPartitionAssignment> partitionAssignmentsForTopic = [.. partitionAssignments.Where(assignment => assignment.IsSubscribedTo(topicPartitions.Key))];
 
             AssignTopicPartitions(
                 [.. topicPartitions],

@@ -232,6 +232,19 @@ public class MockedConfluentConsumerTests
     }
 
     [Fact]
+    public void Subscribe_ShouldThrow_WhenPatternIsNotValid()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new();
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+
+        Action act = () => consumer.Subscribe(["topic", "^topic-[a-z"]);
+
+        KafkaException exception = act.ShouldThrow<KafkaException>();
+        exception.Error.Code.ShouldBe(ErrorCode.Local_InvalidArg);
+        consumer.Subscription.ShouldBeEmpty();
+    }
+
+    [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Not an issue")]
     public async Task Unsubscribe_ShouldNotRevokeAgain_WhenRebalanceIsRevokingPartitions()
     {

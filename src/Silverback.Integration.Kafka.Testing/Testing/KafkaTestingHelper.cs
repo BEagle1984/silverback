@@ -9,7 +9,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
+using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Util;
 
 namespace Silverback.Testing;
@@ -94,7 +98,8 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
             case 0:
                 return _topics.Get(name, bootstrapServers);
             default:
-                return topics.Single();
+                // Get it through the collection, to wait for the notification of a topic being created concurrently
+                return _topics.Get(topics[0].Name, topics[0].BootstrapServers);
         }
     }
 
@@ -106,10 +111,50 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
         if (_groups == null)
             return Task.CompletedTask;
 
+        string[] topicNames = [.. endpointNames.SelectMany(GetTopicNames)];
+
         return Task.WhenAll(
-            _groups.Select(group => group.WaitUntilAllMessagesAreConsumedAsync(
-                    [.. endpointNames.Select(GetEndpointRawName)],
-                    cancellationToken)
-                .AsTask()));
+            _groups.Select(group => group.WaitUntilAllMessagesAreConsumedAsync(topicNames, cancellationToken).AsTask()));
     }
+
+    // A consumer endpoint can subscribe multiple topics and patterns, which are waited for separately
+    private IEnumerable<string> GetTopicNames(string endpointName)
+    {
+        ProducerEndpointConfiguration? producerEndpointConfiguration = GetProducerEndpointConfiguration(endpointName);
+
+        if (producerEndpointConfiguration != null)
+        {
+            return producerEndpointConfiguration.EndpointResolver is KafkaStaticProducerEndpointResolver staticEndpointResolver
+                ? [staticEndpointResolver.TopicPartition.Topic]
+                : [producerEndpointConfiguration.RawName];
+        }
+
+        ConsumerEndpointConfiguration? consumerEndpointConfiguration = GetConsumerEndpointConfiguration(endpointName);
+
+        // The endpoint of another broker doesn't match any Kafka topic
+        if (consumerEndpointConfiguration != null)
+        {
+            return consumerEndpointConfiguration is KafkaConsumerEndpointConfiguration kafkaConsumerEndpointConfiguration
+                ? kafkaConsumerEndpointConfiguration.TopicPartitions.Select(topicPartition => topicPartition.Topic).Distinct()
+                : [consumerEndpointConfiguration.RawName];
+        }
+
+        if (IsSubscribedTopic(endpointName))
+            return [endpointName];
+
+        throw new InvalidOperationException($"Endpoint '{endpointName}' not found.");
+    }
+
+    // The topic (or pattern) is subscribed by one of the consumers, or the topic matches one of the subscribed patterns (a pattern can't
+    // be a topic name)
+    private bool IsSubscribedTopic(string topic) =>
+        _serviceProvider.GetService<IConsumerCollection>()?
+            .OfType<IKafkaConsumer>()
+            .Any(consumer => consumer.Configuration.Endpoints.Any(endpoint => endpoint.TopicPartitions.Any(topicPartition =>
+                topicPartition.Topic == topic ||
+                !KafkaTopicPattern.IsPattern(topic) &&
+                KafkaTopicPattern.IsMatch(
+                    topicPartition.Topic,
+                    topic,
+                    KafkaTopicPattern.IsFullMatchRequired(consumer.Configuration.GroupProtocol))))) ?? false;
 }

@@ -135,6 +135,7 @@ public abstract class ConfluentAdminClientFactoryBase : IConfluentAdminClientFac
         IKafkaConsumer consumer =
             kafkaConsumers.Find(kafkaConsumer => kafkaConsumer.EndpointsConfiguration.Any(endpoint => endpoint.FriendlyName == endpointName)) ??
             kafkaConsumers.Find(kafkaConsumer => kafkaConsumer.EndpointsConfiguration.Any(endpoint => IsConsumingFrom(endpoint, endpointName))) ??
+            kafkaConsumers.Find(kafkaConsumer => IsConsumingByPattern(kafkaConsumer, endpointName)) ??
             throw new InvalidOperationException($"No Kafka consumer has been configured for endpoint '{endpointName}'.");
 
         return GetClient(consumer);
@@ -150,6 +151,13 @@ public abstract class ConfluentAdminClientFactoryBase : IConfluentAdminClientFac
 
     private static bool IsConsumingFrom(KafkaConsumerEndpointConfiguration endpoint, string name) =>
         endpoint.RawName == name || endpoint.TopicPartitions.Any(topicPartition => topicPartition.Topic == name);
+
+    // A pattern can't be a topic name
+    private static bool IsConsumingByPattern(IKafkaConsumer consumer, string topic) =>
+        !KafkaTopicPattern.IsPattern(topic) &&
+        consumer.EndpointsConfiguration.Any(endpoint => endpoint.TopicPartitions.Any(topicPartition =>
+            KafkaTopicPattern.IsPattern(topicPartition.Topic) &&
+            KafkaTopicPattern.IsMatch(topicPartition.Topic, topic, KafkaTopicPattern.IsFullMatchRequired(consumer.Configuration.GroupProtocol))));
 
     private List<IProducer> GetKafkaProducers() =>
         [.. _producers.Where(producer => producer is KafkaProducer or KafkaTransactionalProducer)];

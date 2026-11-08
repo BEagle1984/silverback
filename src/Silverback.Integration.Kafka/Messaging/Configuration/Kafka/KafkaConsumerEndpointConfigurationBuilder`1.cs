@@ -45,7 +45,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the topic to be subscribed.
     /// </summary>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic, or a regular expression starting with <c>^</c> to subscribe all matching topics (e.g. <c>^orders-.*</c>).
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -57,7 +57,8 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the topics to be subscribed.
     /// </summary>
     /// <param name="topics">
-    ///     The topics to be subscribed.
+    ///     The topics to be subscribed. A topic starting with <c>^</c> is a regular expression subscribing all matching topics (e.g.
+    ///     <c>^orders-.*</c>).
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.

@@ -64,7 +64,8 @@ public interface IMockedConsumerGroup
     ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.
     /// </summary>
     /// <param name="topicNames">
-    ///     The names of the topics to wait for. If not specified, all topics are considered.
+    ///     The names of the topics to wait for, or regular expressions starting with <c>^</c> matching them. If not specified, all
+    ///     topics are considered.
     /// </param>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
@@ -77,7 +78,10 @@ public interface IMockedConsumerGroup
     /// <summary>
     ///     Waits until the offsets of all messages routed to the consumers have been committed to the mocked Kafka broker.
     /// </summary>
-    /// <param name="topicNames">The topic names to wait for. If empty, all topics are considered.</param>
+    /// <param name="topicNames">
+    ///     The names of the topics to wait for, or regular expressions starting with <c>^</c> matching them. If empty, all topics are
+    ///     considered.
+    /// </param>
     /// <param name="cancellationToken">The cancellation token to observe while waiting.</param>
     /// <returns>A task that completes when all offsets have been committed.</returns>
     ValueTask WaitUntilAllMessagesAreCommittedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default);

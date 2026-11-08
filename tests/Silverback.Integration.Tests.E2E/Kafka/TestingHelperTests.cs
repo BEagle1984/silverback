@@ -292,4 +292,97 @@ public class TestingHelperTests : KafkaTests
             taskCompletionSource.SetResult();
         }
     }
+
+    [Fact]
+    public async Task WaitUntilAllMessagesAreCommittedAsync_ShouldWaitTopicOfProducerEndpoint_WhenPartitionIsStaticallyAssigned()
+    {
+        TaskCompletionSource taskCompletionSource = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(2)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>("one", endpoint => endpoint.ProduceTo("topic1", 1))
+                    .Produce<TestEventThree>("three", endpoint => endpoint.ProduceTo("topic3")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic3"))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
+            .AddIntegrationSpy());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 10; i++)
+        {
+            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishAsync(new TestEventThree { ContentEventThree = $"{i}" });
+        }
+
+        try
+        {
+            await Helper.WaitUntilAllMessagesAreCommittedAsync("one");
+
+            Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.ShouldBe([new TopicPartitionOffset("topic1", 1, 10)]);
+        }
+        finally
+        {
+            taskCompletionSource.SetResult();
+        }
+    }
+
+    [Fact]
+    public async Task WaitUntilAllMessagesAreCommittedAsync_ShouldWaitTopicMatchingPattern()
+    {
+        TaskCompletionSource taskCompletionSource = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(2)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(
+                        "dynamic",
+                        endpoint => endpoint.ProduceTo((TestEventOne? _) => new TopicPartition("topic-a", Partition.Any)))
+                    .Produce<TestEventThree>("three", endpoint => endpoint.ProduceTo("topic3")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("^topic-", "topic3"))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
+            .AddIntegrationSpy());
+
+        // Create the topic and let the consumer get it assigned, before blocking the processing (and thus the revocation)
+        Helper.GetTopic("topic-a", "PLAINTEXT://e2e");
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 10; i++)
+        {
+            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishAsync(new TestEventThree { ContentEventThree = $"{i}" });
+        }
+
+        try
+        {
+            await Helper.WaitUntilAllMessagesAreCommittedAsync("topic-a");
+
+            Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.Where(offset => offset.Topic == "topic-a").ShouldBe(
+                [
+                    new TopicPartitionOffset("topic-a", 0, 5),
+                    new TopicPartitionOffset("topic-a", 1, 5)
+                ],
+                true);
+        }
+        finally
+        {
+            taskCompletionSource.SetResult();
+        }
+    }
 }

@@ -316,10 +316,47 @@ public class SimpleRebalanceStrategyTests
             });
     }
 
+    [Fact]
+    public void Rebalance_ShouldAssignPartitionsToConsumersSubscribedToMatchingPattern()
+    {
+        List<TopicPartition> partitions =
+        [
+            new("topic-a", 0),
+            new("topic-a", 1),
+            new("topic-b", 0),
+            new("other", 0)
+        ];
+
+        IMockedConfluentConsumer consumer1 = GetMockedConsumer("^topic-");
+        IMockedConfluentConsumer consumer2 = GetMockedConsumer("other", "^topic-a$");
+
+        List<SubscriptionPartitionAssignment> partitionAssignments =
+        [
+            new(consumer1),
+            new(consumer2)
+        ];
+
+        new SimpleRebalanceStrategy().Rebalance(partitions, partitionAssignments);
+
+        partitionAssignments[0].Partitions.ShouldBe(
+            [
+                new TopicPartition("topic-a", 0),
+                new TopicPartition("topic-b", 0)
+            ],
+            true);
+        partitionAssignments[1].Partitions.ShouldBe(
+            [
+                new TopicPartition("topic-a", 1),
+                new TopicPartition("other", 0)
+            ],
+            true);
+    }
+
     private static IMockedConfluentConsumer GetMockedConsumer(params string[] topics)
     {
         IMockedConfluentConsumer? consumer = Substitute.For<IMockedConfluentConsumer>();
         consumer.Subscription.Returns<List<string>>([.. topics]);
+        consumer.Config.Returns(new ConsumerConfig());
         return consumer;
     }
 }

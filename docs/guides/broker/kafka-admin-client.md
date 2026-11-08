@@ -15,7 +15,7 @@ Method | Argument
 `GetClientForProducer` | The name specified in `AddProducer`
 `GetClientForConsumer` | The name specified in `AddConsumer`
 `GetClientForProducerEndpoint` | The endpoint friendly name or the topic name
-`GetClientForConsumerEndpoint` | The endpoint friendly name or the name of one of the consumed topics
+`GetClientForConsumerEndpoint` | The endpoint friendly name or the name of one of the consumed topics, including the topics matching a subscribed pattern
 
 ```csharp
 public class TopicsInspector

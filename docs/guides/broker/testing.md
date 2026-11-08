@@ -178,6 +178,14 @@ Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 
 Mocked Kafka automatically overrides the auto-commit interval to **50 milliseconds** to speed up commit waits when auto-commit is enabled. No explicit configuration is needed. Use <xref:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.OverrideAutoCommitIntervalMs(System.Nullable{System.Int32})> only when a test requires different commit timing. Passing `null` disables the override and uses the consumer's configured interval, or 5 seconds if no interval is configured.
 
+### Topic Patterns
+
+The mocked Kafka supports the [pattern subscriptions](xref:kafka-subscription#subscribe-by-pattern), matching them as .NET regular expressions against the in-memory topics (requiring the pattern to match the entire topic name with the consumer group protocol, like the broker), and rebalances as soon as a matching topic is created, without waiting for a metadata refresh. Without committed offsets, the mocked consumers always start from the beginning of the partitions, regardless of the offset reset setting.
+
+`WaitUntilAllMessagesAreConsumedAsync` and `WaitUntilAllMessagesAreCommittedAsync` accept the name of an endpoint subscribing patterns, as well as a single topic matching them. The waits apply to whole topics: waiting for an endpoint subscribing a pattern also waits for the matching topics routed to other endpoints.
+
+`GetTopic` creates the topic if it doesn't exist yet, triggering the rebalance of the consumers subscribing a matching pattern. Specify the bootstrap servers if no topic exists yet, as with consumers subscribing only patterns.
+
 ### Access In-Memory Topics
 
 When using the mocked Kafka broker you can inspect the internal topics via <xref:Silverback.Testing.IKafkaTestingHelper.GetTopic(System.String,System.String)>.

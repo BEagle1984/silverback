@@ -127,7 +127,7 @@ public interface IConfluentAdminClientFactory
     ///     Returns an <see cref="IAdminClient" /> instance using the configuration of the Kafka consumer for the specified endpoint.
     /// </summary>
     /// <param name="endpointName">
-    ///     The endpoint friendly name or the name of one of the consumed topics.
+    ///     The endpoint friendly name or the name of one of the consumed topics, including the topics matching a subscribed pattern.
     /// </param>
     /// <returns>
     ///     The <see cref="IAdminClient" />.

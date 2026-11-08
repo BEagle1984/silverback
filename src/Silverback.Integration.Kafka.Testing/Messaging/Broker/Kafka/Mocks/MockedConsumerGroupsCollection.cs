@@ -18,6 +18,10 @@ internal class MockedConsumerGroupsCollection : IMockedConsumerGroupsCollection
     public MockedConsumerGroupsCollection(IInMemoryTopicCollection topicCollection)
     {
         _topicCollection = topicCollection;
+
+        // Both are singletons, so the handler doesn't need to be removed
+        if (topicCollection is InMemoryTopicCollection inMemoryTopicCollection)
+            inMemoryTopicCollection.TopicCreated += OnTopicCreated;
     }
 
     public int Count => _groups.Count;
@@ -36,4 +40,12 @@ internal class MockedConsumerGroupsCollection : IMockedConsumerGroupsCollection
 
     [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    private void OnTopicCreated(object? sender, IInMemoryTopic topic)
+    {
+        foreach (MockedConsumerGroup group in _groups.Values)
+        {
+            group.OnTopicCreated(topic);
+        }
+    }
 }

@@ -61,7 +61,7 @@ public partial class KafkaTestingHelper
         if (_groups == null)
             return Task.CompletedTask;
 
-        string[] topicNames = [.. endpointNames.Select(GetEndpointRawName)];
+        string[] topicNames = [.. endpointNames.SelectMany(GetTopicNames)];
 
         return Task.WhenAll(
             _groups.Select(group => group.WaitUntilAllMessagesAreCommittedAsync(topicNames, cancellationToken).AsTask()));

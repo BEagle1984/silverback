@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Kafka.Mocks.Rebalance;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
@@ -219,6 +220,28 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
             await Task.Delay(50).ConfigureAwait(false);
             await RebalanceAsync().ConfigureAwait(false);
         }).FireAndForget();
+    }
+
+    // Like librdkafka refreshing the metadata, a new topic matching a pattern triggers a rebalance (right away, to keep the tests fast).
+    // A topic subscribed by name is instead created and assigned by the rebalance triggered by the subscription.
+    public void OnTopicCreated(IInMemoryTopic topic)
+    {
+        if (!IsSameCluster(topic))
+            return;
+
+        lock (_stateLock)
+        {
+            if (_subscriptions.Exists(subscription => subscription.Topic == topic.Name) ||
+                !_subscriptions.Exists(subscription =>
+                    KafkaTopicPattern.IsPattern(subscription.Topic) && subscription.IsMatch(topic.Name)))
+            {
+                return;
+            }
+
+            // Scheduled while holding the lock, so that a concurrent drain check can't see the new version without the rebalance
+            _stateVersion++;
+            Rebalance();
+        }
     }
 
     public IReadOnlyCollection<TopicPartition> GetAssignment(IMockedConfluentConsumer consumer)
@@ -452,11 +475,23 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
     private List<TopicPartition> GetPartitionsToAssign() =>
     [
-        .. _subscriptions.Select(subscription => subscription.Topic).Distinct()
-            .Select(topicName => _topicCollection.Get(topicName, BootstrapServers))
+        .. _subscriptions.SelectMany(GetSubscribedTopics)
+            .Distinct()
             .SelectMany(topic =>
                 topic.Partitions.Select(partition => new TopicPartition(topic.Name, partition.Partition)))
     ];
+
+    // A topic name creates the topic, while a pattern matches the existing topics only
+    private IEnumerable<IInMemoryTopic> GetSubscribedTopics(ConsumerSubscription subscription) =>
+        KafkaTopicPattern.IsPattern(subscription.Topic)
+            ? _topicCollection
+                .Where(topic => IsSameCluster(topic) && subscription.IsMatch(topic.Name))
+                .OrderBy(topic => topic.Name, StringComparer.Ordinal)
+            : [_topicCollection.Get(subscription.Topic, BootstrapServers)];
+
+    // The topics collection compares the bootstrap servers ignoring the case
+    private bool IsSameCluster(IInMemoryTopic topic) =>
+        string.Equals(topic.BootstrapServers, BootstrapServers, StringComparison.OrdinalIgnoreCase);
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "A failing callback must not affect the other consumers")]
     private void InvokePartitionsRevokedCallbacks(SubscribedConsumer[] consumers, RebalanceResult result)
@@ -512,7 +547,8 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
             return false;
 
         return assignment
-            .Where(partition => topicNames.Count == 0 || topicNames.Contains(partition.Topic, StringComparer.Ordinal))
+            .Where(partition => topicNames.Count == 0 || topicNames.Any(topicName =>
+                KafkaTopicPattern.IsMatch(topicName, partition.Topic, KafkaTopicPattern.IsFullMatchRequired(consumer.Config.GroupProtocol))))
             .All(topicPartition =>
             {
                 IInMemoryTopic topic = _topicCollection.Get(topicPartition.Topic, consumer.Config);
@@ -552,5 +588,9 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
         public MockedConfluentConsumer Consumer { get; }
 
         public string Topic { get; }
+
+        // Like the broker, the consumer protocol requires the pattern to match the entire topic name
+        public bool IsMatch(string topic) =>
+            KafkaTopicPattern.IsMatch(Topic, topic, KafkaTopicPattern.IsFullMatchRequired(Consumer.Config.GroupProtocol));
     }
 }

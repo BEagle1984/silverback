@@ -30,7 +30,7 @@ internal class SimpleRebalanceStrategy : IRebalanceStrategy
         foreach (IGrouping<string, TopicPartition> topicPartitions in partitionsByTopic)
         {
             List<SubscriptionPartitionAssignment> partitionAssignmentsForTopic =
-                [.. partitionAssignments.Where(assignment => assignment.Consumer.Subscription.Contains(topicPartitions.Key))];
+                [.. partitionAssignments.Where(assignment => assignment.IsSubscribedTo(topicPartitions.Key))];
 
             AssignTopicPartitions(topicPartitions, partitionAssignmentsForTopic);
         }

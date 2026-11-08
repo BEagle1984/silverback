@@ -201,6 +201,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         IReadOnlyList<string> topicsList = Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
         Check.NotEmpty(topicsList, nameof(topics));
         Check.HasNoEmpties(topicsList, nameof(topics));
+        topicsList.Where(KafkaTopicPattern.IsPattern).ForEach(ThrowIfInvalidPattern);
 
         Subscription.Clear();
         Subscription.AddRange(topicsList);
@@ -498,6 +499,19 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             : consumerGroups.Get(Guid.NewGuid().ToString(), config.BootstrapServers);
 
         return (IInternalMockedConsumerGroup)consumerGroup;
+    }
+
+    // Like librdkafka, which rejects the subscription with an invalid regular expression
+    private static void ThrowIfInvalidPattern(string pattern)
+    {
+        try
+        {
+            _ = KafkaTopicPattern.Create(pattern);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new KafkaException(new Error(ErrorCode.Local_InvalidArg, $"Invalid regular expression '{pattern}': {ex.Message}"));
+        }
     }
 
     private void RevokePartitions(IReadOnlyCollection<TopicPartition> topicPartitions)

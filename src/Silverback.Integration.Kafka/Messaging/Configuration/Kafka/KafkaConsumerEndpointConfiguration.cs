@@ -26,6 +26,12 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
     ///         <see cref="IKafkaPartitionsAssignedCallback" /> can be registered to interact with the partitions assignment process.
     ///     </para>
     ///     <para>
+    ///         A topic starting with <c>^</c> is a regular expression and subscribes all matching topics, including the ones created
+    ///         later. The partition must be <see cref="Partition.Any" />. A message is routed to the endpoint whose topic name matches
+    ///         exactly, or else to the first endpoint whose pattern matches it. The pattern should match the whole topic name (e.g.
+    ///         <c>^orders-.*</c>), since the broker requires it with the consumer group protocol.
+    ///     </para>
+    ///     <para>
     ///         Setting the partition to <see cref="Partition.Any" /> for a topic and setting a <see cref="PartitionOffsetsProvider" />
     ///         will cause the consumer to retrieve the topics metadata, collect all available partitions and call the specified resolver
     ///         function. The result of the function will be used as static partition assignment for the consumer.
@@ -90,8 +96,31 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
                 "Use Partition.Any when specifying the topic partition or remove the resolver.");
         }
 
+        ValidateTopicPatterns();
         ValidateTopicPartitions();
         ValidatePartitionsAssignment();
+    }
+
+    private void ValidateTopicPatterns()
+    {
+        foreach (TopicPartitionOffset topicPartition in TopicPartitions.Where(topicPartition => KafkaTopicPattern.IsPattern(topicPartition.Topic)))
+        {
+            if (topicPartition.Partition != Partition.Any || PartitionOffsetsProvider != null)
+            {
+                throw new BrokerConfigurationException(
+                    $"Cannot assign the partitions of the topic pattern '{topicPartition.Topic}'. " +
+                    "The topics matching a pattern can only be subscribed, using Partition.Any and no partitions provider.");
+            }
+
+            try
+            {
+                _ = KafkaTopicPattern.Create(topicPartition.Topic);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new BrokerConfigurationException($"The topic pattern '{topicPartition.Topic}' is not a valid regular expression.", ex);
+            }
+        }
     }
 
     private void ValidateTopicPartitions()

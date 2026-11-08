@@ -240,6 +240,65 @@ public class KafkaConsumerConfigurationTests
         exception.Message.ShouldMatch("Cannot connect to the same topic in different endpoints.*");
     }
 
+    [Fact]
+    public void Validate_ShouldThrow_WhenTopicPatternIsSpecifiedMoreThanOnce()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+            [
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("^topic-", Partition.Any, Offset.Unset)
+                    ])
+                },
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("^topic-", Partition.Any, Offset.Unset)
+                    ])
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("Cannot connect to the same topic in different endpoints.*");
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenTopicPatternMatchesTopicOfOtherEndpoint()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+            [
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("^topic-", Partition.Any, Offset.Unset)
+                    ])
+                },
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic-1", Partition.Any, Offset.Unset)
+                    ])
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
