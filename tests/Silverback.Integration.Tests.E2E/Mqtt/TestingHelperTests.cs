@@ -146,4 +146,94 @@ public class TestingHelperTests : MqttTests
             taskCompletionSource.SetResult();
         }
     }
+
+    [Theory]
+    [InlineData("readings")]
+    [InlineData("sensors/+/readings")]
+    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldWaitTopicsMatchingConsumerEndpointFilters(string endpointName)
+    {
+        TaskCompletionSource taskCompletionSource = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .EnableParallelProcessing(30) // needed to avoid deadlocks
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("sensors/1/readings"))
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("sensors/2/readings"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("alerts/1"))
+                    .Consume<TestEventOne>("readings", endpoint => endpoint.ConsumeFrom("sensors/+/readings"))
+                    .Consume<TestEventTwo>("alerts", endpoint => endpoint.ConsumeFrom("alerts/#"))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventTwo>(_ => taskCompletionSource.Task)
+            .AddIntegrationSpy());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 10; i++)
+        {
+            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+        }
+
+        try
+        {
+            await Helper.WaitUntilAllMessagesAreConsumedAsync(endpointName);
+
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("sensors/1/readings").ShouldBe(0);
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("sensors/2/readings").ShouldBe(0);
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("alerts/1").ShouldBe(10);
+        }
+        finally
+        {
+            taskCompletionSource.SetResult();
+        }
+    }
+
+    [Fact]
+    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldWaitTopicMatchingConsumerEndpointFilter()
+    {
+        TaskCompletionSource taskCompletionSource = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .EnableParallelProcessing(30) // needed to avoid deadlocks
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(message => $"sensors/{message?.ContentEventOne}/readings"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("alerts/1"))
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("sensors/+/readings"))
+                    .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("alerts/#"))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventTwo>(_ => taskCompletionSource.Task)
+            .AddIntegrationSpy());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 10; i++)
+        {
+            await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
+            await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+        }
+
+        try
+        {
+            await Helper.WaitUntilAllMessagesAreConsumedAsync("sensors/1/readings");
+
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("sensors/1/readings").ShouldBe(0);
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("alerts/1").ShouldBe(10);
+        }
+        finally
+        {
+            taskCompletionSource.SetResult();
+        }
+    }
 }

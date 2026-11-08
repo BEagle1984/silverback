@@ -18,6 +18,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -26,6 +27,119 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker.Mqtt;
 public class MqttClientWrapperTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
+
+    [Theory]
+    [InlineData(MqttClientSubscribeResultCode.NotAuthorized)]
+    [InlineData(MqttClientSubscribeResultCode.UnspecifiedError)] // The only failure code of MQTT 3.1.1 (0x80)
+    [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Modified to simulate a following subscription")]
+    public async Task SubscribeAsync_ShouldLogAndExcludeTopicFiltersRejectedByBroker(MqttClientSubscribeResultCode resultCode)
+    {
+        bool reject = true;
+        IMqttClient nativeClient = Substitute.For<IMqttClient>();
+        nativeClient.SubscribeAsync(Arg.Any<MqttClientSubscribeOptions>(), Arg.Any<CancellationToken>()).Returns(call =>
+        {
+            MqttClientSubscribeOptions options = call.Arg<MqttClientSubscribeOptions>();
+
+            return Task.FromResult(
+                new MqttClientSubscribeResult(
+                    0,
+                    [
+                        new MqttClientSubscribeResultItem(options.TopicFilters[0], MqttClientSubscribeResultCode.GrantedQoS1),
+                        new MqttClientSubscribeResultItem(options.TopicFilters[1], reject ? resultCode : MqttClientSubscribeResultCode.GrantedQoS0),
+                        new MqttClientSubscribeResultItem(options.TopicFilters[2], MqttClientSubscribeResultCode.GrantedQoS0)
+                    ],
+                    string.Empty,
+                    []));
+        });
+
+        LoggerSubstitute<MqttClientWrapperTests> loggerSubstitute = new(LogLevel.Trace);
+        SilverbackLogger<MqttClientWrapperTests> logger = new(new MappedLevelsLogger<MqttClientWrapperTests>([], loggerSubstitute));
+        MqttClientConfiguration configuration = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
+            .ConnectViaTcp("test-broker")
+            .WithClientId("test-client")
+            .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2/#", "topic3"))
+            .Build();
+        MqttClientWrapper client = new("client1", nativeClient, configuration, Substitute.For<IBrokerClientCallbacksInvoker>(), logger);
+
+        client.SubscribedTopicsFilters.Select(filter => filter.Topic).ShouldBe(["topic1", "topic2/#", "topic3"]);
+
+        await client.SubscribeAsync();
+
+        client.SubscribedTopicsFilters.Select(filter => filter.Topic).ShouldBe(["topic1", "topic3"]);
+        loggerSubstitute.Received(
+            LogLevel.Error,
+            null,
+            $"Subscription to topic2/# rejected by the broker with result code {resultCode} | ClientName: client1, ClientId: test-client",
+            4042);
+
+        // A following subscription (e.g. after reconnecting) resets the rejected filters
+        reject = false;
+        await client.SubscribeAsync();
+
+        client.SubscribedTopicsFilters.Select(filter => filter.Topic).ShouldBe(["topic1", "topic2/#", "topic3"]);
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task ConnectAsync_ShouldRaiseSubscribed_UnlessBrokerRejectsAllTopicFilters(bool rejectAll, bool expectedSubscribed)
+    {
+        bool isConnected = false;
+        IMqttClient nativeClient = Substitute.For<IMqttClient>();
+        nativeClient.IsConnected.Returns(_ => isConnected);
+        nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            isConnected = true;
+            return new MqttClientConnectResult();
+        });
+        nativeClient.DisconnectAsync(Arg.Any<MqttClientDisconnectOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            isConnected = false;
+            return Task.CompletedTask;
+        });
+        nativeClient.SubscribeAsync(Arg.Any<MqttClientSubscribeOptions>(), Arg.Any<CancellationToken>()).Returns(call =>
+            Task.FromResult(
+                new MqttClientSubscribeResult(
+                    0,
+                    [
+                        .. call.Arg<MqttClientSubscribeOptions>().TopicFilters.Select((filter, index) =>
+                            new MqttClientSubscribeResultItem(
+                                filter,
+                                rejectAll || index > 0 ? MqttClientSubscribeResultCode.NotAuthorized : MqttClientSubscribeResultCode.GrantedQoS0))
+                    ],
+                    string.Empty,
+                    [])));
+
+        IBrokerClientCallbacksInvoker callbacksInvoker = Substitute.For<IBrokerClientCallbacksInvoker>();
+        MqttClientConfiguration configuration = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
+            .ConnectViaTcp("test-broker")
+            .WithClientId("test-client")
+            .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2"))
+            .Build();
+        await using MqttClientWrapper client = new(
+            "client1",
+            nativeClient,
+            configuration,
+            callbacksInvoker,
+            Substitute.For<ISilverbackLogger>());
+        bool subscribed = false;
+        client.Subscribed.AddHandler(_ =>
+        {
+            subscribed = true;
+            return ValueTask.CompletedTask;
+        });
+
+        await client.ConnectAsync();
+
+        // The connected callbacks are invoked after the Subscribed event
+        await WaitUntilAsync(() => callbacksInvoker.ReceivedCalls().Any(call =>
+            call.GetMethodInfo().IsGenericMethod &&
+            call.GetMethodInfo().GetGenericArguments()[0] == typeof(IMqttClientConnectedCallback)));
+
+        subscribed.ShouldBe(expectedSubscribed);
+        client.SubscribedTopicsFilters.Select(filter => filter.Topic).ShouldBe(rejectAll ? [] : ["topic1"]);
+        client.IsConnected.ShouldBeTrue();
+    }
 
     [Fact]
     public async Task DisconnectAsync_ShouldCompleteInFlightPublishBeforeDisconnecting()

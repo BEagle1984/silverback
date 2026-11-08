@@ -70,11 +70,13 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
                     .WithQualityOfServiceLevel(endpoint.QualityOfServiceLevel)
                     .Build()))
         ];
+        SubscribedTopicsFilters = _subscribedTopicsFilters;
 
         _mqttClient.ApplicationMessageReceivedAsync += OnMessageReceivedAsync;
     }
 
-    public IReadOnlyCollection<MqttTopicFilter> SubscribedTopicsFilters => _subscribedTopicsFilters;
+    // Excludes the topic filters rejected by the broker at the last subscription
+    public IReadOnlyCollection<MqttTopicFilter> SubscribedTopicsFilters { get; private set; }
 
     public MqttClientConfiguration Configuration { get; }
 
@@ -97,14 +99,29 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             onError.Invoke(new ProduceException("Cannot produce because the MQTT client is disconnecting or disconnected."));
     }
 
-    public Task SubscribeAsync() =>
-        _subscribedTopicsFilters.Length >= 1
-            ? _mqttClient.SubscribeAsync(
+    public async Task SubscribeAsync()
+    {
+        if (_subscribedTopicsFilters.Length == 0)
+            return;
+
+        MqttClientSubscribeResult result = await _mqttClient.SubscribeAsync(
                 new MqttClientSubscribeOptions
                 {
                     TopicFilters = [.. _subscribedTopicsFilters]
                 })
-            : Task.CompletedTask;
+            .ConfigureAwait(false);
+
+        // The broker rejects the single topic filters (e.g. if not authorized) through the result codes, without failing
+        List<MqttClientSubscribeResultItem> rejectedItems =
+            [.. result.Items.Where(item => item.ResultCode > MqttClientSubscribeResultCode.GrantedQoS2)];
+
+        rejectedItems.ForEach(item => _logger.LogSubscriptionRejected(item.TopicFilter.Topic, item.ResultCode, this));
+
+        SubscribedTopicsFilters =
+        [
+            .. _subscribedTopicsFilters.Where(topicFilter => !rejectedItems.Exists(item => item.TopicFilter.Topic == topicFilter.Topic))
+        ];
+    }
 
     public Task UnsubscribeAsync() =>
         _subscribedTopicsFilters.Length >= 1
@@ -226,7 +243,11 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             cancellationToken.ThrowIfCancellationRequested();
             await SubscribeAsync().ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
-            await Subscribed.InvokeAsync(this).ConfigureAwait(false);
+
+            // The consumers aren't reported as connected if the broker rejected all the topic filters
+            if (SubscribedTopicsFilters.Count > 0 || _subscribedTopicsFilters.Length == 0)
+                await Subscribed.InvokeAsync(this).ConfigureAwait(false);
+
             await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(callback => callback.OnClientConnectedAsync(Configuration)).ConfigureAwait(false);
         }
         catch (Exception) when (cancellationToken.IsCancellationRequested)

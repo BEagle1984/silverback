@@ -77,4 +77,29 @@ public class MqttToKafkaTests : KafkaTests
         eventTwoCount.ShouldBe(15);
         DefaultConsumerGroup.GetCommittedOffsetsCount("some-topic").ShouldBe(15);
     }
+
+    [Fact]
+    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldNotThrow_WhenWaitingForEndpointOfOtherBroker()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt().AddMockedKafka())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId("client1")
+                    .Consume(endpoint => endpoint.ConsumeFrom("mqtt/+/topic"))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("^kafka-[a-z]+$"))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Task.CompletedTask));
+
+        IMqttTestingHelper mqttTestingHelper = Host.ServiceProvider.GetRequiredService<IMqttTestingHelper>();
+
+        await mqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync("^kafka-[a-z]+$");
+        await Helper.WaitUntilAllMessagesAreConsumedAsync("mqtt/+/topic");
+    }
 }

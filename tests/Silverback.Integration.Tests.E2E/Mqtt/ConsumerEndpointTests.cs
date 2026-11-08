@@ -251,7 +251,9 @@ public partial class ConsumerEndpointTests : MqttTests
                 .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4")
         ];
 
-        envelopesOneClient1.Union(envelopesOneClient2).Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
+        envelopesOneClient1.ShouldNotBeEmpty();
+        envelopesOneClient2.ShouldNotBeEmpty();
+        envelopesOneClient1.Union(envelopesOneClient2).Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], true);
         envelopesOneClient3.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
         envelopesOneClient4.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
 
@@ -279,7 +281,9 @@ public partial class ConsumerEndpointTests : MqttTests
                 .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4")
         ];
 
-        envelopesTwoClient1.Union(envelopesTwoClient2).Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"]);
+        envelopesTwoClient1.ShouldNotBeEmpty();
+        envelopesTwoClient2.ShouldNotBeEmpty();
+        envelopesTwoClient1.Union(envelopesTwoClient2).Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], true);
         envelopesTwoClient3.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"]);
         envelopesTwoClient4.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"]);
     }

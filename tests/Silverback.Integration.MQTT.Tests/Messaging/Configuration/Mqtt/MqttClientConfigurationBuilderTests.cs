@@ -285,7 +285,9 @@ public class MqttClientConfigurationBuilderTests
         Action act = () => builder.Build();
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("Cannot connect to the same topic in different endpoints in the same consumer.");
+        exception.Message.ShouldBe(
+            "Cannot connect to the same topic in different endpoints in the same consumer, or subscribe it more than once " +
+            "through shared subscriptions.");
     }
 
     [Fact]

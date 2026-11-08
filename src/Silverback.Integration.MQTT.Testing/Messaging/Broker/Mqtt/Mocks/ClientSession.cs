@@ -10,6 +10,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Packets;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
@@ -64,7 +65,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
         {
             foreach (string topic in topics)
             {
-                if (_subscriptions.Any(subscription => subscription.Topic == topic))
+                if (_subscriptions.Any(subscription => subscription.Filter == topic))
                     continue;
 
                 if (Client.Options == null)
@@ -80,7 +81,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
     {
         lock (_subscriptions)
         {
-            foreach (Subscription subscription in _subscriptions.Where(subscription => topics.Contains(subscription.Topic)).ToArray())
+            foreach (Subscription subscription in _subscriptions.Where(subscription => topics.Contains(subscription.Filter)).ToArray())
             {
                 _subscriptions.Remove(subscription);
             }
@@ -101,21 +102,28 @@ internal sealed class ClientSession : IDisposable, IClientSession
         }
     }
 
+    // Counted before writing, since the message could otherwise be handled and acknowledged before being counted
     public async ValueTask PushAsync(MqttApplicationMessage message)
     {
-        await _channel.Writer.WriteAsync(message).ConfigureAwait(false);
-
         Interlocked.Increment(ref _pendingMessagesCount);
         _pendingMessagesCountByTopic.AddOrUpdate(
             message.Topic,
             _ => 1,
             (_, count) => count + 1);
+
+        await _channel.Writer.WriteAsync(message).ConfigureAwait(false);
     }
 
     public int GetPendingMessagesCount() => _pendingMessagesCount;
 
     public int GetPendingMessagesCount(string topicName) =>
         _pendingMessagesCountByTopic.GetValueOrDefault(topicName, 0);
+
+    // Counts the pending messages of the topics matching the topic filter (a topic name or a wildcard or shared subscription)
+    public int GetPendingMessagesCount(ParsedTopic topicFilter) =>
+        _pendingMessagesCountByTopic
+            .Where(pair => topicFilter.IsMatch(pair.Key))
+            .Sum(pair => pair.Value);
 
     public void Dispose()
     {

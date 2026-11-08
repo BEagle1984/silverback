@@ -76,7 +76,7 @@ public partial class ConsumerEndpointTests
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
                     .Consume(endpoint => endpoint.ConsumeFrom("world/europe/switzerland/#"))
-                    .Consume(endpoint => endpoint.ConsumeFrom("world/america/#/news"))))
+                    .Consume(endpoint => endpoint.ConsumeFrom("world/america/canada/#"))))
             .AddIntegrationSpyAndSubscriber());
 
         IProducer GetProducer(string topic) => Helper.GetProducer(client => client
@@ -109,6 +109,45 @@ public partial class ConsumerEndpointTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message.ShouldBeOfType<TestEventOne>().ContentEventOne)
-            .ShouldBe(["Mesocco", "Ticino", "USA News", "California News", "Canada News"]);
+            .ShouldBe(["Mesocco", "Ticino", "Switzerland", "Canada", "Canada News"]);
+        Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldBe(
+        [
+            "world/europe/switzerland/graubuenden/mesocco",
+            "world/europe/switzerland/ticino",
+            "world/europe/switzerland",
+            "world/america/canada",
+            "world/america/canada/news"
+        ]);
+    }
+
+    [Fact]
+    public async Task ConsumerEndpoint_ShouldNotRouteDollarTopicsToWildcardEndpoint_WhenFilterStartsWithWildcard()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Consume<TestEventOne>("all", endpoint => endpoint.ConsumeFrom("#"))
+                    .Consume<TestEventTwo>("system", endpoint => endpoint.ConsumeFrom("$SYS/#"))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer GetProducer(string topic) => Helper.GetProducer(client => client
+            .ConnectViaTcp("e2e-mqtt-broker")
+            .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(topic)));
+
+        await GetProducer("world/europe").ProduceAsync(new TestEventOne { ContentEventOne = "Europe" });
+        await GetProducer("$SYS/uptime").ProduceAsync(new TestEventTwo { ContentEventTwo = "Uptime" });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.ShouldContain(envelope =>
+            envelope.Endpoint.RawName == "world/europe" && envelope.Endpoint.Configuration.FriendlyName == "all");
+        Helper.Spy.InboundEnvelopes.ShouldContain(envelope =>
+            envelope.Endpoint.RawName == "$SYS/uptime" && envelope.Endpoint.Configuration.FriendlyName == "system");
     }
 }

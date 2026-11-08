@@ -213,7 +213,9 @@ As with Kafka, the destination topic can be computed per message, using a functi
 `ConsumeFrom` accepts one or more topics or topic filters, including the MQTT wildcards:
 
 - `+` matches exactly one topic level (e.g. `sensors/+/readings` matches `sensors/1/readings`, but not `sensors/1/2/readings`).
-- `#` matches any number of levels and must be the last character (e.g. `sensors/#`).
+- `#` matches any number of levels, including the parent level, and must be the last level (e.g. `sensors/#` matches `sensors`, `sensors/1` and `sensors/1/readings`).
+
+Each wildcard must occupy an entire level: Silverback rejects an invalid filter such as `sensors/#/readings` or `sensors+` when validating the configuration. As defined by the MQTT specification, the filters starting with a wildcard (e.g. `#` or `+/readings`) don't match the topics starting with `$`, such as `$SYS/...`.
 
 ```csharp
 .Consume<SensorReading>("readings", endpoint => endpoint
@@ -232,7 +234,9 @@ public Task HandleAsync(IInboundEnvelope<SensorReading> envelope)
 ```
 
 > [!Note]
-> The same topic can't be subscribed by multiple endpoints in the same client. Use separate clients if you need to subscribe the same topic with a different configuration.
+> The same topic can't be subscribed by multiple endpoints in the same client, nor more than once through shared subscriptions (e.g. `orders` and `$share/group/orders`, or `$share/group1/orders` and `$share/group2/orders`), since the broker delivers a copy of each message per subscription. Use separate clients if you need to subscribe the same topic with a different configuration.
+
+If the broker rejects a subscription (e.g. because the client isn't authorized to subscribe the topic), Silverback logs an error (`SubscriptionRejected`) and the other topic filters of the client remain subscribed. If all the topic filters are rejected, the consumer isn't reported as connected. The rejected topic filters are subscribed again only when the client reconnects.
 
 ### Shared Subscriptions
 

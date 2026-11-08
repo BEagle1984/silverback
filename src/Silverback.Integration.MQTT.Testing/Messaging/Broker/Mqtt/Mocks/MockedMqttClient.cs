@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Diagnostics.PacketInspection;
+using MQTTnet.Packets;
+using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -109,12 +111,15 @@ public sealed class MockedMqttClient : IMqttClient
         Check.NotNull(options, nameof(options));
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
+        // Like the real client, reject the invalid topic filters before subscribing
+        options.TopicFilters.ForEach(filter => MqttTopicValidator.ThrowIfInvalidSubscribe(filter.Topic));
+
         _broker.Subscribe(this, [.. options.TopicFilters.Select(filter => filter.Topic)]);
 
         return Task.FromResult(
             new MqttClientSubscribeResult(
                 0,
-                [.. options.TopicFilters.Select(filter => new MqttClientSubscribeResultItem(filter, MqttClientSubscribeResultCode.GrantedQoS0))],
+                [.. options.TopicFilters.Select(filter => new MqttClientSubscribeResultItem(filter, GetGrantedResultCode(filter)))],
                 string.Empty,
                 []));
     }
@@ -153,4 +158,13 @@ public sealed class MockedMqttClient : IMqttClient
     [SuppressMessage("Usage", "VSTHRD110", MessageId = "Observe result of async calls", Justification = "False positive")]
     internal Task HandleMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs) =>
         ApplicationMessageReceivedAsync?.Invoke(eventArgs) ?? Task.CompletedTask;
+
+    // The mocked broker always grants the requested quality of service
+    private static MqttClientSubscribeResultCode GetGrantedResultCode(MqttTopicFilter filter) =>
+        filter.QualityOfServiceLevel switch
+        {
+            MqttQualityOfServiceLevel.AtLeastOnce => MqttClientSubscribeResultCode.GrantedQoS1,
+            MqttQualityOfServiceLevel.ExactlyOnce => MqttClientSubscribeResultCode.GrantedQoS2,
+            _ => MqttClientSubscribeResultCode.GrantedQoS0
+        };
 }

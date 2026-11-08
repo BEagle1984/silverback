@@ -89,6 +89,8 @@ MQTT connection-loss cases cut the client's TCP connection through a test proxy 
 
 MQTT shutdown cases exercise actual hosted shutdown while an in-flight subscriber publishes through the same native MQTT client. An independent client observes the reply. The cases cover QoS 1/2 replies, with and without full input buffers, and hold shutdown open across two observed keep-alive responses before publishing. The main E2E suite also checks single-message and batch subscribers publishing between all Kafka/MQTT source and destination combinations, including separate MQTT clients.
 
+MQTT topic-filter cases run a Silverback host in the test process against the root EMQX cluster. They verify that a multi-level wildcard also matches its parent level, that a single-level wildcard matches exactly one level, including an empty one, and that two clients sharing a subscription consume each message once. Each message must be routed to the endpoint of its actual topic, without the `$share` prefix. Probe messages are published until one is consumed, since the cluster nodes replicate the subscriptions asynchronously. Filter `FullyQualifiedName~MqttTopicFilterTests` to run them.
+
 ### Worker and evidence
 
 Run the xUnit tests to manage the worker. Its `Kafka/ReconciliationConsumer` records processing and ownership events, `Kafka/MixedWorkload` runs shared subscriber workloads, and `Diagnostics/ProgressProbe` records recent activity and flags polling stalls. The fixture supplies the required `PREFIX` environment variable. The image includes dotnet-stack and dotnet-dump.

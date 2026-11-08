@@ -100,7 +100,8 @@ public interface IInMemoryMqttBroker
     ///     processed and committed.
     /// </summary>
     /// <param name="topicNames">
-    ///     The names of the topics to wait for. If not specified, all topics are considered.
+    ///     The names of the topics or the topic filters (including wildcards and shared subscriptions) to wait for. If not specified, all
+    ///     topics are considered.
     /// </param>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.

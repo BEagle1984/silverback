@@ -115,6 +115,75 @@ public class MqttConsumerEndpointConfigurationTests
         exception.Message.ShouldBe("A topic name cannot be null or empty.");
     }
 
+    [Theory]
+    [InlineData("test/+")]
+    [InlineData("test/+/sub")]
+    [InlineData("+")]
+    [InlineData("+/+")]
+    [InlineData("test/#")]
+    [InlineData("#")]
+    [InlineData("test//sub")]
+    [InlineData("/test")]
+    [InlineData("$SYS/#")]
+    [InlineData("$share/group/test")]
+    [InlineData("$share/group/test/+/#")]
+    [InlineData("$share/group/#")]
+    public void Validate_ShouldNotThrow_WhenTopicFilterIsValid(string topic)
+    {
+        MqttConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            Topics = new ValueReadOnlyCollection<string>([topic])
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Theory]
+    [InlineData("test/#/sub")]
+    [InlineData("test/sub#")]
+    [InlineData("test/#sub")]
+    [InlineData("test/sub+")]
+    [InlineData("test/+sub/x")]
+    [InlineData("#/sub")]
+    [InlineData("$share/group/test/#/sub")]
+    public void Validate_ShouldThrow_WhenTopicFilterIsNotValid(string topic)
+    {
+        MqttConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            Topics = new ValueReadOnlyCollection<string>(["test", topic])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe(
+            $"The topic filter '{topic}' is not valid. " +
+            "The wildcards '+' and '#' must occupy an entire level and '#' must be the last level.");
+    }
+
+    [Theory]
+    [InlineData("$share/group")]
+    [InlineData("$share/group/")]
+    [InlineData("$share//test")]
+    [InlineData("$share/gr+oup/test")]
+    [InlineData("$share/gr#oup/test")]
+    public void Validate_ShouldThrow_WhenSharedSubscriptionIsNotValid(string topic)
+    {
+        MqttConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            Topics = new ValueReadOnlyCollection<string>([topic])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe(
+            $"The shared subscription '{topic}' is not valid. " +
+            "The expected format is '$share/{ShareName}/{TopicFilter}', with a share name without wildcards.");
+    }
+
     [Fact]
     public void Validate_ShouldThrow_WhenBatchProcessingIsEnabled()
     {

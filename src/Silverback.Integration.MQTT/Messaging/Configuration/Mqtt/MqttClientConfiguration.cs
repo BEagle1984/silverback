@@ -169,11 +169,20 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         }
     }
 
+    // The messages are routed by topic and the broker delivers a copy per subscription, so a filter can't be subscribed more than once,
+    // not even through different share groups (the exact same topic repeated in an endpoint is a single subscription)
     private void CheckDuplicateConsumerTopics()
     {
-        List<string> topics = [.. ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Distinct())];
+        static string GetTopicFilter(string topic) =>
+            ParsedTopic.TrySplitSharedSubscription(topic, out _, out string? filter) ? filter : topic;
+
+        List<string> topics = [.. ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Distinct()).Select(GetTopicFilter)];
 
         if (topics.Count != topics.Distinct().Count())
-            throw new BrokerConfigurationException("Cannot connect to the same topic in different endpoints in the same consumer.");
+        {
+            throw new BrokerConfigurationException(
+                "Cannot connect to the same topic in different endpoints in the same consumer, or subscribe it more than once " +
+                "through shared subscriptions.");
+        }
     }
 }

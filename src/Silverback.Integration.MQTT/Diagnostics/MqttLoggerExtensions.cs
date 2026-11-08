@@ -86,6 +86,18 @@ internal static partial class MqttLoggerExtensions
             consumer.Client.Configuration.ClientId,
             consumer.DisplayName);
 
+    public static void LogSubscriptionRejected(
+        this ISilverbackLogger logger,
+        string topicPattern,
+        MqttClientSubscribeResultCode resultCode,
+        MqttClientWrapper client) =>
+        SubscriptionRejected(
+            logger.InnerLogger,
+            topicPattern,
+            resultCode,
+            client.DisplayName,
+            client.Configuration.ClientId);
+
     public static void LogMqttClientError(
         this ISilverbackLogger logger,
         string? source,
@@ -272,6 +284,22 @@ internal static partial class MqttLoggerExtensions
         string clientName,
         string clientId,
         string consumerName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the broker rejects the subscription to a topic or
+    ///     pattern.
+    /// </summary>
+    [LoggerMessage(
+        4042,
+        LogLevel.Error,
+        "Subscription to {TopicPattern} rejected by the broker with result code {ResultCode} | ClientName: {ClientName}, ClientId: {ClientId}",
+        EventName = "Silverback.Integration.MQTT_SubscriptionRejected")]
+    private static partial void SubscriptionRejected(
+        ILogger logger,
+        string topicPattern,
+        MqttClientSubscribeResultCode resultCode,
+        string clientName,
+        string clientId);
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from

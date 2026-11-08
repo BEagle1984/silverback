@@ -139,6 +139,75 @@ public class MqttClientConfigurationTests
     }
 
     [Theory]
+    [InlineData("topic1", "$share/group/topic1")]
+    [InlineData("$share/group1/topic1", "$share/group2/topic1")]
+    [InlineData("topic1/#", "$share/group/topic1/#")]
+    public void Validate_ShouldThrow_WhenTopicIsSubscribedMoreThanOnceThroughSharedSubscriptionInSameEndpoint(string topic1, string topic2)
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+            [
+                new MqttConsumerEndpointConfiguration
+                {
+                    Topics = new ValueReadOnlyCollection<string>([topic1, topic2])
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch(".*subscribe it more than once through shared subscriptions.*");
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenSameTopicIsRepeatedInSameEndpoint()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+            [
+                new MqttConsumerEndpointConfiguration
+                {
+                    Topics = new ValueReadOnlyCollection<string>(["$share/group/topic1", "$share/group/topic1"])
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Theory]
+    [InlineData("topic1", "$share/group/topic1")]
+    [InlineData("$share/group1/topic1", "$share/group2/topic1")]
+    [InlineData("topic1/#", "$share/group/topic1/#")]
+    public void Validate_ShouldThrow_WhenTopicIsSpecifiedMoreThanOnceThroughSharedSubscription(string topic1, string topic2)
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+            [
+                new MqttConsumerEndpointConfiguration
+                {
+                    Topics = new ValueReadOnlyCollection<string>([topic1])
+                },
+                new MqttConsumerEndpointConfiguration
+                {
+                    Topics = new ValueReadOnlyCollection<string>([topic2])
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("Cannot connect to the same topic in different endpoints.*");
+    }
+
+    [Theory]
     [InlineData(null)]
     [InlineData("")]
     public void Validate_ShouldThrow_WhenClientIdIsNullOrEmpty(string? clientId)

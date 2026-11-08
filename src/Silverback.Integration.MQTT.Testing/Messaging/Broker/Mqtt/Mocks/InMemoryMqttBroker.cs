@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
@@ -19,9 +20,16 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     private readonly Dictionary<string, List<MqttApplicationMessage>> _messagesByTopic = [];
 
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only")]
-    public IClientSession GetClientSession(string clientId) =>
-        _sessions.Single(sessionPair => sessionPair.Key.StartsWith($"{clientId}|", StringComparison.Ordinal)).Value;
+    // The index of the next session receiving the messages of each shared subscription, per broker (synchronized with the sessions)
+    private readonly Dictionary<(string? Broker, string Group, string Topic), int> _sharedSubscriptionIndexes = [];
+
+    public IClientSession GetClientSession(string clientId)
+    {
+        lock (_sessions)
+        {
+            return _sessions.Single(sessionPair => sessionPair.Key.StartsWith($"{clientId}|", StringComparison.Ordinal)).Value;
+        }
+    }
 
     public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic, string? server = null)
     {
@@ -96,44 +104,44 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         }
     }
 
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only")]
     public async ValueTask PublishAsync(MockedMqttClient client, MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
-        if (!TryGetClientSession(client, out ClientSession? publisherSession) || !publisherSession.IsConnected)
-            throw new InvalidOperationException("The client is not connected.");
+        List<ClientSession> receivers;
+
+        lock (_sessions)
+        {
+            if (!TryGetClientSession(client, out ClientSession? publisherSession) || !publisherSession.IsConnected)
+                throw new InvalidOperationException("The client is not connected.");
+
+            receivers = GetReceivers(message, clientOptions);
+        }
 
         StoreMessage(message, clientOptions);
 
-        List<string> pushedSharedSubscriptionGroups = [];
-
-        foreach (ClientSession session in _sessions.Values)
+        foreach (ClientSession session in receivers)
         {
-            foreach (Subscription subscription in session.GetMatchingSubscriptions(message, clientOptions))
-            {
-                if (subscription.SharedSubscriptionGroup != null)
-                {
-                    if (pushedSharedSubscriptionGroups.Contains(subscription.SharedSubscriptionGroup))
-                        continue;
-
-                    pushedSharedSubscriptionGroups.Add(subscription.SharedSubscriptionGroup);
-                }
-
-                await session.PushAsync(message).ConfigureAwait(false);
-                break;
-            }
+            await session.PushAsync(message).ConfigureAwait(false);
         }
     }
 
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only.")]
     public async Task WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default)
     {
+        List<ParsedTopic> topicFilters = [.. topicNames.Select(topicName => new ParsedTopic(topicName))];
+
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (_sessions.Values.All(session => (topicNames.Count > 0
-                                                    ? topicNames.All(topicName => session.GetPendingMessagesCount(topicName) == 0)
-                                                    : session.GetPendingMessagesCount() == 0) ||
-                                                !session.Client.IsConnected ||
-                                                !session.IsConnected))
+            ClientSession[] sessions;
+
+            lock (_sessions)
+            {
+                sessions = [.. _sessions.Values];
+            }
+
+            if (sessions.All(session => (topicFilters.Count > 0
+                                            ? topicFilters.TrueForAll(topicFilter => session.GetPendingMessagesCount(topicFilter) == 0)
+                                            : session.GetPendingMessagesCount() == 0) ||
+                                        !session.Client.IsConnected ||
+                                        !session.IsConnected))
             {
                 return;
             }
@@ -142,7 +150,13 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         }
     }
 
-    public void Dispose() => _sessions.Values.ForEach(session => session.Dispose());
+    public void Dispose()
+    {
+        lock (_sessions)
+        {
+            _sessions.Values.ForEach(session => session.Dispose());
+        }
+    }
 
     private static string GetClientSessionKey(MockedMqttClient client) => $"{client.Options?.ClientId}|{client.Options?.ChannelOptions}";
 
@@ -150,6 +164,48 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         _sessions.TryGetValue(GetClientSessionKey(client), out session);
 
     private void RemoveClientSession(MockedMqttClient client) => _sessions.Remove(GetClientSessionKey(client));
+
+    // Like a broker, delivers the message to each session with a matching subscription (a single copy for the overlapping subscriptions)
+    // and, for each shared subscription, an additional copy to one of the sessions sharing it, picked round-robin among the connected
+    // ones. Must be called holding the lock.
+    private List<ClientSession> GetReceivers(MqttApplicationMessage message, MqttClientOptions clientOptions)
+    {
+        List<ClientSession> receivers = [];
+        Dictionary<(string Group, string Topic), List<ClientSession>> sharedSubscriptionSessions = [];
+
+        foreach (ClientSession session in _sessions.Values)
+        {
+            foreach (Subscription subscription in session.GetMatchingSubscriptions(message, clientOptions))
+            {
+                if (subscription.SharedSubscriptionGroup == null)
+                {
+                    if (!receivers.Contains(session))
+                        receivers.Add(session);
+                }
+                else
+                {
+                    sharedSubscriptionSessions.GetOrAddDefault((subscription.SharedSubscriptionGroup, subscription.Topic)).Add(session);
+                }
+            }
+        }
+
+        foreach (((string Group, string Topic) sharedSubscription, List<ClientSession> sessions) in sharedSubscriptionSessions)
+        {
+            // The messages are queued in a disconnected (persistent) session only if no session sharing the subscription is connected
+            List<ClientSession> candidates = sessions.Exists(session => session.IsConnected)
+                ? sessions.FindAll(session => session.IsConnected)
+                : sessions;
+
+            (string? Broker, string Group, string Topic) indexKey =
+                (clientOptions.ChannelOptions?.ToString(), sharedSubscription.Group, sharedSubscription.Topic);
+            int index = _sharedSubscriptionIndexes.GetValueOrDefault(indexKey) % candidates.Count;
+            _sharedSubscriptionIndexes[indexKey] = index + 1;
+
+            receivers.Add(candidates[index]);
+        }
+
+        return receivers;
+    }
 
     private void StoreMessage(MqttApplicationMessage message, MqttClientOptions clientOptions)
     {

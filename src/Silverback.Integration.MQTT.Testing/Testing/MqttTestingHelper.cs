@@ -10,7 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt.Mocks;
+using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
 namespace Silverback.Testing;
@@ -70,7 +73,36 @@ public partial class MqttTestingHelper : TestingHelper, IMqttTestingHelper
             return Task.CompletedTask;
 
         return _inMemoryMqttBroker.WaitUntilAllMessagesAreConsumedAsync(
-            [.. endpointNames.Select(GetEndpointRawName)],
+            [.. endpointNames.SelectMany(GetTopicFilters)],
             cancellationToken);
     }
+
+    // A consumer endpoint can subscribe multiple topics, wildcard or shared subscriptions, which are waited for separately
+    private IEnumerable<string> GetTopicFilters(string endpointName)
+    {
+        if (GetProducerEndpointConfiguration(endpointName) is { } producerEndpointConfiguration)
+            return [producerEndpointConfiguration.RawName];
+
+        ConsumerEndpointConfiguration? consumerEndpointConfiguration = GetConsumerEndpointConfiguration(endpointName);
+
+        // The endpoint of another broker doesn't match any MQTT topic
+        if (consumerEndpointConfiguration != null)
+        {
+            return consumerEndpointConfiguration is MqttConsumerEndpointConfiguration mqttConsumerEndpointConfiguration
+                ? mqttConsumerEndpointConfiguration.Topics
+                : [consumerEndpointConfiguration.RawName];
+        }
+
+        if (IsSubscribedTopic(endpointName))
+            return [endpointName];
+
+        throw new InvalidOperationException($"Endpoint '{endpointName}' not found.");
+    }
+
+    // The topic (or filter) is subscribed by one of the consumers, or the topic matches one of the subscribed filters
+    private bool IsSubscribedTopic(string topic) =>
+        _serviceProvider.GetService<IConsumerCollection>()?
+            .OfType<MqttConsumer>()
+            .Any(consumer => consumer.EndpointsConfiguration.Any(endpoint => endpoint.Topics.Any(subscribedTopic =>
+                subscribedTopic == topic || new ParsedTopic(subscribedTopic).IsMatch(topic)))) ?? false;
 }

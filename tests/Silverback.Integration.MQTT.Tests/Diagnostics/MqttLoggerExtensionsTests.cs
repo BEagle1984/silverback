@@ -213,6 +213,18 @@ public sealed class MqttLoggerExtensionsTests : IDisposable
     }
 
     [Fact]
+    public void LogSubscriptionRejected_ShouldLog()
+    {
+        _silverbackLogger.LogSubscriptionRejected("my/topic/#", MqttClientSubscribeResultCode.NotAuthorized, _mqttClientWrapper);
+
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            null,
+            "Subscription to my/topic/# rejected by the broker with result code NotAuthorized | ClientName: client1, ClientId: id1",
+            4042);
+    }
+
+    [Fact]
     public void LogMqttClientError_ShouldLog()
     {
         _silverbackLogger.LogMqttClientError(

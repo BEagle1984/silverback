@@ -3,15 +3,18 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
 internal class ParsedTopic
 {
+    private const string SharedSubscriptionPrefix = "$share/";
+
     public ParsedTopic(string topic)
     {
-        if (IsSharedSubscription(topic, out string? group, out string? actualTopic))
+        if (TrySplitSharedSubscription(topic, out string? group, out string? actualTopic))
         {
             topic = actualTopic;
             SharedSubscriptionGroup = group;
@@ -27,35 +30,65 @@ internal class ParsedTopic
 
     public string? SharedSubscriptionGroup { get; }
 
-    private static bool IsSharedSubscription(
+    // Splits '$share/{ShareName}/{TopicFilter}', returning an empty filter if the separator is missing
+    public static bool TrySplitSharedSubscription(
         string topic,
         [NotNullWhen(true)] out string? group,
         [NotNullWhen(true)] out string? actualTopic)
     {
-        const string sharedSubscriptionPrefix = "$share/";
-        if (topic.StartsWith(sharedSubscriptionPrefix, StringComparison.Ordinal))
+        if (!topic.StartsWith(SharedSubscriptionPrefix, StringComparison.Ordinal))
         {
-            group = topic[sharedSubscriptionPrefix.Length..topic.IndexOf('/', sharedSubscriptionPrefix.Length)];
-            actualTopic = topic[(topic.IndexOf('/', sharedSubscriptionPrefix.Length) + 1)..];
+            group = null;
+            actualTopic = null;
+            return false;
+        }
+
+        int separatorIndex = topic.IndexOf('/', SharedSubscriptionPrefix.Length);
+
+        if (separatorIndex < 0)
+        {
+            group = topic[SharedSubscriptionPrefix.Length..];
+            actualTopic = string.Empty;
             return true;
         }
 
-        group = null;
-        actualTopic = null;
-        return false;
+        group = topic[SharedSubscriptionPrefix.Length..separatorIndex];
+        actualTopic = topic[(separatorIndex + 1)..];
+        return true;
     }
 
+    public bool IsMatch(string topic) => Regex?.IsMatch(topic) ?? Topic == topic;
+
+    // Builds the regex level by level, assuming a valid filter (each wildcard occupying an entire level and '#' being the last)
     private static Regex? GetRegex(string topic)
     {
         if (!topic.Contains('+', StringComparison.Ordinal) && !topic.Contains('#', StringComparison.Ordinal))
-        {
             return null;
+
+        string[] levels = topic.Split('/');
+        StringBuilder pattern = new("^");
+
+        // The topics starting with '$' (e.g. '$SYS/...') aren't matched by the filters starting with a wildcard
+        if (levels[0] is "+" or "#")
+            pattern.Append(@"(?!\$)");
+
+        for (int i = 0; i < levels.Length; i++)
+        {
+            // The multi-level wildcard also matches the parent level ('a/#' matches 'a')
+            if (levels[i] == "#")
+            {
+                pattern.Append(i == 0 ? ".*" : "(?:/.*)?");
+                break;
+            }
+
+            if (i > 0)
+                pattern.Append('/');
+
+            pattern.Append(levels[i] == "+" ? "[^/]*" : Regex.Escape(levels[i]));
         }
 
-        string pattern = Regex.Escape(topic)
-            .Replace("\\+", "[^\\/]*", StringComparison.Ordinal)
-            .Replace("\\#", ".*", StringComparison.Ordinal);
+        pattern.Append(@"\z");
 
-        return new Regex($"^{pattern}$", RegexOptions.Compiled);
+        return new Regex(pattern.ToString(), RegexOptions.Compiled | RegexOptions.Singleline);
     }
 }

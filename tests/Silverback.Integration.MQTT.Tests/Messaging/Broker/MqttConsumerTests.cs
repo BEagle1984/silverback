@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Packets;
 using MQTTnet.Protocol;
@@ -18,6 +19,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker;
@@ -187,6 +189,83 @@ public class MqttConsumerTests
             new Acknowledgement(1, 1, 1),
             new Acknowledgement(2, 1, 1)
         ]);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ConnectAsync_ShouldReportGrantedTopicFiltersOnly_WhenBrokerRejectsSubscriptions(bool rejectAll)
+    {
+        bool isConnected = false;
+        IMqttClient nativeClient = Substitute.For<IMqttClient>();
+        nativeClient.IsConnected.Returns(_ => isConnected);
+        nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            isConnected = true;
+            return new MqttClientConnectResult();
+        });
+        nativeClient.DisconnectAsync(Arg.Any<MqttClientDisconnectOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            isConnected = false;
+            return Task.CompletedTask;
+        });
+        nativeClient.SubscribeAsync(Arg.Any<MqttClientSubscribeOptions>(), Arg.Any<CancellationToken>()).Returns(call =>
+            Task.FromResult(
+                new MqttClientSubscribeResult(
+                    0,
+                    [
+                        .. call.Arg<MqttClientSubscribeOptions>().TopicFilters.Select((filter, index) =>
+                            new MqttClientSubscribeResultItem(
+                                filter,
+                                rejectAll || index > 0 ? MqttClientSubscribeResultCode.NotAuthorized : MqttClientSubscribeResultCode.GrantedQoS0))
+                    ],
+                    string.Empty,
+                    [])));
+
+        IBrokerClientCallbacksInvoker callbacksInvoker = Substitute.For<IBrokerClientCallbacksInvoker>();
+        MqttClientConfiguration configuration = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
+            .ConnectViaTcp("test-broker")
+            .WithClientId("test-client")
+            .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2"))
+            .Build();
+        await using MqttClientWrapper client = new(
+            "client1",
+            nativeClient,
+            configuration,
+            callbacksInvoker,
+            Substitute.For<ISilverbackLogger>());
+        IBrokerBehaviorsProvider<IConsumerBehavior> behaviors = Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>();
+        behaviors.GetBehaviorsList().Returns([]);
+        LoggerSubstitute<MqttConsumer> loggerSubstitute = new(LogLevel.Trace);
+        using MqttConsumer consumer = new(
+            "consumer1",
+            client,
+            configuration,
+            behaviors,
+            Substitute.For<IServiceProvider>(),
+            new SilverbackLogger<MqttConsumer>(new MappedLevelsLogger<MqttConsumer>([], loggerSubstitute)));
+
+        await client.ConnectAsync();
+
+        // The connected callbacks are invoked after the Subscribed event
+        using CancellationTokenSource timeout = new(ReconnectTimeout);
+
+        while (!callbacksInvoker.ReceivedCalls().Any(call =>
+                   call.GetMethodInfo().IsGenericMethod &&
+                   call.GetMethodInfo().GetGenericArguments()[0] == typeof(IMqttClientConnectedCallback)))
+        {
+            await Task.Delay(10, timeout.Token);
+        }
+
+        consumer.StatusInfo.Status.ShouldBe(rejectAll ? ConsumerStatus.Started : ConsumerStatus.Connected);
+        loggerSubstitute.DidNotReceive(LogLevel.Information, null, "Consumer subscribed to topic2 | ClientName: client1, ClientId: test-client, ConsumerName: consumer1", 4041);
+
+        if (rejectAll)
+            loggerSubstitute.DidNotReceive(LogLevel.Information, null, "Consumer subscribed to topic1 | ClientName: client1, ClientId: test-client, ConsumerName: consumer1", 4041);
+        else
+            loggerSubstitute.Received(LogLevel.Information, null, "Consumer subscribed to topic1 | ClientName: client1, ClientId: test-client, ConsumerName: consumer1", 4041);
+
+        await client.DisconnectAsync();
     }
 
     [Fact]
@@ -741,6 +820,9 @@ public class MqttConsumerTests
                 await PendingReceive;
                 _isConnected = false;
             });
+
+            _nativeClient.SubscribeAsync(Arg.Any<MqttClientSubscribeOptions>(), Arg.Any<CancellationToken>())
+                .Returns(new MqttClientSubscribeResult(0, [], string.Empty, []));
 
             MqttClientConfigurationBuilder builder = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
                 .ConnectViaTcp("backpressure-test-broker")

@@ -22,7 +22,8 @@ public interface IMqttClientWrapper : IBrokerClient
     AsyncEvent<BrokerClient> Connected { get; }
 
     /// <summary>
-    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the topics are successfully subscribed.
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the topics are successfully subscribed. It isn't fired if the
+    ///     broker rejects all the topic filters.
     /// </summary>
     AsyncEvent<BrokerClient> Subscribed { get; }
 
@@ -42,7 +43,7 @@ public interface IMqttClientWrapper : IBrokerClient
     MqttClientConfiguration Configuration { get; }
 
     /// <summary>
-    ///     Gets the subscribed topics filters.
+    ///     Gets the subscribed topics filters, excluding the ones rejected by the broker at the last subscription.
     /// </summary>
     IReadOnlyCollection<MqttTopicFilter> SubscribedTopicsFilters { get; }
 

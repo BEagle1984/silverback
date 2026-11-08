@@ -15,15 +15,14 @@ internal sealed class Subscription : ParsedTopic
         : base(topic)
     {
         _clientOptions = clientOptions;
+        Filter = topic;
     }
 
-    public bool IsMatch(MqttApplicationMessage message, MqttClientOptions clientOptions)
-    {
-        if (!IsSameBroker(clientOptions))
-            return false;
+    // The subscribed topic filter, including the shared subscription prefix
+    public string Filter { get; }
 
-        return Regex?.IsMatch(message.Topic) ?? Topic == message.Topic;
-    }
+    public bool IsMatch(MqttApplicationMessage message, MqttClientOptions clientOptions) =>
+        IsSameBroker(clientOptions) && IsMatch(message.Topic);
 
     private bool IsSameBroker(MqttClientOptions clientOptions)
     {
