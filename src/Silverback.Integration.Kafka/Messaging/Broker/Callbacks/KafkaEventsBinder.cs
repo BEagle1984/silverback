@@ -196,7 +196,7 @@ internal static class KafkaEventsBinder
 
         callbacksInvoker.Invoke<IKafkaConsumerErrorCallback>(handler =>
         {
-            handled &= handler.OnConsumerError(error, consumerWrapper.Consumer);
+            handled |= handler.OnConsumerError(error, consumerWrapper.Consumer);
         });
 
         if (handled)
@@ -219,7 +219,7 @@ internal static class KafkaEventsBinder
 
         callbacksInvoker.Invoke<IKafkaProducerLogCallback>(handler =>
         {
-            handled &= handler.OnProducerLog(logMessage, producerWrapper);
+            handled |= handler.OnProducerLog(logMessage, producerWrapper);
         });
 
         if (handled)
@@ -259,7 +259,7 @@ internal static class KafkaEventsBinder
 
         callbacksInvoker.Invoke<IKafkaConsumerLogCallback>(handler =>
         {
-            handled &= handler.OnConsumerLog(logMessage, consumerWrapper.Consumer);
+            handled |= handler.OnConsumerLog(logMessage, consumerWrapper.Consumer);
         });
 
         if (handled)
