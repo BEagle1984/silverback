@@ -76,7 +76,7 @@ Kafka guarantees ordering only within a partition. Set a key (e.g. via `SetKafka
 
 ### MQTT Producing When Nobody Is Subscribed
 
-By default, the MQTT producer doesn't throw if no subscriber is consuming the produced message. The behavior can be configured per endpoint with `IgnoreNoMatchingSubscribers()`, `LogNoMatchingSubscribersWarning()` or `ThrowNoMatchingSubscribersError()`. See <xref:mqtt>.
+By default, the MQTT producer doesn't throw if no subscriber is consuming the produced message. The behavior can be configured per endpoint with `IgnoreNoMatchingSubscribers()`, `LogNoMatchingSubscribersWarning()` or `ThrowNoMatchingSubscribersError()`. See [No Matching Subscribers](xref:mqtt-message-properties#no-matching-subscribers).
 
 ## Outbox and Storage
 

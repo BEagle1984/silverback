@@ -305,4 +305,6 @@ public class ConsumerManagementService
 * <xref:producing>
 * <xref:consuming>
 * <xref:mqtt>
+* <xref:kafka-subscription>
+* <xref:mqtt-subscription>
 * <xref:samples>

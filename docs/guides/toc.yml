@@ -40,6 +40,10 @@
               href: broker/producing/kafka/transactions.md
             - name: Schema Registry
               href: broker/producing/kafka/schema-registry.md
+        - name: MQTT
+          items:
+            - name: Message Properties
+              href: broker/producing/mqtt/message-properties.md
     - name: Consuming
       items:
         - name: Basics
@@ -74,9 +78,13 @@
               href: broker/consuming/kafka/offset.md
             - name: Schema Registry
               href: broker/consuming/kafka/schema-registry.md
+        - name: MQTT
+          items:
+            - name: Subscription and Processing
+              href: broker/consuming/mqtt/subscription.md
     - name: Kafka Admin Client
       href: broker/kafka-admin-client.md
-    - name: MQTT Specifics
+    - name: MQTT Client Configuration
       href: broker/mqtt.md
     - name: Default Headers
       href: broker/default-headers.md

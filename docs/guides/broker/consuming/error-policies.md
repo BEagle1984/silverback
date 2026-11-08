@@ -376,7 +376,7 @@ Other things to consider:
 
 MQTT can't re-read messages from the broker: the retry policy reprocesses the message that is held locally, and the message is acknowledged only after it has been successfully processed, skipped or moved.
 
-- While a message is being retried, the processing channel it belongs to is blocked. With the default sequential processing, this means that the whole client stops processing messages; consider `EnableParallelProcessing` (see <xref:mqtt>).
+- While a message is being retried, the processing channel it belongs to is blocked. With the default sequential processing, this means that the whole client stops processing messages. With parallel processing, the other channels keep processing only until the buffer of the blocked channel is full, since the messages are distributed round-robin; consider `EnableParallelProcessing` (see [Parallel Processing and Backpressure](xref:mqtt-subscription#parallel-processing-and-backpressure)).
 - The broker only delivers a limited number of unacknowledged QoS 1/2 messages (*Receive Maximum*, configurable via `LimitUnacknowledgedPublications`), so new messages stop flowing until the failed message is acknowledged.
 - If the client disconnects while retrying, the unacknowledged message is redelivered by the broker only if a persistent session and QoS 1 or 2 are used.
 - With MQTT 3.1.1, headers aren't supported, so the failed attempts count can't be transferred with moved messages (see [Failed Attempts Header](#failed-attempts-header)).
@@ -438,3 +438,4 @@ Alternatively, derive from <xref:Silverback.Messaging.Consuming.ErrorHandling.Er
 - <xref:consuming-validation>
 - <xref:default-headers>
 - <xref:mqtt>
+- <xref:mqtt-subscription>
