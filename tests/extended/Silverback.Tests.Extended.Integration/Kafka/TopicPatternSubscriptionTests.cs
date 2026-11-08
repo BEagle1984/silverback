@@ -40,8 +40,10 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
 
     private static readonly TimeSpan SettleTime = TimeSpan.FromSeconds(3);
 
-    [Fact]
-    public async Task Consume_ShouldConsumeMatchingTopicsOnly_WhenSubscribingPattern()
+    [Theory]
+    [InlineData(GroupProtocol.Classic)]
+    [InlineData(GroupProtocol.Consumer)]
+    public async Task Consume_ShouldConsumeMatchingTopicsOnly_WhenSubscribingPattern(GroupProtocol groupProtocol)
     {
         _ = fixture;
 
@@ -66,7 +68,7 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
         ConcurrentQueue<ConsumedMessage> consumed = new();
         AssignmentObserver assignments = new();
         using CollectingLoggerProvider logs = new();
-        using IHost host = CreateHost(prefix, consumed, assignments, logs, consumer => AddEndpoint(consumer, pattern));
+        using IHost host = CreateHost(prefix, groupProtocol, consumed, assignments, logs, consumer => AddEndpoint(consumer, pattern));
 
         try
         {
@@ -92,8 +94,10 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
         }
     }
 
-    [Fact]
-    public async Task Consume_ShouldConsumeTopicCreatedLater_WhenSubscribingPattern()
+    [Theory]
+    [InlineData(GroupProtocol.Classic)]
+    [InlineData(GroupProtocol.Consumer)]
+    public async Task Consume_ShouldConsumeTopicCreatedLater_WhenSubscribingPattern(GroupProtocol groupProtocol)
     {
         _ = fixture;
 
@@ -111,7 +115,7 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
         ConcurrentQueue<ConsumedMessage> consumed = new();
         AssignmentObserver assignments = new();
         using CollectingLoggerProvider logs = new();
-        using IHost host = CreateHost(prefix, consumed, assignments, logs, consumer => AddEndpoint(consumer, pattern));
+        using IHost host = CreateHost(prefix, groupProtocol, consumed, assignments, logs, consumer => AddEndpoint(consumer, pattern));
 
         try
         {
@@ -121,7 +125,9 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
             await CreateTopicsAsync(admin, topicB);
             await ProduceJsonAsync(producer, topicB, new ReconciliationMessage(0, 2));
 
-            // librdkafka matches the new topic at the next metadata refresh and rejoins the group to have it assigned
+            // With the classic protocol, librdkafka matches the new topic at the next metadata refresh and rejoins the group to have
+            // it assigned. With the consumer protocol, the broker resolves the pattern again when it learns about the new topic (at
+            // most every 10 seconds, on a heartbeat) and assigns it incrementally.
             await WaitUntilAsync(
                 () => consumed.Any(message => message.Topic == topicB),
                 DiscoveryTimeout,
@@ -143,8 +149,10 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
         }
     }
 
-    [Fact]
-    public async Task Consume_ShouldPreferTopicNameEndpoint_WhenTopicAlsoMatchesPattern()
+    [Theory]
+    [InlineData(GroupProtocol.Classic)]
+    [InlineData(GroupProtocol.Consumer)]
+    public async Task Consume_ShouldPreferTopicNameEndpoint_WhenTopicAlsoMatchesPattern(GroupProtocol groupProtocol)
     {
         _ = fixture;
 
@@ -167,6 +175,7 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
         // The pattern endpoint is configured first, but the endpoint subscribing the topic name takes precedence
         using IHost host = CreateHost(
             prefix,
+            groupProtocol,
             consumed,
             assignments,
             logs,
@@ -188,6 +197,56 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
                 new(topicA, topicA, pattern, new ReconciliationMessage(0, 1)),
                 new(topicB, topicB, topicB, new ReconciliationMessage(0, 2))
             ];
+            consumed.Distinct().ShouldBe(expected, ignoreOrder: true);
+            logs.Errors.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopHostAsync(host, assignments, consumed, logs);
+        }
+    }
+
+    [Theory]
+    [InlineData(GroupProtocol.Classic)]
+    [InlineData(GroupProtocol.Consumer)]
+    public async Task Consume_ShouldApplyMatchSemanticsOfGroupProtocol_WhenPatternIsNotAnchoredAtEnd(GroupProtocol groupProtocol)
+    {
+        _ = fixture;
+
+        string prefix = "stress-pattern-" + Guid.NewGuid().ToString("N");
+        string topicA = prefix + ".a";
+        string longerTopic = prefix + ".a1";
+
+        // Without the trailing '$', librdkafka (classic protocol) also subscribes the topic starting with the matched text, while
+        // the broker (consumer protocol) requires the pattern to match the entire topic name
+        string pattern = $"^{Regex.Escape(topicA)}";
+
+        using IAdminClient admin = CreateAdminClient();
+        await CreateTopicsAsync(admin, topicA, longerTopic);
+
+        using IProducer<Null, byte[]> producer = CreateProducer();
+        await ProduceJsonAsync(producer, topicA, new ReconciliationMessage(0, 1));
+        await ProduceJsonAsync(producer, longerTopic, new ReconciliationMessage(0, 2));
+
+        ConcurrentQueue<ConsumedMessage> consumed = new();
+        AssignmentObserver assignments = new();
+        using CollectingLoggerProvider logs = new();
+        using IHost host = CreateHost(prefix, groupProtocol, consumed, assignments, logs, consumer => AddEndpoint(consumer, pattern));
+
+        try
+        {
+            List<ConsumedMessage> expected = [new(topicA, topicA, pattern, new ReconciliationMessage(0, 1))];
+
+            if (groupProtocol == GroupProtocol.Classic)
+                expected.Add(new ConsumedMessage(longerTopic, longerTopic, pattern, new ReconciliationMessage(0, 2)));
+
+            await host.StartAsync().WaitAsync(Timeout);
+            await WaitUntilAsync(() => consumed.Distinct().Count() >= expected.Count, Timeout, "the messages of the matching topics");
+
+            // Leave time to consume the messages of the other topic, in case it was assigned as well
+            await Task.Delay(SettleTime);
+
+            assignments.Topics.ShouldBe(expected.Select(message => message.Topic), ignoreOrder: true);
             consumed.Distinct().ShouldBe(expected, ignoreOrder: true);
             logs.Errors.ShouldBeEmpty();
         }
@@ -220,6 +279,7 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
 
     private static IHost CreateHost(
         string prefix,
+        GroupProtocol groupProtocol,
         ConcurrentQueue<ConsumedMessage> consumed,
         AssignmentObserver assignments,
         ILoggerProvider logs,
@@ -236,11 +296,13 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
                 .WithBootstrapServers(KafkaFixture.BootstrapServers)
                 .AddConsumer(consumer =>
                 {
-                    // Refresh the metadata every second to discover the new topics quickly (the default is 5 minutes) and
-                    // consume the messages written to a topic before it was assigned
+                    // With the classic protocol, refresh the metadata every second to discover the new topics quickly (the default
+                    // is 5 minutes), while with the consumer protocol the broker resolves the pattern. Consume the messages written
+                    // to a topic before it was assigned.
                     consumer
                         .WithGroupId(prefix + "-group")
                         .WithClientId(prefix + "-consumer")
+                        .WithGroupProtocol(groupProtocol)
                         .WithTopicMetadataRefreshIntervalMs(1000)
                         .AutoResetOffsetToEarliest();
 

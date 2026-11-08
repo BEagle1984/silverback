@@ -39,11 +39,17 @@ public class RebalanceTests
     [InlineData("CooperativeSticky", true, true, "single")]
     [InlineData("CooperativeSticky", true, false, "batch")]
     [InlineData("CooperativeSticky", true, true, "batch")]
+    [InlineData("", false, false, "single", "Consumer")]
+    [InlineData("", false, true, "single", "Consumer")]
+    [InlineData("", true, false, "single", "Consumer")]
+    [InlineData("", false, false, "batch", "Consumer")]
+    [InlineData("", true, true, "batch", "Consumer")]
     public async Task Rebalance_ShouldReconcileEveryRecord_WhenConsumersJoinAndLeave(
         string assignor,
         bool sharedChannel,
         bool autoCommit,
-        string workload)
+        string workload,
+        string groupProtocol = "Classic")
     {
         await using ContainerTestRun run = new(_output);
         KafkaReconciliation reconciliation = new(run);
@@ -53,6 +59,7 @@ public class RebalanceTests
             "BOOTSTRAP=" + KafkaFixture.ContainerBootstrapServers,
             "SCENARIO=reconciliation",
             "ASSIGNOR=" + assignor,
+            "GROUP_PROTOCOL=" + groupProtocol,
             "SHARED_CHANNEL=" + (sharedChannel ? "true" : "false"),
             "AUTO_COMMIT=" + (autoCommit ? "true" : "false"),
             "WORKLOAD=" + workload

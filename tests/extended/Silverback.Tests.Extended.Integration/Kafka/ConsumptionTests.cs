@@ -26,7 +26,11 @@ public class ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
     [InlineData("single", "")]
     [InlineData("mixed", "")]
     [InlineData("mixed", "CooperativeSticky")]
-    public async Task Consume_ShouldContinueMakingProgress_DuringRepeatedRebalances(string scenario, string assignor)
+    [InlineData("mixed", "", "Consumer")]
+    public async Task Consume_ShouldContinueMakingProgress_DuringRepeatedRebalances(
+        string scenario,
+        string assignor,
+        string groupProtocol = "Classic")
     {
         _ = fixture;
 
@@ -36,6 +40,7 @@ public class ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
             "BOOTSTRAP=" + KafkaFixture.ContainerBootstrapServers,
             "SCENARIO=" + scenario,
             "ASSIGNOR=" + assignor,
+            "GROUP_PROTOCOL=" + groupProtocol,
             "PARALLELISM=2",
             "BACKPRESSURE=1",
             "PARTITIONS=6",
@@ -47,22 +52,32 @@ public class ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
         IContainerService producer = await run.StartAsync("producer", ["ROLE=producer", .. settings]);
         await run.WaitForLogAsync(producer, "PRODUCED", TimeSpan.FromSeconds(30));
 
+        // Wait until the primary is assigned and processing before the first member joins, otherwise (with the consumer protocol) the
+        // joining members could take their partitions without revoking any from the primary
         IContainerService primary = await run.StartAsync("primary", settings);
-        await run.WaitForLogAsync(primary, "PROGRESS", TimeSpan.FromSeconds(30));
+        await WaitForCounterAsync(run, primary, "assignments", TimeSpan.FromSeconds(60));
+        await WaitForCounterAsync(run, primary, "processed", TimeSpan.FromSeconds(30));
 
-        long before = ReadProcessed(await ContainerTestRun.LogsAsync(primary));
+        long before = ReadCounter(await ContainerTestRun.LogsAsync(primary), "processed");
 
         for (int index = 0; index < 2; index++)
         {
+            // Wait for the assignment, not just the first progress report, to make sure that the member joined the group (with the
+            // consumer protocol the broker assigns the partitions incrementally, at the following heartbeats)
             IContainerService joining = await run.StartAsync("joining-" + index, settings);
-            await run.WaitForLogAsync(joining, "PROGRESS", TimeSpan.FromSeconds(30));
+            await WaitForCounterAsync(run, joining, "assignments", TimeSpan.FromSeconds(60));
             await MonitorAsync(run, primary, TimeSpan.FromSeconds(10));
             await run.StopAsync(joining);
         }
 
         await MonitorAsync(run, primary, TimeSpan.FromSeconds(5));
 
-        ReadProcessed(await ContainerTestRun.LogsAsync(primary)).ShouldBeGreaterThan(before);
+        string primaryLogs = await ContainerTestRun.LogsAsync(primary);
+        ReadCounter(primaryLogs, "processed").ShouldBeGreaterThan(before);
+
+        // Not checked per member: with the consumer protocol, the second member can take over the partitions released by the first
+        // one, without any further revocation from the primary
+        ReadCounter(primaryLogs, "revocations").ShouldBeGreaterThan(0);
 
         await run.StopAsync(primary);
 
@@ -128,7 +143,28 @@ public class ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
         }
     }
 
-    private static long ReadProcessed(string logs)
+    private static async Task WaitForCounterAsync(
+        ContainerTestRun run,
+        IContainerService container,
+        string counter,
+        TimeSpan timeout)
+    {
+        DateTime deadline = DateTime.UtcNow + timeout;
+
+        while (DateTime.UtcNow < deadline)
+        {
+            container.GetConfiguration(true).State.Running.ShouldBeTrue($"{container.Name} exited before reporting {counter}");
+
+            if (ReadCounter(await ContainerTestRun.LogsAsync(container), counter) > 0)
+                return;
+
+            await Task.Delay(200);
+        }
+
+        throw new TimeoutException($"{container.Name} reported no {counter} within {timeout}. Artifacts: {run.Artifacts}");
+    }
+
+    private static long ReadCounter(string logs, string counter)
     {
         string? progress = logs.Split('\n').LastOrDefault(line => line.Contains("PROGRESS ", StringComparison.Ordinal));
 
@@ -137,6 +173,6 @@ public class ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
 
         using JsonDocument document = JsonDocument.Parse(progress[(progress.IndexOf("PROGRESS ", StringComparison.Ordinal) + 9)..]);
 
-        return document.RootElement.GetProperty("processed").GetInt64();
+        return document.RootElement.GetProperty(counter).GetInt64();
     }
 }

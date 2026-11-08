@@ -3,7 +3,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Configuration;
@@ -50,8 +49,6 @@ internal static class ReconciliationConsumer
                     .WithGroupId(prefix + "-group")
                     .WithClientId(member)
                     .WithMaxPollIntervalMs(300000)
-                    .WithSessionTimeoutMs(6000)
-                    .WithHeartbeatIntervalMs(1000)
                     .LimitParallelism(2)
                     .LimitBackpressure(2)
                     .AutoResetOffsetToEarliest();
@@ -62,10 +59,7 @@ internal static class ReconciliationConsumer
                 if (Environment.GetEnvironmentVariable("AUTO_COMMIT") != "true")
                     consumer.CommitOffsetEach(1);
 
-                string? assignor = Environment.GetEnvironmentVariable("ASSIGNOR");
-
-                if (!string.IsNullOrEmpty(assignor))
-                    consumer.WithPartitionAssignmentStrategy(Enum.Parse<PartitionAssignmentStrategy>(assignor, true));
+                KafkaGroupProtocolSettings.Apply(consumer);
 
                 consumer.Consume<ReconciliationMessage>(endpoint =>
                 {

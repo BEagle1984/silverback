@@ -106,17 +106,12 @@ internal static class MixedWorkload
                         .WithGroupId(prefix + "-group")
                         .WithClientId(member)
                         .WithMaxPollIntervalMs(ReadInt("MAX_POLL_MS", 300000))
-                        .WithSessionTimeoutMs(6000)
-                        .WithHeartbeatIntervalMs(1000)
                         .WithStatisticsIntervalMs(1000)
                         .LimitParallelism(ReadInt("PARALLELISM", 100))
                         .LimitBackpressure(ReadInt("BACKPRESSURE", 50))
                         .AutoResetOffsetToEarliest();
 
-                    string? assignor = Environment.GetEnvironmentVariable("ASSIGNOR");
-
-                    if (!string.IsNullOrEmpty(assignor))
-                        consumer.WithPartitionAssignmentStrategy(Enum.Parse<PartitionAssignmentStrategy>(assignor, true));
+                    KafkaGroupProtocolSettings.Apply(consumer);
 
                     if (Environment.GetEnvironmentVariable("AUTO_RECOVERY") != "true")
                         consumer.DisableAutoRecovery();
