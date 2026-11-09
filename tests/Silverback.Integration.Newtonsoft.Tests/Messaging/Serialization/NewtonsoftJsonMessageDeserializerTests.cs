@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -350,6 +351,48 @@ public class NewtonsoftJsonMessageDeserializerTests
             {
                 NullValueHandling = NullValueHandling.Include
             });
+
+        bool result = Equals(deserializer1, deserializer2);
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentContractResolver()
+    {
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer1 = new(
+            new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer2 = new(
+            new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver()
+            });
+
+        bool result = Equals(deserializer1, deserializer2);
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentEncoding()
+    {
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer1 = new(encoding: MessageEncoding.UTF8);
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer2 = new(encoding: MessageEncoding.Unicode);
+
+        bool result = Equals(deserializer1, deserializer2);
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentTypeHeaderBehavior()
+    {
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer1 = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Optional);
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer2 = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Ignore);
 
         bool result = Equals(deserializer1, deserializer2);
 

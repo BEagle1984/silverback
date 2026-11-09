@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Newtonsoft.Json;
 using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
@@ -46,6 +47,43 @@ public class NewtonsoftJsonMessageSerializerBuilderTests
         NewtonsoftJsonMessageSerializer newtonsoftJsonMessageSerializer = serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
         newtonsoftJsonMessageSerializer.Settings.ShouldNotBeNull();
         newtonsoftJsonMessageSerializer.Settings.MaxDepth.ShouldBe(42);
+    }
+
+    [Fact]
+    public void Configure_ShouldApplyToPreviousSettings_WhenCalledMultipleTimes()
+    {
+        NewtonsoftJsonMessageSerializerBuilder builder = new();
+
+        IMessageSerializer serializer = builder
+            .Configure(settings => settings.MaxDepth = 42)
+            .Configure(settings => settings.NullValueHandling = NullValueHandling.Ignore)
+            .Build();
+
+        NewtonsoftJsonMessageSerializer newtonsoftJsonMessageSerializer = serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
+        newtonsoftJsonMessageSerializer.Settings.ShouldNotBeNull();
+        newtonsoftJsonMessageSerializer.Settings.MaxDepth.ShouldBe(42);
+        newtonsoftJsonMessageSerializer.Settings.NullValueHandling.ShouldBe(NullValueHandling.Ignore);
+    }
+
+    [Fact]
+    public void Configure_ShouldNotAlterPreviousSettings()
+    {
+        JsonSerializerSettings? firstSettings = null;
+        NewtonsoftJsonMessageSerializerBuilder builder = new();
+
+        IMessageSerializer serializer = builder
+            .Configure(
+                settings =>
+                {
+                    settings.MaxDepth = 42;
+                    firstSettings = settings;
+                })
+            .Configure(settings => settings.MaxDepth = 13)
+            .Build();
+
+        firstSettings.ShouldNotBeNull();
+        firstSettings.MaxDepth.ShouldBe(42);
+        serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>().Settings.ShouldNotBeSameAs(firstSettings);
     }
 
     [Fact]

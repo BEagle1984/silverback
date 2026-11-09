@@ -101,8 +101,18 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : IMessageDeseri
     public IMessageSerializer GetCompatibleSerializer() => new NewtonsoftJsonMessageSerializer(Settings, Encoding);
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(NewtonsoftJsonMessageDeserializer<TMessage>? other) =>
-        NewtonsoftComparisonHelper.JsonEquals(this, other);
+    public bool Equals(NewtonsoftJsonMessageDeserializer<TMessage>? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Encoding == other.Encoding &&
+               TypeHeaderBehavior == other.TypeHeaderBehavior &&
+               JsonSerializerSettingsComparer.AreEqual(Settings, other.Settings);
+    }
 
     /// <inheritdoc cref="object.Equals(object)" />
     public override bool Equals(object? obj)

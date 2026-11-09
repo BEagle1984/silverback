@@ -69,7 +69,16 @@ public sealed class JsonMessageSerializer : IMessageSerializer, IEquatable<JsonM
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(JsonMessageSerializer? other) => ComparisonHelper.JsonEquals(this, other);
+    public bool Equals(JsonMessageSerializer? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return MustSetTypeHeader == other.MustSetTypeHeader && JsonSerializerOptionsComparer.AreEqual(Options, other.Options);
+    }
 
     /// <inheritdoc cref="object.Equals(object)" />
     public override bool Equals(object? obj)

@@ -389,4 +389,51 @@ public class JsonMessageDeserializerTests
 
         result.ShouldBeFalse();
     }
+
+    [Fact]
+    public async Task Equals_ShouldReturnTrue_WhenSameSettingsAndOneDeserializerHasBeenUsed()
+    {
+        JsonMessageDeserializer<TestEventOne> deserializer1 = new(new JsonSerializerOptions { MaxDepth = 42 });
+        JsonMessageDeserializer<TestEventOne> deserializer2 = new(new JsonSerializerOptions { MaxDepth = 42 });
+
+        await deserializer1.DeserializeAsync(
+            new MemoryStream("{\"Content\":\"the message\"}"u8.ToArray()),
+            [],
+            TestConsumerEndpoint.GetDefault());
+
+        bool result = Equals(deserializer1, deserializer2);
+
+        result.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentTypeInfoResolver()
+    {
+        JsonMessageDeserializer<TestEventOne> deserializer1 = new(
+            new JsonSerializerOptions
+            {
+                TypeInfoResolver = TestEventOneJsonSerializerContext.Default
+            });
+
+        JsonMessageDeserializer<TestEventOne> deserializer2 = new(
+            new JsonSerializerOptions
+            {
+                TypeInfoResolver = TestEventTwoJsonSerializerContext.Default
+            });
+
+        bool result = Equals(deserializer1, deserializer2);
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentTypeHeaderBehavior()
+    {
+        JsonMessageDeserializer<TestEventOne> deserializer1 = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Optional);
+        JsonMessageDeserializer<TestEventOne> deserializer2 = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Ignore);
+
+        bool result = Equals(deserializer1, deserializer2);
+
+        result.ShouldBeFalse();
+    }
 }

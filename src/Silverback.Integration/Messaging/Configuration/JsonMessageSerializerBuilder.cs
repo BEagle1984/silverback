@@ -3,6 +3,7 @@
 
 using System;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -19,7 +20,8 @@ public sealed class JsonMessageSerializerBuilder
     private bool? _mustSetTypeHeader;
 
     /// <summary>
-    ///     Configures the <see cref="JsonSerializerOptions" />.
+    ///     Configures the <see cref="JsonSerializerOptions" />. The action is applied to a copy of the options set by the previous calls
+    ///     to <see cref="Configure" /> or <see cref="UseJsonSerializerContext" />, if any.
     /// </summary>
     /// <param name="configureAction">
     ///     An <see cref="Action{T}" /> that takes the <see cref="JsonSerializerOptions" /> and configures it.
@@ -31,9 +33,31 @@ public sealed class JsonMessageSerializerBuilder
     {
         Check.NotNull(configureAction, nameof(configureAction));
 
-        _options = new JsonSerializerOptions();
-        configureAction.Invoke(_options);
+        JsonSerializerOptions options = _options == null ? new JsonSerializerOptions() : new JsonSerializerOptions(_options);
+        configureAction.Invoke(options);
+        _options = options;
 
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the source-generated <see cref="JsonSerializerContext" /> to be used. The serializer will use the context's own
+    ///     <see cref="JsonSerializerContext.Options" />, replacing the options set by the previous calls to <see cref="Configure" />.
+    ///     Call <see cref="Configure" /> afterwards to further customize a copy of these options, for example to add more contexts to the
+    ///     <see cref="JsonSerializerOptions.TypeInfoResolverChain" />. The additional contexts will use these same options.
+    /// </summary>
+    /// <param name="context">
+    ///     The <see cref="JsonSerializerContext" />. Pass the generated <c>Default</c> instance to use the options declared via the
+    ///     <see cref="JsonSourceGenerationOptionsAttribute" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public JsonMessageSerializerBuilder UseJsonSerializerContext(JsonSerializerContext context)
+    {
+        Check.NotNull(context, nameof(context));
+
+        _options = context.Options;
         return this;
     }
 

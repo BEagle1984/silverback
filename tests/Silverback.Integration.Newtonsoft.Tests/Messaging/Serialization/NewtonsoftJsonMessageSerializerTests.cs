@@ -4,6 +4,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -185,6 +186,48 @@ public class NewtonsoftJsonMessageSerializerTests
             {
                 NullValueHandling = NullValueHandling.Include
             });
+
+        bool result = Equals(serializer1, serializer2);
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentContractResolver()
+    {
+        NewtonsoftJsonMessageSerializer serializer1 = new(
+            new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
+        NewtonsoftJsonMessageSerializer serializer2 = new(
+            new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver()
+            });
+
+        bool result = Equals(serializer1, serializer2);
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentEncoding()
+    {
+        NewtonsoftJsonMessageSerializer serializer1 = new(encoding: MessageEncoding.UTF8);
+        NewtonsoftJsonMessageSerializer serializer2 = new(encoding: MessageEncoding.Unicode);
+
+        bool result = Equals(serializer1, serializer2);
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentTypeHeaderSetting()
+    {
+        NewtonsoftJsonMessageSerializer serializer1 = new(mustSetTypeHeader: true);
+        NewtonsoftJsonMessageSerializer serializer2 = new(mustSetTypeHeader: false);
 
         bool result = Equals(serializer1, serializer2);
 

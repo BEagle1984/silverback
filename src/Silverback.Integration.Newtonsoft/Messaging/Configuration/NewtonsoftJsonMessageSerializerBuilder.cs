@@ -21,7 +21,8 @@ public class NewtonsoftJsonMessageSerializerBuilder
     private bool? _mustSetTypeHeader;
 
     /// <summary>
-    ///     Configures the <see cref="JsonSerializerSettings" />.
+    ///     Configures the <see cref="JsonSerializerSettings" />. The action is applied to a copy of the settings set by the previous calls
+    ///     to <see cref="Configure" />, if any.
     /// </summary>
     /// <param name="configureAction">
     ///     An <see cref="Action{T}" /> that takes the <see cref="JsonSerializerSettings" /> and configures it.
@@ -33,8 +34,9 @@ public class NewtonsoftJsonMessageSerializerBuilder
     {
         Check.NotNull(configureAction, nameof(configureAction));
 
-        _settings = new JsonSerializerSettings();
-        configureAction.Invoke(_settings);
+        JsonSerializerSettings settings = _settings == null ? new JsonSerializerSettings() : new JsonSerializerSettings(_settings);
+        configureAction.Invoke(settings);
+        _settings = settings;
 
         return this;
     }

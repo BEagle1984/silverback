@@ -165,6 +165,48 @@ public class JsonSerializationTests : KafkaTests
     }
 
     [Fact]
+    public async Task JsonSerialization_ShouldProduceAndConsume_WhenUsingJsonSerializerContext()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .SerializeAsJson(serializer => serializer
+                            .UseJsonSerializerContext(CamelCaseTestEventOneJsonSerializerContext.Default)
+                            .Configure(options => options.TypeInfoResolverChain.Add(TestEventTwoJsonSerializerContext.Default)))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .DeserializeJson(deserializer => deserializer
+                            .UseJsonSerializerContext(CamelCaseTestEventOneJsonSerializerContext.Default)
+                            .Configure(options => options.TypeInfoResolverChain.Add(TestEventTwoJsonSerializerContext.Default))))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageType].ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
+        Helper.Spy.OutboundEnvelopes[1].Headers[DefaultMessageHeaders.MessageType].ShouldBe(typeof(TestEventTwo).AssemblyQualifiedName);
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().ShouldBe("{\"contentEventOne\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
+        Helper.Spy.InboundEnvelopes[1].GetRawMessageAsString().ShouldBe("{\"contentEventTwo\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventTwo>().ContentEventTwo.ShouldBe("Hello E2E!");
+    }
+
+    [Fact]
     public async Task JsonSerialization_ShouldProduceAndConsume_WhenCombiningSourceGeneratedContexts()
     {
         await Host.ConfigureServicesAndRunAsync(services => services

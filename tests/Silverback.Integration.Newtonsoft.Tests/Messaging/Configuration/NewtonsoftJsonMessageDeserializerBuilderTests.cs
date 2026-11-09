@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Newtonsoft.Json;
 using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
@@ -58,6 +59,43 @@ public class NewtonsoftJsonMessageDeserializerBuilderTests
         NewtonsoftJsonMessageDeserializer<object> newtonsoftJsonMessageDeserializer = deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
         newtonsoftJsonMessageDeserializer.Settings.ShouldNotBeNull();
         newtonsoftJsonMessageDeserializer.Settings.MaxDepth.ShouldBe(42);
+    }
+
+    [Fact]
+    public void Configure_ShouldApplyToPreviousSettings_WhenCalledMultipleTimes()
+    {
+        NewtonsoftJsonMessageDeserializerBuilder builder = new();
+
+        IMessageDeserializer deserializer = builder
+            .Configure(settings => settings.MaxDepth = 42)
+            .Configure(settings => settings.NullValueHandling = NullValueHandling.Ignore)
+            .Build();
+
+        NewtonsoftJsonMessageDeserializer<object> newtonsoftJsonMessageDeserializer = deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        newtonsoftJsonMessageDeserializer.Settings.ShouldNotBeNull();
+        newtonsoftJsonMessageDeserializer.Settings.MaxDepth.ShouldBe(42);
+        newtonsoftJsonMessageDeserializer.Settings.NullValueHandling.ShouldBe(NullValueHandling.Ignore);
+    }
+
+    [Fact]
+    public void Configure_ShouldNotAlterPreviousSettings()
+    {
+        JsonSerializerSettings? firstSettings = null;
+        NewtonsoftJsonMessageDeserializerBuilder builder = new();
+
+        IMessageDeserializer deserializer = builder
+            .Configure(
+                settings =>
+                {
+                    settings.MaxDepth = 42;
+                    firstSettings = settings;
+                })
+            .Configure(settings => settings.MaxDepth = 13)
+            .Build();
+
+        firstSettings.ShouldNotBeNull();
+        firstSettings.MaxDepth.ShouldBe(42);
+        deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>().Settings.ShouldNotBeSameAs(firstSettings);
     }
 
     [Fact]

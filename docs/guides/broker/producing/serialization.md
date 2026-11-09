@@ -10,7 +10,7 @@ The message payload needs to be serialized into a byte array before it can be se
 
 ### System.Text.Json
 
-The default serializer is `System.Text.Json`. It is used to serialize the message payload into a JSON string. The serializer settings can be customized using the `Configure` method.
+The default serializer is `System.Text.Json`. It is used to serialize the message payload into a JSON string. The serializer settings can be customized using the `Configure` method. When called multiple times, each call applies its changes on top of the previous ones.
 
 ```csharp
 services.AddSilverback()
@@ -30,11 +30,12 @@ services.AddSilverback()
 
 #### Source Generation
 
-The serializer can use the metadata generated at compile time by the [System.Text.Json source generator](https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/source-generation) instead of runtime reflection. Declare a `JsonSerializerContext` listing the message types and set it as `TypeInfoResolver` in the `Configure` method.
+The serializer can use the metadata generated at compile time by the [System.Text.Json source generator](https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/source-generation) instead of runtime reflection. Declare a `JsonSerializerContext` listing the message types and pass it to the `UseJsonSerializerContext` method.
 
 ```csharp
 [JsonSerializable(typeof(MyMessage))]
 [JsonSerializable(typeof(MyOtherMessage))]
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 public partial class MyJsonContext : JsonSerializerContext;
 ```
 
@@ -47,28 +48,31 @@ services.AddSilverback()
             .Produce<IMyMessage>("endpoint1", endpoint => endpoint
                 .ProduceTo("my-topic")
                 .SerializeAsJson(serializer => serializer
-                    .Configure(
-                        options =>
-                        {
-                            options.TypeInfoResolver = MyJsonContext.Default;
-                        })))));
+                    .UseJsonSerializerContext(MyJsonContext.Default)))));
 ```
 
-Several contexts can be combined by adding them to the `TypeInfoResolverChain`. The resolvers are queried in order and the first one providing the metadata for the type wins.
+The serializer uses the context's own options, which for the generated `Default` instance include the settings declared via `[JsonSourceGenerationOptions]`. Calling `Configure` afterwards customizes a copy of these options, for example to combine several contexts in the `TypeInfoResolverChain`. The resolvers are queried in order and the first one providing the metadata for the type wins. All contexts use the same options, so most settings declared via `[JsonSourceGenerationOptions]` on the additional contexts, such as the naming policy, are ignored (see below).
+
+```csharp
+.SerializeAsJson(serializer => serializer
+    .UseJsonSerializerContext(MyJsonContext.Default)
+    .Configure(options => options.TypeInfoResolverChain.Add(MyOtherJsonContext.Default)))
+```
+
+Alternatively, the context can be set as `TypeInfoResolver` (or added to the `TypeInfoResolverChain`) in the `Configure` method. In this case, most settings declared via `[JsonSourceGenerationOptions]`, such as the naming policy, the ignore conditions or the case insensitivity, are ignored, because they apply only to the context's own `Options`, and have to be set in `Configure` as well. The same applies to the `Converters`, which have to be added to `options.Converters`. Only `UseStringEnumConverter` is part of the generated metadata and still applies.
 
 ```csharp
 .SerializeAsJson(serializer => serializer
     .Configure(
         options =>
         {
-            options.TypeInfoResolverChain.Add(MyJsonContext.Default);
-            options.TypeInfoResolverChain.Add(MyOtherJsonContext.Default);
+            options.TypeInfoResolver = MyJsonContext.Default;
+            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         }))
 ```
 
 Keep the following in mind:
 * Silverback serializes the actual type of the message, not the type declared in the endpoint configuration. Every concrete type that is produced must be listed in a context, otherwise the serializer throws a `NotSupportedException`. To fall back to reflection for the types not listed, add a `DefaultJsonTypeInfoResolver` at the end of the `TypeInfoResolverChain`.
-* Most settings declared via `[JsonSourceGenerationOptions]`, such as the naming policy, the ignore conditions or the case insensitivity, apply only to the context's own `Options` and are ignored when the context is used as resolver. Set them on the options in the `Configure` method instead (e.g. `options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase`). The converters declared there (`Converters` and `UseStringEnumConverter`) are part of the generated metadata and still apply.
 * The `x-message-type` header is written as usual (see [Polymorphic Serialization](#polymorphic-serialization)).
 * This reduces the reflection used for the serialization, but doesn't make Silverback compatible with trimming or Native AOT.
 
@@ -87,7 +91,7 @@ services.AddSilverback()
                 .SerializeAsJsonUsingNewtonsoft())));
 ```
 
-Optionally, the serializer settings can be customized using the `Configure` method.
+Optionally, the serializer settings can be customized using the `Configure` method. When called multiple times, each call applies its changes on top of the previous ones.
 
 ```csharp
 services.AddSilverback()

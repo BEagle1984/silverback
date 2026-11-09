@@ -88,8 +88,18 @@ public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquat
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(NewtonsoftJsonMessageSerializer? other) =>
-        NewtonsoftComparisonHelper.JsonEquals(this, other);
+    public bool Equals(NewtonsoftJsonMessageSerializer? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Encoding == other.Encoding &&
+               MustSetTypeHeader == other.MustSetTypeHeader &&
+               JsonSerializerSettingsComparer.AreEqual(Settings, other.Settings);
+    }
 
     /// <inheritdoc cref="object.Equals(object)" />
     public override bool Equals(object? obj)

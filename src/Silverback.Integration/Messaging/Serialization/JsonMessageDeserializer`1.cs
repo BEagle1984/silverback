@@ -77,7 +77,16 @@ public sealed class JsonMessageDeserializer<TMessage> : IMessageDeserializer, IE
     public IMessageSerializer GetCompatibleSerializer() => new JsonMessageSerializer(Options);
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(JsonMessageDeserializer<TMessage>? other) => ComparisonHelper.JsonEquals(this, other);
+    public bool Equals(JsonMessageDeserializer<TMessage>? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return TypeHeaderBehavior == other.TypeHeaderBehavior && JsonSerializerOptionsComparer.AreEqual(Options, other.Options);
+    }
 
     /// <inheritdoc cref="object.Equals(object)" />
     public override bool Equals(object? obj)

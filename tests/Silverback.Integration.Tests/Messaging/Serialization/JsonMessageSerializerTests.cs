@@ -217,4 +217,48 @@ public class JsonMessageSerializerTests
 
         result.ShouldBeFalse();
     }
+
+    [Fact]
+    public async Task Equals_ShouldReturnTrue_WhenSameSettingsAndOneSerializerHasBeenUsed()
+    {
+        JsonMessageSerializer serializer1 = new(new JsonSerializerOptions { MaxDepth = 42 });
+        JsonMessageSerializer serializer2 = new(new JsonSerializerOptions { MaxDepth = 42 });
+
+        await serializer1.SerializeAsync(new TestEventOne(), [], TestProducerEndpoint.GetDefault());
+
+        bool result = Equals(serializer1, serializer2);
+
+        result.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentTypeInfoResolver()
+    {
+        JsonMessageSerializer serializer1 = new(
+            new JsonSerializerOptions
+            {
+                TypeInfoResolver = TestEventOneJsonSerializerContext.Default
+            });
+
+        JsonMessageSerializer serializer2 = new(
+            new JsonSerializerOptions
+            {
+                TypeInfoResolver = TestEventTwoJsonSerializerContext.Default
+            });
+
+        bool result = Equals(serializer1, serializer2);
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenDifferentTypeHeaderSetting()
+    {
+        JsonMessageSerializer serializer1 = new(mustSetTypeHeader: true);
+        JsonMessageSerializer serializer2 = new(mustSetTypeHeader: false);
+
+        bool result = Equals(serializer1, serializer2);
+
+        result.ShouldBeFalse();
+    }
 }
