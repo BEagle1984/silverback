@@ -91,6 +91,42 @@ When multiple subscribers handle the same batch (see also <xref:consuming>), eac
 >
 > If several actions are needed, use a single subscriber and invoke them explicitly from it.
 
+## Streaming
+
+As an alternative to batch processing, `AllowStreaming` lets a subscriber consume all the messages of an endpoint through a single, unbounded stream. Prefer batch processing whenever possible: streaming is more fragile and some features, like the error policies, aren't available.
+
+```csharp
+.AddConsumer("consumer1", consumer => consumer
+    .Consume<MyMessage>("endpoint1", endpoint => endpoint
+        .ConsumeFrom("my-topic")
+        .AllowStreaming()))
+```
+```csharp
+public async Task HandleAsync(IAsyncEnumerable<MyMessage> messages)
+{
+    await foreach (MyMessage message in messages)
+    {
+        // process each message
+    }
+}
+```
+
+The subscriber is invoked when the first message is consumed and receives all the following messages through the same stream. It can subscribe to the same types as for the batches, or to an `IMessageStreamObservable<T>` after calling `AsObservable()` from the [Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx) package.
+
+- With Kafka, a stream per partition is created by default, or a single one for all the partitions with `ProcessAllPartitionsTogether`.
+- Each message is committed as soon as the subscriber requests the next one.
+- When the consumer is stopped or disconnected, or the partitions are revoked, the enumeration throws an `OperationCanceledException` (an `IMessageStreamObservable<T>` completes, and `Subscribe` then throws it). A new stream is published, invoking the subscriber again, when the consumption resumes.
+- If the subscriber throws while processing a message, that message isn't committed and the consumer is stopped and disconnected, as with the default stop policy (see <xref:error-policies>). The other error policies can't be used with streaming.
+
+> [!Warning]
+> Process the messages one at a time. Since each message is committed as soon as the next one is requested, consuming the stream concurrently (for example with `Parallel.ForEachAsync`) commits the messages before they're processed, and an exception thrown while the stream is waiting for the next message may not stop the consumer.
+
+> [!Warning]
+> Don't stop enumerating the stream (for example with a `break` or an early `return`) while the consumer is running. The message being processed is never committed and the partition stalls, while stopping or disconnecting the consumer, including the graceful shutdown of the application, hangs.
+
+> [!Warning]
+> The subscriber is resolved from the service scope of the message that starts the stream, and that scope stays open until the stream ends, which can be the whole lifetime of the application. The scoped services, such as an Entity Framework `DbContext`, are therefore shared by all the messages of the stream: their state keeps growing and is never refreshed. Inject the `IServiceScopeFactory` instead, and create a scope per message or per unit of work.
+
 ## Additional Resources
 
 - [API Reference](xref:Silverback)

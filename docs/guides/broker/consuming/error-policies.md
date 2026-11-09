@@ -347,7 +347,7 @@ When the consumed messages are part of a sequence (a batch, a chunked message, e
 - **MoveTo** can't move a sequence: the policy logs a warning and is skipped, falling back to the next policy in the chain (or stopping the consumer, if there is none). Don't rely on `MoveTo` with batch processing or chunked messages; use `Skip` with a [callback](#callbacks) instead.
 
 > [!Warning]
-> Error policies aren't supported when streaming is enabled via `AllowStreaming()`. Silverback rejects any policy other than the default stop policy in that case.
+> Error policies aren't supported when streaming is enabled via `AllowStreaming()` (see [Streaming](xref:batch-processing#streaming)). Silverback rejects any policy other than the default stop policy in that case.
 
 ## Kafka Considerations
 
