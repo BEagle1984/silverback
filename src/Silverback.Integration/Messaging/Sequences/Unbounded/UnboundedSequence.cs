@@ -46,9 +46,10 @@ internal sealed class UnboundedSequence : Sequence
     /// </summary>
     public bool IsErrorHandledByAbort => (_addState & ErrorClaimedByAbortFlag) != 0;
 
-    // The transaction of the message that started the sequence is usually committed already: let the pipeline of the message being
-    // added apply the error policies and roll back, or the abort itself if no message is being added (see TryClaimErrorForAbort), and
-    // let the pipeline commit the message being added when the subscribers stop enumerating
+    // The transaction of the message that started the sequence is usually committed already, or still handled by its own pipeline:
+    // let the pipeline of the message being added apply the error policies and roll back, or the abort itself if no message is being
+    // added (see TryClaimErrorForAbort), let the pipeline commit the message being added when the subscribers stop enumerating, and
+    // let each pipeline roll back its own message when the consumer stops (rolling it back here as well would fail its later commit)
     private protected override bool CompletesTransactionOnAbort => false;
 
     // A sequence aborted by an error stays in the store until the error is handled, so that the messages consumed in the meantime fail

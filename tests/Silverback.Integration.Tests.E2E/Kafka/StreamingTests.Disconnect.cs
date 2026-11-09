@@ -7,10 +7,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -158,5 +160,71 @@ public partial class StreamingTests
         invocationsCount.ShouldBe(2);
         canceledCount.ShouldBe(1);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldNotApplyErrorPolicy_WhenConsumerStopsWhileOtherSubscriberHandlesFirstMessage()
+    {
+        TaskCompletionSource<bool> otherSubscriberStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> streamCanceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseOtherSubscriber = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        IStopConsumerErrorPolicyCallback callback = Substitute.For<IStopConsumerErrorPolicyCallback>();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, CancellationToken>(HandleUnboundedStream)
+            .AddDelegateSubscriber<TestEventOne>(HandleMessageAsync)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        // Throws the cancellation while waiting for the next message, after the push of the first one completed
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await foreach (TestEventOne dummy in stream.WithCancellation(cancellationToken))
+                {
+                    // Request the next message
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                streamCanceled.TrySetResult(true);
+                throw;
+            }
+        }
+
+        // Ignores the cancellation (e.g. an I/O call), completing the processing of the first message after the stream was aborted
+        async Task HandleMessageAsync(TestEventOne message)
+        {
+            otherSubscriberStarted.TrySetResult(true);
+            await releaseOtherSubscriber.Task;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await otherSubscriberStarted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        Task stopTask = consumer.StopAsync().AsTask();
+        await streamCanceled.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        // Let the abort caused by the stream cancellation complete before the first message's processing completes
+        await Task.Delay(200);
+        releaseOtherSubscriber.SetResult(true);
+        await stopTask.WaitAsync(TimeSpan.FromSeconds(10));
+
+        callback.ReceivedCalls().ShouldBeEmpty();
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
     }
 }

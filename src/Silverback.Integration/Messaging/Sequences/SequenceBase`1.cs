@@ -181,10 +181,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public SequenceAbortReason AbortReason { get; private set; }
 
     /// <summary>
-    ///     Gets a value indicating whether the abort caused by an error or by the subscribers stopping the enumeration completes the
-    ///     transaction of the <see cref="Context" />, applying the error policies and rolling it back or committing it. Otherwise, the
-    ///     caller handles it (e.g., the pipeline of the message being added rethrows the <see cref="AbortException" /> or commits the
-    ///     message).
+    ///     Gets a value indicating whether the abort caused by an error, by the subscribers stopping the enumeration or by the consumer
+    ///     stopping completes the transaction of the <see cref="Context" />, applying the error policies and rolling it back or committing
+    ///     it. Otherwise, the caller handles it (e.g., the pipeline of the message being added rethrows the <see cref="AbortException" />,
+    ///     commits the message or rolls it back).
     /// </summary>
     private protected virtual bool CompletesTransactionOnAbort => true;
 
@@ -793,6 +793,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                     break;
                 case SequenceAbortReason.ConsumerAborted:
                 case SequenceAbortReason.Disposing:
+                    if (!CompletesTransactionOnAbort)
+                        break;
+
                     done = await Context.TransactionManager.RollbackAsync(
                             exception,
                             throwIfAlreadyCommitted: false,

@@ -1811,8 +1811,20 @@ public partial class KafkaConsumerTests
             });
 
             cleanup = sequence.AbortAsync(commit ? SequenceAbortReason.IncompleteSequence : SequenceAbortReason.ConsumerAborted);
-            await cleanupEntered.Task.WaitAsync(Timeout);
-            _output.WriteLine("Sequence abort reached the transaction gate.");
+
+            if (unbounded)
+            {
+                // The unbounded sequence leaves the transaction to the pipelines of its messages: its abort completes without touching it,
+                // so it can't affect the replacement either
+                await cleanup.WaitAsync(Timeout);
+                cleanupEntered.Task.IsCompleted.ShouldBeFalse();
+                _output.WriteLine("Unbounded sequence abort completed without touching the transaction.");
+            }
+            else
+            {
+                await cleanupEntered.Task.WaitAsync(Timeout);
+                _output.WriteLine("Sequence abort reached the transaction gate.");
+            }
 
             if (transition == "rebalance")
             {
@@ -1845,6 +1857,10 @@ public partial class KafkaConsumerTests
             releaseCleanup.TrySetResult(true);
             await cleanup.WaitAsync(Timeout);
             await reading.WaitAsync(Timeout);
+
+            // The first message's own pipeline rolls it back late instead (see RollbackStopCancellationAsync)
+            if (unbounded)
+                await transaction.RollbackAsync(new OperationCanceledException(), stopConsuming: false).WaitAsync(Timeout);
             _output.WriteLine(
                 $"Cleanup evidence: transition={transition}, unbounded={unbounded}, commit={commit}, " +
                 $"committed={harness.CommittedOffset(0)}, seeks={string.Join(", ", harness.Seeks)}, " +

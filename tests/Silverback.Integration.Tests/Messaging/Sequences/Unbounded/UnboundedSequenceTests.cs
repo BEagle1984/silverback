@@ -63,6 +63,21 @@ public class UnboundedSequenceTests
         sequence.ProcessingCompletedTask.IsCompletedSuccessfully.ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData(SequenceAbortReason.ConsumerAborted)]
+    [InlineData(SequenceAbortReason.Disposing)]
+    public async Task AbortAsync_ShouldNotRollBackTransaction_WhenAbortedBecauseConsumerIsStopping(SequenceAbortReason reason)
+    {
+        (ConsumerPipelineContext context, _, IConsumerTransactionManager transactionManager) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+
+        await sequence.AbortAsync(reason, new OperationCanceledException());
+
+        await transactionManager.DidNotReceiveWithAnyArgs().RollbackAsync(null);
+        sequence.IsAborted.ShouldBeTrue();
+        sequence.ProcessingCompletedTask.IsCompletedSuccessfully.ShouldBeTrue();
+    }
+
     [Fact]
     public async Task AbortAsync_ShouldNotRemoveFromStore_WhenAbortedBecauseOfError()
     {
