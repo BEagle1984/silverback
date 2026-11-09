@@ -108,9 +108,9 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     // Check IsCompleting first, since it's reset only after the state is switched to complete
     private static bool IsCompletingOrComplete(ISequence sequence) => sequence.IsCompleting || sequence.IsComplete;
 
-    // When streaming, the exception might come from the unbounded sequence processing, whose abort applied the error policies already
-    // (possibly stopping the consumer): rely on its abort reason, like for the other sequences. Check the reason rather than IsAborted,
-    // since the state is switched before the reason is set: until then rely on the token, which the error policies cancel only afterwards.
+    // When streaming, the exception might come from the unbounded sequence processing: rely on its abort reason, like for the other
+    // sequences, since the token might have been canceled in the meantime by a stop that didn't cause the exception. Check the reason
+    // rather than IsAborted, since the state is switched before the reason is set: until then rely on the token.
     private static bool IsStopCancellation(ConsumerPipelineContext context, Exception exception, CancellationToken cancellationToken) =>
         context.UnboundedSequence is { AbortReason: not SequenceAbortReason.None } unboundedSequence
             ? StopCancellationHelper.IsStopCancellation(exception, unboundedSequence)

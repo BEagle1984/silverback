@@ -177,6 +177,14 @@ internal static partial class IntegrationLoggerExtensions
         SequenceTimeoutError(logger.InnerLogger, sequence.GetType().Name, sequence.SequenceId, exception);
     }
 
+    public static void LogSequenceDisposeError(this ISilverbackLogger logger, ISequence sequence, Exception exception)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.SequenceDisposeError))
+            return;
+
+        SequenceDisposeError(logger.InnerLogger, sequence.GetType().Name, sequence.SequenceId, exception);
+    }
+
     public static void LogBrokerClientsInitializationError(this ISilverbackLogger logger, Exception exception) =>
         BrokerClientsInitializationError(logger.InnerLogger, exception);
 
@@ -582,6 +590,17 @@ internal static partial class IntegrationLoggerExtensions
         "Error occurred executing timeout for {SequenceType} {SequenceId}",
         EventName = "Silverback.Integration_SequenceTimeoutError")]
     private static partial void SequenceTimeoutError(ILogger logger, string sequenceType, string sequenceId, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs disposing a sequence, for example
+    ///     because a scoped service used by the subscribers of a stream (see <c>AllowStreaming</c>) fails to dispose.
+    /// </summary>
+    [LoggerMessage(
+        1019,
+        LogLevel.Error,
+        "Error occurred disposing {SequenceType} {SequenceId}",
+        EventName = "Silverback.Integration_SequenceDisposeError")]
+    private static partial void SequenceDisposeError(ILogger logger, string sequenceType, string sequenceId, Exception exception);
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown when initializing the

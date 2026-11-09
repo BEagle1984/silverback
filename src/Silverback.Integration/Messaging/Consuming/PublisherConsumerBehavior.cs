@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -69,13 +70,27 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                 UnboundedSequence unboundedSequence = await GetUnboundedSequenceAsync(context, cancellationToken).ConfigureAwait(false);
 
                 // Let the TransactionHandlerConsumerBehavior tell whether the exception rethrown from the sequence is the cancellation
-                // requested by the consumer stop: its abort might have applied the error policies already, stopping the consumer
+                // requested by the consumer stop, since the stop might have canceled the token already (aborting the sequence)
                 context.UnboundedSequence = unboundedSequence;
 
-                AddToSequenceResult result = await unboundedSequence.AddAsync(envelope, null, false).ConfigureAwait(false);
+                AddToSequenceResult result;
 
+                try
+                {
+                    result = await unboundedSequence.AddAsync(envelope, null, false).ConfigureAwait(false);
+                }
+                catch (InvalidOperationException) when (unboundedSequence is { IsAborted: true, AbortException: not null })
+                {
+                    // Pushing to the sequence being aborted fails if its streams are aborted in the meantime: rethrow the exception that
+                    // caused the abort instead
+                    ExceptionDispatchInfo.Throw(unboundedSequence.AbortException);
+                    throw;
+                }
+
+                // The abort leaves the error handling to the pipeline of the message being pushed (preserving the stack trace of the
+                // subscriber exception)
                 if (unboundedSequence is { IsAborted: true, AbortException: not null })
-                    throw unboundedSequence.AbortException;
+                    ExceptionDispatchInfo.Throw(unboundedSequence.AbortException);
 
                 throwIfUnhandled &= result.PushedStreamsCount == 0;
             }
@@ -115,11 +130,48 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
             return sequence;
 
         sequence = new UnboundedSequence(sequenceIdPrefix + Guid.NewGuid().ToString("N"), context);
-        await context.SequenceStore.AddAsync(sequence).ConfigureAwait(false);
+        Task processingTask = Task.CompletedTask;
 
-        await PublishStreamProviderAsync(sequence, context, cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await context.SequenceStore.AddAsync(sequence).ConfigureAwait(false);
+            processingTask = await PublishStreamProviderAsync(sequence, context, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            // The subscribers couldn't be invoked (e.g., because they can't be resolved): abort the sequence and let the pipeline of this
+            // message handle the exception
+            await sequence.AbortAsync(StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken), exception)
+                .ConfigureAwait(false);
+            throw;
+        }
+        finally
+        {
+            DisposeWhenProcessedAsync(sequence, processingTask).FireAndForget();
+        }
 
         return sequence;
+    }
+
+    // The unbounded sequence never completes: dispose it, releasing the service scope used by the subscribers, once it's aborted
+    // (because a subscriber failed, or the consumer is stopping or the partitions are being revoked) and the subscribers returned
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    private async Task DisposeWhenProcessedAsync(UnboundedSequence sequence, Task processingTask)
+    {
+        // The exceptions are handled by the sequence abort and by the pipeline of the message being pushed
+        await Task.WhenAll(processingTask, sequence.ProcessingCompletedTask).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+
+        try
+        {
+            // Dispose on another thread, since this continuation might run synchronously when the abort notifies the processing
+            // completion, while it still holds the semaphore that Dispose waits for
+            await Task.Run(sequence.Dispose).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            // E.g., a scoped service used by the subscribers fails to dispose
+            _logger.LogSequenceDisposeError(sequence, exception);
+        }
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to log and forward")]

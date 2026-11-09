@@ -59,7 +59,7 @@ public class PublisherConsumerBehaviorTests
         Task handling = behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, CancellationToken.None).AsTask();
 
         // The failure is rethrown pushing the message and the sequence is exposed to let the TransactionHandlerConsumerBehavior check why
-        // it was aborted, since the error policies applied by the abort might have stopped the consumer, canceling the token
+        // it was aborted, since the token might have been canceled in the meantime by a stop that didn't cause the exception
         await Should.ThrowAsync<TaskCanceledException>(handling.WaitAsync(Timeout));
         ISequence unboundedSequence = context.UnboundedSequence.ShouldNotBeNull();
         unboundedSequence.IsAborted.ShouldBeTrue();

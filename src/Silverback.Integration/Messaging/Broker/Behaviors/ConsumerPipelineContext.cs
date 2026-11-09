@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Consuming.Transaction;
@@ -21,7 +22,7 @@ public sealed class ConsumerPipelineContext : IDisposable
 {
     private readonly System.Threading.Lock _disposeLock = new();
 
-    private IServiceScope? _serviceScope;
+    private SharedServiceScope? _serviceScope;
 
     private IRawInboundEnvelope _envelope;
 
@@ -187,9 +188,11 @@ public sealed class ConsumerPipelineContext : IDisposable
     /// </param>
     public void ReplaceServiceScope(IServiceScope newServiceScope)
     {
+        Check.NotNull(newServiceScope, nameof(newServiceScope));
+
         _serviceScope?.Dispose();
 
-        _serviceScope = Check.NotNull(newServiceScope, nameof(newServiceScope));
+        _serviceScope = new SharedServiceScope(newServiceScope);
         ServiceProvider = newServiceScope.ServiceProvider;
         _silverbackContext = null;
     }
@@ -249,5 +252,66 @@ public sealed class ConsumerPipelineContext : IDisposable
 
         ProcessingTask.Dispose();
         ProcessingTask = null;
+    }
+
+    /// <summary>
+    ///     Keeps the current service scope alive until the returned lease is disposed, even if the context is disposed in the
+    ///     meantime. The scope is disposed when both the context and all the leases are disposed.
+    /// </summary>
+    /// <remarks>
+    ///     The unbounded sequence uses it, since its subscribers are resolved from the scope of the message that starts it and
+    ///     keep using that scope after the pipeline of that message completes and disposes the context.
+    /// </remarks>
+    /// <returns>
+    ///     The lease to be disposed to release the scope, or <c>null</c> if the context doesn't own a scope.
+    /// </returns>
+    internal IDisposable? LeaseServiceScope()
+    {
+        lock (_disposeLock)
+        {
+            Check.ThrowObjectDisposedIf(_isDisposed, this);
+
+            return _serviceScope?.Lease();
+        }
+    }
+
+    // The scope owned by the context, disposed when the context and all the leases released it
+    private sealed class SharedServiceScope : IDisposable
+    {
+        private readonly IServiceScope _serviceScope;
+
+        private int _referencesCount = 1;
+
+        public SharedServiceScope(IServiceScope serviceScope)
+        {
+            _serviceScope = serviceScope;
+        }
+
+        public IDisposable Lease()
+        {
+            Interlocked.Increment(ref _referencesCount);
+            return new ServiceScopeLease(this);
+        }
+
+        // Releases the reference held by the context
+        public void Dispose() => Release();
+
+        private void Release()
+        {
+            if (Interlocked.Decrement(ref _referencesCount) == 0)
+                _serviceScope.Dispose();
+        }
+
+        private sealed class ServiceScopeLease : IDisposable
+        {
+            private SharedServiceScope? _sharedServiceScope;
+
+            public ServiceScopeLease(SharedServiceScope sharedServiceScope)
+            {
+                _sharedServiceScope = sharedServiceScope;
+            }
+
+            public void Dispose() => Interlocked.Exchange(ref _sharedServiceScope, null)?.Release();
+        }
     }
 }

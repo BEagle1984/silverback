@@ -221,8 +221,8 @@ public partial class ErrorPoliciesTests
         {
             await foreach (TestEventOne dummy in stream)
             {
-                // Not caused by the stop (e.g. a timed out HTTP request): the error policies applied aborting the sequence stop the
-                // consumer, canceling the token, before the exception reaches the transaction handler
+                // Not caused by the stop (e.g. a timed out HTTP request): the error policies must be applied, even though the stop they
+                // cause cancels the token (when batching, before the exception reaches the transaction handler)
                 throw new TaskCanceledException("Unrelated timeout");
             }
         }

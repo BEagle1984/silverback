@@ -279,6 +279,18 @@ public class IntegrationLoggerExtensionsTests
     }
 
     [Fact]
+    public void LogSequenceDisposeError_ShouldLog()
+    {
+        _silverbackLogger.LogSequenceDisposeError(new FakeSequence(), new InvalidOperationException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            typeof(InvalidOperationException),
+            "Error occurred disposing FakeSequence fake1",
+            1019);
+    }
+
+    [Fact]
     public void LogBrokerClientsInitializationError_ShouldLog()
     {
         _silverbackLogger.LogBrokerClientsInitializationError(new AuthenticationException());

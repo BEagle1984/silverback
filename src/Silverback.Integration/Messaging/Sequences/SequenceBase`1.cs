@@ -173,6 +173,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <inheritdoc cref="ISequence.AbortReason" />
     public SequenceAbortReason AbortReason { get; private set; }
 
+    /// <summary>
+    ///     Gets a value indicating whether the abort caused by an error applies the error policies and rolls back the transaction of the
+    ///     <see cref="Context" />. Otherwise, the error is left to the caller adding the message, which rethrows the
+    ///     <see cref="AbortException" />.
+    /// </summary>
+    private protected virtual bool AppliesErrorPoliciesOnAbort => true;
+
     /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
     void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
 
@@ -545,7 +552,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _logger.LogSequenceDisposed(this);
 
-        Context.Dispose();
+        DisposeContext();
     }
 
     /// <summary>
@@ -556,6 +563,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     protected virtual Task OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
+
+    /// <summary>
+    ///     Disposes the <see cref="Context" />, which the sequence owns.
+    /// </summary>
+    private protected virtual void DisposeContext() => Context.Dispose();
 
     private void CompleteLinkedSequence(ISequenceImplementation sequence)
     {
@@ -716,6 +728,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             switch (AbortReason)
             {
                 case SequenceAbortReason.Error:
+                    if (!AppliesErrorPoliciesOnAbort)
+                        break;
+
                     if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!).ConfigureAwait(false))
                     {
                         await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
