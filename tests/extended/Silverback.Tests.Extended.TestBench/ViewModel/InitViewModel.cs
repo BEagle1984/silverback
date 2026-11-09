@@ -86,7 +86,6 @@ public class InitViewModel : ViewModelBase
         set => SetProperty(ref field, value, nameof(ProgressMessage));
     }
 
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Catching all is intended")]
     private async Task OnStartAsync()
     {
         IsInitializing = true;

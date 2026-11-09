@@ -3,6 +3,7 @@
 
 using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -28,9 +29,15 @@ namespace Silverback.Tests.Extended.Integration.Mqtt;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "MQTT")]
-public class ShutdownTests(MqttFixture fixture)
+public class ShutdownTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
+
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    public ShutdownTests(MqttFixture fixture)
+    {
+    }
 
     [Theory]
     [InlineData(MqttQualityOfServiceLevel.AtLeastOnce, false)]
@@ -41,8 +48,6 @@ public class ShutdownTests(MqttFixture fixture)
         MqttQualityOfServiceLevel qualityOfServiceLevel,
         bool fillInputBuffer)
     {
-        _ = fixture;
-
         string prefix = "stress-shutdown-" + Guid.NewGuid().ToString("N");
         TaskCompletionSource<bool> started = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> stopping = new(TaskCreationOptions.RunContinuationsAsynchronously);

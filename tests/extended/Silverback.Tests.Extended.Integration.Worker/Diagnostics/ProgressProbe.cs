@@ -15,8 +15,12 @@ using Silverback.Tests.Extended.Shared;
 namespace Silverback.Tests.Extended.Integration.Worker.Diagnostics;
 
 // A diagnostic observer only: it neither calls Kafka APIs nor reconnects the consumer
-internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerProvider
+internal sealed class ProgressProbe : ILoggerProvider
 {
+    private readonly string _member;
+
+    private readonly int _stallSeconds;
+
     private readonly ConcurrentQueue<string> _recent = new();
 
     private readonly ConcurrentDictionary<string, string> _channelStates = new();
@@ -46,6 +50,12 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
     private int _disposed;
 
     private Thread? _thread;
+
+    public ProgressProbe(string member, int stallSeconds)
+    {
+        _member = member;
+        _stallSeconds = stallSeconds;
+    }
 
     public ILogger CreateLogger(string categoryName) => new ProbeLogger(this, categoryName);
 
@@ -141,7 +151,7 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
             string snapshot = JsonSerializer.Serialize(new
             {
                 utc = DateTime.UtcNow,
-                member,
+                member = _member,
                 elapsedSeconds = Stopwatch.GetElapsedTime(_started).TotalSeconds,
                 consumed = Interlocked.Read(ref _consumed),
                 processed = Interlocked.Read(ref _processed),
@@ -159,19 +169,29 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
             Console.WriteLine($"PROGRESS {snapshot}");
 
             // This is a candidate, not proof of a deadlock. Empty/paused workloads and rebalances must be checked separately.
-            if (Interlocked.Read(ref _consumed) > 0 && statsAge > stallSeconds &&
+            if (Interlocked.Read(ref _consumed) > 0 && statsAge > _stallSeconds &&
                 Interlocked.CompareExchange(ref _captured, 1, 0) == 0)
             {
                 string folder = Environment.GetEnvironmentVariable("EVIDENCE_DIR") ?? "/evidence";
                 Directory.CreateDirectory(folder);
-                File.WriteAllLines(Path.Combine(folder, $"{member}-candidate.txt"), [snapshot, .. _recent.ToArray()]);
-                Console.WriteLine($"STALL_CANDIDATE member={member} statsAge={statsAge:F1}s consumeAge={consumedAge:F1}s");
+                File.WriteAllLines(Path.Combine(folder, $"{_member}-candidate.txt"), [snapshot, .. _recent.ToArray()]);
+                Console.WriteLine($"STALL_CANDIDATE member={_member} statsAge={statsAge:F1}s consumeAge={consumedAge:F1}s");
             }
         }
     }
 
-    private sealed class ProbeLogger(ProgressProbe owner, string category) : ILogger
+    private sealed class ProbeLogger : ILogger
     {
+        private readonly ProgressProbe _owner;
+
+        private readonly string _category;
+
+        public ProbeLogger(ProgressProbe owner, string category)
+        {
+            _owner = owner;
+            _category = category;
+        }
+
         public IDisposable? BeginScope<TState>(TState state)
             where TState : notnull => null;
 
@@ -182,6 +202,6 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
             EventId eventId,
             TState state,
             Exception? exception,
-            Func<TState, Exception?, string> formatter) => owner.Record(category, logLevel, eventId, state, exception, formatter);
+            Func<TState, Exception?, string> formatter) => _owner.Record(_category, logLevel, eventId, state, exception, formatter);
     }
 }

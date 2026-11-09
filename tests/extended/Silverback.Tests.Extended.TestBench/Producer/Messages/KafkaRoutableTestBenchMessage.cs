@@ -5,4 +5,10 @@ using Silverback.Tests.Extended.TestBench.ViewModel.Topics;
 
 namespace Silverback.Tests.Extended.TestBench.Producer.Messages;
 
-public class KafkaRoutableTestBenchMessage(KafkaTopicViewModel targetTopicConfiguration) : RoutableTestBenchMessage(targetTopicConfiguration);
+public class KafkaRoutableTestBenchMessage : RoutableTestBenchMessage
+{
+    public KafkaRoutableTestBenchMessage(KafkaTopicViewModel targetTopicConfiguration)
+        : base(targetTopicConfiguration)
+    {
+    }
+}

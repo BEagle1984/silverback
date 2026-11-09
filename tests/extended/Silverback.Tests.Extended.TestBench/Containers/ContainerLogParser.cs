@@ -98,7 +98,6 @@ public sealed partial class ContainerLogParser : IDisposable
         }
     }
 
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged")]
     private async Task TailLogAsync(CancellationToken stoppingToken)
     {
         string logPath = Path.Combine(FileSystemHelper.LogsFolder, $"{_containerService.Name}.log");

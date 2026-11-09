@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -29,9 +30,18 @@ namespace Silverback.Tests.Extended.Integration.Kafka;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "Kafka")]
-public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper output)
+public class StaticAssignmentTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
+
+    private readonly ITestOutputHelper _output;
+
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    public StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper output)
+    {
+        _output = output;
+    }
 
     [Theory]
     [InlineData("automatic", false, false)]
@@ -46,8 +56,6 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
     [InlineData("per-message", true, true)]
     public async Task Commit_ShouldRespectGroupMembership_WithStaticAssignment(string commitMode, bool shareActiveGroup, bool retryOnError)
     {
-        _ = fixture;
-
         bool commitsToBroker = commitMode is not ("disabled" or "client-side");
 
         string prefix = "stress-static-" + Guid.NewGuid().ToString("N");
@@ -168,7 +176,7 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
 
         using IHost host = builder.Build();
 
-        output.WriteLine($"librdkafka={Library.VersionString}; group={groupId}; mode={commitMode}; activeSubscribedMember={shareActiveGroup}");
+        _output.WriteLine($"librdkafka={Library.VersionString}; group={groupId}; mode={commitMode}; activeSubscribedMember={shareActiveGroup}");
 
         try
         {
@@ -203,14 +211,14 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
                                 exception.Error.Code == ErrorCode.UnknownTopicOrPart && !peerReady.Task.IsCompleted)
                             {
                                 // CreateTopics can return before the topic metadata has propagated to every broker
-                                output.WriteLine($"Waiting for peer topic metadata: {exception.Error}");
+                                _output.WriteLine($"Waiting for peer topic metadata: {exception.Error}");
                             }
 
                             // The group leader can compute the assignment from the metadata of a broker that doesn't
                             // know the new topic yet, so rejoin to have it assigned again
                             if (peerAssignmentEmpty && !peerReady.Task.IsCompleted)
                             {
-                                output.WriteLine("Peer received an empty assignment, rejoining the group");
+                                _output.WriteLine("Peer received an empty assignment, rejoining the group");
                                 peerAssignmentEmpty = false;
                                 peer.Unsubscribe();
                                 peer.Subscribe(peerTopic);
@@ -264,7 +272,7 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
                         new Message<Null, byte[]> { Value = JsonSerializer.SerializeToUtf8Bytes(new ReconciliationMessage(0, 2)) });
 
                     (await processedAfterFailure.Task.WaitAsync(Timeout)).ShouldBe(new ReconciliationMessage(0, 2));
-                    output.WriteLine($"{commitMode}: the subscriber continued after the failed commit; retry policy enabled={retryOnError}");
+                    _output.WriteLine($"{commitMode}: the subscriber continued after the failed commit; retry policy enabled={retryOnError}");
                 }
                 else
                 {
@@ -299,18 +307,18 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
                 {
                     foreach (string diagnostic in peerDiagnostics)
                     {
-                        output.WriteLine($"Peer: {diagnostic}");
+                        _output.WriteLine($"Peer: {diagnostic}");
                     }
                 }
 
                 foreach (string error in logs.Errors)
                 {
-                    output.WriteLine($"Error log: {error}");
+                    _output.WriteLine($"Error log: {error}");
                 }
 
                 foreach (CommittedOffsets result in commits.Results)
                 {
-                    output.WriteLine($"Commit: global={result.Error}; partitions={string.Join(", ", result.Offsets ?? [])}");
+                    _output.WriteLine($"Commit: global={result.Error}; partitions={string.Join(", ", result.Offsets ?? [])}");
                 }
             }
         }
@@ -319,7 +327,7 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
         {
             DescribeConsumerGroupsResult result = await admin.DescribeConsumerGroupsAsync([groupId]).WaitAsync(Timeout);
             ConsumerGroupDescription group = result.ConsumerGroupDescriptions.Single();
-            output.WriteLine($"Group state: {group.State}; members: {group.Members.Count}");
+            _output.WriteLine($"Group state: {group.State}; members: {group.Members.Count}");
 
             group.State.ShouldBe(ConsumerGroupState.Stable);
             group.Members.Count.ShouldBe(1);
@@ -329,7 +337,7 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
         Offset ReadCommittedOffset()
         {
             Offset offset = observer.Committed([partition], TimeSpan.FromSeconds(5)).Single().Offset;
-            output.WriteLine($"Broker committed offset: {partition} = {offset}");
+            _output.WriteLine($"Broker committed offset: {partition} = {offset}");
 
             return offset;
         }
@@ -380,8 +388,15 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
         }
     }
 
-    private sealed class CommitObserver(TopicPartition partition) : IKafkaOffsetCommittedCallback
+    private sealed class CommitObserver : IKafkaOffsetCommittedCallback
     {
+        private readonly TopicPartition _partition;
+
+        public CommitObserver(TopicPartition partition)
+        {
+            _partition = partition;
+        }
+
         public ConcurrentQueue<CommittedOffsets> Results { get; } = new();
 
         public TaskCompletionSource<CommittedOffsets> FirstResult { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -390,7 +405,7 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
         {
             Results.Enqueue(offsets);
 
-            if (offsets.Error.IsError || offsets.Offsets?.Any(offset => offset.TopicPartition == partition) == true)
+            if (offsets.Error.IsError || offsets.Offsets?.Any(offset => offset.TopicPartition == _partition) == true)
                 FirstResult.TrySetResult(offsets);
         }
     }

@@ -13,7 +13,6 @@ namespace Silverback.Tests.Extended.Benchmarks.VersionComparison.V4_6_2.Mediator
 
 [SimpleJob]
 [MemoryDiagnoser]
-[SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Benchmark methods")]
 [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Test code")]
 public class MediatorBenchmark : Benchmark
 {

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace Silverback.Tests.Extended.Integration.Mqtt;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "MQTT")]
-public class MqttTopicFilterTests(MqttFixture fixture, ITestOutputHelper output)
+public class MqttTopicFilterTests
 {
     private const int SharedMessagesCount = 20;
 
@@ -37,11 +38,18 @@ public class MqttTopicFilterTests(MqttFixture fixture, ITestOutputHelper output)
 
     private static readonly TimeSpan SettleTime = TimeSpan.FromSeconds(2);
 
+    private readonly ITestOutputHelper _output;
+
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    public MqttTopicFilterTests(MqttFixture fixture, ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
     [Fact]
     public Task Consume_ShouldConsumeParentAndChildLevels_WhenSubscribingMultiLevelWildcard()
     {
-        _ = fixture;
-
         string prefix = "stress-filter-" + Guid.NewGuid().ToString("N");
 
         // The multi-level wildcard also matches the parent level (MQTT specification 4.7.1.2)
@@ -56,8 +64,6 @@ public class MqttTopicFilterTests(MqttFixture fixture, ITestOutputHelper output)
     [Fact]
     public Task Consume_ShouldConsumeSingleLevel_WhenSubscribingSingleLevelWildcard()
     {
-        _ = fixture;
-
         string prefix = "stress-filter-" + Guid.NewGuid().ToString("N");
 
         // The single-level wildcard also matches an empty level
@@ -72,8 +78,6 @@ public class MqttTopicFilterTests(MqttFixture fixture, ITestOutputHelper output)
     [Fact]
     public async Task Consume_ShouldConsumeEachMessageOnce_WhenClientsShareSubscription()
     {
-        _ = fixture;
-
         string prefix = "stress-filter-" + Guid.NewGuid().ToString("N");
         string topic = prefix + "/shared";
         string filter = $"$share/{prefix}-group/{topic}";
@@ -89,7 +93,7 @@ public class MqttTopicFilterTests(MqttFixture fixture, ITestOutputHelper output)
         // The distribution depends on the shared subscription strategy configured in the broker
         foreach (string clientId in clientIds)
         {
-            output.WriteLine($"{clientId} consumed {consumed.Count(message => message.ClientId == clientId)} messages");
+            _output.WriteLine($"{clientId} consumed {consumed.Count(message => message.ClientId == clientId)} messages");
         }
 
         consumed.Select(message => message.Message!.Number).Order().ShouldBe(Enumerable.Range(0, SharedMessagesCount));
@@ -254,11 +258,11 @@ public class MqttTopicFilterTests(MqttFixture fixture, ITestOutputHelper output)
             }
             finally
             {
-                output.WriteLine($"Filter={filter}; consumed messages: {string.Join(", ", consumed)}");
+                _output.WriteLine($"Filter={filter}; consumed messages: {string.Join(", ", consumed)}");
 
                 foreach (string entry in logs.Entries)
                 {
-                    output.WriteLine($"Log: {entry}");
+                    _output.WriteLine($"Log: {entry}");
                 }
             }
 

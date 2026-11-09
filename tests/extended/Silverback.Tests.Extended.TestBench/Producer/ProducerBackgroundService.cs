@@ -52,7 +52,6 @@ public class ProducerBackgroundService : BackgroundService
         return Task.CompletedTask;
     }
 
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Log and continue in any case")]
     private async Task ProduceAsync(TopicViewModel topic, CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)

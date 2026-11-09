@@ -32,7 +32,7 @@ namespace Silverback.Tests.Extended.Integration.Kafka;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "Kafka")]
-public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelper output)
+public class TopicPatternSubscriptionTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
 
@@ -40,13 +40,20 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
 
     private static readonly TimeSpan SettleTime = TimeSpan.FromSeconds(3);
 
+    private readonly ITestOutputHelper _output;
+
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    public TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
     [Theory]
     [InlineData(GroupProtocol.Classic)]
     [InlineData(GroupProtocol.Consumer)]
     public async Task Consume_ShouldConsumeMatchingTopicsOnly_WhenSubscribingPattern(GroupProtocol groupProtocol)
     {
-        _ = fixture;
-
         string prefix = "stress-pattern-" + Guid.NewGuid().ToString("N");
         string pattern = CreatePattern(prefix);
         string topicA = prefix + ".a";
@@ -99,8 +106,6 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
     [InlineData(GroupProtocol.Consumer)]
     public async Task Consume_ShouldConsumeTopicCreatedLater_WhenSubscribingPattern(GroupProtocol groupProtocol)
     {
-        _ = fixture;
-
         string prefix = "stress-pattern-" + Guid.NewGuid().ToString("N");
         string pattern = CreatePattern(prefix);
         string topicA = prefix + ".a";
@@ -154,8 +159,6 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
     [InlineData(GroupProtocol.Consumer)]
     public async Task Consume_ShouldPreferTopicNameEndpoint_WhenTopicAlsoMatchesPattern(GroupProtocol groupProtocol)
     {
-        _ = fixture;
-
         string prefix = "stress-pattern-" + Guid.NewGuid().ToString("N");
         string pattern = CreatePattern(prefix);
         string topicA = prefix + ".a";
@@ -211,8 +214,6 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
     [InlineData(GroupProtocol.Consumer)]
     public async Task Consume_ShouldApplyMatchSemanticsOfGroupProtocol_WhenPatternIsNotAnchoredAtEnd(GroupProtocol groupProtocol)
     {
-        _ = fixture;
-
         string prefix = "stress-pattern-" + Guid.NewGuid().ToString("N");
         string topicA = prefix + ".a";
         string longerTopic = prefix + ".a1";
@@ -340,13 +341,13 @@ public class TopicPatternSubscriptionTests(KafkaFixture fixture, ITestOutputHelp
         }
         finally
         {
-            output.WriteLine($"librdkafka={Library.VersionString}");
-            output.WriteLine($"Assigned partitions: {string.Join(", ", assignments.Partitions)}");
-            output.WriteLine($"Consumed messages: {string.Join(", ", consumed)}");
+            _output.WriteLine($"librdkafka={Library.VersionString}");
+            _output.WriteLine($"Assigned partitions: {string.Join(", ", assignments.Partitions)}");
+            _output.WriteLine($"Consumed messages: {string.Join(", ", consumed)}");
 
             foreach (string entry in logs.Entries)
             {
-                output.WriteLine($"Log: {entry}");
+                _output.WriteLine($"Log: {entry}");
             }
         }
     }

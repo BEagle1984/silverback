@@ -12,6 +12,7 @@
     <File Path="../../nuget.config" />
     <File Path="../../README.md" />
     <File Path="../../stylecop.json" />
+    <File Path="../.editorconfig" />
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="Directory.Build.props" />

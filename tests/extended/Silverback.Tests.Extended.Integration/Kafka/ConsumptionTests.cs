@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -19,8 +20,17 @@ namespace Silverback.Tests.Extended.Integration.Kafka;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "Kafka")]
-public class ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
+public class ConsumptionTests
 {
+    private readonly ITestOutputHelper _output;
+
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    public ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
     [Theory]
     [Trait("Category", "Stress")]
     [InlineData("single", "")]
@@ -32,9 +42,7 @@ public class ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
         string assignor,
         string groupProtocol = "Classic")
     {
-        _ = fixture;
-
-        await using ContainerTestRun run = new(output);
+        await using ContainerTestRun run = new(_output);
         string[] settings =
         [
             "BOOTSTRAP=" + KafkaFixture.ContainerBootstrapServers,
@@ -89,9 +97,7 @@ public class ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
     [Trait("Category", "Diagnostics")]
     public async Task ProgressMonitor_ShouldCaptureBlockedPolling_BeforeTheMaximumPollInterval()
     {
-        _ = fixture;
-
-        await using ContainerTestRun run = new(output);
+        await using ContainerTestRun run = new(_output);
         string[] settings =
         [
             "BOOTSTRAP=" + KafkaFixture.ContainerBootstrapServers,

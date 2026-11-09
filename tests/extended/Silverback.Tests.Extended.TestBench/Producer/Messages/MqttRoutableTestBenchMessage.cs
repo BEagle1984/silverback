@@ -5,4 +5,10 @@ using Silverback.Tests.Extended.TestBench.ViewModel.Topics;
 
 namespace Silverback.Tests.Extended.TestBench.Producer.Messages;
 
-public class MqttRoutableTestBenchMessage(MqttTopicViewModel targetTopicConfiguration) : RoutableTestBenchMessage(targetTopicConfiguration);
+public class MqttRoutableTestBenchMessage : RoutableTestBenchMessage
+{
+    public MqttRoutableTestBenchMessage(MqttTopicViewModel targetTopicConfiguration)
+        : base(targetTopicConfiguration)
+    {
+    }
+}

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Ductus.FluentDocker.Services;
 using Shouldly;
@@ -21,9 +22,10 @@ public class RebalanceTests
 {
     private readonly ITestOutputHelper _output;
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
     public RebalanceTests(KafkaFixture fixture, ITestOutputHelper output)
     {
-        _ = fixture;
         _output = output;
     }
 

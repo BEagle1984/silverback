@@ -4,6 +4,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -29,9 +30,18 @@ namespace Silverback.Tests.Extended.Integration.Mqtt;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "MQTT")]
-public class ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
+public class ConnectionLossTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
+
+    private readonly ITestOutputHelper _output;
+
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
+    public ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
+    {
+        _output = output;
+    }
 
     [Theory]
     [InlineData(MqttQualityOfServiceLevel.AtMostOnce, false, false)]
@@ -44,8 +54,6 @@ public class ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
         bool persistentSession,
         bool publishFromSubscriber)
     {
-        _ = fixture;
-
         string prefix = "stress-loss-" + Guid.NewGuid().ToString("N");
         TaskCompletionSource<bool> firstStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> releaseFirst = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -219,7 +227,7 @@ public class ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
         finally
         {
             releaseFirst.TrySetResult(true);
-            output.WriteLine($"Connection={connection}; disconnected notifications={disconnectNotifications}; processed={string.Join(", ", processed)}");
+            _output.WriteLine($"Connection={connection}; disconnected notifications={disconnectNotifications}; processed={string.Join(", ", processed)}");
             await connector.DisconnectAsync().AsTask().WaitAsync(Timeout);
 
             if (producer.IsConnected)
