@@ -117,12 +117,16 @@ The subscriber is invoked when the first message is consumed and receives all th
 - Each message is committed as soon as the subscriber requests the next one.
 - When the consumer is stopped or disconnected, or the partitions are revoked, the enumeration throws an `OperationCanceledException` (an `IMessageStreamObservable<T>` completes, and `Subscribe` then throws it). A new stream is published, invoking the subscriber again, when the consumption resumes.
 - If the subscriber throws while processing a message, that message isn't committed and the consumer is stopped and disconnected, as with the default stop policy (see <xref:error-policies>). If it throws while the stream is waiting for the next message, the consumer is stopped and disconnected as well, and the stop callbacks receive the message that started the stream. The other error policies can't be used with streaming.
+- If the subscriber stops enumerating the stream (for example with a `break` or an early `return`), the stream ends and the last message it received is committed, unlike when it throws. The next message, including one it stopped waiting for, starts a new stream, invoking the subscriber again. If the subscriber returns without receiving any message, the message that started the stream is committed as well. If it returns because the consumer is stopping (for example when the cancellation token passed to it is canceled), the message is rolled back instead, as if it threw.
+
+> [!Warning]
+> The stream ends as soon as the subscriber returns. Don't hand it over to a background task: the messages would be committed without being processed.
 
 > [!Warning]
 > Process the messages one at a time. Since each message is committed as soon as the next one is requested, consuming the stream concurrently (for example with `Parallel.ForEachAsync`) commits the messages before they're processed, and those whose processing fails aren't consumed again.
 
 > [!Warning]
-> Don't stop enumerating the stream (for example with a `break` or an early `return`) while the consumer is running. The message being processed is never committed and the partition stalls, while stopping or disconnecting the consumer, including the graceful shutdown of the application, hangs.
+> Only one subscriber per stream is supported reliably. All the stream subscribers matching the consumed messages share the same stream, including the subscribers of a different message type once they received a message. If a subscriber stops enumerating the stream while another subscriber is still enumerating it, the stream can neither be completed nor aborted. The partition then stalls, while stopping or disconnecting the consumer, including the graceful shutdown of the application, hangs unless the other subscriber stops when the cancellation token passed to it is canceled.
 
 > [!Warning]
 > The subscriber is resolved from the service scope of the message that starts the stream, and that scope stays open until the stream ends, which can be the whole lifetime of the application. The scoped services, such as an Entity Framework `DbContext`, are therefore shared by all the messages of the stream: their state keeps growing and is never refreshed. Inject the `IServiceScopeFactory` instead, and create a scope per message or per unit of work.

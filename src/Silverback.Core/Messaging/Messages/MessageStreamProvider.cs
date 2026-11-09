@@ -17,6 +17,12 @@ internal abstract class MessageStreamProvider : IMessageStreamProvider, IDisposa
     /// <inheritdoc cref="IMessageStreamProvider.StreamsCount" />
     public abstract int StreamsCount { get; }
 
+    /// <summary>
+    ///     Gets a <see cref="Task" /> that completes when the subscribers of all the streams created so far returned without throwing,
+    ///     meaning that they stopped enumerating them. The subscribers whose stream wasn't created yet aren't awaited.
+    /// </summary>
+    public abstract Task SubscribersReturnedTask { get; }
+
     /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />
     public abstract IMessageStreamEnumerable<object> CreateStream(
         Type messageType,

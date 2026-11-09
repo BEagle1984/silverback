@@ -11,5 +11,8 @@ internal interface ILazyStreamArgumentValue : ILazyArgumentValue
     /// <summary>
     ///     Notifies that the subscriber method returned or threw, meaning that it will not pull any further message from the stream.
     /// </summary>
-    void NotifySubscriberCompleted();
+    /// <param name="hasThrown">
+    ///     A value indicating whether the subscriber method threw.
+    /// </param>
+    void NotifySubscriberCompleted(bool hasThrown);
 }

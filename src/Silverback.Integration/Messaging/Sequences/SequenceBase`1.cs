@@ -55,6 +55,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
+    // The envelope being pushed doesn't change until its push completes, since the adds are serialized by the add semaphore
+    private TEnvelope? _pushedEnvelope;
+
+    // Set by the subscriber pulling the envelope being pushed, so it only holds the last pulled envelope. The early exit handling reads
+    // it only after the subscribers returned, which orders the read after their pulls.
+    private TEnvelope? _lastPulledEnvelope;
+
     private DateTime _timeoutExpiration = DateTime.MaxValue;
 
     private List<ISequence>? _sequences;
@@ -174,11 +181,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public SequenceAbortReason AbortReason { get; private set; }
 
     /// <summary>
-    ///     Gets a value indicating whether the abort caused by an error applies the error policies and rolls back the transaction of the
-    ///     <see cref="Context" />. Otherwise, the error is left to the caller adding the message, which rethrows the
-    ///     <see cref="AbortException" />.
+    ///     Gets a value indicating whether the abort caused by an error or by the subscribers stopping the enumeration completes the
+    ///     transaction of the <see cref="Context" />, applying the error policies and rolling it back or committing it. Otherwise, the
+    ///     caller handles it (e.g., the pipeline of the message being added rethrows the <see cref="AbortException" /> or commits the
+    ///     message).
     /// </summary>
-    private protected virtual bool AppliesErrorPoliciesOnAbort => true;
+    private protected virtual bool CompletesTransactionOnAbort => true;
 
     /// <summary>
     ///     Gets a value indicating whether the abort removes the sequence from the <see cref="ConsumerPipelineContext.SequenceStore" />.
@@ -350,6 +358,21 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     }
 
     /// <summary>
+    ///     Checks whether the specified envelope was the last one pulled by a subscriber, from any stream of the sequence.
+    /// </summary>
+    /// <remarks>
+    ///     The result is reliable once the subscribers returned, for example when the sequence is aborted because they stopped
+    ///     enumerating.
+    /// </remarks>
+    /// <param name="envelope">
+    ///     The envelope that was added to the sequence.
+    /// </param>
+    /// <returns>
+    ///     <c>true</c> if the envelope was the last pulled one, otherwise <c>false</c>.
+    /// </returns>
+    internal bool IsLastPulled(IRawInboundEnvelope envelope) => ReferenceEquals(_lastPulledEnvelope, envelope);
+
+    /// <summary>
     ///     Adds the message to the sequence.
     /// </summary>
     /// <param name="envelope">
@@ -392,11 +415,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             _addCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
+            _pushedEnvelope = envelope;
+
             pushedStreamsCount = await _streamProvider.PushAsync(
                     envelope,
                     throwIfUnhandled,
-                    static envelope => ActivitySources.UpdateConsumeActivity((IRawInboundEnvelope)envelope!),
-                    envelope,
+                    static sequence => ((SequenceBase<TEnvelope>)sequence!).OnPushedEnvelopePulled(),
+                    this,
                     _addCancellationTokenSource.Token)
                 .ConfigureAwait(false);
 
@@ -575,6 +600,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </summary>
     private protected virtual void DisposeContext() => Context.Dispose();
 
+    // Invoked by each stream pulling the envelope being pushed
+    private void OnPushedEnvelopePulled()
+    {
+        _lastPulledEnvelope = _pushedEnvelope;
+        ActivitySources.UpdateConsumeActivity(_pushedEnvelope!);
+    }
+
     private void CompleteLinkedSequence(ISequenceImplementation sequence)
     {
         sequence.NotifyProcessingCompleted();
@@ -738,7 +770,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             switch (AbortReason)
             {
                 case SequenceAbortReason.Error:
-                    if (!AppliesErrorPoliciesOnAbort)
+                    if (!CompletesTransactionOnAbort)
                         break;
 
                     if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!).ConfigureAwait(false))
@@ -751,7 +783,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
                     break;
                 case SequenceAbortReason.EnumerationAborted:
-                    await Context.TransactionManager.CommitAsync().ConfigureAwait(false);
+                    if (CompletesTransactionOnAbort)
+                        await Context.TransactionManager.CommitAsync().ConfigureAwait(false);
+
                     done = false;
                     break;
                 case SequenceAbortReason.IncompleteSequence:

@@ -68,14 +68,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                 context.Envelope.Endpoint.Configuration.AllowStreaming &&
                 HasMessageStreamSubscriber(context))
             {
-                UnboundedSequence unboundedSequence = await GetUnboundedSequenceAsync(context, cancellationToken).ConfigureAwait(false);
-
-                // Let the TransactionHandlerConsumerBehavior tell whether the exception rethrown from the sequence is the cancellation
-                // requested by the consumer stop, since the stop might have canceled the token already (aborting the sequence), and
-                // whether the error policies were applied already by the abort
-                context.UnboundedSequence = unboundedSequence;
-
-                AddToSequenceResult result = await AddToUnboundedSequenceAsync(unboundedSequence, envelope).ConfigureAwait(false);
+                AddToSequenceResult result = await AddToUnboundedSequenceAsync(context, envelope, cancellationToken).ConfigureAwait(false);
 
                 throwIfUnhandled &= result.PushedStreamsCount == 0;
             }
@@ -97,33 +90,80 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         context.ServiceProvider.GetRequiredService<SubscribedMethodsCache>()
             .HasMessageStreamSubscriber(context.Envelope, context.ServiceProvider);
 
+    // The pending sequence, or the one aborted by an error, which stays in the store until the error is handled: the message is added
+    // to it, failing with that error, instead of starting a new stream
+    private static bool IsCurrent(UnboundedSequence sequence) =>
+        sequence is { IsPending: true } or { IsAborted: true, AbortReason: SequenceAbortReason.Error };
+
+    // Wait for the abort to complete, since the sequence must be removed from the store before a new one is created
+    private static async Task<bool> IsEnumerationAbortedAsync(UnboundedSequence sequence)
+    {
+        await sequence.ProcessingCompletedTask.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+
+        return sequence.AbortReason == SequenceAbortReason.EnumerationAborted;
+    }
+
+    private static void EndAdd(UnboundedSequence sequence)
+    {
+        if (sequence.EndAdd())
+            ExceptionDispatchInfo.Throw(sequence.AbortException!);
+    }
+
     // The abort leaves the error handling to the pipeline of the message being added, which rethrows the exception that caused the abort
     // (preserving the stack trace of the subscriber exception), as well as the cancellation requested by the consumer stop. If no message
-    // is being added, the abort handles the error itself (see DisposeWhenProcessedAsync) and the messages added afterwards fail with the
-    // same exception, without applying the error policies again.
-    private static async Task<AddToSequenceResult> AddToUnboundedSequenceAsync(UnboundedSequence sequence, IInboundEnvelope envelope)
+    // is being added, the abort handles the error itself (see AbortAndDisposeWhenProcessedAsync) and the messages added afterwards fail
+    // with the same exception, without applying the error policies again. If the subscribers stopped enumerating instead, the message is
+    // committed, rolled back if the consumer is stopping, or added to a new sequence if it wasn't received.
+    private async Task<AddToSequenceResult> AddToUnboundedSequenceAsync(
+        ConsumerPipelineContext context,
+        IInboundEnvelope envelope,
+        CancellationToken cancellationToken)
     {
-        AddToSequenceResult result;
-
-        try
+        while (true)
         {
-            result = await sequence.AddAsync(envelope, null, false).ConfigureAwait(false);
-        }
-        catch (Exception)
-        {
-            // E.g., pushing to the sequence being aborted fails if its streams are aborted in the meantime
-            EndAdd(sequence);
-            throw;
-        }
+            UnboundedSequence unboundedSequence = await GetUnboundedSequenceAsync(context, cancellationToken).ConfigureAwait(false);
 
-        EndAdd(sequence);
+            // Let the TransactionHandlerConsumerBehavior tell whether the exception rethrown from the sequence is the cancellation
+            // requested by the consumer stop, since the stop might have canceled the token already (aborting the sequence), and
+            // whether the error policies were applied already by the abort
+            context.UnboundedSequence = unboundedSequence;
 
-        return result;
+            AddToSequenceResult result;
 
-        static void EndAdd(UnboundedSequence sequence)
-        {
-            if (sequence.EndAdd())
-                ExceptionDispatchInfo.Throw(sequence.AbortException!);
+            try
+            {
+                result = await unboundedSequence.AddAsync(envelope, null, false).ConfigureAwait(false);
+            }
+            catch (InvalidOperationException) when (unboundedSequence.AbortReason == SequenceAbortReason.EnumerationAborted)
+            {
+                // Pushing to the sequence being aborted fails if its streams are aborted in the meantime: handle the message as not
+                // received, since the subscribers stopped enumerating
+                result = AddToSequenceResult.Aborted(null);
+            }
+            catch (Exception)
+            {
+                // E.g., pushing to the sequence being aborted by an error fails if its streams are aborted in the meantime
+                EndAdd(unboundedSequence);
+                throw;
+            }
+
+            EndAdd(unboundedSequence);
+
+            if (result.IsAborted && await IsEnumerationAbortedAsync(unboundedSequence).ConfigureAwait(false))
+            {
+                // The subscribers stopped enumerating because the consumer is stopping (e.g., returning when the token passed to them is
+                // canceled): roll the message back, as if they threw the cancellation, instead of committing it
+                cancellationToken.ThrowIfCancellationRequested();
+
+                // The subscribers stopped enumerating before receiving the message (e.g., canceling the enumeration with their own token
+                // while it was being added): push it to a new stream, invoking them again, instead of committing it. This doesn't apply to
+                // the message that started the stream, since the subscribers were invoked for it and returned without receiving it, and it
+                // bounds the retries.
+                if (!unboundedSequence.IsLastPulled(envelope) && unboundedSequence.Context != context)
+                    continue;
+            }
+
+            return result;
         }
     }
 
@@ -142,9 +182,11 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
         UnboundedSequence? sequence = await context.SequenceStore.GetAsync<UnboundedSequence>(sequenceIdPrefix, true).ConfigureAwait(false);
 
-        // A sequence aborted by an error stays in the store until the error is handled: add the message to it, failing with that
-        // error, instead of starting a new stream
-        if (sequence is { IsPending: true } or { IsAborted: true, AbortReason: SequenceAbortReason.Error })
+        // An aborted sequence stays in the store until its abort completes, possibly ahead of the sequence that replaced it
+        if (sequence != null && !IsCurrent(sequence))
+            sequence = context.SequenceStore.OfType<UnboundedSequence>().FirstOrDefault(IsCurrent);
+
+        if (sequence != null)
         {
             sequence.BeginAdd();
             return sequence;
@@ -170,19 +212,34 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         }
         finally
         {
-            DisposeWhenProcessedAsync(sequence, processingTask).FireAndForget();
+            AbortAndDisposeWhenProcessedAsync(sequence, processingTask).FireAndForget();
         }
 
         return sequence;
     }
 
-    // The unbounded sequence never completes: dispose it, releasing the service scope used by the subscribers, once it's aborted
-    // (because a subscriber failed, or the consumer is stopping or the partitions are being revoked) and the subscribers returned
+    // The unbounded sequence never completes: dispose it, releasing the service scope used by the subscribers, once it's aborted and the
+    // subscribers returned. It's aborted when a subscriber fails, when the consumer is stopping or the partitions are being revoked, or
+    // here, when the subscribers stop enumerating (e.g., with a break) while it's still pending.
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    private async Task DisposeWhenProcessedAsync(UnboundedSequence sequence, Task processingTask)
+    private async Task AbortAndDisposeWhenProcessedAsync(UnboundedSequence sequence, Task processingTask)
     {
+        // Don't wait for all the subscribers to return, since the ones whose stream isn't created yet (e.g., subscribing to another
+        // message type) keep waiting for it until the sequence is aborted
+        Task subscribersReturnedTask = ((MessageStreamProvider)sequence.StreamProvider).SubscribersReturnedTask;
+        await Task.WhenAny(processingTask, subscribersReturnedTask).ConfigureAwait(false);
+
+        // Abort the sequence if the subscribers stopped enumerating while it's still pending, as the TransactionHandlerConsumerBehavior
+        // does for the other sequences: the pending push would otherwise wait forever for the next pull, stalling the partition and the
+        // consumer stop. The pipeline of the message being pushed then commits it, rolls it back if the consumer is stopping, or pushes it
+        // to a new sequence if it wasn't received (see AddToUnboundedSequenceAsync), and the next message starts a new sequence. A
+        // sequence without subscribers isn't pushed to any stream and stays pending.
+        if (subscribersReturnedTask.IsCompleted && sequence.IsPending)
+            await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+
         // The exceptions are handled by the sequence abort and by the pipeline of the message being pushed
-        await Task.WhenAll(processingTask, sequence.ProcessingCompletedTask).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        await processingTask.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        await sequence.ProcessingCompletedTask.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
 
         try
         {

@@ -147,14 +147,17 @@ internal static class SubscribedMethodInvoker
                 return;
             }
 
+            bool hasThrown = true;
+
             try
             {
                 await InvokeWithActivityWithoutBlockingAsync(subscribedMethod, target, arguments).ConfigureAwait(false);
+                hasThrown = false;
             }
             finally
             {
                 // The subscriber will not pull any further message: don't let the stream completion wait for it
-                (lazyStream as ILazyStreamArgumentValue)?.NotifySubscriberCompleted();
+                (lazyStream as ILazyStreamArgumentValue)?.NotifySubscriberCompleted(hasThrown);
             }
         });
     }

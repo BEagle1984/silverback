@@ -111,7 +111,8 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
     // When streaming, the exception might come from the unbounded sequence processing: rely on its abort reason, like for the other
     // sequences, since the token might have been canceled in the meantime by a stop that didn't cause the exception. Rely on the token
-    // for the exceptions thrown by the rest of the pipeline (e.g., by the other subscribers), as for the messages that aren't streamed.
+    // for the exceptions thrown by the rest of the pipeline (e.g., by the other subscribers or by the early exit handling, which rolls
+    // back the message when the consumer is stopping), as for the messages that aren't streamed.
     private static bool IsStopCancellation(ConsumerPipelineContext context, Exception exception, CancellationToken cancellationToken) =>
         context.UnboundedSequence is { AbortReason: not SequenceAbortReason.None } unboundedSequence &&
         exception == unboundedSequence.AbortException

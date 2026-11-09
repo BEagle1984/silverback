@@ -13,8 +13,9 @@ namespace Silverback.Messaging.Sequences.Unbounded;
 ///     belonging to a sequence.
 /// </summary>
 /// <remarks>
-///     Each message is committed by its own pipeline, as soon as the subscribers pull the next one. The <see cref="ISequence.Context" />
-///     is the context of the message that started the sequence, which is disposed by its own pipeline.
+///     Each message is committed by its own pipeline, as soon as the subscribers pull the next one or, if they stop enumerating, once the
+///     sequence is aborted. The <see cref="ISequence.Context" /> is the context of the message that started the sequence, which is
+///     disposed by its own pipeline.
 /// </remarks>
 internal sealed class UnboundedSequence : Sequence
 {
@@ -46,8 +47,9 @@ internal sealed class UnboundedSequence : Sequence
     public bool IsErrorHandledByAbort => (_addState & ErrorClaimedByAbortFlag) != 0;
 
     // The transaction of the message that started the sequence is usually committed already: let the pipeline of the message being
-    // added apply the error policies and roll back, or the abort itself if no message is being added (see TryClaimErrorForAbort)
-    private protected override bool AppliesErrorPoliciesOnAbort => false;
+    // added apply the error policies and roll back, or the abort itself if no message is being added (see TryClaimErrorForAbort), and
+    // let the pipeline commit the message being added when the subscribers stop enumerating
+    private protected override bool CompletesTransactionOnAbort => false;
 
     // A sequence aborted by an error stays in the store until the error is handled, so that the messages consumed in the meantime fail
     // with that error instead of starting a new stream. The PublisherConsumerBehavior removes it.

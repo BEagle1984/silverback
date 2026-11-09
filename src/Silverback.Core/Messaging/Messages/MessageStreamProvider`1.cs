@@ -26,6 +26,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
     private readonly SemaphoreSlim _completeSemaphore = new(1, 1);
 
+    private readonly TaskCompletionSource _subscribersReturnedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     private MethodInfo? _genericCreateStreamMethodInfo;
 
     private bool _completed;
@@ -43,6 +45,9 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
     /// <inheritdoc cref="MessageStreamProvider.StreamsCount" />
     public override int StreamsCount => _lazyStreams.Count;
+
+    /// <inheritdoc cref="MessageStreamProvider.SubscribersReturnedTask" />
+    public override Task SubscribersReturnedTask => _subscribersReturnedTaskCompletionSource.Task;
 
     /// <summary>
     ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the message has actually been
@@ -194,7 +199,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="MessageStreamProvider.CreateLazyStream{TMessage}" />
     public override ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStream<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null)
     {
-        ILazyMessageStreamEnumerable<TMessageLinked> stream = CreateLazyStreamCore<TMessageLinked>(filters);
+        ILazyMessageStreamEnumerable<TMessageLinked> stream = new LazyMessageStreamEnumerable<TMessageLinked>(filters, OnSubscriberReturned);
 
         lock (_lazyStreams)
         {
@@ -218,9 +223,6 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
         _disposed = true;
     }
-
-    private static LazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
-        new(filters);
 
     private static bool PushIfCompatibleType(
         ILazyMessageStreamEnumerable lazyStream,
@@ -273,5 +275,17 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
                 yield return processingTask;
             }
         }
+    }
+
+    // Invoked by a lazy stream, whose stream is created, when its subscriber returns
+    private void OnSubscriberReturned()
+    {
+        lock (_lazyStreams)
+        {
+            if (_lazyStreams.Exists(lazyStream => lazyStream.Stream != null && !lazyStream.HasSubscriberReturned))
+                return;
+        }
+
+        _subscribersReturnedTaskCompletionSource.TrySetResult();
     }
 }

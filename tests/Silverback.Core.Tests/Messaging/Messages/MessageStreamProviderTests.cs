@@ -10,6 +10,7 @@ using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Util;
 using Xunit;
 
@@ -573,6 +574,51 @@ public class MessageStreamProviderTests
 
         Func<Task> act = async () => await pushTask;
         await act.ShouldThrowAsync<OperationCanceledException>();
+    }
+
+    [Fact]
+    public async Task SubscribersReturnedTask_ShouldComplete_WhenSubscribersOfAllCreatedStreamsReturned()
+    {
+        MessageStreamProvider<IMessage> provider = new();
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream1 = provider.CreateLazyStream<TestEventOne>();
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream2 = provider.CreateLazyStream<TestEventOne>();
+        provider.CreateLazyStream<TestEventTwo>();
+
+        Task pushTask = provider.PushAsync(new TestEventOne());
+
+        ((ILazyStreamArgumentValue)lazyStream1).NotifySubscriberCompleted(false);
+        bool isCompletedBeforeAllReturned = provider.SubscribersReturnedTask.IsCompleted;
+        ((ILazyStreamArgumentValue)lazyStream2).NotifySubscriberCompleted(false);
+
+        isCompletedBeforeAllReturned.ShouldBeFalse();
+        await provider.SubscribersReturnedTask.WaitAsync(Timeout);
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+    }
+
+    [Fact]
+    public async Task SubscribersReturnedTask_ShouldNotComplete_WhenSubscriberThrew()
+    {
+        MessageStreamProvider<IMessage> provider = new();
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+
+        Task pushTask = provider.PushAsync(new TestEventOne());
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(true);
+        bool isCompleted = provider.SubscribersReturnedTask.IsCompleted;
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+
+        isCompleted.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void SubscribersReturnedTask_ShouldNotComplete_WhenNoStreamCreated()
+    {
+        MessageStreamProvider<IMessage> provider = new();
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false);
+
+        provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
     }
 
     [Fact]

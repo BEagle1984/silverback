@@ -18,15 +18,18 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     private readonly System.Threading.Lock _syncRoot = new();
 
+    private readonly Action? _onSubscriberReturned;
+
     private MessageStreamEnumerable<TMessage>? _stream;
 
     private bool _isCreationCanceled;
 
     private bool _isDisposed;
 
-    public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null)
+    public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null, Action? onSubscriberReturned = null)
     {
         Filters = filters;
+        _onSubscriberReturned = onSubscriberReturned;
     }
 
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.MessageType" />
@@ -46,6 +49,12 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.Filters" />
     public IReadOnlyCollection<IMessageFilter>? Filters { get; }
+
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.HasSubscriberReturned" />
+    /// <remarks>
+    ///     The provider reads it while holding its lock, which the notifying subscriber acquires after setting it.
+    /// </remarks>
+    public bool HasSubscriberReturned { get; private set; }
 
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.Stream" />
     IMessageStreamEnumerable? ILazyMessageStreamEnumerable.Stream => (IMessageStreamEnumerable?)Stream;
@@ -114,16 +123,25 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
     }
 
     /// <inheritdoc cref="ILazyStreamArgumentValue.NotifySubscriberCompleted" />
-    public void NotifySubscriberCompleted()
+    public void NotifySubscriberCompleted(bool hasThrown)
     {
         MessageStreamEnumerable<TMessage>? stream;
 
         lock (_syncRoot)
         {
             stream = _stream;
+
+            if (stream != null && !hasThrown)
+                HasSubscriberReturned = true;
         }
 
-        stream?.Abandon();
+        if (stream == null)
+            return;
+
+        stream.Abandon();
+
+        if (!hasThrown)
+            _onSubscriberReturned?.Invoke();
     }
 
     public void Dispose()

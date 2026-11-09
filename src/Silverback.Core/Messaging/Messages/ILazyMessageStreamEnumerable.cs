@@ -31,6 +31,11 @@ internal interface ILazyMessageStreamEnumerable
     IReadOnlyCollection<IMessageFilter>? Filters { get; }
 
     /// <summary>
+    ///     Gets a value indicating whether the subscriber consuming the stream returned without throwing.
+    /// </summary>
+    bool HasSubscriberReturned { get; }
+
+    /// <summary>
     ///     Gets an awaitable <see cref="Task" /> that completes when the first message is pushed and the
     ///     <see cref="IMessageStreamEnumerable" /> is created. The created stream can be retrieved via
     ///     the <see cref="Stream" /> property.

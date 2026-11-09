@@ -370,6 +370,56 @@ public class SequenceBaseTests
         sequence.Dispose();
     }
 
+    [Fact]
+    public async Task IsLastPulled_ShouldReturnFalse_WhenAbortedBeforeMessageIsLastPulled()
+    {
+        TestSequence sequence = CreateSequence(new HookLogger());
+        sequence.CreateStream<IRawInboundEnvelope>();
+        RawInboundEnvelope envelope = CreateEnvelope();
+
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(envelope, null, true);
+        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
+        AddToSequenceResult addResult = await addTask.WaitAsync(Timeout);
+
+        addResult.IsAborted.ShouldBeTrue();
+        sequence.IsLastPulled(envelope).ShouldBeFalse();
+        sequence.Dispose();
+    }
+
+    [Fact]
+    public async Task IsLastPulled_ShouldReturnTrue_WhenAbortedAfterMessageIsLastPulled()
+    {
+        TestSequence sequence = CreateSequence(new HookLogger());
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        await using IAsyncEnumerator<IRawInboundEnvelope> enumerator = stream.GetAsyncEnumerator();
+        RawInboundEnvelope envelope = CreateEnvelope();
+
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(envelope, null, true);
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
+        AddToSequenceResult addResult = await addTask.WaitAsync(Timeout);
+
+        addResult.IsAborted.ShouldBeTrue();
+        sequence.IsLastPulled(envelope).ShouldBeTrue();
+        sequence.IsLastPulled(CreateEnvelope()).ShouldBeFalse();
+        sequence.Dispose();
+    }
+
+    [Fact]
+    public async Task IsLastPulled_ShouldReturnFalse_WhenAddedToAbortedSequence()
+    {
+        TestSequence sequence = CreateSequence(new HookLogger());
+        sequence.CreateStream<IRawInboundEnvelope>();
+        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
+        RawInboundEnvelope envelope = CreateEnvelope();
+
+        AddToSequenceResult addResult = await sequence.AddAsync(envelope, null, true).WaitAsync(Timeout);
+
+        addResult.IsAborted.ShouldBeTrue();
+        sequence.IsLastPulled(envelope).ShouldBeFalse();
+        sequence.Dispose();
+    }
+
     private static TestSequence CreateSequence(HookLogger logger, ISequenceStore? sequenceStore = null)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
