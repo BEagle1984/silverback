@@ -28,6 +28,49 @@ services.AddSilverback()
                         })))));
 ```
 
+#### Source Generation
+
+The deserializer can use the metadata generated at compile time by the [System.Text.Json source generator](https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/source-generation) instead of runtime reflection. Declare a `JsonSerializerContext` listing the message types and set it as `TypeInfoResolver` in the `Configure` method.
+
+```csharp
+[JsonSerializable(typeof(MyMessage))]
+[JsonSerializable(typeof(MyOtherMessage))]
+public partial class MyJsonContext : JsonSerializerContext;
+```
+
+```csharp
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(clients => clients
+        .WithBootstrapServers("PLAINTEXT://localhost:9092")
+        .AddConsumer("consumer1", consumer => consumer
+            .Consume("endpoint1", endpoint => endpoint
+                .ConsumeFrom("my-topic")
+                .DeserializeJson(deserializer => deserializer
+                    .Configure(
+                        options =>
+                        {
+                            options.TypeInfoResolver = MyJsonContext.Default;
+                        })))));
+```
+
+Several contexts can be combined by adding them to the `TypeInfoResolverChain`. The resolvers are queried in order and the first one providing the metadata for the type wins.
+
+```csharp
+.DeserializeJson(deserializer => deserializer
+    .Configure(
+        options =>
+        {
+            options.TypeInfoResolverChain.Add(MyJsonContext.Default);
+            options.TypeInfoResolverChain.Add(MyOtherJsonContext.Default);
+        }))
+```
+
+Keep the following in mind:
+* Every type the message can be deserialized into must be listed in a context: the type set in the endpoint configuration and, when the `x-message-type` header is used (see [Polymorphic Deserialization](#polymorphic-deserialization)), every type the header may point to. Otherwise the deserializer throws a `NotSupportedException`. To fall back to reflection for the types not listed, add a `DefaultJsonTypeInfoResolver` at the end of the `TypeInfoResolverChain`.
+* Most settings declared via `[JsonSourceGenerationOptions]`, such as the naming policy, the ignore conditions or the case insensitivity, apply only to the context's own `Options` and are ignored when the context is used as resolver. Set them on the options in the `Configure` method instead (e.g. `options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase`). The converters declared there (`Converters` and `UseStringEnumConverter`) are part of the generated metadata and still apply.
+* This reduces the reflection used for the deserialization, but doesn't make Silverback compatible with trimming or Native AOT. The type in the `x-message-type` header, for example, is still resolved via reflection.
+
 ### Newtonsoft.Json
 
 Silverback also provides a deserializer based on `Newtonsoft.Json`. It is found in the [Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/) package and can be enabled by calling the `DeserializeJsonUsingNewtonsoft` method.

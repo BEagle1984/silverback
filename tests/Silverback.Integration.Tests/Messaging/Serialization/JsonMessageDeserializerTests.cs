@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Silverback.Util;
@@ -205,6 +206,75 @@ public class JsonMessageDeserializerTests
         Func<Task> act = () => deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault()).AsTask();
 
         await act.ShouldThrowAsync<TypeLoadException>();
+    }
+
+    [Fact]
+    public async Task DeserializeAsync_ShouldDeserialize_WhenUsingSourceGeneratedContext()
+    {
+        MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
+
+        JsonMessageDeserializer<TestEventOne> deserializer = new(
+            new JsonSerializerOptions
+            {
+                TypeInfoResolver = TestEventOneJsonSerializerContext.Default
+            });
+
+        (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, [], TestConsumerEndpoint.GetDefault());
+
+        TestEventOne testEventOne = deserializedObject.ShouldBeOfType<TestEventOne>();
+        testEventOne.Content.ShouldBe("the message");
+        type.ShouldBe(typeof(TestEventOne));
+    }
+
+    [Theory]
+    [InlineData(typeof(TestEventOne))]
+    [InlineData(typeof(TestEventTwo))]
+    public async Task DeserializeAsync_ShouldDeserializeTypeFromHeader_WhenCombiningSourceGeneratedContexts(Type messageType)
+    {
+        MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
+        MessageHeaderCollection headers = new()
+        {
+            { "x-message-type", messageType.AssemblyQualifiedName }
+        };
+
+        JsonSerializerOptions options = new();
+        options.TypeInfoResolverChain.Add(TestEventOneJsonSerializerContext.Default);
+        options.TypeInfoResolverChain.Add(TestEventTwoJsonSerializerContext.Default);
+        JsonMessageDeserializer<object> deserializer = new(options);
+
+        (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
+
+        deserializedObject.ShouldNotBeNull();
+        deserializedObject.GetType().ShouldBe(messageType);
+        string? content = deserializedObject switch
+        {
+            TestEventOne testEventOne => testEventOne.Content,
+            TestEventTwo testEventTwo => testEventTwo.Content,
+            _ => null
+        };
+        content.ShouldBe("the message");
+        type.ShouldBe(messageType);
+    }
+
+    [Fact]
+    public async Task DeserializeAsync_ShouldThrow_WhenTypeNotInSourceGeneratedContext()
+    {
+        MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
+        MessageHeaderCollection headers = new()
+        {
+            { "x-message-type", typeof(TestEventTwo).AssemblyQualifiedName }
+        };
+
+        JsonMessageDeserializer<object> deserializer = new(
+            new JsonSerializerOptions
+            {
+                TypeInfoResolver = TestEventOneJsonSerializerContext.Default
+            });
+
+        Func<Task> act = () => deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault()).AsTask();
+
+        Exception exception = await act.ShouldThrowAsync<NotSupportedException>();
+        exception.Message.ShouldContain(nameof(TestEventTwo));
     }
 
     [Fact]

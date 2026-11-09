@@ -1,12 +1,14 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Silverback.Util;
@@ -84,6 +86,60 @@ public class JsonMessageSerializerTests
             TestProducerEndpoint.GetDefault());
 
         serialized.ReadAll().ShouldBe(messageBytes);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ShouldSerialize_WhenUsingSourceGeneratedContext()
+    {
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = [];
+
+        JsonMessageSerializer serializer = new(
+            new JsonSerializerOptions
+            {
+                TypeInfoResolver = TestEventOneJsonSerializerContext.Default
+            });
+
+        Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        byte[] expected = "{\"Content\":\"the message\"}"u8.ToArray();
+        serialized.ReadAll().ShouldBe(expected);
+        headers.GetValue("x-message-type").ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ShouldSerialize_WhenCombiningSourceGeneratedContexts()
+    {
+        TestEventTwo message = new() { Content = "the message" };
+        MessageHeaderCollection headers = [];
+
+        JsonSerializerOptions options = new();
+        options.TypeInfoResolverChain.Add(TestEventOneJsonSerializerContext.Default);
+        options.TypeInfoResolverChain.Add(TestEventTwoJsonSerializerContext.Default);
+        JsonMessageSerializer serializer = new(options);
+
+        Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        byte[] expected = "{\"Content\":\"the message\"}"u8.ToArray();
+        serialized.ReadAll().ShouldBe(expected);
+        headers.GetValue("x-message-type").ShouldBe(typeof(TestEventTwo).AssemblyQualifiedName);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ShouldThrow_WhenTypeNotInSourceGeneratedContext()
+    {
+        TestEventTwo message = new() { Content = "the message" };
+
+        JsonMessageSerializer serializer = new(
+            new JsonSerializerOptions
+            {
+                TypeInfoResolver = TestEventOneJsonSerializerContext.Default
+            });
+
+        Func<Task> act = () => serializer.SerializeAsync(message, [], TestProducerEndpoint.GetDefault()).AsTask();
+
+        Exception exception = await act.ShouldThrowAsync<NotSupportedException>();
+        exception.Message.ShouldContain(nameof(TestEventTwo));
     }
 
     [Fact]
