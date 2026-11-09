@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences.Unbounded;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences;
@@ -166,8 +167,9 @@ public abstract class SequenceReaderBase : ISequenceReader
 
         await sequences.ForEachAsync(AwaitOrAbortPreviousSequenceAsync).ConfigureAwait(false);
 
+        // The unbounded sequence aborted by an error stays in the store until its error is handled (see UnboundedSequence)
         await sequences
-            .Where(sequence => !sequence.IsPending)
+            .Where(sequence => !sequence.IsPending && sequence is not UnboundedSequence)
             .ForEachAsync(sequence => sequenceStore.RemoveAsync(sequence.SequenceId))
             .ConfigureAwait(false);
     }

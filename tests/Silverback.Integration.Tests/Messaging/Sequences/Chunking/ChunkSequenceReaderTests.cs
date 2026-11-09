@@ -10,6 +10,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Messaging.Sequences.Unbounded;
 using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
@@ -328,6 +329,36 @@ public sealed class ChunkSequenceReaderTests : IDisposable
         ISequence sequence2 = await reader.GetSequenceAsync(context2);
         sequence2.ShouldBeOfType<IncompleteSequence>();
         sequence2.ShouldNotBe(sequence1);
+    }
+
+    [Fact]
+    public async Task GetSequence_ShouldKeepUnboundedSequenceAbortedByErrorInStore_WhenFirstChunk()
+    {
+        UnboundedSequence unboundedSequence = new(
+            "unbounded|test",
+            ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: _sequenceStore));
+        await _sequenceStore.AddAsync(unboundedSequence);
+        await unboundedSequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("Test"));
+        RawInboundEnvelope envelope = new(
+            BytesUtil.GetRandomBytes(10),
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageKey, "123" },
+                { DefaultMessageHeaders.ChunkIndex, "0" },
+                { DefaultMessageHeaders.ChunksCount, "4" }
+            },
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
+            envelope,
+            sequenceStore: _sequenceStore);
+
+        ISequence sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
+
+        sequence.IsNew.ShouldBeTrue();
+        UnboundedSequence? storedSequence = await _sequenceStore.GetAsync<UnboundedSequence>("unbounded|", true);
+        storedSequence.ShouldBeSameAs(unboundedSequence);
     }
 
     public void Dispose() => _sequenceStore.DisposeAsync().SafeWait();
