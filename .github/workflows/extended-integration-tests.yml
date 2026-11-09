@@ -35,7 +35,7 @@ jobs:
           dotnet-version: '10.0.x'
       # Pull the broker images up front, so that the download time doesn't count against the test fixtures' startup timeouts
       - name: Pull broker images
-        run: docker compose --project-name silverback pull kafka-1 kafka-2 emqx1 emqx2 haproxy
+        run: docker compose --project-name silverback pull kafka-1 kafka-2 schema-registry emqx1 emqx2 haproxy
       - name: Build
         run: |
           dotnet build tests/extended/Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj \
@@ -63,7 +63,7 @@ jobs:
         if: failure()
         run: |
           mkdir -p "$RUNNER_TEMP/broker-logs"
-          for container in silverback-kafka-1 silverback-kafka-2 silverback-emqx1 silverback-emqx2 silverback-haproxy; do
+          for container in silverback-kafka-1 silverback-kafka-2 silverback-schema-registry silverback-emqx1 silverback-emqx2 silverback-haproxy; do
             docker logs "$container" > "$RUNNER_TEMP/broker-logs/$container.log" 2>&1 || true
           done
       # The worker containers run as root and createdump writes the dumps with mode 0600, so give the evidence files back to the

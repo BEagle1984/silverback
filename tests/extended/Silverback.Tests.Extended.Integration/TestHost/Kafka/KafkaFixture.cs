@@ -18,7 +18,7 @@ public sealed class KafkaFixture : DockerTestsFixture
 
     protected override IReadOnlyCollection<string> InfrastructureServices => ["kafka-1", "kafka-2"];
 
-    protected override async Task WaitForInfrastructureAsync()
+    public static async Task WaitUntilClusterIsReadyAsync()
     {
         using IAdminClient admin = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = BootstrapServers }).Build();
         Stopwatch stopwatch = Stopwatch.StartNew();
@@ -40,6 +40,8 @@ public sealed class KafkaFixture : DockerTestsFixture
 
         throw new TimeoutException("The root compose Kafka cluster did not become ready.");
     }
+
+    protected override Task WaitForInfrastructureAsync() => WaitUntilClusterIsReadyAsync();
 
     protected override async Task InitializeCoreAsync()
     {
