@@ -10,6 +10,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Unbounded;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Consuming.Transaction;
@@ -109,12 +110,19 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     private static bool IsCompletingOrComplete(ISequence sequence) => sequence.IsCompleting || sequence.IsComplete;
 
     // When streaming, the exception might come from the unbounded sequence processing: rely on its abort reason, like for the other
-    // sequences, since the token might have been canceled in the meantime by a stop that didn't cause the exception. Check the reason
-    // rather than IsAborted, since the state is switched before the reason is set: until then rely on the token.
+    // sequences, since the token might have been canceled in the meantime by a stop that didn't cause the exception. Rely on the token
+    // for the exceptions thrown by the rest of the pipeline (e.g., by the other subscribers), as for the messages that aren't streamed.
     private static bool IsStopCancellation(ConsumerPipelineContext context, Exception exception, CancellationToken cancellationToken) =>
-        context.UnboundedSequence is { AbortReason: not SequenceAbortReason.None } unboundedSequence
+        context.UnboundedSequence is { AbortReason: not SequenceAbortReason.None } unboundedSequence &&
+        exception == unboundedSequence.AbortException
             ? StopCancellationHelper.IsStopCancellation(exception, unboundedSequence)
             : StopCancellationHelper.IsStopCancellation(exception, cancellationToken);
+
+    // The unbounded sequence abort applied the error policies already, because the subscriber failed while no message was being added:
+    // the message added afterwards just rolls back and stops the consumer
+    private static bool IsHandledByUnboundedSequenceAbort(ConsumerPipelineContext context, Exception exception) =>
+        context.UnboundedSequence is UnboundedSequence { IsErrorHandledByAbort: true } unboundedSequence &&
+        exception == unboundedSequence.AbortException;
 
     private async Task AwaitProcessedIfNecessaryAsync(ConsumerPipelineContext context)
     {
@@ -300,7 +308,8 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
         try
         {
-            bool handled = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false);
+            bool handled = !IsHandledByUnboundedSequenceAbort(context, exception) &&
+                           await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false);
 
             if (!handled)
             {

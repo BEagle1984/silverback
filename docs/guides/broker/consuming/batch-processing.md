@@ -116,10 +116,10 @@ The subscriber is invoked when the first message is consumed and receives all th
 - With Kafka, a stream per partition is created by default, or a single one for all the partitions with `ProcessAllPartitionsTogether`.
 - Each message is committed as soon as the subscriber requests the next one.
 - When the consumer is stopped or disconnected, or the partitions are revoked, the enumeration throws an `OperationCanceledException` (an `IMessageStreamObservable<T>` completes, and `Subscribe` then throws it). A new stream is published, invoking the subscriber again, when the consumption resumes.
-- If the subscriber throws while processing a message, that message isn't committed and the consumer is stopped and disconnected, as with the default stop policy (see <xref:error-policies>). The other error policies can't be used with streaming.
+- If the subscriber throws while processing a message, that message isn't committed and the consumer is stopped and disconnected, as with the default stop policy (see <xref:error-policies>). If it throws while the stream is waiting for the next message, the consumer is stopped and disconnected as well, and the stop callbacks receive the message that started the stream. The other error policies can't be used with streaming.
 
 > [!Warning]
-> Process the messages one at a time. Since each message is committed as soon as the next one is requested, consuming the stream concurrently (for example with `Parallel.ForEachAsync`) commits the messages before they're processed, and an exception thrown while the stream is waiting for the next message may not stop the consumer.
+> Process the messages one at a time. Since each message is committed as soon as the next one is requested, consuming the stream concurrently (for example with `Parallel.ForEachAsync`) commits the messages before they're processed, and those whose processing fails aren't consumed again.
 
 > [!Warning]
 > Don't stop enumerating the stream (for example with a `break` or an early `return`) while the consumer is running. The message being processed is never committed and the partition stalls, while stopping or disconnecting the consumer, including the graceful shutdown of the application, hangs.

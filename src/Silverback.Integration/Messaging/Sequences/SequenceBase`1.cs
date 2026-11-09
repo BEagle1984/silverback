@@ -47,8 +47,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     private readonly TaskCompletionSource _disposeTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     // The state and the completing flag are also read without holding the semaphores (e.g., when the processing completes). They are
-    // volatile because the readers rely on the order of the updates: IsCompleting is reset only after the state is switched to complete
-    // and _abortingTaskCompletionSource is set before the state is switched to aborted.
+    // volatile because the readers rely on the order of the updates: IsCompleting is reset only after the state is switched to complete,
+    // while _abortingTaskCompletionSource, the abort reason and the abort exception are set before the state is switched to aborted.
     private volatile CompleteState _completeState = CompleteState.NotComplete;
 
     private volatile bool _isCompleting;
@@ -179,6 +179,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     <see cref="AbortException" />.
     /// </summary>
     private protected virtual bool AppliesErrorPoliciesOnAbort => true;
+
+    /// <summary>
+    ///     Gets a value indicating whether the abort removes the sequence from the <see cref="ConsumerPipelineContext.SequenceStore" />.
+    ///     Otherwise, the sequence has to be removed by the caller.
+    /// </summary>
+    private protected virtual bool IsRemovedFromStoreOnAbort => true;
 
     /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
     void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
@@ -668,15 +674,17 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (IsAborted)
             return false;
 
-        // Create the completion source before switching the state, for the readers checking IsAborted without the complete semaphore
+        // Set the completion source, the reason and the exception before switching the state, for the readers checking IsAborted
+        // without the complete semaphore
         _abortingTaskCompletionSource = new TaskCompletionSource<bool>();
-        _completeState = CompleteState.Aborted;
 
         if (reason > AbortReason)
         {
             AbortReason = reason;
             AbortException = exception;
         }
+
+        _completeState = CompleteState.Aborted;
 
         _logger.LogSequenceAborting(this, AbortReason, AbortException);
 
@@ -700,7 +708,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             try
             {
-                await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+                if (IsRemovedFromStoreOnAbort)
+                    await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+
                 if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
                     LogAbort();
             }

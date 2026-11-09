@@ -63,6 +63,133 @@ public class UnboundedSequenceTests
         sequence.ProcessingCompletedTask.IsCompletedSuccessfully.ShouldBeTrue();
     }
 
+    [Fact]
+    public async Task AbortAsync_ShouldNotRemoveFromStore_WhenAbortedBecauseOfError()
+    {
+        (ConsumerPipelineContext context, _, _) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+
+        await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("Test"));
+
+        await context.SequenceStore.DidNotReceiveWithAnyArgs().RemoveAsync(null!);
+    }
+
+    [Fact]
+    public async Task AbortAsync_ShouldRemoveFromStore_WhenAbortedBecauseOfConsumerAbort()
+    {
+        (ConsumerPipelineContext context, _, _) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+
+        await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted);
+
+        await context.SequenceStore.Received(1).RemoveAsync("unbounded|test");
+    }
+
+    [Fact]
+    public void EndAdd_ShouldReturnFalse_WhenNotAborted()
+    {
+        (ConsumerPipelineContext context, _, _) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+
+        sequence.BeginAdd();
+        bool result = sequence.EndAdd();
+
+        result.ShouldBeFalse();
+        sequence.IsErrorHandledByAbort.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task EndAdd_ShouldReturnFalse_WhenAbortedBecauseOfConsumerAbort()
+    {
+        (ConsumerPipelineContext context, _, _) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+
+        sequence.BeginAdd();
+        await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted);
+        bool result = sequence.EndAdd();
+
+        result.ShouldBeFalse();
+        sequence.TryClaimErrorForAbort().ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task EndAdd_ShouldReturnTrue_WhenAbortedBecauseOfConsumerAbortWithException()
+    {
+        (ConsumerPipelineContext context, _, _) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+
+        sequence.BeginAdd();
+        await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted, new OperationCanceledException());
+        bool result = sequence.EndAdd();
+
+        result.ShouldBeTrue();
+        sequence.TryClaimErrorForAbort().ShouldBeFalse();
+        sequence.IsErrorHandledByAbort.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task EndAdd_ShouldReturnTrueAndClaimError_WhenAbortedBecauseOfErrorWhileAdding()
+    {
+        (ConsumerPipelineContext context, _, _) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+
+        sequence.BeginAdd();
+        await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("Test"));
+        bool claimedForAbort = sequence.TryClaimErrorForAbort();
+        bool result = sequence.EndAdd();
+
+        claimedForAbort.ShouldBeFalse();
+        result.ShouldBeTrue();
+        sequence.TryClaimErrorForAbort().ShouldBeFalse();
+        sequence.IsErrorHandledByAbort.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task TryClaimErrorForAbort_ShouldReturnTrue_WhenAbortedBecauseOfErrorWhileNotAdding()
+    {
+        (ConsumerPipelineContext context, _, _) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+
+        sequence.BeginAdd();
+        sequence.EndAdd().ShouldBeFalse();
+        await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("Test"));
+        bool result = sequence.TryClaimErrorForAbort();
+
+        result.ShouldBeTrue();
+        sequence.IsErrorHandledByAbort.ShouldBeTrue();
+        sequence.TryClaimErrorForAbort().ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task EndAdd_ShouldReturnTrueWithoutClaimingError_WhenErrorIsAlreadyHandledByAbort()
+    {
+        (ConsumerPipelineContext context, _, _) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+        await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("Test"));
+        sequence.TryClaimErrorForAbort().ShouldBeTrue();
+
+        sequence.BeginAdd();
+        bool result = sequence.EndAdd();
+
+        result.ShouldBeTrue();
+        sequence.IsErrorHandledByAbort.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task TryClaimErrorForAbort_ShouldReturnFalse_WhenErrorIsAlreadyClaimedByPipeline()
+    {
+        (ConsumerPipelineContext context, _, _) = CreateContext();
+        using UnboundedSequence sequence = new("unbounded|test", context);
+        await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("Test"));
+
+        sequence.BeginAdd();
+        sequence.EndAdd().ShouldBeTrue();
+        bool result = sequence.TryClaimErrorForAbort();
+
+        result.ShouldBeFalse();
+        sequence.IsErrorHandledByAbort.ShouldBeFalse();
+    }
+
     private static (ConsumerPipelineContext Context, IServiceScope ServiceScope, IConsumerTransactionManager TransactionManager)
         CreateContext()
     {
