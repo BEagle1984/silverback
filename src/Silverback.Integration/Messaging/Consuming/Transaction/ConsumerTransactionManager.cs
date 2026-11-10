@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -124,7 +123,9 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         {
             // If the error policy requires committing the consumer, we do it only if there are no pending sequences
             // to prevent a skipped message (not deserialized, so not added to the sequence) to commit everything.
-            if (_context.Sequence != null || !_context.SequenceStore.Any(sequence => sequence.IsPending))
+            // The unbounded sequences don't count: their messages are committed one by one by their own pipelines, like the messages
+            // outside a sequence, and with MQTT the skipped message would never be acknowledged, stalling the consumer.
+            if (_context.Sequence != null || _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0)
                 await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
         }
         else

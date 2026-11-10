@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -12,6 +13,10 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.Transaction;
+using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Messaging.Sequences.Unbounded;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Consuming.Transaction;
@@ -115,6 +120,73 @@ public class ConsumerTransactionManagerTests
         Task<bool> Act() => transaction.RollbackAsync(null);
 
         await Should.ThrowAsync<InvalidOperationException>(Act);
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task RollbackAsync_ShouldCommit_WhenCommittingConsumerAndNoSequenceIsPending()
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        await transaction.RollbackAsync(null, commitConsumer: true);
+
+        IBrokerMessageIdentifier identifier = context.Envelope.BrokerMessageIdentifier;
+        await context.Consumer.Received(1).CommitAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single() == identifier));
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task RollbackAsync_ShouldNotCommit_WhenCommittingConsumerAndSequenceIsPending()
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        using ConsumerPipelineContext sequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        await store.AddAsync(new ChunkSequence("123", 5, sequenceContext));
+
+        await transaction.RollbackAsync(null, commitConsumer: true);
+
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task RollbackAsync_ShouldCommit_WhenCommittingConsumerAndUnboundedSequenceIsPending()
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        using ConsumerPipelineContext sequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        await store.AddAsync(new UnboundedSequence("unbounded", sequenceContext));
+
+        await transaction.RollbackAsync(null, commitConsumer: true);
+
+        IBrokerMessageIdentifier identifier = context.Envelope.BrokerMessageIdentifier;
+        await context.Consumer.Received(1).CommitAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single() == identifier));
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task RollbackAsync_ShouldNotCommit_WhenCommittingConsumerAndSequenceIsPendingNextToUnboundedSequence()
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        using ConsumerPipelineContext unboundedSequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        using ConsumerPipelineContext sequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        await store.AddAsync(new UnboundedSequence("unbounded", unboundedSequenceContext));
+        await store.AddAsync(new ChunkSequence("123", 5, sequenceContext));
+
+        await transaction.RollbackAsync(null, commitConsumer: true);
+
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
         await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
     }
 

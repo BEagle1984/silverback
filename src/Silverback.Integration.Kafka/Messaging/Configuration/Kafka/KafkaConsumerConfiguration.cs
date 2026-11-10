@@ -237,8 +237,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
                 "Use separate consumers for the endpoints with different batch settings.");
         }
 
-        // The stream would be shared with the other streaming endpoints and aborted when a message from another endpoint is rolled back,
-        // while the pending stream prevents committing the messages skipped by the error policies of the other endpoints
+        // The stream would be shared with the other streaming endpoints and aborted when a message from another endpoint is rolled back
         if (Endpoints.Count > 1 && Endpoints.Any(endpoint => endpoint.AllowStreaming))
         {
             throw new BrokerConfigurationException(
