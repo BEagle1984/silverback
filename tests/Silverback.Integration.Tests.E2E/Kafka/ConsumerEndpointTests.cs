@@ -388,8 +388,12 @@ public partial class ConsumerEndpointTests : KafkaTests
         DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 0))!.Offset.Value.ShouldBe(3);
         DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 1))!.Offset.Value.ShouldBe(2);
 
-        await AsyncTestingUtil.WaitAsync(() => offsetCommittedCallback.Offsets.Count == 2);
+        // The mock commits to the consumer group before invoking the handler, so the callback may still lag behind
+        await AsyncTestingUtil.WaitAsync(() =>
+            offsetCommittedCallback.Offsets.TryGetValue(new TopicPartition(DefaultTopicName, 0), out Offset offset0) && offset0 == 3 &&
+            offsetCommittedCallback.Offsets.TryGetValue(new TopicPartition(DefaultTopicName, 1), out Offset offset1) && offset1 == 2);
 
+        offsetCommittedCallback.Offsets.Count.ShouldBe(2);
         offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 0)].Value.ShouldBe(3);
         offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 1)].Value.ShouldBe(2);
     }
