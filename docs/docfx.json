@@ -55,6 +55,7 @@
       {
         "files": [
           "images/**",
+          "robots.txt",
           "v4/**"
         ]
       }
@@ -72,11 +73,13 @@
     ],
     "globalMetadata": {
       "_appTitle": "Silverback",
+      "_lang": "en",
+      "_siteUrl": "https://silverback-messaging.net/",
       "_appLogoPath": "images/logo.svg",
       "_appFaviconPath": "images/favicon.ico",
       "_appFooter": "© 2026 Sergio Aquilini",
       "_description": "Silverback is a message bus and broker integration library for .NET, with first-class support for Apache Kafka and MQTT.",
-      "_ogImage": "https://silverback-messaging.net/images/og-card.png",
+      "_ogImage": "https://silverback-messaging.net/images/og-card.jpg",
       "_enableSearch": "true",
       "_gitContribute": {
         "repo": "https://github.com/beagle1984/silverback",

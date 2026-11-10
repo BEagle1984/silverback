@@ -1,5 +1,6 @@
 ---
 uid: batch-processing
+description: "Process consumed Kafka messages in batches to cut per-message overhead: configure batch size and timeout, subscribe to batches, or stream them instead."
 ---
 
 # Batch Processing Consumed Messages

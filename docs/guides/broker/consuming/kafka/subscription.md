@@ -1,5 +1,6 @@
 ---
 uid: kafka-subscription
+description: "Subscribe Kafka consumers to topics by consumer group, by pattern or with static partition assignment, and control partition processing concurrency."
 ---
 
 # Kafka Subscription and Partition Assignment

@@ -1,5 +1,6 @@
 ---
 uid: setup
+description: "Choose the Silverback NuGet packages for core, Kafka or MQTT integration, storage and testing, and register Silverback in your .NET application."
 ---
 
 # Setting Up Silverback

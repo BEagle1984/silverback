@@ -1,5 +1,6 @@
 ---
 uid: storage
+description: "Pick a Silverback storage package (in-memory, SQLite, PostgreSQL or Entity Framework) for the transactional outbox, Kafka offsets and distributed locks."
 ---
 
 # Storage Integration

@@ -1,5 +1,6 @@
 ---
 uid: sample-mqtt-basic
+description: "The simplest Silverback MQTT sample: a producer and a consumer configured with AddMqtt, using at-least-once QoS, the retain flag and a subscriber."
 ---
 
 # MQTT - Basic

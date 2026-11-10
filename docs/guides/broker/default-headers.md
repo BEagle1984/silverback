@@ -1,5 +1,6 @@
 ---
 uid: default-headers
+description: "Reference of the default headers Silverback adds to produced Kafka and MQTT messages, plus how to customize the default header names."
 ---
 
 # Default Headers

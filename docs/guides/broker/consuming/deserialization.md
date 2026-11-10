@@ -1,5 +1,6 @@
 ---
 uid: deserialization
+description: "Deserialize consumed messages with System.Text.Json, Newtonsoft.Json, Avro, Protobuf, raw binary or string payloads, or write a custom deserializer."
 ---
 
 # Deserializing the Consumed Messages

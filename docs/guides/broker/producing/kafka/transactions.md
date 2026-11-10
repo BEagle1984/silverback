@@ -1,5 +1,6 @@
 ---
 uid: kafka-transactions
+description: "Produce Kafka messages atomically with transactions: enable them on the producer, commit or abort, and commit consumed offsets in the same transaction."
 ---
 
 # Kafka Transactions

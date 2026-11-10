@@ -1,5 +1,6 @@
 ---
 uid: broker-callbacks
+description: "Hook into Silverback broker client lifecycle events with callback handlers, including Kafka consumer and producer callbacks and MQTT client connection events."
 ---
 
 # Broker Callbacks

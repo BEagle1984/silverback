@@ -1,5 +1,6 @@
 ---
 uid: consumer-health-check
+description: "Monitor Kafka and MQTT consumers with ASP.NET Core health checks, tune the grace period and failure status, and add a check for the transactional outbox."
 ---
 
 # Consumer Health Check

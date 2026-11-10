@@ -1,5 +1,6 @@
 ---
 uid: producing
+description: "Configure Kafka and MQTT producers, publish messages and batches through IPublisher, and route them with functions, resolvers, dynamic topics and filters."
 ---
 
 # Producing Messages

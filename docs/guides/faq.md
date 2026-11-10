@@ -1,6 +1,7 @@
 ---
 uid: faq
 title: FAQ and Troubleshooting
+description: "Answers to common Silverback problems: consumers missing messages, stopping after exceptions, duplicates, wrong deserialization and messages not being produced."
 ---
 
 # FAQ and Troubleshooting

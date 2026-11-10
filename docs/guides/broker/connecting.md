@@ -1,5 +1,6 @@
 ---
 uid: broker
+description: "Connect Silverback to Kafka or MQTT: install the integration package, configure clients and endpoints, choose connection modes and shut down gracefully."
 ---
 
 # Connecting to a Message Broker

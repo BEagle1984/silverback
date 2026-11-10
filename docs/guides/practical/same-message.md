@@ -1,5 +1,6 @@
 ---
 uid: same-message
+description: "Consume one message type from several topics with one or more endpoints and a shared subscriber: a list of topics for Kafka, wildcards for MQTT."
 ---
 
 # Consuming the Same Message from Multiple Topics

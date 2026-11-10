@@ -1,5 +1,6 @@
 ---
 uid: sample-mqtt-binaryfile
+description: "Sample that transfers files through MQTT as raw binary messages, wrapping a FileStream and mapping a custom filename header on both ends."
 ---
 
 # MQTT - File Streaming

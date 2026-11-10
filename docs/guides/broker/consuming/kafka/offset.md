@@ -1,5 +1,6 @@
 ---
 uid: kafka-offset
+description: "Store Kafka consumer offsets in your own database with Silverback client-side offset storage for exactly-once processing with respect to your data."
 ---
 
 # Kafka Offset Storage

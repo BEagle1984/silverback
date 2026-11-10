@@ -1,5 +1,6 @@
 ---
 uid: producing-tombstone
+description: "Produce Kafka tombstones, keyed messages with a null payload that delete records in compacted topics, via WrapAndPublish or a Tombstone message."
 ---
 
 # Producing Tombstone Messages

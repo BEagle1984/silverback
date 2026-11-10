@@ -1,5 +1,6 @@
 ---
 uid: producing-validation
+description: "Validate produced messages with DataAnnotations attributes, log invalid ones, prevent them from being sent to the broker or disable validation."
 ---
 
 # Validating the Produced Messages

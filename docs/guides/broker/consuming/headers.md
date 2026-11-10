@@ -1,5 +1,6 @@
 ---
 uid: consuming-headers
+description: "Read Kafka headers and MQTT 5 user properties of consumed messages through the inbound envelope or by mapping them to message model properties."
 ---
 
 # Reading Headers

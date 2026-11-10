@@ -1,5 +1,6 @@
 ---
 uid: consuming-tombstone
+description: "Handle Kafka tombstone messages, the null payloads that delete records in compacted topics, via the inbound envelope or a Tombstone subscriber."
 ---
 
 # Consuming Tombstone Messages

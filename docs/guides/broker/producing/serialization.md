@@ -1,5 +1,6 @@
 ---
 uid: serialization
+description: "Serialize produced messages with System.Text.Json, Newtonsoft.Json, Avro, Protobuf, raw binary or strings, or plug in a custom serializer."
 ---
 
 # Serializing the Produced Messages

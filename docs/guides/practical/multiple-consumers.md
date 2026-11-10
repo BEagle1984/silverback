@@ -1,5 +1,6 @@
 ---
 uid: multiple-consumers
+description: "Consume the same Kafka or MQTT topic more than once with separate consumers, each tracking its own progress, and route messages to the right subscribers."
 ---
 
 # Multiple Consumers for the Same Topic

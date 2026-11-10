@@ -10,18 +10,53 @@
       <meta http-equiv="refresh" content="0;URL='{{redirect_url}}'">
     {{/redirect_url}}
     {{^redirect_url}}
-      <title>{{#title}}{{title}}{{/title}}{{^title}}{{>partials/title}}{{/title}} {{#_appTitle}}| {{_appTitle}} {{/_appTitle}}</title>
+      {{! The error page is served at any missing path, so its relative links must resolve from the site root }}
+      {{#_errorPage}}<base href="/">{{/_errorPage}}
+      <title>{{>partials/sb-page-title}}</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="{{#title}}{{title}}{{/title}}{{^title}}{{>partials/title}}{{/title}} {{#_appTitle}}| {{_appTitle}} {{/_appTitle}}">
+      <meta name="title" content="{{>partials/sb-page-title}}">
       {{#description}}<meta name="description" content="{{description}}">{{/description}}
       {{^description}}{{#_description}}<meta name="description" content="{{_description}}">{{/_description}}{{/description}}
+      {{#_errorPage}}<meta name="robots" content="noindex">{{/_errorPage}}
+      {{^_errorPage}}
+      <link rel="canonical" href="{{>partials/sb-canonical-url}}">
+      <meta property="og:url" content="{{>partials/sb-canonical-url}}">
+      {{/_errorPage}}
       <meta property="og:type" content="website">
       <meta property="og:site_name" content="{{_appTitle}}">
-      <meta property="og:title" content="{{#title}}{{title}}{{/title}}{{^title}}{{>partials/title}}{{/title}} {{#_appTitle}}| {{_appTitle}} {{/_appTitle}}">
+      <meta property="og:title" content="{{>partials/sb-page-title}}">
       {{#description}}<meta property="og:description" content="{{description}}">{{/description}}
       {{^description}}{{#_description}}<meta property="og:description" content="{{_description}}">{{/_description}}{{/description}}
       {{#_ogImage}}<meta property="og:image" content="{{_ogImage}}">{{/_ogImage}}
       <meta name="twitter:card" content="summary_large_image">
+      {{#_structuredData}}
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              "name": "{{_appTitle}}",
+              "url": "{{_siteUrl}}"
+            },
+            {
+              "@type": "SoftwareSourceCode",
+              "name": "{{_appTitle}}",
+              "description": "{{{description}}}",
+              "url": "{{_siteUrl}}",
+              "codeRepository": "https://github.com/BEagle1984/silverback",
+              "programmingLanguage": "C#",
+              "runtimePlatform": ".NET",
+              "license": "https://opensource.org/licenses/MIT",
+              "author": {
+                "@type": "Person",
+                "name": "Sergio Aquilini"
+              }
+            }
+          ]
+        }
+      </script>
+      {{/_structuredData}}
       <meta name="theme-color" content="#0d1117">
       <link rel="icon" href="{{_rel}}{{{_appFaviconPath}}}{{^_appFaviconPath}}favicon.ico{{/_appFaviconPath}}">
       <link rel="icon" type="image/png" sizes="32x32" href="{{_rel}}images/icons/favicon-32x32.png">
@@ -34,10 +69,11 @@
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
       <link rel="stylesheet" href="{{_rel}}public/docfx.min.css">
       <link rel="stylesheet" href="{{_rel}}public/main.css">
-      <meta name="docfx:navrel" content="{{_navRel}}">
-      <meta name="docfx:tocrel" content="{{_tocRel}}">
+      {{! docfx.min.js resolves these against the page URL, ignoring the base element, so the error page needs them rooted }}
+      <meta name="docfx:navrel" content="{{#_errorPage}}/{{/_errorPage}}{{_navRel}}">
+      <meta name="docfx:tocrel" content="{{#_errorPage}}/{{/_errorPage}}{{_tocRel}}">
       {{#_noindex}}<meta name="searchOption" content="noindex">{{/_noindex}}
-      {{#_enableSearch}}<meta name="docfx:rel" content="{{_rel}}">{{/_enableSearch}}
+      {{#_enableSearch}}<meta name="docfx:rel" content="{{#_errorPage}}/{{/_errorPage}}{{_rel}}">{{/_enableSearch}}
       {{#_disableNewTab}}<meta name="docfx:disablenewtab" content="true">{{/_disableNewTab}}
       {{#_disableTocFilter}}<meta name="docfx:disabletocfilter" content="true">{{/_disableTocFilter}}
       {{#docurl}}<meta name="docfx:docurl" content="{{docurl}}">{{/docurl}}

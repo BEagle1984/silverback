@@ -1,5 +1,6 @@
 ---
 uid: mqtt
+description: "Configure MQTT clients in Silverback: protocol version, TLS and credentials, quality of service, last will message, persistent sessions and MQTT 3.1.1 limits."
 ---
 
 # MQTT Client Configuration

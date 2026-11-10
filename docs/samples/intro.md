@@ -1,6 +1,7 @@
 ---
 uid: samples
 title: Samples
+description: "Runnable Silverback sample apps for Kafka and MQTT, each with a producer and a consumer, plus how to start the infrastructure and run them."
 ---
 
 # Samples

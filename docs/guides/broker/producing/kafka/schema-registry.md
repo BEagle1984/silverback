@@ -1,5 +1,6 @@
 ---
 uid: kafka-schema-registry-serializer
+description: "Produce Kafka messages with Confluent Schema Registry using Avro, JSON Schema or Protobuf serializers, and control how schemas get registered."
 ---
 
 # Kafka Schema Registry

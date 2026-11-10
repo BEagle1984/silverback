@@ -1,5 +1,6 @@
 ---
 uid: kafka-partitioning
+description: "Control Kafka message ordering and parallelism with partition keys, the KafkaKeyMember attribute, custom partitioning and static partition selection."
 ---
 
 # Kafka Keys and Partitioning

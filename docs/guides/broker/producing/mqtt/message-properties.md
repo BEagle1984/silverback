@@ -1,5 +1,6 @@
 ---
 uid: mqtt-message-properties
+description: "Set MQTT-specific producer options: the retain flag, message expiration, response topic and correlation data, and handling of no matching subscribers."
 ---
 
 # MQTT Message Properties

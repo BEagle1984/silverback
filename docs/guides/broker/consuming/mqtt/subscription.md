@@ -1,5 +1,6 @@
 ---
 uid: mqtt-subscription
+description: "Subscribe MQTT consumers with topic filters and wildcards or shared subscriptions, and see how parallel processing, backpressure and redelivery work."
 ---
 
 # MQTT Subscription and Processing

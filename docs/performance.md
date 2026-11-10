@@ -1,5 +1,6 @@
 ---
 uid: performance
+description: "BenchmarkDotNet results comparing Silverback 5.0.0 with 4.6.2: execution time and memory allocations of the in-memory message bus and the Kafka producer."
 ---
 
 # Performance

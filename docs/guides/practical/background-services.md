@@ -1,5 +1,6 @@
 ---
 uid: background-services
+description: "Run a background task on a single node of a scaled-out .NET application with Silverback's distributed lock and its base classes for hosted services."
 ---
 
 # Background Services with a Distributed Lock

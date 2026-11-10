@@ -1,5 +1,6 @@
 ---
 uid: sample-kafka-basic
+description: "The simplest Silverback Kafka sample: a producer publishing messages from a hosted service and a consumer subscriber, configured with AddKafka."
 ---
 
 # Kafka - Basic

@@ -1,5 +1,6 @@
 ---
 uid: producing-chunking
+description: "Split large messages into chunks on the producer side to stay under broker size limits such as Kafka's, with the consumer reassembling them automatically."
 ---
 
 # Producing Chunked Messages

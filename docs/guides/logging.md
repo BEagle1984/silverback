@@ -1,5 +1,6 @@
 ---
 uid: logging
+description: "Silverback logging with Microsoft.Extensions.Logging: the log events reference by package, customizing log levels and exporting distributed traces."
 ---
 
 # Logging and Tracing

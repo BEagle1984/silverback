@@ -1,5 +1,6 @@
 ---
 uid: testing
+description: "Test Kafka and MQTT applications with in-memory mocked brokers, testing helpers that wait for consumption and the integration spy to inspect messages."
 ---
 
 # Testing

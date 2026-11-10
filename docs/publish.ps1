@@ -111,6 +111,44 @@ function Add-AssetVersions {
     Write-Host "Added the asset versions to $updatedPagesCount pages."
 }
 
+function Update-Sitemap {
+    param([string] $Path)
+
+    $sitemapPath = Join-Path $Path "sitemap.xml"
+    [xml] $sitemap = [IO.File]::ReadAllText($sitemapPath)
+    $namespaces = [Xml.XmlNamespaceManager]::new($sitemap.NameTable)
+    $namespaces.AddNamespace("s", "http://www.sitemaps.org/schemas/sitemap/0.9")
+
+    # GitHub Pages serves 404.html for every missing path, so it must not be listed as a page
+    $errorPageUrls = @($sitemap.SelectNodes("/s:urlset/s:url[substring(s:loc, string-length(s:loc) - 8) = '/404.html']", $namespaces))
+    if ($errorPageUrls.Count -ne 1) {
+        throw "Expected exactly one 404.html entry in '$sitemapPath', but found $($errorPageUrls.Count)."
+    }
+
+    $errorPageUrls[0].ParentNode.RemoveChild($errorPageUrls[0]) | Out-Null
+
+    # The home page declares the site root as its canonical URL, so the sitemap has to list the same URL
+    $homeLocations = @($sitemap.SelectNodes("/s:urlset/s:url/s:loc[text() = 'https://silverback-messaging.net/index.html']", $namespaces))
+    if ($homeLocations.Count -ne 1) {
+        throw "Expected exactly one home page entry in '$sitemapPath', but found $($homeLocations.Count)."
+    }
+
+    $homeLocations[0].InnerText = "https://silverback-messaging.net/"
+
+    $settings = [Xml.XmlWriterSettings]::new()
+    $settings.Encoding = [Text.UTF8Encoding]::new($false)
+    $settings.Indent = $true
+    $writer = [Xml.XmlWriter]::Create($sitemapPath, $settings)
+    try {
+        $sitemap.Save($writer)
+    }
+    finally {
+        $writer.Dispose()
+    }
+
+    Write-Host "Removed the 404.html entry and set the home page entry to the site root."
+}
+
 $repositoryPath = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
 $repositoryParentPath = Split-Path -Parent $repositoryPath
 $publishRepositoryPath = Join-Path $repositoryParentPath "silverback-ghpages"
@@ -183,6 +221,9 @@ Write-Host "Copied the contents of '$sitePath' to '$publishRepositoryPath'."
 
 Write-Step "Adding the cache-busting asset versions"
 Add-AssetVersions $publishRepositoryPath
+
+Write-Step "Updating the sitemap"
+Update-Sitemap $publishRepositoryPath
 
 Write-Step "Reading the Silverback version"
 [xml] $buildProps = Get-Content -LiteralPath $buildPropsPath -Raw

@@ -1,5 +1,6 @@
 ---
 uid: outbox
+description: "Use the transactional outbox to publish messages atomically with your database changes, with Entity Framework support, a distributed lock and a health check."
 ---
 
 # Transactional Outbox

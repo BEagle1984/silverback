@@ -1,5 +1,6 @@
 ---
 uid: encryption
+description: "Encrypt produced messages end to end with symmetric encryption, using a random initialization vector and key rotation, independent of the serializer."
 ---
 
 # Encrypt Produced Messages

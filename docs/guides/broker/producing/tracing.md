@@ -1,5 +1,6 @@
 ---
 uid: producing-tracing
+description: "Propagate distributed tracing when producing messages: Silverback writes the W3C trace context and the baggage to Kafka and MQTT 5 message headers."
 ---
 
 # Distributed Tracing and Producers

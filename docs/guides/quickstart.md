@@ -1,6 +1,7 @@
 ---
 uid: quickstart
 title: Quickstart
+description: "Build a .NET app that produces and consumes messages through Apache Kafka in minutes: create the project, define a message and configure Silverback."
 ---
 
 # Quickstart

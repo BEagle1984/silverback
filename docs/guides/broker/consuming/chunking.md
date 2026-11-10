@@ -1,5 +1,6 @@
 ---
 uid: consuming-chunking
+description: "Consume chunked messages in Silverback: the consumer automatically reassembles the chunks split by the producer before delivering them to subscribers."
 ---
 
 # Consuming Chunked Messages

@@ -1,6 +1,7 @@
 ---
 uid: migration-v5
 title: Migrating from v4 to v5
+description: "Step-by-step guide to migrate a Silverback v4 application to v5: latest .NET LTS, new endpoint configuration API, storage and outbox changes and updated tests."
 ---
 
 # Migrating from v4 to v5

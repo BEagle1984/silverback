@@ -1,5 +1,6 @@
 ---
 uid: consuming
+description: "Configure Kafka and MQTT consumers in .NET, handle consumed messages in subscribers, tune parallelism and apply error handling rules."
 ---
 
 # Consuming Messages

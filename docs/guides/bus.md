@@ -1,5 +1,6 @@
 ---
 uid: bus
+description: "Use the Silverback in-process message bus in .NET: define message models, publish messages, write subscribers and republish returned messages."
 ---
 
 # Using the Message Bus

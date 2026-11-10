@@ -1,5 +1,6 @@
 ---
 uid: consuming-validation
+description: "Validate consumed messages with DataAnnotations attributes, log invalid ones, block them from processing or turn validation off for an endpoint."
 ---
 
 # Validating the Consumed Messages

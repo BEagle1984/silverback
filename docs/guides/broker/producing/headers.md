@@ -1,5 +1,6 @@
 ---
 uid: producing-headers
+description: "Set custom Kafka headers and MQTT 5 user properties on produced messages with WrapAndPublish, endpoint enrichers or the HeaderAttribute on the model."
 ---
 
 # Setting Headers

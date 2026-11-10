@@ -1,5 +1,6 @@
 ---
 uid: sample-kafka-batch
+description: "Sample that publishes 100 Kafka messages at once with WrapAndPublishBatchAsync and consumes them in batches with a maximum size and wait time."
 ---
 
 # Kafka - Batch Processing

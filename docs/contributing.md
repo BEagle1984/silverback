@@ -1,5 +1,6 @@
 ---
 uid: contributing
+description: "Contribute to Silverback: get the source code, learn how versions are set and commits are written, build the NuGet packages locally and find the tests."
 ---
 
 # Contributing

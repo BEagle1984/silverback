@@ -1,5 +1,6 @@
 ---
 uid: kafka-admin-client
+description: "Get a Confluent.Kafka admin client from the IConfluentAdminClientFactory to create topics at startup or read cluster metadata with the client settings."
 ---
 
 # Kafka Admin Client

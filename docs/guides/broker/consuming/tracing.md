@@ -1,5 +1,6 @@
 ---
 uid: consuming-tracing
+description: "Continue distributed traces automatically when consuming messages: Silverback restores the W3C trace context and baggage from Kafka and MQTT 5 headers."
 ---
 
 # Distributed Tracing and Consumers

@@ -1,5 +1,6 @@
 ---
 uid: consumer-behaviors
+description: "See the default pipeline of behaviors that processes every consumed message, how SortIndex sets the order and how to add your own custom behavior."
 ---
 
 # Consumer Behaviors Pipeline

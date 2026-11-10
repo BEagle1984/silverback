@@ -1,5 +1,6 @@
 ---
 uid: kafka-schema-registry-deserializer
+description: "Consume Kafka messages validated against Confluent Schema Registry, using the Avro, JSON Schema or Protobuf deserializers in your consumer endpoints."
 ---
 
 # Kafka Schema Registry

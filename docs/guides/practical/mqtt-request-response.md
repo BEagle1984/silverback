@@ -1,5 +1,6 @@
 ---
 uid: mqtt-request-response
+description: "Implement the MQTT 5 request-response pattern using response topic and correlation data, with both the requester and the responder side wired up."
 ---
 
 # MQTT 5 Request-Response

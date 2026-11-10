@@ -1,5 +1,6 @@
 ---
 uid: error-policies
+description: "Handle consumer failures with the stop, skip, retry and move error policies, chain them together and understand the caveats with batches and Kafka."
 ---
 
 # Error Handling Policies

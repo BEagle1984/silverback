@@ -1,6 +1,7 @@
 ---
 uid: about
 title: About Silverback
+description: "About Silverback, the open-source .NET message bus and broker integration library for Kafka and MQTT: license, contact and acknowledgements."
 ---
 
 # About Silverback

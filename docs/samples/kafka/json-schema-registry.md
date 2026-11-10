@@ -1,5 +1,6 @@
 ---
 uid: sample-kafka-json-schema-registry
+description: "Sample Kafka producer and consumer that serialize messages as JSON validated against a JSON schema stored in Confluent Schema Registry."
 ---
 
 # Kafka - JSON with Schema Registry

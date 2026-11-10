@@ -1,5 +1,6 @@
 ---
 uid: conversion
+description: "Convert internal messages and domain events into integration messages with a subscriber, add headers and translate consumed messages into your own model."
 ---
 
 # Seamless Message Conversion

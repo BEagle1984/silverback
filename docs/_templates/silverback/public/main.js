@@ -38,6 +38,18 @@ function rotateInstallPackage() {
     }, 2500)
 }
 
+// The 404 page sets a base element to the site root, which turns the href="#" placeholders (e.g. the search pagination)
+// into links to the home page
+function keepPlaceholderLinksOnPage() {
+    if (!document.querySelector('base'))
+        return
+
+    document.addEventListener('click', event => {
+        if (event.target.closest?.('a[href="#"]'))
+            event.preventDefault()
+    }, true)
+}
+
 export default {
     defaultTheme: 'dark',
     iconLinks: [
@@ -52,5 +64,8 @@ export default {
             title: 'NuGet packages'
         }
     ],
-    start: rotateInstallPackage
+    start: () => {
+        rotateInstallPackage()
+        keepPlaceholderLinksOnPage()
+    }
 }

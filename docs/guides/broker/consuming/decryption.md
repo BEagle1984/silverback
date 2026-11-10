@@ -1,5 +1,6 @@
 ---
 uid: decryption
+description: "Decrypt end-to-end encrypted messages on the consumer side with symmetric encryption, including the random initialization vector and key rotation."
 ---
 
 # Decrypt Consumed Messages

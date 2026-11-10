@@ -1,5 +1,9 @@
 ---
 title: "Home"
+_fullTitle: "Silverback: Effortless Kafka and MQTT Messaging for .NET"
+description: "Open-source .NET message bus with first-class Apache Kafka and MQTT support: transactional outbox, error policies, batching, streaming and in-memory testing."
+_canonicalUrl: "https://silverback-messaging.net/"
+_structuredData: true
 _layout: landing
 _disableAffix: true
 _disableToc: true

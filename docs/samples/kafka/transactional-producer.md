@@ -1,5 +1,6 @@
 ---
 uid: sample-kafka-transactional-producer
+description: "Sample Kafka transactional producer that publishes sets of messages atomically, committing some transactions and aborting others to show the difference."
 ---
 
 # Kafka - Transactional Producer

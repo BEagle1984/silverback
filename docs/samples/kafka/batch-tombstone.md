@@ -1,5 +1,6 @@
 ---
 uid: sample-kafka-batch-tombstone
+description: "Sample that publishes Kafka batches containing tombstones and consumes them in batch, telling the null-payload tombstones apart from regular messages."
 ---
 
 # Kafka - Batch Processing with Tombstones

@@ -1,5 +1,6 @@
 ---
 uid: domain-events
+description: "Collect domain events from your DDD entities and publish them through the message bus with Entity Framework Core, and pair them with the transactional outbox."
 ---
 
 # Domain-Driven Design and Domain Events

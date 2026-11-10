@@ -1,5 +1,6 @@
 ---
 uid: sample-kafka-binaryfile
+description: "Sample that transfers large files through Kafka as binary messages, streaming a FileStream without loading it into memory and mapping a filename header."
 ---
 
 # Kafka - File Streaming

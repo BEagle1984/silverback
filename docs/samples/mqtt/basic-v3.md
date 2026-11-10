@@ -1,5 +1,6 @@
 ---
 uid: sample-mqtt-basic-v3
+description: "Basic MQTT producer and consumer sample running on protocol version 3.1.0, with at-least-once quality of service and the retain flag."
 ---
 
 # MQTT - Basic (MQTT v3)

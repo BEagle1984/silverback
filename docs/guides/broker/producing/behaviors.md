@@ -1,5 +1,6 @@
 ---
 uid: producer-behaviors
+description: "See the default behaviors pipeline that processes every produced message, how SortIndex sets the execution order and how to write a custom behavior."
 ---
 
 # Producer Behaviors Pipeline
