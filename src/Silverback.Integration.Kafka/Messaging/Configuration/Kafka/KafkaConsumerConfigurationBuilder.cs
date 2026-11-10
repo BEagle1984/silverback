@@ -351,6 +351,10 @@ public partial class KafkaConsumerConfigurationBuilder
     ///     all the partitions and the sequences (<see cref="ChunkSequence" />, <see cref="BatchSequence" />, ...) can span across the
     ///     partitions.
     /// </summary>
+    /// <remarks>
+    ///     The batches can also span across the endpoints, therefore all the endpoints must use the same batch settings. A streaming
+    ///     endpoint must be the only endpoint of the consumer.
+    /// </remarks>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>

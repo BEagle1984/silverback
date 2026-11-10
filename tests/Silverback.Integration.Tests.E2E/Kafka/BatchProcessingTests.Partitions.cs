@@ -1,14 +1,17 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
@@ -163,6 +166,122 @@ public partial class BatchProcessingTests
 
         receivedBatches.Count.ShouldBe(1);
         receivedBatches.Sum(batch => batch.Count).ShouldBe(10);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldCreateBatchesSpanningEndpoints_WhenPartitionsProcessedTogether()
+    {
+        TestingCollection<List<IIntegrationEvent>> receivedBatches = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .ProcessAllPartitionsTogether()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom("topic1")
+                        .EnableBatchProcessing(10))
+                    .Consume<TestEventTwo>(endpoint => endpoint
+                        .ConsumeFrom("topic2")
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch));
+
+        async Task HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
+        {
+            List<IIntegrationEvent> list = [];
+            receivedBatches.Add(list);
+
+            await foreach (IIntegrationEvent message in batch)
+            {
+                list.Add(message);
+            }
+        }
+
+        IProducer producer1 = Helper.GetProducerForEndpoint("topic1");
+        IProducer producer2 = Helper.GetProducerForEndpoint("topic2");
+
+        for (int i = 1; i <= 5; i++)
+        {
+            await producer1.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await producer2.ProduceAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        receivedBatches.Count.ShouldBe(1);
+        receivedBatches[0].OfType<TestEventOne>().Select(message => message.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], true);
+        receivedBatches[0].OfType<TestEventTwo>().Select(message => message.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], true);
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount("topic1").ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount("topic2").ShouldBe(5);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldRetryBatchSpanningEndpoints_WhenPartitionsProcessedTogether()
+    {
+        int failedMessageTries = 0;
+        TestingCollection<List<IIntegrationEvent>> completedBatches = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .ProcessAllPartitionsTogether()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom("topic1")
+                        .EnableBatchProcessing(10)
+                        .OnError(policy => policy.Retry(3)))
+                    .Consume<TestEventTwo>(endpoint => endpoint
+                        .ConsumeFrom("topic2")
+                        .EnableBatchProcessing(10)
+                        .OnError(policy => policy.Retry(3)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch));
+
+        async Task HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
+        {
+            List<IIntegrationEvent> list = [];
+
+            await foreach (IIntegrationEvent message in batch)
+            {
+                if (message is TestEventTwo { ContentEventTwo: "3" } && Interlocked.Increment(ref failedMessageTries) <= 2)
+                    throw new InvalidOperationException("Test");
+
+                list.Add(message);
+            }
+
+            completedBatches.Add(list);
+        }
+
+        IProducer producer1 = Helper.GetProducerForEndpoint("topic1");
+        IProducer producer2 = Helper.GetProducerForEndpoint("topic2");
+
+        for (int i = 1; i <= 5; i++)
+        {
+            await producer1.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await producer2.ProduceAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        failedMessageTries.ShouldBe(3);
+        completedBatches.Count.ShouldBe(1);
+        completedBatches[0].OfType<TestEventOne>().Select(message => message.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], true);
+        completedBatches[0].OfType<TestEventTwo>().Select(message => message.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], true);
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount("topic1").ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount("topic2").ShouldBe(5);
     }
 
     [Fact]

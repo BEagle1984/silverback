@@ -116,6 +116,8 @@ Process all partitions in a single stream (disables partition-based parallelism)
 
 Both settings apply to the whole consumer, not to a single endpoint. Use `LimitBackpressure(n)` to set the buffer capacity per partition when processing partitions independently. With `ProcessAllPartitionsTogether()`, it sets the capacity of the shared buffer for all partitions. The default limit is 50.
 
+With `ProcessAllPartitionsTogether()`, all the endpoints of the consumer share the same batches, so they must use the same batch settings, and a streaming endpoint must be the only endpoint of the consumer. A batch can then contain the messages from different endpoints: handle it with a single subscriber of a common message type (see [Multiple Subscribers](xref:batch-processing#multiple-subscribers)) and use the same error policy for all the endpoints, since the policy of the endpoint of the first message of the batch applies to the whole batch. Use separate consumers for the endpoints that need different settings.
+
 ### MQTT
 
 Enable parallel processing and set the maximum degree of parallelism:

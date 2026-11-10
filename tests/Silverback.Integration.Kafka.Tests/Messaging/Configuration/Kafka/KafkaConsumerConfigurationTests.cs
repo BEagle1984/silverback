@@ -579,7 +579,9 @@ public class KafkaConsumerConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("All endpoints must use the same Batch settings.*");
+        exception.Message.ShouldBe(
+            "All endpoints must use the same batch settings when the partitions aren't processed independently. " +
+            "Use separate consumers for the endpoints with different batch settings.");
     }
 
     [Fact]
@@ -618,7 +620,216 @@ public class KafkaConsumerConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("All endpoints must use the same Batch settings.*");
+        exception.Message.ShouldBe(
+            "All endpoints must use the same batch settings when the partitions aren't processed independently. " +
+            "Use separate consumers for the endpoints with different batch settings.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenProcessingPartitionsTogetherWithDifferentBatchMaxWaitTime()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            ProcessPartitionsIndependently = false,
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+            [
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+                    ]),
+                    Batch = new BatchSettings
+                    {
+                        Size = 42,
+                        MaxWaitTime = TimeSpan.FromSeconds(1)
+                    }
+                },
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset)
+                    ]),
+                    Batch = new BatchSettings
+                    {
+                        Size = 42,
+                        MaxWaitTime = TimeSpan.FromSeconds(2)
+                    }
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe(
+            "All endpoints must use the same batch settings when the partitions aren't processed independently. " +
+            "Use separate consumers for the endpoints with different batch settings.");
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenProcessingPartitionsTogetherWithSameBatchSettings()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            ProcessPartitionsIndependently = false,
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+            [
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+                    ]),
+                    Batch = new BatchSettings
+                    {
+                        Size = 42,
+                        MaxWaitTime = TimeSpan.FromSeconds(1)
+                    }
+                },
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset)
+                    ]),
+                    Batch = new BatchSettings
+                    {
+                        Size = 42,
+                        MaxWaitTime = TimeSpan.FromSeconds(1)
+                    }
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Validate_ShouldThrow_WhenProcessingPartitionsTogetherWithStreamingAndOtherEndpoint(bool otherEndpointAllowsStreaming)
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            ProcessPartitionsIndependently = false,
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+            [
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+                    ]),
+                    AllowStreaming = true
+                },
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset)
+                    ]),
+                    AllowStreaming = otherEndpointAllowsStreaming
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe(
+            "A streaming endpoint must be the only endpoint of the consumer when the partitions aren't processed independently. " +
+            "Use separate consumers for the other endpoints.");
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenProcessingPartitionsTogetherWithSingleStreamingEndpoint()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            ProcessPartitionsIndependently = false,
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+            [
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
+                        new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset)
+                    ]),
+                    AllowStreaming = true
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenProcessingPartitionsIndependentlyWithMultipleStreamingEndpoints()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            ProcessPartitionsIndependently = true,
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+            [
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+                    ]),
+                    AllowStreaming = true
+                },
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset)
+                    ]),
+                    AllowStreaming = true
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenProcessingPartitionsTogetherWithMultipleEndpointsWithoutBatch()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            ProcessPartitionsIndependently = false,
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+            [
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+                    ])
+                },
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                    [
+                        new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset)
+                    ])
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
     }
 
     [Fact]

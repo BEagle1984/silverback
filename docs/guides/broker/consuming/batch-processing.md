@@ -70,7 +70,7 @@ public async Task HandleAsync(IAsyncEnumerable<IInboundEnvelope<MyMessage>> enve
 > If the subscriber throws, the configured error policy applies to the whole batch.
 
 > [!Note]
-> A batch per topic partition is created by default. You can decide to process all partitions together by calling `ProcessAllPartitionsTogether` on the consumer configuration and that will create a single batch for the whole topic.
+> A batch per topic partition is created by default. You can decide to process all partitions together by calling `ProcessAllPartitionsTogether` on the consumer configuration and that will create a single batch for all the topics consumed by the consumer, which must then use the same batch settings for all its endpoints (see [Parallelism](xref:consuming#parallelism)).
 
 > [!Tip]
 > While the batch is enumerated, the current `Activity` continues the trace of the message being processed. Avoid buffering the batch (e.g. with `ToList()`) if the trace of each message must be preserved. See <xref:consuming-tracing> for details.
@@ -113,7 +113,7 @@ public async Task HandleAsync(IAsyncEnumerable<MyMessage> messages)
 
 The subscriber is invoked when the first message is consumed and receives all the following messages through the same stream. It can subscribe to the same types as for the batches, or to an `IMessageStreamObservable<T>` after calling `AsObservable()` from the [Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx) package.
 
-- With Kafka, a stream per partition is created by default, or a single one for all the partitions with `ProcessAllPartitionsTogether`.
+- With Kafka, a stream per partition is created by default, or a single one for all the partitions with `ProcessAllPartitionsTogether`, in which case the streaming endpoint must be the only endpoint of the consumer.
 - Each message is committed as soon as the subscriber requests the next one.
 - When the consumer is stopped or disconnected, or the partitions are revoked, the enumeration throws an `OperationCanceledException` (an `IMessageStreamObservable<T>` completes, and `Subscribe` then throws it). A new stream is published, invoking the subscriber again, when the consumption resumes.
 - If the subscriber throws while processing a message, that message isn't committed and the consumer is stopped and disconnected, as with the default stop policy (see <xref:error-policies>). If it throws while the stream is waiting for the next message, the consumer is stopped and disconnected as well, and the stop callbacks receive the message that started the stream (or the message being added to it at that moment). The other error policies can't be used with streaming.

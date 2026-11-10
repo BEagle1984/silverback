@@ -97,7 +97,9 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     ///     The default is <c>true</c>.
     /// </summary>
     /// <remarks>
-    ///     Settings this value to <c>false</c> implicitly sets the <see cref="MaxDegreeOfParallelism" /> to 1.
+    ///     Setting this value to <c>false</c> implicitly sets the <see cref="MaxDegreeOfParallelism" /> to 1. All the endpoints must then
+    ///     use the same batch settings, since the batches can also span across the endpoints, and a streaming endpoint must be the only
+    ///     endpoint of the consumer.
     /// </remarks>
     public bool ProcessPartitionsIndependently
     {
@@ -186,8 +188,8 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         if (GetMetadataTimeout <= TimeSpan.Zero)
             throw new BrokerConfigurationException("The get metadata timeout must be greater than zero.");
 
-        if (!ProcessPartitionsIndependently && Endpoints.Skip(0).Any(endpoint => endpoint != Endpoints.First()))
-            throw new BrokerConfigurationException("All endpoints must use the same Batch settings if the partitions are consumed independently.");
+        if (!ProcessPartitionsIndependently)
+            ValidateSharedSequences();
     }
 
     internal override ConsumerConfig ToConfluentConfig()
@@ -223,6 +225,26 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
         if (topics.Count != topics.Distinct().Count())
             throw new BrokerConfigurationException("Cannot connect to the same topic in different endpoints in the same consumer.");
+    }
+
+    // All the partitions share the same channel and sequence store, so a batch can contain the messages from different endpoints
+    private void ValidateSharedSequences()
+    {
+        if (Endpoints.Select(endpoint => endpoint.Batch).Distinct().Skip(1).Any())
+        {
+            throw new BrokerConfigurationException(
+                "All endpoints must use the same batch settings when the partitions aren't processed independently. " +
+                "Use separate consumers for the endpoints with different batch settings.");
+        }
+
+        // The stream would be shared with the other streaming endpoints and aborted when a message from another endpoint is rolled back,
+        // while the pending stream prevents committing the messages skipped by the error policies of the other endpoints
+        if (Endpoints.Count > 1 && Endpoints.Any(endpoint => endpoint.AllowStreaming))
+        {
+            throw new BrokerConfigurationException(
+                "A streaming endpoint must be the only endpoint of the consumer when the partitions aren't processed independently. " +
+                "Use separate consumers for the other endpoints.");
+        }
     }
 
     private void CheckGroupIdRequirements()

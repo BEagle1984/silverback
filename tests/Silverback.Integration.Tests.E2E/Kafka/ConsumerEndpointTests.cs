@@ -1,8 +1,10 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
@@ -156,6 +158,105 @@ public partial class ConsumerEndpointTests : KafkaTests
         eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(
             ["1", "2", "3", "4", "5"],
             true);
+    }
+
+    [Fact]
+    public async Task ConsumerEndpoint_ShouldConsume_WhenMultipleEndpointsShareConsumerProcessingAllPartitionsTogether()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .ProcessAllPartitionsTogether()
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1"))
+                    .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer1 = Helper.GetProducerForEndpoint("topic1");
+        IProducer producer2 = Helper.GetProducerForEndpoint("topic2");
+
+        for (int i = 1; i <= 5; i++)
+        {
+            await producer1.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await producer2.ProduceAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
+        IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>()];
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
+        eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
+        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], true);
+        eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic2");
+        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], true);
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount("topic1").ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount("topic2").ShouldBe(5);
+    }
+
+    [Fact]
+    public async Task ConsumerEndpoint_ShouldApplyEndpointErrorPolicy_WhenMultipleEndpointsShareConsumerProcessingAllPartitionsTogether()
+    {
+        int failedMessageTries = 0;
+        TestingCollection<string?> receivedEventOnes = [];
+        TestingCollection<string?> receivedEventTwos = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .ProcessAllPartitionsTogether()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom("topic1")
+                        .OnError(policy => policy.Retry(2).ThenSkip()))
+                    .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"))))
+            .AddDelegateSubscriber<TestEventOne>(HandleEventOne)
+            .AddDelegateSubscriber<TestEventTwo>(HandleEventTwo));
+
+        void HandleEventOne(TestEventOne message)
+        {
+            if (message.ContentEventOne == "3")
+            {
+                Interlocked.Increment(ref failedMessageTries);
+                throw new InvalidOperationException("Test");
+            }
+
+            receivedEventOnes.Add(message.ContentEventOne);
+        }
+
+        void HandleEventTwo(TestEventTwo message) => receivedEventTwos.Add(message.ContentEventTwo);
+
+        IProducer producer1 = Helper.GetProducerForEndpoint("topic1");
+        IProducer producer2 = Helper.GetProducerForEndpoint("topic2");
+
+        for (int i = 1; i <= 5; i++)
+        {
+            await producer1.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await producer2.ProduceAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        failedMessageTries.ShouldBe(3);
+        receivedEventOnes.ShouldBe(["1", "2", "4", "5"], true);
+        receivedEventTwos.ShouldBe(["1", "2", "3", "4", "5"], true);
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount("topic1").ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount("topic2").ShouldBe(5);
     }
 
     [Fact]
