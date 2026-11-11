@@ -6,20 +6,27 @@ using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Packets;
 using MQTTnet.Protocol;
 using NSubstitute;
 using Shouldly;
+using Silverback.Collections;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker;
@@ -30,6 +37,41 @@ public partial class MqttConsumerTests
     private const int UntrackedMessage = 99;
 
     private static readonly TimeSpan BatchTimeout = TimeSpan.FromSeconds(10);
+
+    [Theory]
+    [InlineData(MqttQualityOfServiceLevel.AtLeastOnce)]
+    [InlineData(MqttQualityOfServiceLevel.ExactlyOnce)]
+    public void Constructor_ShouldLogBatchProcessingEnabled_WhenBatchesAreAcknowledged(MqttQualityOfServiceLevel qualityOfServiceLevel)
+    {
+        LoggerSubstitute<MqttConsumer> loggerSubstitute = new(LogLevel.Trace);
+        SilverbackLogger<MqttConsumer> logger = new(new MappedLevelsLogger<MqttConsumer>([], loggerSubstitute));
+        using MqttClientWrapper client = CreateBatchLoggingClient(logger);
+
+        using MqttConsumer consumer = CreateBatchLoggingConsumer(client, logger, qualityOfServiceLevel, new BatchSettings { Size = 10 });
+
+        const string expectedMessage =
+            "Batch processing enabled: the broker must allow at least 30 unacknowledged messages " +
+            "(batch size 10, max degree of parallelism 3) | ConsumerName: batch-log-test";
+        loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 4014);
+    }
+
+    [Theory]
+    [InlineData(MqttQualityOfServiceLevel.AtMostOnce, 10)]
+    [InlineData(MqttQualityOfServiceLevel.AtLeastOnce, null)]
+    [InlineData(MqttQualityOfServiceLevel.ExactlyOnce, 1)]
+    public void Constructor_ShouldNotLogBatchProcessingEnabled_WhenBatchesAreNotAcknowledged(
+        MqttQualityOfServiceLevel qualityOfServiceLevel,
+        int? batchSize)
+    {
+        LoggerSubstitute<MqttConsumer> loggerSubstitute = new(LogLevel.Trace);
+        SilverbackLogger<MqttConsumer> logger = new(new MappedLevelsLogger<MqttConsumer>([], loggerSubstitute));
+        using MqttClientWrapper client = CreateBatchLoggingClient(logger);
+        BatchSettings? batch = batchSize == null ? null : new BatchSettings { Size = batchSize.Value };
+
+        using MqttConsumer consumer = CreateBatchLoggingConsumer(client, logger, qualityOfServiceLevel, batch);
+
+        loggerSubstitute.DidNotReceive(LogLevel.Information, null, null, 4014);
+    }
 
     [Theory]
     [InlineData(MqttQualityOfServiceLevel.AtLeastOnce)]
@@ -142,6 +184,108 @@ public partial class MqttConsumerTests
         harness.Acknowledged.ShouldBe([.. untrackedMessages, 0, 1, 2]);
     }
 
+    [Fact]
+    public async Task RollbackAsync_ShouldNotRestartReader_WhenConsumerIsStoppedWhileRestartIsPending()
+    {
+        // The restart and the stop race when the stopped reader exits: repeat to cover both orders
+        for (int i = 0; i < 20; i++)
+        {
+            await RollbackAndStopWhileRestartIsPendingAsync();
+        }
+    }
+
+    private static async Task RollbackAndStopWhileRestartIsPendingAsync()
+    {
+        await using BatchConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce, 3);
+        TaskCompletionSource<bool> secondMessageProcessing = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseSecondMessage = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int secondMessageProcessingCount = 0;
+
+        harness.Behavior.OnProcessing = async number =>
+        {
+            if (number != 1 || Interlocked.Increment(ref secondMessageProcessingCount) > 1)
+                return;
+
+            secondMessageProcessing.TrySetResult(true);
+            await releaseSecondMessage.Task.WaitAsync(BatchTimeout);
+        };
+
+        await harness.ConnectAsync();
+        await harness.DeliverAsync(0, 1);
+        await secondMessageProcessing.Task.WaitAsync(BatchTimeout);
+        ConsumerChannel channel = harness.GetChannel();
+
+        // The first message is tracked by the pending batch: its rollback requests the restart, which stops the reader and waits
+        // for the processing of the second message
+        await harness.Consumer.RollbackAsync([harness.Behavior.Identifiers[0]]);
+        await AsyncTestingUtil.WaitAsync(() => channel.IsReadCanceled, BatchTimeout);
+        channel.IsReadCanceled.ShouldBeTrue();
+        channel.GetRestartRequestsCount().ShouldBe(1);
+
+        // The stop takes over the pending restart request, while the processing of the second message is still blocked
+        Task stopTask = harness.Consumer.StopAsync().AsTask();
+        await AsyncTestingUtil.WaitAsync(() => channel.GetRestartRequestsCount() == 0, BatchTimeout);
+        channel.GetRestartRequestsCount().ShouldBe(0);
+
+        releaseSecondMessage.TrySetResult(true);
+        await stopTask.WaitAsync(BatchTimeout);
+
+        // The restart overtaken by the stop doesn't start a new reader
+        await AsyncTestingUtil.WaitAsync(() => !channel.IsReadCanceled, TimeSpan.FromMilliseconds(200));
+        channel.IsReadCanceled.ShouldBeTrue();
+        harness.Behavior.Processed.ShouldBe([0, 1]);
+
+        // Both messages are replayed in order once started again, and the restart overtaken by the stop didn't touch the requests
+        await harness.Consumer.StartAsync().AsTask().WaitAsync(BatchTimeout);
+        await AsyncTestingUtil.WaitAsync(() => harness.Behavior.Processed.Count >= 4, BatchTimeout);
+
+        harness.Behavior.Processed.ShouldBe([0, 1, 0, 1]);
+        channel.GetRestartRequestsCount().ShouldBe(0);
+        channel.IsRestartPending.ShouldBeFalse();
+    }
+
+    private static MqttClientWrapper CreateBatchLoggingClient(ISilverbackLogger logger) =>
+        new(
+            "batch-log-client",
+            Substitute.For<IMqttClient>(),
+            new MqttClientConfiguration
+            {
+                ClientId = "batch-log-client",
+                Channel = new MqttClientTcpConfiguration { RemoteEndpoint = new DnsEndPoint("test-broker", 1234) }
+            },
+            Substitute.For<IBrokerClientCallbacksInvoker>(),
+            logger);
+
+    private static MqttConsumer CreateBatchLoggingConsumer(
+        MqttClientWrapper client,
+        ISilverbackLogger<MqttConsumer> logger,
+        MqttQualityOfServiceLevel qualityOfServiceLevel,
+        BatchSettings? batch)
+    {
+        IServiceProvider serviceProvider = Substitute.For<IServiceProvider>();
+        serviceProvider.GetService(typeof(ISequenceStore)).Returns(Substitute.For<ISequenceStore>());
+
+        return new MqttConsumer(
+            "batch-log-test",
+            client,
+            new MqttClientConfiguration
+            {
+                MaxDegreeOfParallelism = 3,
+                ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+                [
+                    new MqttConsumerEndpointConfiguration
+                    {
+                        Topics = new ValueReadOnlyCollection<string>(["topic1"]),
+                        QualityOfServiceLevel = qualityOfServiceLevel,
+                        Batch = batch
+                    }
+                ])
+            },
+            Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+            serviceProvider,
+            logger);
+    }
+
     private sealed class BatchConsumerHarness : IAsyncDisposable
     {
         private readonly IMqttClient _nativeClient = Substitute.For<IMqttClient>();
@@ -225,6 +369,19 @@ public partial class MqttConsumerTests
 
         public void FailAcknowledgment(int number, Exception exception) => _acknowledgmentFailure = (number, exception);
 
+        // The channels aren't exposed by the consumer
+        public ConsumerChannel GetChannel()
+        {
+            object channelsManager = typeof(MqttConsumer)
+                .GetField("_channelsManager", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetValue(Consumer)!;
+
+            return ((ConsumerChannel[])typeof(ConsumerChannelsManager)
+                    .GetField("_channels", BindingFlags.Instance | BindingFlags.NonPublic)!
+                    .GetValue(channelsManager)!)
+                .Single();
+        }
+
         public async Task ConnectAsync()
         {
             await Client.ConnectAsync().AsTask().WaitAsync(BatchTimeout);
@@ -299,7 +456,13 @@ public partial class MqttConsumerTests
 
         public Func<IConsumer, IReadOnlyList<IBrokerMessageIdentifier>, Task>? OnBatchCompleted { get; set; }
 
+        // Awaited before the message is added to the batch
+        public Func<int, Task>? OnProcessing { get; set; }
+
         public ConcurrentQueue<int> Processed { get; } = new();
+
+        // The identifier of each message, set when it's first added to a batch
+        public ConcurrentDictionary<int, IBrokerMessageIdentifier> Identifiers { get; } = new();
 
         public Task<IReadOnlyList<IBrokerMessageIdentifier>> ReadBatchAsync() =>
             _completedBatches.Reader.ReadAsync().AsTask().WaitAsync(BatchTimeout);
@@ -309,6 +472,10 @@ public partial class MqttConsumerTests
             using (context)
             {
                 int number = context.Envelope.RawMessage!.ReadByte();
+
+                if (OnProcessing != null)
+                    await OnProcessing(number);
+
                 IReadOnlyList<IBrokerMessageIdentifier>? completedBatch = AddToBatch(number, context.Envelope.BrokerMessageIdentifier);
 
                 if (completedBatch == null)
@@ -329,6 +496,8 @@ public partial class MqttConsumerTests
 
                 if (number == UntrackedMessage)
                     return null;
+
+                Identifiers.TryAdd(number, identifier);
 
                 // Each batch has its own tracker, like each sequence
                 _tracker ??= new MqttMessageIdentifiersTracker(Consumers);
