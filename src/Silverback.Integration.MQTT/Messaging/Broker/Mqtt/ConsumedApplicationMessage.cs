@@ -60,6 +60,12 @@ internal sealed class ConsumedApplicationMessage
     public bool IsTracked { get; set; }
 
     /// <summary>
+    ///     Gets or sets a value indicating whether the message is being acknowledged, after being committed with its sequence. It's still
+    ///     pending until acknowledged, but must not be replayed anymore. Guarded by the channel lock.
+    /// </summary>
+    public bool IsAcknowledging { get; set; }
+
+    /// <summary>
     ///     Gets or sets the node of the message in the list of the pending messages of its channel, or <c>null</c> if it was acknowledged
     ///     or discarded. Guarded by the channel lock.
     /// </summary>

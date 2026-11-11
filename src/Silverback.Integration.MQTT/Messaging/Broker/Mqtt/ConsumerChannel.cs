@@ -187,6 +187,50 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
     }
 
     /// <summary>
+    ///     Marks the message committed with its sequence as being acknowledged, so that a rollback doesn't replay it while its
+    ///     acknowledgment is in progress.
+    /// </summary>
+    /// <remarks>
+    ///     A message scheduled for replay by a rollback (e.g. read after the rolled back sequence and committed by a sequence started
+    ///     before the reader restarted) mustn't be acknowledged: it's processed and committed again by the replay, in the right order.
+    /// </remarks>
+    /// <param name="message">
+    ///     The message to be acknowledged.
+    /// </param>
+    /// <returns>
+    ///     <c>true</c> if the message must be acknowledged, or <c>false</c> if it's scheduled for replay.
+    /// </returns>
+    public bool BeginAcknowledgment(ConsumedApplicationMessage message)
+    {
+        lock (_messagesLock)
+        {
+            if (message.IsReplayPending)
+                return false;
+
+            message.IsAcknowledging = true;
+            return true;
+        }
+    }
+
+    /// <summary>
+    ///     Returns a value indicating whether the message is still pending, meaning that it was neither acknowledged nor discarded with
+    ///     the session it was delivered by (see <see cref="Reset" />).
+    /// </summary>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <returns>
+    ///     <c>true</c> if the message is still pending, otherwise <c>false</c>.
+    /// </returns>
+    public bool IsPending(ConsumedApplicationMessage message)
+    {
+        lock (_messagesLock)
+        {
+            return IsPendingCore(message);
+        }
+    }
+
+    /// <summary>
     ///     Removes the message after it was acknowledged and completes its task.
     /// </summary>
     /// <param name="message">
@@ -258,6 +302,10 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
                  node != null && node.Value.Position >= fromPosition;
                  node = node.Previous)
             {
+                // Committed with its sequence already: it's still pending only until acknowledged
+                if (node.Value.IsAcknowledging)
+                    continue;
+
                 SetReplayPendingCore(node.Value);
                 node.Value.TaskCompletionSource.TrySetResult(false);
             }
@@ -287,7 +335,22 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
     /// <returns>
     ///     <c>true</c> if further requests were added in the meantime, otherwise <c>false</c>.
     /// </returns>
-    public bool RemoveRestartRequests(int count) => Interlocked.Add(ref _restartRequestsCount, -count) > 0;
+    public bool RemoveRestartRequests(int count)
+    {
+        // Never below zero: two restarts may handle the same request (e.g. a restart delayed until after a stop and a start, capturing
+        // the generation of the restart requested afterwards), which would otherwise disable the restarts requested later on
+        int current;
+        int updated;
+
+        do
+        {
+            current = Volatile.Read(ref _restartRequestsCount);
+            updated = Math.Max(current - count, 0);
+        }
+        while (Interlocked.CompareExchange(ref _restartRequestsCount, updated, current) != current);
+
+        return updated > 0;
+    }
 
     /// <summary>
     ///     Discards the pending restart requests, when the restart is overtaken by a stop. The messages to be replayed are kept and

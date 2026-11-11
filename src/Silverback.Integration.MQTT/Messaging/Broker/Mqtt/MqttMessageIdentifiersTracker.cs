@@ -15,6 +15,10 @@ namespace Silverback.Messaging.Broker.Mqtt;
 /// </summary>
 internal sealed class MqttMessageIdentifiersTracker : IBrokerMessageIdentifiersTracker
 {
+    // The identifiers are added by the reader, while the rollback of another sequence may read them (see
+    // ConsumerPipelineContext.GetRollbackIdentifiers)
+    private readonly System.Threading.Lock _lock = new();
+
     private readonly HashSet<IBrokerMessageIdentifier> _identifiers = [];
 
     private readonly IConsumerCollection _consumers;
@@ -26,7 +30,13 @@ internal sealed class MqttMessageIdentifiersTracker : IBrokerMessageIdentifiersT
 
     public void TrackIdentifier(IBrokerMessageIdentifier identifier)
     {
-        if (!_identifiers.Add(identifier) || identifier is not MqttMessageIdentifier mqttIdentifier)
+        lock (_lock)
+        {
+            if (!_identifiers.Add(identifier))
+                return;
+        }
+
+        if (identifier is not MqttMessageIdentifier mqttIdentifier)
             return;
 
         // The client identifier isn't necessarily unique (e.g. when connecting to multiple brokers), the message identifier is
@@ -37,7 +47,15 @@ internal sealed class MqttMessageIdentifiersTracker : IBrokerMessageIdentifiersT
         }
     }
 
-    public IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers() => _identifiers;
+    public IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers() => GetSnapshot();
 
-    public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers() => _identifiers;
+    public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers() => GetSnapshot();
+
+    private IBrokerMessageIdentifier[] GetSnapshot()
+    {
+        lock (_lock)
+        {
+            return [.. _identifiers];
+        }
+    }
 }

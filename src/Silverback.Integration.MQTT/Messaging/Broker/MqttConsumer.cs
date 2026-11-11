@@ -190,17 +190,27 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         // packet identifier.
         List<ConsumedApplicationMessage> consumedMessages = PullPendingConsumedMessages(brokerMessageIdentifiers);
 
+        // Marked before acknowledging the first one, since a rollback (e.g. of a sequence that failed earlier) mustn't replay them. The
+        // messages already scheduled for replay are left pending: they are processed and committed again by the replay.
+        bool[] isAcknowledged = [.. consumedMessages.Select(message => message.Channel.BeginAcknowledgment(message))];
+
         for (int i = 0; i < consumedMessages.Count; i++)
         {
             ConsumedApplicationMessage consumedMessage = consumedMessages[i];
 
+            if (!isAcknowledged[i])
+                continue;
+
             try
             {
-                await AcknowledgeAsync(consumedMessage).ConfigureAwait(false);
+                // A delivery of a disconnected session (e.g. lost while a previous acknowledgment was in progress) is replayed by the
+                // broker, and mustn't be acknowledged on the new connection
+                if (consumedMessage.Channel.IsPending(consumedMessage))
+                    await AcknowledgeAsync(consumedMessage).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                HandleAcknowledgeFailure(consumedMessages.Skip(i), ex);
+                HandleAcknowledgeFailure(consumedMessages.Where((_, index) => index >= i && isAcknowledged[index]), ex);
                 throw;
             }
 

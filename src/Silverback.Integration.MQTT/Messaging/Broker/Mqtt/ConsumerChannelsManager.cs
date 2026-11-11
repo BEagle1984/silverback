@@ -72,21 +72,42 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
     ///     The channel to be restarted.
     /// </param>
     // The rollback is usually requested by the processing, which the stop awaits: never wait for the restart
-    public void RestartReading(ConsumerChannel channel) => Task.Run(() => RestartReadingAsync(channel)).FireAndForget();
+    public void RestartReading(ConsumerChannel channel)
+    {
+        int stopGeneration;
+
+        // Captured when the restart is requested: a restart delayed until after a stop (and maybe a start) must not handle the requests
+        // added afterwards, which belong to another restart
+        lock (_restartLock)
+        {
+            stopGeneration = _stopGeneration;
+        }
+
+        Task.Run(() => RestartReadingAsync(channel, stopGeneration)).FireAndForget();
+    }
 
     protected override IEnumerable<ConsumerChannel> GetChannels() => _channels;
 
     protected override Task StopReadingAsync(ConsumerChannel channel)
     {
-        // Incremented before the reading is canceled, to skip the restarts that would otherwise resume the stopped reader. The stop
-        // takes over the pending restart requests: the messages to replay are processed when the reader is started again.
+        // Incremented before the reading is canceled, to skip the restarts that would otherwise resume the stopped reader
         lock (_restartLock)
         {
             _stopGeneration++;
+        }
+
+        // Cancels the reading synchronously, before awaiting the reader
+        Task stopReadingTask = base.StopReadingAsync(channel);
+
+        // The stop takes over the pending restart requests: the messages to replay are processed when the reader is started again.
+        // Cleared only after canceling the reading, since the pending requests keep the reader from taking the messages to replay
+        // (into the sequences that the restart would abort).
+        lock (_restartLock)
+        {
             channel.ClearRestartRequests();
         }
 
-        return base.StopReadingAsync(channel);
+        return stopReadingTask;
     }
 
     protected override async Task ReadChannelOnceAsync(ConsumerChannel channel)
@@ -179,7 +200,7 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    private async Task RestartReadingAsync(ConsumerChannel channel)
+    private async Task RestartReadingAsync(ConsumerChannel channel, int stopGeneration)
     {
         try
         {
@@ -188,7 +209,7 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
 
             do
             {
-                isCompleted = await TryRestartReadingAsync(channel).ConfigureAwait(false);
+                isCompleted = await TryRestartReadingAsync(channel, stopGeneration).ConfigureAwait(false);
             }
             while (!isCompleted);
         }
@@ -202,28 +223,14 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
 
     // Returns false if the restart was requested again in the meantime and must be retried. A restart overtaken by a stop never touches
     // the reader or the restart requests, which belong to the stop (and to the reader started afterwards).
-    private async Task<bool> TryRestartReadingAsync(ConsumerChannel channel)
+    private async Task<bool> TryRestartReadingAsync(ConsumerChannel channel, int stopGeneration)
     {
-        int stopGeneration;
-
-        // Captured before checking the consumer status: a stop either incremented it already (and is then visible as stopping) or
-        // increments it later, skipping the restart
-        lock (_restartLock)
-        {
-            stopGeneration = _stopGeneration;
-        }
-
+        // The generation is captured when the restart is requested, before checking the consumer status: a stop either incremented it
+        // already (and is then visible as stopping) or increments it later, skipping the restart
+        // The consumer is being stopped: the stop takes over the restart requests once it canceled the reading (see StopReadingAsync),
+        // and the messages to replay are processed when the consumer is started again
         if (!_consumer.IsRunning || _consumer.IsProcessingCanceled)
-        {
-            // The consumer is being stopped: the messages to replay are processed when it's started again
-            lock (_restartLock)
-            {
-                if (_stopGeneration == stopGeneration)
-                    channel.ClearRestartRequests();
-            }
-
             return true;
-        }
 
         int requestsCount;
         Task stopReadingTask;
@@ -235,6 +242,11 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
                 return true;
 
             requestsCount = channel.GetRestartRequestsCount();
+
+            // The requests were taken over by a stop that completed before the restart captured the generation (e.g. stopped and
+            // started again in the meantime): don't stop the healthy reader
+            if (requestsCount == 0)
+                return true;
 
             // Aborts the pending sequences, which roll back their messages as well (requesting the restart again, if not stopped yet)
             stopReadingTask = channel.StopReadingAsync();

@@ -624,6 +624,77 @@ public class ConsumerChannelTests
     }
 
     [Fact]
+    public async Task Rollback_ShouldNotReplayMessagesBeingAcknowledged()
+    {
+        using ConsumerChannel channel = CreateChannel();
+        ConsumedApplicationMessage[] messages = await WriteMessagesAsync(channel, 3);
+
+        for (int i = 0; i < 3; i++)
+        {
+            await ReadNextAsync(channel);
+            channel.MarkTracked(messages[i]);
+            channel.Defer(messages[i], out _).ShouldBe(ConsumerChannel.PendingState.Tracked);
+        }
+
+        // The second message was committed with another sequence and is being acknowledged when the first one is rolled back
+        channel.BeginAcknowledgment(messages[1]).ShouldBeTrue();
+        Task<bool> acknowledgingTask = messages[1].TaskCompletionSource.Task;
+
+        channel.Rollback([messages[0]]).ShouldBeTrue();
+        channel.RemoveRestartRequests(1).ShouldBeFalse();
+
+        messages.Select(message => message.IsReplayPending).ShouldBe([true, false, true]);
+        acknowledgingTask.IsCompleted.ShouldBeFalse();
+
+        channel.Acknowledged(messages[1]);
+        (await acknowledgingTask.WaitAsync(Timeout)).ShouldBeTrue();
+        ConsumedApplicationMessage[] readMessages = await ReadMessagesAsync(channel, 2);
+        readMessages.ShouldBe([messages[0], messages[2]]);
+    }
+
+    [Fact]
+    public async Task BeginAcknowledgment_ShouldReturnFalse_WhenMessageIsScheduledForReplay()
+    {
+        using ConsumerChannel channel = CreateChannel();
+        ConsumedApplicationMessage[] messages = await WriteMessagesAsync(channel, 2);
+
+        for (int i = 0; i < 2; i++)
+        {
+            await ReadNextAsync(channel);
+            channel.MarkTracked(messages[i]);
+            channel.Defer(messages[i], out _).ShouldBe(ConsumerChannel.PendingState.Tracked);
+        }
+
+        // The second message is committed by a sequence started before the reader is restarted to replay the first one: it's replayed
+        // (and committed again) in order, instead of being acknowledged first
+        channel.Rollback([messages[0]]).ShouldBeTrue();
+        channel.RemoveRestartRequests(1).ShouldBeFalse();
+
+        channel.BeginAcknowledgment(messages[1]).ShouldBeFalse();
+        messages[1].IsAcknowledging.ShouldBeFalse();
+
+        ConsumedApplicationMessage[] readMessages = await ReadMessagesAsync(channel, 2);
+        readMessages.ShouldBe(messages);
+        channel.BeginAcknowledgment(messages[1]).ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task IsPending_ShouldReturnFalse_WhenChannelIsResetOrMessageIsAcknowledged()
+    {
+        using ConsumerChannel channel = CreateChannel();
+        ConsumedApplicationMessage[] messages = await WriteMessagesAsync(channel, 2);
+        await ReadMessagesAsync(channel, 2);
+
+        channel.IsPending(messages[0]).ShouldBeTrue();
+        channel.Acknowledged(messages[0]);
+        channel.IsPending(messages[0]).ShouldBeFalse();
+
+        channel.IsPending(messages[1]).ShouldBeTrue();
+        channel.Reset();
+        channel.IsPending(messages[1]).ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task Rollback_ShouldIgnoreMessages_WhenChannelIsReset()
     {
         using ConsumerChannel channel = CreateChannel();
@@ -663,6 +734,31 @@ public class ConsumerChannelTests
 
         isRestartRequired.ShouldBeFalse();
         channel.GetRestartRequestsCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task RemoveRestartRequests_ShouldNotGoBelowZero_WhenSameRequestIsRemovedTwice()
+    {
+        using ConsumerChannel channel = CreateChannel();
+        ConsumedApplicationMessage[] messages = await WriteMessagesAsync(channel, 2);
+
+        for (int i = 0; i < 2; i++)
+        {
+            await ReadNextAsync(channel);
+            channel.Defer(messages[i], out _).ShouldBe(ConsumerChannel.PendingState.Untracked);
+        }
+
+        channel.Rollback([messages[1]]).ShouldBeTrue();
+
+        // Handled by two restarts (e.g. one delayed until after a stop and a start)
+        channel.RemoveRestartRequests(1).ShouldBeFalse();
+        channel.RemoveRestartRequests(1).ShouldBeFalse();
+        channel.GetRestartRequestsCount().ShouldBe(0);
+
+        // The next rollback still requests a restart
+        channel.Rollback([messages[0]]).ShouldBeTrue();
+        channel.GetRestartRequestsCount().ShouldBe(1);
+        channel.IsRestartPending.ShouldBeTrue();
     }
 
     [Fact]
