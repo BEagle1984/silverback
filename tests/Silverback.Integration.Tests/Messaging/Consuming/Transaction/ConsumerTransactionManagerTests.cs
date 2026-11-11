@@ -187,6 +187,46 @@ public class ConsumerTransactionManagerTests
         await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
     }
 
+    [Theory]
+    [InlineData(false, false, false, true)]
+    [InlineData(false, true, false, true)]
+    [InlineData(false, true, true, true)]
+    [InlineData(true, false, false, true)]
+    [InlineData(true, true, false, false)]
+    [InlineData(true, false, true, false)]
+    public async Task RollbackAsync_ShouldCommitSequenceOnlyIfNotCommittingOtherSequences_WhenCommittingConsumer(
+        bool isCommitCumulative,
+        bool isOtherSequencePending,
+        bool isStopping,
+        bool expectedIsCommitted)
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        IConsumer consumer = isCommitCumulative ? Substitute.For<CumulativeCommitConsumer>() : Substitute.For<IConsumer>();
+        using ConsumerPipelineContext otherSequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(consumer: consumer, sequenceStore: store);
+        using CancellationTokenSource processingCancellationTokenSource = new();
+        ConsumerTransactionManager transaction = new(
+            context,
+            Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>(),
+            processingCancellationTokenSource.Token);
+
+        // The skipped sequence itself (e.g. a chunked message failing before being added to the batch) doesn't count
+        ChunkSequence skippedSequence = await store.AddAsync(new ChunkSequence("skipped", 5, context));
+        context.SetSequence(skippedSequence, true);
+
+        if (isOtherSequencePending)
+            await store.AddAsync(new ChunkSequence("other", 5, otherSequenceContext));
+
+        if (isStopping)
+            await processingCancellationTokenSource.CancelAsync();
+
+        await transaction.RollbackAsync(null, commitConsumer: true);
+
+        // With Kafka the commit would implicitly commit the other sequence (or the one aborted by the stop), while with MQTT nothing else
+        // would acknowledge the messages of the skipped sequence
+        await consumer.Received(expectedIsCommitted ? 1 : 0).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
     [Fact]
     public async Task RollbackAsync_ShouldNotCommit_WhenCommittingConsumerAndSequenceIsPending()
     {

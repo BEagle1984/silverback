@@ -287,6 +287,76 @@ public partial class ChunkingTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
     }
 
+    [Fact]
+    public async Task Chunking_ShouldNotCommitSkippedChunkedMessage_WhileBatchIsPending()
+    {
+        TestingCollection<List<string?>> receivedBatches = [];
+        TaskCompletionSource<bool> chunkedMessageSkipped = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        ISkipMessageErrorPolicyCallback callback = Substitute.For<ISkipMessageErrorPolicyCallback>();
+        callback.OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(_ =>
+            {
+                chunkedMessageSkipped.TrySetResult(true);
+                return Task.CompletedTask;
+            });
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2)
+                        .OnError(policy => policy.Skip()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+            }
+
+            receivedBatches.Add(list);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] invalidChunks = [.. "{ invalid json"u8.ToArray().Chunk(7)];
+
+        // The chunked message can't be deserialized and is skipped while the batch is pending: committing it would commit the batch
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+
+        for (int i = 0; i < invalidChunks.Length; i++)
+        {
+            await producer.RawProduceAsync(
+                invalidChunks[i],
+                HeadersHelper.GetChunkHeaders("A", i, invalidChunks.Length, typeof(TestEventOne)));
+        }
+
+        await chunkedMessageSkipped.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) > 0, TimeSpan.FromSeconds(1));
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+
+        // The skipped chunks are committed with the batch
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        receivedBatches.ShouldHaveSingleItem().ShouldBe(["1", "2"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(4);
+    }
+
     private static byte[][] SerializeAndSplitIntoChunks(string content, int chunksCount)
     {
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(new TestEventOne { ContentEventOne = content });

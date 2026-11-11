@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Unbounded;
@@ -156,9 +157,10 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
             // Not while the consumer is stopping either: the stop aborts the pending sequences and removes them from the store without
             // rolling them back (Kafka consumes them again from the first uncommitted offset after the restart), so the commit could
             // commit their messages. The skipped message is consumed (and skipped) again after the restart.
-            if (_context.Sequence != null ||
-                !_processingCancellationToken.IsCancellationRequested &&
-                _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0 && !HasUnresolvedSequences())
+            if (_context.Sequence != null
+                    ? CanCommitSequence()
+                    : !_processingCancellationToken.IsCancellationRequested &&
+                      _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0 && !HasUnresolvedSequences())
             {
                 await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
             }
@@ -177,6 +179,19 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         return true;
     }
+
+    // The skipped (or incomplete) sequence, e.g. a batch or a chunked message, is committed right away, unless the commit is cumulative
+    // (Kafka) and would implicitly commit the messages of another sequence that isn't resolved yet (e.g. a pending batch, when a chunked
+    // message fails before being added to it) or that the stop aborted without rolling it back. With MQTT, the messages of the sequence
+    // must be acknowledged anyway, since nothing else would acknowledge them.
+    private bool CanCommitSequence() =>
+        _context.Consumer is not ICumulativeCommitConsumer ||
+        !_processingCancellationToken.IsCancellationRequested && !_context.SequenceStore.Any(IsOtherUnresolvedSequence);
+
+    private bool IsOtherUnresolvedSequence(ISequence sequence) =>
+        sequence != _context.Sequence && sequence.ParentSequence != _context.Sequence && sequence is not UnboundedSequence &&
+        (sequence.IsPending ||
+         sequence is ISequenceImplementation { ProcessingCompletedTask.IsCompleted: false } && sequence.ParentSequence == null);
 
     // The sequences that aren't pending anymore but whose processing isn't completed yet, e.g. a batch completed by its max wait time
     private bool HasUnresolvedSequences() =>

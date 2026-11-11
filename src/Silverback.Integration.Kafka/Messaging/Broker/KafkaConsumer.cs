@@ -21,7 +21,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker;
 
 /// <inheritdoc cref="Consumer{TIdentifier}" />
-public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
+public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeCommitConsumer
 {
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
 
