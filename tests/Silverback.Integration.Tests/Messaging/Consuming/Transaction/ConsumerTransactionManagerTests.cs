@@ -164,6 +164,29 @@ public class ConsumerTransactionManagerTests
         await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RollbackAsync_ShouldCommitUnlessStopping_WhenCommittingConsumerAndNoSequenceIsPending(bool isStopping)
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        using CancellationTokenSource processingCancellationTokenSource = new();
+        ConsumerTransactionManager transaction = new(
+            context,
+            Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>(),
+            processingCancellationTokenSource.Token);
+
+        // The stop removes the pending sequences from the store without rolling them back: the commit could commit their messages
+        if (isStopping)
+            await processingCancellationTokenSource.CancelAsync();
+
+        await transaction.RollbackAsync(null, commitConsumer: true);
+
+        await context.Consumer.Received(isStopping ? 0 : 1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
     [Fact]
     public async Task RollbackAsync_ShouldNotCommit_WhenCommittingConsumerAndSequenceIsPending()
     {

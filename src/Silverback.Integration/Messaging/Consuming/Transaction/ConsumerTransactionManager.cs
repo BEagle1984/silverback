@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -19,6 +20,8 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     private readonly ISilverbackLogger<ConsumerTransactionManager> _logger;
 
     private readonly System.Threading.Lock _syncLock = new();
+
+    private readonly CancellationToken _processingCancellationToken; // Canceled by the consumer stop
 
     private Task? _commitTask;
 
@@ -41,6 +44,15 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     {
         _context = context;
         _logger = logger;
+    }
+
+    internal ConsumerTransactionManager(
+        ConsumerPipelineContext context,
+        ISilverbackLogger<ConsumerTransactionManager> logger,
+        CancellationToken processingCancellationToken)
+        : this(context, logger)
+    {
+        _processingCancellationToken = processingCancellationToken;
     }
 
     /// <inheritdoc cref="IConsumerTransactionManager.Committing" />
@@ -141,7 +153,11 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
             // completed by its max wait time, still being processed or handled by its error policies, which may roll it back).
             // The unbounded sequences don't count: their messages are committed one by one by their own pipelines, like the messages
             // outside a sequence, and with MQTT the skipped message would never be acknowledged, stalling the consumer.
+            // Not while the consumer is stopping either: the stop aborts the pending sequences and removes them from the store without
+            // rolling them back (Kafka consumes them again from the first uncommitted offset after the restart), so the commit could
+            // commit their messages. The skipped message is consumed (and skipped) again after the restart.
             if (_context.Sequence != null ||
+                !_processingCancellationToken.IsCancellationRequested &&
                 _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0 && !HasUnresolvedSequences())
             {
                 await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);

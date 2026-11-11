@@ -508,6 +508,90 @@ public partial class BatchProcessingTests
     }
 
     [Fact]
+    public async Task Batch_ShouldNotCommitSkippedMessage_WhenStoppingWhileBatchIsPending()
+    {
+        TestingCollection<List<string?>> successfulBatches = [];
+        TaskCompletionSource<bool> messageSkipping = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> batchCanceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int skipsCount = 0;
+
+        ISkipMessageErrorPolicyCallback callback = Substitute.For<ISkipMessageErrorPolicyCallback>();
+        callback.OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(async _ =>
+            {
+                if (Interlocked.Increment(ref skipsCount) > 1)
+                    return;
+
+                // Skip the message only after the stop aborted the pending batch, removing it from the store
+                messageSkipping.TrySetResult(true);
+                await batchCanceled.Task.WaitAsync(TimeSpan.FromSeconds(10));
+                await Task.Delay(TimeSpan.FromMilliseconds(200));
+            });
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(1))
+                        .OnError(policy => policy.Skip(skip => skip.ApplyTo<JsonException>())))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, CancellationToken>(HandleBatchAsync)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch, CancellationToken cancellationToken)
+        {
+            List<string?> list = [];
+
+            try
+            {
+                await foreach (TestEventOne message in batch.WithCancellation(cancellationToken))
+                {
+                    list.Add(message.ContentEventOne);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                batchCanceled.TrySetResult(true);
+                throw;
+            }
+
+            successfulBatches.Add(list);
+        }
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" });
+        await producer.RawProduceAsync(
+            "{ invalid"u8.ToArray(),
+            [new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)]);
+        await messageSkipping.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        // The stop aborts the pending batch without rolling it back: committing the skipped message would commit the batch as well
+        await consumer.StopAsync();
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+
+        // The batch is consumed again after the restart, followed by the skipped message
+        await consumer.StartAsync();
+        await AsyncTestingUtil.WaitAsync(() => successfulBatches.Count > 0);
+        await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 3);
+
+        successfulBatches.ShouldHaveSingleItem().ShouldBe(["1", "2", "3"]);
+        skipsCount.ShouldBe(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+    }
+
+    [Fact]
     public async Task Batch_ShouldRetryMessage_WhenDeserializationFailsWhileBatchWithIgnoredMessagesIsPending()
     {
         int retriesCount = 0;

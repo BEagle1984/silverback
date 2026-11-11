@@ -51,7 +51,8 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             context.ReplaceServiceScope(scope);
             context.TransactionManager = new ConsumerTransactionManager(
                 context,
-                context.ServiceProvider.GetRequiredService<ISilverbackLogger<ConsumerTransactionManager>>());
+                context.ServiceProvider.GetRequiredService<ISilverbackLogger<ConsumerTransactionManager>>(),
+                cancellationToken);
             context.SilverbackContext.SetConsumerPipelineContext(context);
 
             _logger.LogProcessing(context.Envelope);
