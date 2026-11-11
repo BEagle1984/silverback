@@ -484,9 +484,22 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         catch (OperationCanceledException)
         {
-            // Consider the message as successfully processed if the enumeration was aborted and track the related identifier
             if (IsAborted && AbortReason == SequenceAbortReason.EnumerationAborted)
-                _identifiersTracker?.TrackIdentifier(envelope.BrokerMessageIdentifier);
+            {
+                // Consider the message as successfully processed if the enumeration was aborted after a subscriber pulled it and track
+                // the related identifier. A batch refuses the message that no subscriber pulled instead (e.g. pushed right after the
+                // subscriber stopped enumerating, before the abort started), which is added to the next batch (see AddAsync), like the
+                // unbounded sequences do (see PublisherConsumerBehavior).
+                if (!IsMessageRefusedByAbortAddedToNextSequence || IsLastPulled(envelope))
+                {
+                    _identifiersTracker?.TrackIdentifier(envelope.BrokerMessageIdentifier);
+                }
+                else
+                {
+                    RemoveChildSequence(sequence);
+                    _isAddRefused = true;
+                }
+            }
 
             // The streams were completed (e.g. by the max wait time) while pushing: the message is added to the next sequence (see
             // AddAsync), so the added sequence must not stay linked to this one, which would commit or complete it. When the streams are
