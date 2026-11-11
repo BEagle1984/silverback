@@ -605,6 +605,55 @@ public class SequenceBaseTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
+    public async Task AddAsync_ShouldRefuseMessage_WhenPushIsCanceledByCompletionAndSequenceIsThenSkipped()
+    {
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream)
+                {
+                    // Just consume the stream
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // The stream is aborted with the sequence
+            }
+        });
+
+        AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+
+        // The sequence is being completed (e.g. by the max wait time) and its stream completed, so that the push is canceled
+        using HookChildSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            () =>
+            {
+                typeof(SequenceBase<IRawInboundEnvelope>)
+                    .GetField("_isCompleting", BindingFlags.Instance | BindingFlags.NonPublic)!
+                    .SetValue(sequence, true);
+                _ = ((IMessageStreamEnumerable)stream).CompleteAsync();
+            });
+
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), childSequence, true);
+
+        // The sequence then fails and is skipped
+        await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test")).WaitAsync(Timeout);
+        AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+        // The message didn't join the sequence: it's added to the next one, instead of being skipped (and committed) with it
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+        childSequence.Parent.ShouldBeNull();
+    }
+
+    [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The subscriber task is awaited before the disposal")]
     public async Task AddAsync_ShouldRefuseMessage_WhenEnumerationIsAbortedBeforeMessageIsPulled()
     {

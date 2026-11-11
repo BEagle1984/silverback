@@ -505,8 +505,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             // AddAsync), so the added sequence must not stay linked to this one, which would commit or complete it. When the streams are
             // aborted instead (also before the sequence, e.g. by the publisher when one of several subscribers fails), the message and
             // the added sequence share the outcome of the abort.
+            // The message is refused, like when the push fails on the completed streams (see below), so that it's added to the next
+            // sequence also if the sequence is then skipped (e.g. failing), instead of sharing its outcome.
             if (IsMessageRefusedByAbortAddedToNextSequence && IsBeingCompleted())
+            {
                 RemoveChildSequence(sequence);
+                _isAddRefused = true;
+            }
 
             throw;
         }
