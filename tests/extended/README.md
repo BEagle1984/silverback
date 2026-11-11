@@ -69,6 +69,13 @@ The xUnit project follows the E2E layout: broker-specific cases in `Kafka/` and 
 
 `DockerTestsFixture` starts the required broker services from the root `docker-compose.yaml` using the `silverback` Compose project and `silverback_default` network. It leaves this shared infrastructure running. `ContainerTestRun` uses FluentDocker to manage worker containers. Compose startup and image builds use bounded Docker CLI calls from C#.
 
+The tests that run Silverback in the test process derive from `BrokerHarnessTests<THarness>` and build the host through its `Harness`, an `MqttTestHarness` or a `KafkaTestHarness` (both based on `BrokerTestHarness`) in `TestHost/`. xUnit creates a harness for each test case and disposes it after the test, so that a teardown failure, for example a client that doesn't stop, fails the test and is reported together with the failure of the test rather than in its place. A harness creates the unique prefix, builds the host with a log collector, offers the clients and helpers of its broker, and on dispose stops everything, deletes the MQTT sessions and writes the collected logs and the teardown failures to the test output. It also hides the waits that the clustered brokers need before a test can rely on them:
+
+- The EMQX nodes replicate the subscriptions asynchronously, and HAProxy spreads the connections across the nodes, so a message published right after a subscription is acknowledged can be dropped when the publisher is connected to the other node. The `MqttTestHarness` methods that connect the Silverback clients (`ConnectAsync`, `StartHostAsync`, `ReconnectAsync`, `WaitUntilSubscribedAsync`) and `TestMqttClient.SubscribeAsync` return only once every node routes the subscribed topics. Publish only after they return, and don't wait on the `Subscribed` event or subscribe through the native MQTTnet client.
+- `CreateTopics` can return before both Kafka brokers know the new topic, and a consumer joining a group in the meantime can receive an empty assignment that is never repaired. `KafkaTestHarness.CreateTopicsAsync` returns only once every broker knows the topics.
+
+The scenario itself (the gates, a disconnect, a shutdown, the assertions) stays in the test, which keeps access to the host, the clients and the native MQTTnet client for what the harness doesn't cover.
+
 Each case uses a unique `stress-` prefix for topics, client/group IDs and containers. Kafka topics are retained for investigation; worker containers are removed after evidence capture. The Kafka fixture builds the worker from the current checkout. `INTEGRATION_SDK_IMAGE` overrides the default `mcr.microsoft.com/dotnet/sdk:10.0` build image.
 
 ### Coverage

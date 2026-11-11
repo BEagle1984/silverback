@@ -5,21 +5,14 @@ using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using MQTTnet;
 using MQTTnet.Protocol;
 using Shouldly;
-using Silverback.Configuration;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Mqtt;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Extended.Integration.TestHost;
 using Silverback.Tests.Extended.Integration.TestHost.Mqtt;
 using Xunit;
 using Xunit.Abstractions;
@@ -30,17 +23,13 @@ namespace Silverback.Tests.Extended.Integration.Mqtt;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "MQTT")]
-public class ConnectionLossTests
+public class ConnectionLossTests : BrokerHarnessTests<MqttTestHarness>
 {
-    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
-
-    private readonly ITestOutputHelper _output;
-
     [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
     [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
     public ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
+        : base(new MqttTestHarness("loss", output))
     {
-        _output = output;
     }
 
     [Theory]
@@ -54,25 +43,23 @@ public class ConnectionLossTests
         bool persistentSession,
         bool publishFromSubscriber)
     {
-        string prefix = "stress-loss-" + Guid.NewGuid().ToString("N");
+        string outputTopic = Harness.Prefix + "-output";
         TaskCompletionSource<bool> firstStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> releaseFirst = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> buffered = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> blocked = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> stopping = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        TaskCompletionSource<bool> subscribed = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        TaskCompletionSource<bool> reconnected = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> freshProcessed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> replyReceived = new(TaskCreationOptions.RunContinuationsAsynchronously);
         ConcurrentQueue<(int Message, int Connection)> processed = new();
         int connection = 0;
         int disconnectNotifications = 0;
         bool sessionPresent = false;
         int failedPublishes = 0;
-        TaskCompletionSource<bool> replyReceived = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        await using DisconnectableTcpProxy proxy = new();
-        using NativeClientFactory clientFactory = new();
-        clientFactory.Client.ConnectedAsync += args =>
+        DisconnectableTcpProxy proxy = Harness.UseDisconnectableProxy();
+
+        Harness.NativeClient.ConnectedAsync += args =>
         {
             Interlocked.Increment(ref connection);
             sessionPresent = args.ConnectResult.IsSessionPresent;
@@ -80,7 +67,7 @@ public class ConnectionLossTests
             return Task.CompletedTask;
         };
 
-        clientFactory.Client.ApplicationMessageReceivedAsync += args =>
+        Harness.NativeClient.ApplicationMessageReceivedAsync += args =>
         {
             int number = JsonSerializer.Deserialize<ReconnectMessage>(args.ApplicationMessage.Payload.ToArray())!.Number;
 
@@ -90,30 +77,23 @@ public class ConnectionLossTests
             return Task.CompletedTask;
         };
 
-        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
-        builder.Logging.ClearProviders();
-        builder.Logging.AddSimpleConsole();
-        builder.Services.AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddMqtt())
-            .AddMqttClients(clients => clients
-                .ConnectViaTcp("127.0.0.1", proxy.Port)
-                .AddClient(client =>
-                {
-                    client.WithClientId(prefix)
-                        .DisableParallelProcessing()
-                        .LimitBackpressure(1)
-                        .Consume<ReconnectMessage>(endpoint => endpoint
-                            .ConsumeFrom(prefix)
-                            .WithQualityOfServiceLevel(qualityOfServiceLevel)
-                            .OnError(policy => policy.Retry(3))
-                            .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()))
-                        .Produce<ConnectionLossReply>(endpoint => endpoint
-                            .ProduceTo(prefix + "-output")
-                            .WithQualityOfServiceLevel(qualityOfServiceLevel));
+        Harness.AddClient(client =>
+        {
+            client.DisableParallelProcessing()
+                .LimitBackpressure(1)
+                .Consume<ReconnectMessage>(endpoint => endpoint
+                    .ConsumeFrom(Harness.Prefix)
+                    .WithQualityOfServiceLevel(qualityOfServiceLevel)
+                    .OnError(policy => policy.Retry(3))
+                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()))
+                .Produce<ConnectionLossReply>(endpoint => endpoint
+                    .ProduceTo(outputTopic)
+                    .WithQualityOfServiceLevel(qualityOfServiceLevel));
 
-                    if (persistentSession)
-                        client.RequestPersistentSession(TimeSpan.FromMinutes(5));
-                }))
+            if (persistentSession)
+                client.RequestPersistentSession(TimeSpan.FromMinutes(5));
+        });
+        Harness.ConfigureSilverback(silverback => silverback
             .AddDelegateSubscriber<ReconnectMessage, IPublisher, CancellationToken>(async Task (message, publisher, cancellationToken) =>
             {
                 int receivedConnection = connection;
@@ -122,7 +102,7 @@ public class ConnectionLossTests
                 {
                     using CancellationTokenRegistration registration = cancellationToken.Register(() => stopping.TrySetResult(true));
                     firstStarted.TrySetResult(true);
-                    await releaseFirst.Task.WaitAsync(Timeout, CancellationToken.None);
+                    await releaseFirst.Task.WaitAsync(Harness.Timeout, CancellationToken.None);
                 }
 
                 processed.Enqueue((message.Number, receivedConnection));
@@ -142,30 +122,23 @@ public class ConnectionLossTests
 
                 if (message.Number == 3)
                     freshProcessed.TrySetResult(true);
-            });
-        builder.Services.AddSingleton<IMqttNetClientFactory>(clientFactory);
+            }));
+        Harness.OnDispose(() =>
+        {
+            releaseFirst.TrySetResult(true);
+            Harness.Output.WriteLine($"Connection={connection}; disconnected notifications={disconnectNotifications}; processed={string.Join(", ", processed)}");
+        });
 
-        using IHost host = builder.Build();
-        IBrokerClientsConnector connector = host.Services.GetRequiredService<IBrokerClientsConnector>();
-        await connector.InitializeAsync();
-        MqttConsumer consumer = host.Services.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>().Single();
-        consumer.Client.Disconnected.AddHandler(_ =>
+        await Harness.InitializeAsync();
+        Harness.Consumer.Client.Disconnected.AddHandler(_ =>
         {
             Interlocked.Increment(ref disconnectNotifications);
 
             return ValueTask.CompletedTask;
         });
-        consumer.Client.Subscribed.AddHandler(_ =>
-        {
-            subscribed.TrySetResult(true);
 
-            if (connection > 1)
-                reconnected.TrySetResult(true);
-
-            return ValueTask.CompletedTask;
-        });
-
-        clientFactory.Client.ApplicationMessageReceivedAsync += args =>
+        // Register after Silverback so this gate confirms its receive callback has buffered the delivery
+        Harness.NativeClient.ApplicationMessageReceivedAsync += args =>
         {
             int number = JsonSerializer.Deserialize<ReconnectMessage>(args.ApplicationMessage.Payload.ToArray())!.Number;
 
@@ -175,83 +148,53 @@ public class ConnectionLossTests
             return Task.CompletedTask;
         };
 
-        using IMqttClient producer = new MqttClientFactory().CreateMqttClient();
-        producer.ApplicationMessageReceivedAsync += args =>
+        TestMqttClient producer = await Harness.CreateClientAsync("producer");
+        producer.Native.ApplicationMessageReceivedAsync += args =>
         {
             JsonSerializer.Deserialize<ConnectionLossReply>(args.ApplicationMessage.Payload.ToArray())!.Number.ShouldBe(0);
             replyReceived.TrySetResult(true);
 
             return Task.CompletedTask;
         };
+        await producer.SubscribeAsync(outputTopic, qualityOfServiceLevel);
+        await Harness.ConnectAsync();
 
-        try
+        await PublishAsync(0);
+        await firstStarted.Task.WaitAsync(Harness.Timeout);
+        await PublishAsync(1);
+        await buffered.Task.WaitAsync(Harness.Timeout);
+        await PublishAsync(2);
+        await blocked.Task.WaitAsync(Harness.Timeout);
+
+        proxy.DropConnections();
+        await stopping.Task.WaitAsync(Harness.Timeout);
+
+        connection.ShouldBe(1);
+        Harness.SubscriptionsCount.ShouldBe(1);
+
+        releaseFirst.TrySetResult(true);
+        await Harness.WaitUntilSubscribedAsync(2);
+        await PublishAsync(3);
+        await freshProcessed.Task.WaitAsync(Harness.Timeout);
+        await Harness.Consumer.StopAsync().AsTask().WaitAsync(Harness.Timeout);
+
+        if (publishFromSubscriber)
         {
-            await producer.ConnectAsync(new MqttClientOptionsBuilder()
-                .WithTcpServer(MqttFixture.BrokerHost)
-                .WithClientId(prefix + "-producer")
-                .Build());
-            await producer.SubscribeAsync(prefix + "-output", qualityOfServiceLevel);
-            await connector.ConnectAsync().AsTask().WaitAsync(Timeout);
-            await subscribed.Task.WaitAsync(Timeout);
-
-            await PublishAsync(0);
-            await firstStarted.Task.WaitAsync(Timeout);
-            await PublishAsync(1);
-            await buffered.Task.WaitAsync(Timeout);
-            await PublishAsync(2);
-            await blocked.Task.WaitAsync(Timeout);
-
-            proxy.DropConnections();
-            await stopping.Task.WaitAsync(Timeout);
-
-            connection.ShouldBe(1);
-            reconnected.Task.IsCompleted.ShouldBeFalse();
-
-            releaseFirst.TrySetResult(true);
-            await reconnected.Task.WaitAsync(Timeout);
-            await PublishAsync(3);
-            await freshProcessed.Task.WaitAsync(Timeout);
-            await consumer.StopAsync().AsTask().WaitAsync(Timeout);
-
-            if (publishFromSubscriber)
-            {
-                await replyReceived.Task.WaitAsync(Timeout);
-                failedPublishes.ShouldBe(1);
-            }
-
-            disconnectNotifications.ShouldBe(1);
-            sessionPresent.ShouldBe(persistentSession);
-            (int, int)[] expected = persistentSession ? [(0, 1), (0, 2), (1, 2), (2, 2), (3, 2)] : [(0, 1), (3, 2)];
-            processed.ToArray().ShouldBe(expected);
-        }
-        finally
-        {
-            releaseFirst.TrySetResult(true);
-            _output.WriteLine($"Connection={connection}; disconnected notifications={disconnectNotifications}; processed={string.Join(", ", processed)}");
-            await connector.DisconnectAsync().AsTask().WaitAsync(Timeout);
-
-            if (producer.IsConnected)
-                await producer.DisconnectAsync();
+            await replyReceived.Task.WaitAsync(Harness.Timeout);
+            failedPublishes.ShouldBe(1);
         }
 
-        Task PublishAsync(int number) => producer.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic(prefix)
-            .WithPayload(JsonSerializer.SerializeToUtf8Bytes(new ReconnectMessage { Number = number }))
-            .WithQualityOfServiceLevel(qualityOfServiceLevel)
-            .Build()).WaitAsync(Timeout);
+        disconnectNotifications.ShouldBe(1);
+        sessionPresent.ShouldBe(persistentSession);
+        (int, int)[] expected = persistentSession ? [(0, 1), (0, 2), (1, 2), (2, 2), (3, 2)] : [(0, 1), (3, 2)];
+        processed.ToArray().ShouldBe(expected);
+
+        Task PublishAsync(int number) =>
+            producer.PublishJsonAsync(Harness.Prefix, new ReconnectMessage { Number = number }, qualityOfServiceLevel);
     }
 
     private sealed class ConnectionLossReply
     {
         public int Number { get; set; }
-    }
-
-    private sealed class NativeClientFactory : IMqttNetClientFactory, IDisposable
-    {
-        public IMqttClient Client { get; } = new MqttClientFactory().CreateMqttClient();
-
-        public IMqttClient CreateClient() => Client;
-
-        public void Dispose() => Client.Dispose();
     }
 }

@@ -12,19 +12,16 @@ using System.Net;
 using System.Threading.Tasks;
 using Avro.Generic;
 using Confluent.Kafka;
-using Confluent.Kafka.Admin;
 using Confluent.Kafka.SyncOverAsync;
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Shouldly;
-using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Extended.Integration.TestHost;
 using Silverback.Tests.Extended.Integration.TestHost.Kafka;
 using Silverback.Tests.Extended.Integration.TestHost.Kafka.SchemaRegistry;
 using Xunit;
@@ -36,7 +33,7 @@ namespace Silverback.Tests.Extended.Integration.Kafka;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "Kafka")]
-public class SchemaRegistryTests
+public class SchemaRegistryTests : BrokerHarnessTests<KafkaTestHarness>
 {
     private const int MessagesCount = 5;
 
@@ -46,13 +43,11 @@ public class SchemaRegistryTests
 
     private static readonly string[] ExpectedNumbers = [.. Enumerable.Range(1, MessagesCount).Select(number => $"{number}")];
 
-    private readonly ITestOutputHelper _output;
-
     [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
     [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
     public SchemaRegistryTests(SchemaRegistryFixture fixture, ITestOutputHelper output)
+        : base(new KafkaTestHarness("schema", output))
     {
-        _output = output;
     }
 
     [Fact]
@@ -60,11 +55,8 @@ public class SchemaRegistryTests
     {
         string topic = await CreateTopicAsync();
         ConcurrentQueue<object> consumed = new();
-        using CollectingLoggerProvider logs = new();
-        using IHost host = CreateHost(
-            topic,
+        ConfigureHost(
             consumed,
-            logs,
             producer => producer.Produce<AvroTestMessage>(endpoint => endpoint
                 .SerializeAsAvro(avro => avro.ConnectToSchemaRegistry(SchemaRegistryFixture.Url))
                 .ProduceTo(topic)),
@@ -72,17 +64,13 @@ public class SchemaRegistryTests
                 .DeserializeAvro(avro => avro.ConnectToSchemaRegistry(SchemaRegistryFixture.Url))
                 .ConsumeFrom(topic)));
 
-        await RunAsync(
-            host,
-            logs,
-            async () =>
-            {
-                await PublishAsync(host, number => new AvroTestMessage { Number = number });
-                await WaitUntilConsumedAsync(consumed);
-            });
+        await Harness.StartHostAsync();
+        await PublishAsync(number => new AvroTestMessage { Number = number });
+        await WaitUntilConsumedAsync(consumed);
+        await Harness.StopHostAsync().WaitAsync(Harness.Timeout);
 
         consumed.Cast<AvroTestMessage>().Select(message => message.Number).ShouldBe(ExpectedNumbers);
-        logs.Errors.ShouldBeEmpty();
+        Harness.Logs.Errors.ShouldBeEmpty();
 
         using ISchemaRegistryClient registry = CreateRegistryClient();
         RegisteredSchema schema = await registry.GetLatestSchemaAsync(GetValueSubject(topic));
@@ -96,11 +84,8 @@ public class SchemaRegistryTests
     {
         string topic = await CreateTopicAsync();
         ConcurrentQueue<object> consumed = new();
-        using CollectingLoggerProvider logs = new();
-        using IHost host = CreateHost(
-            topic,
+        ConfigureHost(
             consumed,
-            logs,
             producer => producer.Produce<JsonTestMessage>(endpoint => endpoint
                 .SerializeAsJsonUsingSchemaRegistry(json => json.ConnectToSchemaRegistry(SchemaRegistryFixture.Url))
                 .ProduceTo(topic)),
@@ -108,17 +93,13 @@ public class SchemaRegistryTests
                 .DeserializeJsonUsingSchemaRegistry(json => json.ConnectToSchemaRegistry(SchemaRegistryFixture.Url))
                 .ConsumeFrom(topic)));
 
-        await RunAsync(
-            host,
-            logs,
-            async () =>
-            {
-                await PublishAsync(host, number => new JsonTestMessage { Number = number });
-                await WaitUntilConsumedAsync(consumed);
-            });
+        await Harness.StartHostAsync();
+        await PublishAsync(number => new JsonTestMessage { Number = number });
+        await WaitUntilConsumedAsync(consumed);
+        await Harness.StopHostAsync().WaitAsync(Harness.Timeout);
 
         consumed.Cast<JsonTestMessage>().Select(message => message.Number).ShouldBe(ExpectedNumbers);
-        logs.Errors.ShouldBeEmpty();
+        Harness.Logs.Errors.ShouldBeEmpty();
 
         using ISchemaRegistryClient registry = CreateRegistryClient();
         RegisteredSchema schema = await registry.GetLatestSchemaAsync(GetValueSubject(topic));
@@ -131,11 +112,8 @@ public class SchemaRegistryTests
     {
         string topic = await CreateTopicAsync();
         ConcurrentQueue<object> consumed = new();
-        using CollectingLoggerProvider logs = new();
-        using IHost host = CreateHost(
-            topic,
+        ConfigureHost(
             consumed,
-            logs,
             producer => producer.Produce<ProtobufTestMessage>(endpoint => endpoint
                 .SerializeAsProtobuf(protobuf => protobuf.ConnectToSchemaRegistry(SchemaRegistryFixture.Url))
                 .ProduceTo(topic)),
@@ -143,17 +121,13 @@ public class SchemaRegistryTests
                 .DeserializeProtobuf(protobuf => protobuf.ConnectToSchemaRegistry(SchemaRegistryFixture.Url))
                 .ConsumeFrom(topic)));
 
-        await RunAsync(
-            host,
-            logs,
-            async () =>
-            {
-                await PublishAsync(host, number => new ProtobufTestMessage { Number = number });
-                await WaitUntilConsumedAsync(consumed);
-            });
+        await Harness.StartHostAsync();
+        await PublishAsync(number => new ProtobufTestMessage { Number = number });
+        await WaitUntilConsumedAsync(consumed);
+        await Harness.StopHostAsync().WaitAsync(Harness.Timeout);
 
         consumed.Cast<ProtobufTestMessage>().Select(message => message.Number).ShouldBe(ExpectedNumbers);
-        logs.Errors.ShouldBeEmpty();
+        Harness.Logs.Errors.ShouldBeEmpty();
 
         using ISchemaRegistryClient registry = CreateRegistryClient();
         RegisteredSchema schema = await registry.GetLatestSchemaAsync(GetValueSubject(topic));
@@ -172,11 +146,8 @@ public class SchemaRegistryTests
             new Schema(AvroTestMessage._SCHEMA.ToString(), SchemaType.Avro));
 
         ConcurrentQueue<object> consumed = new();
-        using CollectingLoggerProvider logs = new();
-        using IHost host = CreateHost(
-            topic,
+        ConfigureHost(
             consumed,
-            logs,
             producer => producer.Produce<AvroTestMessage>(endpoint => endpoint
                 .SerializeAsAvro(avro => avro
                     .ConnectToSchemaRegistry(SchemaRegistryFixture.Url)
@@ -186,17 +157,13 @@ public class SchemaRegistryTests
                 .DeserializeAvro(avro => avro.ConnectToSchemaRegistry(SchemaRegistryFixture.Url))
                 .ConsumeFrom(topic)));
 
-        await RunAsync(
-            host,
-            logs,
-            async () =>
-            {
-                await PublishAsync(host, number => new AvroTestMessage { Number = number });
-                await WaitUntilConsumedAsync(consumed);
-            });
+        await Harness.StartHostAsync();
+        await PublishAsync(number => new AvroTestMessage { Number = number });
+        await WaitUntilConsumedAsync(consumed);
+        await Harness.StopHostAsync().WaitAsync(Harness.Timeout);
 
         consumed.Cast<AvroTestMessage>().Select(message => message.Number).ShouldBe(ExpectedNumbers);
-        logs.Errors.ShouldBeEmpty();
+        Harness.Logs.Errors.ShouldBeEmpty();
 
         (await ReadSchemaIdsAsync(topic)).ShouldAllBe(id => id == schemaId);
         (await registry.GetSubjectVersionsAsync(GetValueSubject(topic))).ShouldBe([1]);
@@ -206,11 +173,8 @@ public class SchemaRegistryTests
     public async Task Produce_ShouldThrow_WhenSchemaIsNotRegisteredAndAutoRegistrationIsDisabled()
     {
         string topic = await CreateTopicAsync();
-        using CollectingLoggerProvider logs = new();
-        using IHost host = CreateHost(
-            topic,
+        ConfigureHost(
             new ConcurrentQueue<object>(),
-            logs,
             producer => producer.Produce<AvroTestMessage>(endpoint => endpoint
                 .SerializeAsAvro(avro => avro
                     .ConnectToSchemaRegistry(SchemaRegistryFixture.Url)
@@ -218,19 +182,13 @@ public class SchemaRegistryTests
                 .ProduceTo(topic)),
             configureConsumer: null);
 
-        SchemaRegistryException? exception = null;
+        await Harness.StartHostAsync();
+        IPublisher publisher = Harness.Services.GetRequiredService<IPublisher>();
+        SchemaRegistryException exception = await Should.ThrowAsync<SchemaRegistryException>(() => publisher.PublishAsync(new AvroTestMessage { Number = "1" }));
+        await Harness.StopHostAsync().WaitAsync(Harness.Timeout);
 
-        await RunAsync(
-            host,
-            logs,
-            async () =>
-            {
-                IPublisher publisher = host.Services.GetRequiredService<IPublisher>();
-                exception = await Should.ThrowAsync<SchemaRegistryException>(() => publisher.PublishAsync(new AvroTestMessage { Number = "1" }));
-            });
-
-        _output.WriteLine($"Exception: {exception}");
-        exception.ShouldNotBeNull().Status.ShouldBe(HttpStatusCode.NotFound);
+        Harness.Output.WriteLine($"Exception: {exception}");
+        exception.Status.ShouldBe(HttpStatusCode.NotFound);
 
         using ISchemaRegistryClient registry = CreateRegistryClient();
         (await registry.GetAllSubjectsAsync()).ShouldNotContain(GetValueSubject(topic));
@@ -253,39 +211,37 @@ public class SchemaRegistryTests
         }
 
         ConcurrentQueue<object> consumed = new();
-        using CollectingLoggerProvider logs = new();
-        using IHost host = CreateHost(
-            topic,
+        ConfigureHost(
             consumed,
-            logs,
             configureProducer: null,
             consumer => consumer.Consume<AvroTestMessage>(endpoint => endpoint
                 .DeserializeAvro(avro => avro.ConnectToSchemaRegistry(SchemaRegistryFixture.Url))
                 .ConsumeFrom(topic)));
 
-        await RunAsync(host, logs, () => WaitUntilConsumedAsync(consumed));
+        await Harness.StartHostAsync();
+        await WaitUntilConsumedAsync(consumed);
+        await Harness.StopHostAsync().WaitAsync(Harness.Timeout);
 
         consumed.Cast<AvroTestMessage>().Select(message => message.Number).ShouldBe(ExpectedNumbers);
-        logs.Errors.ShouldBeEmpty();
+        Harness.Logs.Errors.ShouldBeEmpty();
     }
 
     [Fact]
     public async Task Produce_ShouldSerializeAvroReadableWithConfluentDeserializer()
     {
         string topic = await CreateTopicAsync();
-        using CollectingLoggerProvider logs = new();
-        using IHost host = CreateHost(
-            topic,
+        ConfigureHost(
             new ConcurrentQueue<object>(),
-            logs,
             producer => producer.Produce<AvroTestMessage>(endpoint => endpoint
                 .SerializeAsAvro(avro => avro.ConnectToSchemaRegistry(SchemaRegistryFixture.Url))
                 .ProduceTo(topic)),
             configureConsumer: null);
 
-        await RunAsync(host, logs, () => PublishAsync(host, number => new AvroTestMessage { Number = number }));
+        await Harness.StartHostAsync();
+        await PublishAsync(number => new AvroTestMessage { Number = number });
+        await Harness.StopHostAsync().WaitAsync(Harness.Timeout);
 
-        logs.Errors.ShouldBeEmpty();
+        Harness.Logs.Errors.ShouldBeEmpty();
 
         // Read the generic records, to resolve the writer schema from the registry by the id in the payload, independently of the
         // message type
@@ -310,105 +266,6 @@ public class SchemaRegistryTests
             BootstrapServers = KafkaFixture.BootstrapServers,
             Acks = Acks.All
         };
-
-    private static async Task<string> CreateTopicAsync()
-    {
-        string topic = "stress-schema-" + Guid.NewGuid().ToString("N");
-
-        // A single partition, to verify the order of the consumed messages
-        using (IAdminClient admin = CreateAdminClient(KafkaFixture.BootstrapServers))
-        {
-            await admin.CreateTopicsAsync([new TopicSpecification { Name = topic, NumPartitions = 1, ReplicationFactor = 1 }]);
-        }
-
-        // CreateTopics can return before every broker knows the topic, and a consumer joining the group in the meantime can receive an
-        // empty assignment that is never repaired
-        foreach (string broker in KafkaFixture.BootstrapServers.Split(','))
-        {
-            await WaitUntilBrokerKnowsTopicAsync(broker, topic);
-        }
-
-        return topic;
-    }
-
-    private static IAdminClient CreateAdminClient(string bootstrapServers) =>
-        new AdminClientBuilder(new AdminClientConfig { BootstrapServers = bootstrapServers }).Build();
-
-    private static async Task WaitUntilBrokerKnowsTopicAsync(string broker, string topic)
-    {
-        Stopwatch stopwatch = Stopwatch.StartNew();
-
-        while (true)
-        {
-            try
-            {
-                // A new client is connected only to its bootstrap broker, so the metadata reflects that broker's view
-                using IAdminClient admin = CreateAdminClient(broker);
-                TopicMetadata? metadata = admin.GetMetadata(topic, TimeSpan.FromSeconds(5)).Topics.SingleOrDefault();
-
-                if (metadata is { Error.IsError: false, Partitions: [{ Leader: >= 0 }] })
-                    return;
-            }
-            catch (KafkaException)
-            {
-                // The metadata request can time out while the broker is applying the change
-            }
-
-            stopwatch.Elapsed.ShouldBeLessThan(Timeout, $"Timed out waiting for {broker} to know {topic}");
-            await Task.Delay(100);
-        }
-    }
-
-    private static IHost CreateHost(
-        string topic,
-        ConcurrentQueue<object> consumed,
-        ILoggerProvider logs,
-        Action<KafkaProducerConfigurationBuilder>? configureProducer,
-        Action<KafkaConsumerConfigurationBuilder>? configureConsumer)
-    {
-        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
-        builder.Logging.ClearProviders().AddProvider(logs);
-        builder.Services.AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddKafka().AddConfluentSchemaRegistry())
-            .AddDelegateSubscriber<IInboundEnvelope>(envelope => consumed.Enqueue(envelope.Message!))
-            .AddKafkaClients(clients =>
-            {
-                clients.WithBootstrapServers(KafkaFixture.BootstrapServers);
-
-                if (configureProducer != null)
-                {
-                    clients.AddProducer(producer =>
-                    {
-                        producer.WithClientId(topic + "-producer");
-                        configureProducer(producer);
-                    });
-                }
-
-                if (configureConsumer != null)
-                {
-                    clients.AddConsumer(consumer =>
-                    {
-                        consumer
-                            .WithGroupId(topic + "-group")
-                            .WithClientId(topic + "-consumer")
-                            .AutoResetOffsetToEarliest();
-                        configureConsumer(consumer);
-                    });
-                }
-            });
-
-        return builder.Build();
-    }
-
-    private static async Task PublishAsync(IHost host, Func<string, object> createMessage)
-    {
-        IPublisher publisher = host.Services.GetRequiredService<IPublisher>();
-
-        foreach (string number in ExpectedNumbers)
-        {
-            await publisher.PublishAsync(createMessage(number));
-        }
-    }
 
     private static async Task WaitUntilConsumedAsync(ConcurrentQueue<object> consumed)
     {
@@ -483,66 +340,56 @@ public class SchemaRegistryTests
                 return values;
             });
 
-    private async Task RunAsync(IHost host, CollectingLoggerProvider logs, Func<Task> action)
+    // A single partition, to verify the order of the consumed messages
+    private async Task<string> CreateTopicAsync()
     {
-        try
-        {
-            await host.StartAsync().WaitAsync(Timeout);
-            await action();
-        }
-        finally
-        {
-            try
-            {
-                await host.StopAsync().WaitAsync(Timeout);
-            }
-            finally
-            {
-                foreach (string entry in logs.Entries)
-                {
-                    _output.WriteLine($"Log: {entry}");
-                }
-            }
-        }
+        await Harness.CreateTopicsAsync(Harness.Prefix);
+
+        return Harness.Prefix;
     }
 
-    private sealed class CollectingLoggerProvider : ILoggerProvider, ILogger
+    private void ConfigureHost(
+        ConcurrentQueue<object> consumed,
+        Action<KafkaProducerConfigurationBuilder>? configureProducer,
+        Action<KafkaConsumerConfigurationBuilder>? configureConsumer)
     {
-        public ConcurrentQueue<string> Entries { get; } = new();
+        string topic = Harness.Prefix;
 
-        public ConcurrentQueue<string> Errors { get; } = new();
-
-        public ILogger CreateLogger(string categoryName) => this;
-
-        public IDisposable? BeginScope<TState>(TState state)
-            where TState : notnull => null;
-
-        public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Warning;
-
-        public void Log<TState>(
-            LogLevel logLevel,
-            EventId eventId,
-            TState state,
-            Exception? exception,
-            Func<TState, Exception?, string> formatter)
+        Harness.ConfigureBroker(options => options.AddConfluentSchemaRegistry());
+        Harness.ConfigureSilverback(silverback => silverback
+            .AddDelegateSubscriber<IInboundEnvelope>(envelope => consumed.Enqueue(envelope.Message!)));
+        Harness.AddClients(clients =>
         {
-            if (!IsEnabled(logLevel))
-                return;
+            if (configureProducer != null)
+            {
+                clients.AddProducer(producer =>
+                {
+                    producer.WithClientId(topic + "-producer");
+                    configureProducer(producer);
+                });
+            }
 
-            string entry = $"{logLevel} {eventId.Id}: {formatter(state, exception)}";
+            if (configureConsumer != null)
+            {
+                clients.AddConsumer(consumer =>
+                {
+                    consumer
+                        .WithGroupId(topic + "-group")
+                        .WithClientId(topic + "-consumer")
+                        .AutoResetOffsetToEarliest();
+                    configureConsumer(consumer);
+                });
+            }
+        });
+    }
 
-            if (exception != null)
-                entry += $" | {exception.GetType().Name}: {exception.Message}";
+    private async Task PublishAsync(Func<string, object> createMessage)
+    {
+        IPublisher publisher = Harness.Services.GetRequiredService<IPublisher>();
 
-            Entries.Enqueue(entry);
-
-            if (logLevel >= LogLevel.Error)
-                Errors.Enqueue(entry);
-        }
-
-        public void Dispose()
+        foreach (string number in ExpectedNumbers)
         {
-            // No resources to release
+            await publisher.PublishAsync(createMessage(number));
         }
     }
 }

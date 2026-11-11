@@ -5,19 +5,11 @@ using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using MQTTnet;
 using MQTTnet.Protocol;
 using Shouldly;
-using Silverback.Configuration;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Mqtt;
-using Silverback.Messaging.Configuration;
+using Silverback.Tests.Extended.Integration.TestHost;
 using Silverback.Tests.Extended.Integration.TestHost.Mqtt;
 using Xunit;
 using Xunit.Abstractions;
@@ -28,17 +20,13 @@ namespace Silverback.Tests.Extended.Integration.Mqtt;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "MQTT")]
-public class ReconnectTests
+public class ReconnectTests : BrokerHarnessTests<MqttTestHarness>
 {
-    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
-
-    private readonly ITestOutputHelper _output;
-
     [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
     [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
     public ReconnectTests(MqttFixture fixture, ITestOutputHelper output)
+        : base(new MqttTestHarness("reconnect", output))
     {
-        _output = output;
     }
 
     [Theory]
@@ -54,7 +42,6 @@ public class ReconnectTests
         bool persistentSession,
         bool blockWriter)
     {
-        string prefix = "stress-reconnect-" + Guid.NewGuid().ToString("N");
         TaskCompletionSource<bool> firstStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> releaseFirst = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> blockedDelivery = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -68,15 +55,14 @@ public class ReconnectTests
         int connection = 1;
         bool sessionPresent = false;
 
-        using NativeClientFactory clientFactory = new();
-        clientFactory.Client.ConnectedAsync += args =>
+        Harness.NativeClient.ConnectedAsync += args =>
         {
             sessionPresent = args.ConnectResult.IsSessionPresent;
 
             return Task.CompletedTask;
         };
 
-        clientFactory.Client.ApplicationMessageReceivedAsync += args =>
+        Harness.NativeClient.ApplicationMessageReceivedAsync += args =>
         {
             ReconnectMessage message = JsonSerializer.Deserialize<ReconnectMessage>(args.ApplicationMessage.Payload.ToArray())!;
             received.Enqueue((message.Number, connection));
@@ -87,38 +73,30 @@ public class ReconnectTests
             return Task.CompletedTask;
         };
 
-        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
-        builder.Logging.ClearProviders();
-        IServiceCollection services = builder.Services;
-        services.AddLogging()
-            .AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddMqtt())
-            .AddMqttClients(clients => clients
-                .ConnectViaTcp(MqttFixture.BrokerHost)
-                .AddClient(client =>
-                {
-                    client.WithClientId(prefix)
-                        .DisableParallelProcessing()
-                        .LimitBackpressure(1)
-                        .Consume<ReconnectMessage>(endpoint => endpoint
-                            .ConsumeFrom(prefix)
-                            .WithQualityOfServiceLevel(qualityOfServiceLevel)
-                            .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()));
+        Harness.AddClient(client =>
+        {
+            client.DisableParallelProcessing()
+                .LimitBackpressure(1)
+                .Consume<ReconnectMessage>(endpoint => endpoint
+                    .ConsumeFrom(Harness.Prefix)
+                    .WithQualityOfServiceLevel(qualityOfServiceLevel)
+                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()));
 
-                    if (persistentSession)
-                    {
-                        if (blockWriter)
-                            client.RequestPersistentSession(TimeSpan.FromMinutes(5));
-                        else
-                            client.RequestPersistentSession();
-                    }
-                }))
+            if (persistentSession)
+            {
+                if (blockWriter)
+                    client.RequestPersistentSession(TimeSpan.FromMinutes(5));
+                else
+                    client.RequestPersistentSession();
+            }
+        });
+        Harness.ConfigureSilverback(silverback => silverback
             .AddDelegateSubscriber<ReconnectMessage>(async ValueTask (message) =>
             {
                 if (message.Number == 0)
                 {
                     firstStarted.TrySetResult(true);
-                    await releaseFirst.Task.WaitAsync(Timeout);
+                    await releaseFirst.Task.WaitAsync(Harness.Timeout);
                 }
 
                 processed.Enqueue(message.Number);
@@ -129,23 +107,16 @@ public class ReconnectTests
                     freshProcessed.TrySetResult(true);
                 else if (message.Number == 3)
                     blockedReplayProcessed.TrySetResult(true);
-            });
-        services.AddSingleton<IMqttNetClientFactory>(clientFactory);
-
-        using IHost host = builder.Build();
-        IServiceProvider serviceProvider = host.Services;
-        IBrokerClientsConnector connector = serviceProvider.GetRequiredService<IBrokerClientsConnector>();
-        await connector.InitializeAsync();
-        MqttConsumer consumer = serviceProvider.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>().Single();
-        TaskCompletionSource<bool> subscribed = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        consumer.Client.Subscribed.AddHandler(_ =>
+            }));
+        Harness.OnDispose(() =>
         {
-            subscribed.TrySetResult(true);
-
-            return ValueTask.CompletedTask;
+            releaseFirst.TrySetResult(true);
+            Harness.Output.WriteLine($"QoS={qualityOfServiceLevel}; persistent={persistentSession}; sessionPresent={sessionPresent}");
+            Harness.Output.WriteLine($"Received: {string.Join(", ", received)}; processed: {string.Join(", ", processed)}");
         });
 
-        consumer.Client.Disconnecting.AddHandler(_ =>
+        await Harness.InitializeAsync();
+        Harness.Consumer.Client.Disconnecting.AddHandler(_ =>
         {
             disconnectingStarted.TrySetResult(true);
 
@@ -153,7 +124,7 @@ public class ReconnectTests
         });
 
         // Register after Silverback so this gate confirms its receive callback has buffered the delivery
-        clientFactory.Client.ApplicationMessageReceivedAsync += args =>
+        Harness.NativeClient.ApplicationMessageReceivedAsync += args =>
         {
             ReconnectMessage message = JsonSerializer.Deserialize<ReconnectMessage>(args.ApplicationMessage.Payload.ToArray())!;
 
@@ -163,106 +134,60 @@ public class ReconnectTests
             return Task.CompletedTask;
         };
 
-        using IMqttClient producer = new MqttClientFactory().CreateMqttClient();
+        await Harness.ConnectAsync();
+        TestMqttClient producer = await Harness.CreateClientAsync("producer");
 
-        try
+        await PublishAsync(0);
+        await firstStarted.Task.WaitAsync(Harness.Timeout);
+        await PublishAsync(1);
+        await buffered.Task.WaitAsync(Harness.Timeout);
+
+        if (blockWriter)
         {
-            await connector.ConnectAsync().AsTask().WaitAsync(Timeout);
-            await subscribed.Task.WaitAsync(Timeout);
-            await producer.ConnectAsync(new MqttClientOptionsBuilder()
-                .WithTcpServer(MqttFixture.BrokerHost)
-                .WithClientId(prefix + "-producer")
-                .Build());
+            await PublishAsync(3);
+            await blockedDelivery.Task.WaitAsync(Harness.Timeout);
+        }
 
-            await PublishAsync(0);
-            await firstStarted.Task.WaitAsync(Timeout);
-            await PublishAsync(1);
-            await buffered.Task.WaitAsync(Timeout);
+        Task disconnecting = Harness.Consumer.Client.DisconnectAsync().AsTask();
+
+        await disconnectingStarted.Task.WaitAsync(Harness.Timeout);
+        releaseFirst.TrySetResult(true);
+        await disconnecting.WaitAsync(Harness.Timeout);
+
+        processed.ShouldBe([0]);
+
+        connection = 2;
+        await Harness.ReconnectAsync();
+
+        sessionPresent.ShouldBe(persistentSession);
+
+        bool shouldReplay = persistentSession && qualityOfServiceLevel != MqttQualityOfServiceLevel.AtMostOnce;
+
+        if (shouldReplay)
+        {
+            await replayProcessed.Task.WaitAsync(Harness.Timeout);
+            received.ShouldContain((1, 2));
 
             if (blockWriter)
             {
-                await PublishAsync(3);
-                await blockedDelivery.Task.WaitAsync(Timeout);
-            }
-
-            Task disconnecting = consumer.Client.DisconnectAsync().AsTask();
-
-            await disconnectingStarted.Task.WaitAsync(Timeout);
-            releaseFirst.TrySetResult(true);
-            await disconnecting.WaitAsync(Timeout);
-
-            processed.ShouldBe([0]);
-
-            connection = 2;
-            subscribed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            await consumer.Client.ConnectAsync().AsTask().WaitAsync(Timeout);
-            await subscribed.Task.WaitAsync(Timeout);
-
-            sessionPresent.ShouldBe(persistentSession);
-
-            bool shouldReplay = persistentSession && qualityOfServiceLevel != MqttQualityOfServiceLevel.AtMostOnce;
-
-            if (shouldReplay)
-            {
-                await replayProcessed.Task.WaitAsync(Timeout);
-                received.ShouldContain((1, 2));
-
-                if (blockWriter)
-                {
-                    await blockedReplayProcessed.Task.WaitAsync(Timeout);
-                    received.ShouldContain((3, 2));
-                }
-            }
-
-            await PublishAsync(2);
-            await freshProcessed.Task.WaitAsync(Timeout);
-            await consumer.StopAsync().AsTask().WaitAsync(Timeout);
-
-            int[] expected = [0, 2];
-
-            if (shouldReplay)
-                expected = blockWriter ? [0, 1, 3, 2] : [0, 1, 2];
-
-            processed.ShouldBe(expected);
-            received.ShouldContain((2, 2));
-        }
-        finally
-        {
-            releaseFirst.TrySetResult(true);
-            _output.WriteLine($"QoS={qualityOfServiceLevel}; persistent={persistentSession}; sessionPresent={sessionPresent}");
-            _output.WriteLine($"Received: {string.Join(", ", received)}; processed: {string.Join(", ", processed)}");
-            await connector.DisconnectAsync().AsTask().WaitAsync(Timeout);
-
-            if (producer.IsConnected)
-                await producer.DisconnectAsync();
-
-            if (persistentSession)
-            {
-                // Delete the test session, including those now configured without an expiry
-                using IMqttClient cleanupClient = new MqttClientFactory().CreateMqttClient();
-                await cleanupClient.ConnectAsync(new MqttClientOptionsBuilder()
-                    .WithTcpServer(MqttFixture.BrokerHost)
-                    .WithClientId(prefix)
-                    .WithCleanSession()
-                    .WithSessionExpiryInterval(0)
-                    .Build()).WaitAsync(Timeout);
-                await cleanupClient.DisconnectAsync().WaitAsync(Timeout);
+                await blockedReplayProcessed.Task.WaitAsync(Harness.Timeout);
+                received.ShouldContain((3, 2));
             }
         }
 
-        Task PublishAsync(int number) => producer.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic(prefix)
-            .WithPayload(JsonSerializer.SerializeToUtf8Bytes(new ReconnectMessage { Number = number }))
-            .WithQualityOfServiceLevel(qualityOfServiceLevel)
-            .Build()).WaitAsync(Timeout);
-    }
+        await PublishAsync(2);
+        await freshProcessed.Task.WaitAsync(Harness.Timeout);
+        await Harness.Consumer.StopAsync().AsTask().WaitAsync(Harness.Timeout);
 
-    private sealed class NativeClientFactory : IMqttNetClientFactory, IDisposable
-    {
-        public IMqttClient Client { get; } = new MqttClientFactory().CreateMqttClient();
+        int[] expected = [0, 2];
 
-        public IMqttClient CreateClient() => Client;
+        if (shouldReplay)
+            expected = blockWriter ? [0, 1, 3, 2] : [0, 1, 2];
 
-        public void Dispose() => Client.Dispose();
+        processed.ShouldBe(expected);
+        received.ShouldContain((2, 2));
+
+        Task PublishAsync(int number) =>
+            producer.PublishJsonAsync(Harness.Prefix, new ReconnectMessage { Number = number }, qualityOfServiceLevel);
     }
 }

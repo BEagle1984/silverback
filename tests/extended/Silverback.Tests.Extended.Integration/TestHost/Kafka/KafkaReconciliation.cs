@@ -28,13 +28,15 @@ public sealed class KafkaReconciliation
 
     public async Task ProduceAsync(int partitions, int count)
     {
+        string[] topics = [_run.Prefix + "-records", _run.Prefix + "-receipts"];
         using IAdminClient admin = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = KafkaFixture.BootstrapServers }).Build();
-        await admin.CreateTopicsAsync(new[] { "-records", "-receipts" }.Select(suffix => new TopicSpecification
+        await admin.CreateTopicsAsync(topics.Select(topic => new TopicSpecification
         {
-            Name = _run.Prefix + suffix,
+            Name = topic,
             NumPartitions = partitions,
             ReplicationFactor = 1
         }));
+        await KafkaFixture.WaitUntilTopicsArePropagatedAsync(topics, partitions);
 
         using IProducer<Null, byte[]> producer = new ProducerBuilder<Null, byte[]>(new ProducerConfig
         {

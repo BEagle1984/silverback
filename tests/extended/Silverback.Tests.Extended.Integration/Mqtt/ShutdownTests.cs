@@ -4,24 +4,18 @@
 using System;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using MQTTnet;
 using MQTTnet.Diagnostics.PacketInspection;
 using MQTTnet.Protocol;
 using Shouldly;
-using Silverback.Configuration;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Mqtt;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Extended.Integration.TestHost;
 using Silverback.Tests.Extended.Integration.TestHost.Mqtt;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Extended.Integration.Mqtt;
 
@@ -29,13 +23,12 @@ namespace Silverback.Tests.Extended.Integration.Mqtt;
 [Trait("Type", "Integration")]
 [Trait("Dependency", "Docker")]
 [Trait("Broker", "MQTT")]
-public class ShutdownTests
+public class ShutdownTests : BrokerHarnessTests<MqttTestHarness>
 {
-    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
-
     [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
     [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Declares the fixture starting the infrastructure, so that xUnit verifies that the collection provides it")]
-    public ShutdownTests(MqttFixture fixture)
+    public ShutdownTests(MqttFixture fixture, ITestOutputHelper output)
+        : base(new MqttTestHarness("shutdown", output))
     {
     }
 
@@ -48,12 +41,12 @@ public class ShutdownTests
         MqttQualityOfServiceLevel qualityOfServiceLevel,
         bool fillInputBuffer)
     {
-        string prefix = "stress-shutdown-" + Guid.NewGuid().ToString("N");
+        string inputTopic = Harness.Prefix + "-input";
+        string outputTopic = Harness.Prefix + "-output";
         TaskCompletionSource<bool> started = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> stopping = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> release = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> published = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        TaskCompletionSource<bool> subscribed = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> buffered = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> blockedDelivery = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> keepAliveReceived = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -62,8 +55,7 @@ public class ShutdownTests
         int pingResponses = 0;
         int disconnects = 0;
 
-        using NativeClientFactory clientFactory = new();
-        clientFactory.Client.InspectPacketAsync += args =>
+        Harness.NativeClient.InspectPacketAsync += args =>
         {
             // Observe actual PINGRESP packets while shutdown holds the subscriber open
             if (stopping.Task.IsCompleted && args.Direction == MqttPacketFlowDirection.Inbound &&
@@ -75,14 +67,14 @@ public class ShutdownTests
             return Task.CompletedTask;
         };
 
-        clientFactory.Client.DisconnectedAsync += _ =>
+        Harness.NativeClient.DisconnectedAsync += _ =>
         {
             Interlocked.Increment(ref disconnects);
 
             return Task.CompletedTask;
         };
 
-        clientFactory.Client.ApplicationMessageReceivedAsync += args =>
+        Harness.NativeClient.ApplicationMessageReceivedAsync += args =>
         {
             if (JsonSerializer.Deserialize<ShutdownRequest>(args.ApplicationMessage.Payload.ToArray())!.Number == 2)
                 blockedDelivery.TrySetResult(true);
@@ -90,47 +82,34 @@ public class ShutdownTests
             return Task.CompletedTask;
         };
 
-        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
-        builder.Logging.ClearProviders();
-        builder.Services.AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddMqtt())
-            .AddMqttClients(clients => clients
-                .ConnectViaTcp(MqttFixture.BrokerHost)
-                .AddClient(client => client
-                    .WithClientId(prefix)
-                    .SendKeepAlive(TimeSpan.FromSeconds(4))
-                    .DisableParallelProcessing()
-                    .LimitBackpressure(1)
-                    .Consume<ShutdownRequest>(endpoint => endpoint
-                        .ConsumeFrom(prefix + "-input")
-                        .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()))
-                    .Produce<ShutdownReply>(endpoint => endpoint
-                        .ProduceTo(prefix + "-output")
-                        .WithQualityOfServiceLevel(qualityOfServiceLevel))))
+        Harness.AddClient(client => client
+            .SendKeepAlive(TimeSpan.FromSeconds(4))
+            .DisableParallelProcessing()
+            .LimitBackpressure(1)
+            .Consume<ShutdownRequest>(endpoint => endpoint
+                .ConsumeFrom(inputTopic)
+                .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()))
+            .Produce<ShutdownReply>(endpoint => endpoint
+                .ProduceTo(outputTopic)
+                .WithQualityOfServiceLevel(qualityOfServiceLevel)));
+        Harness.ConfigureSilverback(silverback => silverback
             .AddDelegateSubscriber<ShutdownRequest, IPublisher, CancellationToken>(
                 async Task (message, publisher, cancellationToken) =>
                 {
                     Interlocked.Increment(ref processed);
                     using CancellationTokenRegistration registration = cancellationToken.Register(() => stopping.TrySetResult(true));
                     started.TrySetResult(true);
-                    await release.Task.WaitAsync(Timeout, CancellationToken.None);
+                    await release.Task.WaitAsync(Harness.Timeout, CancellationToken.None);
 
                     await publisher.PublishAsync(new ShutdownReply { Number = message.Number }, cancellationToken: CancellationToken.None);
                     published.TrySetResult(true);
-                });
-        builder.Services.AddSingleton<IMqttNetClientFactory>(clientFactory);
+                }));
+        Harness.OnDispose(() => release.TrySetResult(true));
 
-        using IHost host = builder.Build();
-        await host.Services.GetRequiredService<IBrokerClientsConnector>().InitializeAsync();
-        MqttConsumer consumer = host.Services.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>().Single();
-        consumer.Client.Subscribed.AddHandler(_ =>
-        {
-            subscribed.TrySetResult(true);
+        await Harness.InitializeAsync();
 
-            return ValueTask.CompletedTask;
-        });
-
-        clientFactory.Client.ApplicationMessageReceivedAsync += args =>
+        // Register after Silverback so this gate confirms its receive callback has buffered the delivery
+        Harness.NativeClient.ApplicationMessageReceivedAsync += args =>
         {
             if (JsonSerializer.Deserialize<ShutdownRequest>(args.ApplicationMessage.Payload.ToArray())!.Number == 1)
                 buffered.TrySetResult(true);
@@ -138,76 +117,44 @@ public class ShutdownTests
             return Task.CompletedTask;
         };
 
-        using IMqttClient observer = new MqttClientFactory().CreateMqttClient();
-        observer.ApplicationMessageReceivedAsync += args =>
+        TestMqttClient observer = await Harness.CreateClientAsync("observer");
+        observer.Native.ApplicationMessageReceivedAsync += args =>
         {
             received.TrySetResult(JsonSerializer.Deserialize<ShutdownReply>(args.ApplicationMessage.Payload.ToArray())!);
 
             return Task.CompletedTask;
         };
-        Task? shutdown = null;
+        await observer.SubscribeAsync(outputTopic, qualityOfServiceLevel);
+        await Harness.StartHostAsync();
 
-        try
+        await observer.PublishJsonAsync(inputTopic, new ShutdownRequest { Number = 0 });
+        await started.Task.WaitAsync(Harness.Timeout);
+
+        if (fillInputBuffer)
         {
-            await observer.ConnectAsync(new MqttClientOptionsBuilder()
-                .WithTcpServer(MqttFixture.BrokerHost)
-                .WithClientId(prefix + "-observer")
-                .Build());
-            await observer.SubscribeAsync(prefix + "-output", qualityOfServiceLevel);
-            await host.StartAsync();
-            await subscribed.Task.WaitAsync(Timeout);
-
-            await PublishInputAsync(0);
-            await started.Task.WaitAsync(Timeout);
-
-            if (fillInputBuffer)
-            {
-                await PublishInputAsync(1);
-                await buffered.Task.WaitAsync(Timeout);
-                await PublishInputAsync(2);
-                await blockedDelivery.Task.WaitAsync(Timeout);
-            }
-
-            shutdown = host.StopAsync();
-            await stopping.Task.WaitAsync(Timeout);
-            await keepAliveReceived.Task.WaitAsync(Timeout);
-
-            disconnects.ShouldBe(0);
-            pingResponses.ShouldBeGreaterThanOrEqualTo(2);
-            shutdown.IsCompleted.ShouldBeFalse();
-            clientFactory.Client.IsConnected.ShouldBeTrue();
-
-            release.TrySetResult(true);
-            await published.Task.WaitAsync(Timeout);
-            (await received.Task.WaitAsync(Timeout)).Number.ShouldBe(0);
-            await shutdown.WaitAsync(Timeout);
-
-            processed.ShouldBe(1);
-            consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
-            clientFactory.Client.IsConnected.ShouldBeFalse();
-        }
-        finally
-        {
-            release.TrySetResult(true);
-            await (shutdown ?? host.StopAsync()).WaitAsync(Timeout);
-
-            if (observer.IsConnected)
-                await observer.DisconnectAsync();
+            await observer.PublishJsonAsync(inputTopic, new ShutdownRequest { Number = 1 });
+            await buffered.Task.WaitAsync(Harness.Timeout);
+            await observer.PublishJsonAsync(inputTopic, new ShutdownRequest { Number = 2 });
+            await blockedDelivery.Task.WaitAsync(Harness.Timeout);
         }
 
-        Task PublishInputAsync(int number) => observer.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic(prefix + "-input")
-            .WithPayload(JsonSerializer.SerializeToUtf8Bytes(new ShutdownRequest { Number = number }))
-            .Build()).WaitAsync(Timeout);
-    }
+        Task shutdown = Harness.StopHostAsync();
+        await stopping.Task.WaitAsync(Harness.Timeout);
+        await keepAliveReceived.Task.WaitAsync(Harness.Timeout);
 
-    private sealed class NativeClientFactory : IMqttNetClientFactory, IDisposable
-    {
-        public IMqttClient Client { get; } = new MqttClientFactory().CreateMqttClient();
+        disconnects.ShouldBe(0);
+        pingResponses.ShouldBeGreaterThanOrEqualTo(2);
+        shutdown.IsCompleted.ShouldBeFalse();
+        Harness.NativeClient.IsConnected.ShouldBeTrue();
 
-        public IMqttClient CreateClient() => Client;
+        release.TrySetResult(true);
+        await published.Task.WaitAsync(Harness.Timeout);
+        (await received.Task.WaitAsync(Harness.Timeout)).Number.ShouldBe(0);
+        await shutdown.WaitAsync(Harness.Timeout);
 
-        public void Dispose() => Client.Dispose();
+        processed.ShouldBe(1);
+        Harness.Consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        Harness.NativeClient.IsConnected.ShouldBeFalse();
     }
 
     private sealed class ShutdownRequest

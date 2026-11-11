@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Silverback.Tests.Extended.Integration.TestHost.Mqtt;
 
-internal sealed class DisconnectableTcpProxy : IAsyncDisposable
+public sealed class DisconnectableTcpProxy : IAsyncDisposable
 {
     private readonly TcpListener _listener = new(IPAddress.Loopback, 0);
 
