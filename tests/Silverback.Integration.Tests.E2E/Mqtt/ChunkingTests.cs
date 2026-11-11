@@ -121,52 +121,69 @@ public partial class ChunkingTests : MqttTests
     }
 
     [Fact]
-    public async Task Chunking_ShouldConsumeChunkedJsonAndAcknowledge_WhenConsumedInBatch()
+    public async Task Chunking_ShouldProduceAndConsumeChunkedJsonWithCustomHeaderNames()
     {
-        TestingCollection<List<string?>> batches = [];
+        const int chunksPerMessage = 4;
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .WithCustomHeaderName(DefaultMessageHeaders.ChunkIndex, "x-quack-index")
+            .WithCustomHeaderName(DefaultMessageHeaders.ChunksCount, "x-quack-count")
             .AddMqttClients(clients => clients
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
-                    .EnableParallelProcessing(2)
                     .Produce<IIntegrationEvent>(endpoint => endpoint
                         .ProduceTo(DefaultTopicName)
                         .WithAtLeastOnceQoS()
                         .EnableChunking(ChunkSize))
-                    .Consume<TestEventOne>(endpoint => endpoint
+                    .Consume(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
-                        .WithAtLeastOnceQoS()
-                        .EnableBatchProcessing(3, TimeSpan.FromSeconds(1)))))
-            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync));
-
-        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
-        {
-            List<string?> list = [];
-            batches.Add(list);
-
-            await foreach (TestEventOne message in batch)
-            {
-                list.Add(message.ContentEventOne);
-            }
-        }
+                        .WithAtLeastOnceQoS())))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
-        for (int i = 1; i <= 12; i++)
+        for (int i = 1; i <= 5; i++)
         {
             await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"Long message {i}" });
         }
 
-        await AsyncTestingUtil.WaitAsync(() => batches.Sum(batch => batch.Count) == 12);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        batches.SelectMany(batch => batch).ShouldBe(Enumerable.Range(1, 12).Select(i => $"Long message {i}"), ignoreOrder: true);
-        batches.ShouldAllBe(batch => batch.Count <= 3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(5);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(5 * chunksPerMessage);
+        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.ShouldBeLessThanOrEqualTo(ChunkSize));
+
+        // The chunk headers are renamed, while the chunked message id (which can't be renamed) is still sent to correlate the chunks
+        IReadOnlyList<MqttApplicationMessage> messages = GetDefaultTopicMessages();
+        messages.Count.ShouldBe(5 * chunksPerMessage);
+
+        for (int i = 0; i < messages.Count; i++)
+        {
+            MqttApplicationMessage message = messages[i];
+
+            GetUserProperty(message, DefaultMessageHeaders.ChunkIndex).ShouldBeNull();
+            GetUserProperty(message, DefaultMessageHeaders.ChunksCount).ShouldBeNull();
+            GetUserProperty(message, "x-quack-index").ShouldBe((i % chunksPerMessage).ToString(CultureInfo.InvariantCulture));
+            GetUserProperty(message, "x-quack-count").ShouldBe(chunksPerMessage.ToString(CultureInfo.InvariantCulture));
+            GetUserProperty(message, MqttMessageHeaders.ChunkMessageId).ShouldNotBeNullOrEmpty();
+        }
+
+        messages.Chunk(chunksPerMessage)
+            .Select(chunks => chunks
+                .Select(chunk => GetUserProperty(chunk, MqttMessageHeaders.ChunkMessageId))
+                .Distinct()
+                .ShouldHaveSingleItem())
+            .Distinct()
+            .Count()
+            .ShouldBe(5);
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(5);
+        Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
+            .ShouldBe(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 

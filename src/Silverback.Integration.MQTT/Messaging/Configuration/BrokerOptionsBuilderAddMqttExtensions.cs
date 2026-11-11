@@ -4,10 +4,12 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Diagnostics.Logger;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Consuming;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -34,6 +36,7 @@ public static class BrokerOptionsBuilderAddMqttExtensions
             return brokerOptionsBuilder;
 
         brokerOptionsBuilder.SilverbackBuilder
+            .AddSingletonBrokerBehavior<MqttBatchChunkingGuardConsumerBehavior>()
             .Services
             .AddScoped<MqttClientsConfigurationActions>()
             .AddTransient<IMqttNetClientFactory, MqttNetClientFactory>()

@@ -254,12 +254,6 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
 
             long fromPosition = currentMessages.Min(message => message.Position);
 
-            // The restart (or the stop) aborts all the pending sequences of the channel: replay their messages as well, since the
-            // rollback identifiers don't necessarily include them (e.g. when a batch is aborted while a chunked message is partially
-            // received, only the pending chunk sequence is rolled back)
-            if (!isObservedByReader && GetOldestTrackedCore() is { } oldestTrackedMessage && oldestTrackedMessage.Position < fromPosition)
-                fromPosition = oldestTrackedMessage.Position;
-
             for (LinkedListNode<ConsumedApplicationMessage>? node = _pendingMessages.Last;
                  node != null && node.Value.Position >= fromPosition;
                  node = node.Previous)
@@ -321,17 +315,6 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
     }
 
     private bool IsPendingCore(ConsumedApplicationMessage message) => message.PendingNode?.List == _pendingMessages;
-
-    private ConsumedApplicationMessage? GetOldestTrackedCore()
-    {
-        for (LinkedListNode<ConsumedApplicationMessage>? node = _pendingMessages.First; node != null; node = node.Next)
-        {
-            if (node.Value.IsTracked && !node.Value.IsReplayPending)
-                return node.Value;
-        }
-
-        return null;
-    }
 
     private void SetReplayPendingCore(ConsumedApplicationMessage message)
     {

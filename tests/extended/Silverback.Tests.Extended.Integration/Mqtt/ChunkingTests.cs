@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -50,11 +49,9 @@ public class ChunkingTests
     }
 
     [Theory]
-    [InlineData(1, null)]
-    [InlineData(4, null)]
-    [InlineData(1, 3)]
-    [InlineData(2, 3)]
-    public async Task Chunking_ShouldReassembleAndAcknowledgeChunkedMessages(int maxDegreeOfParallelism, int? batchSize)
+    [InlineData(1)]
+    [InlineData(4)]
+    public async Task Chunking_ShouldReassembleAndAcknowledgeChunkedMessages(int maxDegreeOfParallelism)
     {
         string consumerClientId = "stress-chunk-" + Guid.NewGuid().ToString("N");
         string topic = consumerClientId;
@@ -68,12 +65,11 @@ public class ChunkingTests
             })
         ];
         ConcurrentQueue<ChunkMessage> consumed = new();
-        ConcurrentQueue<ChunkMessage[]> batches = new();
         ConcurrentQueue<ObservedChunk> chunks = new();
 
         using RecordingMqttClientFactory clientFactory = new();
         using RecordingLoggerProvider logs = new();
-        using IHost host = CreateHost(topic, consumerClientId, maxDegreeOfParallelism, batchSize, consumed, batches, clientFactory, logs);
+        using IHost host = CreateHost(topic, consumerClientId, maxDegreeOfParallelism, consumed, clientFactory, logs);
         IBrokerClientsConnector connector = host.Services.GetRequiredService<IBrokerClientsConnector>();
 
         // An independent client observes the chunks produced to the broker
@@ -113,7 +109,7 @@ public class ChunkingTests
 
             await WaitUntilAsync(() => consumed.Count >= MessagesCount, "the chunked messages to be consumed");
 
-            // Each chunk is acknowledged once its message (or batch) is processed
+            // Each chunk is acknowledged once its message is processed
             MqttClientRecorder recorder = clientFactory.GetRecorder(consumerClientId);
             await WaitUntilAsync(() => AreAllChunksAcknowledged(recorder, chunks.Count), "the chunks to be acknowledged");
 
@@ -121,12 +117,6 @@ public class ChunkingTests
                 consumed.ShouldBe(messages);
             else
                 consumed.ShouldBe(messages, ignoreOrder: true);
-
-            if (batchSize != null)
-            {
-                batches.ShouldAllBe(batch => batch.Length <= batchSize);
-                batches.SelectMany(batch => batch).ShouldBe(consumed, ignoreOrder: true);
-            }
 
             // Each message was split into contiguous chunks, correlated by the chunked message id
             ObservedChunk[] observedChunks = [.. chunks];
@@ -151,7 +141,6 @@ public class ChunkingTests
         finally
         {
             _output.WriteLine($"Client={consumerClientId}; consumed: {string.Join(", ", consumed.Select(message => message.Number))}");
-            _output.WriteLine($"Batches: {string.Join("; ", batches.Select(batch => $"[{string.Join(", ", batch.Select(message => message.Number))}]"))}");
             _output.WriteLine($"Chunks: {string.Join(", ", chunks)}");
             logs.WriteTo(_output);
 
@@ -174,9 +163,7 @@ public class ChunkingTests
         string topic,
         string consumerClientId,
         int maxDegreeOfParallelism,
-        int? batchSize,
         ConcurrentQueue<ChunkMessage> consumed,
-        ConcurrentQueue<ChunkMessage[]> batches,
         RecordingMqttClientFactory clientFactory,
         ILoggerProvider logs)
     {
@@ -184,7 +171,7 @@ public class ChunkingTests
         builder.Logging.ClearProviders().AddProvider(logs);
 
         // A dedicated client consumes the chunked messages, so that the chunks of each message are contiguous
-        SilverbackBuilder silverbackBuilder = builder.Services.AddSilverback()
+        builder.Services.AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddMqtt())
             .AddMqttClients(clients => clients
                 .ConnectViaTcp(MqttFixture.BrokerHost)
@@ -198,38 +185,15 @@ public class ChunkingTests
                     .WithClientId(consumerClientId)
                     .RequestPersistentSession(TimeSpan.FromMinutes(5))
                     .EnableParallelProcessing(maxDegreeOfParallelism)
-                    .Consume<ChunkMessage>(endpoint =>
-                    {
-                        endpoint
-                            .ConsumeFrom(topic)
-                            .WithAtLeastOnceQoS()
-                            .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader());
-
-                        if (batchSize != null)
-                            endpoint.EnableBatchProcessing(batchSize.Value, TimeSpan.FromSeconds(1));
-                    })));
-
-        if (batchSize == null)
-            silverbackBuilder.AddDelegateSubscriber<ChunkMessage>(consumed.Enqueue);
-        else
-            silverbackBuilder.AddDelegateSubscriber<IAsyncEnumerable<ChunkMessage>>(HandleBatchAsync);
+                    .Consume<ChunkMessage>(endpoint => endpoint
+                        .ConsumeFrom(topic)
+                        .WithAtLeastOnceQoS()
+                        .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()))))
+            .AddDelegateSubscriber<ChunkMessage>(consumed.Enqueue);
 
         builder.Services.AddSingleton<IMqttNetClientFactory>(clientFactory);
 
         return builder.Build();
-
-        async Task HandleBatchAsync(IAsyncEnumerable<ChunkMessage> batch)
-        {
-            List<ChunkMessage> batchMessages = [];
-
-            await foreach (ChunkMessage message in batch)
-            {
-                batchMessages.Add(message);
-            }
-
-            batches.Enqueue([.. batchMessages]);
-            batchMessages.ForEach(consumed.Enqueue);
-        }
     }
 
     private static async Task PublishAsync(IHost host, ChunkMessage[] messages)

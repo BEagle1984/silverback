@@ -217,8 +217,7 @@ internal static partial class MqttLoggerExtensions
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a consumer with batch processing and QoS 1 or 2
     ///     is created. The messages are acknowledged when their batch is processed, and the broker stops delivering when too many
-    ///     messages are waiting for acknowledgment: the broker must allow at least the logged number of unacknowledged messages
-    ///     (more with chunked messages, since each chunk is acknowledged with its batch).
+    ///     messages are waiting for acknowledgment: the broker must allow at least the logged number of unacknowledged messages.
     /// </summary>
     [LoggerMessage(
         4014,

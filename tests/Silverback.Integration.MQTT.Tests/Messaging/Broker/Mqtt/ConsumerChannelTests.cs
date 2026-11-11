@@ -484,22 +484,27 @@ public class ConsumerChannelTests
     }
 
     [Fact]
-    public async Task Rollback_ShouldReturnTrueAndReplayFromOldestTrackedMessage_WhenMessageProcessedByReaderIsTracked()
+    public async Task Rollback_ShouldReturnTrue_WhenMessageProcessedByReaderIsTracked()
     {
         using ConsumerChannel channel = CreateChannel();
         ConsumedApplicationMessage[] messages = await WriteMessagesAsync(channel, 2);
         await ReadNextAsync(channel);
-        channel.MarkTracked(messages[0]);
-        channel.Defer(messages[0], out _).ShouldBe(ConsumerChannel.PendingState.Tracked);
-        await ReadNextAsync(channel);
 
-        // Tracked by its sequence (e.g. the first chunk of a chunked message) before the reader moved on
-        channel.MarkTracked(messages[1]);
-        bool isRestartRequired = channel.Rollback([messages[1]]);
+        // Tracked by its sequence (e.g. the batch it was added to) before the reader moved on: the restart must abort the sequence
+        channel.MarkTracked(messages[0]);
+        bool isRestartRequired = channel.Rollback([messages[0]]);
 
         isRestartRequired.ShouldBeTrue();
         channel.GetRestartRequestsCount().ShouldBe(1);
-        messages.ShouldAllBe(message => message.IsReplayPending);
+        channel.IsRestartPending.ShouldBeTrue();
+        messages[0].IsReplayPending.ShouldBeTrue();
+        messages[1].IsReplayPending.ShouldBeFalse();
+
+        channel.RemoveRestartRequests(1).ShouldBeFalse();
+
+        ConsumedApplicationMessage[] readMessages = await ReadMessagesAsync(channel, 2);
+        readMessages.ShouldBe(messages);
+        messages.Select(message => message.ReplayCount).ShouldBe([1, 0]);
     }
 
     [Fact]
@@ -587,18 +592,17 @@ public class ConsumerChannelTests
     }
 
     [Fact]
-    public async Task Rollback_ShouldReplayFromOldestTrackedPendingMessage()
+    public async Task Rollback_ShouldNotReplayOlderTrackedMessages_WhenTheyAreStillPending()
     {
         using ConsumerChannel channel = CreateChannel();
         ConsumedApplicationMessage[] messages = await WriteMessagesAsync(channel, 4);
-        await ReadNextAsync(channel);
-        channel.MarkTracked(messages[0]);
-        channel.Defer(messages[0], out _).ShouldBe(ConsumerChannel.PendingState.Tracked);
 
-        for (int i = 1; i < 3; i++)
+        // The first batch (messages 0 and 1) is still being committed (e.g. skipped) while the next batch (message 2) is rolled back
+        for (int i = 0; i < 3; i++)
         {
             await ReadNextAsync(channel);
-            channel.Defer(messages[i], out _).ShouldBe(ConsumerChannel.PendingState.Untracked);
+            channel.MarkTracked(messages[i]);
+            channel.Defer(messages[i], out _).ShouldBe(ConsumerChannel.PendingState.Tracked);
         }
 
         Task<bool>[] tasks = [.. messages.Select(message => message.TaskCompletionSource.Task)];
@@ -606,38 +610,17 @@ public class ConsumerChannelTests
         bool isRestartRequired = channel.Rollback([messages[2]]);
 
         isRestartRequired.ShouldBeTrue();
-        (await tasks[0].WaitAsync(Timeout)).ShouldBeFalse();
-        (await tasks[1].WaitAsync(Timeout)).ShouldBeFalse();
+        tasks[0].IsCompleted.ShouldBeFalse();
+        tasks[1].IsCompleted.ShouldBeFalse();
         (await tasks[2].WaitAsync(Timeout)).ShouldBeFalse();
         tasks[3].IsCompleted.ShouldBeFalse();
+        messages.Select(message => message.IsReplayPending).ShouldBe([false, false, true, false]);
 
         channel.RemoveRestartRequests(1).ShouldBeFalse();
 
-        ConsumedApplicationMessage[] readMessages = await ReadMessagesAsync(channel, 4);
-        readMessages.ShouldBe(messages);
-    }
-
-    [Fact]
-    public async Task Rollback_ShouldNotReplayOlderTrackedMessage_WhenMessageIsProcessedByReader()
-    {
-        using ConsumerChannel channel = CreateChannel();
-        ConsumedApplicationMessage[] messages = await WriteMessagesAsync(channel, 3);
-        await ReadNextAsync(channel);
-        channel.MarkTracked(messages[0]);
-        channel.Defer(messages[0], out _).ShouldBe(ConsumerChannel.PendingState.Tracked);
-        await ReadNextAsync(channel);
-        Task<bool> task1 = messages[0].TaskCompletionSource.Task;
-        Task<bool> task2 = messages[1].TaskCompletionSource.Task;
-
-        bool isRestartRequired = channel.Rollback([messages[1]]);
-
-        isRestartRequired.ShouldBeFalse();
-        task1.IsCompleted.ShouldBeFalse();
-        (await task2.WaitAsync(Timeout)).ShouldBeFalse();
-        messages[0].IsReplayPending.ShouldBeFalse();
         ConsumedApplicationMessage[] readMessages = await ReadMessagesAsync(channel, 2);
-        readMessages.ShouldBe([messages[1], messages[2]]);
-        messages[0].ReplayCount.ShouldBe(0);
+        readMessages.ShouldBe([messages[2], messages[3]]);
+        messages.Select(message => message.ReplayCount).ShouldBe([0, 0, 1, 0]);
     }
 
     [Fact]

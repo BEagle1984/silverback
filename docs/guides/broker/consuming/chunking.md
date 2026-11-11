@@ -26,10 +26,11 @@ No special configuration is required on the consumer to support chunked messages
 
 Chunking requires MQTT 5.
 
-- The chunks must be contiguous in all the messages consumed by the client, not only in their topic. A chunk of another message received between the chunks, from any topic or endpoint of the client, discards the incomplete message (that is acknowledged and lost), and so does any other message, unless batch processing is enabled. Consume the chunked messages with a dedicated client, subscribed only to their topic, and produce them with a single producer.
+- The chunks must be contiguous in all the messages consumed by the client, not only in their topic. A chunk of another message received between the chunks, from any topic or endpoint of the client, discards the incomplete message (that is acknowledged and lost), and so does any other message. Consume the chunked messages with a dedicated client, subscribed only to their topic, and produce them with a single producer.
 - The chunks can't be consumed through a shared subscription, since the broker would spread them across the consumers.
+- Chunking can't be combined with batch processing (see <xref:batch-processing>). A client with batch processing rejects each chunk with a <xref:Silverback.Messaging.Sequences.SequenceException>, which the error policy of the endpoint handles (e.g. skipping the chunks or moving them to another topic). The messages fitting in a single chunk aren't affected.
 - With parallel processing, all the chunks of a message are processed by the same parallel execution.
-- With QoS 1 or 2, the chunks are acknowledged only when the whole message is processed (or its batch, with batch processing), and the broker stops delivering when too many messages are waiting for acknowledgment. The number of chunks of a message must not exceed the `ReceiveMaximum` of the client (see `LimitUnacknowledgedPublications`) and the limit enforced by the broker. Otherwise, the consumer stalls until the sequence timeout elapses and then discards the message. With batch processing, when the chunks of the batched messages (multiplied by the `MaxDegreeOfParallelism`) exceed the limit, the batches are completed by their max wait time with fewer messages.
+- With QoS 1 or 2, the chunks are acknowledged only when the whole message is processed, and the broker stops delivering when too many messages are waiting for acknowledgment. The number of chunks of a message must not exceed the `ReceiveMaximum` of the client (see `LimitUnacknowledgedPublications`) and the limit enforced by the broker. Otherwise, the consumer stalls until the sequence timeout elapses and then discards the message.
 
 ## Additional Resources
 
