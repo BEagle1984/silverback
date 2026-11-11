@@ -43,9 +43,9 @@ public class BatchSequence : Sequence
         _logger = context.ServiceProvider.GetRequiredService<ISilverbackLogger<BatchSequence>>();
     }
 
-    // The reader moves on while the batch completed by the timeout is processed: the next batch must wait for the failed one to be
-    // committed or rolled back
-    private protected override bool IsRemovedFromStoreAfterErrorHandling => true;
+    // The reader moves on while the batch completed by the timeout is processed: the next batch must wait for the failed batch (or the
+    // batch whose subscriber stopped enumerating) to be committed or rolled back
+    private protected override bool IsRemovedFromStoreAfterTransaction => true;
 
     /// <summary>
     ///     Called when the timeout is elapsed. In this special case the sequence is completed instead of aborted.

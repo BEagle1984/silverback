@@ -203,13 +203,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     private protected virtual bool IsRemovedFromStoreOnAbort => true;
 
     /// <summary>
-    ///     Gets a value indicating whether the sequence aborted by an error is removed from the store only after the error policies
-    ///     committed or rolled it back, instead of before applying them. The next messages wait for the sequences in the store before
-    ///     starting a new one (see SequenceReaderBase), so that a sequence started while the failed one is being handled (e.g. after a
-    ///     batch completed by the timeout, while the reader moved on) can't be committed first, which with Kafka would implicitly commit
-    ///     the failed one as well.
+    ///     Gets a value indicating whether the sequence aborted by an error or because the subscriber stopped enumerating is removed from
+    ///     the store only after it was committed or rolled back (by the error policies), instead of before. The next messages wait for
+    ///     the sequences in the store before starting a new one (see SequenceReaderBase), so that a sequence started in the meantime
+    ///     (e.g. after a batch completed by the timeout, while the reader moved on) can't be committed first, which with Kafka would
+    ///     implicitly commit the failed one as well (or let its commit move the committed offset back).
     /// </summary>
-    private protected virtual bool IsRemovedFromStoreAfterErrorHandling => false;
+    private protected virtual bool IsRemovedFromStoreAfterTransaction => false;
 
     /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
     void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
@@ -793,17 +793,18 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             try
             {
-                bool isRemovedAfterErrorHandling =
-                    IsRemovedFromStoreOnAbort && AbortReason == SequenceAbortReason.Error && IsRemovedFromStoreAfterErrorHandling;
+                bool isRemovedAfterTransaction =
+                    IsRemovedFromStoreOnAbort && IsRemovedFromStoreAfterTransaction &&
+                    AbortReason is SequenceAbortReason.Error or SequenceAbortReason.EnumerationAborted;
 
-                if (IsRemovedFromStoreOnAbort && !isRemovedAfterErrorHandling)
+                if (IsRemovedFromStoreOnAbort && !isRemovedAfterTransaction)
                     await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
 
                 if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
                     LogAbort();
 
                 // Removed before completing the abort, which the next messages wait for before starting a new sequence
-                if (isRemovedAfterErrorHandling)
+                if (isRemovedAfterTransaction)
                     await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
             }
             finally
