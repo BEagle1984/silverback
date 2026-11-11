@@ -151,8 +151,8 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
     {
         lock (_messagesLock)
         {
-            return IsPendingCore(message) && message.ReplayCount == replayCount && !message.IsReplayPending && !message.IsTracked &&
-                   !message.TaskCompletionSource.Task.IsCompleted;
+            return IsPendingCore(message) && message.ReplayCount == replayCount &&
+                   message is { IsReplayPending: false, IsTracked: false, TaskCompletionSource.Task.IsCompleted: false };
         }
     }
 

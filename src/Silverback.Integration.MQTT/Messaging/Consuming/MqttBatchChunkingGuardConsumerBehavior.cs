@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
@@ -20,6 +21,7 @@ namespace Silverback.Messaging.Consuming;
 ///     The behavior runs after the <see cref="TransactionHandlerConsumerBehavior" />, so that the error policies apply, and before the
 ///     <see cref="RawSequencerConsumerBehavior" />, so that the chunk sequence isn't started.
 /// </remarks>
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Class used via DI")]
 internal sealed class MqttBatchChunkingGuardConsumerBehavior : IConsumerBehavior
 {
     private static readonly ChunkSequenceReader ChunkSequenceReader = new();

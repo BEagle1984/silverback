@@ -150,6 +150,7 @@ public partial class StreamingTests
         public List<string> Errors { get; } = [];
     }
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private sealed class ScopedStreamSubscriber
     {
         private readonly ScopedService _service;
@@ -186,6 +187,7 @@ public partial class StreamingTests
         }
     }
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private sealed class FailingConstructorStreamSubscriber
     {
         public FailingConstructorStreamSubscriber(ScopedService service, ScopedStreamSubscriberResults results)

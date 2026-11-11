@@ -420,6 +420,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     ///     disposed already.
     /// </returns>
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Context is disposed by the TransactionHandler")]
+    [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global", Justification = "Extension point for the broker-specific consumers")]
     protected virtual async ValueTask<ConsumerPipelineContext> HandleMessageAsync(
         byte[]? message,
         IReadOnlyCollection<MessageHeader> headers,

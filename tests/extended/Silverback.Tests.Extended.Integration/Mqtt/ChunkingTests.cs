@@ -283,6 +283,7 @@ public class ChunkingTests
     {
         public int Number { get; init; }
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local", Justification = "Serialized")]
         public string Content { get; init; } = string.Empty;
     }
 }

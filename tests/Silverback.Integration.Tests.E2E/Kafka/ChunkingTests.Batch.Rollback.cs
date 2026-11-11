@@ -111,7 +111,7 @@ public partial class ChunkingTests
         failBatch.TrySetResult(true);
 
         // The failed batch is consumed again, followed by the incomplete chunked message
-        await AsyncTestingUtil.WaitAsync(() => receivedBatches.Count == 2 && receivedBatches[1].Count == 1);
+        await AsyncTestingUtil.WaitAsync(() => receivedBatches is [_, { Count: 1 }]);
         await producer.RawProduceAsync(chunksB[2], HeadersHelper.GetChunkHeaders("B", 2, chunksB.Length, typeof(TestEventOne)));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

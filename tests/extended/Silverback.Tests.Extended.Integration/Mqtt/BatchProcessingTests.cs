@@ -363,13 +363,13 @@ public class BatchProcessingTests
             _host = builder.Build();
         }
 
-        public string ClientId { get; } = "stress-batch-" + Guid.NewGuid().ToString("N");
-
-        public string Topic => ClientId;
-
         public RecordingLoggerProvider Logs { get; } = new();
 
         public MqttClientRecorder Recorder => _clientFactory.GetRecorder(ClientId);
+
+        private string ClientId { get; } = "stress-batch-" + Guid.NewGuid().ToString("N");
+
+        private string Topic => ClientId;
 
         private MqttConsumer Consumer => _consumer ?? throw new InvalidOperationException("The consumer isn't started.");
 

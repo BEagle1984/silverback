@@ -274,10 +274,13 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
             return _channels[0];
 
         // All the chunks of a message must be processed in order by the same channel
-        if (_consumer.Configuration.AreHeadersSupported &&
-            applicationMessage.UserProperties?.FirstOrDefault(property => property.Name == MqttMessageHeaders.ChunkMessageId) is { } property)
+        MqttUserProperty? chunkMessageIdProperty = _consumer.Configuration.AreHeadersSupported
+            ? applicationMessage.UserProperties?.FirstOrDefault(property => property.Name == MqttMessageHeaders.ChunkMessageId)
+            : null;
+
+        if (chunkMessageIdProperty != null)
         {
-            uint hash = (uint)StringComparer.Ordinal.GetHashCode(property.ReadValueAsString());
+            uint hash = (uint)StringComparer.Ordinal.GetHashCode(chunkMessageIdProperty.ReadValueAsString());
             return _channels[hash % (uint)_channels.Length];
         }
 

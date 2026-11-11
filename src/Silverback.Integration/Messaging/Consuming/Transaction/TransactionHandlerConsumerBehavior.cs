@@ -131,7 +131,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     // again, just awaiting that abort, since aborting the inner sequence would apply the error policies a second time. Otherwise the
     // exception comes from the inner sequence processing (e.g., failing before the message is added to the outer sequence).
     private static ISequence GetFailedSequence(ConsumerPipelineContext context, ISequence sequence, Exception exception) =>
-        context.IsSequenceStart && context.Sequence is { } outerSequence && outerSequence != sequence &&
+        context is { IsSequenceStart: true, Sequence: { } outerSequence } && outerSequence != sequence &&
         outerSequence.AbortException == exception
             ? outerSequence
             : sequence;

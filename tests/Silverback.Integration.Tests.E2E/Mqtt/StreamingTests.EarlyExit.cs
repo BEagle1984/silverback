@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -319,6 +320,7 @@ public partial class StreamingTests
                         .AllowStreaming())))
             .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, CancellationToken>(HandleUnboundedStream));
 
+        [SuppressMessage("ReSharper", "UseCancellationTokenForIAsyncEnumerable", Justification = "The stop aborts the stream, the token cancels the processing")]
         async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream, CancellationToken cancellationToken)
         {
             try

@@ -45,7 +45,7 @@ public class SequencerConsumerBehaviorTests
         SequencerConsumerBehavior behavior = new([sequenceReader], Substitute.For<ISilverbackLogger<SequencerConsumerBehavior>>());
 
         // Run on another thread, since the endless loop would block the test thread
-        await Task.Run(() => behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, default).AsTask()).WaitAsync(Timeout);
+        await Task.Run(() => behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, CancellationToken.None).AsTask()).WaitAsync(Timeout);
 
         // Removed only after refusing the message twice (a single failure is a legitimate retry case, e.g. completed by its timeout)
         await refusingSequence.Received(2).AddAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<ISequence?>(), Arg.Any<bool>());

@@ -39,7 +39,7 @@ public class TransactionHandlerConsumerBehaviorTests
             .Returns(_ => ValueTask.FromException(new InvalidOperationException("Commit failed.")));
         TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
 
-        Task Act() => behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, default).AsTask();
+        Task Act() => behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, CancellationToken.None).AsTask();
 
         InvalidOperationException exception = await Should.ThrowAsync<InvalidOperationException>(Act);
 
@@ -78,7 +78,7 @@ public class TransactionHandlerConsumerBehaviorTests
                 pipelineContext.ProcessingTask = processingTask;
                 await sequence.AddAsync(pipelineContext.Envelope, null, true);
             },
-            default).AsTask().WaitAsync(Timeout);
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
         Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(offset2), null, true);
 
         await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
@@ -129,7 +129,7 @@ public class TransactionHandlerConsumerBehaviorTests
                 pipelineContext.ProcessingTask = Task.CompletedTask;
                 return ValueTask.CompletedTask;
             },
-            default).AsTask().WaitAsync(Timeout);
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
 
         await disposedTaskCompletionSource.Task.WaitAsync(Timeout);
 
@@ -163,7 +163,7 @@ public class TransactionHandlerConsumerBehaviorTests
                 pipelineContext.ProcessingTask = processingTask;
                 await sequence.AddAsync(pipelineContext.Envelope, null, true);
             },
-            default).AsTask().WaitAsync(Timeout);
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
         AddToSequenceResult addResult = await sequence.AddAsync(CreateEnvelope(offset2), null, true).WaitAsync(Timeout);
 
         await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
@@ -208,7 +208,7 @@ public class TransactionHandlerConsumerBehaviorTests
                 pipelineContext.ProcessingTask = processingTask;
                 addResult = await sequence.AddAsync(pipelineContext.Envelope, null, true);
             },
-            default).AsTask();
+            CancellationToken.None).AsTask();
         await pulledTaskCompletionSource.Task.WaitAsync(Timeout);
 
         // Complete the sequence (as the batch timeout does) while the subscriber is still processing the first message: the completion
@@ -268,7 +268,7 @@ public class TransactionHandlerConsumerBehaviorTests
                 pipelineContext.ProcessingTask = processingTask;
                 await sequence.AddAsync(pipelineContext.Envelope, null, true);
             },
-            default).AsTask().WaitAsync(Timeout);
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
         Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(offset2), null, true);
         await pulledTaskCompletionSource.Task.WaitAsync(Timeout);
 
@@ -459,7 +459,7 @@ public class TransactionHandlerConsumerBehaviorTests
                 pipelineContext.ProcessingTask = innerProcessingTaskCompletionSource.Task;
                 return ValueTask.CompletedTask;
             },
-            default).AsTask().WaitAsync(Timeout);
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
 
         // The awaiter references the inner sequence (e.g., a chunk sequence) when the message is added to the outer sequence it starts
         // (e.g., a batch), whose processing fails
@@ -498,7 +498,7 @@ public class TransactionHandlerConsumerBehaviorTests
                 pipelineContext.ProcessingTask = innerProcessingTaskCompletionSource.Task;
                 return ValueTask.CompletedTask;
             },
-            default).AsTask().WaitAsync(Timeout);
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
 
         // The message might be added to an outer sequence started by another message, whose processing task isn't awaited, or start an
         // outer sequence and fail before being added to it (e.g., because the subscribers can't be invoked), not aborting it

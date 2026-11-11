@@ -13,7 +13,7 @@ namespace Silverback.Tests.Extended.Integration.TestHost.Mqtt;
 /// </summary>
 internal sealed class RecordingLoggerProvider : ILoggerProvider, ILogger
 {
-    public ConcurrentQueue<string> Entries { get; } = new();
+    private readonly ConcurrentQueue<string> _entries = new();
 
     public ConcurrentQueue<string> Errors { get; } = new();
 
@@ -39,7 +39,7 @@ internal sealed class RecordingLoggerProvider : ILoggerProvider, ILogger
         if (exception != null)
             entry += $" | {exception.GetType().Name}: {exception.Message}";
 
-        Entries.Enqueue(entry);
+        _entries.Enqueue(entry);
 
         if (logLevel >= LogLevel.Error)
             Errors.Enqueue(entry);
@@ -47,7 +47,7 @@ internal sealed class RecordingLoggerProvider : ILoggerProvider, ILogger
 
     public void WriteTo(ITestOutputHelper output)
     {
-        foreach (string entry in Entries)
+        foreach (string entry in _entries)
         {
             output.WriteLine($"Log: {entry}");
         }
