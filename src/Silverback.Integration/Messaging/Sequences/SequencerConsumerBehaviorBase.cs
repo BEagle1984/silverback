@@ -156,6 +156,9 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         }
     }
 
+    private static bool IsStoppingOrReadingCanceled(ConsumerPipelineContext context, CancellationToken cancellationToken) =>
+        cancellationToken.IsCancellationRequested || context.SequenceStore is SequenceStore { IsReadingCanceled: true };
+
     // The previous sequence (e.g. the chunk sequence of a chunked message) is completed with the sequence it's added to (e.g. the batch).
     // When the message is left out (by the stop or by the aborted sequence that refused it), abort it like the stop aborts the pending
     // sequences, rolling it back, since it may be complete already and nothing else would remove it from the store or complete its
@@ -188,11 +191,13 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
             Activity.Current?.SetTag(ActivityTagNames.SequenceId, sequence.SequenceId);
 
-            // The consumer may have been stopped while the new sequence waited for the previous ones (e.g. by the error policies of the
-            // previous batch): don't publish it, since it could be committed past the previous one, but roll back the message, which is
+            // The consumer may have been stopped (or the reading canceled to roll back or revoke the partition) while the new sequence
+            // waited for the previous ones (e.g. by the error policies of the previous batch): don't publish it, since it could be
+            // committed past the previous one (or would be processed and then consumed again), but roll back the message, which is
             // consumed again after the restart. The sequence is aborted here, since the stop cancellation doesn't necessarily reach the
-            // transaction handler of its context (e.g. when the message is chunked).
-            if (sequence.IsNew && cancellationToken.IsCancellationRequested)
+            // transaction handler of its context (e.g. when the message is chunked), which handles the cancellation of the sequence
+            // aborted by the consumer as the stop cancellation (without applying the error policies).
+            if (sequence.IsNew && IsStoppingOrReadingCanceled(context, cancellationToken))
             {
                 OperationCanceledException stopCancellation = new(cancellationToken);
                 await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted, stopCancellation).ConfigureAwait(false);
@@ -225,10 +230,11 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             failedSequence = addToSequenceResult.IsSuccess ? null : sequence;
 
             // The message refused by a sequence that was committed on abort (see SequenceBase.AddAsync) is added to a new sequence,
-            // unless the consumer is stopping: the new sequence would be aborted by the stop (and could even commit the message without
-            // processing it, if the subscribers return without pulling it), while the message is consumed again after the restart
+            // unless the consumer is stopping (or the reading was canceled): the new sequence would be aborted by the stop (and could
+            // even commit the message without processing it, if the subscribers return without pulling it), while the message is
+            // consumed again after the restart (or the rollback)
             if (addToSequenceResult is { IsSuccess: false, IsAborted: false, AbortTask: { } refusingSequenceAbortTask } &&
-                cancellationToken.IsCancellationRequested)
+                IsStoppingOrReadingCanceled(context, cancellationToken))
             {
                 await refusingSequenceAbortTask.ConfigureAwait(false);
                 await AbortPreviousSequenceIfNotAddedAsync(previousSequence, new OperationCanceledException(cancellationToken))

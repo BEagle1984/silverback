@@ -172,6 +172,40 @@ public class SequencerConsumerBehaviorTests
 
     [Fact]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task HandleAsync_ShouldNotPublishNewSequence_WhenReadingIsCanceled()
+    {
+        // The reading is canceled to roll back (or revoke) the partition, without stopping the consumer
+        await using SequenceStore sequenceStore = new(new SilverbackLoggerSubstitute<SequenceStore>(), () => true);
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: sequenceStore);
+        ISequence newSequence = CreateSequence("new", AddToSequenceResult.Success(1));
+        newSequence.IsNew.Returns(true);
+
+        ISequenceReader sequenceReader = Substitute.For<ISequenceReader>();
+        sequenceReader.CanHandleAsync(context).Returns(true);
+        sequenceReader.GetSequenceAsync(context).Returns(newSequence);
+
+        SequencerConsumerBehavior behavior = new([sequenceReader], Substitute.For<ISilverbackLogger<SequencerConsumerBehavior>>());
+        bool isPublished = false;
+
+        // The message is rolled back and consumed again after the seek, instead of being processed by a sequence aborted afterwards
+        await Should.ThrowAsync<OperationCanceledException>(() => behavior.HandleAsync(
+                context,
+                (_, _) =>
+                {
+                    isPublished = true;
+                    return ValueTask.CompletedTask;
+                },
+                CancellationToken.None)
+            .AsTask()
+            .WaitAsync(Timeout));
+
+        isPublished.ShouldBeFalse();
+        await newSequence.DidNotReceive().AddAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<ISequence?>(), Arg.Any<bool>());
+        await newSequence.Received(1).AbortAsync(SequenceAbortReason.ConsumerAborted, Arg.Any<OperationCanceledException>());
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task HandleAsync_ShouldAbortPreviousSequence_WhenConsumerIsStoppingBeforeNewSequenceIsPublished()
     {
         using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();

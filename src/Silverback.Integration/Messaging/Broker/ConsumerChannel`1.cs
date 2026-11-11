@@ -38,7 +38,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
         _channel = Channel.CreateBounded<T>(_capacity);
         _overflowChannel = Channel.CreateUnbounded<T>();
-        SequenceStore = new SequenceStore(logger);
+        SequenceStore = CreateSequenceStore();
     }
 
     public string Id { get; }
@@ -154,7 +154,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         }
 
         SequenceStore.Dispose();
-        SequenceStore = new SequenceStore(_logger);
+        SequenceStore = CreateSequenceStore();
         InstanceId = Guid.NewGuid();
     }
 
@@ -171,7 +171,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
             // The stopped reader aborted its pending sequences already (see NotifyReadingStoppedAsync) and the new one isn't started yet.
             // The previous store isn't disposed, not to break the work still pending on its sequences.
             if (IsSequenceStoreReplacedOnRestart)
-                SequenceStore = new SequenceStore(_logger);
+                SequenceStore = CreateSequenceStore();
         }
 
         if (_readTaskCompletionSource.Task.IsCompleted)
@@ -232,6 +232,9 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
         _isDisposed = true;
     }
+
+    // The store tells the sequencer whether the reading was canceled, not to start new sequences that would be aborted anyway
+    private SequenceStore CreateSequenceStore() => new(_logger, () => IsReadCanceled);
 
     private (Channel<T> Channel, Channel<T> OverflowChannel) GetChannels()
     {

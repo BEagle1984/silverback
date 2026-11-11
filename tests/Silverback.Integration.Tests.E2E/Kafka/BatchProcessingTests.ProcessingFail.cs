@@ -508,6 +508,73 @@ public partial class BatchProcessingTests
     }
 
     [Fact]
+    public async Task Batch_ShouldProcessNextMessageOnce_WhenFailedBatchIsRolledBackWhileNextMessageWaits()
+    {
+        TestingCollection<string?> processedMessages = [];
+        TaskCompletionSource<bool> firstBatchCompleted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseFirstBatch = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(500))
+                        .OnError(policy => policy.Retry(1)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch)
+            .AddIntegrationSpy());
+
+        // The first batch is completed by the timeout and fails once, while the next message waits for it
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            try
+            {
+                await foreach (TestEventOne message in batch)
+                {
+                    processedMessages.Add(message.ContentEventOne);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
+            if (Interlocked.Increment(ref completedBatches) == 1)
+            {
+                firstBatchCompleted.TrySetResult(true);
+                await releaseFirstBatch.Task.WaitAsync(TimeSpan.FromSeconds(30));
+                throw new InvalidOperationException("Retry!");
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await firstBatchCompleted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count >= 2);
+        await Task.Delay(TimeSpan.FromMilliseconds(200)); // Let the next message wait for the first batch, to start the next one
+
+        // The rollback cancels the reading: the next message doesn't start a batch, which would be aborted (and the message processed
+        // again after the seek)
+        releaseFirstBatch.TrySetResult(true);
+        await AsyncTestingUtil.WaitAsync(() => completedBatches > 1);
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        processedMessages.ShouldBe(["1", "1", "2"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
+    }
+
+    [Fact]
     public async Task Batch_ShouldNotCommitSkippedMessage_WhenStoppingWhileBatchIsPending()
     {
         TestingCollection<List<string?>> successfulBatches = [];
