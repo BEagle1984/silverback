@@ -477,12 +477,30 @@ public class SequenceBaseTests
     }
 
     [Theory]
-    [InlineData("enumeration-aborted")]
-    [InlineData("consumer-aborted")]
+    [InlineData("skip", false)]
+    [InlineData("enumeration-aborted", false)]
+    [InlineData("skip", true)]
+    public async Task AddAsync_ShouldReturnAborted_WhenSequenceStartedByMessageIsAbortedAndCommittedOnAbort(string abort, bool isDisposed)
+    {
+        AddToSequenceResult result = await AddToSequenceAbortedAfterBeingFoundAsync(abort, isDisposed, isFound: false);
+
+        // The sequence shares the context of the message that started it, which can't be reused for a new sequence: the message shares
+        // the outcome of the sequence instead (e.g. skipped or ignored with it)
+        result.IsAborted.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData("enumeration-aborted", true)]
+    [InlineData("consumer-aborted", true)]
+    [InlineData("enumeration-aborted", false)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
-    public async Task AddAsync_ShouldRefuseMessageAndSequence_WhenAbortedRightBeforePush(string abort)
+    public async Task AddAsync_ShouldRefuseMessageAndSequence_WhenAbortedRightBeforePush(string abort, bool isFound)
     {
         using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+
+        // Found in the store by the reader, otherwise it's the new sequence started by the added message
+        if (isFound)
+            ((ISequenceImplementation)sequence).SetIsNew(false);
         IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
         _ = Task.Run(async () =>
         {
@@ -513,11 +531,12 @@ public class SequenceBaseTests
         (abortTask != null).ShouldBeTrue();
         await abortTask!.WaitAsync(Timeout);
 
-        // The message didn't join the sequence (instead of failing the processing), which doesn't commit or complete the chunk sequence
+        // The message didn't join the sequence (instead of failing the processing), which doesn't commit or complete the chunk sequence.
+        // The message that started the sequence shares its outcome instead of being added to the next one.
         childSequence.Parent.ShouldBeNull();
         sequence.Sequences.ShouldNotContain(childSequence);
 
-        if (abort == "enumeration-aborted")
+        if (abort == "enumeration-aborted" && isFound)
         {
             result.IsSuccess.ShouldBeFalse();
             result.IsAborted.ShouldBeFalse();
@@ -582,10 +601,14 @@ public class SequenceBaseTests
         }
     }
 
-    private static async Task<AddToSequenceResult> AddToSequenceAbortedAfterBeingFoundAsync(string abort, bool isDisposed)
+    private static async Task<AddToSequenceResult> AddToSequenceAbortedAfterBeingFoundAsync(string abort, bool isDisposed, bool isFound = true)
     {
         IErrorPolicy errorPolicy = abort == "retry" ? new RetryErrorPolicy { MaxFailedAttempts = 2 } : new SkipMessageErrorPolicy();
         AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), errorPolicy));
+
+        // Found in the store by the reader, otherwise it's the new sequence started by the added message
+        if (isFound)
+            ((ISequenceImplementation)sequence).SetIsNew(false);
 
         try
         {

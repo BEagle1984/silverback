@@ -221,6 +221,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </summary>
     private protected virtual bool IsMessageRefusedByAbortAddedToNextSequence => false;
 
+    // Not when the sequence is new, i.e. started by the refused message itself: it shares the message's context (and transaction), which
+    // the message must not reuse for the next sequence, and the message shares its outcome instead (e.g. skipped or ignored with it)
+    private bool IsRefusedMessageAddedToNextSequence => IsMessageRefusedByAbortAddedToNextSequence && !IsNew;
+
     /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
     void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
 
@@ -263,7 +267,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         // Disposed only once its abort (if any) completed: the sequence was aborted (or completed) after the reader found it pending
         if (!await WaitIfNotDisposedAsync(_addSemaphoreSlim).ConfigureAwait(false))
-            return GetRefusedResult(IsAborted && IsMessageRefusedByAbortAddedToNextSequence);
+            return GetRefusedResult(IsAborted && IsRefusedMessageAddedToNextSequence);
 
         bool lockReleased = false;
 
@@ -426,7 +430,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             // Aborted after the reader found it pending: the abort commits or rolls back the sequence without the message, which is
             // handled like the message refused because of the timeout (see AddAsync), once the abort completed
-            if (IsAborted && IsMessageRefusedByAbortAddedToNextSequence)
+            if (IsAborted && IsRefusedMessageAddedToNextSequence)
             {
                 _isAddRefused = true;
                 throw new OperationCanceledException("The sequence was aborted.");
@@ -491,6 +495,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             // The streams were completed (e.g. by the max wait time) or aborted after the checks above, before the message was pushed: the
             // message didn't join the sequence, which must not commit or complete the added sequence either
             RemoveChildSequence(sequence);
+
+            // The message that started the sequence shares the outcome of its abort (see IsRefusedMessageAddedToNextSequence)
+            if (IsNew)
+                return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
 
             if (!IsAborted)
                 return AddToSequenceResult.Failed;
