@@ -3,14 +3,18 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Sequences;
@@ -235,6 +239,47 @@ public class SequencerConsumerBehaviorTests
         await newSequence.Received(isStopping ? 0 : 1).AddAsync(Arg.Any<IRawInboundEnvelope>(), previousSequence, Arg.Any<bool>());
     }
 
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited before the disposal")]
+    public async Task HandleAsync_ShouldAddMessageToNewSequence_WhenBatchIsCompletedAfterBeingFound()
+    {
+        TestConsumerEndpointConfiguration endpointConfiguration = new("test")
+        {
+            Batch = new BatchSettings
+            {
+                Size = 10
+            }
+        };
+        InboundEnvelope envelope = new(
+            "message",
+            Stream.Null,
+            null,
+            new TestConsumerEndpoint("test", endpointConfiguration),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(envelope);
+
+        // The reader found the batch pending, but it was completed (e.g. by its max wait time) right afterwards
+        using CompletableBatchSequence completedBatch = new("batch-1", context);
+        await completedBatch.CompleteFromTestAsync();
+        ISequence newSequence = CreateSequence("new", AddToSequenceResult.Success(1));
+        int getSequenceCount = 0;
+
+        ISequenceReader sequenceReader = Substitute.For<ISequenceReader>();
+        sequenceReader.CanHandleAsync(context).Returns(true);
+        sequenceReader.GetSequenceAsync(context)
+            .Returns(_ => ValueTask.FromResult(Interlocked.Increment(ref getSequenceCount) == 1 ? completedBatch : newSequence));
+
+        SequencerConsumerBehavior behavior = new([sequenceReader], Substitute.For<ISilverbackLogger<SequencerConsumerBehavior>>());
+
+        await behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The message isn't skipped (and committed without being processed) but added to the next batch
+        await newSequence.Received(1).AddAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<ISequence?>(), Arg.Any<bool>());
+        context.Sequence.ShouldBe(newSequence);
+    }
+
     private static ISequence CreateSequence(string sequenceId, AddToSequenceResult addToSequenceResult)
     {
         ISequence sequence = Substitute.For<ISequence>();
@@ -244,5 +289,15 @@ public class SequencerConsumerBehaviorTests
         sequence.ParentSequence.Returns((ISequence?)null);
         sequence.AddAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<ISequence?>(), Arg.Any<bool>()).Returns(addToSequenceResult);
         return sequence;
+    }
+
+    private sealed class CompletableBatchSequence : BatchSequence
+    {
+        public CompletableBatchSequence(string sequenceId, ConsumerPipelineContext context)
+            : base(sequenceId, context)
+        {
+        }
+
+        public Task CompleteFromTestAsync() => CompleteAsync();
     }
 }

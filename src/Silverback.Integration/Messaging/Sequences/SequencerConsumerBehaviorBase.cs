@@ -12,6 +12,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences;
@@ -272,7 +273,9 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     {
         ISequence sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 
-        if (sequence.IsComplete)
+        // The message belongs to a complete sequence (e.g. a duplicated chunk): skip it. A batch is instead complete only if it was
+        // completed (e.g. by its max wait time) after the reader returned it: the message is refused and added to the next batch.
+        if (sequence.IsComplete && sequence is not BatchSequence)
             return null;
 
         if (sequence is IncompleteSequence incompleteSequence)
