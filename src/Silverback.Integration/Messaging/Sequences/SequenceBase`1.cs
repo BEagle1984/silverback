@@ -73,8 +73,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private bool _isTimeoutTimerInitialized;
 
-    // Set by AddCoreAsync when it refuses the message because the timeout elapsed: accessed only holding the add semaphore
-    private bool _isAddRefusedByTimeout;
+    // Set by AddCoreAsync when it refuses the message because the timeout elapsed or the sequence was aborted after being found pending
+    // (see IsMessageRefusedByAbortAddedToNextSequence): accessed only holding the add semaphore
+    private bool _isAddRefused;
 
     private bool _isDisposed;
 
@@ -211,6 +212,15 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </summary>
     private protected virtual bool IsRemovedFromStoreAfterTransaction => false;
 
+    /// <summary>
+    ///     Gets a value indicating whether the message refused because the sequence was aborted after the reader found it pending (e.g.
+    ///     because the subscriber stopped enumerating it) is added to the next sequence when the abort commits the sequence, like the
+    ///     message refused because of the timeout, instead of being left out (and committed with the next message without being
+    ///     processed). Otherwise the abort decides for the refused message as well (e.g. the chunks of an aborted chunk sequence are
+    ///     skipped).
+    /// </summary>
+    private protected virtual bool IsMessageRefusedByAbortAddedToNextSequence => false;
+
     /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
     void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
 
@@ -251,8 +261,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (envelope is not TEnvelope typedEnvelope)
             throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");
 
+        // Disposed only once its abort (if any) completed: the sequence was aborted (or completed) after the reader found it pending
         if (!await WaitIfNotDisposedAsync(_addSemaphoreSlim).ConfigureAwait(false))
-            return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+            return GetRefusedResult(IsAborted && IsMessageRefusedByAbortAddedToNextSequence);
 
         bool lockReleased = false;
 
@@ -264,21 +275,15 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             _logger.LogSequenceAddCanceled(this, ex);
 
-            bool isRefusedByTimeout = _isAddRefusedByTimeout;
-            _isAddRefusedByTimeout = false;
+            bool isRefused = _isAddRefused;
+            _isAddRefused = false;
 
             _addSemaphoreSlim.Release(); // Release the semaphore to allow the abort to complete and avoid deadlocks
             lockReleased = true;
 
             await _processingCompleteTaskCompletionSource.Task.ConfigureAwait(false);
 
-            // The message refused because of the timeout isn't committed with the sequence: fail without aborting, so that the message is
-            // added to a new sequence instead of being lost, unless the sequence was rolled back (consuming the message again). The abort
-            // task tells the sequencer that the sequence was aborted anyway (see SequencerConsumerBehaviorBase).
-            if (isRefusedByTimeout && IsCommittedOnAbort())
-                return new AddToSequenceResult(false, AbortTask: _abortingTaskCompletionSource?.Task);
-
-            return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+            return GetRefusedResult(isRefused);
         }
         catch (Exception ex)
         {
@@ -418,14 +423,24 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     protected virtual async Task<AddToSequenceResult> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
         if (!IsPending)
+        {
+            // Aborted after the reader found it pending: the abort commits or rolls back the sequence without the message, which is
+            // handled like the message refused because of the timeout (see AddAsync), once the abort completed
+            if (IsAborted && IsMessageRefusedByAbortAddedToNextSequence)
+            {
+                _isAddRefused = true;
+                throw new OperationCanceledException("The sequence was aborted.");
+            }
+
             return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+        }
 
         if (_enforceTimeout)
         {
             // The timer will complete or abort the sequence: refuse the message, which doesn't join the sequence
             if (IsTimeoutElapsed())
             {
-                _isAddRefusedByTimeout = true;
+                _isAddRefused = true;
                 throw new OperationCanceledException("The sequence timed out.");
             }
 
@@ -680,6 +695,14 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     private bool IsCommittedOnAbort() =>
         AbortReason is SequenceAbortReason.Error or SequenceAbortReason.EnumerationAborted &&
         Context.TransactionManager is not ConsumerTransactionManager { IsConsumerRolledBack: true };
+
+    // The refused message isn't committed with the sequence: fail without aborting, so that the message is added to a new sequence
+    // instead of being lost, unless the sequence was rolled back (consuming the message again). The abort task tells the sequencer that
+    // the sequence was aborted anyway (see SequencerConsumerBehaviorBase). Must be called once the abort completed.
+    private AddToSequenceResult GetRefusedResult(bool isAddedToNextSequenceIfCommitted) =>
+        isAddedToNextSequenceIfCommitted && IsCommittedOnAbort()
+            ? new AddToSequenceResult(false, AbortTask: _abortingTaskCompletionSource?.Task)
+            : AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async ValueTask<bool> EnforceTimeoutAsync()

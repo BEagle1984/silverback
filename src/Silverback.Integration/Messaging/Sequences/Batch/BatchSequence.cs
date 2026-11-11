@@ -47,6 +47,9 @@ public class BatchSequence : Sequence
     // batch whose subscriber stopped enumerating) to be committed or rolled back
     private protected override bool IsRemovedFromStoreAfterTransaction => true;
 
+    // The message refused because the batch was aborted after being found pending is added to the next batch, if the abort commits it
+    private protected override bool IsMessageRefusedByAbortAddedToNextSequence => true;
+
     /// <summary>
     ///     Called when the timeout is elapsed. In this special case the sequence is completed instead of aborted.
     /// </summary>

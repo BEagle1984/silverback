@@ -448,6 +448,34 @@ public class SequenceBaseTests
         result.IsAborted.ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData("skip", false)]
+    [InlineData("enumeration-aborted", false)]
+    [InlineData("skip", true)]
+    public async Task AddAsync_ShouldFailWithoutAborting_WhenAbortedAfterBeingFoundAndCommittedOnAbort(string abort, bool isDisposed)
+    {
+        AddToSequenceResult result = await AddToSequenceAbortedAfterBeingFoundAsync(abort, isDisposed);
+
+        // The message isn't committed with the sequence (and then with the next message without being processed): the sequencer adds it
+        // to a new sequence, unless stopping (see AbortTask)
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+    }
+
+    [Theory]
+    [InlineData("retry")]
+    [InlineData("incomplete")]
+    [InlineData("consumer-aborted")]
+    [InlineData("disposing")]
+    public async Task AddAsync_ShouldReturnAborted_WhenAbortedAfterBeingFoundAndNotCommittedOnAbort(string abort)
+    {
+        AddToSequenceResult result = await AddToSequenceAbortedAfterBeingFoundAsync(abort, false);
+
+        // The message is consumed again after the rollback (or the restart), or discarded with the incomplete sequence
+        result.IsAborted.ShouldBeTrue();
+    }
+
     private static async Task<AddToSequenceResult> AddRefusedByTimeoutAsync(string abort)
     {
         HookLogger logger = new();
@@ -501,7 +529,58 @@ public class SequenceBaseTests
         }
     }
 
-    private static TimeoutTestSequence CreateTimeoutSequence(HookLogger logger, IErrorPolicy errorPolicy)
+    private static async Task<AddToSequenceResult> AddToSequenceAbortedAfterBeingFoundAsync(string abort, bool isDisposed)
+    {
+        IErrorPolicy errorPolicy = abort == "retry" ? new RetryErrorPolicy { MaxFailedAttempts = 2 } : new SkipMessageErrorPolicy();
+        AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), errorPolicy));
+
+        try
+        {
+            IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await foreach (IRawInboundEnvelope dummy in stream)
+                    {
+                        // Just consume the stream
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    // The stream is aborted with the sequence
+                }
+            });
+
+            AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+            firstResult.IsSuccess.ShouldBeTrue();
+
+            // Aborted after the reader found it pending, before the next message is added
+            Task abortTask = abort switch
+            {
+                "skip" or "retry" => sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test")),
+                "enumeration-aborted" => sequence.AbortAsync(SequenceAbortReason.EnumerationAborted),
+                "incomplete" => sequence.AbortAsync(SequenceAbortReason.IncompleteSequence),
+                "consumer-aborted" => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted),
+                _ => sequence.AbortAsync(SequenceAbortReason.Disposing)
+            };
+            await abortTask.WaitAsync(Timeout);
+
+            if (isDisposed)
+                sequence.Dispose();
+
+            return await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        }
+        finally
+        {
+            sequence.Dispose();
+        }
+    }
+
+    private static TimeoutTestSequence CreateTimeoutSequence(HookLogger logger, IErrorPolicy errorPolicy) =>
+        new(CreateErrorPolicyContext(logger, errorPolicy));
+
+    private static ConsumerPipelineContext CreateErrorPolicyContext(HookLogger logger, IErrorPolicy errorPolicy)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
         {
@@ -525,7 +604,7 @@ public class SequenceBaseTests
             ConsumerPipelineContextHelper.CreateSubstitute(),
             Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
 
-        return new TimeoutTestSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider, transactionManager));
+        return ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider, transactionManager);
     }
 
     private static TestSequence CreateSequence(HookLogger logger, ISequenceStore? sequenceStore = null)
@@ -564,6 +643,17 @@ public class SequenceBaseTests
         }
 
         public Task CompleteFromTestAsync() => CompleteAsync();
+    }
+
+    // Adds the message refused because of the abort to the next sequence, like the batches
+    private sealed class AbortTestSequence : SequenceBase<IRawInboundEnvelope>
+    {
+        public AbortTestSequence(ConsumerPipelineContext context)
+            : base("abort-test-sequence", context, enforceTimeout: false, trackIdentifiers: false)
+        {
+        }
+
+        private protected override bool IsMessageRefusedByAbortAddedToNextSequence => true;
     }
 
     // Holds the timer while handling the elapsed timeout, so that the sequence is still pending after its timeout elapsed
