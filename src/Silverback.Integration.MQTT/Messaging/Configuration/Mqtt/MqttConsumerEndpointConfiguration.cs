@@ -47,9 +47,6 @@ public sealed record MqttConsumerEndpointConfiguration : ConsumerEndpointConfigu
             throw new BrokerConfigurationException("A topic name cannot be null or empty.");
 
         Topics.ForEach(ValidateTopicFilter);
-
-        if (Batch is { Size: > 1 })
-            throw new BrokerConfigurationException("Batch processing is currently not supported for MQTT.");
     }
 
     private static void ValidateTopicFilter(string topic)

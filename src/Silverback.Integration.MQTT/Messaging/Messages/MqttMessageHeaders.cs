@@ -22,4 +22,10 @@ public static class MqttMessageHeaders
     ///     The header containing the dynamic destination topic the message should be produced to.
     /// </summary>
     public const string DestinationTopic = DefaultMessageHeaders.InternalHeadersPrefix + "mqtt-destination-topic";
+
+    /// <summary>
+    ///     The header containing the identifier of the chunked message, which correlates its chunks. It is set when chunking only and
+    ///     it can't be renamed.
+    /// </summary>
+    public const string ChunkMessageId = "x-chunk-message-id";
 }

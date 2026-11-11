@@ -27,8 +27,7 @@ services.AddSilverback()
                 .EnableBatchProcessing(1000, TimeSpan.FromSeconds(30)))));
 ```
 
-> [!Note]
-> Batch processing is currently supported for Kafka only.
+With MQTT, batch processing requires MQTT 5 (see [MQTT](#mqtt) below).
 
 ## Subscribing to Batches
 
@@ -71,10 +70,33 @@ public async Task HandleAsync(IAsyncEnumerable<IInboundEnvelope<MyMessage>> enve
 > If the subscriber throws, the configured error policy applies to the whole batch.
 
 > [!Note]
-> A batch per topic partition is created by default. You can decide to process all partitions together by calling `ProcessAllPartitionsTogether` on the consumer configuration and that will create a single batch for all the topics consumed by the consumer, which must then use the same batch settings for all its endpoints (see [Parallelism](xref:consuming#parallelism)).
+> With Kafka, a batch per topic partition is created by default. You can decide to process all partitions together by calling `ProcessAllPartitionsTogether` on the consumer configuration and that will create a single batch for all the topics consumed by the consumer, which must then use the same batch settings for all its endpoints (see [Parallelism](xref:consuming#parallelism)).
 
 > [!Tip]
 > While the batch is enumerated, the current `Activity` continues the trace of the message being processed. Avoid buffering the batch (e.g. with `ToList()`) if the trace of each message must be preserved. See <xref:consuming-tracing> for details.
+
+## MQTT
+
+Batch processing requires MQTT 5 and is configured in the same way:
+
+```csharp
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddMqtt())
+    .AddMqttClients(clients => clients
+        .ConnectViaTcp("localhost")
+        .AddClient("my-client", client => client
+            .WithClientId("client1")
+            .EnableParallelProcessing(4)
+            .Consume<MyMessage>("endpoint1", endpoint => endpoint
+                .ConsumeFrom("messages/my")
+                .WithAtLeastOnceQoS()
+                .EnableBatchProcessing(100, TimeSpan.FromSeconds(5)))));
+```
+
+- Each parallel execution (see `EnableParallelProcessing` in [Parallelism](xref:consuming#parallelism)) builds its own batch, and the subscriber processes up to `MaxDegreeOfParallelism` batches at the same time. The messages are spread round-robin across them, so each batch fills that many times more slowly: at low message rates, the batches are usually completed by the max wait time rather than by the batch size. Use a single parallel execution (the default) to preserve the order of the messages.
+- All the consumer endpoints of the client share the same batches and must therefore use the same batch settings. A batch can contain messages from different endpoints: handle it with a single subscriber of a common message type and use the same error policy for all the endpoints, since the policy of the endpoint of the first message of the batch applies to the whole batch. Use separate clients for the endpoints that need different settings.
+- The messages are acknowledged when their batch is processed. With QoS 1 or 2, the broker stops delivering when too many messages are waiting for acknowledgment, which could prevent a batch from being completed: the max wait time is therefore required, and the batch size multiplied by the `MaxDegreeOfParallelism` must not exceed the `ReceiveMaximum` of the client (65,535 by default, see `LimitUnacknowledgedPublications`). The broker can also enforce a lower limit (e.g. `max_inflight_messages` in Mosquitto): check its configuration. The consumer logs the minimum number of unacknowledged messages the broker must allow when it's created. With chunked messages (see <xref:consuming-chunking>), each chunk is acknowledged with its batch, so the batches need that many times more.
+- MQTT can't seek: when a batch is rolled back to be retried (e.g. by the `Retry` error policy), its messages are replayed from memory, in the same order. The messages of a batch that is pending when the client disconnects are replayed by the broker, provided that a persistent session and QoS 1 or 2 are used.
 
 ## Multiple Subscribers
 

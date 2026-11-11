@@ -30,6 +30,8 @@ services.AddSilverback()
 > [!Important]
 > The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition. If using Kafka see also <xref:kafka-partitioning>.
 
+With MQTT, chunking requires MQTT 5 and is useful with the brokers limiting the message size (e.g. cloud brokers allowing only small messages). The chunks of the same message are correlated by the `x-chunk-message-id` user property and must be produced to the same topic with the same QoS, since MQTT only preserves the order of those messages. Chunking can't be enabled for retained messages, since the broker retains only the last chunk, and the chunks can't be consumed through a shared subscription, which spreads them across the consumers. See also <xref:consuming-chunking> for the requirements on the consumer side.
+
 ## Additional Resources
 
 - [API Reference](xref:Silverback)

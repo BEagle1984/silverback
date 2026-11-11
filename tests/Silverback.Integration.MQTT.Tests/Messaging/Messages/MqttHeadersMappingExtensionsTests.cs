@@ -89,4 +89,49 @@ public class MqttHeadersMappingExtensionsTests
             new MqttUserProperty("two", "2")
         ]);
     }
+
+    [Fact]
+    public void ToUserProperties_ShouldAddChunkMessageId_WhenChunkingIsEnabled()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.MessageKey, "message1" },
+            { "x-ch-idx", "0" }
+        };
+
+        List<MqttUserProperty> userProperties = headers.ToUserProperties(true);
+
+        userProperties.ShouldBe(
+        [
+            new MqttUserProperty("x-ch-idx", "0"),
+            new MqttUserProperty(MqttMessageHeaders.ChunkMessageId, "message1")
+        ]);
+    }
+
+    [Fact]
+    public void ToUserProperties_ShouldNotAddChunkMessageId_WhenChunkingIsNotEnabled()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.MessageKey, "message1" },
+            { DefaultMessageHeaders.ChunkIndex, "0" }
+        };
+
+        List<MqttUserProperty> userProperties = headers.ToUserProperties();
+
+        userProperties.ShouldBe([new MqttUserProperty(DefaultMessageHeaders.ChunkIndex, "0")]);
+    }
+
+    [Fact]
+    public void ToUserProperties_ShouldNotAddChunkMessageId_WhenMessageKeyIsNotSet()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.ChunkIndex, "0" }
+        };
+
+        List<MqttUserProperty> userProperties = headers.ToUserProperties(true);
+
+        userProperties.ShouldBe([new MqttUserProperty(DefaultMessageHeaders.ChunkIndex, "0")]);
+    }
 }

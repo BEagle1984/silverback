@@ -36,6 +36,14 @@ internal static partial class MqttLoggerExtensions
             consumer.DisplayName,
             exception);
 
+    public static void LogBatchProcessingEnabled(this ISilverbackLogger logger, MqttConsumer consumer) =>
+        BatchProcessingEnabled(
+            logger.InnerLogger,
+            consumer.Configuration.MaxBatchedMessagesCount,
+            consumer.Configuration.BatchSize ?? 1,
+            consumer.Configuration.MaxDegreeOfParallelism,
+            consumer.DisplayName);
+
     public static void LogNoMatchingSubscribers(this ISilverbackLogger logger, string topic) =>
         NoMatchingSubscribers(logger.InnerLogger, topic);
 
@@ -205,6 +213,25 @@ internal static partial class MqttLoggerExtensions
         string topic,
         string consumerName,
         Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a consumer with batch processing and QoS 1 or 2
+    ///     is created. The messages are acknowledged when their batch is processed, and the broker stops delivering when too many
+    ///     messages are waiting for acknowledgment: the broker must allow at least the logged number of unacknowledged messages
+    ///     (more with chunked messages, since each chunk is acknowledged with its batch).
+    /// </summary>
+    [LoggerMessage(
+        4014,
+        LogLevel.Information,
+        "Batch processing enabled: the broker must allow at least {MaxPendingMessages} unacknowledged messages " +
+        "(batch size {BatchSize}, max degree of parallelism {MaxDegreeOfParallelism}) | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.MQTT_BatchProcessingEnabled")]
+    private static partial void BatchProcessingEnabled(
+        ILogger logger,
+        long maxPendingMessages,
+        int batchSize,
+        int maxDegreeOfParallelism,
+        string consumerName);
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when no matching subscribers are found for a produced message.
