@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -168,16 +167,22 @@ public sealed class ConsumerPipelineContext : IDisposable
     /// </returns>
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers()
     {
-        // Always roll back all pending sequences because we assume that they will all be aborted anyway
-        IReadOnlyCollection<ISequence> pendingSequences = SequenceStore.GetPendingSequences();
+        // Roll back the failed message (or its sequence) and all the pending sequences, which are aborted anyway: the consumer rolls
+        // back to the lowest of these identifiers, like a seek. The failed sequence isn't necessarily pending anymore (e.g. a batch
+        // completed by the timeout leaves the store before the error policies are applied, while the next batch may start in the
+        // meantime) and a pending sequence doesn't necessarily track any message (e.g. a batch started by an ignored message).
+        HashSet<IBrokerMessageIdentifier> identifiers = [Envelope.BrokerMessageIdentifier];
 
-        if (pendingSequences.Count == 0)
-            return [Envelope.BrokerMessageIdentifier];
+        if (Sequence != null)
+            identifiers.UnionWith(Sequence.GetRollbackIdentifiers());
 
-        if (pendingSequences.Count == 1)
-            return pendingSequences.Single().GetRollbackIdentifiers();
+        foreach (ISequence pendingSequence in SequenceStore.GetPendingSequences())
+        {
+            if (pendingSequence != Sequence)
+                identifiers.UnionWith(pendingSequence.GetRollbackIdentifiers());
+        }
 
-        throw new InvalidOperationException("Concurrent sequences not supported.");
+        return identifiers;
     }
 
     /// <summary>

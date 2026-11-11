@@ -23,6 +23,8 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
     private bool _isConsumerCommitted;
 
+    private volatile bool _isConsumerRolledBack;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerTransactionManager" /> class.
     /// </summary>
@@ -49,6 +51,12 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
     /// <inheritdoc cref="IConsumerTransactionManager.Aborted" />
     public AsyncEvent<ConsumerPipelineContext> Aborted { get; } = new();
+
+    /// <summary>
+    ///     Gets a value indicating whether the transaction was rolled back without committing the consumer (e.g. to retry the message),
+    ///     so that the rolled back messages and the later ones are consumed again. It's set as soon as the rollback starts.
+    /// </summary>
+    internal bool IsConsumerRolledBack => _isConsumerRolledBack;
 
     /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
     public Task CommitAsync()
@@ -116,6 +124,10 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     private async Task<bool> RollbackCoreAsync(Exception? exception, bool commitConsumer, bool stopConsuming)
     {
         _logger.LogConsumerTransactionAborting(_context.Envelope, exception);
+
+        // Set before invoking the handlers, which may fail: the consumer isn't committed in any case
+        if (!commitConsumer)
+            _isConsumerRolledBack = true;
 
         await Aborting.InvokeAsync(_context).ConfigureAwait(false);
 

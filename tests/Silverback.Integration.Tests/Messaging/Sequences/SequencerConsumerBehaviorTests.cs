@@ -97,6 +97,75 @@ public class SequencerConsumerBehaviorTests
         abortReason.ShouldBe(expectedReason);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task HandleAsync_ShouldAddRefusedMessageToNewSequenceUnlessStopping_WhenRefusingSequenceIsCommittedOnAbort(bool isStopping)
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        using CancellationTokenSource cancellationTokenSource = new();
+
+        if (isStopping)
+            await cancellationTokenSource.CancelAsync();
+
+        // The sequence refused the message because of its timeout and was then committed on abort (e.g. skipped)
+        TaskCompletionSource abortTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        abortTaskCompletionSource.SetResult();
+        ISequence refusingSequence = CreateSequence("refusing", new AddToSequenceResult(false, AbortTask: abortTaskCompletionSource.Task));
+        ISequence newSequence = CreateSequence("new", AddToSequenceResult.Success(1));
+        int getSequenceCount = 0;
+
+        ISequenceReader sequenceReader = Substitute.For<ISequenceReader>();
+        sequenceReader.CanHandleAsync(context).Returns(true);
+        sequenceReader.GetSequenceAsync(context)
+            .Returns(_ => ValueTask.FromResult(Interlocked.Increment(ref getSequenceCount) == 1 ? refusingSequence : newSequence));
+
+        SequencerConsumerBehavior behavior = new([sequenceReader], Substitute.For<ISilverbackLogger<SequencerConsumerBehavior>>());
+
+        await behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        // When stopping, the message is left out (and consumed again after the restart), like when refused by an aborted sequence
+        await newSequence.Received(isStopping ? 0 : 1).AddAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<ISequence?>(), Arg.Any<bool>());
+        context.Sequence.ShouldBe(isStopping ? refusingSequence : newSequence);
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task HandleAsync_ShouldNotPublishNewSequence_WhenConsumerIsStopping()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        using CancellationTokenSource cancellationTokenSource = new();
+
+        // Stopped while the new sequence was waiting for the previous ones (e.g. by the error policies of the previous batch)
+        await cancellationTokenSource.CancelAsync();
+        ISequence newSequence = CreateSequence("new", AddToSequenceResult.Success(1));
+        newSequence.IsNew.Returns(true);
+
+        ISequenceReader sequenceReader = Substitute.For<ISequenceReader>();
+        sequenceReader.CanHandleAsync(context).Returns(true);
+        sequenceReader.GetSequenceAsync(context).Returns(newSequence);
+
+        SequencerConsumerBehavior behavior = new([sequenceReader], Substitute.For<ISilverbackLogger<SequencerConsumerBehavior>>());
+        bool isPublished = false;
+
+        // The stop cancellation rolls back the message, without applying the error policies
+        await Should.ThrowAsync<OperationCanceledException>(() => behavior.HandleAsync(
+                context,
+                (_, _) =>
+                {
+                    isPublished = true;
+                    return ValueTask.CompletedTask;
+                },
+                cancellationTokenSource.Token)
+            .AsTask()
+            .WaitAsync(Timeout));
+
+        isPublished.ShouldBeFalse();
+        await newSequence.DidNotReceive().AddAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<ISequence?>(), Arg.Any<bool>());
+        await newSequence.Received(1).AbortAsync(SequenceAbortReason.ConsumerAborted, Arg.Any<OperationCanceledException>());
+    }
+
     private static ISequence CreateSequence(string sequenceId, AddToSequenceResult addToSequenceResult)
     {
         ISequence sequence = Substitute.For<ISequence>();

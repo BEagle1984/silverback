@@ -17,6 +17,8 @@ using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
@@ -420,6 +422,112 @@ public class SequenceBaseTests
         sequence.Dispose();
     }
 
+    [Theory]
+    [InlineData("skip")]
+    [InlineData("enumeration-aborted")]
+    public async Task AddAsync_ShouldFailWithoutAborting_WhenRefusedByTimeoutAndSequenceIsCommittedOnAbort(string abort)
+    {
+        AddToSequenceResult result = await AddRefusedByTimeoutAsync(abort);
+
+        // The message didn't join the committed sequence: the sequencer adds it to a new sequence, unless stopping (see AbortTask)
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+    }
+
+    [Theory]
+    [InlineData("retry")]
+    [InlineData("incomplete")]
+    [InlineData("consumer-aborted")]
+    [InlineData("disposing")]
+    public async Task AddAsync_ShouldReturnAborted_WhenRefusedByTimeoutAndSequenceIsNotCommittedOnAbort(string abort)
+    {
+        AddToSequenceResult result = await AddRefusedByTimeoutAsync(abort);
+
+        // The message is consumed again after the rollback (or the restart), or discarded with the incomplete sequence
+        result.IsAborted.ShouldBeTrue();
+    }
+
+    private static async Task<AddToSequenceResult> AddRefusedByTimeoutAsync(string abort)
+    {
+        HookLogger logger = new();
+        IErrorPolicy errorPolicy = abort == "retry" ? new RetryErrorPolicy { MaxFailedAttempts = 2 } : new SkipMessageErrorPolicy();
+        using TimeoutTestSequence sequence = CreateTimeoutSequence(logger, errorPolicy);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream)
+                {
+                    // Just consume the stream
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // The stream is aborted with the sequence
+            }
+        });
+
+        AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+
+        // The timer is held while handling the timeout, so that the sequence is still pending when the next message is added
+        await sequence.TimeoutElapsed.WaitAsync(Timeout);
+
+        TaskCompletionSource addRefused = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        logger.OnLog("Operation canceled, skipping add to {SequenceType} '{SequenceId}' and waiting until it is completed.", addRefused.SetResult);
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), null, true);
+        await addRefused.Task.WaitAsync(Timeout);
+
+        try
+        {
+            Task abortTask = abort switch
+            {
+                "skip" or "retry" => sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test")),
+                "enumeration-aborted" => sequence.AbortAsync(SequenceAbortReason.EnumerationAborted),
+                "incomplete" => sequence.AbortAsync(SequenceAbortReason.IncompleteSequence),
+                "consumer-aborted" => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted),
+                _ => sequence.AbortAsync(SequenceAbortReason.Disposing)
+            };
+
+            await abortTask.WaitAsync(Timeout);
+
+            return await addTask.WaitAsync(Timeout);
+        }
+        finally
+        {
+            sequence.ReleaseTimeout();
+        }
+    }
+
+    private static TimeoutTestSequence CreateTimeoutSequence(HookLogger logger, IErrorPolicy errorPolicy)
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
+        {
+            services
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker();
+
+            services.AddSingleton<ISilverbackLogger<SequenceBase<IRawInboundEnvelope>>>(logger);
+        });
+
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            [],
+            new TestConsumerEndpointConfiguration("test") { ErrorPolicy = errorPolicy }.GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        // A real transaction manager, tracking whether the error policy rolled back the consumer
+        ConsumerTransactionManager transactionManager = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        return new TimeoutTestSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider, transactionManager));
+    }
+
     private static TestSequence CreateSequence(HookLogger logger, ISequenceStore? sequenceStore = null)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
@@ -456,6 +564,29 @@ public class SequenceBaseTests
         }
 
         public Task CompleteFromTestAsync() => CompleteAsync();
+    }
+
+    // Holds the timer while handling the elapsed timeout, so that the sequence is still pending after its timeout elapsed
+    private sealed class TimeoutTestSequence : SequenceBase<IRawInboundEnvelope>
+    {
+        private readonly TaskCompletionSource _timeoutElapsed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        private readonly TaskCompletionSource _releaseTimeout = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TimeoutTestSequence(ConsumerPipelineContext context)
+            : base("timeout-test-sequence", context, enforceTimeout: true, timeout: TimeSpan.FromMilliseconds(50), trackIdentifiers: false)
+        {
+        }
+
+        public Task TimeoutElapsed => _timeoutElapsed.Task;
+
+        public void ReleaseTimeout() => _releaseTimeout.TrySetResult();
+
+        protected override Task OnTimeoutElapsedAsync()
+        {
+            _timeoutElapsed.TrySetResult();
+            return _releaseTimeout.Task;
+        }
     }
 
     // Runs the registered action (once) when the message with the specified template is logged, to deterministically reproduce

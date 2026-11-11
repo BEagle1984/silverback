@@ -37,6 +37,31 @@ public class ConsumerTransactionManagerTests
         await context.Consumer.DidNotReceive().StopAsync(Arg.Any<bool>());
     }
 
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public async Task RollbackAsync_ShouldSetIsConsumerRolledBack_WhenNotCommittingConsumer(bool commitConsumer, bool expectedIsConsumerRolledBack)
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        transaction.IsConsumerRolledBack.ShouldBeFalse();
+
+        await transaction.RollbackAsync(null, commitConsumer, stopConsuming: false);
+
+        transaction.IsConsumerRolledBack.ShouldBe(expectedIsConsumerRolledBack);
+    }
+
+    [Fact]
+    public async Task CommitAsync_ShouldNotSetIsConsumerRolledBack()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        await transaction.CommitAsync();
+
+        transaction.IsConsumerRolledBack.ShouldBeFalse();
+    }
+
     [Fact]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task RollbackAsync_ShouldRollback_WhenCommitFailed()

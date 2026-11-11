@@ -539,8 +539,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 return ValueTask.CompletedTask;
             }
 
+            // The rollback can include several offsets per partition (e.g. the failed batch and the batch started in the meantime):
+            // seek to the lowest one, to consume all of them again
             IEnumerable<KafkaOffset> offsets = Configuration.ProcessPartitionsIndependently
-                ? currentOffsets
+                ? GetLowestOffsetPerPartition(currentOffsets)
                 : _offsets.GetRollbackOffSets();
 
             foreach (KafkaOffset offset in offsets)
@@ -593,6 +595,13 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         _isDisposed = true;
     }
+
+    // The special offsets (e.g. unset) compare lower than any actual offset: prefer the actual ones
+    private static IEnumerable<KafkaOffset> GetLowestOffsetPerPartition(IEnumerable<KafkaOffset> offsets) =>
+        offsets
+            .GroupBy(offset => offset.TopicPartition)
+            .Select(partitionOffsets => partitionOffsets.Aggregate((lowest, offset) =>
+                !offset.IsSpecial && (lowest.IsSpecial || offset < lowest) ? offset : lowest));
 
     private ValueTask OnClientConnectedAsync(BrokerClient client)
     {

@@ -13,6 +13,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
@@ -46,6 +47,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly TaskCompletionSource _disposeTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
+    // The child sequences (_sequences) are added by the reader, while the identifiers may be read by the rollback of another sequence
+    // (see ConsumerPipelineContext.GetRollbackIdentifiers)
+    private readonly System.Threading.Lock _sequencesLock = new();
+
     // The state and the completing flag are also read without holding the semaphores (e.g., when the processing completes). They are
     // volatile because the readers rely on the order of the updates: IsCompleting is reset only after the state is switched to complete,
     // while _abortingTaskCompletionSource, the abort reason and the abort exception are set before the state is switched to aborted.
@@ -67,6 +72,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     private List<ISequence>? _sequences;
 
     private bool _isTimeoutTimerInitialized;
+
+    // Set by AddCoreAsync when it refuses the message because the timeout elapsed: accessed only holding the add semaphore
+    private bool _isAddRefusedByTimeout;
 
     private bool _isDisposed;
 
@@ -142,7 +150,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
 
     /// <inheritdoc cref="ISequence.Sequences" />
-    public IReadOnlyCollection<ISequence> Sequences => _sequences?.AsReadOnlyCollection() ?? [];
+    public IReadOnlyCollection<ISequence> Sequences => GetSequencesSnapshot();
 
     /// <inheritdoc cref="ISequence.Context" />
     public ConsumerPipelineContext Context { get; }
@@ -194,6 +202,15 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </summary>
     private protected virtual bool IsRemovedFromStoreOnAbort => true;
 
+    /// <summary>
+    ///     Gets a value indicating whether the sequence aborted by an error is removed from the store only after the error policies
+    ///     committed or rolled it back, instead of before applying them. The next messages wait for the sequences in the store before
+    ///     starting a new one (see SequenceReaderBase), so that a sequence started while the failed one is being handled (e.g. after a
+    ///     batch completed by the timeout, while the reader moved on) can't be committed first, which with Kafka would implicitly commit
+    ///     the failed one as well.
+    /// </summary>
+    private protected virtual bool IsRemovedFromStoreAfterErrorHandling => false;
+
     /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
     void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
 
@@ -209,7 +226,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     void ISequenceImplementation.NotifyProcessingCompleted()
     {
         _processingCompleteTaskCompletionSource.TrySetResult(true);
-        _sequences?.OfType<ISequenceImplementation>().ToList().ForEach(CompleteLinkedSequence); // Copy the list to avoid concurrent modification exception
+        GetSequencesSnapshot().OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
     }
 
     /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
@@ -218,7 +235,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _processingCompleteTaskCompletionSource.TrySetException(exception);
 
         // Don't forward the error, it's enough to handle it once
-        _sequences?.OfType<ISequenceImplementation>().ToList().ForEach(CompleteLinkedSequence); // Copy the list to avoid concurrent modification exception
+        GetSequencesSnapshot().OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
         _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
     }
 
@@ -247,10 +264,19 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             _logger.LogSequenceAddCanceled(this, ex);
 
+            bool isRefusedByTimeout = _isAddRefusedByTimeout;
+            _isAddRefusedByTimeout = false;
+
             _addSemaphoreSlim.Release(); // Release the semaphore to allow the abort to complete and avoid deadlocks
             lockReleased = true;
 
             await _processingCompleteTaskCompletionSource.Task.ConfigureAwait(false);
+
+            // The message refused because of the timeout isn't committed with the sequence: fail without aborting, so that the message is
+            // added to a new sequence instead of being lost, unless the sequence was rolled back (consuming the message again). The abort
+            // task tells the sequencer that the sequence was aborted anyway (see SequencerConsumerBehaviorBase).
+            if (isRefusedByTimeout && IsCommittedOnAbort())
+                return new AddToSequenceResult(false, AbortTask: _abortingTaskCompletionSource?.Task);
 
             return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
         }
@@ -324,9 +350,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers()
     {
         // Merge identifiers from the child sequences to ensure that they are all taken into account for the commit
-        if (_sequences != null && _identifiersTracker != null)
+        if (_identifiersTracker != null)
         {
-            foreach (IBrokerMessageIdentifier offset in _sequences.SelectMany(sequence => sequence.GetCommitIdentifiers()))
+            foreach (IBrokerMessageIdentifier offset in GetSequencesSnapshot().SelectMany(sequence => sequence.GetCommitIdentifiers()))
             {
                 _identifiersTracker?.TrackIdentifier(offset);
             }
@@ -339,9 +365,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers()
     {
         // Merge identifiers from the child sequences to ensure that they are all taken into account for the rollback
-        if (_sequences != null && _identifiersTracker != null)
+        if (_identifiersTracker != null)
         {
-            foreach (IBrokerMessageIdentifier offset in _sequences.SelectMany(sequence => sequence.GetRollbackIdentifiers()))
+            foreach (IBrokerMessageIdentifier offset in GetSequencesSnapshot().SelectMany(sequence => sequence.GetRollbackIdentifiers()))
             {
                 _identifiersTracker?.TrackIdentifier(offset);
             }
@@ -396,8 +422,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         if (_enforceTimeout)
         {
+            // The timer will complete or abort the sequence: refuse the message, which doesn't join the sequence
             if (IsTimeoutElapsed())
+            {
+                _isAddRefusedByTimeout = true;
                 throw new OperationCanceledException("The sequence timed out.");
+            }
 
             ResetTimeout();
             InitTimeoutTimer();
@@ -405,8 +435,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         if (sequence != null && sequence != this)
         {
-            _sequences ??= [];
-            _sequences.Add(sequence);
+            lock (_sequencesLock)
+            {
+                _sequences ??= [];
+                _sequences.Add(sequence);
+            }
+
             (sequence as ISequenceImplementation)?.SetParentSequence(this);
         }
 
@@ -572,7 +606,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _disposeTaskCompletionSource.TrySetResult();
 
         _streamProvider.Dispose();
-        _sequences?.ForEach(sequence => sequence.Dispose());
+        GetSequencesSnapshot().ForEach(sequence => sequence.Dispose());
         _addSemaphoreSlim.Dispose();
         _addCancellationTokenSource.Dispose();
         _completeSemaphoreSlim.Dispose();
@@ -613,8 +647,20 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         if (_identifiersTracker == null)
         {
-            _sequences?.Remove(sequence);
+            lock (_sequencesLock)
+            {
+                _sequences?.Remove(sequence);
+            }
+
             sequence.Dispose();
+        }
+    }
+
+    private ISequence[] GetSequencesSnapshot()
+    {
+        lock (_sequencesLock)
+        {
+            return _sequences == null ? [] : [.. _sequences];
         }
     }
 
@@ -627,6 +673,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     }
 
     private bool IsTimeoutElapsed() => DateTime.UtcNow > _timeoutExpiration;
+
+    // The sequence aborted by the error policies (e.g. skipped) or because the subscriber stopped enumerating is committed, unless its
+    // transaction was rolled back (e.g. to be retried). The other aborts (e.g. the incomplete sequences or the consumer stop) aren't
+    // affected by the messages they refused.
+    private bool IsCommittedOnAbort() =>
+        AbortReason is SequenceAbortReason.Error or SequenceAbortReason.EnumerationAborted &&
+        Context.TransactionManager is not ConsumerTransactionManager { IsConsumerRolledBack: true };
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async ValueTask<bool> EnforceTimeoutAsync()
@@ -740,11 +793,18 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             try
             {
-                if (IsRemovedFromStoreOnAbort)
+                bool isRemovedAfterErrorHandling =
+                    IsRemovedFromStoreOnAbort && AbortReason == SequenceAbortReason.Error && IsRemovedFromStoreAfterErrorHandling;
+
+                if (IsRemovedFromStoreOnAbort && !isRemovedAfterErrorHandling)
                     await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
 
                 if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
                     LogAbort();
+
+                // Removed before completing the abort, which the next messages wait for before starting a new sequence
+                if (isRemovedAfterErrorHandling)
+                    await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
             }
             finally
             {

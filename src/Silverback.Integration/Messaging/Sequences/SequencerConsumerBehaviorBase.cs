@@ -177,6 +177,17 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
             Activity.Current?.SetTag(ActivityTagNames.SequenceId, sequence.SequenceId);
 
+            // The consumer may have been stopped while the new sequence waited for the previous ones (e.g. by the error policies of the
+            // previous batch): don't publish it, since it could be committed past the previous one, but roll back the message, which is
+            // consumed again after the restart. The sequence is aborted here, since the stop cancellation doesn't necessarily reach the
+            // transaction handler of its context (e.g. when the message is chunked).
+            if (sequence.IsNew && cancellationToken.IsCancellationRequested)
+            {
+                OperationCanceledException stopCancellation = new(cancellationToken);
+                await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted, stopCancellation).ConfigureAwait(false);
+                throw stopCancellation;
+            }
+
             await PublishSequenceIfNewAsync(context, next, sequence, cancellationToken).ConfigureAwait(false);
 
             addToSequenceResult = await sequence.AddAsync(
@@ -200,6 +211,16 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                 await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
 
             failedSequence = addToSequenceResult.IsSuccess ? null : sequence;
+
+            // The message refused by a sequence that was committed on abort (see SequenceBase.AddAsync) is added to a new sequence,
+            // unless the consumer is stopping: the new sequence would be aborted by the stop (and could even commit the message without
+            // processing it, if the subscribers return without pulling it), while the message is consumed again after the restart
+            if (addToSequenceResult is { IsSuccess: false, IsAborted: false, AbortTask: { } refusingSequenceAbortTask } &&
+                cancellationToken.IsCancellationRequested)
+            {
+                await refusingSequenceAbortTask.ConfigureAwait(false);
+                return sequence;
+            }
         }
         while (addToSequenceResult is { IsSuccess: false, IsAborted: false });
 
