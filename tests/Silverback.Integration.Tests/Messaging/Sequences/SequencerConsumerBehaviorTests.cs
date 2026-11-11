@@ -239,6 +239,40 @@ public class SequencerConsumerBehaviorTests
         await newSequence.Received(isStopping ? 0 : 1).AddAsync(Arg.Any<IRawInboundEnvelope>(), previousSequence, Arg.Any<bool>());
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task HandleAsync_ShouldAbortPreviousSequenceUnlessAdded_WhenRefusedByAbortedSequence(bool isPreviousSequenceAdded)
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+
+        // The chunk sequence of a chunked message, to be added to the batch
+        ISequence previousSequence = CreateSequence("previous", AddToSequenceResult.Success(1));
+        context.SetSequence(previousSequence, true);
+
+        // The batch refused the message (e.g. because of the timeout) and was then rolled back (e.g. retried)
+        TaskCompletionSource abortTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        abortTaskCompletionSource.SetResult();
+        ISequence abortedSequence = CreateSequence("aborted", AddToSequenceResult.Aborted(abortTaskCompletionSource.Task));
+
+        if (isPreviousSequenceAdded)
+            previousSequence.ParentSequence.Returns(abortedSequence);
+
+        ISequenceReader sequenceReader = Substitute.For<ISequenceReader>();
+        sequenceReader.CanHandleAsync(context).Returns(true);
+        sequenceReader.GetSequenceAsync(context).Returns(abortedSequence);
+
+        SequencerConsumerBehavior behavior = new([sequenceReader], Substitute.For<ISilverbackLogger<SequencerConsumerBehavior>>());
+
+        await behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The previous sequence left out of the aborted one is rolled back as well, not to be left in the store forever, while the one
+        // added to it is completed by its abort
+        await previousSequence.Received(isPreviousSequenceAdded ? 0 : 1)
+            .AbortAsync(SequenceAbortReason.ConsumerAborted, Arg.Any<Exception?>());
+    }
+
     [Fact]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited before the disposal")]

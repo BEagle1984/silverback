@@ -157,12 +157,13 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     }
 
     // The previous sequence (e.g. the chunk sequence of a chunked message) is completed with the sequence it's added to (e.g. the batch).
-    // When the stop leaves the message out, abort it like the stop aborts the pending sequences, since it may be complete already and
-    // nothing else would remove it from the store or complete its processing, which the stop awaits.
-    private static async Task AbortPreviousSequenceIfNotAddedAsync(ISequence? previousSequence, OperationCanceledException stopCancellation)
+    // When the message is left out (by the stop or by the aborted sequence that refused it), abort it like the stop aborts the pending
+    // sequences, rolling it back, since it may be complete already and nothing else would remove it from the store or complete its
+    // processing, which the stop and the rollback await.
+    private static async Task AbortPreviousSequenceIfNotAddedAsync(ISequence? previousSequence, Exception? exception)
     {
         if (previousSequence is { ParentSequence: null })
-            await previousSequence.AbortAsync(SequenceAbortReason.ConsumerAborted, stopCancellation).ConfigureAwait(false);
+            await previousSequence.AbortAsync(SequenceAbortReason.ConsumerAborted, exception).ConfigureAwait(false);
     }
 
     private async Task<ISequence?> AddMessageToSequenceAsync(
@@ -243,6 +244,10 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             // continue before the abort and miss the exception
             if (addToSequenceResult.AbortTask != null)
                 await addToSequenceResult.AbortTask.ConfigureAwait(false);
+
+            // The message is rolled back with the aborted sequence, which it didn't join (e.g. refused because of the timeout or because
+            // the sequence was aborted after being found pending)
+            await AbortPreviousSequenceIfNotAddedAsync(previousSequence, sequence.AbortException).ConfigureAwait(false);
         }
         else
         {
