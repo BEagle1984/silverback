@@ -90,20 +90,21 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
 
     protected override Task StopReadingAsync(ConsumerChannel channel)
     {
-        // Incremented before the reading is canceled, to skip the restarts that would otherwise resume the stopped reader
+        Task stopReadingTask;
+
+        // All in one go, so that a restart can't run in between: when the consumer is disconnected, the restart doesn't see it stopping
+        // yet and would otherwise resume the reader, if it captured the new generation before the requests are cleared
         lock (_restartLock)
         {
+            // Incremented before the reading is canceled, to skip the restarts that would otherwise resume the stopped reader
             _stopGeneration++;
-        }
 
-        // Cancels the reading synchronously, before awaiting the reader
-        Task stopReadingTask = base.StopReadingAsync(channel);
+            // Cancels the reading synchronously, before awaiting the reader
+            stopReadingTask = base.StopReadingAsync(channel);
 
-        // The stop takes over the pending restart requests: the messages to replay are processed when the reader is started again.
-        // Cleared only after canceling the reading, since the pending requests keep the reader from taking the messages to replay
-        // (into the sequences that the restart would abort).
-        lock (_restartLock)
-        {
+            // The stop takes over the pending restart requests: the messages to replay are processed when the reader is started again.
+            // Cleared only after canceling the reading, since the pending requests keep the reader from taking the messages to replay
+            // (into the sequences that the restart would abort).
             channel.ClearRestartRequests();
         }
 
