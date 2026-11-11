@@ -437,6 +437,86 @@ public class TransactionHandlerConsumerBehaviorTests
     }
 
     [Fact]
+    public async Task HandleAsync_ShouldAbortOuterSequenceOnly_WhenOuterSequenceStartedByContextFails()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        InvalidOperationException exception = new("test");
+        (ISequence innerSequence, Task innerContextRead, Task innerDisposed) = CreateInnerSequence(context);
+        ISequence outerSequence = Substitute.For<ISequence>();
+        outerSequence.Context.Returns(context);
+
+        // The failed processing task aborts the outer sequence with its exception before rethrowing it
+        outerSequence.AbortException.Returns(exception);
+        TaskCompletionSource innerProcessingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource outerProcessingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(innerSequence, true);
+                pipelineContext.ProcessingTask = innerProcessingTaskCompletionSource.Task;
+                return ValueTask.CompletedTask;
+            },
+            default).AsTask().WaitAsync(Timeout);
+
+        // The awaiter references the inner sequence (e.g., a chunk sequence) when the message is added to the outer sequence it starts
+        // (e.g., a batch), whose processing fails
+        await innerContextRead.WaitAsync(Timeout);
+        context.SetSequence(outerSequence, true);
+        context.ProcessingTask = outerProcessingTaskCompletionSource.Task;
+        innerProcessingTaskCompletionSource.SetResult();
+        outerProcessingTaskCompletionSource.SetException(exception);
+
+        await innerDisposed.WaitAsync(Timeout);
+
+        await outerSequence.Received(1).AbortAsync(SequenceAbortReason.Error, exception);
+        await innerSequence.DidNotReceive().AbortAsync(Arg.Any<SequenceAbortReason>(), Arg.Any<Exception?>());
+        outerSequence.Received(1).Dispose();
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task HandleAsync_ShouldAbortInnerSequence_WhenInnerSequenceProcessingFails(bool isOuterSequenceSet, bool isOuterSequenceStart)
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        InvalidOperationException exception = new("test");
+        (ISequence innerSequence, Task innerContextRead, Task innerDisposed) = CreateInnerSequence(context);
+        ISequence outerSequence = Substitute.For<ISequence>();
+        outerSequence.Context.Returns(context);
+        TaskCompletionSource innerProcessingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(innerSequence, true);
+                pipelineContext.ProcessingTask = innerProcessingTaskCompletionSource.Task;
+                return ValueTask.CompletedTask;
+            },
+            default).AsTask().WaitAsync(Timeout);
+
+        // The message might be added to an outer sequence started by another message, whose processing task isn't awaited, or start an
+        // outer sequence and fail before being added to it (e.g., because the subscribers can't be invoked), not aborting it
+        await innerContextRead.WaitAsync(Timeout);
+
+        if (isOuterSequenceSet)
+            context.SetSequence(outerSequence, isOuterSequenceStart);
+
+        innerProcessingTaskCompletionSource.SetException(exception);
+
+        await innerDisposed.WaitAsync(Timeout);
+
+        await innerSequence.Received(1).AbortAsync(SequenceAbortReason.Error, exception);
+        await outerSequence.DidNotReceive().AbortAsync(Arg.Any<SequenceAbortReason>(), Arg.Any<Exception?>());
+        outerSequence.DidNotReceive().Dispose();
+    }
+
+    [Fact]
     public async Task HandleAsync_ShouldRethrow_WhenOperationCanceledWithoutStoppingConsumerFailsSequence()
     {
         TestOffset offset = new("test", "1");
@@ -603,6 +683,23 @@ public class TransactionHandlerConsumerBehaviorTests
         IReadOnlyCollection<Task> processingTasks = await streamPublisher.PublishAsync(sequence.StreamProvider);
 
         return processingTasks.Single();
+    }
+
+    // The context read signals that the sequence processing awaiter captured the sequence, since it reads its context right after
+    private static (ISequence Sequence, Task ContextRead, Task Disposed) CreateInnerSequence(ConsumerPipelineContext context)
+    {
+        ISequence sequence = Substitute.For<ISequence>();
+        TaskCompletionSource contextReadTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource disposedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        sequence.Context.Returns(_ =>
+        {
+            contextReadTaskCompletionSource.TrySetResult();
+            return context;
+        });
+        sequence.IsComplete.Returns(true);
+        sequence.When(substitute => substitute.Dispose()).Do(_ => disposedTaskCompletionSource.TrySetResult());
+
+        return (sequence, contextReadTaskCompletionSource.Task, disposedTaskCompletionSource.Task);
     }
 
     private sealed class TestSequence : SequenceBase<IRawInboundEnvelope>

@@ -125,6 +125,17 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         context.UnboundedSequence is UnboundedSequence { IsErrorHandledByAbort: true } unboundedSequence &&
         exception == unboundedSequence.AbortException;
 
+    // The processing of the outer sequence started by the context (e.g., the batch started by a chunked message) can fail while the
+    // inner sequence awaited first, which is complete already, is still referenced. The failed processing task aborts the outer sequence
+    // with its exception, applying the error policies, before rethrowing it (see PublisherConsumerBehavior): abort the outer sequence
+    // again, just awaiting that abort, since aborting the inner sequence would apply the error policies a second time. Otherwise the
+    // exception comes from the inner sequence processing (e.g., failing before the message is added to the outer sequence).
+    private static ISequence GetFailedSequence(ConsumerPipelineContext context, ISequence sequence, Exception exception) =>
+        context.IsSequenceStart && context.Sequence is { } outerSequence && outerSequence != sequence &&
+        outerSequence.AbortException == exception
+            ? outerSequence
+            : sequence;
+
     private async Task AwaitProcessedIfNecessaryAsync(ConsumerPipelineContext context)
     {
         if (context.Sequence == null)
@@ -160,6 +171,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     {
         ISequence sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
         context = sequence.Context;
+        ISequence? failedSequence = null;
 
         try
         {
@@ -195,11 +207,13 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         }
         catch (Exception exception)
         {
-            await sequence.AbortAsync(StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken), exception)
+            failedSequence = GetFailedSequence(context, sequence, exception);
+            await failedSequence.AbortAsync(StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken), exception)
                 .ConfigureAwait(false);
         }
         finally
         {
+            failedSequence?.Dispose();
             sequence.Dispose();
         }
     }
