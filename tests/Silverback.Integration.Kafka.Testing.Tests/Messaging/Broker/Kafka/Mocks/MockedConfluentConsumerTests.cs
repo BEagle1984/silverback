@@ -278,6 +278,7 @@ public class MockedConfluentConsumerTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Not an issue")]
     public void OnPartitionsRevoked_ShouldAutoCommit_WhenRevokedHandlerFails()
     {
         FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
