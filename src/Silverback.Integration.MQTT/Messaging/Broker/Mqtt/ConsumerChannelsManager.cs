@@ -124,7 +124,20 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
         // processing, which is rolled back right away
         ThrowAndPutBackIfCanceled(channel, consumedMessage);
 
-        ConsumerPipelineContext context = await _consumer.HandleMessageAsync(consumedMessage, channel.SequenceStore).ConfigureAwait(false);
+        ConsumerPipelineContext context;
+
+        try
+        {
+            context = await _consumer.HandleMessageAsync(consumedMessage, channel.SequenceStore).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (consumedMessage.TaskCompletionSource.Task.IsFaulted)
+        {
+            // The acknowledgment of the message failed while the reader awaited its sequence (e.g. timed out) and surfaced as a
+            // cancellation through the failed processing (e.g. stopped by the error policy): rethrow the acknowledgment failure, which
+            // disconnects the client, otherwise the reader would exit as canceled, leaving the deliveries pending
+            await consumedMessage.TaskCompletionSource.Task.ConfigureAwait(false);
+            throw;
+        }
 
         ConsumerChannel.PendingState state = channel.Defer(consumedMessage, out int replayCount);
 

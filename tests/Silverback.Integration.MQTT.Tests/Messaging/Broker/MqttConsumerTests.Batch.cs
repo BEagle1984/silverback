@@ -140,6 +140,25 @@ public partial class MqttConsumerTests
         harness.Acknowledged.ShouldBe([UntrackedMessage, .. Enumerable.Range(0, failingMessage)]);
     }
 
+    [Fact]
+    public async Task CommitAsync_ShouldDisconnect_WhenQoS2AcknowledgmentTimesOutWhileReaderAwaitsBatch()
+    {
+        await using BatchConsumerHarness harness = new(MqttQualityOfServiceLevel.ExactlyOnce, 3);
+        harness.FailAcknowledgment(1, new OperationCanceledException("Acknowledgment timed out."));
+
+        // Committed while the reader awaits the batch it completed: the processing fails with the acknowledgment timeout, as when the
+        // error policy (e.g. Stop) doesn't handle the commit failure
+        harness.Behavior.OnBatchCompleted = async (consumer, batch) => await consumer.CommitAsync(batch);
+        await harness.ConnectAsync();
+        await harness.DeliverAsync(0, 1, 2);
+
+        // The reader observes the acknowledgment failure instead of taking it for a cancellation, which would leave the deliveries pending
+        await AsyncTestingUtil.WaitAsync(() => harness.Client.Status == ClientStatus.Disconnected, BatchTimeout);
+
+        harness.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        harness.Acknowledged.ShouldBe([0]);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
