@@ -489,27 +489,28 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 _identifiersTracker?.TrackIdentifier(envelope.BrokerMessageIdentifier);
 
             // The streams were completed (e.g. by the max wait time) while pushing: the message is added to the next sequence (see
-            // AddAsync), so the added sequence must not stay linked to this one, which would commit or complete it. When aborted instead,
-            // the message and the added sequence share the outcome of the abort.
-            if (!IsAborted && IsMessageRefusedByAbortAddedToNextSequence)
+            // AddAsync), so the added sequence must not stay linked to this one, which would commit or complete it. When the streams are
+            // aborted instead (also before the sequence, e.g. by the publisher when one of several subscribers fails), the message and
+            // the added sequence share the outcome of the abort.
+            if (IsMessageRefusedByAbortAddedToNextSequence && IsBeingCompleted())
                 RemoveChildSequence(sequence);
 
             throw;
         }
-        catch (InvalidOperationException) when (IsMessageRefusedByAbortAddedToNextSequence && (IsCompleting || !IsPending))
+        catch (InvalidOperationException) when (IsMessageRefusedByAbortAddedToNextSequence &&
+                                                 (IsCompleting || !IsPending || _streamProvider.IsCompletedOrAborted))
         {
             // The streams were completed (e.g. by the max wait time) or aborted after the checks above, before the message was pushed: the
             // message didn't join the sequence, which must not commit or complete the added sequence either
             RemoveChildSequence(sequence);
 
-            // The message that started the sequence shares the outcome of its abort (see IsRefusedMessageAddedToNextSequence)
-            if (IsNew)
-                return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+            // The message that started the sequence shares its outcome instead (see IsRefusedMessageAddedToNextSequence)
+            if (IsBeingCompleted())
+                return IsNew ? AddToSequenceResult.Aborted(null) : AddToSequenceResult.Failed;
 
-            if (!IsAborted)
-                return AddToSequenceResult.Failed;
-
-            // Handled like the message refused because the sequence was aborted after being found pending (see above)
+            // Aborted, or being aborted (e.g. by the publisher, which aborts the streams before the sequence when one of several
+            // subscribers fails): handled like the message refused because the sequence was aborted after being found pending (see above),
+            // once the abort completed
             _isAddRefused = true;
             throw new OperationCanceledException("The sequence was aborted.");
         }
@@ -739,10 +740,20 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     // The refused message isn't committed with the sequence: fail without aborting, so that the message is added to a new sequence
     // instead of being lost, unless the sequence was rolled back (consuming the message again). The abort task tells the sequencer that
     // the sequence was aborted anyway (see SequencerConsumerBehaviorBase). Must be called once the abort completed.
-    private AddToSequenceResult GetRefusedResult(bool isAddedToNextSequenceIfCommitted) =>
-        isAddedToNextSequenceIfCommitted && IsCommittedOnAbort()
+    // The message that started the new sequence shares its outcome instead, also when the sequence was completed in the meantime (see
+    // IsRefusedMessageAddedToNextSequence), since it must never be retried on its context.
+    private AddToSequenceResult GetRefusedResult(bool isAddedToNextSequenceIfCommitted)
+    {
+        if (IsNew && IsMessageRefusedByAbortAddedToNextSequence)
+            return AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task);
+
+        return isAddedToNextSequenceIfCommitted && IsCommittedOnAbort()
             ? new AddToSequenceResult(false, AbortTask: _abortingTaskCompletionSource?.Task)
             : AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+    }
+
+    // Completed, or being completed (e.g. by the max wait time), as opposed to aborted
+    private bool IsBeingCompleted() => !IsAborted && (IsCompleting || IsComplete);
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async ValueTask<bool> EnforceTimeoutAsync()
