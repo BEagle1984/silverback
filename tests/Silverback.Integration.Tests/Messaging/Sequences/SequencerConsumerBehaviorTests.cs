@@ -166,6 +166,75 @@ public class SequencerConsumerBehaviorTests
         await newSequence.Received(1).AbortAsync(SequenceAbortReason.ConsumerAborted, Arg.Any<OperationCanceledException>());
     }
 
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task HandleAsync_ShouldAbortPreviousSequence_WhenConsumerIsStoppingBeforeNewSequenceIsPublished()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        using CancellationTokenSource cancellationTokenSource = new();
+
+        // The chunk sequence of a chunked message, to be added to the batch it starts
+        ISequence previousSequence = CreateSequence("previous", AddToSequenceResult.Success(1));
+        context.SetSequence(previousSequence, true);
+
+        await cancellationTokenSource.CancelAsync();
+        ISequence newSequence = CreateSequence("new", AddToSequenceResult.Success(1));
+        newSequence.IsNew.Returns(true);
+
+        ISequenceReader sequenceReader = Substitute.For<ISequenceReader>();
+        sequenceReader.CanHandleAsync(context).Returns(true);
+        sequenceReader.GetSequenceAsync(context).Returns(newSequence);
+
+        SequencerConsumerBehavior behavior = new([sequenceReader], Substitute.For<ISilverbackLogger<SequencerConsumerBehavior>>());
+
+        await Should.ThrowAsync<OperationCanceledException>(() => behavior.HandleAsync(
+                context,
+                (_, _) => ValueTask.CompletedTask,
+                cancellationTokenSource.Token)
+            .AsTask()
+            .WaitAsync(Timeout));
+
+        // The previous sequence isn't added to the aborted new sequence: it must be aborted as well, not to be left in the store forever
+        await previousSequence.Received(1).AbortAsync(SequenceAbortReason.ConsumerAborted, Arg.Any<OperationCanceledException>());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task HandleAsync_ShouldAbortPreviousSequenceOnlyWhenStopping_WhenRefusingSequenceIsCommittedOnAbort(bool isStopping)
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        using CancellationTokenSource cancellationTokenSource = new();
+
+        // The chunk sequence of a chunked message, to be added to the batch
+        ISequence previousSequence = CreateSequence("previous", AddToSequenceResult.Success(1));
+        context.SetSequence(previousSequence, true);
+
+        if (isStopping)
+            await cancellationTokenSource.CancelAsync();
+
+        TaskCompletionSource abortTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        abortTaskCompletionSource.SetResult();
+        ISequence refusingSequence = CreateSequence("refusing", new AddToSequenceResult(false, AbortTask: abortTaskCompletionSource.Task));
+        ISequence newSequence = CreateSequence("new", AddToSequenceResult.Success(1));
+        int getSequenceCount = 0;
+
+        ISequenceReader sequenceReader = Substitute.For<ISequenceReader>();
+        sequenceReader.CanHandleAsync(context).Returns(true);
+        sequenceReader.GetSequenceAsync(context)
+            .Returns(_ => ValueTask.FromResult(Interlocked.Increment(ref getSequenceCount) == 1 ? refusingSequence : newSequence));
+
+        SequencerConsumerBehavior behavior = new([sequenceReader], Substitute.For<ISilverbackLogger<SequencerConsumerBehavior>>());
+
+        await behavior.HandleAsync(context, (_, _) => ValueTask.CompletedTask, cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        // When stopping, the message is left out and its previous sequence must be aborted, otherwise it's added to the new sequence
+        await previousSequence.Received(isStopping ? 1 : 0)
+            .AbortAsync(SequenceAbortReason.ConsumerAborted, Arg.Any<OperationCanceledException>());
+        await newSequence.Received(isStopping ? 0 : 1).AddAsync(Arg.Any<IRawInboundEnvelope>(), previousSequence, Arg.Any<bool>());
+    }
+
     private static ISequence CreateSequence(string sequenceId, AddToSequenceResult addToSequenceResult)
     {
         ISequence sequence = Substitute.For<ISequence>();

@@ -206,6 +206,87 @@ public partial class ChunkingTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(4);
     }
 
+    [Fact]
+    public async Task Chunking_ShouldStopConsumer_WhenStoppedWhileChunkedMessageStartsNextBatch()
+    {
+        TestingCollection<List<string?>> receivedBatches = [];
+        TaskCompletionSource<bool> firstBatchCompleted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseFirstBatch = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int batchesCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(1)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddIntegrationSpy());
+
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+            }
+
+            receivedBatches.Add(list);
+
+            if (Interlocked.Increment(ref batchesCount) == 1)
+            {
+                firstBatchCompleted.TrySetResult(true);
+                await releaseFirstBatch.Task.WaitAsync(TimeSpan.FromSeconds(30));
+            }
+        }
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] chunksA = SerializeAndSplitIntoChunks("Long message A", 3);
+        byte[][] chunksB = SerializeAndSplitIntoChunks("Long message B", 3);
+
+        // The first chunks of the next message are consumed while the first batch is still pending
+        for (int i = 0; i < chunksA.Length; i++)
+        {
+            await producer.RawProduceAsync(chunksA[i], HeadersHelper.GetChunkHeaders("A", i, chunksA.Length, typeof(TestEventOne)));
+        }
+
+        await producer.RawProduceAsync(chunksB[0], HeadersHelper.GetChunkHeaders("B", 0, chunksB.Length, typeof(TestEventOne)));
+        await producer.RawProduceAsync(chunksB[1], HeadersHelper.GetChunkHeaders("B", 1, chunksB.Length, typeof(TestEventOne)));
+
+        // The first batch is completed by its timeout, then the next chunked message starts the next batch, waiting for the first one
+        await firstBatchCompleted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        await producer.RawProduceAsync(chunksB[2], HeadersHelper.GetChunkHeaders("B", 2, chunksB.Length, typeof(TestEventOne)));
+        await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Any(envelope => IsRawChunk(envelope, "B", 2)));
+        await Task.Delay(TimeSpan.FromMilliseconds(200)); // Let the chunked message reach the sequencer
+
+        // The stop rolls back the chunked message, which isn't added to the next batch
+        Task stopTask = consumer.StopAsync().AsTask();
+        await Task.Delay(TimeSpan.FromMilliseconds(200)); // Let the stop cancel the processing before the first batch completes
+        releaseFirstBatch.TrySetResult(true);
+        await stopTask.WaitAsync(TimeSpan.FromSeconds(10));
+
+        // The chunked message is consumed again after the restart
+        await consumer.StartAsync();
+        await AsyncTestingUtil.WaitAsync(() => receivedBatches.Count > 1);
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].ShouldBe(["Long message A"]);
+        receivedBatches[1].ShouldBe(["Long message B"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
+    }
+
     private static byte[][] SerializeAndSplitIntoChunks(string content, int chunksCount)
     {
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(new TestEventOne { ContentEventOne = content });

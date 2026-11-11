@@ -155,6 +155,15 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         }
     }
 
+    // The previous sequence (e.g. the chunk sequence of a chunked message) is completed with the sequence it's added to (e.g. the batch).
+    // When the stop leaves the message out, abort it like the stop aborts the pending sequences, since it may be complete already and
+    // nothing else would remove it from the store or complete its processing, which the stop awaits.
+    private static async Task AbortPreviousSequenceIfNotAddedAsync(ISequence? previousSequence, OperationCanceledException stopCancellation)
+    {
+        if (previousSequence is { ParentSequence: null })
+            await previousSequence.AbortAsync(SequenceAbortReason.ConsumerAborted, stopCancellation).ConfigureAwait(false);
+    }
+
     private async Task<ISequence?> AddMessageToSequenceAsync(
         ConsumerPipelineContext context,
         ConsumerBehaviorHandler next,
@@ -185,6 +194,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             {
                 OperationCanceledException stopCancellation = new(cancellationToken);
                 await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted, stopCancellation).ConfigureAwait(false);
+                await AbortPreviousSequenceIfNotAddedAsync(previousSequence, stopCancellation).ConfigureAwait(false);
                 throw stopCancellation;
             }
 
@@ -219,6 +229,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                 cancellationToken.IsCancellationRequested)
             {
                 await refusingSequenceAbortTask.ConfigureAwait(false);
+                await AbortPreviousSequenceIfNotAddedAsync(previousSequence, new OperationCanceledException(cancellationToken))
+                    .ConfigureAwait(false);
                 return sequence;
             }
         }
