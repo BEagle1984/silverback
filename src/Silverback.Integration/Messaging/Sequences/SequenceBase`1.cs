@@ -488,6 +488,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             if (IsAborted && AbortReason == SequenceAbortReason.EnumerationAborted)
                 _identifiersTracker?.TrackIdentifier(envelope.BrokerMessageIdentifier);
 
+            // The streams were completed (e.g. by the max wait time) while pushing: the message is added to the next sequence (see
+            // AddAsync), so the added sequence must not stay linked to this one, which would commit or complete it. When aborted instead,
+            // the message and the added sequence share the outcome of the abort.
+            if (!IsAborted && IsMessageRefusedByAbortAddedToNextSequence)
+                RemoveChildSequence(sequence);
+
             throw;
         }
         catch (InvalidOperationException) when (IsMessageRefusedByAbortAddedToNextSequence && (IsCompleting || !IsPending))
