@@ -356,7 +356,16 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
     ///     Discards the pending restart requests, when the restart is overtaken by a stop. The messages to be replayed are kept and
     ///     processed when the reader is started again.
     /// </summary>
-    public void ClearRestartRequests() => Interlocked.Exchange(ref _restartRequestsCount, 0);
+    public void ClearRestartRequests()
+    {
+        // Under the lock, since the rollback checks whether the reading is canceled and requests the restart under the lock: the stop
+        // cancels the reading first, so a rollback either sees it canceled or requests the restart before the clear. Otherwise the
+        // request would be left behind, with no restart to handle it, and would stop the reader started afterwards.
+        lock (_messagesLock)
+        {
+            Interlocked.Exchange(ref _restartRequestsCount, 0);
+        }
+    }
 
     /// <inheritdoc cref="ConsumerChannel{T}.Reset" />
     public override void Reset()
