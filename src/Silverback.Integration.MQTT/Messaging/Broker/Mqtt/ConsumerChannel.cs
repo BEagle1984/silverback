@@ -172,7 +172,7 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
 
     /// <summary>
     ///     Puts back a message taken by a stopping reader, so that it's processed again when the reader restarts, unless it was
-    ///     committed or rolled back already.
+    ///     committed (or is being acknowledged) or rolled back already.
     /// </summary>
     /// <param name="message">
     ///     The message to put back.
@@ -181,7 +181,8 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
     {
         lock (_messagesLock)
         {
-            if (IsPendingCore(message) && !message.TaskCompletionSource.Task.IsCompleted)
+            // Like the rollback, never replay a message committed with its sequence, which would be acknowledged twice
+            if (IsPendingCore(message) && !message.IsAcknowledging && !message.TaskCompletionSource.Task.IsCompleted)
                 SetReplayPendingCore(message);
         }
     }

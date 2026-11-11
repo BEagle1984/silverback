@@ -292,6 +292,23 @@ public class ConsumerChannelTests
     }
 
     [Fact]
+    public async Task PutBack_ShouldIgnoreMessage_WhenMessageIsBeingAcknowledged()
+    {
+        using ConsumerChannel channel = CreateChannel();
+        ConsumedApplicationMessage[] messages = await WriteMessagesAsync(channel, 2);
+        await ReadNextAsync(channel);
+
+        // Committed with its sequence: replaying it would acknowledge it twice
+        channel.BeginAcknowledgment(messages[0]).ShouldBeTrue();
+
+        channel.PutBack(messages[0]);
+
+        messages[0].IsReplayPending.ShouldBeFalse();
+        ConsumedApplicationMessage readMessage = await ReadNextAsync(channel);
+        readMessage.ShouldBeSameAs(messages[1]);
+    }
+
+    [Fact]
     public async Task PutBack_ShouldIgnoreMessage_WhenAcknowledgmentFailed()
     {
         using ConsumerChannel channel = CreateChannel();
