@@ -4,7 +4,7 @@ name: extended-integration-tests
 # depend on real broker timings, so they run nightly and on demand rather than on each push, and aren't a required check.
 on:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '23 0 * * *'
   workflow_dispatch:
     inputs:
       filter:
