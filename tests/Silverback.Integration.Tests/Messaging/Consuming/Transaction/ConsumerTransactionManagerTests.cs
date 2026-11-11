@@ -13,6 +13,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.Transaction;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Sequences.Unbounded;
@@ -179,6 +180,39 @@ public class ConsumerTransactionManagerTests
         await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RollbackAsync_ShouldCommitOnlyIfSequenceIsResolved_WhenCommittingConsumerAndCompleteSequenceIsInStore(bool isResolved)
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        // E.g. a batch completed by its max wait time, while being processed or handled by its error policies
+        using ConsumerPipelineContext sequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        CompletableSequence sequence = new(sequenceContext);
+        await store.AddAsync(sequence);
+        await sequence.CompleteFromTestAsync();
+        sequence.IsPending.ShouldBeFalse();
+
+        try
+        {
+            if (isResolved)
+                ((ISequenceImplementation)sequence).NotifyProcessingCompleted();
+
+            await transaction.RollbackAsync(null, commitConsumer: true);
+
+            await context.Consumer.Received(isResolved ? 1 : 0).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+            await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        }
+        finally
+        {
+            // The store disposal awaits the processing of the sequences
+            ((ISequenceImplementation)sequence).NotifyProcessingCompleted();
+        }
+    }
+
     [Fact]
     public async Task RollbackAsync_ShouldCommit_WhenCommittingConsumerAndUnboundedSequenceIsPending()
     {
@@ -226,5 +260,15 @@ public class ConsumerTransactionManagerTests
         bool rolledBack = await transaction.RollbackAsync(null, throwIfAlreadyCommitted: false);
 
         rolledBack.ShouldBeFalse();
+    }
+
+    private sealed class CompletableSequence : SequenceBase<IRawInboundEnvelope>
+    {
+        public CompletableSequence(ConsumerPipelineContext context)
+            : base("completable-sequence", context, enforceTimeout: false, trackIdentifiers: false)
+        {
+        }
+
+        public Task CompleteFromTestAsync() => CompleteAsync();
     }
 }

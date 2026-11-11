@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -347,6 +348,162 @@ public partial class BatchProcessingTests
         await AsyncTestingUtil.WaitAsync(() => successfulBatches.Count > 0, TimeSpan.FromSeconds(2));
 
         successfulBatches.ShouldBeEmpty();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldReplayBatchCompletedByTimeout_WhenItFailsWhileNextMessageIsRolledBack()
+    {
+        TestingCollection<List<string?>> successfulBatches = [];
+        TaskCompletionSource<bool> firstBatchCompleted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseFirstBatch = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> nextMessageRetrying = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int completedBatches = 0;
+
+        IRetryErrorPolicyCallback callback = Substitute.For<IRetryErrorPolicyCallback>();
+        callback.OnRetryingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(call =>
+            {
+                if (call.ArgAt<Exception>(1) is JsonException)
+                    nextMessageRetrying.TrySetResult(true);
+
+                return Task.CompletedTask;
+            });
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(500))
+                        .OnError(policy => policy.Retry(1).ThenSkip()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        // The first batch is completed by the timeout and fails once, after the next message started rolling back the partition
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+
+            try
+            {
+                await foreach (TestEventOne message in batch)
+                {
+                    list.Add(message.ContentEventOne);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
+            if (Interlocked.Increment(ref completedBatches) == 1)
+            {
+                firstBatchCompleted.TrySetResult(true);
+                await releaseFirstBatch.Task.WaitAsync(TimeSpan.FromSeconds(30));
+                throw new InvalidOperationException("Retry!");
+            }
+
+            successfulBatches.Add(list);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await firstBatchCompleted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        // The next message fails before the sequencer and is rolled back while the first batch is still being processed
+        await producer.RawProduceAsync(
+            "{ invalid"u8.ToArray(),
+            [new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)]);
+        await nextMessageRetrying.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        await Task.Delay(TimeSpan.FromMilliseconds(500)); // Let the rollback of the next message start first, as in the reported issue
+
+        releaseFirstBatch.TrySetResult(true);
+
+        // The first batch is consumed again, although its rollback overlapped the pending one
+        await AsyncTestingUtil.WaitAsync(() => successfulBatches.Count > 0);
+        successfulBatches.SelectMany(batch => batch).ShouldBe(["1"]);
+
+        // The skipped message is committed with the next one
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await AsyncTestingUtil.WaitAsync(() => successfulBatches.Count > 1);
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        successfulBatches.SelectMany(batch => batch).ShouldBe(["1", "2"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldNotCommitSkippedMessage_WhileBatchCompletedByTimeoutIsUnresolved()
+    {
+        TaskCompletionSource<bool> firstBatchCompleted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseFirstBatch = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> nextMessageSkipped = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        ISkipMessageErrorPolicyCallback callback = Substitute.For<ISkipMessageErrorPolicyCallback>();
+        callback.OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(_ =>
+            {
+                nextMessageSkipped.TrySetResult(true);
+                return Task.CompletedTask;
+            });
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(500))
+                        .OnError(policy => policy.Skip(skip => skip.ApplyTo<JsonException>())))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        // The first batch is completed by the timeout and then fails, stopping the consumer
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne dummy in batch)
+            {
+                // Just consume the batch
+            }
+
+            firstBatchCompleted.TrySetResult(true);
+            await releaseFirstBatch.Task.WaitAsync(TimeSpan.FromSeconds(30));
+            throw new InvalidOperationException("Stop!");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await firstBatchCompleted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        // The next message is skipped while the first batch is still being processed: committing it would commit the batch as well
+        await producer.RawProduceAsync(
+            "{ invalid"u8.ToArray(),
+            [new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)]);
+        await nextMessageSkipped.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) > 0, TimeSpan.FromSeconds(1));
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+
+        // The first batch then fails and stops the consumer, without committing anything
+        releaseFirstBatch.TrySetResult(true);
+        await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) > 0, TimeSpan.FromSeconds(2));
+
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
     }
 

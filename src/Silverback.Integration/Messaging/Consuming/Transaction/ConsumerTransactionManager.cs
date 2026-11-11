@@ -2,9 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Unbounded;
 
 namespace Silverback.Messaging.Consuming.Transaction;
 
@@ -133,12 +136,16 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         if (commitConsumer)
         {
-            // If the error policy requires committing the consumer, we do it only if there are no pending sequences
-            // to prevent a skipped message (not deserialized, so not added to the sequence) to commit everything.
+            // If the error policy requires committing the consumer, we do it only if there are no pending or unresolved sequences
+            // to prevent a skipped message (not deserialized, so not added to the sequence) to commit everything (e.g. a batch
+            // completed by its max wait time, still being processed or handled by its error policies, which may roll it back).
             // The unbounded sequences don't count: their messages are committed one by one by their own pipelines, like the messages
             // outside a sequence, and with MQTT the skipped message would never be acknowledged, stalling the consumer.
-            if (_context.Sequence != null || _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0)
+            if (_context.Sequence != null ||
+                _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0 && !HasUnresolvedSequences())
+            {
                 await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
+            }
         }
         else
         {
@@ -154,4 +161,11 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         return true;
     }
+
+    // The sequences that aren't pending anymore but whose processing isn't completed yet, e.g. a batch completed by its max wait time
+    private bool HasUnresolvedSequences() =>
+        _context.SequenceStore.Any(sequence =>
+            sequence is ISequenceImplementation { ProcessingCompletedTask.IsCompleted: false } and not UnboundedSequence &&
+            sequence.ParentSequence == null &&
+            !sequence.IsPending);
 }
