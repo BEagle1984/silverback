@@ -64,6 +64,10 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
     // a replayed message). Kafka creates a new channel instead.
     protected virtual bool IsSequenceStoreReplacedOnRestart => false;
 
+    // The reader is about to stop (e.g. a restart is pending): the messages being processed are consumed again and must not start new
+    // sequences
+    protected virtual bool IsReadingStopping => IsReadCanceled;
+
     public void Complete()
     {
         lock (_channelLock)
@@ -234,7 +238,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
     }
 
     // The store tells the sequencer whether the reading was canceled, not to start new sequences that would be aborted anyway
-    private SequenceStore CreateSequenceStore() => new(_logger, () => IsReadCanceled);
+    private SequenceStore CreateSequenceStore() => new(_logger, () => IsReadingStopping);
 
     private (Channel<T> Channel, Channel<T> OverflowChannel) GetChannels()
     {
