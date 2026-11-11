@@ -476,6 +476,59 @@ public class SequenceBaseTests
         result.IsAborted.ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData("enumeration-aborted")]
+    [InlineData("consumer-aborted")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
+    public async Task AddAsync_ShouldRefuseMessageAndSequence_WhenAbortedRightBeforePush(string abort)
+    {
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream)
+                {
+                    // Just consume the stream
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // The stream is aborted with the sequence
+            }
+        });
+
+        AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+
+        // Aborted after the checks, while the chunk sequence of the next (chunked) message is being linked, right before the push
+        Task? abortTask = null;
+        using HookChildSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            () => abortTask = sequence.AbortAsync(
+                abort == "enumeration-aborted" ? SequenceAbortReason.EnumerationAborted : SequenceAbortReason.ConsumerAborted));
+
+        AddToSequenceResult result = await sequence.AddAsync(CreateEnvelope(), childSequence, true).WaitAsync(Timeout);
+        (abortTask != null).ShouldBeTrue();
+        await abortTask!.WaitAsync(Timeout);
+
+        // The message didn't join the sequence (instead of failing the processing), which doesn't commit or complete the chunk sequence
+        childSequence.Parent.ShouldBeNull();
+        sequence.Sequences.ShouldNotContain(childSequence);
+
+        if (abort == "enumeration-aborted")
+        {
+            result.IsSuccess.ShouldBeFalse();
+            result.IsAborted.ShouldBeFalse();
+            (result.AbortTask?.IsCompleted).ShouldBe(true);
+        }
+        else
+        {
+            result.IsAborted.ShouldBeTrue();
+        }
+    }
+
     private static async Task<AddToSequenceResult> AddRefusedByTimeoutAsync(string abort)
     {
         HookLogger logger = new();
@@ -654,6 +707,29 @@ public class SequenceBaseTests
         }
 
         private protected override bool IsMessageRefusedByAbortAddedToNextSequence => true;
+    }
+
+    // Runs the action when it's linked to the parent sequence, right before the message is pushed, to deterministically reproduce the
+    // parent being aborted in between, and records the parent (re-implementing the interface hides the base implementation)
+    private sealed class HookChildSequence : SequenceBase<IRawInboundEnvelope>, ISequenceImplementation
+    {
+        private readonly Action _onLinking;
+
+        public HookChildSequence(ConsumerPipelineContext context, Action onLinking)
+            : base("child-sequence", context, enforceTimeout: false, trackIdentifiers: false)
+        {
+            _onLinking = onLinking;
+        }
+
+        public ISequence? Parent { get; private set; }
+
+        void ISequenceImplementation.SetParentSequence(ISequence? parentSequence)
+        {
+            if (parentSequence != null)
+                _onLinking();
+
+            Parent = parentSequence;
+        }
     }
 
     // Holds the timer while handling the elapsed timeout, so that the sequence is still pending after its timeout elapsed

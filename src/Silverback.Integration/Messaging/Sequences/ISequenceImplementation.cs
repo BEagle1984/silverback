@@ -37,9 +37,9 @@ internal interface ISequenceImplementation : ISequence
     ///     is added to a <see cref="BatchSequence" />.
     /// </summary>
     /// <param name="parentSequence">
-    ///     The parent sequence.
+    ///     The parent sequence, or <c>null</c> if the sequence couldn't be added to it after all.
     /// </param>
-    void SetParentSequence(ISequence parentSequence);
+    void SetParentSequence(ISequence? parentSequence);
 
     /// <summary>
     ///     Completes the <see cref="Task" /> that is used to notify when the sequence went through both behaviors. See

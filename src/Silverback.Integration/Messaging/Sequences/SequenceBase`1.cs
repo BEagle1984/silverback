@@ -225,7 +225,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
 
     /// <inheritdoc cref="ISequenceImplementation.SetParentSequence" />
-    void ISequenceImplementation.SetParentSequence(ISequence parentSequence) =>
+    void ISequenceImplementation.SetParentSequence(ISequence? parentSequence) =>
         ParentSequence = parentSequence;
 
     /// <inheritdoc cref="ISequenceImplementation.CompleteSequencerBehaviorsTask" />
@@ -486,6 +486,19 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             throw;
         }
+        catch (InvalidOperationException) when (IsMessageRefusedByAbortAddedToNextSequence && (IsCompleting || !IsPending))
+        {
+            // The streams were completed (e.g. by the max wait time) or aborted after the checks above, before the message was pushed: the
+            // message didn't join the sequence, which must not commit or complete the added sequence either
+            RemoveChildSequence(sequence);
+
+            if (!IsAborted)
+                return AddToSequenceResult.Failed;
+
+            // Handled like the message refused because the sequence was aborted after being found pending (see above)
+            _isAddRefused = true;
+            throw new OperationCanceledException("The sequence was aborted.");
+        }
 
         Length++; // Increment only after checking that the message was pushed to at least one stream
 
@@ -692,6 +705,19 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     // The sequence aborted by the error policies (e.g. skipped) or because the subscriber stopped enumerating is committed, unless its
     // transaction was rolled back (e.g. to be retried). The other aborts (e.g. the incomplete sequences or the consumer stop) aren't
     // affected by the messages they refused.
+    private void RemoveChildSequence(ISequence? sequence)
+    {
+        if (sequence == null || sequence == this)
+            return;
+
+        lock (_sequencesLock)
+        {
+            _sequences?.Remove(sequence);
+        }
+
+        (sequence as ISequenceImplementation)?.SetParentSequence(null);
+    }
+
     private bool IsCommittedOnAbort() =>
         AbortReason is SequenceAbortReason.Error or SequenceAbortReason.EnumerationAborted &&
         Context.TransactionManager is not ConsumerTransactionManager { IsConsumerRolledBack: true };
