@@ -89,4 +89,47 @@ public class BatchSequenceTests
         storedBatch = await store.GetAsync<BatchSequence>("batch-1");
         storedBatch.ShouldBeNull();
     }
+
+    [Fact]
+    public async Task OnTimeoutElapsedAsync_ShouldNotAbortBatch_WhenStreamsWereAbortedByPublisher()
+    {
+        TestConsumerEndpointConfiguration endpointConfiguration = new("test")
+        {
+            Batch = new BatchSettings
+            {
+                Size = 10,
+                MaxWaitTime = TimeSpan.FromMinutes(1)
+            }
+        };
+        InboundEnvelope envelope = new(
+            "message",
+            Stream.Null,
+            null,
+            new TestConsumerEndpoint("test", endpointConfiguration),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(envelope);
+        using TimeoutTestBatchSequence batch = new("batch-1", context);
+
+        // One of several subscribers failed: the publisher aborts the streams first, and the batch (with the exception of the subscriber)
+        // only once the other subscribers returned
+        ((MessageStreamProvider)batch.StreamProvider).AbortIfPending();
+
+        await batch.ElapseTimeoutFromTestAsync().WaitAsync(Timeout);
+
+        // Not aborted with the exception of the failed completion, to which the error policies would be applied
+        batch.IsPending.ShouldBeTrue();
+        batch.AbortReason.ShouldBe(SequenceAbortReason.None);
+        batch.AbortException.ShouldBeNull();
+    }
+
+    private sealed class TimeoutTestBatchSequence : BatchSequence
+    {
+        public TimeoutTestBatchSequence(string sequenceId, ConsumerPipelineContext context)
+            : base(sequenceId, context)
+        {
+        }
+
+        public Task ElapseTimeoutFromTestAsync() => OnTimeoutElapsedAsync();
+    }
 }
