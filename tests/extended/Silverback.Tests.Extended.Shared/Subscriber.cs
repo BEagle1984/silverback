@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -24,7 +23,7 @@ public class Subscriber
 
     private readonly ConcurrentDictionary<string, int> _failedAttemptsDictionary = new();
 
-    private readonly ConcurrentDictionary<TopicPartition, int> _batchConsecutiveFailures = new();
+    private readonly ConcurrentDictionary<string, int> _batchConsecutiveFailures = new();
 
     public Subscriber(IPublisher publisher, ILogger<Subscriber> logger)
     {
@@ -40,7 +39,7 @@ public class Subscriber
 
     public async Task OnMessageReceivedAsync(IAsyncEnumerable<IInboundEnvelope<BatchMessage>> batch)
     {
-        TopicPartition? partition = null;
+        string? batchKey = null;
 
         try
         {
@@ -50,10 +49,10 @@ public class Subscriber
 
             await foreach (IInboundEnvelope<TestBenchMessage> envelope in batch)
             {
-                if (partition == null)
+                if (batchKey == null)
                 {
-                    partition = envelope.GetKafkaOffset().TopicPartition;
-                    consecutiveFailures = _batchConsecutiveFailures.AddOrUpdate(partition, _ => 0, (_, _) => 0);
+                    batchKey = GetBatchKey(envelope);
+                    consecutiveFailures = _batchConsecutiveFailures.GetOrAdd(batchKey, 0);
                 }
 
                 // Prevent too many consecutive failures to avoid whole batches being skipped
@@ -69,11 +68,14 @@ public class Subscriber
             {
                 LogMessageProcessed(envelope);
             }
+
+            if (batchKey != null)
+                _batchConsecutiveFailures[batchKey] = 0;
         }
         catch (Exception)
         {
-            if (partition != null)
-                _batchConsecutiveFailures.AddOrUpdate(partition, _ => 1, (_, count) => count + 1);
+            if (batchKey != null)
+                _batchConsecutiveFailures.AddOrUpdate(batchKey, _ => 1, (_, count) => count + 1);
 
             throw;
         }
@@ -119,6 +121,10 @@ public class Subscriber
             LogMessageProcessed(envelope);
         }
     }
+
+    // Kafka creates a batch per partition, while the MQTT batches are shared by all the endpoints of the client
+    private static string GetBatchKey(IInboundEnvelope envelope) =>
+        envelope.Endpoint is KafkaConsumerEndpoint ? envelope.GetKafkaOffset().TopicPartition.ToString() : envelope.Consumer.Name;
 
     private async Task ProcessEnvelopeAsync(IInboundEnvelope<TestBenchMessage> envelope)
     {

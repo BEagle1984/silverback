@@ -31,6 +31,8 @@ public static class TopicNames
         [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "Reviewed")]
         public const string Single = "testbench/mqtt/single";
 
+        public const string Batch = "testbench/mqtt/batch";
+
         public const string Unbounded = "testbench/mqtt/unbounded";
     }
 }
