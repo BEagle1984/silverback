@@ -28,6 +28,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
     private readonly TaskCompletionSource _subscribersReturnedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
+    private readonly bool _restartsReturningSubscribers;
+
     private MethodInfo? _genericCreateStreamMethodInfo;
 
     private bool _completed;
@@ -39,6 +41,32 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     private bool _isCompleting;
 
     private bool _isAborting;
+
+    // Set holding the _lazyStreams lock when the streams are being aborted or completed: no replacement stream is created afterwards
+    private bool _isClosed;
+
+    // Set holding the _lazyStreams lock when a subscriber throws: no replacement stream is created afterwards
+    private bool _hasSubscriberThrown;
+
+    // Set holding the _lazyStreams lock when a subscriber throws an exception other than the cancellation (see OnSubscriberCompleted)
+    private bool _hasSubscriberFailed;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="MessageStreamProvider{TMessage}" /> class.
+    /// </summary>
+    /// <param name="restartsReturningSubscribers">
+    ///     A value indicating whether a subscriber that returns (e.g., with a <c>break</c>), while the subscribers of the other streams are
+    ///     still enumerating them, is invoked again with a new stream, which receives the next messages. It isn't if the cancellation token
+    ///     passed to it was canceled (e.g., because the consumer is stopping), nor once a subscriber threw. A subscriber returning or
+    ///     throwing the cancellation because the token was canceled instead completes the <see cref="SubscribersReturnedTask" /> as if all
+    ///     the subscribers returned, unless another subscriber failed (or, when throwing, it's the only subscriber). Otherwise, its pending
+    ///     push is left to the completion or the abort,
+    ///     which are expected once all the subscribers returned (see <see cref="SubscribersReturnedTask" />).
+    /// </param>
+    public MessageStreamProvider(bool restartsReturningSubscribers = false)
+    {
+        _restartsReturningSubscribers = restartsReturningSubscribers;
+    }
 
     /// <inheritdoc cref="MessageStreamProvider.MessageType" />
     public override Type MessageType => typeof(TMessage);
@@ -124,7 +152,10 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             _isAborting = true;
 
-            _lazyStreams.ForEach(lazyStream => lazyStream.Abort());
+            foreach (ILazyMessageStreamEnumerable lazyStream in CloseAndGetLazyStreams())
+            {
+                lazyStream.Abort();
+            }
 
             _aborted = true;
         }
@@ -153,7 +184,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             _isCompleting = true;
 
-            await _lazyStreams
+            await CloseAndGetLazyStreams()
                 .ParallelForEachAsync(async lazyStream => await lazyStream.CompleteAsync(cancellationToken).ConfigureAwait(false))
                 .ConfigureAwait(false);
 
@@ -202,7 +233,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="MessageStreamProvider.CreateLazyStream{TMessage}" />
     public override ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStream<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null)
     {
-        ILazyMessageStreamEnumerable<TMessageLinked> stream = new LazyMessageStreamEnumerable<TMessageLinked>(filters, OnSubscriberReturned);
+        ILazyMessageStreamEnumerable<TMessageLinked> stream = new LazyMessageStreamEnumerable<TMessageLinked>(filters, OnSubscriberCompleted);
 
         lock (_lazyStreams)
         {
@@ -227,38 +258,53 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         _disposed = true;
     }
 
-    private static bool PushIfCompatibleType(
+    private static bool TryGetCompatibleMessage(
         ILazyMessageStreamEnumerable lazyStream,
         TMessage message,
-        Action<object?>? onPullAction,
-        object? onPullActionArgument,
-        CancellationToken cancellationToken,
-        out Task messageProcessingTask)
+        [NotNullWhen(true)] out object? compatibleMessage)
     {
         if (message == null || IsFiltered(lazyStream.Filters, message))
         {
-            messageProcessingTask = Task.CompletedTask;
+            compatibleMessage = null;
             return false;
         }
 
         if (lazyStream.MessageType.IsInstanceOfType(message))
         {
-            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(message, onPullAction, onPullActionArgument, cancellationToken);
+            compatibleMessage = message;
             return true;
         }
 
         if (message is IEnvelope { Message: not null } envelope && lazyStream.MessageType.IsInstanceOfType(envelope.Message))
         {
-            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(envelope.Message, onPullAction, onPullActionArgument, cancellationToken);
+            compatibleMessage = envelope.Message;
             return true;
         }
 
-        messageProcessingTask = Task.CompletedTask;
+        compatibleMessage = null;
         return false;
     }
 
     private static bool IsFiltered(IReadOnlyCollection<IMessageFilter>? filters, object message) =>
         filters != null && filters.Count != 0 && !filters.All(filter => filter.MustProcess(message));
+
+    // The subscriber of the stream returned without receiving the message and is invoked again with the stream replacing it (see
+    // OnSubscriberCompleted): push the message to that stream instead. The message is refused only once, since it's the first one pushed
+    // to the replacement, which acknowledges it if its subscriber returns again without receiving it.
+    private static async Task PushToReplacementIfRefusedAsync(
+        Task<bool> pushTask,
+        ILazyMessageStreamEnumerable lazyStream,
+        object message,
+        Action<object?>? onPullAction,
+        object? onPullActionArgument,
+        CancellationToken cancellationToken)
+    {
+        while (!await pushTask.ConfigureAwait(false))
+        {
+            lazyStream = lazyStream.Replacement ?? throw new InvalidOperationException("The stream was detached without a replacement.");
+            pushTask = lazyStream.GetOrCreateStream().PushAsync(message, onPullAction, onPullActionArgument, cancellationToken);
+        }
+    }
 
     private IEnumerable<Task> PushToCompatibleStreams(
         TMessage message,
@@ -266,29 +312,99 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         object? onPullActionArgument,
         CancellationToken cancellationToken)
     {
-        foreach (ILazyMessageStreamEnumerable lazyStream in _lazyStreams)
+        foreach (ILazyMessageStreamEnumerable lazyStream in GetLazyStreams())
         {
             // Softly abort if the cancellation token is signaled, don't throw to avoid unnecessary logging when triggered by the
             // application shutdown
             if (cancellationToken.IsCancellationRequested)
                 yield break;
 
-            if (PushIfCompatibleType(lazyStream, message, onPullAction, onPullActionArgument, cancellationToken, out Task processingTask))
-            {
-                yield return processingTask;
-            }
+            if (TryGetCompatibleMessage(lazyStream, message, out object? compatibleMessage))
+                yield return PushToStreamAsync(lazyStream, compatibleMessage, onPullAction, onPullActionArgument, cancellationToken);
         }
     }
 
-    // Invoked by a lazy stream, whose stream is created, when its subscriber returns
-    private void OnSubscriberReturned()
+    private Task PushToStreamAsync(
+        ILazyMessageStreamEnumerable lazyStream,
+        object message,
+        Action<object?>? onPullAction,
+        object? onPullActionArgument,
+        CancellationToken cancellationToken)
+    {
+        Task<bool> pushTask = lazyStream.GetOrCreateStream().PushAsync(message, onPullAction, onPullActionArgument, cancellationToken);
+
+        // Without restarts the streams are never detached, so the push is never refused
+        return _restartsReturningSubscribers
+            ? PushToReplacementIfRefusedAsync(pushTask, lazyStream, message, onPullAction, onPullActionArgument, cancellationToken)
+            : pushTask;
+    }
+
+    // Copy the list, since a returning subscriber can replace its stream while the streams are being pushed (see OnSubscriberCompleted)
+    private ILazyMessageStreamEnumerable[] GetLazyStreams()
     {
         lock (_lazyStreams)
         {
-            if (_lazyStreams.Exists(lazyStream => lazyStream.Stream != null && !lazyStream.HasSubscriberReturned))
-                return;
+            return [.. _lazyStreams];
+        }
+    }
+
+    private ILazyMessageStreamEnumerable[] CloseAndGetLazyStreams()
+    {
+        lock (_lazyStreams)
+        {
+            _isClosed = true;
+            return [.. _lazyStreams];
+        }
+    }
+
+    // Invoked by a lazy stream, whose stream is created, when its subscriber returns or throws. Returns the lazy stream replacing it if the
+    // subscriber is invoked again, because it returned while the subscribers of the other streams are still enumerating them.
+    private ILazyMessageStreamEnumerable? OnSubscriberCompleted(ILazyMessageStreamEnumerable lazyStream, bool hasThrown, bool isCanceled)
+    {
+        lock (_lazyStreams)
+        {
+            if (hasThrown)
+            {
+                _hasSubscriberThrown = true;
+                _hasSubscriberFailed |= !isCanceled;
+
+                // The failure aborts the streams (e.g., see PublisherConsumerBehavior): the pending pushes are left to the abort. The
+                // cancellation (e.g., because the consumer is stopping) doesn't, while the other subscribers are still enumerating or
+                // waiting for their stream, and the pending push would never complete: end the streams as when a subscriber returns
+                // because of the cancellation, unless a subscriber failed (its abort applies the error policies). The cancellation of a
+                // single subscriber aborts the streams like a failure.
+                if (!_restartsReturningSubscribers || !isCanceled || _isClosed || _hasSubscriberFailed || _lazyStreams.Count == 1)
+                    return null;
+            }
+            else if (_lazyStreams.Exists(otherLazyStream => otherLazyStream.Stream != null && !otherLazyStream.HasSubscriberReturned))
+            {
+                // Leave the pending push to the abort or completion in progress, or to the abort caused by the failed subscriber
+                if (!_restartsReturningSubscribers || _isClosed || _hasSubscriberThrown)
+                    return null;
+
+                // A subscriber returning because the consumer is stopping ends the streams instead, as if all the subscribers returned, so
+                // that the pending message is rolled back (see PublisherConsumerBehavior). Do the same if the stream can't be replaced,
+                // not to leave the pending push waiting.
+                if (!isCanceled && ReplaceLazyStream(lazyStream) is { } replacement)
+                    return replacement;
+            }
         }
 
         _subscribersReturnedTaskCompletionSource.TrySetResult();
+        return null;
+    }
+
+    // Must be called holding the _lazyStreams lock. The replacement takes the position of the lazy stream, which no longer receives
+    // the pushed messages: the pending push is acknowledged or refused when the stream is detached.
+    private ILazyMessageStreamEnumerable? ReplaceLazyStream(ILazyMessageStreamEnumerable lazyStream)
+    {
+        int index = _lazyStreams.IndexOf(lazyStream);
+
+        if (index < 0)
+            return null;
+
+        ILazyMessageStreamEnumerable replacement = lazyStream.CreateReplacement();
+        _lazyStreams[index] = replacement;
+        return replacement;
     }
 }

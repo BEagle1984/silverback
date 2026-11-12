@@ -19,7 +19,10 @@ internal abstract class MessageStreamProvider : IMessageStreamProvider, IDisposa
 
     /// <summary>
     ///     Gets a <see cref="Task" /> that completes when the subscribers of all the streams created so far returned without throwing,
-    ///     meaning that they stopped enumerating them. The subscribers whose stream wasn't created yet aren't awaited.
+    ///     meaning that they stopped enumerating them. The subscribers whose stream wasn't created yet aren't awaited, including the ones
+    ///     invoked again with a new stream after returning while the others were still enumerating. With these restarts enabled, it also
+    ///     completes as soon as a subscriber returns or throws the cancellation because the cancellation token passed to it was canceled
+    ///     (see <see cref="MessageStreamProvider{TMessage}(bool)" />).
     /// </summary>
     public abstract Task SubscribersReturnedTask { get; }
 

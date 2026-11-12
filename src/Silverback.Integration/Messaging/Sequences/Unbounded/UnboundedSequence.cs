@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Sequences.Unbounded;
 
@@ -30,9 +31,11 @@ internal sealed class UnboundedSequence : Sequence
 
     private int _addState;
 
+    // A subscriber that stops enumerating while the other subscribers are still enumerating their streams is invoked again with a new
+    // stream, receiving the next messages, since the sequence is aborted only once all of them stopped (see PublisherConsumerBehavior)
     [SuppressMessage("", "CA2000", Justification = "Stream disposed in base class")]
     public UnboundedSequence(string sequenceId, ConsumerPipelineContext context)
-        : base(sequenceId, context, false, trackIdentifiers: false)
+        : base(sequenceId, context, false, new MessageStreamProvider<IInboundEnvelope>(restartsReturningSubscribers: true), false)
     {
         // The subscribers are resolved from the scope of the message that starts the sequence and keep using it until the sequence
         // ends, while the pipeline of that message disposes its context as soon as it completes

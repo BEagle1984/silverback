@@ -39,6 +39,16 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
     private bool _isAbandoned;
 
+    // Set by the enumerator when it returns the current message to the subscriber, which then receives it. The detach reads it only after
+    // the subscriber returned, which orders the read after the write.
+    private bool _isCurrentPulled;
+
+    private bool _hasPushedMessages;
+
+    private bool _isPendingPushFirst;
+
+    private bool _isPendingPushRefused;
+
     private Action<object?>? _onPullAction;
 
     private object? _onPullActionArgument;
@@ -49,12 +59,14 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
         Complete,
 
-        Aborted
+        Aborted,
+
+        Detached
     }
 
     /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(object,Action{object},object,CancellationToken)" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "The lock is important to avoid multiple complete/abort, here is not important")]
-    public async Task PushAsync(TMessage message, Action<object?>? onPullAction = null, object? onPullActionArgument = null, CancellationToken cancellationToken = default)
+    public async Task<bool> PushAsync(TMessage message, Action<object?>? onPullAction = null, object? onPullActionArgument = null, CancellationToken cancellationToken = default)
     {
         Check.NotNull(message, nameof(message));
 
@@ -62,28 +74,54 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
         await _writeSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
 
-        _current = message;
-        _hasCurrent = true;
-        _onPullAction = onPullAction;
-        _onPullActionArgument = onPullActionArgument;
-        SafelyRelease(_readSemaphore);
-
         try
         {
-            await _processedSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-            // Abort the stream, since the message might have been pulled already: its late processed signal could otherwise be taken
-            // as the acknowledgement of the next pushed message
-            Abort();
-            throw;
+            // Write the message holding the lock, so that either the detach sees the pending push or the push sees the detached stream
+            lock (_completeLock)
+            {
+                bool isFirst = !_hasPushedMessages;
+                _hasPushedMessages = true;
+
+                // The subscriber was invoked for the first message, so it's acknowledged as when it's pending (see Detach)
+                if (_completeState == CompleteState.Detached)
+                    return isFirst;
+
+                _current = message;
+                _hasCurrent = true;
+                _isCurrentPulled = false;
+                _isPendingPushFirst = isFirst;
+                _onPullAction = onPullAction;
+                _onPullActionArgument = onPullActionArgument;
+            }
+
+            SafelyRelease(_readSemaphore);
+
+            try
+            {
+                await _processedSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // Abort the stream, since the message might have been pulled already: its late processed signal could otherwise be taken
+                // as the acknowledgement of the next pushed message
+                Abort();
+                throw;
+            }
+
+            lock (_completeLock)
+            {
+                return !_isPendingPushRefused;
+            }
         }
         finally
         {
             // Always release the write lock, otherwise CompleteAsync would wait for it forever
-            _current = default;
-            _hasCurrent = false;
+            lock (_completeLock)
+            {
+                _current = default;
+                _hasCurrent = false;
+            }
+
             ReleaseWriteLock();
         }
     }
@@ -152,6 +190,27 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         AcknowledgePendingPush();
     }
 
+    /// <inheritdoc cref="IMessageStreamEnumerable.Detach" />
+    public void Detach()
+    {
+        lock (_completeLock)
+        {
+            if (_completeState != CompleteState.NotComplete)
+                return;
+
+            _completeState = CompleteState.Detached;
+
+            if (!_hasCurrent)
+                return;
+
+            // Refuse the message that the subscriber didn't receive, so that it's pushed to the replacing stream, unless the subscriber
+            // was invoked for it (it returned without receiving it, as when it doesn't enumerate the stream at all)
+            _isPendingPushRefused = !_isCurrentPulled && !_isPendingPushFirst;
+        }
+
+        AcknowledgePendingPush();
+    }
+
     /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
     [MustDisposeResource]
     public IEnumerator<TMessage> GetEnumerator() => GetEnumerable().GetEnumerator();
@@ -160,7 +219,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
         GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken);
 
-    Task IMessageStreamEnumerable.PushAsync(object message, Action<object?>? onPullAction, object? onPullActionArgument, CancellationToken cancellationToken) =>
+    Task<bool> IMessageStreamEnumerable.PushAsync(object message, Action<object?>? onPullAction, object? onPullActionArgument, CancellationToken cancellationToken) =>
         PushAsync((TMessage)message, onPullAction, onPullActionArgument, cancellationToken);
 
     /// <inheritdoc cref="IEnumerable.GetEnumerator" />
@@ -219,6 +278,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         }
     }
 
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Ordered by the read semaphore, see _isCurrentPulled")]
     private IEnumerable<TMessage> GetEnumerable()
     {
         while (WaitForNextAsync(CancellationToken.None).SafeWait())
@@ -226,6 +286,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
             if (!_hasCurrent || _current == null)
                 continue;
 
+            _isCurrentPulled = true;
             _onPullAction?.Invoke(_onPullActionArgument);
 
             yield return _current;
@@ -233,6 +294,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     }
 
     [SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Reviewed")]
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Ordered by the read semaphore, see _isCurrentPulled")]
     private async IAsyncEnumerable<TMessage> GetAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken)
     {
         while (await WaitForNextAsync(cancellationToken).ConfigureAwait(false))
@@ -240,6 +302,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
             if (!_hasCurrent || _current == null)
                 continue;
 
+            _isCurrentPulled = true;
             _onPullAction?.Invoke(_onPullActionArgument);
 
             yield return _current;

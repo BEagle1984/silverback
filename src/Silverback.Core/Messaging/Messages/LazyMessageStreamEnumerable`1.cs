@@ -18,7 +18,7 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     private readonly System.Threading.Lock _syncRoot = new();
 
-    private readonly Action? _onSubscriberReturned;
+    private readonly Func<ILazyMessageStreamEnumerable, bool, bool, ILazyMessageStreamEnumerable?>? _onSubscriberCompleted;
 
     private MessageStreamEnumerable<TMessage>? _stream;
 
@@ -26,10 +26,24 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     private bool _isDisposed;
 
-    public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null, Action? onSubscriberReturned = null)
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="LazyMessageStreamEnumerable{TMessage}" /> class.
+    /// </summary>
+    /// <param name="filters">
+    ///     The filters to be applied.
+    /// </param>
+    /// <param name="onSubscriberCompleted">
+    ///     The callback invoked when the subscriber of the created stream returns or throws, with this lazy stream, a value indicating
+    ///     whether the subscriber threw and a value indicating whether it returned or threw because the cancellation token passed to it was
+    ///     canceled. It returns the lazy stream replacing this one, if the subscriber has to be invoked again with it, otherwise
+    ///     <c>null</c>.
+    /// </param>
+    public LazyMessageStreamEnumerable(
+        IReadOnlyCollection<IMessageFilter>? filters = null,
+        Func<ILazyMessageStreamEnumerable, bool, bool, ILazyMessageStreamEnumerable?>? onSubscriberCompleted = null)
     {
         Filters = filters;
-        _onSubscriberReturned = onSubscriberReturned;
+        _onSubscriberCompleted = onSubscriberCompleted;
     }
 
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.MessageType" />
@@ -55,6 +69,12 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
     ///     The provider reads it while holding its lock, which the notifying subscriber acquires after setting it.
     /// </remarks>
     public bool HasSubscriberReturned { get; private set; }
+
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.Replacement" />
+    /// <remarks>
+    ///     Set by the provider holding its lock before the stream is detached, which orders the read by the refused push after the write.
+    /// </remarks>
+    public ILazyMessageStreamEnumerable? Replacement { get; private set; }
 
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.Stream" />
     IMessageStreamEnumerable? ILazyMessageStreamEnumerable.Stream => (IMessageStreamEnumerable?)Stream;
@@ -122,8 +142,16 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
         return stream.CompleteAsync(cancellationToken);
     }
 
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.CreateReplacement" />
+    public ILazyMessageStreamEnumerable CreateReplacement()
+    {
+        LazyMessageStreamEnumerable<TMessage> replacement = new(Filters, _onSubscriberCompleted);
+        Replacement = replacement;
+        return replacement;
+    }
+
     /// <inheritdoc cref="ILazyStreamArgumentValue.NotifySubscriberCompleted" />
-    public void NotifySubscriberCompleted(bool hasThrown)
+    public ILazyStreamArgumentValue? NotifySubscriberCompleted(bool hasThrown, bool isCanceled)
     {
         MessageStreamEnumerable<TMessage>? stream;
 
@@ -136,12 +164,17 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
         }
 
         if (stream == null)
-            return;
+            return null;
 
         stream.Abandon();
 
-        if (!hasThrown)
-            _onSubscriberReturned?.Invoke();
+        ILazyMessageStreamEnumerable? replacement = _onSubscriberCompleted?.Invoke(this, hasThrown, isCanceled);
+
+        // Detach only once the replacement is set, since the refused push is then pushed to it
+        if (replacement != null)
+            stream.Detach();
+
+        return (ILazyStreamArgumentValue?)replacement;
     }
 
     public void Dispose()
