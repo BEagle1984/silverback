@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,6 +75,19 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     /// </summary>
     internal bool IsConsumerRolledBack => _isConsumerRolledBack;
 
+    /// <summary>
+    ///     Gets a value indicating whether the consumer was stopped because of the message, by the rollback when the error policies don't
+    ///     handle the error, or when the error handling fails (see <see cref="TryStopConsumerAsync" />). It's set when the stop fails as
+    ///     well, since it might have failed after being accepted.
+    /// </summary>
+    internal bool IsConsumerStopped { get; private set; }
+
+    /// <summary>
+    ///     Gets the start generation of the consumer stopped because of the message (see <see cref="IStopOnFailureConsumer" />), or
+    ///     <c>null</c> if unknown (e.g., because the stop failed).
+    /// </summary>
+    internal int? StoppedConsumerStartGeneration { get; private set; }
+
     /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
     public Task CommitAsync()
     {
@@ -120,6 +134,70 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         }
     }
 
+    /// <summary>
+    ///     Requests the consumer to stop because of the message, as the rollback does when the error policies don't handle the error.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a value indicating whether
+    ///     the consumer was stopped because of the message.
+    /// </returns>
+    internal async Task<bool> TryStopConsumerAsync()
+    {
+        // The stop is ignored when the processing is stale (e.g. its Kafka partition was revoked in the meantime) and when the processing
+        // was canceled by a stop (the consumer might have been restarted since)
+        bool isStopped;
+
+        try
+        {
+            if (_context.Consumer is IStopOnFailureConsumer consumer)
+            {
+                int? stoppedConsumerStartGeneration = await consumer
+                    .TryStopOnFailureAsync(_context.Envelope.BrokerMessageIdentifier, _processingCancellationToken)
+                    .ConfigureAwait(false);
+
+                isStopped = stoppedConsumerStartGeneration != null;
+
+                if (isStopped)
+                    StoppedConsumerStartGeneration = stoppedConsumerStartGeneration;
+            }
+            else
+            {
+                // The consumers not deriving from Consumer<TIdentifier> don't report whether the stop was accepted: it's assumed when the
+                // stop cancels the processing token, also when another stop does it concurrently
+                if (_processingCancellationToken.IsCancellationRequested)
+                    return IsConsumerStopped;
+
+                await _context.Consumer.StopAsync(_context.Envelope.BrokerMessageIdentifier, false).ConfigureAwait(false);
+                isStopped = _processingCancellationToken.IsCancellationRequested;
+            }
+        }
+        catch (Exception)
+        {
+            // The stop failed, possibly after being accepted: handled like an accepted stop, so that the client is disconnected, as when
+            // the exception reaches the reader
+            IsConsumerStopped = true;
+            throw;
+        }
+
+        if (isStopped)
+            IsConsumerStopped = true;
+
+        return IsConsumerStopped;
+    }
+
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged by the consumer")]
+    private async Task TryStopConsumerAfterFailureAsync()
+    {
+        try
+        {
+            await TryStopConsumerAsync().ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // The exception thrown by the failed operation is rethrown instead
+        }
+    }
+
     private async Task CommitCoreAsync()
     {
         _logger.LogConsumerTransactionCommitting(_context.Envelope);
@@ -145,7 +223,16 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         if (!commitConsumer)
             _isConsumerRolledBack = true;
 
-        await Aborting.InvokeAsync(_context).ConfigureAwait(false);
+        try
+        {
+            await Aborting.InvokeAsync(_context).ConfigureAwait(false);
+        }
+        catch (Exception) when (!commitConsumer && stopConsuming)
+        {
+            // The rollback failed: stop the consumer anyway, as when the error handling fails (see ErrorPoliciesHelper)
+            await TryStopConsumerAfterFailureAsync().ConfigureAwait(false);
+            throw;
+        }
 
         if (commitConsumer)
         {
@@ -168,7 +255,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         else
         {
             if (stopConsuming)
-                await _context.Consumer.StopAsync(_context.Envelope.BrokerMessageIdentifier, false).ConfigureAwait(false);
+                await TryStopConsumerAsync().ConfigureAwait(false);
 
             await _context.Consumer.RollbackAsync(_context.GetRollbackIdentifiers()).ConfigureAwait(false);
         }

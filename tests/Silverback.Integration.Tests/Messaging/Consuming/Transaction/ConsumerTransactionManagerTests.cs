@@ -39,6 +39,91 @@ public class ConsumerTransactionManagerTests
     }
 
     [Theory]
+    [InlineData("accepted", true)]
+    [InlineData("ignored", false)]
+    [InlineData("processing canceled", false)]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The stop is requested before the disposal")]
+    public async Task TryStopConsumerAsync_ShouldReportWhetherConsumerIsStopped(string scenario, bool expectedResult)
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        using CancellationTokenSource cancellationTokenSource = new();
+        ConsumerTransactionManager transaction = new(
+            context,
+            Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>(),
+            cancellationTokenSource.Token);
+
+        // A consumer not reporting whether the stop is accepted (see IStopOnFailureConsumer) cancels the processing when stopping, and
+        // the request is obsolete if the processing was already canceled by a stop (e.g., followed by a restart)
+        if (scenario == "accepted")
+        {
+            context.Consumer.StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>()).Returns(_ =>
+            {
+                cancellationTokenSource.Cancel();
+                return ValueTask.CompletedTask;
+            });
+        }
+
+        if (scenario == "processing canceled")
+            await cancellationTokenSource.CancelAsync();
+
+        bool result = await transaction.TryStopConsumerAsync();
+
+        result.ShouldBe(expectedResult);
+        transaction.IsConsumerStopped.ShouldBe(expectedResult);
+        await context.Consumer.Received(scenario == "processing canceled" ? 0 : 1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task TryStopConsumerAsync_ShouldConsiderConsumerStoppedAndRethrow_WhenStopFails()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        using CancellationTokenSource cancellationTokenSource = new();
+        ConsumerTransactionManager transaction = new(
+            context,
+            Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>(),
+            cancellationTokenSource.Token);
+        context.Consumer.StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>())
+            .Returns(_ => ValueTask.FromException(new InvalidOperationException("Stop failed.")));
+
+        Task Act() => transaction.TryStopConsumerAsync();
+
+        // The stop might have failed after being accepted: the client must be disconnected as well
+        InvalidOperationException exception = await Should.ThrowAsync<InvalidOperationException>(Act);
+        exception.Message.ShouldBe("Stop failed.");
+        transaction.IsConsumerStopped.ShouldBeTrue();
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The stop is requested before the disposal")]
+    public async Task RollbackAsync_ShouldStopConsumerAndRethrow_WhenAbortingHandlerFails()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        using CancellationTokenSource cancellationTokenSource = new();
+        ConsumerTransactionManager transaction = new(
+            context,
+            Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>(),
+            cancellationTokenSource.Token);
+        transaction.Aborting.AddHandler(_ => ValueTask.FromException(new InvalidOperationException("Handler failed.")));
+        context.Consumer.StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>()).Returns(_ =>
+        {
+            cancellationTokenSource.Cancel();
+            return ValueTask.CompletedTask;
+        });
+
+        Task Act() => transaction.RollbackAsync(new InvalidOperationException("test"));
+
+        // The consumer is stopped anyway, as when the error handling fails
+        AggregateException exception = await Should.ThrowAsync<AggregateException>(Act);
+        exception.InnerExceptions.ShouldHaveSingleItem().Message.ShouldBe("Handler failed.");
+        transaction.IsConsumerStopped.ShouldBeTrue();
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Theory]
     [InlineData(false, true)]
     [InlineData(true, false)]
     public async Task RollbackAsync_ShouldSetIsConsumerRolledBack_WhenNotCommittingConsumer(bool commitConsumer, bool expectedIsConsumerRolledBack)

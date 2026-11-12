@@ -65,6 +65,130 @@ public partial class BatchProcessingTests
         Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Batch_ShouldStopConsumerAndDisconnect_WhenBatchCompletedByTimeoutFails(bool isErrorHandlingFailed)
+    {
+        int stopCalls = 0;
+
+        // When the error handling fails (the stop callback throws), the rollback doesn't stop the consumer
+        IStopConsumerErrorPolicyCallback callback = Substitute.For<IStopConsumerErrorPolicyCallback>();
+        callback.OnStoppingConsumerAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(_ =>
+            {
+                Interlocked.Increment(ref stopCalls);
+                return isErrorHandlingFailed ? Task.FromException(new InvalidOperationException("Callback failed.")) : Task.CompletedTask;
+            });
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(300))
+                        .OnError(policy => policy.Stop()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        // No message is being added to the batch when the subscriber fails, after enumerating the whole batch completed by its max wait
+        // time, so no reader rethrows the exception
+        static async ValueTask HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne dummy in batch)
+            {
+                // Enumerate the whole batch before failing
+            }
+
+            throw new InvalidOperationException("Test");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 2" });
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected, TimeSpan.FromSeconds(10));
+
+        stopCalls.ShouldBe(1);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldNotDisconnect_WhenBatchCompletedByTimeoutFailsAfterConsumerIsRestarted()
+    {
+        TestingCollection<List<string?>> successfulBatches = [];
+        TaskCompletionSource<bool> firstBatchEnumerated = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> failFirstBatch = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int batchesCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(300))
+                        .OnError(policy => policy.Stop()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync));
+
+        // The first batch, completed by its max wait time, keeps being processed while the consumer is restarted (ignoring the
+        // cancellation), and only then fails
+        async ValueTask HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+            }
+
+            if (Interlocked.Increment(ref batchesCount) == 1)
+            {
+                firstBatchEnumerated.TrySetResult(true);
+                await failFirstBatch.Task.WaitAsync(TimeSpan.FromSeconds(30));
+                throw new InvalidOperationException("Test");
+            }
+
+            successfulBatches.Add(list);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+
+        await firstBatchEnumerated.Task.WaitAsync(TimeSpan.FromSeconds(30));
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.StopAsync(false);
+        await consumer.StartAsync();
+        failFirstBatch.TrySetResult(true);
+
+        // The stop requested by the stale error handling is ignored and the restarted consumer processes the messages again
+        await AsyncTestingUtil.WaitAsync(() => successfulBatches.Count > 0, TimeSpan.FromSeconds(10));
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        successfulBatches.ShouldHaveSingleItem().ShouldBe(["1", "2"]);
+        consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
+    }
+
     [Fact]
     public async Task Batch_ShouldStopConsumer_WhenProcessingFailsWithMultiplePendingBatches()
     {

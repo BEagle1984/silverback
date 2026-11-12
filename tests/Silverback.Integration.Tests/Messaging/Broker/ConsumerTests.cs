@@ -11,6 +11,7 @@ using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Types;
 using Xunit;
@@ -298,6 +299,140 @@ public class ConsumerTests
 
         consumer.Started.ShouldBeFalse();
         consumer.StopCalls.ShouldBe(1);
+    }
+
+    [Theory]
+    [InlineData("accepted", true)]
+    [InlineData("stale identifier", false)]
+    [InlineData("processing canceled by stop", false)]
+    [InlineData("consumer restarted", false)]
+    [InlineData("concurrent stop", false)]
+    public async Task TryStopOnFailureAsync_ShouldReportWhetherConsumerIsStopped(string scenario, bool expectedResult)
+    {
+        CancellationTokenCapturingBehavior behavior = new();
+        using TestConsumer consumer = CreateConsumer(behavior);
+        TaskCompletionSource<bool> releaseStopCore = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        await consumer.StartAsync();
+        await consumer.ConsumeAsync();
+
+        // The token canceled by a stop (also of a processing of a previous start, when the consumer was restarted) and the identifiers
+        // rejected by the broker implementation (e.g., the Kafka offsets of a revoked partition) make the request obsolete. A request
+        // waiting for a stop in progress is obsolete as soon as that stop cancels the processing.
+        Task stopping = Task.CompletedTask;
+
+        switch (scenario)
+        {
+            case "processing canceled by stop":
+                await consumer.StopAsync();
+                break;
+            case "consumer restarted":
+                await consumer.StopAsync();
+                await consumer.StartAsync();
+                break;
+            case "concurrent stop":
+                consumer.StopGate = releaseStopCore.Task;
+                stopping = consumer.StopAsync().AsTask();
+                break;
+        }
+
+        TestOffset identifier = scenario == "stale identifier" ? new TestOffset() : consumer.CurrentIdentifier;
+        Task<int?> stopRequest = ((IStopOnFailureConsumer)consumer)
+            .TryStopOnFailureAsync(identifier, behavior.CancellationToken)
+            .AsTask();
+
+        try
+        {
+            if (scenario == "concurrent stop")
+            {
+                stopRequest.IsCompleted.ShouldBeFalse();
+                releaseStopCore.TrySetResult(true);
+            }
+
+            (await stopRequest.WaitAsync(Timeout) != null).ShouldBe(expectedResult);
+            await stopping.WaitAsync(Timeout);
+
+            consumer.Started.ShouldBe(scenario is "stale identifier" or "consumer restarted");
+            consumer.StopCalls.ShouldBe(scenario == "stale identifier" ? 0 : 1);
+        }
+        finally
+        {
+            releaseStopCore.TrySetResult(true);
+            await stopping.WaitAsync(Timeout);
+        }
+    }
+
+    [Theory]
+    [InlineData("stopped", true)]
+    [InlineData("restarted", false)]
+    [InlineData("restarted and stopped again", false)]
+    public async Task DisconnectAfterStopOnFailureAsync_ShouldDisconnectUnlessRestarted(string scenario, bool isDisconnected)
+    {
+        CancellationTokenCapturingBehavior behavior = new();
+        using TestConsumer consumer = CreateConsumer(behavior);
+        await consumer.StartAsync();
+        await consumer.ConsumeAsync();
+        int? stoppedConsumerStartGeneration = await ((IStopOnFailureConsumer)consumer)
+            .TryStopOnFailureAsync(consumer.CurrentIdentifier, behavior.CancellationToken);
+
+        // The consumer might be restarted (and stopped again) between the stop requested because of the failed processing and the
+        // disconnection
+        if (scenario != "stopped")
+            await consumer.StartAsync();
+
+        if (scenario == "restarted and stopped again")
+            await consumer.StopAsync();
+
+        stoppedConsumerStartGeneration.ShouldNotBeNull();
+        await ((IStopOnFailureConsumer)consumer).DisconnectAfterStopOnFailureAsync(stoppedConsumerStartGeneration.Value)
+            .AsTask()
+            .WaitAsync(Timeout);
+
+        await consumer.Client.Received(isDisconnected ? 1 : 0).DisconnectAsync();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task TryStopConsumerAsync_ShouldReportWhetherConsumerAcceptedStop(bool isStoppedConcurrently)
+    {
+        CancellationTokenCapturingBehavior behavior = new();
+        using TestConsumer consumer = CreateConsumer(behavior);
+        TaskCompletionSource<bool> releaseStopCore = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        await consumer.StartAsync();
+        await consumer.ConsumeAsync();
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
+            consumer: consumer,
+            identifier: consumer.CurrentIdentifier);
+        ConsumerTransactionManager transaction = new(
+            context,
+            Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>(),
+            behavior.CancellationToken);
+
+        // An unrelated stop in progress cancels the processing, ignoring the request, which must not look accepted
+        Task stopping = Task.CompletedTask;
+
+        if (isStoppedConcurrently)
+        {
+            consumer.StopGate = releaseStopCore.Task;
+            stopping = consumer.StopAsync().AsTask();
+        }
+
+        Task<bool> stopRequest = transaction.TryStopConsumerAsync();
+
+        try
+        {
+            releaseStopCore.TrySetResult(true);
+
+            (await stopRequest.WaitAsync(Timeout)).ShouldBe(!isStoppedConcurrently);
+            transaction.IsConsumerStopped.ShouldBe(!isStoppedConcurrently);
+            await stopping.WaitAsync(Timeout);
+            consumer.StopCalls.ShouldBe(1);
+        }
+        finally
+        {
+            releaseStopCore.TrySetResult(true);
+            await stopping.WaitAsync(Timeout);
+        }
     }
 
     private static TestConsumer CreateConsumer(params IConsumerBehavior[] behaviors)

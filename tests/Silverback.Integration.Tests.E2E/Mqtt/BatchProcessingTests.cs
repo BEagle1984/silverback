@@ -8,10 +8,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -522,6 +524,132 @@ public partial class BatchProcessingTests : MqttTests
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
         receivedMessages.ShouldBe(2);
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(3);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Batch_ShouldStopConsumerAndDisconnectWithoutAcknowledging_WhenBatchCompletedByTimeoutFails(bool isErrorHandlingFailed)
+    {
+        int stopCalls = 0;
+
+        // When the error handling fails (the stop callback throws), the rollback doesn't stop the consumer
+        IStopConsumerErrorPolicyCallback callback = Substitute.For<IStopConsumerErrorPolicyCallback>();
+        callback.OnStoppingConsumerAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(_ =>
+            {
+                Interlocked.Increment(ref stopCalls);
+                return isErrorHandlingFailed ? Task.FromException(new InvalidOperationException("Callback failed.")) : Task.CompletedTask;
+            });
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(300)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        // No message is being added to the batch when the subscriber fails, after enumerating the whole batch completed by its max wait
+        // time, so no reader rethrows the exception
+        static async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne unused in batch)
+            {
+                // Enumerate the whole batch before failing
+            }
+
+            throw new InvalidOperationException("Test");
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected, TimeSpan.FromSeconds(10));
+
+        stopCalls.ShouldBe(1);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldNotStopRestartedConsumer_WhenBatchCompletedByTimeoutFailsAfterRestart()
+    {
+        TestingCollection<List<string?>> successfulBatches = [];
+        TaskCompletionSource<bool> firstBatchEnumerated = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> failFirstBatch = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int batchesCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(300)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync));
+
+        // The first batch, completed by its max wait time, keeps being processed while the consumer is restarted (ignoring the
+        // cancellation), and only then fails
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+            }
+
+            if (Interlocked.Increment(ref batchesCount) == 1)
+            {
+                firstBatchEnumerated.TrySetResult(true);
+                await failFirstBatch.Task.WaitAsync(TimeSpan.FromSeconds(30));
+                throw new InvalidOperationException("Test");
+            }
+
+            successfulBatches.Add(list);
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+
+        await firstBatchEnumerated.Task.WaitAsync(TimeSpan.FromSeconds(30));
+
+        await consumer.StopAsync(false);
+        await consumer.StartAsync();
+        failFirstBatch.TrySetResult(true);
+
+        // The stop requested by the stale error handling is ignored and the restarted consumer processes the messages again
+        await AsyncTestingUtil.WaitAsync(() => successfulBatches.Count > 0, TimeSpan.FromSeconds(10));
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        successfulBatches.ShouldHaveSingleItem().ShouldBe(["1", "2"]);
+        consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 
     [Fact]

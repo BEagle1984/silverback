@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Broker;
 /// <typeparam name="TIdentifier">
 ///     The type of the <see cref="IBrokerMessageIdentifier" /> used by the consumer implementation.
 /// </typeparam>
-public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
+public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer, IDisposable
     where TIdentifier : class, IBrokerMessageIdentifier
 {
     private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
@@ -37,6 +37,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     private readonly System.Threading.Lock _reconnectLock = new();
 
     private CancellationTokenSource _processingCancellationTokenSource = new();
+
+    private int _startGeneration;
 
     // The start and stop flags are updated under the start/stop semaphore but read from any thread (e.g. by the consume loop and the
     // broker callbacks). They are volatile and IsStartedAndNotStopping reads them in the reverse order of their updates (the start
@@ -219,6 +221,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
                 _processingCancellationTokenSource = new CancellationTokenSource();
             }
 
+            Interlocked.Increment(ref _startGeneration);
+
             await StartCoreAsync().ConfigureAwait(false);
 
             // Set before resetting IsStarting, as IsStartedAndNotStopping requires
@@ -248,6 +252,38 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
 
         await StopCoreAsync((TIdentifier)brokerMessageIdentifier, waitUntilStopped, ignoreOnceCanceled: true).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc cref="IStopOnFailureConsumer.TryStopOnFailureAsync" />
+    async ValueTask<int?> IStopOnFailureConsumer.TryStopOnFailureAsync(
+        IBrokerMessageIdentifier brokerMessageIdentifier,
+        CancellationToken processingCancellationToken)
+    {
+        Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+
+        // Read before requesting the stop: if the stop is accepted, the consumer wasn't stopped, and therefore not restarted, since the
+        // processing started, since that stop would have canceled the processing
+        int startGeneration = Volatile.Read(ref _startGeneration);
+
+        bool isStopped = await StopCoreAsync(
+                (TIdentifier)brokerMessageIdentifier,
+                waitUntilStopped: false,
+                ignoreOnceCanceled: true,
+                processingCancellationToken)
+            .ConfigureAwait(false);
+
+        return isStopped ? startGeneration : null;
+    }
+
+    /// <inheritdoc cref="IStopOnFailureConsumer.DisconnectAfterStopOnFailureAsync" />
+    async ValueTask IStopOnFailureConsumer.DisconnectAfterStopOnFailureAsync(int startGeneration)
+    {
+        // Restarted after the stop (and possibly stopped again). The consumer can still be restarted before the disconnection begins, as
+        // when the exception reaches the reader.
+        if (Volatile.Read(ref _startGeneration) != startGeneration)
+            return;
+
+        await Client.DisconnectAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />
@@ -499,13 +535,25 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             cancellationToken);
     }
 
-    private async ValueTask<bool> StopCoreAsync(TIdentifier? brokerMessageIdentifier, bool waitUntilStopped, bool ignoreOnceCanceled)
+    private async ValueTask<bool> StopCoreAsync(
+        TIdentifier? brokerMessageIdentifier,
+        bool waitUntilStopped,
+        bool ignoreOnceCanceled,
+        CancellationToken processingCancellationToken = default)
     {
         if (!await TryWaitStartStopSemaphoreAsync(ignoreOnceCanceled).ConfigureAwait(false))
             return false;
 
         try
         {
+            // The processing requesting the stop was canceled by a stop, which might have been followed by a restart: checked while
+            // holding the semaphore, which the stop and the start hold as well
+            if (processingCancellationToken.IsCancellationRequested)
+            {
+                _logger.LogConsumerStopIgnored(this);
+                return false;
+            }
+
             if (!TryBeginStop(brokerMessageIdentifier))
                 return false;
 

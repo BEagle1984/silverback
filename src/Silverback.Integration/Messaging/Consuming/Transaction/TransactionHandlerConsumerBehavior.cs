@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Sequences;
@@ -126,16 +127,129 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         context.UnboundedSequence is UnboundedSequence { IsErrorHandledByAbort: true } unboundedSequence &&
         exception == unboundedSequence.AbortException;
 
-    // The processing of the outer sequence started by the context (e.g., the batch started by a chunked message) can fail while the
-    // inner sequence awaited first, which is complete already, is still referenced. The failed processing task aborts the outer sequence
-    // with its exception, applying the error policies, before rethrowing it (see PublisherConsumerBehavior): abort the outer sequence
-    // again, just awaiting that abort, since aborting the inner sequence would apply the error policies a second time. Otherwise the
-    // exception comes from the inner sequence processing (e.g., failing before the message is added to the outer sequence).
-    private static ISequence GetFailedSequence(ConsumerPipelineContext context, ISequence sequence, Exception exception) =>
-        context is { IsSequenceStart: true, Sequence: { } outerSequence } && outerSequence != sequence &&
-        outerSequence.AbortException == exception
-            ? outerSequence
-            : sequence;
+    // The failure of the outer sequence the message is added to (e.g., the batch a chunked message is added to by the processing of its
+    // chunk sequence), while the inner sequence is still referenced, is handled by aborting the outer sequence, unless it was aborted for a
+    // reason that doesn't handle failures (e.g., the subscriber stopped enumerating it and its commit failed), applying the error policies
+    // to the inner sequence then:
+    // - Any failure of the message that joined the outer sequence is a failure of the outer sequence, as for the messages pushed directly
+    //   to it (see HandleSequenceExceptionAsync), whatever the exception (e.g., the failure pushing the message to the batch, or completing
+    //   the batch whose streams were aborted).
+    // - When the context started the aborted outer sequence as well, any failure belongs to it, whichever processing task threw it (e.g.,
+    //   the cancellation thrown by the subscriber when the batch was aborted with another exception).
+    // - The failure of an outer sequence is also rethrown to the message left out of it (e.g., refused because the batch timed out, see
+    //   SequenceBase.AddAsync): it's either the exception that aborted the outer sequence or the one thrown by its error handling.
+    // Otherwise the exception comes from the inner sequence processing (e.g., failing before the message is added to the outer sequence).
+    private static bool IsOuterSequenceFailure(
+        ConsumerPipelineContext context,
+        ISequence sequence,
+        Exception exception,
+        [NotNullWhen(true)] out ISequence? outerSequence)
+    {
+        outerSequence = context.Sequence;
+
+        if (outerSequence == null || outerSequence == sequence || outerSequence.IsAborted && !IsAbortedByErrorOrStop(outerSequence))
+            return false;
+
+        if (sequence.ParentSequence == outerSequence || context.IsSequenceStart && outerSequence.IsAborted)
+            return true;
+
+        return outerSequence.AbortException == exception || GetProcessingException(outerSequence) == exception;
+    }
+
+    // The abort handles the failures of the sequence, applying the error policies or rolling it back because the consumer is stopped,
+    // unlike when aborted because incomplete or because the subscribers stopped enumerating it
+    private static bool IsAbortedByErrorOrStop(ISequence sequence) =>
+        sequence.IsAborted &&
+        sequence.AbortReason is SequenceAbortReason.Error or SequenceAbortReason.ConsumerAborted or SequenceAbortReason.Disposing;
+
+    private static Exception? GetProcessingException(ISequence sequence) =>
+        sequence is ISequenceImplementation { ProcessingCompletedTask: { IsFaulted: true } processingCompletedTask }
+            ? processingCompletedTask.Exception?.InnerException
+            : null;
+
+    // The abort of the outer sequence handles the failure, applying the error policies (unless aborted by the stop): await it (or abort it,
+    // when the message failed to be pushed to it), since aborting the inner sequence as failed would apply them a second time. The inner
+    // sequence is completed with the outer sequence it joined. When the message was left out instead, nothing else completes the inner
+    // sequence, which may be complete already and stays in the store, where the stop and the next messages await its processing: abort it
+    // like the stop aborts the pending sequences, rolling it back without applying the error policies (see SequencerConsumerBehaviorBase).
+    private static async Task HandleOuterSequenceFailureAsync(
+        ISequence sequence,
+        ISequence outerSequence,
+        SequenceAbortReason abortReason,
+        Exception exception)
+    {
+        try
+        {
+            await outerSequence.AbortAsync(abortReason, exception).ConfigureAwait(false);
+        }
+        finally
+        {
+            if (sequence.ParentSequence != outerSequence)
+                await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted, exception).ConfigureAwait(false);
+        }
+    }
+
+    // Awaits the subscribers of the sequence before it's disposed, which might still be processing its streams (e.g., when the message
+    // failed to be pushed to it)
+    private static async Task AwaitSubscribersAsync(ISequence sequence)
+    {
+        if (sequence.Context.ProcessingTask is { } processingTask)
+            await processingTask.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+    }
+
+    // The error handling of the failed sequence stopped the consumer, because the error policies don't handle the error or the error
+    // handling failed (see ConsumerTransactionManager.TryStopConsumerAsync, which ignores the stop requested by a stale processing): the
+    // client must be disconnected as well, as when the exception reaches the reader (see ConsumerChannelsManager), but no reader rethrows
+    // it when no reader awaits the sequence (e.g., a batch completed by its max wait time, or ended by a chunked message, which the
+    // processing of its chunk sequence adds)
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged by DisconnectAsync")]
+    private static void DisconnectIfStoppedByErrorHandling(ISequence sequence, ISequence? ownedOuterSequence)
+    {
+        ConsumerTransactionManager? transactionManager = GetTransactionManagerIfStoppedByErrorHandling(sequence) ??
+                                                         (ownedOuterSequence != null
+                                                             ? GetTransactionManagerIfStoppedByErrorHandling(ownedOuterSequence)
+                                                             : null);
+
+        if (transactionManager == null)
+            return;
+
+        IConsumer consumer = sequence.Context.Consumer;
+        int? stoppedConsumerStartGeneration = transactionManager.StoppedConsumerStartGeneration;
+
+        // On another thread, since the disconnection waits for the readers to stop, while this continuation might run synchronously in the
+        // abort of the sequence, which a reader might be waiting for. The consumer restarted after the stop isn't disconnected, unless
+        // the stop failed (and the start generation is unknown).
+        Task.Run(
+                async () =>
+                {
+                    try
+                    {
+                        if (consumer is IStopOnFailureConsumer stopOnFailureConsumer && stoppedConsumerStartGeneration != null)
+                        {
+                            await stopOnFailureConsumer.DisconnectAfterStopOnFailureAsync(stoppedConsumerStartGeneration.Value)
+                                .ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            await consumer.Client.DisconnectAsync().ConfigureAwait(false);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Logged by DisconnectAsync
+                    }
+                },
+                CancellationToken.None)
+            .FireAndForget();
+    }
+
+    // The sequence was aborted because of an error and its error handling stopped the consumer (its processing might have been completed
+    // already, e.g., when it's a chunk sequence added to a batch, which completes it, failing afterwards)
+    private static ConsumerTransactionManager? GetTransactionManagerIfStoppedByErrorHandling(ISequence sequence) =>
+        sequence.AbortReason == SequenceAbortReason.Error &&
+        sequence.Context.TransactionManager is ConsumerTransactionManager { IsConsumerStopped: true } transactionManager
+            ? transactionManager
+            : null;
 
     private async Task AwaitProcessedIfNecessaryAsync(ConsumerPipelineContext context)
     {
@@ -163,41 +277,53 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             context.Dispose();
     }
 
-    // The token is only used to recognize the cancellation requested by the consumer stop, the awaiter must run until completion
-    private void StartSequenceProcessingAwaiter(ConsumerPipelineContext context, CancellationToken cancellationToken) =>
-        Task.Run(() => AwaitSequenceProcessingAsync(context, cancellationToken), CancellationToken.None).FireAndForget();
+    // The token is only used to recognize the cancellation requested by the consumer stop, the awaiter must run until completion. The
+    // sequence and its processing task are captured before the awaiter runs, since the message might be added to an outer sequence in
+    // the meantime (e.g., the chunked message added to a batch, which replaces the processing task of the context): the processing task of
+    // the sequence must be awaited first, not to miss its failure.
+    private void StartSequenceProcessingAwaiter(ConsumerPipelineContext context, CancellationToken cancellationToken)
+    {
+        Task? processingTask = context.ProcessingTask;
+        ISequence sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
+        Task.Run(() => AwaitSequenceProcessingAsync(sequence, processingTask, cancellationToken), CancellationToken.None).FireAndForget();
+    }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync")]
-    private async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context, CancellationToken cancellationToken)
+    private async Task AwaitSequenceProcessingAsync(ISequence sequence, Task? processingTask, CancellationToken cancellationToken)
     {
-        ISequence sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
-        context = sequence.Context;
-        ISequence? failedSequence = null;
+        ConsumerPipelineContext context = sequence.Context;
+
+        // The outer sequence started by the context (e.g., the batch started by a chunked message), which this awaiter owns
+        ISequence? ownedOuterSequence = null;
 
         try
         {
-            (context, sequence) = await AwaitSequenceCoreAsync(context, sequence).ConfigureAwait(false);
+            (context, ISequence processedSequence) =
+                await AwaitSequenceCoreAsync(context, sequence, processingTask).ConfigureAwait(false);
+
+            if (processedSequence != sequence)
+                ownedOuterSequence = processedSequence;
 
             if (!context.IsSequenceStart)
             {
-                _logger.LogSequenceProcessingCompletedNotOuterStart(context.Envelope, sequence);
+                _logger.LogSequenceProcessingCompletedNotOuterStart(context.Envelope, processedSequence);
             }
 
-            LogSequenceCompletedTrace(context, sequence);
+            LogSequenceCompletedTrace(context, processedSequence);
 
             // Commit only if it is the start of the outer sequence (e.g., when combining batching and chunking), to avoid commits in the
             // middle of the outer sequence (batch).
             if (context.IsSequenceStart)
             {
-                if (sequence.ParentSequence == null && !IsCompletingOrComplete(sequence))
+                if (processedSequence.ParentSequence == null && !IsCompletingOrComplete(processedSequence))
                 {
                     // The subscriber stopped enumerating before the end of the sequence (or the sequence is being aborted): abort it as
                     // the SequencerConsumerBehaviorBase does, or await the abort already in progress, instead of committing directly.
                     // This waits for the pending add, to commit the message being pushed when the enumeration stopped as well. The abort
                     // also commits and notifies the processing completion.
-                    await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+                    await processedSequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
                 }
-                else if (!sequence.IsAborted)
+                else if (!processedSequence.IsAborted)
                 {
                     await context.TransactionManager.CommitAsync().ConfigureAwait(false);
 
@@ -208,23 +334,58 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         }
         catch (Exception exception)
         {
-            failedSequence = GetFailedSequence(context, sequence, exception);
-            await failedSequence.AbortAsync(StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken), exception)
-                .ConfigureAwait(false);
+            SequenceAbortReason abortReason = StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken);
+
+            if (IsOuterSequenceFailure(context, sequence, exception, out ISequence? outerSequence))
+            {
+                if (context.IsSequenceStart)
+                    ownedOuterSequence = outerSequence;
+
+                await HandleOuterSequenceFailureAsync(sequence, outerSequence, abortReason, exception).ConfigureAwait(false);
+
+                if (ownedOuterSequence != null)
+                    await AwaitSubscribersAsync(ownedOuterSequence).ConfigureAwait(false);
+            }
+            else
+            {
+                await sequence.AbortAsync(abortReason, exception).ConfigureAwait(false);
+
+                // The outer sequence started by the context, which the message didn't join (e.g., failing to publish it), would be left
+                // pending otherwise: abort it as well, rolling it back without applying the error policies a second time
+                if (context is { IsSequenceStart: true, Sequence: { } startedSequence } && startedSequence != sequence)
+                {
+                    ownedOuterSequence = startedSequence;
+                    await startedSequence.AbortAsync(SequenceAbortReason.ConsumerAborted, exception).ConfigureAwait(false);
+                    await AwaitSubscribersAsync(startedSequence).ConfigureAwait(false);
+                }
+            }
         }
         finally
         {
-            failedSequence?.Dispose();
-            sequence.Dispose();
+            try
+            {
+                // Before disposing the sequences, which might throw (e.g., when a scoped service fails to dispose)
+                DisconnectIfStoppedByErrorHandling(sequence, ownedOuterSequence);
+            }
+            finally
+            {
+                try
+                {
+                    ownedOuterSequence?.Dispose();
+                }
+                finally
+                {
+                    sequence.Dispose();
+                }
+            }
         }
     }
 
     private async Task<(ConsumerPipelineContext Context, ISequence Sequence)> AwaitSequenceCoreAsync(
         ConsumerPipelineContext context,
-        ISequence sequence)
+        ISequence sequence,
+        Task? processingTask)
     {
-        Task? processingTask = context.ProcessingTask;
-
         // Keep awaiting in a loop because the sequence and the processing task may be reassigned
         // (a ChunkSequence may be added to another sequence only after the message is complete and deserialized)
         while (processingTask != null)
