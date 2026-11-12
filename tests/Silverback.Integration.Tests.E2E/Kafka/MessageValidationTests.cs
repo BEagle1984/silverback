@@ -135,6 +135,8 @@ public class MessageValidationTests : KafkaTests
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
