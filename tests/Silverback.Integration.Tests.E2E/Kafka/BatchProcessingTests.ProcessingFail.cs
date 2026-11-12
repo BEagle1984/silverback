@@ -66,6 +66,145 @@ public partial class BatchProcessingTests
     }
 
     [Theory]
+    [InlineData(typeof(InvalidOperationException))]
+    [InlineData(typeof(OperationCanceledException))]
+    [InlineData(typeof(TaskCanceledException))] // E.g., an HttpClient timeout, which isn't caused by the consumer stop
+    public async Task Batch_ShouldStopConsumer_WhenProcessingFailsWhileOtherSubscriberIsEnumerating(Type exceptionType)
+    {
+        List<string?> receivedMessages = [];
+        List<string?> otherReceivedMessages = [];
+        IStopConsumerErrorPolicyCallback callback = Substitute.For<IStopConsumerErrorPolicyCallback>();
+
+        // The other subscriber is registered first: the test fails if the cancellation of its stream, aborted because of the failure, is
+        // rethrown instead of the exception of the failed subscriber
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(6))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherBatch)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne message in batch)
+            {
+                receivedMessages.Add(message.ContentEventOne);
+
+                if (message.ContentEventOne == "2")
+                    throw (Exception)Activator.CreateInstance(exceptionType, "Test")!;
+            }
+        }
+
+        async ValueTask HandleOtherBatch(IAsyncEnumerable<TestEventTwo> batch)
+        {
+            await foreach (TestEventTwo message in batch)
+            {
+                otherReceivedMessages.Add(message.ContentEventTwo);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+        }
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Stopped);
+
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        receivedMessages.ShouldBe(["1", "2"]);
+        otherReceivedMessages.ShouldBe(["1"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+        await callback.Received(1).OnStoppingConsumerAsync(
+            Arg.Any<IRawInboundEnvelope>(),
+            Arg.Is<Exception>(exception => exception.GetType() == exceptionType && exception.Message == "Test"));
+        callback.ReceivedCalls().Count().ShouldBe(1);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Batch_ShouldRollBackWithoutApplyingErrorPolicy_WhenStoppingWhileSeveralSubscribersAreEnumerating(
+        bool isProcessingWhenStopping)
+    {
+        int processingCount = 0;
+        int otherProcessingCount = 0;
+        IStopConsumerErrorPolicyCallback callback = Substitute.For<IStopConsumerErrorPolicyCallback>();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(6))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherBatch)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, CancellationToken>(HandleBatch)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch, CancellationToken cancellationToken)
+        {
+            await foreach (TestEventOne dummy in batch)
+            {
+                Interlocked.Increment(ref processingCount);
+
+                // Canceled by the stop, otherwise the batch is aborted by the stop while waiting for the next message
+                if (isProcessingWhenStopping)
+                    await Task.Delay(Timeout.Infinite, cancellationToken);
+            }
+        }
+
+        async ValueTask HandleOtherBatch(IAsyncEnumerable<TestEventTwo> batch)
+        {
+            await foreach (TestEventTwo dummy in batch)
+            {
+                // Ignore the cancellation token
+                Interlocked.Increment(ref otherProcessingCount);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await AsyncTestingUtil.WaitAsync(() => processingCount == 1);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.StopAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
+        otherProcessingCount.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+        callback.ReceivedCalls().ShouldBeEmpty();
+
+        // The batch is rolled back and consumed again
+        await consumer.StartAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+        await AsyncTestingUtil.WaitAsync(() => processingCount == 2 && otherProcessingCount == 2);
+
+        processingCount.ShouldBe(2);
+        otherProcessingCount.ShouldBe(2);
+    }
+
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
     public async Task Batch_ShouldStopConsumerAndDisconnect_WhenBatchCompletedByTimeoutFails(bool isErrorHandlingFailed)
