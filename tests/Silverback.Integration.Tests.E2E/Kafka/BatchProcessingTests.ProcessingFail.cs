@@ -308,6 +308,7 @@ public partial class BatchProcessingTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         await AsyncTestingUtil.WaitAsync(() => Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status == ConsumerStatus.Stopped);
+        await AsyncTestingUtil.WaitAsync(() => Helper.GetConsumerForEndpoint(DefaultTopicName).Client.Status == ClientStatus.Disconnected);
         await AsyncTestingUtil.WaitAsync(() => abortedCount == 2);
 
         batchesCount.ShouldBe(3);

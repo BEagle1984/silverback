@@ -138,6 +138,8 @@ public class MessageValidationTests : KafkaTests
         await AsyncTestingUtil.WaitAsync(() =>
             consumer.StatusInfo.Status == ConsumerStatus.Stopped && consumer.Client.Status == ClientStatus.Disconnected);
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
