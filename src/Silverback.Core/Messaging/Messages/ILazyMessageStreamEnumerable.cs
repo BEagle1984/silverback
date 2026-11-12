@@ -36,6 +36,20 @@ internal interface ILazyMessageStreamEnumerable
     bool HasSubscriberReturned { get; }
 
     /// <summary>
+    ///     Gets the lazy stream replacing this one, if its subscriber returned and is invoked again with a new stream (see
+    ///     <see cref="CreateReplacement" />).
+    /// </summary>
+    ILazyMessageStreamEnumerable? Replacement { get; }
+
+    /// <summary>
+    ///     Creates the lazy stream, with the same message type and filters, that replaces this one for the subscriber that returned.
+    /// </summary>
+    /// <returns>
+    ///     The new <see cref="ILazyMessageStreamEnumerable" />, which is also set as <see cref="Replacement" />.
+    /// </returns>
+    ILazyMessageStreamEnumerable CreateReplacement();
+
+    /// <summary>
     ///     Gets an awaitable <see cref="Task" /> that completes when the first message is pushed and the
     ///     <see cref="IMessageStreamEnumerable" /> is created. The created stream can be retrieved via
     ///     the <see cref="Stream" /> property.

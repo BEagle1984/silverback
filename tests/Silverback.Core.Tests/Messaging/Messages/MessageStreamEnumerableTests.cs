@@ -412,6 +412,102 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
+    public async Task Detach_ShouldAcknowledgePendingPush_WhenMessagePulled()
+    {
+        MessageStreamEnumerable<Message> stream = new();
+        await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
+
+        Task<bool> firstPushTask = stream.PushAsync(new Message(1));
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+        Task<bool> pushTask = stream.PushAsync(new Message(2));
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+        (await firstPushTask.WaitAsync(Timeout)).ShouldBeTrue();
+
+        await Task.WhenAny(pushTask, Task.Delay(100));
+        pushTask.IsCompleted.ShouldBeFalse();
+
+        stream.Detach();
+
+        (await pushTask.WaitAsync(Timeout)).ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Detach_ShouldAcknowledgePendingPush_WhenFirstMessageNotPulled()
+    {
+        MessageStreamEnumerable<Message> stream = new();
+
+        Task<bool> pushTask = stream.PushAsync(new Message(1));
+
+        stream.Detach();
+
+        (await pushTask.WaitAsync(Timeout)).ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Detach_ShouldRefusePendingPush_WhenMessageNotPulled()
+    {
+        MessageStreamEnumerable<Message> stream = new();
+        using CancellationTokenSource cancellationTokenSource = new();
+        await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator(cancellationTokenSource.Token);
+
+        Task<bool> firstPushTask = stream.PushAsync(new Message(1));
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        // The subscriber stops waiting for the next message, acknowledging the first one
+        await cancellationTokenSource.CancelAsync();
+        await Should.ThrowAsync<OperationCanceledException>(enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout));
+        (await firstPushTask.WaitAsync(Timeout)).ShouldBeTrue();
+
+        Task<bool> pushTask = stream.PushAsync(new Message(2));
+        await Task.WhenAny(pushTask, Task.Delay(100));
+        pushTask.IsCompleted.ShouldBeFalse();
+
+        stream.Detach();
+
+        (await pushTask.WaitAsync(Timeout)).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task PushAsync_ShouldRefuseMessage_WhenDetached()
+    {
+        MessageStreamEnumerable<Message> stream = new();
+        await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
+
+        Task<bool> firstPushTask = stream.PushAsync(new Message(1));
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+        stream.Detach();
+        (await firstPushTask.WaitAsync(Timeout)).ShouldBeTrue();
+
+        bool isPushed = await stream.PushAsync(new Message(2)).WaitAsync(Timeout);
+
+        isPushed.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task PushAsync_ShouldAcknowledgeFirstMessage_WhenDetached()
+    {
+        MessageStreamEnumerable<Message> stream = new();
+        stream.Detach();
+
+        bool isPushed = await stream.PushAsync(new Message(1)).WaitAsync(Timeout);
+
+        isPushed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Detach_ShouldNotAffectPendingPush_WhenAborted()
+    {
+        MessageStreamEnumerable<Message> stream = new();
+
+        Task<bool> pushTask = stream.PushAsync(new Message(1));
+        stream.Abort();
+        stream.Detach();
+
+        Exception? pushException = await Record.ExceptionAsync(() => pushTask.WaitAsync(Timeout));
+        pushException.ShouldNotBeNull().ShouldBeAssignableTo<OperationCanceledException>();
+    }
+
+    [Fact]
     public async Task CompleteAsync_ShouldCauseExceptionToBeThrown_WhenTryPushingAfterComplete()
     {
         MessageStreamEnumerable<Message> stream = new();

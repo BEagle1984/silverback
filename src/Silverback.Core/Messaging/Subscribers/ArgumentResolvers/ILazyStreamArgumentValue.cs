@@ -14,5 +14,13 @@ internal interface ILazyStreamArgumentValue : ILazyArgumentValue
     /// <param name="hasThrown">
     ///     A value indicating whether the subscriber method threw.
     /// </param>
-    void NotifySubscriberCompleted(bool hasThrown);
+    /// <param name="isCanceled">
+    ///     A value indicating whether the subscriber method returned, or threw an <see cref="System.OperationCanceledException" />, after
+    ///     the cancellation token passed to it was canceled (e.g., because the consumer is stopping). It isn't invoked again in this case.
+    /// </param>
+    /// <returns>
+    ///     The argument value wrapping the stream that replaces this one, if the subscriber method has to be invoked again with it (because
+    ///     it returned while the other streams of the same provider are still being enumerated), otherwise <c>null</c>.
+    /// </returns>
+    ILazyStreamArgumentValue? NotifySubscriberCompleted(bool hasThrown, bool isCanceled);
 }

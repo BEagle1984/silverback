@@ -57,7 +57,8 @@ internal static class SubscribedMethodInvoker
                     subscribedMethod,
                     arguments,
                     streamEnumerableResolver,
-                    serviceProvider);
+                    serviceProvider,
+                    cancellationToken);
 
                 break;
             default:
@@ -125,7 +126,8 @@ internal static class SubscribedMethodInvoker
         SubscribedMethod subscribedMethod,
         object?[] arguments,
         IStreamEnumerableMessageArgumentResolver streamEnumerableResolver,
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider,
+        CancellationToken cancellationToken)
     {
         object target = subscribedMethod.ResolveTargetType(serviceProvider);
 
@@ -134,32 +136,51 @@ internal static class SubscribedMethodInvoker
             subscribedMethod.MessageType,
             subscribedMethod.Options.Filters);
 
-        return Task.Run(async () =>
-        {
-            try
+        return Task.Run(
+            async () =>
             {
-                await lazyStream.WaitUntilCreatedAsync().ConfigureAwait(false);
+                // The subscriber is invoked again with the stream replacing the one it stopped enumerating, if the subscribers of the
+                // other streams are still enumerating them (see MessageStreamProvider)
+                for (ILazyArgumentValue? currentLazyStream = lazyStream; currentLazyStream != null;)
+                {
+                    try
+                    {
+                        await currentLazyStream.WaitUntilCreatedAsync().ConfigureAwait(false);
 
-                arguments[0] = lazyStream.Value;
-            }
-            catch (OperationCanceledException)
-            {
-                return;
-            }
+                        arguments[0] = currentLazyStream.Value;
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
 
-            bool hasThrown = true;
+                    bool hasThrown = true;
+                    bool hasThrownCancellation = false;
+                    ILazyArgumentValue? replacementLazyStream;
 
-            try
-            {
-                await InvokeWithActivityWithoutBlockingAsync(subscribedMethod, target, arguments).ConfigureAwait(false);
-                hasThrown = false;
-            }
-            finally
-            {
-                // The subscriber will not pull any further message: don't let the stream completion wait for it
-                (lazyStream as ILazyStreamArgumentValue)?.NotifySubscriberCompleted(hasThrown);
-            }
-        });
+                    try
+                    {
+                        await InvokeWithActivityWithoutBlockingAsync(subscribedMethod, target, arguments).ConfigureAwait(false);
+                        hasThrown = false;
+                    }
+                    catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                    {
+                        hasThrownCancellation = true;
+                        throw;
+                    }
+                    finally
+                    {
+                        // The subscriber will not pull any further message: don't let the stream completion wait for it. It isn't
+                        // invoked again if the token passed to it was canceled, e.g. because the consumer is stopping.
+                        replacementLazyStream = (currentLazyStream as ILazyStreamArgumentValue)?.NotifySubscriberCompleted(
+                            hasThrown,
+                            hasThrown ? hasThrownCancellation : cancellationToken.IsCancellationRequested);
+                    }
+
+                    currentLazyStream = replacementLazyStream;
+                }
+            },
+            CancellationToken.None); // The token is only checked when the subscriber returns, the invocation must run until completion
     }
 
     private static object? UnwrapIfNeeded(object? message, SubscribedMethod subscribedMethod) =>
