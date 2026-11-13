@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
@@ -157,6 +158,43 @@ public class RetryErrorPolicyTests
             false,
             true,
             false);
+    }
+
+    [Theory]
+    [InlineData(1, 10)]
+    [InlineData(2, 30)]
+    [InlineData(3, 50)]
+    public async Task HandleErrorAsync_ShouldApplyIncrementalDelay(int failedAttempts, int expectedDelay)
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+            .AddLoggerSubstitute(LogLevel.Trace)
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+        LoggerSubstitute<RetryErrorPolicy> logger = (LoggerSubstitute<RetryErrorPolicy>)serviceProvider.GetRequiredService<ILogger<RetryErrorPolicy>>();
+        IErrorPolicyImplementation policy = new RetryErrorPolicy
+        {
+            InitialDelay = TimeSpan.FromMilliseconds(10),
+            DelayIncrement = TimeSpan.FromMilliseconds(20)
+        }.Build(serviceProvider);
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            [new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))],
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
+            new InvalidOperationException("test"));
+
+        // The first retry is delayed by the initial delay and the increment is added at each subsequent retry
+        logger.Received(
+            LogLevel.Trace,
+            null,
+            $"Waiting {expectedDelay} milliseconds before retrying to process the message(s). | EndpointName: test, BrokerMessageId: 42",
+            1999);
     }
 
     [Fact]

@@ -501,11 +501,11 @@ public class OutboxWorkerServiceTests
         AddHealthyProducer(producers, "two");
         outbox.Add(new OutboxMessage([0x01], null, "one"));
 
-        // The first retry is delayed by 1 second, while a second consecutive failure would be delayed by about 17 minutes
+        // The first retry is delayed by 10 milliseconds, while a second consecutive failure would be delayed by 10 seconds
         OutboxWorkerSettings settings = new(new InMemoryOutboxSettings())
         {
             Interval = TimeSpan.FromMilliseconds(10),
-            InitialRetryDelay = TimeSpan.FromMilliseconds(1),
+            InitialRetryDelay = TimeSpan.FromMilliseconds(10),
             RetryDelayFactor = 1000,
             EnforceMessageOrder = false
         };
@@ -518,9 +518,10 @@ public class OutboxWorkerServiceTests
         await service.StartAsync(CancellationToken.None);
 
         // Each healthy message is produced after the first retry delay, since the failed pass producing it resets the attempts: 4 passes
-        // fail without progress (1 second apart) and 3 make progress. Without the reset, the second failure would wait about 17 minutes.
-        await AsyncTestingUtil.WaitAsync(() => Volatile.Read(ref failingProduceCalls[0]) >= 7, TimeSpan.FromSeconds(15));
-        Volatile.Read(ref failingProduceCalls[0]).ShouldBe(7);
+        // fail without progress and 3 make progress. Without the reset, the second failure would already wait 10 seconds. The last
+        // failure is retried once more after the first retry delay, then the second consecutive failure waits 10 seconds.
+        await AsyncTestingUtil.WaitAsync(() => Volatile.Read(ref failingProduceCalls[0]) >= 7, TimeSpan.FromSeconds(5));
+        Volatile.Read(ref failingProduceCalls[0]).ShouldBeInRange(7, 8);
         outbox.ItemsCount.ShouldBe(1);
 
         await service.StopAsync(CancellationToken.None);

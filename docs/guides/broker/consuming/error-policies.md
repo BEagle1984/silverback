@@ -99,8 +99,8 @@ If the processing still fails after the last retry, the next policy in the chain
 By default, the message is retried immediately. Use one of the following methods of the <xref:Silverback.Messaging.Configuration.RetryErrorPolicyBuilder> to delay the retries:
 
 - `WithInterval(TimeSpan interval)`: waits a fixed interval before each retry.
-- `WithIncrementalDelay(TimeSpan initialDelay, TimeSpan delayIncrement, TimeSpan? maxDelay = null)`: starts from the initial delay and adds the increment at each failed attempt, optionally capping the delay to `maxDelay`.
-- `WithExponentialDelay(TimeSpan initialDelay, double delayFactor, TimeSpan? maxDelay = null)`: starts from the initial delay and multiplies it by the factor at each failed attempt, optionally capping the delay to `maxDelay`.
+- `WithIncrementalDelay(TimeSpan initialDelay, TimeSpan delayIncrement, TimeSpan? maxDelay = null)`: waits the initial delay before the first retry and adds the increment at each subsequent retry, optionally capping the delay to `maxDelay`.
+- `WithExponentialDelay(TimeSpan initialDelay, double delayFactor, TimeSpan? maxDelay = null)`: waits the initial delay before the first retry and multiplies it by the factor at each subsequent retry, optionally capping the delay to `maxDelay`.
 
 ```csharp
 .OnError(policy => policy
@@ -117,6 +117,8 @@ By default, the message is retried immediately. Use one of the following methods
             TimeSpan.FromSeconds(30)))
     .ThenMoveTo("my-topic-dlq"))
 ```
+
+In this example, the retries are delayed by 100 milliseconds, 200 milliseconds, 400 milliseconds and so on, up to 30 seconds.
 
 > [!Important]
 > The delay is applied in-process, while the consumer holds on to the failed message: no further message is processed from the same partition (Kafka) or by the same processing channel (MQTT) in the meantime. Long delays can therefore cause broker timeouts. See [Kafka Considerations](#kafka-considerations) and [MQTT Considerations](#mqtt-considerations).
