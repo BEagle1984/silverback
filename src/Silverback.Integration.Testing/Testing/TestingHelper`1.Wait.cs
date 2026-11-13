@@ -7,11 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Testing;
@@ -112,46 +109,13 @@ public abstract partial class TestingHelper
             cancellationToken);
 
     /// <inheritdoc cref="ITestingHelper.WaitUntilOutboxIsEmptyAsync(TimeSpan?)" />
-    public async ValueTask WaitUntilOutboxIsEmptyAsync(TimeSpan? timeout = null)
-    {
-        using CancellationTokenSource cancellationTokenSource = new(timeout ?? DefaultWaitTimeout);
-
-        await WaitUntilOutboxIsEmptyAsync(cancellationTokenSource.Token).ConfigureAwait(false);
-    }
+    public ValueTask WaitUntilOutboxIsEmptyAsync(TimeSpan? timeout = null) => Outbox.WaitUntilEmptyAsync(timeout ?? DefaultWaitTimeout);
 
     /// <inheritdoc cref="ITestingHelper.WaitUntilOutboxIsEmptyAsync(CancellationToken)" />
-    public async ValueTask WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            if (await IsOutboxEmptyAsync().ConfigureAwait(false))
-                return;
-
-            await Task.Delay(50, cancellationToken).ConfigureAwait(false);
-        }
-    }
+    public ValueTask WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken) => Outbox.WaitUntilEmptyAsync(cancellationToken);
 
     /// <inheritdoc cref="ITestingHelper.IsOutboxEmptyAsync" />
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    public async ValueTask<bool> IsOutboxEmptyAsync()
-    {
-        try
-        {
-            foreach (OutboxWorkerService service in _serviceProvider.GetServices<IHostedService>().OfType<OutboxWorkerService>())
-            {
-                if (await service.OutboxWorker.GetLengthAsync().ConfigureAwait(false) > 0)
-                    return false;
-            }
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Error occurred while checking whether the Outbox is empty");
-
-            return false;
-        }
-    }
+    public ValueTask<bool> IsOutboxEmptyAsync() => _outboxHelper.IsEmptyIgnoringErrorsAsync(null);
 
     /// <summary>
     ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed.

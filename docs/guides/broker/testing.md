@@ -171,6 +171,73 @@ Helper.Spy.OutboundEnvelopes.ShouldNotBeEmpty();
 Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 ```
 
+## Testing with the Outbox
+
+When the application stores the messages to the [transactional outbox](xref:outbox), the messages are produced asynchronously by the outbox worker, which makes the tests harder to write. The <xref:Silverback.Testing.IOutboxTestingHelper> (exposed by <xref:Silverback.Testing.ITestingHelper.Outbox>) and a couple of test-only configuration methods help with that.
+
+The outboxes are discovered from the registered outbox workers and from the producer endpoints that store to the outbox, so the helper works even if the worker runs in another process. The methods reading the outbox (`GetMessagesAsync`, `GetLengthAsync`, `IsEmptyAsync` and `ClearAsync`) accept an optional <xref:Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings> to target a single outbox, otherwise all the discovered outboxes are considered. `ProcessAsync`, `PauseWorkerAsync` and `ResumeWorker` have an overload with the settings as well, but they need an outbox worker registered in the host.
+
+> [!Important]
+> `WaitUntilEmptyAsync` called without settings, as well as `WaitUntilOutboxIsEmptyAsync` and `WaitUntilAllMessagesAreConsumedAsync`, wait only for the outboxes that are actually being drained, i.e. those with a registered outbox worker that isn't paused. They don't wait if you are using `UseManualOutboxWorker`, after `PauseWorkerAsync` (or after pausing the worker service with `Pause()`), or if there is no worker in the host. Pass the settings to `WaitUntilEmptyAsync` to wait for a specific outbox regardless.
+
+- <xref:Silverback.Testing.IOutboxTestingHelper.GetMessagesAsync(Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings)> – get the pending messages, without removing them.
+- <xref:Silverback.Testing.IOutboxTestingHelper.GetLengthAsync(Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings)> and <xref:Silverback.Testing.IOutboxTestingHelper.IsEmptyAsync(Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings)> – check how many messages are pending.
+- <xref:Silverback.Testing.IOutboxTestingHelper.WaitUntilEmptyAsync(System.Nullable{System.TimeSpan},Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings)> – wait until the outbox has been drained (see the note above).
+- <xref:Silverback.Testing.IOutboxTestingHelper.ClearAsync(Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings,System.Threading.CancellationToken)> – remove all the pending messages without producing them.
+- <xref:Silverback.Testing.IOutboxTestingHelper.ProcessAsync(System.Threading.CancellationToken)> – run the outbox worker right away, until the outbox is empty. The exceptions are thrown to the caller, including when some messages can't be produced (this relies on the built-in outbox worker to detect the failures: a custom `IOutboxWorker` is trusted to return `true` only on success). The pass is serialized with the outbox worker running in the same host, but the distributed lock is bypassed: no other process may be processing the same outbox, otherwise the messages could be produced twice. Combine it with `UseManualOutboxWorker` or `PauseWorkerAsync` to decide when the messages are produced.
+- <xref:Silverback.Testing.IOutboxTestingHelper.PauseWorkerAsync(System.Threading.CancellationToken)> and <xref:Silverback.Testing.IOutboxTestingHelper.ResumeWorker> – stop and restart the regular processing performed by the outbox worker. The pause takes effect right away and completes when the worker has finished processing the current batch (canceling it only stops the wait). `ResumeWorker` also resumes the workers suspended by `UseManualOutboxWorker`.
+
+### Manual Outbox Worker
+
+<xref:Silverback.Messaging.Configuration.BrokerOptionsBuilderOutboxTestingExtensions.UseManualOutboxWorker(Silverback.Messaging.Configuration.BrokerOptionsBuilder)> prevents the registered outbox workers from processing the outbox on their own. The messages remain in the outbox until the test calls `Helper.Outbox.ProcessAsync()`, allowing to assert the content of the outbox and to decide when the messages are produced. It relies on the generic host (`IHostedLifecycleService`) to suspend the workers before they start.
+
+```csharp
+await Host.ConfigureServicesAndRunAsync(
+    services => services
+        .AddLogging()
+        .AddSilverback()
+        .WithConnectionToMessageBroker(
+            options => options
+                .AddMockedKafka()
+                .AddInMemoryOutbox()
+                .AddOutboxWorker(worker => worker.ProcessOutbox(outbox => outbox.UseMemory()))
+                .UseManualOutboxWorker())
+        .AddKafkaClients(
+            clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(
+                    producer => producer
+                        .Produce<SomeMessage>(
+                            "my-endpoint",
+                            endpoint => endpoint
+                                .ProduceTo("test-topic")
+                                .StoreToOutbox(outbox => outbox.UseMemory())))
+                .AddConsumer(
+                    consumer => consumer
+                        .WithGroupId("test-group")
+                        .Consume(endpoint => endpoint.ConsumeFrom("test-topic"))))
+        .AddIntegrationSpyAndSubscriber());
+
+var publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+await publisher.PublishAsync(new SomeMessage());
+
+(await Helper.Outbox.GetMessagesAsync()).Count.ShouldBe(1);
+
+await Helper.Outbox.ProcessAsync();
+await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+```
+
+### Bypass the Outbox
+
+<xref:Silverback.Messaging.Configuration.BrokerOptionsBuilderOutboxTestingExtensions.BypassOutbox(Silverback.Messaging.Configuration.BrokerOptionsBuilder)> replaces the outbox writer with one that produces the messages to the broker right away, instead of storing them, and the outbox reader with one that is always empty. No outbox worker and no outbox storage are needed in the test, and the outbox remains empty.
+
+> [!Note]
+> The database transaction (if any) is ignored and the produce errors are thrown to the publisher.
+> Call `BypassOutbox` inside the `WithConnectionToMessageBroker` callback, after any other method overriding the outbox, such as `UseInMemoryOutbox`: the last override wins.
+> If an outbox worker is registered anyway, its distributed lock may still use the database.
+
 ## Kafka Specifics
 
 ### Auto-Commit Interval

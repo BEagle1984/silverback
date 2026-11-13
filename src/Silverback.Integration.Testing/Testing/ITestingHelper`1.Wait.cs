@@ -202,6 +202,13 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when the outbox is empty.
     /// </returns>
+    /// <remarks>
+    ///     Only the outboxes actively drained by a registered and not paused outbox worker are considered (see
+    ///     <see cref="IOutboxTestingHelper" />).
+    /// </remarks>
+    /// <exception cref="TimeoutException">
+    ///     The timeout elapsed before the outbox was emptied.
+    /// </exception>
     ValueTask WaitUntilOutboxIsEmptyAsync(TimeSpan? timeout = null);
 
     /// <summary>
@@ -213,6 +220,13 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when the outbox is empty.
     /// </returns>
+    /// <remarks>
+    ///     Only the outboxes actively drained by a registered and not paused outbox worker are considered (see
+    ///     <see cref="IOutboxTestingHelper" />).
+    /// </remarks>
+    /// <exception cref="OperationCanceledException">
+    ///     The <paramref name="cancellationToken" /> was canceled before the outbox was emptied.
+    /// </exception>
     ValueTask WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken);
 
     /// <summary>
@@ -222,5 +236,9 @@ public partial interface ITestingHelper
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains
     ///     <c>true</c> if the outbox is empty, otherwise <c>false</c>.
     /// </returns>
+    /// <remarks>
+    ///     Only the outboxes actively drained by a registered and not paused outbox worker are considered (see
+    ///     <see cref="IOutboxTestingHelper" />).
+    /// </remarks>
     ValueTask<bool> IsOutboxEmptyAsync();
 }

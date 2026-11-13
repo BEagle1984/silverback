@@ -390,6 +390,72 @@ public class OutboxWorkerTests
         AssertReceivedCalls(_producer1, 10);
     }
 
+    [Fact]
+    public async Task ProcessOutboxAsync_ShouldWaitForPendingProduces_WhenGetProducerThrows()
+    {
+        _producer1
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>()))
+            .Do(callInfo =>
+                Task.Run(async () =>
+                {
+                    await Task.Delay(300);
+                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
+                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
+                }).FireAndForget());
+        _producerCollection.GetProducerForEndpoint("unknown").Returns(_ => throw new InvalidOperationException("Unknown endpoint"));
+
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "unknown"));
+
+        OutboxWorker outboxWorker = new(
+            new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
+            new InMemoryOutboxReader(_inMemoryOutbox),
+            _producerCollection,
+            _logger);
+
+        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+
+        // The slow message must have been acknowledged in the same pass, only the failed one is left
+        outboxWorker.LastPassFailed.ShouldBeTrue();
+        (await outboxWorker.GetLengthAsync()).ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task ProcessOutboxAsync_ShouldSetLastPassFailed_WhenProduceFailsAsynchronously()
+    {
+        _producer1
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>()))
+            .Do(callInfo =>
+                Task.Run(async () =>
+                {
+                    await Task.Delay(20);
+                    callInfo.ArgAt<Action<Exception, OutboxMessage>>(3)
+                        .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxMessage>(4));
+                }).FireAndForget());
+
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+
+        OutboxWorker outboxWorker = new(
+            new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
+            new InMemoryOutboxReader(_inMemoryOutbox),
+            _producerCollection,
+            _logger);
+
+        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+
+        outboxWorker.LastPassFailed.ShouldBeTrue();
+    }
+
     private static void AssertReceivedCalls(IProducer producer, int requiredNumberOfCalls) =>
         producer.Received(requiredNumberOfCalls).RawProduce(
             Arg.Any<byte[]>(),
