@@ -407,6 +407,126 @@ public class OutboxWorkerServiceTests
     }
 
     [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task ExecuteLockedAsync_ShouldApplyRetryDelay_WhenProduceFails(bool enforceMessageOrder, bool failAsynchronously)
+    {
+        int[] produceCalls = [0];
+        InMemoryOutbox outbox = new();
+        IProducerCollection producers = CreateFailingProducers(failAsynchronously, () => Interlocked.Increment(ref produceCalls[0]));
+        await new InMemoryOutboxWriter(outbox, Substitute.For<ISilverbackLogger<InMemoryOutboxWriter>>())
+            .AddAsync(new OutboxMessage([0x01], null, "one"));
+        OutboxWorkerSettings settings = new(new InMemoryOutboxSettings())
+        {
+            Interval = TimeSpan.FromMilliseconds(10),
+            InitialRetryDelay = TimeSpan.FromHours(1),
+            EnforceMessageOrder = enforceMessageOrder
+        };
+        using OutboxWorkerService service = new(
+            settings,
+            new OutboxWorker(settings, new InMemoryOutboxReader(outbox), producers, Substitute.For<ISilverbackLogger<OutboxWorker>>()),
+            new InMemoryLock(new InMemoryLockSettings("test"), new SilverbackLoggerSubstitute<InMemoryLock>()),
+            new SilverbackLoggerSubstitute<OutboxWorkerService>());
+
+        await service.StartAsync(CancellationToken.None);
+        await AsyncTestingUtil.WaitAsync(() => Volatile.Read(ref produceCalls[0]) > 0);
+
+        // The failed message must not be retried before the (very long) retry delay elapses
+        await Task.Delay(300);
+        Volatile.Read(ref produceCalls[0]).ShouldBe(1);
+
+        await service.StopAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task ExecuteLockedAsync_ShouldKeepProducingOtherMessages_WhenSomeMessagesFailWithoutOrderEnforcement()
+    {
+        int[] failingProduceCalls = [0];
+        InMemoryOutbox outbox = new();
+        IProducerCollection producers = CreateFailingProducers(false, () => Interlocked.Increment(ref failingProduceCalls[0]));
+        AddHealthyProducer(producers, "two");
+        InMemoryOutboxWriter outboxWriter = new(outbox, Substitute.For<ISilverbackLogger<InMemoryOutboxWriter>>());
+        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+
+        for (int i = 0; i < 5; i++)
+        {
+            await outboxWriter.AddAsync(new OutboxMessage([0x02], null, "two"));
+        }
+
+        OutboxWorkerSettings settings = new(new InMemoryOutboxSettings())
+        {
+            Interval = TimeSpan.FromMilliseconds(10),
+            InitialRetryDelay = TimeSpan.FromHours(1),
+            EnforceMessageOrder = false,
+            BatchSize = 2
+        };
+        using OutboxWorkerService service = new(
+            settings,
+            new OutboxWorker(settings, new InMemoryOutboxReader(outbox), producers, Substitute.For<ISilverbackLogger<OutboxWorker>>()),
+            new InMemoryLock(new InMemoryLockSettings("test"), new SilverbackLoggerSubstitute<InMemoryLock>()),
+            new SilverbackLoggerSubstitute<OutboxWorkerService>());
+
+        await service.StartAsync(CancellationToken.None);
+
+        // The failing message (always first in the batch) doesn't hold back the others, despite the (very long) retry delay
+        await AsyncTestingUtil.WaitAsync(() => outbox.ItemsCount == 1, TimeSpan.FromSeconds(5));
+        outbox.ItemsCount.ShouldBe(1);
+
+        // Once only the failing message is left, the retry delay is applied
+        await AsyncTestingUtil.WaitAsync(() => Volatile.Read(ref failingProduceCalls[0]) >= 6, TimeSpan.FromSeconds(5));
+        await Task.Delay(300);
+        Volatile.Read(ref failingProduceCalls[0]).ShouldBe(6);
+
+        await service.StopAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task ExecuteLockedAsync_ShouldResetFailedAttempts_WhenFailedPassProducedSomeMessages()
+    {
+        int[] failingProduceCalls = [0];
+        InMemoryOutbox outbox = new();
+
+        // The first 3 passes failing without progress (only the failing message read) store a healthy message for the next pass
+        IProducerCollection producers = CreateFailingProducers(
+            false,
+            () =>
+            {
+                int calls = Interlocked.Increment(ref failingProduceCalls[0]);
+
+                if (calls % 2 == 1 && calls < 6)
+                    outbox.Add(new OutboxMessage([0x02], null, "two"));
+            });
+        AddHealthyProducer(producers, "two");
+        outbox.Add(new OutboxMessage([0x01], null, "one"));
+
+        // The first retry is delayed by 1 second, while a second consecutive failure would be delayed by about 17 minutes
+        OutboxWorkerSettings settings = new(new InMemoryOutboxSettings())
+        {
+            Interval = TimeSpan.FromMilliseconds(10),
+            InitialRetryDelay = TimeSpan.FromMilliseconds(1),
+            RetryDelayFactor = 1000,
+            EnforceMessageOrder = false
+        };
+        using OutboxWorkerService service = new(
+            settings,
+            new OutboxWorker(settings, new InMemoryOutboxReader(outbox), producers, Substitute.For<ISilverbackLogger<OutboxWorker>>()),
+            new InMemoryLock(new InMemoryLockSettings("test"), new SilverbackLoggerSubstitute<InMemoryLock>()),
+            new SilverbackLoggerSubstitute<OutboxWorkerService>());
+
+        await service.StartAsync(CancellationToken.None);
+
+        // Each healthy message is produced after the first retry delay, since the failed pass producing it resets the attempts: 4 passes
+        // fail without progress (1 second apart) and 3 make progress. Without the reset, the second failure would wait about 17 minutes.
+        await AsyncTestingUtil.WaitAsync(() => Volatile.Read(ref failingProduceCalls[0]) >= 7, TimeSpan.FromSeconds(15));
+        Volatile.Read(ref failingProduceCalls[0]).ShouldBe(7);
+        outbox.ItemsCount.ShouldBe(1);
+
+        await service.StopAsync(CancellationToken.None);
+    }
+
+    [Theory]
     [InlineData(true)]
     [InlineData(false)]
     public async Task ExecuteLockedAsync_ShouldWaitMinimumDelay_WhenRoundIsSkipped(bool suspended)
@@ -435,6 +555,39 @@ public class OutboxWorkerServiceTests
 
         passResult.SetResult(false);
         await manualPass;
+    }
+
+    [Fact]
+    public async Task ExecuteLockedAsync_ShouldKeepRetrying_WhenMaxRetryDelayIsReached()
+    {
+        int[] calls = [0];
+        IOutboxWorker outboxWorker = Substitute.For<IOutboxWorker>();
+        outboxWorker.ProcessOutboxAsync(Arg.Any<CancellationToken>()).Returns(
+            _ =>
+            {
+                Interlocked.Increment(ref calls[0]);
+                return Task.FromException<bool>(new InvalidOperationException("test"));
+            });
+
+        // The exponential delay would overflow after about 15 attempts, if the attempts were counted past the max delay
+        using OutboxWorkerService service = new(
+            new OutboxWorkerSettings(new InMemoryOutboxSettings())
+            {
+                Interval = TimeSpan.FromMilliseconds(1),
+                InitialRetryDelay = TimeSpan.FromMilliseconds(1),
+                RetryDelayFactor = 10,
+                MaxRetryDelay = TimeSpan.FromMilliseconds(2)
+            },
+            outboxWorker,
+            new InMemoryLock(new InMemoryLockSettings("test"), new SilverbackLoggerSubstitute<InMemoryLock>()),
+            new SilverbackLoggerSubstitute<OutboxWorkerService>());
+
+        await service.StartAsync(CancellationToken.None);
+
+        await AsyncTestingUtil.WaitAsync(() => Volatile.Read(ref calls[0]) >= 50, TimeSpan.FromSeconds(10));
+        Volatile.Read(ref calls[0]).ShouldBeGreaterThanOrEqualTo(50);
+
+        await service.StopAsync(CancellationToken.None);
     }
 
     [Fact]
@@ -491,6 +644,21 @@ public class OutboxWorkerServiceTests
         await Should.ThrowAsync<OperationCanceledException>(manualPass);
 
         await outboxWorkerService.StopAsync(CancellationToken.None);
+    }
+
+    private static void AddHealthyProducer(IProducerCollection producers, string endpointName)
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration(endpointName) { FriendlyName = endpointName });
+        producer
+            .When(p => p.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>()))
+            .Do(callInfo => callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2).Invoke(null, callInfo.ArgAt<OutboxMessage>(4)));
+        producers.GetProducerForEndpoint(endpointName).Returns(producer);
     }
 
     private static IProducerCollection CreateFailingProducers(bool failAsynchronously, Action onProduce)

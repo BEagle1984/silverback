@@ -59,8 +59,10 @@ public record OutboxWorkerSettings : IValidatableSettings
     public TimeSpan Interval { get; init; } = TimeSpan.FromMilliseconds(500);
 
     /// <summary>
-    ///     Gets the delay to be applied to the first retry in case of an error. If the specified delay (after taking increment and factor
-    ///     into account) is less than the <see cref="Interval" />,  the <see cref="Interval" /> will be used.
+    ///     Gets the delay to be applied to the first retry in case of an error, including when the messages fail to produce without
+    ///     aborting the processing (when <see cref="EnforceMessageOrder" /> is disabled or the error is reported asynchronously) and
+    ///     none of the messages in the batch could be produced. If the specified delay (after taking increment and factor into
+    ///     account) is less than the <see cref="Interval" />, the <see cref="Interval" /> will be used.
     /// </summary>
     public TimeSpan InitialRetryDelay { get; init; } = TimeSpan.Zero;
 

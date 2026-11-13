@@ -135,6 +135,25 @@ The default locking mechanism from the selected storage package is automatically
 > [!Note]
 > Both advisory locks and the custom locks table are implemented in the PostgreSQL storage package. The advisory locks are used by default, but you can switch to the custom locks table using `UsePostgreSqlTable`.
 
+### Retries and Message Order
+
+The outbox worker checks the outbox at a regular interval (500 milliseconds by default) and produces the stored messages in batches.
+
+By default, the message order is enforced: the worker stops processing the batch at the first message that fails to produce, and the next iteration retries from that message. With `DisableMessageOrderEnforcement`, the worker skips the failed messages and goes on with the next ones in the batch, and the next iteration retries the skipped messages.
+
+The next iteration is delayed by the interval or by the retry delay configured with `WithIncrementalRetryDelay` or `WithExponentialRetryDelay`, whichever is longer, when the processing of the batch is aborted or none of its messages could be produced. Otherwise the worker goes on right away with the next batch, so that a failing message doesn't slow down the others. Note that the failing messages are skipped only within a batch: if at least `BatchSize` failing messages are at the head of the queue, they block the messages behind them.
+
+The produce errors are often reported asynchronously (e.g. by the Kafka delivery reports), so the failure might be detected only after the whole batch was handed over to the producer. In that case, the messages following the failed one might already have been produced, even if the message order is enforced, and the next iteration starts right away if any message of the batch was produced.
+
+```csharp
+.AddOutboxWorker(worker => worker
+    .ProcessOutbox(outbox => outbox
+        .UsePostgreSql(connectionString))
+    .WithInterval(TimeSpan.FromMilliseconds(100))
+    .WithExponentialRetryDelay(TimeSpan.FromSeconds(1), 2, TimeSpan.FromMinutes(5))
+    .DisableMessageOrderEnforcement())
+```
+
 ### Provisioning the Required Tables
 
 The outbox table and the locks table (if used) must be created in the database. If you are using Entity Framework, you can create the tables by running the migrations. If you are using a different storage package, you can normally use the `SilverbackStorageInitializer` to create the necessary tables.

@@ -65,7 +65,9 @@ public class OutboxWorkerSettingsBuilder
     }
 
     /// <summary>
-    ///     Specifies an initial delay before the first retry and an increment to be added at each subsequent retry.
+    ///     Specifies an initial delay before the first retry and an increment to be added at each subsequent retry. The delay is applied
+    ///     when the outbox processing fails or none of the messages in a batch could be produced, and it is never shorter than the
+    ///     interval.
     /// </summary>
     /// <param name="initialDelay">
     ///     The initial delay before the first retry.
@@ -89,7 +91,9 @@ public class OutboxWorkerSettingsBuilder
     }
 
     /// <summary>
-    ///     Specifies an initial delay before the first retry and a factor to be applied to the delay at each retry.
+    ///     Specifies an initial delay before the first retry and a factor to be applied to the delay at each retry. The delay is applied
+    ///     when the outbox processing fails or none of the messages in a batch could be produced, and it is never shorter than the
+    ///     interval.
     /// </summary>
     /// <param name="initialDelay">
     ///     The initial delay before the first retry.
@@ -127,7 +131,8 @@ public class OutboxWorkerSettingsBuilder
 
     /// <summary>
     ///     Don't strictly enforce the message ordering, meaning that a failure in the produce of a message will cause it to be temporary
-    ///     skipped to try to produce the next message in the queue.
+    ///     skipped to try to produce the next message in the batch. The skipped messages are retried in the next iteration, which is
+    ///     delayed by the retry delay only if none of the messages in the batch could be produced.
     /// </summary>
     /// <returns>
     ///     The <see cref="OutboxWorkerSettingsBuilder" /> so that additional calls can be chained.
