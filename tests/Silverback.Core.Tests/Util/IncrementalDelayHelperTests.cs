@@ -10,13 +10,15 @@ namespace Silverback.Tests.Core.Util;
 
 public class IncrementalDelayHelperTests
 {
-    [Fact]
-    public void Compute_ShouldReturnInitialDelay_WhenFailedAttemptsIsZero()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    public void Compute_ShouldReturnInitialDelay_WhenFirstRetry(int failedAttempts)
     {
         TimeSpan initialDelay = TimeSpan.FromSeconds(42);
 
         TimeSpan delay = IncrementalDelayHelper.Compute(
-            0,
+            failedAttempts,
             initialDelay,
             TimeSpan.FromSeconds(42),
             42.0,
@@ -26,9 +28,9 @@ public class IncrementalDelayHelperTests
     }
 
     [Theory]
-    [InlineData(0, 42)]
-    [InlineData(1, 84)]
-    [InlineData(2, 126)]
+    [InlineData(1, 42)]
+    [InlineData(2, 84)]
+    [InlineData(3, 126)]
     public void Compute_ShouldIncrementDelay(int failedAttempts, int expectedDelay)
     {
         TimeSpan initialDelay = TimeSpan.FromSeconds(42);
@@ -45,9 +47,9 @@ public class IncrementalDelayHelperTests
     }
 
     [Theory]
-    [InlineData(0, 42)]
-    [InlineData(1, 105)]
-    [InlineData(2, 262.5)]
+    [InlineData(1, 42)]
+    [InlineData(2, 105)]
+    [InlineData(3, 262.5)]
     public void Compute_ShouldApplyDelayFactor(int failedAttempts, double expectedDelay)
     {
         TimeSpan initialDelay = TimeSpan.FromSeconds(42);
@@ -87,7 +89,7 @@ public class IncrementalDelayHelperTests
         TimeSpan initialDelay = TimeSpan.FromSeconds(42);
         TimeSpan delayIncrement = TimeSpan.FromSeconds(10);
         TimeSpan maxDelay = TimeSpan.FromSeconds(200);
-        int failedAttempts = 10;
+        int failedAttempts = 11;
 
         TimeSpan delay = IncrementalDelayHelper.Compute(
             failedAttempts,
@@ -105,7 +107,7 @@ public class IncrementalDelayHelperTests
         TimeSpan initialDelay = TimeSpan.FromSeconds(42);
         TimeSpan delayIncrement = TimeSpan.FromSeconds(10);
         TimeSpan? maxDelay = null;
-        int failedAttempts = 10;
+        int failedAttempts = 11;
 
         TimeSpan delay = IncrementalDelayHelper.Compute(
             failedAttempts,
