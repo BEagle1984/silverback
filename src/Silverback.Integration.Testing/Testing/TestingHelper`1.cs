@@ -14,7 +14,7 @@ public abstract partial class TestingHelper : ITestingHelper
 {
     private readonly ILogger _logger;
 
-    private readonly IServiceProvider _serviceProvider;
+    private readonly OutboxTestingHelper _outboxHelper;
 
     private readonly IConsumerCollection? _consumers;
 
@@ -33,10 +33,11 @@ public abstract partial class TestingHelper : ITestingHelper
         IServiceProvider serviceProvider,
         ILogger<TestingHelper> logger)
     {
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        Check.NotNull(serviceProvider, nameof(serviceProvider));
         _logger = logger;
 
         Spy = serviceProvider.GetService<IIntegrationSpy>();
+        _outboxHelper = new OutboxTestingHelper(serviceProvider, logger);
         _consumers = serviceProvider.GetService<IConsumerCollection>();
         _producers = serviceProvider.GetService<IProducerCollection>();
     }
@@ -45,6 +46,9 @@ public abstract partial class TestingHelper : ITestingHelper
     public IIntegrationSpy Spy => field ?? throw new InvalidOperationException(
         "The IIntegrationSpy couldn't be resolved. " +
         "Register it calling AddIntegrationSpy or AddIntegrationSpyAndSubscriber.");
+
+    /// <inheritdoc cref="ITestingHelper.Outbox" />
+    public IOutboxTestingHelper Outbox => _outboxHelper;
 
     /// <summary>
     ///     Resolves the raw name (topic/queue name) of the specified endpoint. If the endpoint is not found in the producers or consumers

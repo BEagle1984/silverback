@@ -29,8 +29,6 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
 
     private readonly DynamicCountdownEvent _pendingProduceCountdown = new();
 
-    private bool _failed;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxWorker" /> class.
     /// </summary>
@@ -58,6 +56,11 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
+    /// <summary>
+    ///     Gets a value indicating whether the last <see cref="ProcessOutboxAsync" /> pass failed to produce some messages.
+    /// </summary>
+    internal bool LastPassFailed { get; private set; }
+
     /// <inheritdoc cref="IOutboxWorker.ProcessOutboxAsync" />
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     public async Task<bool> ProcessOutboxAsync(CancellationToken stoppingToken)
@@ -66,7 +69,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
 
         _pendingProduceCountdown.Reset();
         _producedMessages.Clear();
-        _failed = false;
+        LastPassFailed = false;
 
         using IDisposableAsyncEnumerable<OutboxMessage> outboxMessages = await _outboxReader.GetAsync(_settings.BatchSize).ConfigureAwait(false);
 
@@ -82,7 +85,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
                 stoppingToken.ThrowIfCancellationRequested();
 
                 // Break on failure if message order has to be preserved
-                if (_failed && _settings.EnforceMessageOrder)
+                if (LastPassFailed && _settings.EnforceMessageOrder)
                     throw new OutboxProcessingException("Failed to produce message, aborting the outbox processing.");
             }
 
@@ -119,14 +122,17 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
     [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
     private void ProcessMessage(OutboxMessage outboxMessage)
     {
+        bool countAdded = false;
+
         try
         {
             IProducer producer = GetProducer(outboxMessage);
 
-            if (_failed && _settings.EnforceMessageOrder)
+            if (LastPassFailed && _settings.EnforceMessageOrder)
                 return;
 
             _pendingProduceCountdown.AddCount();
+            countAdded = true;
 
             // The pipeline is bypassed, so the activity must be started here to continue the trace of the stored message
             MessageHeaderCollection headers = [.. outboxMessage.Headers ?? []];
@@ -141,8 +147,10 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
         }
         catch (Exception ex)
         {
-            _failed = true;
-            _pendingProduceCountdown.Signal();
+            LastPassFailed = true;
+
+            if (countAdded)
+                _pendingProduceCountdown.Signal();
 
             _logger.LogErrorProducingOutboxStoredMessage(outboxMessage, ex);
 
@@ -160,7 +168,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
 
     private void OnProduceError(Exception exception, OutboxMessage outboxMessage)
     {
-        _failed = true;
+        LastPassFailed = true;
         _pendingProduceCountdown.Signal();
 
         _logger.LogErrorProducingOutboxStoredMessage(outboxMessage, exception);

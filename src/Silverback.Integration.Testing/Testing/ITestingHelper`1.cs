@@ -15,4 +15,9 @@ public partial interface ITestingHelper
     ///     The <see cref="IIntegrationSpy" /> must be enabled calling <c>AddIntegrationSpy</c> or <c>AddIntegrationSpyAndSubscriber</c>.
     /// </remarks>
     IIntegrationSpy Spy { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="IOutboxTestingHelper" />, exposing the helpers to test the applications using the transactional outbox.
+    /// </summary>
+    IOutboxTestingHelper Outbox { get; }
 }

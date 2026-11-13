@@ -18,9 +18,16 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class OutboxWorkerService : RecurringDistributedBackgroundService
 {
-    private readonly OutboxWorkerSettings _settings;
+    // Minimum delay between the skipped rounds, not to spin while suspended or yielding to a manual pass with a short interval
+    private static readonly TimeSpan SkippedRoundDelay = TimeSpan.FromMilliseconds(100);
+
+    // Serializes the scheduled passes and the manual ones triggered by the testing helpers
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "No wait handle is used, and disposing it would race with the shutdown")]
+    private readonly SemaphoreSlim _processingSemaphore = new(1, 1);
 
     private int _failedAttempts;
+
+    private int _pendingManualPasses;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxWorkerService" /> class.
@@ -44,7 +51,7 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
         ISilverbackLogger<OutboxWorkerService> logger)
         : base(Check.NotNull(settings, nameof(settings)).Interval, distributedLock, logger)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
+        Settings = Check.NotNull(settings, nameof(settings));
         OutboxWorker = Check.NotNull(outboxWorker, nameof(outboxWorker));
     }
 
@@ -54,35 +61,170 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
     public IOutboxWorker OutboxWorker { get; }
 
     /// <summary>
+    ///     Gets the <see cref="OutboxWorkerSettings" />.
+    /// </summary>
+    internal OutboxWorkerSettings Settings { get; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the scheduled processing is currently suspended.
+    /// </summary>
+    internal bool IsAutomaticProcessingSuspended { get; private set; }
+
+    // The built-in OutboxWorker reports the passes that failed to produce some messages without throwing, the other implementations are
+    // trusted to return true only when the batch was successfully processed
+    private bool HasLastPassFailed => OutboxWorker is OutboxWorker { LastPassFailed: true };
+
+    /// <summary>
+    ///     Processes the outbox right away, until it is empty. The exceptions are propagated to the caller.
+    /// </summary>
+    /// <remarks>
+    ///     The distributed lock is intentionally bypassed, since this is meant to be used in tests only. The pass is serialized with the
+    ///     scheduled ones.
+    /// </remarks>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    internal async Task ProcessUntilEmptyAsync(CancellationToken cancellationToken)
+    {
+        // Signals the scheduled loop to yield after the current batch, to not wait for it to drain (or to loop forever on failing messages)
+        Interlocked.Increment(ref _pendingManualPasses);
+
+        try
+        {
+            await _processingSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _pendingManualPasses);
+        }
+
+        try
+        {
+            // Throw on the failed passes, otherwise the messages that keep failing would be retried forever
+            while (await OutboxWorker.ProcessOutboxAsync(cancellationToken).ConfigureAwait(false))
+            {
+                if (HasLastPassFailed)
+                    throw new OutboxProcessingException("Some messages couldn't be produced (see the logs).");
+            }
+        }
+        finally
+        {
+            _processingSemaphore.Release();
+        }
+    }
+
+    /// <summary>
+    ///     Suspends the scheduled processing right away. The returned <see cref="Task" /> completes when any running pass is finished.
+    /// </summary>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    internal Task SuspendAutomaticProcessingAsync(CancellationToken cancellationToken)
+    {
+        SuspendAutomaticProcessing();
+        return WaitForRunningPassAsync(cancellationToken);
+    }
+
+    /// <summary>
+    ///     Suspends the scheduled processing right away, without waiting for the running pass (if any) to complete.
+    /// </summary>
+    internal void SuspendAutomaticProcessing() => IsAutomaticProcessingSuspended = true;
+
+    /// <summary>
+    ///     Waits for the running pass (if any) to complete.
+    /// </summary>
+    /// <remarks>
+    ///     The semaphore operations also order a previous <see cref="SuspendAutomaticProcessing" /> with the scheduled passes. The
+    ///     suspension is not reverted if the wait is canceled.
+    /// </remarks>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    internal async Task WaitForRunningPassAsync(CancellationToken cancellationToken)
+    {
+        await _processingSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+        _processingSemaphore.Release();
+    }
+
+    /// <summary>
+    ///     Resumes the scheduled processing.
+    /// </summary>
+    internal void ResumeAutomaticProcessing() => IsAutomaticProcessingSuspended = false;
+
+    /// <summary>
     ///     Calls the <see cref="IOutboxWorker" /> to process the queue.
     /// </summary>
     /// <inheritdoc cref="DistributedBackgroundService.ExecuteLockedAsync" />
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Handle any exception from any broker type")]
     protected override async Task ExecuteLockedAsync(CancellationToken stoppingToken)
+    {
+        // The round is skipped (and not considered a failure) while a manual pass is running
+        TimeSpan delay = await _processingSemaphore.WaitAsync(0, stoppingToken).ConfigureAwait(false)
+            ? await ProcessScheduledRoundAsync(stoppingToken).ConfigureAwait(false)
+            : SkippedRoundDelay;
+
+        // The delay is awaited after releasing the semaphore, to not block the manual passes. The interval is awaited by the base class.
+        delay -= Settings.Interval;
+
+        if (delay > TimeSpan.Zero)
+            await Task.Delay(delay, stoppingToken).ConfigureAwait(false);
+    }
+
+    // Must be called holding the semaphore, which is released at the end. Returns the delay before the next round.
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Handle any exception from any broker type")]
+    private async Task<TimeSpan> ProcessScheduledRoundAsync(CancellationToken stoppingToken)
     {
         try
         {
-            while (await OutboxWorker.ProcessOutboxAsync(stoppingToken).ConfigureAwait(false))
-            {
-                _failedAttempts = 0;
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception)
-        {
-            _failedAttempts++;
-            TimeSpan delay = IncrementalDelayHelper.Compute(
-                _failedAttempts,
-                _settings.InitialRetryDelay,
-                _settings.RetryDelayIncrement,
-                _settings.RetryDelayFactor,
-                _settings.MaxRetryDelay) - _settings.Interval;
+            // Checked after acquiring the semaphore, to be ordered with the write done by SuspendAutomaticProcessing
+            if (IsAutomaticProcessingSuspended)
+                return SkippedRoundDelay;
 
-            if (delay > TimeSpan.Zero)
-                await Task.Delay(delay, stoppingToken).ConfigureAwait(false);
+            bool failed = false;
+
+            try
+            {
+                // The suspension and the manual passes waiting for the semaphore are checked between the batches, to yield after the
+                // current one instead of draining
+                while (!IsAutomaticProcessingSuspended &&
+                       Volatile.Read(ref _pendingManualPasses) == 0 &&
+                       await OutboxWorker.ProcessOutboxAsync(stoppingToken).ConfigureAwait(false))
+                {
+                    _failedAttempts = 0;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                failed = true;
+            }
+
+            if (!failed)
+                return TimeSpan.Zero;
+
+            _failedAttempts++;
+
+            return IncrementalDelayHelper.Compute(
+                _failedAttempts,
+                Settings.InitialRetryDelay,
+                Settings.RetryDelayIncrement,
+                Settings.RetryDelayFactor,
+                Settings.MaxRetryDelay);
+        }
+        finally
+        {
+            _processingSemaphore.Release();
         }
     }
 }

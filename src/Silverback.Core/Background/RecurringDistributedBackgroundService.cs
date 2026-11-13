@@ -19,8 +19,6 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
 
     private readonly ISilverbackLogger<RecurringDistributedBackgroundService> _logger;
 
-    private bool _enabled = true;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="RecurringDistributedBackgroundService" /> class.
     /// </summary>
@@ -44,14 +42,19 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
     }
 
     /// <summary>
+    ///     Gets a value indicating whether the execution of the recurring task is enabled (not paused).
+    /// </summary>
+    internal bool IsEnabled { get; private set; } = true;
+
+    /// <summary>
     ///     Pauses the execution of the recurring task.
     /// </summary>
-    public void Pause() => _enabled = false;
+    public void Pause() => IsEnabled = false;
 
     /// <summary>
     ///     Resumes the execution of the previously paused recurring task.
     /// </summary>
-    public void Resume() => _enabled = true;
+    public void Resume() => IsEnabled = true;
 
     /// <inheritdoc cref="DistributedBackgroundService.AcquireLockAndExecuteAsync" />
     protected override async Task AcquireLockAndExecuteAsync(CancellationToken stoppingToken)
@@ -82,7 +85,7 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
     {
         while (!linkedCancellationTokenSource.IsCancellationRequested)
         {
-            if (_enabled)
+            if (IsEnabled)
             {
                 await ExecuteLockedAsync(linkedCancellationTokenSource.Token).ConfigureAwait(false);
 
