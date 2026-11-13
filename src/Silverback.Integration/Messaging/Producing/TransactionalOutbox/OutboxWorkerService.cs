@@ -18,6 +18,9 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class OutboxWorkerService : RecurringDistributedBackgroundService
 {
+    // Bounds the counter in any case (e.g. with a delay factor lower than 1, never reaching the max delay)
+    private const int MaxCountedFailedAttempts = 1000;
+
     // Minimum delay between the skipped rounds, not to spin while suspended or yielding to a manual pass with a short interval
     private static readonly TimeSpan SkippedRoundDelay = TimeSpan.FromMilliseconds(100);
 
@@ -73,6 +76,8 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
     // The built-in OutboxWorker reports the passes that failed to produce some messages without throwing, the other implementations are
     // trusted to return true only when the batch was successfully processed
     private bool HasLastPassFailed => OutboxWorker is OutboxWorker { LastPassFailed: true };
+
+    private bool HasLastPassFailedWithoutProgress => OutboxWorker is OutboxWorker { LastPassFailed: true, LastPassProducedCount: 0 };
 
     /// <summary>
     ///     Processes the outbox right away, until it is empty. The exceptions are propagated to the caller.
@@ -198,6 +203,15 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
                        Volatile.Read(ref _pendingManualPasses) == 0 &&
                        await OutboxWorker.ProcessOutboxAsync(stoppingToken).ConfigureAwait(false))
                 {
+                    // A failed pass doesn't throw if the message order isn't enforced or the produce fails asynchronously. It is delayed
+                    // like any other failure when nothing could be produced, not to retry the same failing messages in a tight loop,
+                    // but the processing goes on while some messages are produced, not to let the failing ones throttle the others
+                    if (HasLastPassFailedWithoutProgress)
+                    {
+                        failed = true;
+                        break;
+                    }
+
                     _failedAttempts = 0;
                 }
             }
@@ -213,14 +227,18 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
             if (!failed)
                 return TimeSpan.Zero;
 
-            _failedAttempts++;
-
-            return IncrementalDelayHelper.Compute(
-                _failedAttempts,
+            TimeSpan retryDelay = IncrementalDelayHelper.Compute(
+                _failedAttempts + 1,
                 Settings.InitialRetryDelay,
                 Settings.RetryDelayIncrement,
                 Settings.RetryDelayFactor,
                 Settings.MaxRetryDelay);
+
+            // Stop counting once the max delay is reached, not to overflow the computation while the messages keep failing
+            if (_failedAttempts < MaxCountedFailedAttempts && (Settings.MaxRetryDelay == null || retryDelay < Settings.MaxRetryDelay.Value))
+                _failedAttempts++;
+
+            return retryDelay;
         }
         finally
         {

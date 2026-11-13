@@ -61,6 +61,11 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
     /// </summary>
     internal bool LastPassFailed { get; private set; }
 
+    /// <summary>
+    ///     Gets the number of messages successfully produced in the last <see cref="ProcessOutboxAsync" /> pass.
+    /// </summary>
+    internal int LastPassProducedCount { get; private set; }
+
     /// <inheritdoc cref="IOutboxWorker.ProcessOutboxAsync" />
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     public async Task<bool> ProcessOutboxAsync(CancellationToken stoppingToken)
@@ -70,6 +75,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
         _pendingProduceCountdown.Reset();
         _producedMessages.Clear();
         LastPassFailed = false;
+        LastPassProducedCount = 0;
 
         using IDisposableAsyncEnumerable<OutboxMessage> outboxMessages = await _outboxReader.GetAsync(_settings.BatchSize).ConfigureAwait(false);
 
@@ -106,6 +112,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
         finally
         {
             await WaitAllAsync().ConfigureAwait(false); // Stopping token not forwarded to prevent inconsistencies
+            LastPassProducedCount = _producedMessages.Count;
             await AcknowledgeAllAsync().ConfigureAwait(false);
         }
 
