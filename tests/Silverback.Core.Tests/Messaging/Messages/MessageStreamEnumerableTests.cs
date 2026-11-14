@@ -395,6 +395,28 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
+    public async Task MoveNextAsync_ShouldNotEndEnumeration_WhenPushIsCanceledWhileReleasingMessage()
+    {
+        // The cancellation of the push can't be forced between the release of its message and the subscriber reading it: repeat the
+        // race, so that the enumeration ending normally on the aborted stream shows up in a few iterations
+        for (int i = 0; i < 2000; i++)
+        {
+            MessageStreamEnumerable<Message> stream = new();
+            using CancellationTokenSource cancellationTokenSource = new();
+            await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
+            Task<bool> moveNextTask = enumerator.MoveNextAsync().AsTask();
+
+            Task pushTask = stream.PushAsync(new Message(i), cancellationToken: cancellationTokenSource.Token);
+            await cancellationTokenSource.CancelAsync();
+
+            Exception? pushException = await Record.ExceptionAsync(() => pushTask.WaitAsync(Timeout));
+            pushException.ShouldBeAssignableTo<OperationCanceledException>();
+            Exception? exception = await Record.ExceptionAsync(async () => (await moveNextTask.WaitAsync(Timeout)).ShouldBeTrue());
+            exception?.ShouldBeAssignableTo<OperationCanceledException>();
+        }
+    }
+
+    [Fact]
     public async Task CompleteAsync_ShouldRefuseWaitingPush_WhenAbandonedWhileCompleting()
     {
         MessageStreamEnumerable<Message> stream = new();
