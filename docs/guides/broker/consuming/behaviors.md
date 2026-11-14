@@ -25,6 +25,7 @@ The following table lists the default behaviors that are executed when consuming
 | <xref:Silverback.Messaging.Validation.ValidatorConsumerBehavior>    |   950 | Validates the deserialized message using the configured validation rules and validators.                                                                          |
 | <xref:Silverback.Messaging.Headers.HeadersReaderConsumerBehavior>   |  1000 | Reads headers and maps them to message properties decorated with the <xref:Silverback.Messaging.Messages.HeaderAttribute>.                                      |
 | <xref:Silverback.Messaging.Sequences.SequencerConsumerBehavior>    | 1100 | Uses the available implementations of <xref:Silverback.Messaging.Sequences.ISequenceReader> to reassemble sequences (e.g., chunked messages) and pass the resulting message(s) down the pipeline. |
+| <xref:Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreConsumerBehavior> | 1990 | Stores the consumed Kafka offsets to the client side offset store, when one is configured. |
 | <xref:Silverback.Messaging.Consuming.PublisherConsumerBehavior>    | 2000 | Publishes the message to the configured message handlers, in-memory subscribers or any other final destinations.                                                  |
 
 ## Custom Behaviors
