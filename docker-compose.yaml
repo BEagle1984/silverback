@@ -85,7 +85,7 @@ services:
   
   # MQTT (emqx)
   emqx1:
-    image: emqx:5.8.7
+    image: emqx/emqx:5.8.8
     container_name: silverback-emqx1
     environment:
       - "EMQX_NODE_NAME=emqx@node1.emqx.io"
@@ -103,7 +103,7 @@ services:
         aliases:
           - node1.emqx.io
   emqx2:
-    image: emqx:5.8.7
+    image: emqx/emqx:5.8.8
     container_name: silverback-emqx2
     environment:
       - "EMQX_NODE_NAME=emqx@node2.emqx.io"
