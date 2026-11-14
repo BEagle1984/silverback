@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -129,7 +130,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
             ProduceCoreAsync(
                 async (producer, produceCancellationToken) =>
                 {
-                    await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(produceCancellationToken))
+                    await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(produceCancellationToken).ConfigureAwait(false))
                     {
                         produceCancellationToken.ThrowIfCancellationRequested();
 
@@ -155,6 +156,18 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
             }
 
             return envelope.Headers;
+        }
+
+        // Unlike the async LINQ operators, never resume on the captured synchronization context: a synchronous caller blocking the
+        // context's thread would otherwise deadlock
+        private static async IAsyncEnumerable<OutboxMessage> MapToOutboxMessagesAsync(
+            IAsyncEnumerable<IOutboundEnvelope> envelopes,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(cancellationToken).ConfigureAwait(false))
+            {
+                yield return MapToOutboxMessage(envelope);
+            }
         }
 
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
@@ -201,7 +214,11 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
 
             try
             {
-                await _outboxWriter.AddAsync(stream.AsEnumerable().Select(MapToOutboxMessage), _context, cancellationToken).ConfigureAwait(false);
+                // Write the stream asynchronously, not to block a thread while the messages are produced
+                await _outboxWriter.AddAsync(
+                    MapToOutboxMessagesAsync(stream, cancellationToken),
+                    _context,
+                    cancellationToken).ConfigureAwait(false);
             }
             catch (Exception)
             {

@@ -338,7 +338,7 @@ public class OutboxProduceStrategyTests
             ? strategy.ProduceAsync(envelopes.ToAsyncEnumerable(), cancellationToken)
             : strategy.ProduceAsync(envelopes, cancellationToken));
 
-    // Run in a separate task, since the writer enumerates the batch synchronously and would block the test if hanging
+    // Run in a separate task, so that a synchronous hang makes the test fail instead of blocking it
     private static Task RunWithTimeoutAsync(Func<Task> action) =>
         Task.Run(action, CancellationToken.None).WaitAsync(Timeout, CancellationToken.None);
 
@@ -385,11 +385,17 @@ public class OutboxProduceStrategyTests
         public Task AddAsync(
             IEnumerable<OutboxMessage> outboxMessages,
             ISilverbackContext? context = null,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public async Task AddAsync(
+            IAsyncEnumerable<OutboxMessage> outboxMessages,
+            ISilverbackContext? context = null,
             CancellationToken cancellationToken = default)
         {
             OnEnumerating?.Invoke();
 
-            foreach (OutboxMessage outboxMessage in outboxMessages)
+            await foreach (OutboxMessage outboxMessage in outboxMessages.WithCancellation(cancellationToken))
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -398,14 +404,6 @@ public class OutboxProduceStrategyTests
             }
 
             OnEnumerated?.Invoke();
-
-            return Task.CompletedTask;
         }
-
-        public Task AddAsync(
-            IAsyncEnumerable<OutboxMessage> outboxMessages,
-            ISilverbackContext? context = null,
-            CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
     }
 }

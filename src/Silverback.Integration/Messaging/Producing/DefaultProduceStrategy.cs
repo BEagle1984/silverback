@@ -108,7 +108,7 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
                 cancellationToken.Register(() => taskCompletionSource.TrySetCanceled(cancellationToken)).ConfigureAwait(false);
             Exception? produceException = null;
 
-            await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(cancellationToken))
+            await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(cancellationToken).ConfigureAwait(false))
             {
                 cancellationToken.ThrowIfCancellationRequested();
 

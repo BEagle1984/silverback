@@ -70,6 +70,11 @@ public interface IOutboxWriter
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <remarks>
+    ///     The <see cref="OutboxProduceStrategy" /> writes the batches through this overload, while the messages are still being
+    ///     produced. The implementation should await with <c>ConfigureAwait(false)</c>, otherwise the synchronous publishing methods
+    ///     could deadlock when called on a thread with a synchronization context (e.g. a UI thread).
+    /// </remarks>
     Task AddAsync(
         IAsyncEnumerable<OutboxMessage> outboxMessages,
         ISilverbackContext? context = null,

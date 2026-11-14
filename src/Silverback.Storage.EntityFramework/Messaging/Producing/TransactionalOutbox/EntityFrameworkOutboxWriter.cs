@@ -84,7 +84,7 @@ public class EntityFrameworkOutboxWriter : IOutboxWriter
 
         dbContext.UseTransactionIfAvailable(context);
 
-        await foreach (OutboxMessage outboxMessage in outboxMessages.WithCancellation(cancellationToken))
+        await foreach (OutboxMessage outboxMessage in outboxMessages.WithCancellation(cancellationToken).ConfigureAwait(false))
         {
             cancellationToken.ThrowIfCancellationRequested();
 
