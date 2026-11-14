@@ -388,6 +388,50 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
+    public async Task CompleteAsync_ShouldWaitUntilMessageIsDeliveredToAllStreams_WhenCalledWhilePushing()
+    {
+        using ManualResetEventSlim filterEntered = new();
+        using ManualResetEventSlim continuePush = new(true);
+        MessageStreamProvider<IMessage> provider = new();
+        List<TestEventOne> messages1 = [];
+        List<IEvent> messages2 = [];
+        Task subscriberTask1 = EnumerateAsync(provider.CreateLazyStream<TestEventOne>(), messages1);
+        Task subscriberTask2 = EnumerateAsync(
+            provider.CreateLazyStream<IEvent>([new BlockingMessageFilter(filterEntered, continuePush)]),
+            messages2);
+        TestEventOne message1 = new();
+        TestEventOne message2 = new();
+        await provider.PushAsync(message1).WaitAsync(Timeout);
+
+        // The message is delivered to the 1st stream, then the push is blocked by the filter of the 2nd stream
+        filterEntered.Reset();
+        continuePush.Reset();
+        Task<int> pushTask = Task.Run(() => provider.PushAsync(message2));
+        Task completeTask;
+
+        try
+        {
+            filterEntered.Wait(Timeout).ShouldBeTrue();
+            completeTask = provider.CompleteAsync().AsTask();
+
+            // The 2nd stream isn't completed before the message is delivered to it: it would refuse the message, which the 1st subscriber
+            // is processing
+            await Task.WhenAny(subscriberTask2, Task.Delay(100));
+            subscriberTask2.IsCompleted.ShouldBeFalse();
+        }
+        finally
+        {
+            continuePush.Set();
+        }
+
+        (await pushTask.WaitAsync(Timeout)).ShouldBe(2);
+        await completeTask.WaitAsync(Timeout);
+        await Task.WhenAll(subscriberTask1, subscriberTask2).WaitAsync(Timeout);
+        messages1.ShouldBe([message1, message2]);
+        messages2.ShouldBe([message1, message2]);
+    }
+
+    [Fact]
     public async Task Abort_ShouldAbortEnumeration()
     {
         int? count = null;
@@ -553,27 +597,37 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_ShouldBeCanceled_WhenProviderCompletedBeforeLazyStreamCreation()
+    public async Task PushAsync_ShouldDeliverMessage_WhenProviderCompletedWhileCreatingLazyStream()
     {
         using ManualResetEventSlim filterEntered = new();
         using ManualResetEventSlim continuePush = new();
         MessageStreamProvider<IMessage> provider = new();
-        provider.CreateLazyStream<TestEventOne>([new BlockingMessageFilter(filterEntered, continuePush)]);
+        List<TestEventOne> messages = [];
+        Task subscriberTask = EnumerateAsync(
+            provider.CreateLazyStream<TestEventOne>([new BlockingMessageFilter(filterEntered, continuePush)]),
+            messages);
+        TestEventOne message = new();
 
-        Task<int> pushTask = Task.Run(() => provider.PushAsync(new TestEventOne()));
+        Task<int> pushTask = Task.Run(() => provider.PushAsync(message));
+        Task completeTask;
 
         try
         {
-            filterEntered.Wait(TimeSpan.FromSeconds(5)).ShouldBeTrue();
-            await provider.CompleteAsync();
+            // The completion waits for the message to be delivered, creating the stream
+            filterEntered.Wait(Timeout).ShouldBeTrue();
+            completeTask = provider.CompleteAsync().AsTask();
+            await Task.WhenAny(completeTask, Task.Delay(100));
+            completeTask.IsCompleted.ShouldBeFalse();
         }
         finally
         {
             continuePush.Set();
         }
 
-        Func<Task> act = async () => await pushTask;
-        await act.ShouldThrowAsync<OperationCanceledException>();
+        (await pushTask.WaitAsync(Timeout)).ShouldBe(1);
+        await completeTask.WaitAsync(Timeout);
+        await subscriberTask.WaitAsync(Timeout);
+        messages.ShouldBe([message]);
     }
 
     [Fact]
@@ -633,6 +687,24 @@ public class MessageStreamProviderTests
         // The subscriber of the 1st stream is invoked anyway, receiving the aborted stream, and isn't left waiting
         await lazyStream1.WaitUntilCreatedAsync().WaitAsync(Timeout);
         await Should.ThrowAsync<OperationCanceledException>(lazyStream2.WaitUntilCreatedAsync().WaitAsync(Timeout));
+    }
+
+    [Fact]
+    public async Task PushAsync_ShouldRefuseMessage_WhenStreamsAreBeingCompleted()
+    {
+        MessageStreamProvider<IMessage> provider = new();
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        Task<int> pendingPushTask = provider.PushAsync(new TestEventOne());
+        await using IAsyncEnumerator<TestEventOne> enumerator = lazyStream.Stream.ShouldNotBeNull().GetAsyncEnumerator();
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        // The completion waits for the subscriber to pull the next message, while the further messages are refused right away
+        Task completeTask = provider.CompleteAsync().AsTask();
+        await Should.ThrowAsync<OperationCanceledException>(provider.PushAsync(new TestEventOne()).WaitAsync(Timeout));
+
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeFalse();
+        (await pendingPushTask.WaitAsync(Timeout)).ShouldBe(1);
+        await completeTask.WaitAsync(Timeout);
     }
 
     [Fact]
@@ -1020,15 +1092,15 @@ public class MessageStreamProviderTests
         exception.ShouldBeAssignableTo<OperationCanceledException>();
     }
 
-    // Enumerates the stream, once created, until it's completed or aborted
-    private static Task EnumerateAsync<TMessage>(ILazyMessageStreamEnumerable<TMessage> lazyStream) =>
+    // Enumerates the stream, once created, until it's completed or aborted, optionally collecting the received messages
+    private static Task EnumerateAsync<TMessage>(ILazyMessageStreamEnumerable<TMessage> lazyStream, List<TMessage>? messages = null) =>
         Task.Run(async () =>
         {
             await lazyStream.WaitUntilCreatedAsync();
 
-            await foreach (TMessage dummy in lazyStream.Stream!)
+            await foreach (TMessage message in lazyStream.Stream!)
             {
-                // Just pull the messages
+                messages?.Add(message);
             }
         });
 

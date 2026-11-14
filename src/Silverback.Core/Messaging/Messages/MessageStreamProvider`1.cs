@@ -51,6 +51,14 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     // Set holding the _lazyStreams lock when a subscriber throws an exception other than the cancellation (see OnSubscriberCompleted)
     private bool _hasSubscriberFailed;
 
+    // The pushes delivering their message to the streams, counted holding the _lazyStreams lock, which the completion waits for (see
+    // PushAsync and CompleteAsync)
+    private int _deliveringPushesCount;
+
+    // Created holding the _lazyStreams lock, when the streams are closed while a push is delivering its message, and completed with the
+    // last delivery
+    private TaskCompletionSource? _pushesDeliveredTaskCompletionSource;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="MessageStreamProvider{TMessage}" /> class.
     /// </summary>
@@ -118,7 +126,29 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         if (_completed || _aborted)
             throw new InvalidOperationException("The streams are already completed or aborted.");
 
-        List<Task> processingTasks = PushToCompatibleStreams(message, onPullAction, onPullActionArgument, cancellationToken);
+        lock (_lazyStreams)
+        {
+            // The streams are being completed or aborted: refuse the message, as each stream would (see MessageStreamEnumerable)
+            if (_isClosed)
+                throw new OperationCanceledException("The streams are being completed or aborted.");
+
+            _deliveringPushesCount++;
+        }
+
+        List<Task> processingTasks;
+
+        // Deliver the message to the streams, which the completion waits for (see CompleteAsync). The delivery is synchronous: the previous
+        // push released the write lock of each stream and the completion of the stream, the only other holder, waits for it. The pushes
+        // are serialized (e.g., by the sequence), so no other push holds it either. This doesn't hold after a push that failed midway (e.g.,
+        // because of a filter throwing), leaving the streams it reached waiting for their subscribers, but the failure aborts the sequence.
+        try
+        {
+            processingTasks = PushToCompatibleStreams(message, onPullAction, onPullActionArgument, cancellationToken);
+        }
+        finally
+        {
+            OnPushDelivered();
+        }
 
         if (processingTasks.Count > 0)
             await Task.WhenAll(processingTasks).ConfigureAwait(false);
@@ -153,6 +183,9 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             _isAborting = true;
 
+            // Unlike the completion, don't wait for the message being pushed to be delivered to all the streams: the abort rolls back the
+            // messages or applies the error policies to them, while the abort committing them (the subscribers stopped enumerating) decides
+            // for the message being pushed according to whether a subscriber pulled it (see SequenceBase)
             Close();
             _lazyStreams.ForEach(lazyStream => lazyStream.Abort());
 
@@ -183,7 +216,11 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             _isCompleting = true;
 
+            // Complete the streams only once the message being pushed was delivered to all of them: a stream completed before would
+            // refuse it, while the subscribers of the others process it, and the refused message would then be processed again (e.g.,
+            // added to the next batch)
             Close();
+            await WaitUntilPushesDeliveredAsync().WaitAsync(cancellationToken).ConfigureAwait(false);
             await _lazyStreams
                 .ParallelForEachAsync(async lazyStream => await lazyStream.CompleteAsync(cancellationToken).ConfigureAwait(false))
                 .ConfigureAwait(false);
@@ -356,12 +393,37 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         return processingTasks;
     }
 
-    // No stream is detached once the streams are being aborted or completed: the pending pushes are left to the abort or the completion
+    // No stream is detached and no further message is pushed once the streams are being aborted or completed: the pending pushes are
+    // left to the abort or the completion. The streams stay closed also if the completion fails or is canceled, which must then be retried
+    // or followed by the abort.
     private void Close()
     {
         lock (_lazyStreams)
         {
             _isClosed = true;
+        }
+    }
+
+    // Returns the task completing once the pushes delivering their message to the streams are done with it. Must be called once the
+    // streams are closed, since no further push starts delivering then.
+    private Task WaitUntilPushesDeliveredAsync()
+    {
+        lock (_lazyStreams)
+        {
+            if (_deliveringPushesCount == 0)
+                return Task.CompletedTask;
+
+            _pushesDeliveredTaskCompletionSource ??= new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            return _pushesDeliveredTaskCompletionSource.Task;
+        }
+    }
+
+    private void OnPushDelivered()
+    {
+        lock (_lazyStreams)
+        {
+            if (--_deliveringPushesCount == 0)
+                _pushesDeliveredTaskCompletionSource?.TrySetResult();
         }
     }
 
