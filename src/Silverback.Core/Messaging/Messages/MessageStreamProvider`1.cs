@@ -377,10 +377,10 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
                 _hasSubscriberFailed |= !isCanceled;
 
                 // The failure aborts the streams (e.g., see PublisherConsumerBehavior): the pending pushes are left to the abort. The
-                // cancellation (e.g., because the consumer is stopping) doesn't, while the other subscribers are still enumerating or
-                // waiting for their stream, and the pending push would never complete: end the streams as when a subscriber returns
-                // because of the cancellation, unless a subscriber failed (its abort applies the error policies). The cancellation of a
-                // single subscriber aborts the streams like a failure.
+                // cancellation (e.g., because the consumer is stopping) aborts them as well, once the processing task of the subscriber
+                // is awaited, but it also ends the streams right away, as when a subscriber returns because of the cancellation: the
+                // pending message is rolled back either way. That doesn't happen if a subscriber failed (its abort applies the error
+                // policies), while the cancellation of a single subscriber is left to the abort, as a failure.
                 if (!_detachesReturningSubscribers || !isCanceled || _isClosed || _hasSubscriberFailed || _lazyStreams.Count == 1)
                     return false;
             }
