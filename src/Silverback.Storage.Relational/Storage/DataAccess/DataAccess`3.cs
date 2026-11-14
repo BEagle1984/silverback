@@ -150,7 +150,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
 
         try
         {
-            await foreach (T item in items.WithCancellation(cancellationToken))
+            await foreach (T item in items.WithCancellation(cancellationToken).ConfigureAwait(false))
             {
                 cancellationToken.ThrowIfCancellationRequested();
 

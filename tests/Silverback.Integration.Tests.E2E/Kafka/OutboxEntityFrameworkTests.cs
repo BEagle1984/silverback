@@ -131,6 +131,46 @@ public class OutboxEntityFrameworkTests : KafkaTests, IClassFixture<PostgresCont
     }
 
     [Fact]
+    public async Task Outbox_ShouldProduceBatch_WhenPublishingSynchronouslyWithSynchronizationContext()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await BlockedSynchronizationContext
+            .RunAsync(() => publisher.WrapAndPublishBatch([new TestEventOne(), new TestEventOne()]))
+            .WaitAsync(TimeSpan.FromSeconds(10));
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+    }
+
+    [Fact]
     public async Task Outbox_ShouldProduceAsyncBatch()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();

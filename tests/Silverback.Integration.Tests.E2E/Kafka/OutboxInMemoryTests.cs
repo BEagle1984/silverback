@@ -297,12 +297,48 @@ public class OutboxInMemoryTests : KafkaTests
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
-        // Run in a separate task, since the in-memory outbox writer enumerates the batch synchronously and would block the test if hanging
+        // Run in a separate task, so that a synchronous hang makes the test fail instead of blocking it
         Exception? exception = await Record.ExceptionAsync(() => Task.Run(() => asyncBatch
                 ? publisher.WrapAndPublishBatchAsync(messages.ToAsyncEnumerable())
                 : publisher.WrapAndPublishBatchAsync(messages))
             .WaitAsync(TimeSpan.FromSeconds(10)));
 
         exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe("Enrichment failed.");
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldProduceBatch_WhenPublishingSynchronouslyWithSynchronizationContext()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddInMemoryOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseMemory())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseMemory())))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await BlockedSynchronizationContext
+            .RunAsync(() => publisher.WrapAndPublishBatch([new TestEventOne(), new TestEventOne()]))
+            .WaitAsync(TimeSpan.FromSeconds(10));
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
     }
 }
