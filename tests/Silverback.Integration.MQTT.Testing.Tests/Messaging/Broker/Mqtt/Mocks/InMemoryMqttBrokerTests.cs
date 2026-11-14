@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
+using MQTTnet.Protocol;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker.Mqtt.Mocks;
@@ -357,6 +358,274 @@ public class InMemoryMqttBrokerTests
         await connecting;
     }
 
+    [Fact]
+    public async Task Connect_ShouldRedeliverUnacknowledgedMessagesBeforeNewerOnes_WhenPersistentSessionIsResumed()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingClientAsync(broker, "consumer", false, received);
+        MqttClientOptions options = consumer.Options!;
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await publisher.PublishAsync(CreateMessage("topic", $"{i}", MqttQualityOfServiceLevel.AtLeastOnce));
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 3);
+        await received.First().AcknowledgeAsync(CancellationToken.None);
+        await consumer.DisconnectAsync();
+        await publisher.PublishAsync(CreateMessage("topic", "4", MqttQualityOfServiceLevel.AtLeastOnce));
+
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(3);
+
+        await consumer.ConnectAsync(options);
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 6);
+
+        GetPayloads(received).ShouldBe(["1", "2", "3", "2", "3", "4"]);
+
+        foreach (MqttApplicationMessageReceivedEventArgs eventArgs in received.Skip(3))
+        {
+            await eventArgs.AcknowledgeAsync(CancellationToken.None);
+        }
+
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(0);
+        broker.GetClientSession("consumer").GetPendingMessagesCount("topic").ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldRedeliverMessage_WhenAcknowledgedAfterDisconnect()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingClientAsync(broker, "consumer", false, received);
+        MqttClientOptions options = consumer.Options!;
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+
+        // The broker can't receive the acknowledgment once the connection is closed
+        await received.Single().AcknowledgeAsync(CancellationToken.None);
+
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(1);
+
+        await consumer.ConnectAsync(options);
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+        await received.Last().AcknowledgeAsync(CancellationToken.None);
+
+        GetPayloads(received).ShouldBe(["1", "1"]);
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldIgnoreAcknowledgmentOfPreviousConnection_WhenMessageWasRedelivered()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingClientAsync(broker, "consumer", false, received);
+        MqttClientOptions options = consumer.Options!;
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+        await consumer.ConnectAsync(options);
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+
+        // The acknowledgment of the first delivery must not acknowledge the redelivery
+        await received.First().AcknowledgeAsync(CancellationToken.None);
+
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(1);
+
+        await consumer.DisconnectAsync();
+        await consumer.ConnectAsync(options);
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 3);
+        await received.Last().AcknowledgeAsync(CancellationToken.None);
+
+        GetPayloads(received).ShouldBe(["1", "1", "1"]);
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldRedeliverSharedSubscriptionCopyOnly_WhenOnlySharedSubscriptionHasHigherQualityOfService()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingClientAsync(
+            broker,
+            "consumer",
+            false,
+            received,
+            MqttQualityOfServiceLevel.AtMostOnce);
+        await SubscribeAsync(consumer, "$share/group/topic", MqttQualityOfServiceLevel.AtLeastOnce);
+        MqttClientOptions options = consumer.Options!;
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+        await consumer.DisconnectAsync();
+
+        await consumer.ConnectAsync(options);
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 5);
+
+        // The plain subscription copy (QoS 0) is lost, while the shared subscription copy (QoS 1) precedes the newer messages
+        GetPayloads(received).ShouldBe(["1", "1", "1", "2", "2"]);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldPreserveRedeliveryOrder_WhenDisconnectedAgainDuringRedelivery()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        TaskCompletionSource<bool> releaseRedelivery = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        MockedMqttClient consumer = await CreateClientAsync(broker, "consumer", false);
+        MqttClientOptions options = consumer.Options!;
+        consumer.ApplicationMessageReceivedAsync += async args =>
+        {
+            args.AutoAcknowledge = false;
+            received.Enqueue(args);
+
+            // Block the first redelivery, so that the second message is still to be redelivered when disconnecting
+            if (received.Count == 3)
+                await releaseRedelivery.Task;
+        };
+        await SubscribeAsync(consumer, "topic", MqttQualityOfServiceLevel.AtLeastOnce);
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+        await consumer.DisconnectAsync();
+
+        await consumer.ConnectAsync(options);
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 3);
+        await consumer.DisconnectAsync();
+        releaseRedelivery.SetResult(true);
+
+        await consumer.ConnectAsync(options);
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 5);
+
+        GetPayloads(received).ShouldBe(["1", "2", "1", "1", "2"]);
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(2);
+    }
+
+    [Theory]
+    [InlineData(MqttQualityOfServiceLevel.AtMostOnce, MqttQualityOfServiceLevel.AtLeastOnce)]
+    [InlineData(MqttQualityOfServiceLevel.AtLeastOnce, MqttQualityOfServiceLevel.AtMostOnce)]
+    public async Task Connect_ShouldNotRedeliverUnacknowledgedMessages_WhenQualityOfServiceIsAtMostOnce(
+        MqttQualityOfServiceLevel subscriptionQualityOfServiceLevel,
+        MqttQualityOfServiceLevel messageQualityOfServiceLevel)
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingClientAsync(
+            broker,
+            "consumer",
+            false,
+            received,
+            subscriptionQualityOfServiceLevel);
+        MqttClientOptions options = consumer.Options!;
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", messageQualityOfServiceLevel));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+
+        await consumer.ConnectAsync(options);
+        await publisher.PublishAsync(CreateMessage("topic", "2", messageQualityOfServiceLevel));
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+
+        // The redelivered message would precede the newer one, while the unacknowledged deliveries are still counted as pending
+        GetPayloads(received).ShouldBe(["1", "2"]);
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldNotRedeliverUnacknowledgedMessages_WhenSessionIsClean()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingClientAsync(broker, "consumer", true, received);
+        MqttClientOptions options = consumer.Options!;
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+
+        await consumer.ConnectAsync(options);
+        await SubscribeAsync(consumer, "topic", MqttQualityOfServiceLevel.AtLeastOnce);
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+
+        GetPayloads(received).ShouldBe(["1", "2"]);
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(1);
+    }
+
+    [Theory]
+    [InlineData(MqttQualityOfServiceLevel.AtMostOnce, MqttQualityOfServiceLevel.AtLeastOnce)]
+    [InlineData(MqttQualityOfServiceLevel.AtLeastOnce, MqttQualityOfServiceLevel.AtMostOnce)]
+    public async Task Connect_ShouldRedeliverUnacknowledgedMessages_WhenAnyOverlappingSubscriptionHasHigherQualityOfService(
+        MqttQualityOfServiceLevel firstSubscriptionQualityOfServiceLevel,
+        MqttQualityOfServiceLevel secondSubscriptionQualityOfServiceLevel)
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingClientAsync(
+            broker,
+            "consumer",
+            false,
+            received,
+            firstSubscriptionQualityOfServiceLevel,
+            "topic/#");
+        await SubscribeAsync(consumer, "topic/a", secondSubscriptionQualityOfServiceLevel);
+        MqttClientOptions options = consumer.Options!;
+
+        await publisher.PublishAsync(CreateMessage("topic/a", "1", MqttQualityOfServiceLevel.ExactlyOnce));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+
+        await consumer.ConnectAsync(options);
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+
+        GetPayloads(received).ShouldBe(["1", "1"]);
+    }
+
+    private static string[] GetPayloads(IEnumerable<MqttApplicationMessageReceivedEventArgs> received) =>
+        [.. received.Select(eventArgs => eventArgs.ApplicationMessage.ConvertPayloadToString())];
+
+    private static async Task<MockedMqttClient> CreateManuallyAcknowledgingClientAsync(
+        InMemoryMqttBroker broker,
+        string clientId,
+        bool cleanSession,
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received,
+        MqttQualityOfServiceLevel qualityOfServiceLevel = MqttQualityOfServiceLevel.AtLeastOnce,
+        string topicFilter = "topic")
+    {
+        MockedMqttClient client = await CreateClientAsync(broker, clientId, cleanSession);
+
+        client.ApplicationMessageReceivedAsync += args =>
+        {
+            args.AutoAcknowledge = false;
+            received.Enqueue(args);
+            return Task.CompletedTask;
+        };
+
+        await SubscribeAsync(client, topicFilter, qualityOfServiceLevel);
+
+        return client;
+    }
+
+    private static Task SubscribeAsync(MockedMqttClient client, string topicFilter, MqttQualityOfServiceLevel qualityOfServiceLevel) =>
+        client.SubscribeAsync(
+            new MqttClientSubscribeOptionsBuilder()
+                .WithTopicFilter(topicFilter, qualityOfServiceLevel)
+                .Build());
+
     private static async Task WaitUntilAllMessagesAreConsumedAsync(InMemoryMqttBroker broker)
     {
         using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(5));
@@ -420,9 +689,13 @@ public class InMemoryMqttBrokerTests
         return client;
     }
 
-    private static MqttApplicationMessage CreateMessage(string topic, string payload = "payload") =>
+    private static MqttApplicationMessage CreateMessage(
+        string topic,
+        string payload = "payload",
+        MqttQualityOfServiceLevel qualityOfServiceLevel = MqttQualityOfServiceLevel.AtMostOnce) =>
         new MqttApplicationMessageBuilder()
             .WithTopic(topic)
             .WithPayload(payload)
+            .WithQualityOfServiceLevel(qualityOfServiceLevel)
             .Build();
 }
