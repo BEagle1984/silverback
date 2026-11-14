@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MQTTnet.Exceptions;
 using MQTTnet.Protocol;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -351,9 +352,15 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         }
         catch (Exception ex)
         {
-            // Preserve fatal QoS 2 acknowledgement errors unless the transport was lost in the meantime
-            if (consumedMessage.ApplicationMessage.QualityOfServiceLevel == MqttQualityOfServiceLevel.ExactlyOnce && Client.IsConnected)
+            // Preserve fatal QoS 2 acknowledgment errors, unless the transport was lost: either the client noticed it already or the failure
+            // is a communication error, possibly raised before the client noticed it. The delivery is then replayed by the broker when the
+            // session is resumed, while stopping the consumer would leave it disconnected.
+            if (consumedMessage.ApplicationMessage.QualityOfServiceLevel == MqttQualityOfServiceLevel.ExactlyOnce &&
+                Client.IsConnected &&
+                ex is not MqttCommunicationException)
+            {
                 throw;
+            }
 
             _logger.LogAcknowledgeFailed(consumedMessage, this, ex);
         }
