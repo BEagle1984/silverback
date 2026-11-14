@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
+using MQTTnet.Packets;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
 
@@ -57,7 +58,7 @@ public interface IInMemoryMqttBroker
     void Disconnect(MockedMqttClient client);
 
     /// <summary>
-    ///     Subscribes the specified client to the specified topics.
+    ///     Subscribes the specified client to the specified topics, with QoS 0 (at most once).
     /// </summary>
     /// <param name="client">
     ///     The client.
@@ -66,6 +67,17 @@ public interface IInMemoryMqttBroker
     ///     The name of the topics or the topic filter strings.
     /// </param>
     void Subscribe(MockedMqttClient client, IReadOnlyCollection<string> topics);
+
+    /// <summary>
+    ///     Subscribes the specified client to the specified topic filters, with their quality of service.
+    /// </summary>
+    /// <param name="client">
+    ///     The client.
+    /// </param>
+    /// <param name="topicFilters">
+    ///     The topic filters, including the requested quality of service, which is always granted.
+    /// </param>
+    void Subscribe(MockedMqttClient client, IReadOnlyCollection<MqttTopicFilter> topicFilters);
 
     /// <summary>
     ///     Unsubscribes the specified client from the specified topics.

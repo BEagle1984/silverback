@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -363,6 +365,59 @@ public partial class ConsumerEndpointTests : MqttTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
+    }
+
+    [Fact]
+    public async Task ConsumerEndpoint_ShouldConsumeUnacknowledgedMessageAgain_WhenPersistentSessionIsResumed()
+    {
+        int tryCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS()))
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS())))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage)
+            .AddIntegrationSpy());
+
+        void HandleMessage(TestEventOne message)
+        {
+            if (Interlocked.Increment(ref tryCount) == 1)
+                throw new InvalidOperationException("First attempt failed.");
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+
+        // The failure stops the consumer and disconnects the client without acknowledging the message
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        tryCount.ShouldBe(1);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(1);
+
+        await consumer.Client.ConnectAsync();
+
+        await Helper.WaitUntilConnectedAsync();
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        tryCount.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne).ShouldBe(["1", "1"]);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 
     [Fact]
