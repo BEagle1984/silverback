@@ -75,6 +75,22 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
             return;
         }
 
+        // The stream was completed or aborted while this push waited for the write lock: give up, as if the push had been canceled. The
+        // push gets here before the completion acquired the lock or, since the semaphore can grant it to a waiter whose token was canceled
+        // in the meantime, after the completion or the abort. Otherwise, a subscriber still consuming the stream could receive the message
+        // of a failing push, and if the subscriber stopped consuming it, nothing would acknowledge the push: both the push and the
+        // completion would wait forever. The state is read without the lock. When the abandon or the completion acknowledged the previous
+        // push (the subscriber stopped consuming the stream without pulling it), it did so after the state was written, and the previous
+        // push then released the write lock acquired by this push, which therefore reads the written state, like a push acquiring the
+        // lock released by the completion. Otherwise (e.g., the subscriber acknowledged the previous push by requesting the next message,
+        // then stopped), a push reading a stale state proceeds as before: the subscriber pulls it, the abandon or the completion
+        // acknowledges it, or the abort cancels it.
+        if (_completeState is CompleteState.Complete or CompleteState.Aborted)
+        {
+            ReleaseWriteLock();
+            throw new OperationCanceledException("The stream was completed or aborted.");
+        }
+
         _current = message;
         _hasCurrent = true;
         _onPullAction = onPullAction;
@@ -136,7 +152,9 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         SafelyRelease(_readSemaphore);
 
-        // Cancel before releasing the write lock: no further push must acquire it and take a leftover acknowledgement
+        // Cancel before releasing the write lock, so that the waiting and the later pushes give up instead of taking a leftover
+        // acknowledgment. A waiting push can still be granted the lock, but finds the stream complete (see PushAsync): it fails without
+        // exposing its message to a subscriber still consuming the stream.
         await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
         _writeSemaphore.Release();
     }
