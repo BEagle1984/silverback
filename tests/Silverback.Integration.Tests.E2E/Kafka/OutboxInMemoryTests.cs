@@ -262,4 +262,47 @@ public class OutboxInMemoryTests : KafkaTests
         Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().Count().ShouldBe(1);
         Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventThree>>().Count().ShouldBe(1);
     }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Outbox_ShouldThrow_WhenProducingBatchFails(bool asyncBatch)
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddInMemoryOutbox())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .AddHeader<TestEventOne>(
+                                "x-test",
+                                message => message?.ContentEventOne == "fail"
+                                    ? throw new InvalidOperationException("Enrichment failed.")
+                                    : "ok")
+                            .StoreToOutbox(outbox => outbox.UseMemory())))));
+
+        TestEventOne[] messages =
+        [
+            new() { ContentEventOne = "one" },
+            new() { ContentEventOne = "fail" },
+            new() { ContentEventOne = "three" }
+        ];
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        // Run in a separate task, since the in-memory outbox writer enumerates the batch synchronously and would block the test if hanging
+        Exception? exception = await Record.ExceptionAsync(() => Task.Run(() => asyncBatch
+                ? publisher.WrapAndPublishBatchAsync(messages.ToAsyncEnumerable())
+                : publisher.WrapAndPublishBatchAsync(messages))
+            .WaitAsync(TimeSpan.FromSeconds(10)));
+
+        exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe("Enrichment failed.");
+    }
 }
