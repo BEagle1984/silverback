@@ -33,5 +33,6 @@ internal sealed class LazyMessageStreamObservable<TMessage> : ILazyStreamArgumen
 
     public Task WaitUntilCreatedAsync() => _lazyStream.WaitUntilCreatedAsync();
 
-    public void NotifySubscriberCompleted(bool hasThrown) => (_lazyStream as ILazyStreamArgumentValue)?.NotifySubscriberCompleted(hasThrown);
+    public void NotifySubscriberCompleted(bool hasThrown, bool isCanceled) =>
+        (_lazyStream as ILazyStreamArgumentValue)?.NotifySubscriberCompleted(hasThrown, isCanceled);
 }

@@ -220,7 +220,8 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
     // The unbounded sequence never completes: dispose it, releasing the service scope used by the subscribers, once it's aborted and the
     // subscribers returned. It's aborted when a subscriber fails, when the consumer is stopping or the partitions are being revoked, or
-    // here, when the subscribers stop enumerating (e.g., with a break) while it's still pending.
+    // here, when the subscribers stop enumerating (e.g., with a break) while it's still pending. A subscriber that stops while another one
+    // is still enumerating instead doesn't receive any further message of the sequence (see UnboundedSequence).
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async Task AbortAndDisposeWhenProcessedAsync(UnboundedSequence sequence, Task processingTask)
     {

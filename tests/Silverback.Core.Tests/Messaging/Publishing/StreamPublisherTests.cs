@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -458,6 +459,58 @@ public class StreamPublisherTests
 
         streamProvider.Abort();
 
+        await AsyncTestingUtil.WaitAsync(() => tasks.All(task => task.IsCompleted));
+        tasks.All(task => task.IsCompleted).ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the subscribers to complete.")]
+    public async Task PublishAsync_ShouldEndStreamsOnlyWhenTokenIsCanceled_WhenStreamSubscriberThrowsCancellationWhileOtherIsEnumerating(
+        bool isTokenCanceled)
+    {
+        using CancellationTokenSource cancellationTokenSource = new();
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(Handle1)
+            .AddDelegateSubscriber<IAsyncEnumerable<IEvent>>(Handle2));
+
+        async Task Handle1(IAsyncEnumerable<TestEventOne> enumerable)
+        {
+            await foreach (TestEventOne dummy in enumerable)
+            {
+                if (isTokenCanceled)
+                    await cancellationTokenSource.CancelAsync();
+
+                throw new OperationCanceledException();
+            }
+        }
+
+        static async Task Handle2(IAsyncEnumerable<IEvent> enumerable)
+        {
+            await foreach (IEvent dummy in enumerable)
+            {
+                // Keep enumerating
+            }
+        }
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+        MessageStreamProvider<IEvent> streamProvider = new(detachesReturningSubscribers: true);
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider, cancellationTokenSource.Token);
+        Task<int> pushTask = streamProvider.PushAsync(new TestEventOne());
+
+        // The subscriber is notified as completed before its task completes
+        await Task.WhenAny(tasks).WaitAsync(Timeout);
+
+        // The cancellation requested through the token ends the streams, while any other cancellation is a failure, left to its abort
+        streamProvider.SubscribersReturnedTask.IsCompleted.ShouldBe(isTokenCanceled);
+
+        streamProvider.Abort();
+        await Should.ThrowAsync<OperationCanceledException>(pushTask.WaitAsync(Timeout));
         await AsyncTestingUtil.WaitAsync(() => tasks.All(task => task.IsCompleted));
         tasks.All(task => task.IsCompleted).ShouldBeTrue();
     }
