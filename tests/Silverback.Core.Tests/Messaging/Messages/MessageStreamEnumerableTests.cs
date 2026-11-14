@@ -395,6 +395,50 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
+    public async Task CompleteAsync_ShouldRefuseWaitingPush_WhenAbandonedWhileCompleting()
+    {
+        MessageStreamEnumerable<Message> stream = new();
+        await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
+
+        Task pushTask1 = stream.PushAsync(new Message(1));
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        // The next push waits for the write lock held by the pending push, and the completion waits behind it
+        Task pushTask2 = stream.PushAsync(new Message(2));
+        Task completeTask = stream.CompleteAsync();
+
+        // The abandon acknowledges the pending push, which releases the write lock to the next push first
+        stream.Abandon();
+
+        await pushTask1.WaitAsync(Timeout);
+        Exception? pushException = await Record.ExceptionAsync(() => pushTask2.WaitAsync(Timeout));
+        pushException.ShouldNotBeNull().ShouldBeAssignableTo<OperationCanceledException>();
+        await completeTask.WaitAsync(Timeout);
+    }
+
+    [Fact]
+    public async Task CompleteAsync_ShouldRefuseWaitingPush_WhenNextMessageIsPulledWhileCompleting()
+    {
+        MessageStreamEnumerable<Message> stream = new();
+        await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
+
+        Task pushTask1 = stream.PushAsync(new Message(1));
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        // The next push waits for the write lock held by the pending push, and the completion waits behind it
+        Task pushTask2 = stream.PushAsync(new Message(2));
+        Task completeTask = stream.CompleteAsync();
+
+        // Pulling acknowledges the pending push, which releases the write lock to the next push first: the stream ends without it
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeFalse();
+
+        await pushTask1.WaitAsync(Timeout);
+        Exception? pushException = await Record.ExceptionAsync(() => pushTask2.WaitAsync(Timeout));
+        pushException.ShouldNotBeNull().ShouldBeAssignableTo<OperationCanceledException>();
+        await completeTask.WaitAsync(Timeout);
+    }
+
+    [Fact]
     public async Task Abandon_ShouldNotAcknowledgePendingPush_WhenNotComplete()
     {
         MessageStreamEnumerable<Message> stream = new();
