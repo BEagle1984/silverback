@@ -33,6 +33,24 @@ public class ConsumerChannelTests
     }
 
     [Fact]
+    public async Task SequenceStore_ShouldReportReadingCanceled_WhenRestartIsPending()
+    {
+        using ConsumerChannel channel = CreateChannel();
+        ConsumedApplicationMessage[] messages = await WriteMessagesAsync(channel, 3);
+        await ReadMessagesAsync(channel, 3);
+        SequenceStore sequenceStore = (SequenceStore)channel.SequenceStore;
+        sequenceStore.IsReadingCanceled.ShouldBeFalse();
+
+        // The restart cancels the reading only later: in the meantime, the messages being processed must not start new sequences
+        channel.Rollback([messages[1]]).ShouldBeTrue();
+
+        sequenceStore.IsReadingCanceled.ShouldBeTrue();
+
+        channel.RemoveRestartRequests(1).ShouldBeFalse();
+        sequenceStore.IsReadingCanceled.ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task ReadNextAsync_ShouldReturnMessagesToReplayFirst_WhenMessagesAreRolledBack()
     {
         using ConsumerChannel channel = CreateChannel();

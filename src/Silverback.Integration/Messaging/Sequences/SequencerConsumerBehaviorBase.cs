@@ -12,6 +12,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences;
@@ -155,6 +156,19 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         }
     }
 
+    private static bool IsStoppingOrReadingCanceled(ConsumerPipelineContext context, CancellationToken cancellationToken) =>
+        cancellationToken.IsCancellationRequested || context.SequenceStore is SequenceStore { IsReadingCanceled: true };
+
+    // The previous sequence (e.g. the chunk sequence of a chunked message) is completed with the sequence it's added to (e.g. the batch).
+    // When the message is left out (by the stop or by the aborted sequence that refused it), abort it like the stop aborts the pending
+    // sequences, rolling it back, since it may be complete already and nothing else would remove it from the store or complete its
+    // processing, which the stop and the rollback await.
+    private static async Task AbortPreviousSequenceIfNotAddedAsync(ISequence? previousSequence, Exception? exception)
+    {
+        if (previousSequence is { ParentSequence: null })
+            await previousSequence.AbortAsync(SequenceAbortReason.ConsumerAborted, exception).ConfigureAwait(false);
+    }
+
     private async Task<ISequence?> AddMessageToSequenceAsync(
         ConsumerPipelineContext context,
         ConsumerBehaviorHandler next,
@@ -176,6 +190,20 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                 return null;
 
             Activity.Current?.SetTag(ActivityTagNames.SequenceId, sequence.SequenceId);
+
+            // The consumer may have been stopped (or the reading canceled to roll back or revoke the partition) while the new sequence
+            // waited for the previous ones (e.g. by the error policies of the previous batch): don't publish it, since it could be
+            // committed past the previous one (or would be processed and then consumed again), but roll back the message, which is
+            // consumed again after the restart. The sequence is aborted here, since the stop cancellation doesn't necessarily reach the
+            // transaction handler of its context (e.g. when the message is chunked), which handles the cancellation of the sequence
+            // aborted by the consumer as the stop cancellation (without applying the error policies).
+            if (sequence.IsNew && IsStoppingOrReadingCanceled(context, cancellationToken))
+            {
+                OperationCanceledException stopCancellation = new(cancellationToken);
+                await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted, stopCancellation).ConfigureAwait(false);
+                await AbortPreviousSequenceIfNotAddedAsync(previousSequence, stopCancellation).ConfigureAwait(false);
+                throw stopCancellation;
+            }
 
             await PublishSequenceIfNewAsync(context, next, sequence, cancellationToken).ConfigureAwait(false);
 
@@ -200,6 +228,19 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                 await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
 
             failedSequence = addToSequenceResult.IsSuccess ? null : sequence;
+
+            // The message refused by a sequence that was committed on abort (see SequenceBase.AddAsync) is added to a new sequence,
+            // unless the consumer is stopping (or the reading was canceled): the new sequence would be aborted by the stop (and could
+            // even commit the message without processing it, if the subscribers return without pulling it), while the message is
+            // consumed again after the restart (or the rollback)
+            if (addToSequenceResult is { IsSuccess: false, IsAborted: false, AbortTask: { } refusingSequenceAbortTask } &&
+                IsStoppingOrReadingCanceled(context, cancellationToken))
+            {
+                await refusingSequenceAbortTask.ConfigureAwait(false);
+                await AbortPreviousSequenceIfNotAddedAsync(previousSequence, new OperationCanceledException(cancellationToken))
+                    .ConfigureAwait(false);
+                return sequence;
+            }
         }
         while (addToSequenceResult is { IsSuccess: false, IsAborted: false });
 
@@ -209,6 +250,10 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             // continue before the abort and miss the exception
             if (addToSequenceResult.AbortTask != null)
                 await addToSequenceResult.AbortTask.ConfigureAwait(false);
+
+            // The message is rolled back with the aborted sequence, which it didn't join (e.g. refused because of the timeout or because
+            // the sequence was aborted after being found pending)
+            await AbortPreviousSequenceIfNotAddedAsync(previousSequence, sequence.AbortException).ConfigureAwait(false);
         }
         else
         {
@@ -239,7 +284,9 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     {
         ISequence sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 
-        if (sequence.IsComplete)
+        // The message belongs to a complete sequence (e.g. a duplicated chunk): skip it. A batch is instead complete only if it was
+        // completed (e.g. by its max wait time) after the reader returned it: the message is refused and added to the next batch.
+        if (sequence.IsComplete && sequence is not BatchSequence)
             return null;
 
         if (sequence is IncompleteSequence incompleteSequence)

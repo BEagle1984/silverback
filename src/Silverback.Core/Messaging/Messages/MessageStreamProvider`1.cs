@@ -49,6 +49,9 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="MessageStreamProvider.SubscribersReturnedTask" />
     public override Task SubscribersReturnedTask => _subscribersReturnedTaskCompletionSource.Task;
 
+    // The streams were completed or aborted, which makes the push fail (also before the owner, e.g. the sequence, is aborted)
+    internal bool IsCompletedOrAborted => _completed || _aborted;
+
     /// <summary>
     ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the message has actually been
     ///     pulled and processed.

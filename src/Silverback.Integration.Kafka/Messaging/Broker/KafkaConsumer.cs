@@ -21,7 +21,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker;
 
 /// <inheritdoc cref="Consumer{TIdentifier}" />
-public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
+public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeCommitConsumer
 {
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
 
@@ -44,6 +44,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     private readonly Dictionary<TopicPartition, long> _assignmentVersions = [];
 
     private readonly HashSet<TopicPartition> _rollingBackPartitions = [];
+
+    // The lowest offset requested by the rollbacks of a partition that is already being rolled back (e.g. for a later message, while an
+    // earlier batch completed by its max wait time was still being processed and then failed as well), applied when the rollback seeks
+    private readonly Dictionary<TopicPartition, (Offset Offset, long Version)> _lowerRollbackOffsets = [];
 
     // The partitions paused to roll back their records (or to replay the ones retained by a revocation) and not resumed yet: when
     // a stop or a rebalance defeats the rollback restart, they are resumed by the next start or when they are assigned again
@@ -523,6 +527,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         lock (_assignmentLock)
         {
+            // The shared channel rolls back to the lowest uncommitted offsets anyway (see below)
+            if (Configuration.ProcessPartitionsIndependently)
+                TrackLowerRollbackOffsetsCore(requestedOffsets, versions);
+
             KafkaOffset[] currentOffsets =
             [
                 .. requestedOffsets.Where(offset =>
@@ -539,8 +547,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 return ValueTask.CompletedTask;
             }
 
+            // The rollback can include several offsets per partition (e.g. the failed batch and the batch started in the meantime):
+            // seek to the lowest one, to consume all of them again
             IEnumerable<KafkaOffset> offsets = Configuration.ProcessPartitionsIndependently
-                ? currentOffsets
+                ? GetLowestOffsetPerPartition(currentOffsets)
                 : _offsets.GetRollbackOffSets();
 
             foreach (KafkaOffset offset in offsets)
@@ -594,6 +604,13 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         _isDisposed = true;
     }
 
+    // The special offsets (e.g. unset) compare lower than any actual offset: prefer the actual ones
+    private static IEnumerable<KafkaOffset> GetLowestOffsetPerPartition(IEnumerable<KafkaOffset> offsets) =>
+        offsets
+            .GroupBy(offset => offset.TopicPartition)
+            .Select(partitionOffsets => partitionOffsets.Aggregate((lowest, offset) =>
+                !offset.IsSpecial && (lowest.IsSpecial || offset < lowest) ? offset : lowest));
+
     private ValueTask OnClientConnectedAsync(BrokerClient client)
     {
         // The native consumer was just (re)created: nothing tracked before can be consumed again from it, the new consumer resumes
@@ -639,9 +656,18 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                         return;
                 }
 
-                foreach (TopicPartitionOffset rollbackOffset in current.Select(partition => partition.Offset))
+                foreach (RollbackPartition partition in current)
                 {
+                    TopicPartitionOffset rollbackOffset = partition.Offset;
                     TopicPartitionOffset offset = rollbackOffset;
+
+                    // A rollback requested meanwhile may need a lower offset (see TrackLowerRollbackOffsetsCore)
+                    if (_lowerRollbackOffsets.Remove(rollbackOffset.TopicPartition, out (Offset Offset, long Version) lowerOffset) &&
+                        lowerOffset.Version == partition.Version &&
+                        (offset.Offset == Offset.Unset || lowerOffset.Offset.Value < offset.Offset.Value))
+                    {
+                        offset = new TopicPartitionOffset(offset.TopicPartition, lowerOffset.Offset);
+                    }
 
                     // The pending poll may have discovered this shared partition's first record after rollback began
                     if (offset.Offset == Offset.Unset &&
@@ -724,6 +750,34 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     private bool IsCurrentOffset(KafkaOffset offset) =>
         IsStartedAndNotStopping() && IsOwnedOffset(offset);
+
+    // Must be called while holding the assignment lock. The rollback of a partition that is already being rolled back is otherwise
+    // skipped: its offsets are tracked instead, so that the pending rollback seeks to the lowest one.
+    private void TrackLowerRollbackOffsetsCore(IEnumerable<KafkaOffset> offsets, Dictionary<TopicPartition, long> versions)
+    {
+        if (!IsStartedAndNotStopping())
+            return;
+
+        foreach (KafkaOffset offset in offsets)
+        {
+            if (offset.IsSpecial || !_rollingBackPartitions.Contains(offset.TopicPartition) || !IsNotRevoked(offset.TopicPartition) ||
+                !versions.TryGetValue(offset.TopicPartition, out long version) ||
+                _assignmentVersions.GetValueOrDefault(offset.TopicPartition) != version ||
+                _channelsManager.GetChannel(offset.TopicPartition) is not { } channel ||
+                offset.HasSourceChannel && !offset.BelongsToChannel(channel.InstanceId))
+            {
+                continue;
+            }
+
+            if (_lowerRollbackOffsets.TryGetValue(offset.TopicPartition, out (Offset Offset, long Version) lowerOffset) &&
+                lowerOffset.Version == version && lowerOffset.Offset.Value <= offset.Offset.Value)
+            {
+                continue;
+            }
+
+            _lowerRollbackOffsets[offset.TopicPartition] = (offset.Offset, version);
+        }
+    }
 
     private bool IsOwnedOffset(KafkaOffset offset) =>
         IsNotRevoked(offset.TopicPartition) && !_rollingBackPartitions.Contains(offset.TopicPartition) &&

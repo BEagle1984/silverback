@@ -29,7 +29,8 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
 
     // Incremented under the lock by the rollbacks, cleared under the lock by a stop and decremented with Interlocked by the restart: while
     // the restart is pending the reader must stop. It's read without Volatile, since no read relies on its order with other fields: the
-    // reader takes the messages under the lock and the restart reads it after the rollback that requested it.
+    // reader takes the messages under the lock, the restart reads it after the rollback that requested it, and the sequencer after
+    // awaiting the rolled back sequence.
     private int _restartRequestsCount;
 
     public ConsumerChannel(int capacity, int index, ISilverbackLogger logger)
@@ -66,6 +67,10 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
 
     // The replayed messages start their sequences again in the restarted reader, with the same ids (e.g., the chunk sequences)
     protected override bool IsSequenceStoreReplacedOnRestart => true;
+
+    // The rollback requests the restart, which cancels the reading only later: a message waiting for the rolled back sequence must not
+    // start a new one in the meantime, which would process it before it's replayed
+    protected override bool IsReadingStopping => base.IsReadingStopping || IsRestartPending;
 
     /// <summary>
     ///     Reads the next message to be processed: the oldest message to be replayed, if any, otherwise the next buffered message.
