@@ -55,6 +55,24 @@ internal interface ILazyMessageStreamEnumerable
     IMessageStreamEnumerable GetOrCreateStream();
 
     /// <summary>
+    ///     Gets the already created <see cref="IMessageStreamEnumerable" /> or creates it on the fly, without signaling its creation
+    ///     (see <see cref="WaitUntilCreatedAsync" />) until <see cref="SignalCreated" /> is called.
+    /// </summary>
+    /// <param name="isCreated">
+    ///     A value indicating whether the stream was created by this call.
+    /// </param>
+    /// <returns>
+    ///     The stream.
+    /// </returns>
+    IMessageStreamEnumerable GetOrCreateStreamWithoutSignaling(out bool isCreated);
+
+    /// <summary>
+    ///     Signals the creation of the stream created by <see cref="GetOrCreateStreamWithoutSignaling" />, completing the
+    ///     <see cref="WaitUntilCreatedAsync" /> task.
+    /// </summary>
+    void SignalCreated();
+
+    /// <summary>
     ///     Aborts the stream or cancels its creation.
     /// </summary>
     void Abort();

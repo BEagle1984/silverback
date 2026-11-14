@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Sequences.Unbounded;
 
@@ -13,9 +14,10 @@ namespace Silverback.Messaging.Sequences.Unbounded;
 ///     belonging to a sequence.
 /// </summary>
 /// <remarks>
-///     Each message is committed by its own pipeline, as soon as the subscribers pull the next one or, if they stop enumerating, once the
-///     sequence is aborted. The <see cref="ISequence.Context" /> is the context of the message that started the sequence, which is
-///     disposed by its own pipeline.
+///     Each message is committed by its own pipeline, as soon as the subscribers pull the next one or, once all of them stopped
+///     enumerating, when the sequence is aborted. A subscriber that stops enumerating while the others are still enumerating doesn't
+///     receive any further message: its stream acknowledges them without them being pulled. The <see cref="ISequence.Context" /> is the
+///     context of the message that started the sequence, which is disposed by its own pipeline.
 /// </remarks>
 internal sealed class UnboundedSequence : Sequence
 {
@@ -30,9 +32,11 @@ internal sealed class UnboundedSequence : Sequence
 
     private int _addState;
 
+    // A subscriber that stops enumerating while the other subscribers are still enumerating their streams doesn't receive any further
+    // message, while the sequence is aborted only once all of them stopped (see PublisherConsumerBehavior)
     [SuppressMessage("", "CA2000", Justification = "Stream disposed in base class")]
     public UnboundedSequence(string sequenceId, ConsumerPipelineContext context)
-        : base(sequenceId, context, false, trackIdentifiers: false)
+        : base(sequenceId, context, false, new MessageStreamProvider<IInboundEnvelope>(detachesReturningSubscribers: true), false)
     {
         // The subscribers are resolved from the scope of the message that starts the sequence and keep using it until the sequence
         // ends, while the pipeline of that message disposes its context as soon as it completes

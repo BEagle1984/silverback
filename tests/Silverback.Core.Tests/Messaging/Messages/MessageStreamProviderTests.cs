@@ -577,6 +577,65 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
+    public async Task PushAsync_ShouldSignalStreamsCreation_WhenAllStreamsOfMessageAreCreated()
+    {
+        using ManualResetEventSlim filterEntered = new();
+        using ManualResetEventSlim continuePush = new();
+        MessageStreamProvider<IMessage> provider = new();
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream1 = provider.CreateLazyStream<TestEventOne>();
+        ILazyMessageStreamEnumerable<IEvent> lazyStream2 = provider.CreateLazyStream<IEvent>([new BlockingMessageFilter(filterEntered, continuePush)]);
+
+        Task<int> pushTask = Task.Run(() => provider.PushAsync(new TestEventOne()));
+
+        try
+        {
+            filterEntered.Wait(Timeout).ShouldBeTrue();
+
+            // The 1st stream is created, but its subscriber isn't invoked until the 2nd stream is created as well
+            lazyStream1.Stream.ShouldNotBeNull();
+            lazyStream1.WaitUntilCreatedAsync().IsCompleted.ShouldBeFalse();
+        }
+        finally
+        {
+            continuePush.Set();
+        }
+
+        await lazyStream1.WaitUntilCreatedAsync().WaitAsync(Timeout);
+        await lazyStream2.WaitUntilCreatedAsync().WaitAsync(Timeout);
+        lazyStream2.Stream.ShouldNotBeNull();
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+    }
+
+    [Fact]
+    public async Task PushAsync_ShouldSignalCreatedStreams_WhenPushFailsBeforeCreatingAllStreams()
+    {
+        using ManualResetEventSlim filterEntered = new();
+        using ManualResetEventSlim continuePush = new();
+        MessageStreamProvider<IMessage> provider = new();
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream1 = provider.CreateLazyStream<TestEventOne>();
+        ILazyMessageStreamEnumerable<IEvent> lazyStream2 = provider.CreateLazyStream<IEvent>([new BlockingMessageFilter(filterEntered, continuePush)]);
+
+        Task<int> pushTask = Task.Run(() => provider.PushAsync(new TestEventOne()));
+
+        try
+        {
+            // The abort cancels the creation of the 2nd stream, which makes the push fail
+            filterEntered.Wait(Timeout).ShouldBeTrue();
+            provider.Abort();
+        }
+        finally
+        {
+            continuePush.Set();
+        }
+
+        await Should.ThrowAsync<OperationCanceledException>(pushTask.WaitAsync(Timeout));
+
+        // The subscriber of the 1st stream is invoked anyway, receiving the aborted stream, and isn't left waiting
+        await lazyStream1.WaitUntilCreatedAsync().WaitAsync(Timeout);
+        await Should.ThrowAsync<OperationCanceledException>(lazyStream2.WaitUntilCreatedAsync().WaitAsync(Timeout));
+    }
+
+    [Fact]
     public async Task SubscribersReturnedTask_ShouldComplete_WhenSubscribersOfAllCreatedStreamsReturned()
     {
         MessageStreamProvider<IMessage> provider = new();
@@ -586,9 +645,9 @@ public class MessageStreamProviderTests
 
         Task pushTask = provider.PushAsync(new TestEventOne());
 
-        ((ILazyStreamArgumentValue)lazyStream1).NotifySubscriberCompleted(false);
+        ((ILazyStreamArgumentValue)lazyStream1).NotifySubscriberCompleted(false, false);
         bool isCompletedBeforeAllReturned = provider.SubscribersReturnedTask.IsCompleted;
-        ((ILazyStreamArgumentValue)lazyStream2).NotifySubscriberCompleted(false);
+        ((ILazyStreamArgumentValue)lazyStream2).NotifySubscriberCompleted(false, false);
 
         isCompletedBeforeAllReturned.ShouldBeFalse();
         await provider.SubscribersReturnedTask.WaitAsync(Timeout);
@@ -603,7 +662,7 @@ public class MessageStreamProviderTests
 
         Task pushTask = provider.PushAsync(new TestEventOne());
 
-        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(true);
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(true, false);
         bool isCompleted = provider.SubscribersReturnedTask.IsCompleted;
         await AbortAndWaitForPendingPushAsync(provider, pushTask);
 
@@ -616,9 +675,314 @@ public class MessageStreamProviderTests
         MessageStreamProvider<IMessage> provider = new();
         ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
 
-        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false);
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
 
         provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldAcknowledgeReceivedMessageAndDetachStream_WhenOtherSubscriberIsEnumerating()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        Task otherSubscriberTask = EnumerateAsync(provider.CreateLazyStream<TestEventTwo>());
+        await provider.PushAsync(new TestEventTwo()).WaitAsync(Timeout);
+
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        await using IAsyncEnumerator<TestEventOne> enumerator = lazyStream.Stream!.GetAsyncEnumerator();
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
+
+        (await pushTask.WaitAsync(Timeout)).ShouldBe(1);
+
+        // The next messages are acknowledged without being received, while the other subscriber keeps receiving them
+        (await provider.PushAsync(new TestEventOne()).WaitAsync(Timeout)).ShouldBe(1);
+        (await provider.PushAsync(new TestEventTwo()).WaitAsync(Timeout)).ShouldBe(1);
+        provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
+
+        provider.Abort();
+        await ShouldBeCanceledAsync(otherSubscriberTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldAcknowledgeMessageNotReceived_WhenOtherSubscriberIsEnumerating()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        Task otherSubscriberTask = EnumerateAsync(provider.CreateLazyStream<TestEventTwo>());
+        await provider.PushAsync(new TestEventTwo()).WaitAsync(Timeout);
+
+        Task<int> firstPushTask = provider.PushAsync(new TestEventOne());
+        using CancellationTokenSource cancellationTokenSource = new();
+        await using IAsyncEnumerator<TestEventOne> enumerator = lazyStream.Stream!.GetAsyncEnumerator(cancellationTokenSource.Token);
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        // The subscriber stops waiting for the next message, then returns once it's pushed
+        await cancellationTokenSource.CancelAsync();
+        await Should.ThrowAsync<OperationCanceledException>(enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout));
+        await firstPushTask.WaitAsync(Timeout);
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        await Task.WhenAny(pushTask, Task.Delay(100));
+        pushTask.IsCompleted.ShouldBeFalse();
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
+
+        (await pushTask.WaitAsync(Timeout)).ShouldBe(1);
+        provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
+
+        provider.Abort();
+        await ShouldBeCanceledAsync(otherSubscriberTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldNotCompletePush_WhenOtherSubscriberIsStillProcessingMessage()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        ILazyMessageStreamEnumerable<IEvent> otherLazyStream = provider.CreateLazyStream<IEvent>();
+
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        await using IAsyncEnumerator<TestEventOne> enumerator = lazyStream.Stream!.GetAsyncEnumerator();
+        await using IAsyncEnumerator<IEvent> otherEnumerator = otherLazyStream.Stream!.GetAsyncEnumerator();
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+        (await otherEnumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
+
+        // The detached stream acknowledges the message, but the other subscriber is still processing it
+        await Task.WhenAny(pushTask, Task.Delay(100));
+        pushTask.IsCompleted.ShouldBeFalse();
+
+        Task<bool> otherMoveNextTask = otherEnumerator.MoveNextAsync().AsTask();
+        (await pushTask.WaitAsync(Timeout)).ShouldBe(2);
+
+        provider.Abort();
+        await ShouldBeCanceledAsync(otherMoveNextTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldCompleteSubscribersReturnedTask_WhenLastEnumeratingSubscriberReturns()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream1 = provider.CreateLazyStream<TestEventOne>();
+        ILazyMessageStreamEnumerable<TestEventTwo> lazyStream2 = provider.CreateLazyStream<TestEventTwo>();
+        Task<int> pushTask2 = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask1 = provider.PushAsync(new TestEventOne());
+
+        ((ILazyStreamArgumentValue)lazyStream1).NotifySubscriberCompleted(false, false);
+
+        // The subscriber was invoked for the first message, which is acknowledged without being received
+        (await pushTask1.WaitAsync(Timeout)).ShouldBe(1);
+        provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
+
+        ((ILazyStreamArgumentValue)lazyStream2).NotifySubscriberCompleted(false, false);
+
+        // No subscriber is enumerating anymore: the pending push is left to the abort
+        await provider.SubscribersReturnedTask.WaitAsync(Timeout);
+        pushTask2.IsCompleted.ShouldBeFalse();
+        await AbortAndWaitForPendingPushAsync(provider, pushTask2);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldNotDetachStream_WhenDetachDisabled()
+    {
+        MessageStreamProvider<IMessage> provider = new();
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        provider.CreateLazyStream<TestEventTwo>();
+        Task<int> otherPushTask = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
+
+        await Task.WhenAny(pushTask, Task.Delay(100));
+        pushTask.IsCompleted.ShouldBeFalse();
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+        await ShouldBeCanceledAsync(otherPushTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldCompleteSubscribersReturnedTask_WhenCanceledWhileOtherSubscriberIsEnumerating()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        provider.CreateLazyStream<TestEventTwo>();
+        Task<int> otherPushTask = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, true);
+
+        // The pending push is left to the abort, which ends the streams of all the subscribers
+        await provider.SubscribersReturnedTask.WaitAsync(Timeout);
+        pushTask.IsCompleted.ShouldBeFalse();
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+        await ShouldBeCanceledAsync(otherPushTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldNotDetachStream_WhenOtherSubscriberThrew()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        ILazyMessageStreamEnumerable<TestEventTwo> otherLazyStream = provider.CreateLazyStream<TestEventTwo>();
+        Task<int> otherPushTask = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        ((ILazyStreamArgumentValue)otherLazyStream).NotifySubscriberCompleted(true, false);
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
+
+        // The pending push is left to the abort caused by the failure
+        await Task.WhenAny(pushTask, Task.Delay(100));
+        pushTask.IsCompleted.ShouldBeFalse();
+        provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+        await ShouldBeCanceledAsync(otherPushTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldCompleteSubscribersReturnedTask_WhenThrewCancellationWhileOtherSubscriberIsEnumerating()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        provider.CreateLazyStream<TestEventTwo>();
+        Task<int> otherPushTask = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(true, true);
+
+        // The pending push is left to the abort, which ends the streams of all the subscribers
+        await provider.SubscribersReturnedTask.WaitAsync(Timeout);
+        pushTask.IsCompleted.ShouldBeFalse();
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+        await ShouldBeCanceledAsync(otherPushTask);
+    }
+
+    [Fact]
+    public Task NotifySubscriberCompleted_ShouldNotCompleteSubscribersReturnedTask_WhenSingleSubscriberThrewCancellation()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(true, true);
+
+        // The pending push is left to the abort caused by the cancellation, as for a failure
+        provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
+        return AbortAndWaitForPendingPushAsync(provider, pushTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldNotCompleteSubscribersReturnedTask_WhenThrewCancellationAfterOtherSubscriberFailed()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        ILazyMessageStreamEnumerable<TestEventTwo> otherLazyStream = provider.CreateLazyStream<TestEventTwo>();
+        Task<int> otherPushTask = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        ((ILazyStreamArgumentValue)otherLazyStream).NotifySubscriberCompleted(true, false);
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(true, true);
+
+        // The pending push is left to the abort caused by the failure, which applies the error policies
+        provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+        await ShouldBeCanceledAsync(otherPushTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldNotCompleteSubscribersReturnedTask_WhenReturnedBecauseCanceledAfterOtherSubscriberFailed()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        ILazyMessageStreamEnumerable<TestEventTwo> failedLazyStream = provider.CreateLazyStream<TestEventTwo>();
+        provider.CreateLazyStream<TestCommandOne>();
+        Task<int> otherPushTask = provider.PushAsync(new TestCommandOne());
+        Task<int> failedPushTask = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        ((ILazyStreamArgumentValue)failedLazyStream).NotifySubscriberCompleted(true, false);
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, true);
+
+        // The pending push is left to the abort caused by the failure, which applies the error policies
+        provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+        await ShouldBeCanceledAsync(failedPushTask);
+        await ShouldBeCanceledAsync(otherPushTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldNotDetachStream_WhenOtherSubscriberThrewCancellation()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        ILazyMessageStreamEnumerable<TestEventTwo> canceledLazyStream = provider.CreateLazyStream<TestEventTwo>();
+        provider.CreateLazyStream<TestCommandOne>();
+        Task<int> otherPushTask = provider.PushAsync(new TestCommandOne());
+        Task<int> canceledPushTask = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        ((ILazyStreamArgumentValue)canceledLazyStream).NotifySubscriberCompleted(true, true);
+        await provider.SubscribersReturnedTask.WaitAsync(Timeout);
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
+
+        // The pending push is left to the abort, which ends the streams of all the subscribers
+        await Task.WhenAny(pushTask, Task.Delay(100));
+        pushTask.IsCompleted.ShouldBeFalse();
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+        await ShouldBeCanceledAsync(canceledPushTask);
+        await ShouldBeCanceledAsync(otherPushTask);
+    }
+
+    [Fact]
+    public async Task NotifySubscriberCompleted_ShouldNotCompleteSubscribersReturnedTask_WhenReturningAfterAbort()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        provider.CreateLazyStream<TestEventTwo>();
+        Task<int> otherPushTask = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        await AbortAndWaitForPendingPushAsync(provider, pushTask);
+
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
+
+        // The streams are already aborted: the subscriber isn't detached and doesn't end the streams again
+        provider.SubscribersReturnedTask.IsCompleted.ShouldBeFalse();
+        await ShouldBeCanceledAsync(otherPushTask);
+    }
+
+    [Fact]
+    public async Task Abort_ShouldAbortDetachedStream()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        provider.CreateLazyStream<TestEventTwo>();
+        Task<int> otherPushTask = provider.PushAsync(new TestEventTwo());
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
+        await pushTask.WaitAsync(Timeout);
+
+        await AbortAndWaitForPendingPushAsync(provider, otherPushTask);
+
+        await using IAsyncEnumerator<TestEventOne> enumerator = lazyStream.Stream.ShouldNotBeNull().GetAsyncEnumerator();
+        await Should.ThrowAsync<OperationCanceledException>(enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout));
+    }
+
+    [Fact]
+    public async Task CompleteAsync_ShouldCompleteDetachedStream()
+    {
+        MessageStreamProvider<IMessage> provider = new(detachesReturningSubscribers: true);
+        ILazyMessageStreamEnumerable<TestEventOne> lazyStream = provider.CreateLazyStream<TestEventOne>();
+        Task otherSubscriberTask = EnumerateAsync(provider.CreateLazyStream<TestEventTwo>());
+        await provider.PushAsync(new TestEventTwo()).WaitAsync(Timeout);
+        Task<int> pushTask = provider.PushAsync(new TestEventOne());
+        ((ILazyStreamArgumentValue)lazyStream).NotifySubscriberCompleted(false, false);
+        await pushTask.WaitAsync(Timeout);
+
+        await provider.CompleteAsync().AsTask().WaitAsync(Timeout);
+
+        await otherSubscriberTask.WaitAsync(Timeout);
+        await using IAsyncEnumerator<TestEventOne> enumerator = lazyStream.Stream.ShouldNotBeNull().GetAsyncEnumerator();
+        (await enumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeFalse();
     }
 
     [Fact]
@@ -649,6 +1013,24 @@ public class MessageStreamProviderTests
         Func<Task> act = () => pendingPushTask.WaitAsync(Timeout);
         await act.ShouldThrowAsync<OperationCanceledException>();
     }
+
+    private static async Task ShouldBeCanceledAsync(Task task)
+    {
+        Exception? exception = await Record.ExceptionAsync(() => task.WaitAsync(Timeout));
+        exception.ShouldBeAssignableTo<OperationCanceledException>();
+    }
+
+    // Enumerates the stream, once created, until it's completed or aborted
+    private static Task EnumerateAsync<TMessage>(ILazyMessageStreamEnumerable<TMessage> lazyStream) =>
+        Task.Run(async () =>
+        {
+            await lazyStream.WaitUntilCreatedAsync();
+
+            await foreach (TMessage dummy in lazyStream.Stream!)
+            {
+                // Just pull the messages
+            }
+        });
 
     private class TestEvent : IEvent;
 
