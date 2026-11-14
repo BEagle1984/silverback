@@ -598,8 +598,8 @@ internal static partial class KafkaLoggerExtensions
     private static partial void ConsumerLeaveGroupError(ILogger logger, string consumerName, Exception exception);
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer doesn't release its assignment
-    ///     within the timeout while leaving the group, before being closed.
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer doesn't leave the group within the
+    ///     timeout (its assignment isn't released or the LeaveGroup request isn't sent), before being closed.
     /// </summary>
     [LoggerMessage(
         2045,
