@@ -4,19 +4,23 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
+using Silverback.Tests.Integration.E2E.TestTypes.Logging;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Tests.Integration.E2E.Util;
 using Silverback.Util;
@@ -184,6 +188,42 @@ public class RebalanceTests : KafkaTests
         partitionCallbacksHandler.RevokedPartitions.ShouldNotContainKey(consumers[1]);
         partitionCallbacksHandler.CurrentPartitions[consumers[1]].Count.ShouldBe(2);
         consumers.ShouldAllBe(consumer => consumer.StatusInfo.Status >= ConsumerStatus.Connected);
+    }
+
+    [Fact]
+    public async Task Rebalance_ShouldHandOverPartitionsOfDisconnectedConsumer_WhenUsingCooperativeAssignmentStrategy()
+    {
+        LogEventsCollector logEventsCollector = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .WithCooperativeStickyPartitionAssignmentStrategy()
+                    .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .WithCooperativeStickyPartitionAssignmentStrategy()
+                    .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        KafkaConsumer[] consumers = [.. Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>()];
+        await AsyncTestingUtil.WaitAsync(() => consumers.All(consumer => consumer.Client.Assignment.Count > 0));
+
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        await consumers[1].Client.DisconnectAsync();
+        stopwatch.Stop();
+
+        await AsyncTestingUtil.WaitAsync(() => consumers[0].Client.Assignment.Count == 5);
+
+        consumers[0].Client.Assignment.Count.ShouldBe(5);
+        stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(5));
+        logEventsCollector.Contains(KafkaLogEvents.ConsumerLeaveGroupTimeout.EventId, string.Empty).ShouldBeFalse();
     }
 
     [Fact]
