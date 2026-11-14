@@ -28,6 +28,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
     private readonly TaskCompletionSource _subscribersReturnedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
+    private readonly bool _detachesReturningSubscribers;
+
     private MethodInfo? _genericCreateStreamMethodInfo;
 
     private bool _completed;
@@ -39,6 +41,33 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     private bool _isCompleting;
 
     private bool _isAborting;
+
+    // Set holding the _lazyStreams lock when the streams are being aborted or completed: no stream is detached afterwards
+    private bool _isClosed;
+
+    // Set holding the _lazyStreams lock when a subscriber throws: no stream is detached afterwards
+    private bool _hasSubscriberThrown;
+
+    // Set holding the _lazyStreams lock when a subscriber throws an exception other than the cancellation (see OnSubscriberCompleted)
+    private bool _hasSubscriberFailed;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="MessageStreamProvider{TMessage}" /> class.
+    /// </summary>
+    /// <param name="detachesReturningSubscribers">
+    ///     A value indicating whether the stream of a subscriber that returns (e.g., with a <c>break</c>), while the subscribers of the other
+    ///     streams are still enumerating them, is detached: the subscriber doesn't receive any further message, while the others keep
+    ///     receiving them. It isn't if the cancellation token passed to the subscriber was canceled (e.g., because the consumer is stopping),
+    ///     once a subscriber threw, or once the streams are being aborted or completed. A subscriber returning or throwing the cancellation
+    ///     because the token was canceled instead completes the <see cref="SubscribersReturnedTask" /> as if all the subscribers returned,
+    ///     unless the streams are already being aborted or completed or another subscriber failed (or, when throwing, it's the only
+    ///     subscriber). Otherwise, its pending push is left to the completion or the abort, which are expected once all the subscribers
+    ///     returned (see <see cref="SubscribersReturnedTask" />).
+    /// </param>
+    public MessageStreamProvider(bool detachesReturningSubscribers = false)
+    {
+        _detachesReturningSubscribers = detachesReturningSubscribers;
+    }
 
     /// <inheritdoc cref="MessageStreamProvider.MessageType" />
     public override Type MessageType => typeof(TMessage);
@@ -89,7 +118,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         if (_completed || _aborted)
             throw new InvalidOperationException("The streams are already completed or aborted.");
 
-        List<Task> processingTasks = [.. PushToCompatibleStreams(message, onPullAction, onPullActionArgument, cancellationToken)];
+        List<Task> processingTasks = PushToCompatibleStreams(message, onPullAction, onPullActionArgument, cancellationToken);
 
         if (processingTasks.Count > 0)
             await Task.WhenAll(processingTasks).ConfigureAwait(false);
@@ -124,6 +153,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             _isAborting = true;
 
+            Close();
             _lazyStreams.ForEach(lazyStream => lazyStream.Abort());
 
             _aborted = true;
@@ -153,6 +183,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             _isCompleting = true;
 
+            Close();
             await _lazyStreams
                 .ParallelForEachAsync(async lazyStream => await lazyStream.CompleteAsync(cancellationToken).ConfigureAwait(false))
                 .ConfigureAwait(false);
@@ -202,7 +233,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="MessageStreamProvider.CreateLazyStream{TMessage}" />
     public override ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStream<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null)
     {
-        ILazyMessageStreamEnumerable<TMessageLinked> stream = new LazyMessageStreamEnumerable<TMessageLinked>(filters, OnSubscriberReturned);
+        ILazyMessageStreamEnumerable<TMessageLinked> stream = new LazyMessageStreamEnumerable<TMessageLinked>(filters, OnSubscriberCompleted);
 
         lock (_lazyStreams)
         {
@@ -232,6 +263,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         TMessage message,
         Action<object?>? onPullAction,
         object? onPullActionArgument,
+        ref List<ILazyMessageStreamEnumerable>? createdLazyStreams,
         CancellationToken cancellationToken,
         out Task messageProcessingTask)
     {
@@ -243,13 +275,15 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
         if (lazyStream.MessageType.IsInstanceOfType(message))
         {
-            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(message, onPullAction, onPullActionArgument, cancellationToken);
+            messageProcessingTask = GetOrCreateStream(lazyStream, ref createdLazyStreams)
+                .PushAsync(message, onPullAction, onPullActionArgument, cancellationToken);
             return true;
         }
 
         if (message is IEnvelope { Message: not null } envelope && lazyStream.MessageType.IsInstanceOfType(envelope.Message))
         {
-            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(envelope.Message, onPullAction, onPullActionArgument, cancellationToken);
+            messageProcessingTask = GetOrCreateStream(lazyStream, ref createdLazyStreams)
+                .PushAsync(envelope.Message, onPullAction, onPullActionArgument, cancellationToken);
             return true;
         }
 
@@ -257,38 +291,113 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         return false;
     }
 
+    // The creation of the new streams is signaled, invoking their subscribers, once all the streams the message is pushed to are created
+    // (see PushToCompatibleStreams)
+    private static IMessageStreamEnumerable GetOrCreateStream(
+        ILazyMessageStreamEnumerable lazyStream,
+        ref List<ILazyMessageStreamEnumerable>? createdLazyStreams)
+    {
+        IMessageStreamEnumerable stream = lazyStream.GetOrCreateStreamWithoutSignaling(out bool isCreated);
+
+        if (isCreated)
+            (createdLazyStreams ??= []).Add(lazyStream);
+
+        return stream;
+    }
+
     private static bool IsFiltered(IReadOnlyCollection<IMessageFilter>? filters, object message) =>
         filters != null && filters.Count != 0 && !filters.All(filter => filter.MustProcess(message));
 
-    private IEnumerable<Task> PushToCompatibleStreams(
+    private List<Task> PushToCompatibleStreams(
         TMessage message,
         Action<object?>? onPullAction,
         object? onPullActionArgument,
         CancellationToken cancellationToken)
     {
-        foreach (ILazyMessageStreamEnumerable lazyStream in _lazyStreams)
-        {
-            // Softly abort if the cancellation token is signaled, don't throw to avoid unnecessary logging when triggered by the
-            // application shutdown
-            if (cancellationToken.IsCancellationRequested)
-                yield break;
+        List<Task> processingTasks = [];
+        List<ILazyMessageStreamEnumerable>? createdLazyStreams = null;
 
-            if (PushIfCompatibleType(lazyStream, message, onPullAction, onPullActionArgument, cancellationToken, out Task processingTask))
+        try
+        {
+            foreach (ILazyMessageStreamEnumerable lazyStream in _lazyStreams)
             {
-                yield return processingTask;
+                // Softly abort if the cancellation token is signaled, don't throw to avoid unnecessary logging when triggered by the
+                // application shutdown
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                if (PushIfCompatibleType(
+                    lazyStream,
+                    message,
+                    onPullAction,
+                    onPullActionArgument,
+                    ref createdLazyStreams,
+                    cancellationToken,
+                    out Task processingTask))
+                {
+                    processingTasks.Add(processingTask);
+                }
             }
         }
+        finally
+        {
+            // Invoke the subscribers of the new streams only once all the streams the message is pushed to are created, also if the push
+            // fails midway: a subscriber returning right away then finds the streams of the other subscribers of the same message, which
+            // are therefore still enumerating it (see OnSubscriberCompleted)
+            if (createdLazyStreams != null)
+            {
+                foreach (ILazyMessageStreamEnumerable createdLazyStream in createdLazyStreams)
+                {
+                    createdLazyStream.SignalCreated();
+                }
+            }
+        }
+
+        return processingTasks;
     }
 
-    // Invoked by a lazy stream, whose stream is created, when its subscriber returns
-    private void OnSubscriberReturned()
+    // No stream is detached once the streams are being aborted or completed: the pending pushes are left to the abort or the completion
+    private void Close()
     {
         lock (_lazyStreams)
         {
-            if (_lazyStreams.Exists(lazyStream => lazyStream.Stream != null && !lazyStream.HasSubscriberReturned))
-                return;
+            _isClosed = true;
+        }
+    }
+
+    // Invoked by a lazy stream, whose stream is created, when its subscriber returns or throws. Returns whether the stream must be
+    // detached, because its subscriber returned while the subscribers of the other streams are still enumerating them.
+    private bool OnSubscriberCompleted(bool hasThrown, bool isCanceled)
+    {
+        lock (_lazyStreams)
+        {
+            if (hasThrown)
+            {
+                _hasSubscriberThrown = true;
+                _hasSubscriberFailed |= !isCanceled;
+
+                // The failure aborts the streams (e.g., see PublisherConsumerBehavior): the pending pushes are left to the abort. The
+                // cancellation (e.g., because the consumer is stopping) doesn't, while the other subscribers are still enumerating or
+                // waiting for their stream, and the pending push would never complete: end the streams as when a subscriber returns
+                // because of the cancellation, unless a subscriber failed (its abort applies the error policies). The cancellation of a
+                // single subscriber aborts the streams like a failure.
+                if (!_detachesReturningSubscribers || !isCanceled || _isClosed || _hasSubscriberFailed || _lazyStreams.Count == 1)
+                    return false;
+            }
+            else if (_lazyStreams.Exists(lazyStream => lazyStream.Stream != null && !lazyStream.HasSubscriberReturned))
+            {
+                // Leave the pending push to the abort or completion in progress, or to the abort caused by the failed subscriber
+                if (!_detachesReturningSubscribers || _isClosed || _hasSubscriberThrown)
+                    return false;
+
+                // A subscriber returning because the consumer is stopping ends the streams instead, as if all the subscribers returned, so
+                // that the pending message is rolled back (see PublisherConsumerBehavior)
+                if (!isCanceled)
+                    return true;
+            }
         }
 
         _subscribersReturnedTaskCompletionSource.TrySetResult();
+        return false;
     }
 }

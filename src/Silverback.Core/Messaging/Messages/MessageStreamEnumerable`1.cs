@@ -49,7 +49,9 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
         Complete,
 
-        Aborted
+        Aborted,
+
+        Detached
     }
 
     /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(object,Action{object},object,CancellationToken)" />
@@ -61,6 +63,17 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         using CancellationTokenSource linkedTokenSource = LinkWithAddCancellationTokenSource(cancellationToken);
 
         await _writeSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+
+        // The subscriber of a detached stream won't pull any further message: acknowledge the push without waiting. The state is read
+        // without the lock: the detach writes it and then releases the processed semaphore, unless the subscriber already released it
+        // (the semaphore is full). A push reading the state before the write takes that count, after the detach released it or tried to,
+        // and the next pushes acquire the write lock after that push, therefore reading the written state. The state never goes back to
+        // NotComplete, so the count released by the detach can only acknowledge a push to the detached stream.
+        if (_completeState == CompleteState.Detached)
+        {
+            ReleaseWriteLock();
+            return;
+        }
 
         _current = message;
         _hasCurrent = true;
@@ -93,7 +106,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     {
         lock (_completeLock)
         {
-            if (_completeState != CompleteState.NotComplete)
+            if (_completeState is CompleteState.Complete or CompleteState.Aborted)
                 return;
 
             _completeState = CompleteState.Aborted;
@@ -109,7 +122,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
         lock (_completeLock)
         {
-            if (_completeState != CompleteState.NotComplete)
+            if (_completeState is CompleteState.Complete or CompleteState.Aborted)
                 return;
 
             _completeState = CompleteState.Complete;
@@ -134,7 +147,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     /// <remarks>
     ///     Once the stream is complete (immediately, if it's already complete), the pending push is acknowledged as if the message had
     ///     been processed, since the next message will never be pulled. The pending push of a stream that isn't complete is instead left
-    ///     to the abort.
+    ///     to the abort or to the detach (see <see cref="Detach" />).
     /// </remarks>
     public void Abandon()
     {
@@ -149,6 +162,25 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
                 return;
         }
 
+        AcknowledgePendingPush();
+    }
+
+    /// <summary>
+    ///     Signals that the subscriber stopped consuming the stream while the subscribers of the other streams of the same provider are still
+    ///     enumerating them. The subscriber doesn't receive any further message: the pending push and the next ones are acknowledged without
+    ///     waiting, as if the message had been processed.
+    /// </summary>
+    public void Detach()
+    {
+        lock (_completeLock)
+        {
+            if (_completeState != CompleteState.NotComplete)
+                return;
+
+            _completeState = CompleteState.Detached;
+        }
+
+        // Acknowledge the pending push, or the push that reads the state before it was written (see PushAsync)
         AcknowledgePendingPush();
     }
 
