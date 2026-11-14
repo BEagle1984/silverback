@@ -273,12 +273,15 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     {
         while (WaitForNextAsync(CancellationToken.None).SafeWait())
         {
-            if (!_hasCurrent || _current == null)
+            // Read the message once: the push clears it when it's canceled (e.g., by the abort)
+            TMessage? current = _current;
+
+            if (!_hasCurrent || current == null)
                 continue;
 
             _onPullAction?.Invoke(_onPullActionArgument);
 
-            yield return _current;
+            yield return current;
         }
     }
 
@@ -287,12 +290,15 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     {
         while (await WaitForNextAsync(cancellationToken).ConfigureAwait(false))
         {
-            if (!_hasCurrent || _current == null)
+            // Read the message once: the push clears it when it's canceled (e.g., by the abort)
+            TMessage? current = _current;
+
+            if (!_hasCurrent || current == null)
                 continue;
 
             _onPullAction?.Invoke(_onPullActionArgument);
 
-            yield return _current;
+            yield return current;
         }
     }
 
@@ -323,7 +329,19 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
         _isFirstMessage = false;
 
-        return _hasCurrent;
+        if (_hasCurrent)
+            return true;
+
+        // The completion releases the subscriber without a message, to signal the end of the stream, and the detached stream has no
+        // further message for it either. Otherwise, the push released its message but then withdrew it before it was read, typically
+        // because it was canceled (e.g., by the abort): throw, as when the stream is aborted while waiting, instead of ending the stream
+        // as if it was complete. The state is read without the lock: the completion writes it before releasing the subscriber and the
+        // canceled push aborts the stream (unless the completion started first), while Complete and Aborted are final, so that an aborted
+        // stream can't be read as complete.
+        if (_completeState is not (CompleteState.Complete or CompleteState.Detached))
+            throw new OperationCanceledException("The pushed message was withdrawn before being pulled (e.g., because the stream was aborted).");
+
+        return false;
     }
 
     private CancellationTokenSource LinkWithAddCancellationTokenSource(CancellationToken cancellationToken) =>
