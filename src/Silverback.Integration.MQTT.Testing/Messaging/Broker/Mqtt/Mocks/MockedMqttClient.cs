@@ -114,7 +114,7 @@ public sealed class MockedMqttClient : IMqttClient
         // Like the real client, reject the invalid topic filters before subscribing
         options.TopicFilters.ForEach(filter => MqttTopicValidator.ThrowIfInvalidSubscribe(filter.Topic));
 
-        _broker.Subscribe(this, [.. options.TopicFilters.Select(filter => filter.Topic)]);
+        _broker.Subscribe(this, options.TopicFilters);
 
         return Task.FromResult(
             new MqttClientSubscribeResult(

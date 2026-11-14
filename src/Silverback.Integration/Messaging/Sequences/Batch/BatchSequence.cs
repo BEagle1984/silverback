@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences.Batch;
@@ -43,6 +44,13 @@ public class BatchSequence : Sequence
         _logger = context.ServiceProvider.GetRequiredService<ISilverbackLogger<BatchSequence>>();
     }
 
+    // The reader moves on while the batch completed by the timeout is processed: the next batch must wait for the failed batch (or the
+    // batch whose subscriber stopped enumerating) to be committed or rolled back
+    private protected override bool IsRemovedFromStoreAfterTransaction => true;
+
+    // The message refused because the batch was aborted after being found pending is added to the next batch, if the abort commits it
+    private protected override bool IsMessageRefusedByAbortAddedToNextSequence => true;
+
     /// <summary>
     ///     Called when the timeout is elapsed. In this special case the sequence is completed instead of aborted.
     /// </summary>
@@ -56,6 +64,11 @@ public class BatchSequence : Sequence
         {
             await CompleteAsync().ConfigureAwait(false);
         }
+        catch (InvalidOperationException) when (IsPending && AreStreamsCompletedOrAborted())
+        {
+            // The streams were aborted by the publisher before the batch, because one of several subscribers failed: the publisher
+            // aborts the batch with the exception of the subscriber once the others returned, applying the error policies to it
+        }
         catch (Exception ex)
         {
             _logger.LogSequenceTimeoutError(this, ex);
@@ -63,4 +76,7 @@ public class BatchSequence : Sequence
             await AbortAsync(SequenceAbortReason.Error, ex).ConfigureAwait(false);
         }
     }
+
+    private bool AreStreamsCompletedOrAborted() =>
+        StreamProvider is MessageStreamProvider<IInboundEnvelope> { IsCompletedOrAborted: true };
 }

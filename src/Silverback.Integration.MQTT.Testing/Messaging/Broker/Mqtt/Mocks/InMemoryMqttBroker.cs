@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
+using MQTTnet.Packets;
+using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -84,12 +86,19 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     public void Subscribe(MockedMqttClient client, IReadOnlyCollection<string> topics)
     {
+        Check.NotNull(topics, nameof(topics));
+
+        Subscribe(client, [.. topics.Select(topic => new MqttTopicFilter { Topic = topic })]);
+    }
+
+    public void Subscribe(MockedMqttClient client, IReadOnlyCollection<MqttTopicFilter> topicFilters)
+    {
         lock (_sessions)
         {
             if (!TryGetClientSession(client, out ClientSession? session))
                 return;
 
-            session.Subscribe(topics);
+            session.Subscribe(topicFilters);
         }
     }
 
@@ -106,7 +115,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     public async ValueTask PublishAsync(MockedMqttClient client, MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
-        List<ClientSession> receivers;
+        List<Receiver> receivers;
 
         lock (_sessions)
         {
@@ -118,9 +127,14 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
         StoreMessage(message, clientOptions);
 
-        foreach (ClientSession session in receivers)
+        foreach (Receiver receiver in receivers)
         {
-            await session.PushAsync(message).ConfigureAwait(false);
+            // Like the broker, deliver with the lowest between the published QoS and the subscription QoS
+            MqttQualityOfServiceLevel qualityOfServiceLevel = message.QualityOfServiceLevel < receiver.QualityOfServiceLevel
+                ? message.QualityOfServiceLevel
+                : receiver.QualityOfServiceLevel;
+
+            await receiver.Session.PushAsync(message, qualityOfServiceLevel).ConfigureAwait(false);
         }
     }
 
@@ -165,36 +179,42 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     private void RemoveClientSession(MockedMqttClient client) => _sessions.Remove(GetClientSessionKey(client));
 
-    // Like a broker, delivers the message to each session with a matching subscription (a single copy for the overlapping subscriptions)
-    // and, for each shared subscription, an additional copy to one of the sessions sharing it, picked round-robin among the connected
-    // ones. Must be called holding the lock.
-    private List<ClientSession> GetReceivers(MqttApplicationMessage message, MqttClientOptions clientOptions)
+    // Like a broker, delivers the message to each session with a matching subscription (a single copy for the overlapping subscriptions,
+    // with the highest QoS among them) and, for each shared subscription, an additional copy to one of the sessions sharing it, picked
+    // round-robin among the connected ones. Must be called holding the lock.
+    private List<Receiver> GetReceivers(MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
-        List<ClientSession> receivers = [];
-        Dictionary<(string Group, string Topic), List<ClientSession>> sharedSubscriptionSessions = [];
+        List<Receiver> receivers = [];
+        Dictionary<(string Group, string Topic), List<Receiver>> sharedSubscriptionReceivers = [];
 
         foreach (ClientSession session in _sessions.Values)
         {
+            MqttQualityOfServiceLevel? qualityOfServiceLevel = null;
+
             foreach (Subscription subscription in session.GetMatchingSubscriptions(message, clientOptions))
             {
                 if (subscription.SharedSubscriptionGroup == null)
                 {
-                    if (!receivers.Contains(session))
-                        receivers.Add(session);
+                    if (qualityOfServiceLevel == null || subscription.QualityOfServiceLevel > qualityOfServiceLevel)
+                        qualityOfServiceLevel = subscription.QualityOfServiceLevel;
                 }
                 else
                 {
-                    sharedSubscriptionSessions.GetOrAddDefault((subscription.SharedSubscriptionGroup, subscription.Topic)).Add(session);
+                    sharedSubscriptionReceivers.GetOrAddDefault((subscription.SharedSubscriptionGroup, subscription.Topic))
+                        .Add(new Receiver(session, subscription.QualityOfServiceLevel));
                 }
             }
+
+            if (qualityOfServiceLevel != null)
+                receivers.Add(new Receiver(session, qualityOfServiceLevel.Value));
         }
 
-        foreach (((string Group, string Topic) sharedSubscription, List<ClientSession> sessions) in sharedSubscriptionSessions)
+        foreach (((string Group, string Topic) sharedSubscription, List<Receiver> sharingReceivers) in sharedSubscriptionReceivers)
         {
             // The messages are queued in a disconnected (persistent) session only if no session sharing the subscription is connected
-            List<ClientSession> candidates = sessions.Exists(session => session.IsConnected)
-                ? sessions.FindAll(session => session.IsConnected)
-                : sessions;
+            List<Receiver> candidates = sharingReceivers.Exists(receiver => receiver.Session.IsConnected)
+                ? sharingReceivers.FindAll(receiver => receiver.Session.IsConnected)
+                : sharingReceivers;
 
             (string? Broker, string Group, string Topic) indexKey =
                 (clientOptions.ChannelOptions?.ToString(), sharedSubscription.Group, sharedSubscription.Topic);
@@ -219,4 +239,6 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
             _messagesByTopic[topicKey].Add(message);
         }
     }
+
+    private readonly record struct Receiver(ClientSession Session, MqttQualityOfServiceLevel QualityOfServiceLevel);
 }

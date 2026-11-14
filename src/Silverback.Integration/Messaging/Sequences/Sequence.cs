@@ -40,4 +40,34 @@ public abstract class Sequence : SequenceBase<IInboundEnvelope>
         : base(sequenceId, context, enforceTimeout, timeout, trackIdentifiers: trackIdentifiers)
     {
     }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Sequence" /> class, pushing the specified stream provider.
+    /// </summary>
+    /// <param name="sequenceId">
+    ///     The identifier that is used to match the consumed messages with their belonging sequence.
+    /// </param>
+    /// <param name="context">
+    ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
+    ///     sequence gets published via the message bus.
+    /// </param>
+    /// <param name="enforceTimeout">
+    ///     A value indicating whether the timeout has to be enforced.
+    /// </param>
+    /// <param name="streamProvider">
+    ///     The <see cref="IMessageStreamProvider" /> to be pushed.
+    /// </param>
+    /// <param name="trackIdentifiers">
+    ///     Specifies whether the message identifiers have to be collected, in order to be used for the commit
+    ///     later on.
+    /// </param>
+    private protected Sequence(
+        string sequenceId,
+        ConsumerPipelineContext context,
+        bool enforceTimeout,
+        IMessageStreamProvider streamProvider,
+        bool trackIdentifiers)
+        : base(sequenceId, context, enforceTimeout, streamProvider: streamProvider, trackIdentifiers: trackIdentifiers)
+    {
+    }
 }

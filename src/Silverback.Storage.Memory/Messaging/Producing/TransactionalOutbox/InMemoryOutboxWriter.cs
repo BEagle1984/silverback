@@ -73,7 +73,7 @@ public class InMemoryOutboxWriter : IOutboxWriter
 
         WarnIfTransaction(context);
 
-        await foreach (OutboxMessage outboxMessage in outboxMessages.WithCancellation(cancellationToken))
+        await foreach (OutboxMessage outboxMessage in outboxMessages.WithCancellation(cancellationToken).ConfigureAwait(false))
         {
             cancellationToken.ThrowIfCancellationRequested();
 

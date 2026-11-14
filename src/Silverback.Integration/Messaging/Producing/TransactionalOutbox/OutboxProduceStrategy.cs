@@ -5,10 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
@@ -111,59 +113,31 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
             _logger.LogStoringIntoOutbox(envelope);
         }
 
-        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
-        public async Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken)
-        {
-            using MessageStreamEnumerable<IOutboundEnvelope> stream = new();
-            using DelegatedProducer<MessageStreamEnumerable<IOutboundEnvelope>> producer = new(
-                static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, cancellationToken: finalCancellationToken),
-                _configuration,
-                stream,
-                _context.ServiceProvider);
-
-            Task.Run(
-                async () =>
+        public Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken) =>
+            ProduceCoreAsync(
+                async (producer, produceCancellationToken) =>
                 {
                     foreach (IOutboundEnvelope envelope in envelopes)
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
+                        produceCancellationToken.ThrowIfCancellationRequested();
 
-                        await producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
+                        await producer.ProduceAsync(envelope, produceCancellationToken).ConfigureAwait(false);
                     }
-
-                    await stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
                 },
-                cancellationToken).FireAndForget();
+                cancellationToken);
 
-            await _outboxWriter.AddAsync(stream.AsEnumerable().Select(MapToOutboxMessage), _context, cancellationToken).ConfigureAwait(false);
-        }
-
-        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
-        public async Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken)
-        {
-            using MessageStreamEnumerable<IOutboundEnvelope> stream = new();
-            using DelegatedProducer<MessageStreamEnumerable<IOutboundEnvelope>> producer = new(
-                static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, cancellationToken: finalCancellationToken),
-                _configuration,
-                stream,
-                _context.ServiceProvider);
-
-            Task.Run(
-                async () =>
+        public Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken) =>
+            ProduceCoreAsync(
+                async (producer, produceCancellationToken) =>
                 {
-                    await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(cancellationToken))
+                    await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(produceCancellationToken))
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
+                        produceCancellationToken.ThrowIfCancellationRequested();
 
-                        await producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
+                        await producer.ProduceAsync(envelope, produceCancellationToken).ConfigureAwait(false);
                     }
-
-                    await stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
                 },
-                cancellationToken).FireAndForget();
-
-            await _outboxWriter.AddAsync(stream.AsEnumerable().Select(MapToOutboxMessage), _context, cancellationToken).ConfigureAwait(false);
-        }
+                cancellationToken);
 
         public void Dispose() => _producer?.Dispose();
 
@@ -182,6 +156,97 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
             }
 
             return envelope.Headers;
+        }
+
+        // Unlike the async LINQ operators, never resume on the captured synchronization context: a synchronous caller blocking the
+        // context's thread would otherwise deadlock
+        private static async IAsyncEnumerable<OutboxMessage> MapToOutboxMessagesAsync(
+            IAsyncEnumerable<IOutboundEnvelope> envelopes,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(cancellationToken).ConfigureAwait(false))
+            {
+                yield return MapToOutboxMessage(envelope);
+            }
+        }
+
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
+        [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Shared with the producer task on purpose, through Interlocked")]
+        [SuppressMessage("Reliability", "CA2025:Do not pass \'IDisposable\' instances into unawaited tasks", Justification = "The task is awaited before disposing")]
+        private async Task ProduceCoreAsync(
+            Func<IProducer, CancellationToken, Task> produceEnvelopesAsync,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using MessageStreamEnumerable<IOutboundEnvelope> stream = new();
+            using DelegatedProducer<MessageStreamEnumerable<IOutboundEnvelope>> producer = new(
+                static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, cancellationToken: finalCancellationToken),
+                _configuration,
+                stream,
+                _context.ServiceProvider);
+            using CancellationTokenSource produceTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+            // Counts the failed sides (producer and writer): the first failure is the root cause, since it aborts the stream and makes
+            // the other side fail as well (on cancellation, either side can fail first, both with an OperationCanceledException)
+            int failuresCount = 0;
+
+            // Don't pass the cancellation token to Task.Run: the task must always run, to complete or abort the stream
+            Task produceTask = Task.Run(
+                async () =>
+                {
+                    try
+                    {
+                        await produceEnvelopesAsync(producer, produceTokenSource.Token).ConfigureAwait(false);
+
+                        // Complete the stream regardless of the cancellation: no push is pending, so it cannot block
+                        await stream.CompleteAsync(CancellationToken.None).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // Abort the stream to make the outbox writer fail, instead of waiting forever for the next message
+                        Interlocked.Increment(ref failuresCount);
+                        stream.Abort();
+                        throw;
+                    }
+                },
+                CancellationToken.None);
+
+            try
+            {
+                // Write the stream asynchronously, not to block a thread while the messages are produced
+                await _outboxWriter.AddAsync(
+                    MapToOutboxMessagesAsync(stream, cancellationToken),
+                    _context,
+                    cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                bool isProducerFailureRootCause = Interlocked.Increment(ref failuresCount) > 1;
+
+                // Release the pending push, if any, and stop producing
+                stream.Abort();
+
+                try
+                {
+                    await produceTokenSource.CancelAsync().ConfigureAwait(false);
+                }
+                catch (AggregateException)
+                {
+                    // Ignore the exceptions thrown by the cancellation callbacks: they aren't the root cause
+                }
+
+                // Never dispose the stream and the producer while the task is still using them
+                await produceTask.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+
+                // Rethrow the producer exception, if the writer failed because of it
+                if (isProducerFailureRootCause)
+                    await produceTask.ConfigureAwait(false);
+
+                throw;
+            }
+
+            await produceTask.ConfigureAwait(false);
         }
 
         private record struct DelegatedProducerState(IOutboxWriter OutboxWriter, ISilverbackContext Context);

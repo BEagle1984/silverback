@@ -3,6 +3,7 @@
 
 using System;
 using MQTTnet;
+using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
@@ -11,15 +12,19 @@ internal sealed class Subscription : ParsedTopic
 {
     private readonly MqttClientOptions _clientOptions;
 
-    public Subscription(MqttClientOptions clientOptions, string topic)
+    public Subscription(MqttClientOptions clientOptions, string topic, MqttQualityOfServiceLevel qualityOfServiceLevel)
         : base(topic)
     {
         _clientOptions = clientOptions;
         Filter = topic;
+        QualityOfServiceLevel = qualityOfServiceLevel;
     }
 
     // The subscribed topic filter, including the shared subscription prefix
     public string Filter { get; }
+
+    // The maximum quality of service of the messages delivered through this subscription (always granted by the mocked broker)
+    public MqttQualityOfServiceLevel QualityOfServiceLevel { get; }
 
     public bool IsMatch(MqttApplicationMessage message, MqttClientOptions clientOptions) =>
         IsSameBroker(clientOptions) && IsMatch(message.Topic);

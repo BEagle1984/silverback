@@ -22,10 +22,6 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     private Channel<T> _overflowChannel; // Used to store messages when the main channel is full, to ensure nothing is lost
 
-    private T? _unreadMessage; // Put back by a stopped reader, read again before the buffered messages
-
-    private bool _hasUnreadMessage;
-
     private TaskCompletionSource<bool> _readTaskCompletionSource = new();
 
     private CancellationTokenSource _readCancellationTokenSource = new();
@@ -42,12 +38,15 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
         _channel = Channel.CreateBounded<T>(_capacity);
         _overflowChannel = Channel.CreateUnbounded<T>();
-        SequenceStore = new SequenceStore(logger);
+        SequenceStore = CreateSequenceStore();
     }
 
     public string Id { get; }
 
     public CancellationToken ReadCancellationToken => _readCancellationTokenSource.Token;
+
+    // Unlike the token, it can be read by other threads while the reading is restarted (and the previous source disposed)
+    public bool IsReadCanceled => _readCancellationTokenSource.IsCancellationRequested;
 
     public Task ReadTask => _readTaskCompletionSource.Task;
 
@@ -59,6 +58,15 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
     public Guid InstanceId { get; private set; } = Guid.NewGuid();
 
     public ISequenceStore SequenceStore { get; private set; }
+
+    // A reader restarted after a stop gets a new sequence store when the channel is reused (as MQTT does): the work still pending on the
+    // sequences of the stopped reader (e.g., a late abort) must not affect the new sequences with the same id (e.g., the chunk sequence of
+    // a replayed message). Kafka creates a new channel instead.
+    protected virtual bool IsSequenceStoreReplacedOnRestart => false;
+
+    // The reader is about to stop (e.g. a restart is pending): the messages being processed are consumed again and must not start new
+    // sequences
+    protected virtual bool IsReadingStopping => IsReadCanceled;
 
     public void Complete()
     {
@@ -110,16 +118,6 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
             lock (_channelLock)
             {
-                // The unread message was taken before anything still buffered
-                if (_hasUnreadMessage)
-                {
-                    T unreadMessage = _unreadMessage!;
-                    _unreadMessage = default;
-                    _hasUnreadMessage = false;
-
-                    return unreadMessage;
-                }
-
                 // A canceled write enters overflow after records already buffered in the main channel
                 if (channel.Reader.TryRead(out T? message))
                     return message;
@@ -149,27 +147,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         }
     }
 
-    /// <summary>
-    ///     Puts back the message returned by the last <see cref="ReadAsync" />, when the reader stops before processing it, so
-    ///     that the next read returns it again before the buffered messages.
-    /// </summary>
-    /// <param name="message">
-    ///     The message to put back.
-    /// </param>
-    public void Unread(T message)
-    {
-        lock (_channelLock)
-        {
-            // Overwriting the message put back before would silently drop it
-            if (_hasUnreadMessage)
-                throw new InvalidOperationException("A message was already put back and not read again yet.");
-
-            _unreadMessage = message;
-            _hasUnreadMessage = true;
-        }
-    }
-
-    public void Reset()
+    public virtual void Reset()
     {
         lock (_channelLock)
         {
@@ -177,12 +155,10 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
             _overflowChannel.Writer.TryComplete();
             _channel = Channel.CreateBounded<T>(_capacity);
             _overflowChannel = Channel.CreateUnbounded<T>();
-            _unreadMessage = default;
-            _hasUnreadMessage = false;
         }
 
         SequenceStore.Dispose();
-        SequenceStore = new SequenceStore(_logger);
+        SequenceStore = CreateSequenceStore();
         InstanceId = Guid.NewGuid();
     }
 
@@ -195,6 +171,11 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         {
             _readCancellationTokenSource.Dispose();
             _readCancellationTokenSource = new CancellationTokenSource();
+
+            // The stopped reader aborted its pending sequences already (see NotifyReadingStoppedAsync) and the new one isn't started yet.
+            // The previous store isn't disposed, not to break the work still pending on its sequences.
+            if (IsSequenceStoreReplacedOnRestart)
+                SequenceStore = CreateSequenceStore();
         }
 
         if (_readTaskCompletionSource.Task.IsCompleted)
@@ -255,6 +236,9 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
         _isDisposed = true;
     }
+
+    // The store tells the sequencer whether the reading was canceled, not to start new sequences that would be aborted anyway
+    private SequenceStore CreateSequenceStore() => new(_logger, () => IsReadingStopping);
 
     private (Channel<T> Channel, Channel<T> OverflowChannel) GetChannels()
     {

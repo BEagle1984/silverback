@@ -122,6 +122,45 @@ public class OutboxSqliteTests : KafkaTests
     }
 
     [Fact]
+    public async Task Outbox_ShouldProduceBatch_WhenPublishingSynchronouslyWithSynchronizationContext()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(database.ConnectionString))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddSqliteOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await BlockedSynchronizationContext
+            .RunAsync(() => publisher.WrapAndPublishBatch([new TestEventOne(), new TestEventOne()]))
+            .WaitAsync(TimeSpan.FromSeconds(10));
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+    }
+
+    [Fact]
     public async Task Outbox_ShouldProduceAsyncBatch()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();

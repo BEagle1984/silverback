@@ -18,7 +18,7 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     private readonly System.Threading.Lock _syncRoot = new();
 
-    private readonly Action? _onSubscriberReturned;
+    private readonly Func<bool, bool, bool>? _onSubscriberCompleted;
 
     private MessageStreamEnumerable<TMessage>? _stream;
 
@@ -26,10 +26,22 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     private bool _isDisposed;
 
-    public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null, Action? onSubscriberReturned = null)
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="LazyMessageStreamEnumerable{TMessage}" /> class.
+    /// </summary>
+    /// <param name="filters">
+    ///     The filters to be applied.
+    /// </param>
+    /// <param name="onSubscriberCompleted">
+    ///     The callback invoked when the subscriber of the created stream returns or throws, with a value indicating whether the subscriber
+    ///     threw and a value indicating whether it returned or threw because the cancellation token passed to it was canceled. It returns a
+    ///     value indicating whether the stream must be detached, because the subscribers of the other streams are still enumerating them
+    ///     (see <see cref="MessageStreamEnumerable{TMessage}.Detach" />).
+    /// </param>
+    public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null, Func<bool, bool, bool>? onSubscriberCompleted = null)
     {
         Filters = filters;
-        _onSubscriberReturned = onSubscriberReturned;
+        _onSubscriberCompleted = onSubscriberCompleted;
     }
 
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.MessageType" />
@@ -67,6 +79,14 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.GetOrCreateStream" />
     public IMessageStreamEnumerable GetOrCreateStream()
     {
+        IMessageStreamEnumerable stream = GetOrCreateStreamWithoutSignaling(out _);
+        SignalCreated();
+        return stream;
+    }
+
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.GetOrCreateStreamWithoutSignaling" />
+    public IMessageStreamEnumerable GetOrCreateStreamWithoutSignaling(out bool isCreated)
+    {
         lock (_syncRoot)
         {
             Check.ThrowObjectDisposedIf(_isDisposed, this);
@@ -74,14 +94,25 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
             if (_isCreationCanceled)
                 throw new OperationCanceledException("The stream creation was canceled.");
 
-            if (_stream == null)
-            {
-                _stream = new MessageStreamEnumerable<TMessage>();
-                _taskCompletionSource.SetResult(_stream);
-            }
-
+            isCreated = _stream == null;
+            _stream ??= new MessageStreamEnumerable<TMessage>();
             return _stream;
         }
+    }
+
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.SignalCreated" />
+    public void SignalCreated()
+    {
+        MessageStreamEnumerable<TMessage>? stream;
+
+        lock (_syncRoot)
+        {
+            stream = _stream;
+        }
+
+        // Once created, the stream is never replaced and its creation can't be canceled anymore (see CancelCreation)
+        if (stream != null)
+            _taskCompletionSource.TrySetResult(stream);
     }
 
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.Abort" />
@@ -123,7 +154,7 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
     }
 
     /// <inheritdoc cref="ILazyStreamArgumentValue.NotifySubscriberCompleted" />
-    public void NotifySubscriberCompleted(bool hasThrown)
+    public void NotifySubscriberCompleted(bool hasThrown, bool isCanceled)
     {
         MessageStreamEnumerable<TMessage>? stream;
 
@@ -140,8 +171,8 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
         stream.Abandon();
 
-        if (!hasThrown)
-            _onSubscriberReturned?.Invoke();
+        if (_onSubscriberCompleted?.Invoke(hasThrown, isCanceled) == true)
+            stream.Detach();
     }
 
     public void Dispose()

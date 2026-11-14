@@ -215,9 +215,7 @@ MQTT 3.1.1 doesn't support user properties, therefore no headers are transmitted
 - Custom headers and the tracing headers are dropped.
 - The `x-failed-attempts` header can't be transferred with the messages moved by the `MoveTo` error policy, therefore a maximum number of attempts can't be set on error policies other than `Retry`.
 - Message expiration, response topic, correlation data, session expiration, last will delay and the other MQTT 5 properties aren't available.
-
-> [!Note]
-> Chunking is currently not supported for MQTT, regardless of the protocol version.
+- Batch processing (see <xref:batch-processing>) and chunking (see <xref:producing-chunking>) aren't supported.
 
 ## Additional Resources
 

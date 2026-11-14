@@ -5,7 +5,7 @@ description: "Split large messages into chunks on the producer side to stay unde
 
 # Producing Chunked Messages
 
-When dealing with large messages, it might be necessary to split them into smaller parts to avoid issues with the broker or the consumer. This process is called **chunking** and is especially useful when using Kafka, as it has a maximum message size limit.
+When dealing with large messages, it might be necessary to split them into smaller parts to avoid issues with the broker or the consumer. This process is called **chunking** and is especially useful with Kafka, which has a maximum message size limit, or with the MQTT brokers limiting the message size.
 
 <figure>
 	<a href="~/images/diagrams/chunk-basic.png"><img src="~/images/diagrams/chunk-basic.png" alt="Chunking diagram: a large message is split into smaller chunks."></a>
@@ -16,6 +16,7 @@ The producer automatically adds the necessary headers to the messages to allow t
 
 ## Producer Configuration
 
+# [Kafka](#tab/kafka)
 ```csharp
 services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
@@ -26,9 +27,26 @@ services.AddSilverback()
                 .ProduceTo("my-topic")
                 .EnableChunking(500000))));
 ```
+# [MQTT](#tab/mqtt)
+```csharp
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddMqtt())
+    .AddMqttClients(clients => clients
+        .ConnectViaTcp("localhost")
+        .AddClient("my-client", client => client
+            .WithClientId("client1")
+            .Produce<MyMessage>("endpoint1", endpoint => endpoint
+                .ProduceTo("messages/my")
+                .WithAtLeastOnceQoS()
+                .EnableChunking(100000))));
+```
+***
 
 > [!Important]
 > The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition. If using Kafka see also <xref:kafka-partitioning>.
+
+> [!Important]
+> With MQTT, chunking requires MQTT 5 and can't be enabled for retained messages (see `Retain`), since the broker retains only the last message of each topic: a client subscribing later would receive the last chunk alone.
 
 ## Additional Resources
 

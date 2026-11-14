@@ -194,6 +194,75 @@ public class MockedConfluentConsumerTests
     }
 
     [Fact]
+    public void MemberId_ShouldBeClearedAfterRevocation_WhenUnsubscribing()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+        string? memberIdDuringRevocation = null;
+
+        consumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            memberIdDuringRevocation = consumer.MemberId;
+            return partitions;
+        };
+
+        consumer.Subscribe("topic");
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+
+        consumer.Unsubscribe();
+
+        memberIdDuringRevocation.ShouldNotBeNullOrEmpty();
+        consumer.MemberId.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void MemberId_ShouldBeKeptForConsumerLifetime_WhenUsingConsumerGroupProtocol()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup, groupProtocol: GroupProtocol.Consumer);
+        string memberId = consumer.MemberId;
+
+        memberId.ShouldNotBeEmpty();
+
+        consumer.Subscribe("topic");
+        consumer.Unsubscribe();
+        consumer.Close();
+
+        consumer.MemberId.ShouldBe(memberId);
+    }
+
+    [Fact]
+    public void MemberId_ShouldBeSetOnlyWhileSubscribed()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+
+        consumer.MemberId.ShouldBeEmpty();
+
+        consumer.Subscribe("topic");
+        string memberId = consumer.MemberId;
+
+        memberId.ShouldNotBeEmpty();
+
+        consumer.Subscribe("topic2");
+
+        consumer.MemberId.ShouldBe(memberId);
+
+        consumer.Unsubscribe();
+
+        consumer.MemberId.ShouldBeEmpty();
+
+        consumer.Subscribe("topic");
+
+        consumer.MemberId.ShouldNotBeEmpty();
+        consumer.MemberId.ShouldNotBe(memberId);
+
+        consumer.Close();
+
+        consumer.MemberId.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void Unsubscribe_ShouldNotRevokeManualAssignment()
     {
         FakeInternalMockedConsumerGroup consumerGroup = new();
@@ -229,6 +298,7 @@ public class MockedConfluentConsumerTests
 
         act.ShouldThrow<InvalidOperationException>();
         consumer.Assignment.ShouldBeEmpty();
+        consumer.MemberId.ShouldBeEmpty();
     }
 
     [Fact]
@@ -278,6 +348,7 @@ public class MockedConfluentConsumerTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Not an issue")]
     public void OnPartitionsRevoked_ShouldAutoCommit_WhenRevokedHandlerFails()
     {
         FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
@@ -336,7 +407,10 @@ public class MockedConfluentConsumerTests
         }
     }
 
-    private static MockedConfluentConsumer GetConsumer(FakeInternalMockedConsumerGroup consumerGroup, bool enableAutoCommit = false)
+    private static MockedConfluentConsumer GetConsumer(
+        FakeInternalMockedConsumerGroup consumerGroup,
+        bool enableAutoCommit = false,
+        GroupProtocol? groupProtocol = null)
     {
         MockedKafkaOptions options = new()
         {
@@ -348,7 +422,8 @@ public class MockedConfluentConsumerTests
             {
                 BootstrapServers = "PLAINTEXT://mock",
                 EnableAutoCommit = enableAutoCommit,
-                GroupId = "group"
+                GroupId = "group",
+                GroupProtocol = groupProtocol
             },
             new InMemoryTopicCollection(options),
             consumerGroup,

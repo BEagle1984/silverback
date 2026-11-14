@@ -220,7 +220,8 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
     // The unbounded sequence never completes: dispose it, releasing the service scope used by the subscribers, once it's aborted and the
     // subscribers returned. It's aborted when a subscriber fails, when the consumer is stopping or the partitions are being revoked, or
-    // here, when the subscribers stop enumerating (e.g., with a break) while it's still pending.
+    // here, when the subscribers stop enumerating (e.g., with a break) while it's still pending. A subscriber that stops while another one
+    // is still enumerating instead doesn't receive any further message of the sequence (see UnboundedSequence).
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async Task AbortAndDisposeWhenProcessedAsync(UnboundedSequence sequence, Task processingTask)
     {
@@ -332,6 +333,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
                     using CancellationTokenSource cancellationTokenSource = new();
                     List<Task> tasks = [.. processingTasks.Select(task => task.CancelOnExceptionAsync(cancellationTokenSource))];
+                    Task? failedTask = null;
 
                     // Even though we use the CancelOnExceptionAsync trick, it's not guaranteed that once one of the subscribers
                     // completes, the next ones will not throw.
@@ -341,15 +343,28 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                         Task completedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
                         tasks.Remove(completedTask);
 
-                        if (!sequence.IsComplete && completedTask.IsFaulted)
+                        // A subscriber throwing an OperationCanceledException (e.g., because of a timeout, or because the consumer is
+                        // stopping) fails as well, even though its task is canceled instead of faulted. The catch block tells apart the
+                        // cancellation requested by the consumer stop, while a sequence aborted already (e.g., by the consumer stop)
+                        // keeps its abort reason.
+                        if (!sequence.IsComplete && (completedTask.IsFaulted || completedTask.IsCanceled))
                         {
                             // Call AbortIfPending to abort the uncompleted sequence, including the lazy streams
                             // which haven't been created yet. This is necessary for the Task.WhenAll to complete.
                             // The actual exception is handled in the catch block, and in there the sequence is
                             // properly aborted, triggering the error policies and everything else.
                             (sequence.StreamProvider as MessageStreamProvider)?.AbortIfPending();
+                            failedTask = completedTask;
                             break;
                         }
+                    }
+
+                    if (failedTask != null)
+                    {
+                        // Rethrow the exception of the subscriber that failed, rather than the cancellation of the other subscribers,
+                        // whose streams were aborted
+                        await Task.WhenAll(processingTasks).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                        await failedTask.ConfigureAwait(false);
                     }
 
                     await Task.WhenAll(processingTasks).ConfigureAwait(false);

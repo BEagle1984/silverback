@@ -133,7 +133,10 @@ public class MessageValidationTests : KafkaTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
         received.ShouldBeFalse();
 
+        // The wait returns as soon as the consumer leaves the group, before the disconnection completes
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        await AsyncTestingUtil.WaitAsync(() =>
+            consumer.StatusInfo.Status == ConsumerStatus.Stopped && consumer.Client.Status == ClientStatus.Disconnected);
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }

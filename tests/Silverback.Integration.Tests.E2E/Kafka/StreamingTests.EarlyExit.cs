@@ -7,12 +7,17 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Subscribers.Subscriptions;
+using Silverback.Tests.Integration.E2E.TestTypes.Logging;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
@@ -390,6 +395,886 @@ public partial class StreamingTests
 
         receivedMessages.ShouldBe(["1"]);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldStopPublishingToSubscriber_WhenEnumerationIsAbortedWhileOtherSubscriberIsEnumerating()
+    {
+        int invocationsCount = 0;
+        int otherInvocationsCount = 0;
+        List<string?> receivedMessages = [];
+        List<string?> otherReceivedMessages = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherStream));
+
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream)
+        {
+            Interlocked.Increment(ref invocationsCount);
+
+            await foreach (TestEventOne message in stream)
+            {
+                receivedMessages.Add(message.ContentEventOne);
+
+                if (message.ContentEventOne == "2")
+                    break;
+            }
+        }
+
+        async Task HandleOtherStream(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            Interlocked.Increment(ref otherInvocationsCount);
+
+            await foreach (TestEventTwo message in stream)
+            {
+                otherReceivedMessages.Add(message.ContentEventTwo);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 4; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        // The subscriber doesn't receive any further message, while the other one keeps receiving them
+        receivedMessages.ShouldBe(["1", "2"]);
+        invocationsCount.ShouldBe(1);
+        otherReceivedMessages.ShouldBe(["1", "2", "3", "4"]);
+        otherInvocationsCount.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(8);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldStopPublishingToSubscriber_WhenEnumerationIsAbortedWhileOtherSubscriberIsProcessingSameMessage()
+    {
+        int invocationsCount = 0;
+        int otherInvocationsCount = 0;
+        List<string?> receivedMessages = [];
+        List<string?> otherReceivedMessages = [];
+        TaskCompletionSource enumerationAbortedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource releaseOtherSubscriberTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleOtherStream));
+
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream)
+        {
+            Interlocked.Increment(ref invocationsCount);
+
+            await foreach (TestEventOne message in stream)
+            {
+                receivedMessages.Add(message.ContentEventOne);
+
+                if (message.ContentEventOne == "2")
+                    break;
+            }
+
+            enumerationAbortedTaskCompletionSource.TrySetResult();
+        }
+
+        // Still processing the message when the other subscriber stops enumerating
+        async Task HandleOtherStream(IAsyncEnumerable<IIntegrationEvent> stream)
+        {
+            Interlocked.Increment(ref otherInvocationsCount);
+
+            await foreach (IIntegrationEvent message in stream)
+            {
+                if (message is TestEventOne { ContentEventOne: "2" })
+                    await releaseOtherSubscriberTaskCompletionSource.Task;
+
+                otherReceivedMessages.Add(((TestEventOne)message).ContentEventOne);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 4; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        // The message is committed only once the other subscriber processed it as well
+        await enumerationAbortedTaskCompletionSource.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        // The subscriber is detached right after returning: nothing signals it, so give it time to commit the message too early
+        await Task.Delay(200);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+        releaseOtherSubscriberTaskCompletionSource.TrySetResult();
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        receivedMessages.ShouldBe(["1", "2"]);
+        invocationsCount.ShouldBe(1);
+        otherReceivedMessages.ShouldBe(["1", "2", "3", "4"]);
+        otherInvocationsCount.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(4);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldStopPublishingToSubscriber_WhenReturningAfterFirstMessageWhileOtherSubscriberIsEnumerating()
+    {
+        int invocationsCount = 0;
+        int otherInvocationsCount = 0;
+        List<string?> receivedMessages = [];
+        List<string?> otherReceivedMessages = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherStream));
+
+        void HandleUnboundedStream(IEnumerable<TestEventOne> stream)
+        {
+            Interlocked.Increment(ref invocationsCount);
+            receivedMessages.Add(stream.First().ContentEventOne);
+        }
+
+        async Task HandleOtherStream(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            Interlocked.Increment(ref otherInvocationsCount);
+
+            await foreach (TestEventTwo message in stream)
+            {
+                otherReceivedMessages.Add(message.ContentEventTwo);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "1" });
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "2" });
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        // The next messages are committed without being delivered to the subscriber
+        receivedMessages.ShouldBe(["1"]);
+        invocationsCount.ShouldBe(1);
+        otherReceivedMessages.ShouldBe(["1", "2"]);
+        otherInvocationsCount.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldCommitMessageNotReceived_WhenEnumerationIsCanceledBeforeReceivingItWhileOtherSubscriberIsEnumerating()
+    {
+        int invocationsCount = 0;
+        List<string?> receivedMessages = [];
+        List<string?> otherReceivedMessages = [];
+        TaskCompletionSource enumerationCanceledTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource otherReceivedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        HoldMessageBehavior holdMessageBehavior = new("2");
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddSingletonBrokerBehavior(holdMessageBehavior)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleOtherStream));
+
+        // Cancel the enumeration while waiting for the 2nd message and return only once it's pushed (the other subscriber received it)
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream)
+        {
+            int invocation = Interlocked.Increment(ref invocationsCount);
+            using CancellationTokenSource cancellationTokenSource = new();
+
+            try
+            {
+                await foreach (TestEventOne message in stream.WithCancellation(cancellationTokenSource.Token))
+                {
+                    receivedMessages.Add(message.ContentEventOne);
+
+                    if (invocation == 1)
+                        cancellationTokenSource.CancelAfter(200);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                if (invocation == 1)
+                {
+                    enumerationCanceledTaskCompletionSource.TrySetResult();
+
+                    await holdMessageBehavior.ReachedTask;
+                    holdMessageBehavior.Release();
+                    await otherReceivedTaskCompletionSource.Task;
+                }
+            }
+        }
+
+        async Task HandleOtherStream(IAsyncEnumerable<IIntegrationEvent> stream)
+        {
+            await foreach (IIntegrationEvent message in stream)
+            {
+                string? content = ((TestEventOne)message).ContentEventOne;
+                otherReceivedMessages.Add(content);
+
+                if (content == "2")
+                    otherReceivedTaskCompletionSource.TrySetResult();
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await enumerationCanceledTaskCompletionSource.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        // The message is committed once the other subscriber processed it, without being delivered to the subscriber
+        receivedMessages.ShouldBe(["1"]);
+        invocationsCount.ShouldBe(1);
+        otherReceivedMessages.ShouldBe(["1", "2"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldCommitAndPublishNewStream_WhenEnumerationIsAbortedByAllSubscribers()
+    {
+        int invocationsCount = 0;
+        int otherInvocationsCount = 0;
+        List<string?> receivedMessages = [];
+        List<string?> otherReceivedMessages = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherStream));
+
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream)
+        {
+            Interlocked.Increment(ref invocationsCount);
+
+            await foreach (TestEventOne message in stream)
+            {
+                receivedMessages.Add(message.ContentEventOne);
+
+                if (message.ContentEventOne == "2")
+                    break;
+            }
+        }
+
+        // Stops enumerating as well, after the first subscriber: the stream ends and both get a new stream with the next message
+        async Task HandleOtherStream(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            Interlocked.Increment(ref otherInvocationsCount);
+
+            await foreach (TestEventTwo message in stream)
+            {
+                otherReceivedMessages.Add(message.ContentEventTwo);
+
+                if (message.ContentEventTwo == "2")
+                    break;
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 4; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        receivedMessages.ShouldBe(["1", "2", "3", "4"]);
+        invocationsCount.ShouldBe(2);
+        otherReceivedMessages.ShouldBe(["1", "2", "3", "4"]);
+        otherInvocationsCount.ShouldBe(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(8);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldNotCommitMessage_WhenSubscriberReturnsBecauseConsumerIsStoppingWhileOtherSubscriberIsEnumerating()
+    {
+        int invocationsCount = 0;
+        TaskCompletionSource processingStartedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, CancellationToken>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherStream));
+
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream, CancellationToken cancellationToken)
+        {
+            Interlocked.Increment(ref invocationsCount);
+
+            try
+            {
+                await foreach (TestEventOne dummy in stream)
+                {
+                    processingStartedTaskCompletionSource.TrySetResult();
+                    await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Stop processing without throwing
+            }
+        }
+
+        static async Task HandleOtherStream(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            await foreach (TestEventTwo dummy in stream)
+            {
+                // Just enumerate, ignoring the cancellation token
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventTwo());
+        await producer.ProduceAsync(new TestEventOne());
+        await processingStartedTaskCompletionSource.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.StopAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        invocationsCount.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldNotCommitMessageNotReceived_WhenSubscriberReturnsBecauseConsumerIsStoppingWhileOtherSubscriberIsEnumerating()
+    {
+        List<string?> receivedMessages = [];
+        HoldMessageBehavior holdMessageBehavior = new("2");
+        TaskCompletionSource enumerationCanceledTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddSingletonBrokerBehavior(holdMessageBehavior)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, CancellationToken>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherStream));
+
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await foreach (TestEventOne message in stream.WithCancellation(cancellationToken))
+                {
+                    receivedMessages.Add(message.ContentEventOne);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Stop enumerating without throwing
+                enumerationCanceledTaskCompletionSource.TrySetResult();
+            }
+        }
+
+        static async Task HandleOtherStream(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            await foreach (TestEventTwo dummy in stream)
+            {
+                // Just enumerate, ignoring the cancellation token
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventTwo());
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        // Stop the consumer while the 2nd message is being processed, before it's pushed to the stream
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await holdMessageBehavior.ReachedTask.WaitAsync(TimeSpan.FromSeconds(10));
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        Task stopTask = consumer.StopAsync().AsTask();
+        await enumerationCanceledTaskCompletionSource.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        holdMessageBehavior.Release();
+        await stopTask.WaitAsync(TimeSpan.FromSeconds(10));
+
+        receivedMessages.ShouldBe(["1"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldNotCommitMessage_WhenSubscriberThrowsBecauseConsumerIsStoppingWhileOtherSubscriberIsEnumerating()
+    {
+        TaskCompletionSource processingStartedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, CancellationToken>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherStream));
+
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream, CancellationToken cancellationToken)
+        {
+            await foreach (TestEventOne dummy in stream)
+            {
+                processingStartedTaskCompletionSource.TrySetResult();
+                await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+            }
+        }
+
+        static async Task HandleOtherStream(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            await foreach (TestEventTwo dummy in stream)
+            {
+                // Just enumerate, ignoring the cancellation token
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventTwo());
+        await producer.ProduceAsync(new TestEventOne());
+        await processingStartedTaskCompletionSource.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.StopAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldCommitAndStopPublishingToSubscriber_WhenStreamIsNotEnumeratedWhileOtherSubscriberIsEnumerating()
+    {
+        int invocationsCount = 0;
+        List<string?> otherReceivedMessages = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherStream));
+
+        // Returns without receiving the message it's invoked for, which is committed anyway, as the next messages
+        Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream)
+        {
+            Interlocked.Increment(ref invocationsCount);
+            return Task.CompletedTask;
+        }
+
+        async Task HandleOtherStream(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            await foreach (TestEventTwo message in stream)
+            {
+                otherReceivedMessages.Add(message.ContentEventTwo);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "1" });
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "2" });
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        invocationsCount.ShouldBe(1);
+        otherReceivedMessages.ShouldBe(["1", "2"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldDisconnect_WhenOtherSubscriberFailsAfterSubscriberStoppedEnumerating()
+    {
+        int invocationsCount = 0;
+        List<string?> receivedMessages = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherStream));
+
+        // Stops enumerating after the 1st message
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream)
+        {
+            Interlocked.Increment(ref invocationsCount);
+
+            await foreach (TestEventOne message in stream)
+            {
+                receivedMessages.Add(message.ContentEventOne);
+                break;
+            }
+        }
+
+        // Fails processing the 2nd message, after the other subscriber stopped enumerating
+        static async Task HandleOtherStream(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            await foreach (TestEventTwo message in stream)
+            {
+                if (message.ContentEventTwo == "2")
+                    throw new InvalidOperationException("Test");
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "1" });
+
+        for (int i = 1; i <= 2; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "2" });
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        receivedMessages.ShouldBe(["1"]);
+        invocationsCount.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldStopPublishingToSubscriber_WhenReturningRightAwayWhileOtherSubscriberOfSameMessageIsEnumerating()
+    {
+        int returningInvocationsCount = 0;
+        int enumeratingInvocationsCount = 0;
+        List<string?> receivedMessages = [];
+
+        // The subscriber whose stream is created first returns as soon as it's invoked for the 1st message, while the other one enumerates
+        // the stream. The creation of the other stream is held until the first subscriber returns or a short timeout elapses: if the
+        // subscribers were invoked before all the streams of the message are created, the first one would return before the other stream
+        // exists and end the stream.
+        FirstStreamTracker firstStreamTracker = new(TimeSpan.FromMilliseconds(500));
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(
+                stream => HandleUnboundedStreamAsync(stream, "subscriber1"),
+                new DelegateSubscriptionOptions { Filters = [firstStreamTracker.CreateFilter("subscriber1")] })
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(
+                stream => HandleUnboundedStreamAsync(stream, "subscriber2"),
+                new DelegateSubscriptionOptions { Filters = [firstStreamTracker.CreateFilter("subscriber2")] }));
+
+        async Task HandleUnboundedStreamAsync(IAsyncEnumerable<TestEventOne> stream, string subscriberName)
+        {
+            if (firstStreamTracker.IsFirst(subscriberName))
+            {
+                Interlocked.Increment(ref returningInvocationsCount);
+                firstStreamTracker.NotifyFirstReturned();
+                return;
+            }
+
+            Interlocked.Increment(ref enumeratingInvocationsCount);
+
+            await foreach (TestEventOne message in stream)
+            {
+                receivedMessages.Add(message.ContentEventOne);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        // The other subscriber's stream already exists when the first subscriber returns, so it's still enumerating: the stream doesn't
+        // end and the first subscriber is detached
+        returningInvocationsCount.ShouldBe(1);
+        enumeratingInvocationsCount.ShouldBe(1);
+        receivedMessages.ShouldBe(["1", "2", "3"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldPublishNewStreamToAllSubscribers_WhenPartitionIsRevokedAfterSubscriberStoppedEnumerating()
+    {
+        int invocationsCount = 0;
+        int otherInvocationsCount = 0;
+        List<string?> receivedMessages = [];
+        List<string?> otherReceivedMessages = [];
+        LogEventsCollector logEventsCollector = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleOtherStream));
+
+        // Stops enumerating after the 1st message of each stream
+        async Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream)
+        {
+            Interlocked.Increment(ref invocationsCount);
+
+            await foreach (TestEventOne message in stream)
+            {
+                receivedMessages.Add(message.ContentEventOne);
+                break;
+            }
+        }
+
+        async Task HandleOtherStream(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            Interlocked.Increment(ref otherInvocationsCount);
+
+            await foreach (TestEventTwo message in stream)
+            {
+                otherReceivedMessages.Add(message.ContentEventTwo);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        // The revocation ends the stream: the next messages start a new one, invoking both subscribers again, and the subscriber is
+        // detached again when it stops after its message
+        DefaultConsumerGroup.Rebalance();
+        await AsyncTestingUtil.WaitAsync(() =>
+            logEventsCollector.Contains(KafkaLogEvents.PartitionRevoked.EventId, $"{DefaultTopicName}[0]"));
+        logEventsCollector.Contains(KafkaLogEvents.PartitionRevoked.EventId, $"{DefaultTopicName}[0]").ShouldBeTrue();
+
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "2" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "4" });
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        receivedMessages.ShouldBe(["1", "3"]);
+        invocationsCount.ShouldBe(2);
+        otherReceivedMessages.ShouldBe(["1", "2"]);
+        otherInvocationsCount.ShouldBe(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    // Tracks which subscriber's stream is created first, through the filters evaluated right before the streams of a message are created,
+    // and holds the creation of the second stream of the 1st message until the first subscriber returns or the timeout elapses (then
+    // gives the return time to take effect)
+    private sealed class FirstStreamTracker
+    {
+        private readonly System.Threading.Lock _lock = new();
+
+        private readonly TaskCompletionSource _firstReturnedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        private readonly TimeSpan _timeout;
+
+        private string? _firstSubscriberName;
+
+        private int _filteredCount;
+
+        public FirstStreamTracker(TimeSpan timeout)
+        {
+            _timeout = timeout;
+        }
+
+        public IMessageFilter CreateFilter(string subscriberName) => new TrackingFilter(this, subscriberName);
+
+        public bool IsFirst(string subscriberName)
+        {
+            lock (_lock)
+            {
+                return _firstSubscriberName == subscriberName;
+            }
+        }
+
+        public void NotifyFirstReturned() => _firstReturnedTaskCompletionSource.TrySetResult();
+
+        private void OnFiltering(string subscriberName)
+        {
+            int filteredCount;
+
+            lock (_lock)
+            {
+                filteredCount = ++_filteredCount;
+                _firstSubscriberName ??= subscriberName;
+            }
+
+            if (filteredCount == 2 && _firstReturnedTaskCompletionSource.Task.Wait(_timeout))
+                Thread.Sleep(100);
+        }
+
+        private sealed class TrackingFilter(FirstStreamTracker tracker, string subscriberName) : IMessageFilter
+        {
+            public bool MustProcess(object message)
+            {
+                // The filters are evaluated against the published stream provider as well, before its messages are pushed
+                if (message is not IMessageStreamProvider)
+                    tracker.OnFiltering(subscriberName);
+
+                return true;
+            }
+        }
     }
 
     private sealed class HoldMessageBehavior : IConsumerBehavior

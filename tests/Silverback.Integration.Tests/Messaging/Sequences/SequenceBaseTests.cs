@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,8 @@ using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
@@ -420,6 +423,525 @@ public class SequenceBaseTests
         sequence.Dispose();
     }
 
+    [Theory]
+    [InlineData("skip")]
+    [InlineData("enumeration-aborted")]
+    public async Task AddAsync_ShouldFailWithoutAborting_WhenRefusedByTimeoutAndSequenceIsCommittedOnAbort(string abort)
+    {
+        AddToSequenceResult result = await AddRefusedByTimeoutAsync(abort);
+
+        // The message didn't join the committed sequence: the sequencer adds it to a new sequence, unless stopping (see AbortTask)
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+    }
+
+    [Theory]
+    [InlineData("retry")]
+    [InlineData("incomplete")]
+    [InlineData("consumer-aborted")]
+    [InlineData("disposing")]
+    public async Task AddAsync_ShouldReturnAborted_WhenRefusedByTimeoutAndSequenceIsNotCommittedOnAbort(string abort)
+    {
+        AddToSequenceResult result = await AddRefusedByTimeoutAsync(abort);
+
+        // The message is consumed again after the rollback (or the restart), or discarded with the incomplete sequence
+        result.IsAborted.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData("skip", false)]
+    [InlineData("enumeration-aborted", false)]
+    [InlineData("skip", true)]
+    public async Task AddAsync_ShouldFailWithoutAborting_WhenAbortedAfterBeingFoundAndCommittedOnAbort(string abort, bool isDisposed)
+    {
+        AddToSequenceResult result = await AddToSequenceAbortedAfterBeingFoundAsync(abort, isDisposed);
+
+        // The message isn't committed with the sequence (and then with the next message without being processed): the sequencer adds it
+        // to a new sequence, unless stopping (see AbortTask)
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+    }
+
+    [Theory]
+    [InlineData("retry")]
+    [InlineData("incomplete")]
+    [InlineData("consumer-aborted")]
+    [InlineData("disposing")]
+    public async Task AddAsync_ShouldReturnAborted_WhenAbortedAfterBeingFoundAndNotCommittedOnAbort(string abort)
+    {
+        AddToSequenceResult result = await AddToSequenceAbortedAfterBeingFoundAsync(abort, false);
+
+        // The message is consumed again after the rollback (or the restart), or discarded with the incomplete sequence
+        result.IsAborted.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData("skip", false)]
+    [InlineData("enumeration-aborted", false)]
+    [InlineData("skip", true)]
+    public async Task AddAsync_ShouldReturnAborted_WhenSequenceStartedByMessageIsAbortedAndCommittedOnAbort(string abort, bool isDisposed)
+    {
+        AddToSequenceResult result = await AddToSequenceAbortedAfterBeingFoundAsync(abort, isDisposed, isFound: false);
+
+        // The sequence shares the context of the message that started it, which can't be reused for a new sequence: the message shares
+        // the outcome of the sequence instead (e.g. skipped or ignored with it)
+        result.IsAborted.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData("enumeration-aborted", true)]
+    [InlineData("consumer-aborted", true)]
+    [InlineData("enumeration-aborted", false)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
+    public async Task AddAsync_ShouldRefuseMessageAndSequence_WhenAbortedRightBeforePush(string abort, bool isFound)
+    {
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+
+        // Found in the store by the reader, otherwise it's the new sequence started by the added message
+        if (isFound)
+            ((ISequenceImplementation)sequence).SetIsNew(false);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream)
+                {
+                    // Just consume the stream
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // The stream is aborted with the sequence
+            }
+        });
+
+        AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+
+        // Aborted after the checks, while the chunk sequence of the next (chunked) message is being linked, right before the push
+        Task? abortTask = null;
+        using HookChildSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            () => abortTask = sequence.AbortAsync(
+                abort == "enumeration-aborted" ? SequenceAbortReason.EnumerationAborted : SequenceAbortReason.ConsumerAborted));
+
+        AddToSequenceResult result = await sequence.AddAsync(CreateEnvelope(), childSequence, true).WaitAsync(Timeout);
+        (abortTask != null).ShouldBeTrue();
+        await abortTask!.WaitAsync(Timeout);
+
+        // The message didn't join the sequence (instead of failing the processing), which doesn't commit or complete the chunk sequence.
+        // The message that started the sequence shares its outcome instead of being added to the next one.
+        childSequence.Parent.ShouldBeNull();
+        sequence.Sequences.ShouldNotContain(childSequence);
+
+        if (abort == "enumeration-aborted" && isFound)
+        {
+            result.IsSuccess.ShouldBeFalse();
+            result.IsAborted.ShouldBeFalse();
+            (result.AbortTask?.IsCompleted).ShouldBe(true);
+        }
+        else
+        {
+            result.IsAborted.ShouldBeTrue();
+        }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
+    public async Task AddAsync_ShouldUnlinkSequence_WhenStreamIsCompletedWhilePushing(bool isFound)
+    {
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+
+        // Found in the store by the reader, otherwise it's the new sequence started by the added message
+        if (isFound)
+            ((ISequenceImplementation)sequence).SetIsNew(false);
+
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream)
+                {
+                    // Just consume the stream
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // The stream is aborted with the sequence
+            }
+        });
+
+        AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+
+        // The sequence is being completed (e.g. by the max wait time) and its stream is completed while the chunk sequence of the next
+        // message is being linked, so that the push is canceled before the streams provider is marked as completed
+        using HookChildSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            () =>
+            {
+                typeof(SequenceBase<IRawInboundEnvelope>)
+                    .GetField("_isCompleting", BindingFlags.Instance | BindingFlags.NonPublic)!
+                    .SetValue(sequence, true);
+                _ = ((IMessageStreamEnumerable)stream).CompleteAsync();
+            });
+
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), childSequence, true);
+        ((ISequenceImplementation)sequence).NotifyProcessingCompleted();
+        AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+        // The message is added to the next sequence (or shares the outcome of the sequence it started, never retried on its context),
+        // without leaving the chunk sequence linked to (and committed with) this one
+        result.IsSuccess.ShouldBe(!isFound);
+        result.IsAborted.ShouldBe(!isFound);
+        childSequence.Parent.ShouldBeNull();
+        sequence.Sequences.ShouldNotContain(childSequence);
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
+    public async Task AddAsync_ShouldRefuseMessage_WhenPushIsCanceledByCompletionAndSequenceIsThenSkipped()
+    {
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream)
+                {
+                    // Just consume the stream
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // The stream is aborted with the sequence
+            }
+        });
+
+        AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+
+        // The sequence is being completed (e.g. by the max wait time) and its stream completed, so that the push is canceled
+        using HookChildSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            () =>
+            {
+                typeof(SequenceBase<IRawInboundEnvelope>)
+                    .GetField("_isCompleting", BindingFlags.Instance | BindingFlags.NonPublic)!
+                    .SetValue(sequence, true);
+                _ = ((IMessageStreamEnumerable)stream).CompleteAsync();
+            });
+
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), childSequence, true);
+
+        // The sequence then fails and is skipped
+        await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test")).WaitAsync(Timeout);
+        AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+        // The message didn't join the sequence: it's added to the next one, instead of being skipped (and committed) with it
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+        childSequence.Parent.ShouldBeNull();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The subscriber task is awaited before the disposal")]
+    public async Task AddAsync_ShouldRefuseMessage_WhenEnumerationIsAbortedBeforeMessageIsPulled()
+    {
+        using AbortTestSequence sequence = new(
+            CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()),
+            trackIdentifiers: true);
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        TaskCompletionSource firstMessagePulled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        using CancellationTokenSource subscriberCancellationTokenSource = new();
+
+        // The subscriber stops enumerating while waiting for the next message (e.g. canceled by its own token)
+        Task subscriberTask = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream.WithCancellation(subscriberCancellationTokenSource.Token))
+                {
+                    firstMessagePulled.TrySetResult();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Stopped enumerating
+            }
+        });
+
+        RawInboundEnvelope firstEnvelope = CreateEnvelope();
+        AddToSequenceResult firstResult = await sequence.AddAsync(firstEnvelope, null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+        await firstMessagePulled.Task.WaitAsync(Timeout);
+        await subscriberCancellationTokenSource.CancelAsync();
+        await subscriberTask.WaitAsync(Timeout);
+
+        // The next message is pushed before the sequence is aborted because the subscriber stopped enumerating, but nobody pulls it
+        RawInboundEnvelope secondEnvelope = CreateEnvelope();
+        using HookChildSequence childSequence = new(ConsumerPipelineContextHelper.CreateSubstitute(), () => { });
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(secondEnvelope, childSequence, true);
+        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
+        AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+        // The message isn't committed with the sequence without being processed, but added to the next sequence
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+        childSequence.Parent.ShouldBeNull();
+        sequence.GetCommitIdentifiers().ShouldBe([firstEnvelope.BrokerMessageIdentifier]);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldKeepSequenceLinked_WhenStreamsAreAbortedBeforeSequenceWhilePushing()
+    {
+        HookLogger logger = new();
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(logger, new SkipMessageErrorPolicy()));
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        TaskCompletionSource secondMessagePulled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource releaseSubscriber = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        _ = Task.Run(async () =>
+        {
+            int count = 0;
+
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream)
+                {
+                    // Hold the second message without pulling the next one, so that its push stays pending
+                    if (++count == 2)
+                    {
+                        secondMessagePulled.TrySetResult();
+                        await releaseSubscriber.Task;
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // The stream is aborted with the sequence
+            }
+        });
+
+        try
+        {
+            AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+            firstResult.IsSuccess.ShouldBeTrue();
+
+            using HookChildSequence childSequence = new(ConsumerPipelineContextHelper.CreateSubstitute(), () => { });
+            Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), childSequence, true);
+            await secondMessagePulled.Task.WaitAsync(Timeout);
+
+            // Another subscriber failed: the publisher aborts the streams first, and the sequence only once the subscribers returned
+            TaskCompletionSource addCanceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            logger.OnLog(
+                "Operation canceled, skipping add to {SequenceType} '{SequenceId}' and waiting until it is completed.",
+                addCanceled.SetResult);
+            ((MessageStreamProvider)sequence.StreamProvider).AbortIfPending();
+            await addCanceled.Task.WaitAsync(Timeout);
+            sequence.IsPending.ShouldBeTrue();
+            await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test")).WaitAsync(Timeout);
+            AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+            // The message (possibly processed by the healthy subscriber) shares the outcome of the abort with its chunk sequence
+            result.IsAborted.ShouldBeTrue();
+            childSequence.Parent.ShouldBe(sequence);
+        }
+        finally
+        {
+            releaseSubscriber.TrySetResult();
+        }
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
+    public async Task AddAsync_ShouldRefuseMessage_WhenStreamsAreAbortedBeforeSequenceBeforePush()
+    {
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream)
+                {
+                    // Just consume the stream
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // The stream is aborted with the sequence
+            }
+        });
+
+        AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+
+        // Another subscriber failed right before the push: the publisher aborts the streams first, and the sequence only once the
+        // subscribers returned
+        using HookChildSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            () => ((MessageStreamProvider)sequence.StreamProvider).AbortIfPending());
+
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), childSequence, true);
+        sequence.IsPending.ShouldBeTrue();
+        await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test")).WaitAsync(Timeout);
+        AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+        // The message didn't join the skipped sequence and is added to the next one, instead of failing the processing
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+        childSequence.Parent.ShouldBeNull();
+    }
+
+    private static async Task<AddToSequenceResult> AddRefusedByTimeoutAsync(string abort)
+    {
+        HookLogger logger = new();
+        IErrorPolicy errorPolicy = abort == "retry" ? new RetryErrorPolicy { MaxFailedAttempts = 2 } : new SkipMessageErrorPolicy();
+        using TimeoutTestSequence sequence = CreateTimeoutSequence(logger, errorPolicy);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream)
+                {
+                    // Just consume the stream
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // The stream is aborted with the sequence
+            }
+        });
+
+        AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+
+        // The timer is held while handling the timeout, so that the sequence is still pending when the next message is added
+        await sequence.TimeoutElapsed.WaitAsync(Timeout);
+
+        TaskCompletionSource addRefused = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        logger.OnLog("Operation canceled, skipping add to {SequenceType} '{SequenceId}' and waiting until it is completed.", addRefused.SetResult);
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), null, true);
+        await addRefused.Task.WaitAsync(Timeout);
+
+        try
+        {
+            Task abortTask = abort switch
+            {
+                "skip" or "retry" => sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test")),
+                "enumeration-aborted" => sequence.AbortAsync(SequenceAbortReason.EnumerationAborted),
+                "incomplete" => sequence.AbortAsync(SequenceAbortReason.IncompleteSequence),
+                "consumer-aborted" => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted),
+                _ => sequence.AbortAsync(SequenceAbortReason.Disposing)
+            };
+
+            await abortTask.WaitAsync(Timeout);
+
+            return await addTask.WaitAsync(Timeout);
+        }
+        finally
+        {
+            sequence.ReleaseTimeout();
+        }
+    }
+
+    private static async Task<AddToSequenceResult> AddToSequenceAbortedAfterBeingFoundAsync(string abort, bool isDisposed, bool isFound = true)
+    {
+        IErrorPolicy errorPolicy = abort == "retry" ? new RetryErrorPolicy { MaxFailedAttempts = 2 } : new SkipMessageErrorPolicy();
+        AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), errorPolicy));
+
+        // Found in the store by the reader, otherwise it's the new sequence started by the added message
+        if (isFound)
+            ((ISequenceImplementation)sequence).SetIsNew(false);
+
+        try
+        {
+            IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await foreach (IRawInboundEnvelope dummy in stream)
+                    {
+                        // Just consume the stream
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    // The stream is aborted with the sequence
+                }
+            });
+
+            AddToSequenceResult firstResult = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+            firstResult.IsSuccess.ShouldBeTrue();
+
+            // Aborted after the reader found it pending, before the next message is added
+            Task abortTask = abort switch
+            {
+                "skip" or "retry" => sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test")),
+                "enumeration-aborted" => sequence.AbortAsync(SequenceAbortReason.EnumerationAborted),
+                "incomplete" => sequence.AbortAsync(SequenceAbortReason.IncompleteSequence),
+                "consumer-aborted" => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted),
+                _ => sequence.AbortAsync(SequenceAbortReason.Disposing)
+            };
+            await abortTask.WaitAsync(Timeout);
+
+            if (isDisposed)
+                sequence.Dispose();
+
+            return await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+        }
+        finally
+        {
+            sequence.Dispose();
+        }
+    }
+
+    private static TimeoutTestSequence CreateTimeoutSequence(HookLogger logger, IErrorPolicy errorPolicy) =>
+        new(CreateErrorPolicyContext(logger, errorPolicy));
+
+    private static ConsumerPipelineContext CreateErrorPolicyContext(HookLogger logger, IErrorPolicy errorPolicy)
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
+        {
+            services
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker();
+
+            services.AddSingleton<ISilverbackLogger<SequenceBase<IRawInboundEnvelope>>>(logger);
+        });
+
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            [],
+            new TestConsumerEndpointConfiguration("test") { ErrorPolicy = errorPolicy }.GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        // A real transaction manager, tracking whether the error policy rolled back the consumer
+        ConsumerTransactionManager transactionManager = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        return ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider, transactionManager);
+    }
+
     private static TestSequence CreateSequence(HookLogger logger, ISequenceStore? sequenceStore = null)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
@@ -456,6 +978,63 @@ public class SequenceBaseTests
         }
 
         public Task CompleteFromTestAsync() => CompleteAsync();
+    }
+
+    // Adds the message refused because of the abort to the next sequence, like the batches
+    private sealed class AbortTestSequence : SequenceBase<IRawInboundEnvelope>
+    {
+        public AbortTestSequence(ConsumerPipelineContext context, bool trackIdentifiers = false)
+            : base("abort-test-sequence", context, enforceTimeout: false, trackIdentifiers: trackIdentifiers)
+        {
+        }
+
+        private protected override bool IsMessageRefusedByAbortAddedToNextSequence => true;
+    }
+
+    // Runs the action when it's linked to the parent sequence, right before the message is pushed, to deterministically reproduce the
+    // parent being aborted in between, and records the parent (re-implementing the interface hides the base implementation)
+    private sealed class HookChildSequence : SequenceBase<IRawInboundEnvelope>, ISequenceImplementation
+    {
+        private readonly Action _onLinking;
+
+        public HookChildSequence(ConsumerPipelineContext context, Action onLinking)
+            : base("child-sequence", context, enforceTimeout: false, trackIdentifiers: false)
+        {
+            _onLinking = onLinking;
+        }
+
+        public ISequence? Parent { get; private set; }
+
+        void ISequenceImplementation.SetParentSequence(ISequence? parentSequence)
+        {
+            if (parentSequence != null)
+                _onLinking();
+
+            Parent = parentSequence;
+        }
+    }
+
+    // Holds the timer while handling the elapsed timeout, so that the sequence is still pending after its timeout elapsed
+    private sealed class TimeoutTestSequence : SequenceBase<IRawInboundEnvelope>
+    {
+        private readonly TaskCompletionSource _timeoutElapsed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        private readonly TaskCompletionSource _releaseTimeout = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TimeoutTestSequence(ConsumerPipelineContext context)
+            : base("timeout-test-sequence", context, enforceTimeout: true, timeout: TimeSpan.FromMilliseconds(50), trackIdentifiers: false)
+        {
+        }
+
+        public Task TimeoutElapsed => _timeoutElapsed.Task;
+
+        public void ReleaseTimeout() => _releaseTimeout.TrySetResult();
+
+        protected override Task OnTimeoutElapsedAsync()
+        {
+            _timeoutElapsed.TrySetResult();
+            return _releaseTimeout.Task;
+        }
     }
 
     // Runs the registered action (once) when the message with the specified template is logged, to deterministically reproduce

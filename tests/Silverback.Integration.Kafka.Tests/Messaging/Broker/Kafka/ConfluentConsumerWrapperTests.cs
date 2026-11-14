@@ -490,6 +490,99 @@ public class ConfluentConsumerWrapperTests
         consumer.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData(GroupProtocol.Classic, null)]
+    [InlineData(null, "")]
+    public async Task DisconnectAsync_ShouldWaitUntilGroupIsLeft_WhenUsingCooperativeAssignmentStrategy(
+        GroupProtocol? groupProtocol,
+        string? groupInstanceId)
+    {
+        await using ConfluentConsumerWrapper consumer =
+            await GetConnectedConsumerAsync(
+                groupProtocol: groupProtocol,
+                partitionAssignmentStrategy: PartitionAssignmentStrategy.CooperativeSticky,
+                groupInstanceId: groupInstanceId);
+        ConcurrentQueue<string> nativeCalls = [];
+        List<TopicPartition> assignment = [new("topic", 0)];
+        string memberId = "member-1";
+
+        _confluentConsumer.Assignment.Returns(_ => assignment);
+        _confluentConsumer.MemberId.Returns(_ => memberId);
+        _confluentConsumer.When(native => native.Unsubscribe()).Do(_ => nativeCalls.Enqueue("Unsubscribe"));
+        _confluentConsumer.When(native => native.Close()).Do(_ => nativeCalls.Enqueue("Close"));
+
+        // The revocation releases the assignment, then the LeaveGroup is sent after its offsets are committed
+        _confluentConsumer.Consume(Arg.Any<TimeSpan>()).Returns<ConsumeResult<byte[]?, byte[]?>?>(_ =>
+        {
+            // The consume loop polls until the disconnect stops it
+            if (!nativeCalls.Contains("Unsubscribe"))
+                return null;
+
+            nativeCalls.Enqueue("Consume");
+
+            switch (nativeCalls.Count(call => call == "Consume"))
+            {
+                case 1:
+                    assignment.Clear();
+                    return null;
+                case 2:
+                    return null;
+                default:
+                    memberId = string.Empty;
+                    return null;
+            }
+        });
+
+        await consumer.DisconnectAsync();
+
+        nativeCalls.ShouldBe(["Unsubscribe", "Consume", "Consume", "Consume", "Close"]);
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null, eventId: 2045);
+    }
+
+    [Theory]
+    [InlineData(null, null, null)]
+    [InlineData(null, PartitionAssignmentStrategy.Range, null)]
+    [InlineData(GroupProtocol.Classic, PartitionAssignmentStrategy.RoundRobin, null)]
+    [InlineData(null, PartitionAssignmentStrategy.CooperativeSticky, "instance-1")]
+    [InlineData(GroupProtocol.Consumer, PartitionAssignmentStrategy.CooperativeSticky, null)]
+    public async Task DisconnectAsync_ShouldCloseOnceAssignmentIsReleased_WhenNotUsingCooperativeAssignmentStrategyWithDynamicMembership(
+        GroupProtocol? groupProtocol,
+        PartitionAssignmentStrategy? partitionAssignmentStrategy,
+        string? groupInstanceId)
+    {
+        await using ConfluentConsumerWrapper consumer =
+            await GetConnectedConsumerAsync(
+                groupProtocol: groupProtocol,
+                partitionAssignmentStrategy: partitionAssignmentStrategy,
+                groupInstanceId: groupInstanceId);
+        ConcurrentQueue<string> nativeCalls = [];
+        List<TopicPartition> assignment = [new("topic", 0)];
+
+        _confluentConsumer.Assignment.Returns(_ => assignment);
+        _confluentConsumer.MemberId.Returns("member-1");
+        _confluentConsumer.When(native => native.Unsubscribe()).Do(_ => nativeCalls.Enqueue("Unsubscribe"));
+        _confluentConsumer.When(native => native.Close()).Do(_ => nativeCalls.Enqueue("Close"));
+        _confluentConsumer.Consume(Arg.Any<TimeSpan>()).Returns<ConsumeResult<byte[]?, byte[]?>?>(_ =>
+        {
+            // The consume loop polls until the disconnect stops it
+            if (!nativeCalls.Contains("Unsubscribe"))
+                return null;
+
+            nativeCalls.Enqueue("Consume");
+
+            if (nativeCalls.Count(call => call == "Consume") == 2)
+                assignment.Clear();
+
+            return null;
+        });
+
+        await consumer.DisconnectAsync();
+
+        nativeCalls.ShouldBe(["Unsubscribe", "Consume", "Consume", "Close"]);
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null, eventId: 2045);
+    }
+
     [Fact]
     public async Task DisconnectAsync_ShouldCloseWithoutLeavingGroup_WhenPartitionsAreStaticallyAssigned()
     {
@@ -606,11 +699,17 @@ public class ConfluentConsumerWrapperTests
     private async Task<ConfluentConsumerWrapper> GetConnectedConsumerAsync(
         bool enableAutoCommit = true,
         bool commitOffsets = true,
-        bool staticAssignment = false)
+        bool staticAssignment = false,
+        GroupProtocol? groupProtocol = null,
+        PartitionAssignmentStrategy? partitionAssignmentStrategy = null,
+        string? groupInstanceId = null)
     {
         KafkaConsumerConfiguration configuration = new()
         {
             GroupId = "group",
+            GroupProtocol = groupProtocol,
+            PartitionAssignmentStrategy = partitionAssignmentStrategy,
+            GroupInstanceId = groupInstanceId,
             EnableAutoCommit = enableAutoCommit,
             CommitOffsetEach = enableAutoCommit ? null : 1,
             CommitOffsets = commitOffsets,
