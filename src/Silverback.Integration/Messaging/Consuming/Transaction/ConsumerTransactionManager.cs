@@ -2,9 +2,15 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Unbounded;
 
 namespace Silverback.Messaging.Consuming.Transaction;
 
@@ -16,6 +22,8 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     private readonly ISilverbackLogger<ConsumerTransactionManager> _logger;
 
     private readonly System.Threading.Lock _syncLock = new();
+
+    private readonly CancellationToken _processingCancellationToken; // Canceled by the consumer stop
 
     private Task? _commitTask;
 
@@ -38,6 +46,15 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         _logger = logger;
     }
 
+    internal ConsumerTransactionManager(
+        ConsumerPipelineContext context,
+        ISilverbackLogger<ConsumerTransactionManager> logger,
+        CancellationToken processingCancellationToken)
+        : this(context, logger)
+    {
+        _processingCancellationToken = processingCancellationToken;
+    }
+
     /// <inheritdoc cref="IConsumerTransactionManager.Committing" />
     public AsyncEvent<ConsumerPipelineContext> Committing { get; } = new();
 
@@ -49,6 +66,42 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
     /// <inheritdoc cref="IConsumerTransactionManager.Aborted" />
     public AsyncEvent<ConsumerPipelineContext> Aborted { get; } = new();
+
+    /// <summary>
+    ///     Gets a value indicating whether the transaction was rolled back without committing the consumer (e.g. to retry the message),
+    ///     so that the rolled back messages and the later ones are consumed again. It's set as soon as the rollback starts.
+    /// </summary>
+    internal bool IsConsumerRolledBack
+    {
+        get
+        {
+            lock (_syncLock)
+            {
+                return field;
+            }
+        }
+
+        private set
+        {
+            lock (_syncLock)
+            {
+                field = value;
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Gets a value indicating whether the consumer was stopped because of the message, by the rollback when the error policies don't
+    ///     handle the error, or when the error handling fails (see <see cref="TryStopConsumerAsync" />). It's set when the stop fails as
+    ///     well, since it might have failed after being accepted.
+    /// </summary>
+    internal bool IsConsumerStopped { get; private set; }
+
+    /// <summary>
+    ///     Gets the start generation of the consumer stopped because of the message (see <see cref="IStopOnFailureConsumer" />), or
+    ///     <c>null</c> if unknown (e.g., because the stop failed).
+    /// </summary>
+    internal int? StoppedConsumerStartGeneration { get; private set; }
 
     /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
     public Task CommitAsync()
@@ -96,6 +149,70 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         }
     }
 
+    /// <summary>
+    ///     Requests the consumer to stop because of the message, as the rollback does when the error policies don't handle the error.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a value indicating whether
+    ///     the consumer was stopped because of the message.
+    /// </returns>
+    internal async Task<bool> TryStopConsumerAsync()
+    {
+        // The stop is ignored when the processing is stale (e.g. its Kafka partition was revoked in the meantime) and when the processing
+        // was canceled by a stop (the consumer might have been restarted since)
+        bool isStopped;
+
+        try
+        {
+            if (_context.Consumer is IStopOnFailureConsumer consumer)
+            {
+                int? stoppedConsumerStartGeneration = await consumer
+                    .TryStopOnFailureAsync(_context.Envelope.BrokerMessageIdentifier, _processingCancellationToken)
+                    .ConfigureAwait(false);
+
+                isStopped = stoppedConsumerStartGeneration != null;
+
+                if (isStopped)
+                    StoppedConsumerStartGeneration = stoppedConsumerStartGeneration;
+            }
+            else
+            {
+                // The consumers not deriving from Consumer<TIdentifier> don't report whether the stop was accepted: it's assumed when the
+                // stop cancels the processing token, also when another stop does it concurrently
+                if (_processingCancellationToken.IsCancellationRequested)
+                    return IsConsumerStopped;
+
+                await _context.Consumer.StopAsync(_context.Envelope.BrokerMessageIdentifier, false).ConfigureAwait(false);
+                isStopped = _processingCancellationToken.IsCancellationRequested;
+            }
+        }
+        catch (Exception)
+        {
+            // The stop failed, possibly after being accepted: handled like an accepted stop, so that the client is disconnected, as when
+            // the exception reaches the reader
+            IsConsumerStopped = true;
+            throw;
+        }
+
+        if (isStopped)
+            IsConsumerStopped = true;
+
+        return IsConsumerStopped;
+    }
+
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged by the consumer")]
+    private async Task TryStopConsumerAfterFailureAsync()
+    {
+        try
+        {
+            await TryStopConsumerAsync().ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // The exception thrown by the failed operation is rethrown instead
+        }
+    }
+
     private async Task CommitCoreAsync()
     {
         _logger.LogConsumerTransactionCommitting(_context.Envelope);
@@ -117,21 +234,43 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     {
         _logger.LogConsumerTransactionAborting(_context.Envelope, exception);
 
-        await Aborting.InvokeAsync(_context).ConfigureAwait(false);
+        // Set before invoking the handlers, which may fail: the consumer isn't committed in any case
+        if (!commitConsumer)
+            IsConsumerRolledBack = true;
+
+        try
+        {
+            await Aborting.InvokeAsync(_context).ConfigureAwait(false);
+        }
+        catch (Exception) when (!commitConsumer && stopConsuming)
+        {
+            // The rollback failed: stop the consumer anyway, as when the error handling fails (see ErrorPoliciesHelper)
+            await TryStopConsumerAfterFailureAsync().ConfigureAwait(false);
+            throw;
+        }
 
         if (commitConsumer)
         {
-            // If the error policy requires committing the consumer, we do it only if there are no pending sequences
-            // to prevent a skipped message (not deserialized, so not added to the sequence) to commit everything.
+            // If the error policy requires committing the consumer, we do it only if there are no pending or unresolved sequences
+            // to prevent a skipped message (not deserialized, so not added to the sequence) to commit everything (e.g. a batch
+            // completed by its max wait time, still being processed or handled by its error policies, which may roll it back).
             // The unbounded sequences don't count: their messages are committed one by one by their own pipelines, like the messages
             // outside a sequence, and with MQTT the skipped message would never be acknowledged, stalling the consumer.
-            if (_context.Sequence != null || _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0)
+            // Not while the consumer is stopping either: the stop aborts the pending sequences and removes them from the store without
+            // rolling them back (Kafka consumes them again from the first uncommitted offset after the restart), so the commit could
+            // commit their messages. The skipped message is consumed (and skipped) again after the restart.
+            if (_context.Sequence != null
+                    ? CanCommitSequence()
+                    : !_processingCancellationToken.IsCancellationRequested &&
+                      _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0 && !HasUnresolvedSequences())
+            {
                 await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
+            }
         }
         else
         {
             if (stopConsuming)
-                await _context.Consumer.StopAsync(_context.Envelope.BrokerMessageIdentifier, false).ConfigureAwait(false);
+                await TryStopConsumerAsync().ConfigureAwait(false);
 
             await _context.Consumer.RollbackAsync(_context.GetRollbackIdentifiers()).ConfigureAwait(false);
         }
@@ -142,4 +281,24 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         return true;
     }
+
+    // The skipped (or incomplete) sequence, e.g. a batch or a chunked message, is committed right away, unless the commit is cumulative
+    // (Kafka) and would implicitly commit the messages of another sequence that isn't resolved yet (e.g. a pending batch, when a chunked
+    // message fails before being added to it) or that the stop aborted without rolling it back. With MQTT, the messages of the sequence
+    // must be acknowledged anyway, since nothing else would acknowledge them.
+    private bool CanCommitSequence() =>
+        _context.Consumer is not ICumulativeCommitConsumer ||
+        !_processingCancellationToken.IsCancellationRequested && !_context.SequenceStore.Any(IsOtherUnresolvedSequence);
+
+    private bool IsOtherUnresolvedSequence(ISequence sequence) =>
+        sequence != _context.Sequence && sequence.ParentSequence != _context.Sequence && sequence is not UnboundedSequence &&
+        (sequence.IsPending ||
+         sequence is ISequenceImplementation { ProcessingCompletedTask.IsCompleted: false } && sequence.ParentSequence == null);
+
+    // The sequences that aren't pending anymore but whose processing isn't completed yet, e.g. a batch completed by its max wait time
+    private bool HasUnresolvedSequences() =>
+        _context.SequenceStore.Any(sequence =>
+            sequence is ISequenceImplementation { ProcessingCompletedTask.IsCompleted: false } and not UnboundedSequence &&
+            sequence.ParentSequence == null &&
+            !sequence.IsPending);
 }

@@ -14,6 +14,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Tests.Integration.E2E.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
@@ -446,6 +447,125 @@ public partial class BatchProcessingTests
         receivedBatches.ShouldBe(3);
         receivedMessages.ShouldBe(["1", "2", "3"]);
         offsetCommittedCallback.CallsCount.ShouldBe(3);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldAddMessageToNextBatch_WhenRefusedByTimedOutBatchThatIsSkipped()
+    {
+        TestingCollection<List<string?>> successfulBatches = [];
+        TaskCompletionSource<bool> firstMessageReceived = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(2))
+                        .OnError(policy => policy.Skip()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+                firstMessageReceived.TrySetResult(true);
+            }
+
+            // Skip the first batch, unless the timing didn't allow it to refuse the third message
+            if (list is ["1", "2"])
+                throw new InvalidOperationException("Skip!");
+
+            successfulBatches.Add(list);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await BatchTimeoutTiming.ProduceWhileFirstBatchTimesOutAsync(
+            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" }).AsTask(),
+            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" }).AsTask(),
+            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" }).AsTask(),
+            firstMessageReceived.Task);
+
+        // The refused message isn't committed with the skipped batch, but added to the next one
+        await AsyncTestingUtil.WaitAsync(() => successfulBatches.Any(batch => batch.Contains("3")));
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        successfulBatches.SelectMany(batch => batch).ShouldContain("3");
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldProcessRefusedMessageOnce_WhenTimedOutBatchIsRetried()
+    {
+        TestingCollection<List<string?>> successfulBatches = [];
+        TaskCompletionSource<bool> firstMessageReceived = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int failedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(2))
+                        .OnError(policy => policy.Retry(1)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+
+            try
+            {
+                await foreach (TestEventOne message in batch)
+                {
+                    list.Add(message.ContentEventOne);
+                    firstMessageReceived.TrySetResult(true);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // A batch aborted by the rollback (e.g. started by the third message, if the timing didn't allow the refusal)
+                return;
+            }
+
+            // Fail the first batch once, unless the timing didn't allow it to refuse the third message
+            if (list is ["1", "2"] && Interlocked.Increment(ref failedBatches) == 1)
+                throw new InvalidOperationException("Retry!");
+
+            successfulBatches.Add(list);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await BatchTimeoutTiming.ProduceWhileFirstBatchTimesOutAsync(
+            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" }).AsTask(),
+            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" }).AsTask(),
+            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" }).AsTask(),
+            firstMessageReceived.Task);
+
+        await AsyncTestingUtil.WaitAsync(() => successfulBatches.Any(batch => batch.Contains("3")));
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        // The refused message is consumed again after the seek and processed once (see SequenceBaseTests for the refusal itself)
+        successfulBatches.SelectMany(batch => batch).ShouldBe(["1", "2", "3"]);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
     }
 

@@ -43,6 +43,26 @@ public class ErrorPoliciesHelperTests
         _callback.Invocations.ShouldBe([nameof(IStopConsumerErrorPolicyCallback.OnStoppingConsumerAsync)]);
         _callback.Envelopes.ShouldBe([context.Envelope]);
         _callback.Exceptions.ShouldBe([_exception]);
+
+        // The consumer is stopped by the rollback (see ConsumerTransactionManager)
+        await context.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+    }
+
+    [Fact]
+    public async Task ApplyErrorPoliciesAsync_ShouldStopConsumerAndRethrow_WhenStopCallbackThrowsForUnhandledError()
+    {
+        IStopConsumerErrorPolicyCallback stopCallback = Substitute.For<IStopConsumerErrorPolicyCallback>();
+        stopCallback.OnStoppingConsumerAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(Task.FromException(new InvalidOperationException("Stop callback failed.")));
+        ServiceProvider serviceProvider = BuildServiceProvider(builder => builder.AddSingletonErrorPolicyCallback(stopCallback));
+        ConsumerPipelineContext context = CreateContext(new StopConsumerErrorPolicy(), serviceProvider: serviceProvider);
+
+        Func<Task> act = () => ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, _exception);
+
+        // The error handling failed, so the rollback won't stop the consumer
+        ErrorPolicyCallbackInvocationException exception = await act.ShouldThrowAsync<ErrorPolicyCallbackInvocationException>();
+        exception.InnerException?.Message.ShouldBe("Stop callback failed.");
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
     }
 
     [Fact]
@@ -128,6 +148,7 @@ public class ErrorPoliciesHelperTests
         _callback.Invocations.ShouldBe([nameof(IStopConsumerErrorPolicyCallback.OnStoppingConsumerAsync)]);
         _callback.Envelopes.ShouldBe([context.Envelope]);
         _callback.Exceptions.ShouldBe([_exception]);
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
     }
 
     [Fact]
@@ -149,6 +170,7 @@ public class ErrorPoliciesHelperTests
         ErrorPolicyCallbackInvocationException exception = await act.ShouldThrowAsync<ErrorPolicyCallbackInvocationException>();
         exception.InnerException?.Message.ShouldBe("Skip callback failed.");
         await stopCallback.Received(1).OnStoppingConsumerAsync(context.Envelope, _exception);
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
     }
 
     private static ServiceProvider BuildServiceProvider(Action<SilverbackBuilder> configureBuilder)

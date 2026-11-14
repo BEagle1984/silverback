@@ -147,10 +147,13 @@ public abstract class SequenceReaderBase : ISequenceReader
     {
         List<ISequence> sequences = [.. sequenceStore];
 
+        // Prevent Sequence and RawSequence to mess with each other
+        bool IsHandledByOtherReader(ISequence sequence) =>
+            HandlesRawMessages && sequence is Sequence || !HandlesRawMessages && sequence is RawSequence;
+
         async ValueTask AwaitOrAbortPreviousSequenceAsync(ISequence sequence)
         {
-            // Prevent Sequence and RawSequence to mess with each other
-            if (HandlesRawMessages && sequence is Sequence || !HandlesRawMessages && sequence is RawSequence)
+            if (IsHandledByOtherReader(sequence))
                 return;
 
             if (!sequence.IsComplete)
@@ -158,18 +161,22 @@ public abstract class SequenceReaderBase : ISequenceReader
 
             ISequence? parentSequence = sequence.ParentSequence;
 
-            if (parentSequence == null && sequence.IsComplete)
+            // Await any sequence that isn't pending anymore, not only the complete ones: a complete sequence can switch to aborted at any
+            // time (e.g. when its processing fails), and its processing completes only once the error policies were applied
+            if (parentSequence == null && !sequence.IsPending)
                 await sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
 
-            if (parentSequence is { IsComplete: true })
+            if (parentSequence is { IsPending: false })
                 await parentSequence.AwaitProcessingAsync(false).ConfigureAwait(false);
         }
 
         await sequences.ForEachAsync(AwaitOrAbortPreviousSequenceAsync).ConfigureAwait(false);
 
-        // The unbounded sequence aborted by an error stays in the store until its error is handled (see UnboundedSequence)
+        // The unbounded sequence aborted by an error stays in the store until its error is handled (see UnboundedSequence). The
+        // sequences of the other reader aren't awaited and are removed by that reader, after awaiting them (e.g. a failed batch stays in
+        // the store until its error policies were applied, see BatchSequence).
         await sequences
-            .Where(sequence => !sequence.IsPending && sequence is not UnboundedSequence)
+            .Where(sequence => !sequence.IsPending && sequence is not UnboundedSequence && !IsHandledByOtherReader(sequence))
             .ForEachAsync(sequence => sequenceStore.RemoveAsync(sequence.SequenceId))
             .ConfigureAwait(false);
     }

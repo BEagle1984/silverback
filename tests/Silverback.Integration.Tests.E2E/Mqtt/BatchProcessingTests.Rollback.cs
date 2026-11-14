@@ -8,10 +8,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -232,6 +234,83 @@ public partial class BatchProcessingTests
             abortedBatch.ShouldBe(new[] { "4", "5" }.Take(abortedBatch.Count));
         }
 
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldStartNextBatchOnlyAfterFailedBatchIsSkipped()
+    {
+        TestingCollection<List<string?>> receivedBatches = [];
+        TaskCompletionSource<bool> skipping = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> releaseSkip = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int completedBatches = 0;
+
+        // Delays the commit of the skipped batch, while the next message is consumed
+        ISkipMessageErrorPolicyCallback callback = Substitute.For<ISkipMessageErrorPolicyCallback>();
+        callback.OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(_ =>
+            {
+                skipping.TrySetResult(true);
+                return releaseSkip.Task.WaitAsync(TimeSpan.FromSeconds(30));
+            });
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(1))
+                        .OnError(policy => policy.Retry(1, retry => retry.ApplyTo<TimeoutException>()).ThenSkip()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        // The batches are completed by the timeout: the first one is skipped, the second one is retried
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+            receivedBatches.Add(list);
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+            }
+
+            switch (Interlocked.Increment(ref completedBatches))
+            {
+                case 1:
+                    throw new InvalidOperationException("Skip!");
+                case 2:
+                    throw new TimeoutException("Retry!");
+            }
+        }
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+        await skipping.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
+
+        // The next batch isn't started while the failed one is being skipped
+        await AsyncTestingUtil.WaitAsync(() => receivedBatches.Count > 1, TimeSpan.FromSeconds(2));
+        receivedBatches.Count.ShouldBe(1);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(3);
+
+        // Then the next batch is retried, without replaying the skipped one
+        releaseSkip.TrySetResult(true);
+        await AsyncTestingUtil.WaitAsync(() => completedBatches == 3);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedBatches.Select(batch => batch.ToArray()).ShouldBe([["1", "2"], ["3"], ["3"]]);
+        callback.ReceivedCalls().Count().ShouldBe(1);
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 

@@ -24,10 +24,17 @@ internal sealed class SequenceStore : ISequenceStore
 
     private readonly ISilverbackLogger _logger;
 
-    public SequenceStore(ISilverbackLogger logger)
+    private readonly Func<bool>? _isReadingCanceled;
+
+    public SequenceStore(ISilverbackLogger logger, Func<bool>? isReadingCanceled = null)
     {
         _logger = logger;
+        _isReadingCanceled = isReadingCanceled;
     }
+
+    // The reading of the channel owning the store was canceled (e.g. to stop the consumer, roll back or revoke the partition): the
+    // messages being processed are consumed again (or by another consumer) and must not start new sequences
+    public bool IsReadingCanceled => _isReadingCanceled?.Invoke() ?? false;
 
     public int Count
     {
