@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
+using MQTTnet.Exceptions;
 using MQTTnet.Packets;
 using MQTTnet.Protocol;
 using NSubstitute;
@@ -658,6 +659,30 @@ public partial class MqttConsumerTests
     }
 
     [Fact]
+    public async Task CommitAsync_ShouldAllowRecovery_WhenQoS2AcknowledgementFailsBeforeConnectionLossIsNoticed()
+    {
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.ExactlyOnce);
+        harness.Behavior.ReleaseFirst.TrySetResult(true);
+
+        // The transport is lost while the client still reports the connection as alive
+        harness.FailAcknowledgementOnce(new MqttCommunicationException("Broken pipe"));
+        await harness.ConnectAsync();
+
+        await harness.DeliverAsync(0);
+        await AsyncTestingUtil.WaitAsync(() => !harness.Behavior.Processed.IsEmpty || harness.Behavior.CommitFailure.Task.IsCompleted);
+        harness.LoseConnection();
+        await harness.Reconnected.Task.WaitAsync(ReconnectTimeout);
+        await harness.DeliverAsync(2);
+        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
+
+        harness.Behavior.CommitFailure.Task.IsCompleted.ShouldBeFalse();
+        harness.Behavior.Processed.ShouldBe([0, 2]);
+        harness.Acknowledged.ShouldBe([new Acknowledgement(2, 2, 2)]);
+        harness.Disconnections.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task CommitAsync_ShouldPreserveQoS2AcknowledgementFailure_WhenTransportIsStillConnected()
     {
         await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.ExactlyOnce);
@@ -1101,6 +1126,12 @@ public partial class MqttConsumerTests
             BeforeAcknowledge = null;
             LoseConnection();
             throw new InvalidOperationException("Connection lost during acknowledgement.");
+        };
+
+        public void FailAcknowledgementOnce(Exception exception) => BeforeAcknowledge = () =>
+        {
+            BeforeAcknowledge = null;
+            throw exception;
         };
 
         public void ReceiveBeforeConnected(byte number, bool loseConnection = false) => BeforeConnected = async () =>
