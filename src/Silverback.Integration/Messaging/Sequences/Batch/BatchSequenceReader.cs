@@ -49,10 +49,13 @@ public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
         new BatchSequence(sequenceId + Guid.NewGuid().ToString("N"), context);
 
     /// <inheritdoc cref="SequenceReaderBase.GetExistingSequenceAsync" />
-    protected override ValueTask<ISequence?> GetExistingSequenceAsync(ConsumerPipelineContext context, string sequenceId)
+    protected override async ValueTask<ISequence?> GetExistingSequenceAsync(ConsumerPipelineContext context, string sequenceId)
     {
         Check.NotNull(context, nameof(context));
 
-        return context.SequenceStore.GetAsync<ISequence>(sequenceId, true);
+        // The current batch may have been removed from the store since IsNewSequenceAsync found it (e.g. aborted): start a new one,
+        // instead of returning an incomplete sequence, which would skip the message
+        return await context.SequenceStore.GetAsync<ISequence>(sequenceId, true).ConfigureAwait(false) ??
+               await CreateNewSequenceAsync(sequenceId, context).ConfigureAwait(false);
     }
 }

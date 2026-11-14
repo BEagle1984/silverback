@@ -970,6 +970,58 @@ public partial class ErrorPoliciesTests
     }
 
     [Fact]
+    public async Task RetryPolicy_ShouldRetryBatchConfiguredTimes_WhenFirstMessageIsChunked()
+    {
+        int tryCount = 0;
+        List<string?>? processedMessages = null;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName).EnableChunking(10)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2)
+                        .OnError(policy => policy.Retry(2)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch)
+            .AddIntegrationSpy());
+
+        // Each failure must count as a single attempt, although the batch is started by a chunked message
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            int currentTry = Interlocked.Increment(ref tryCount);
+            List<string?> messages = [];
+
+            await foreach (TestEventOne message in batch)
+            {
+                messages.Add(message.ContentEventOne);
+            }
+
+            if (currentTry <= 2)
+                throw new InvalidOperationException("Retry!");
+
+            processedMessages = messages;
+        }
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message 1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message 2" });
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        tryCount.ShouldBe(3);
+        processedMessages.ShouldBe(["Long message 1", "Long message 2"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(Helper.Spy.RawOutboundEnvelopes.Count);
+    }
+
+    [Fact]
     public async Task RetryPolicy_ShouldStopConsumer_WhenStillFailingAfterRetries()
     {
         int tryCount = 0;
