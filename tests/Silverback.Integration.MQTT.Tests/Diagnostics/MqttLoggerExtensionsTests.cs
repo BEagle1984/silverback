@@ -18,6 +18,7 @@ using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -95,7 +96,9 @@ public sealed class MqttLoggerExtensionsTests : IDisposable
                     Topic = "some-topic"
                 },
                 new MqttPublishPacket(),
-                (_, _) => Task.CompletedTask));
+                (_, _) => Task.CompletedTask),
+            new ConsumerChannel(1, 0, _silverbackLogger),
+            1);
 
         _silverbackLogger.LogConsuming(applicationMessage, _consumer);
 
@@ -117,7 +120,9 @@ public sealed class MqttLoggerExtensionsTests : IDisposable
                     Topic = "some-topic"
                 },
                 new MqttPublishPacket(),
-                (_, _) => Task.CompletedTask));
+                (_, _) => Task.CompletedTask),
+            new ConsumerChannel(1, 0, _silverbackLogger),
+            1);
 
         _silverbackLogger.LogAcknowledgeFailed(applicationMessage, _consumer, new TimeoutException());
 
@@ -138,6 +143,38 @@ public sealed class MqttLoggerExtensionsTests : IDisposable
             null,
             "No matching subscribers found for the produced message | Topic: my/topic",
             4013);
+    }
+
+    [Fact]
+    public void LogBatchProcessingEnabled_ShouldLog()
+    {
+        IServiceProvider serviceProvider = Substitute.For<IServiceProvider>();
+        serviceProvider.GetService(typeof(ISequenceStore)).Returns(Substitute.For<ISequenceStore>());
+        using MqttConsumer consumer = new(
+            "consumer2",
+            _mqttClientWrapper,
+            new MqttClientConfiguration
+            {
+                MaxDegreeOfParallelism = 3,
+                ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+                [
+                    new MqttConsumerEndpointConfiguration
+                    {
+                        Topics = new ValueReadOnlyCollection<string>(["topic1"]),
+                        Batch = new BatchSettings { Size = 10 }
+                    }
+                ])
+            },
+            Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+            serviceProvider,
+            Substitute.For<ISilverbackLogger<MqttConsumer>>());
+
+        _silverbackLogger.LogBatchProcessingEnabled(consumer);
+
+        const string expectedMessage =
+            "Batch processing enabled: the broker must allow at least 30 unacknowledged messages (batch size 10, max degree of parallelism 3) " +
+            "| ConsumerName: consumer2";
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 4014);
     }
 
     [Fact]

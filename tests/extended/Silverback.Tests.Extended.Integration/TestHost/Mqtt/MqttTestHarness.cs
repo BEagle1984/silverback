@@ -2,12 +2,19 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Buffers;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
 using MQTTnet.Diagnostics.Logger;
+using MQTTnet.Diagnostics.PacketInspection;
+using MQTTnet.Formatter;
+using MQTTnet.Protocol;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt;
@@ -23,6 +30,8 @@ namespace Silverback.Tests.Extended.Integration.TestHost.Mqtt;
 // the nodes, and the tests must publish only after these methods return.
 public sealed class MqttTestHarness : BrokerTestHarness
 {
+    private const int PubRelType = 6;
+
     // The session cleanup is best effort, so that an unreachable broker doesn't delay the teardown for each client
     private static readonly TimeSpan SessionCleanupTimeout = TimeSpan.FromSeconds(5);
 
@@ -130,6 +139,9 @@ public sealed class MqttTestHarness : BrokerTestHarness
         await WaitUntilAllSubscribedAsync(subscriptionsCounts);
     }
 
+    // Disconnects the consumer, keeping its persistent session
+    public Task DisconnectConsumerAsync() => Consumer.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
     // Connects the consumer again, after the test disconnected it, and waits until it subscribed again on all the nodes
     public async Task ReconnectAsync()
     {
@@ -154,6 +166,73 @@ public sealed class MqttTestHarness : BrokerTestHarness
             .Build()).WaitAsync(Timeout);
 
         return client;
+    }
+
+    // Resumes the persistent session of the consumer, which the test disconnected, with a native client and returns the payloads the
+    // broker replays because they were never acknowledged, and the number of PUBREL packets it sends again because their QoS 2
+    // delivery was never completed. A sentinel published to the topic while the session is disconnected is queued after them (the
+    // broker resends the unacknowledged deliveries and releases before the queued messages), so it marks the end of the replay. The
+    // session ends when the native client disconnects.
+    public async Task<SessionReplay> ResumeAndEndSessionAsync(string topic)
+    {
+        if (Consumer.Client.Status != ClientStatus.Disconnected)
+            throw new InvalidOperationException("The consumer must be disconnected to resume its session.");
+
+        string clientId = Consumer.Configuration.ClientId;
+        byte[] sentinel = Encoding.UTF8.GetBytes("sentinel-" + Guid.NewGuid().ToString("N"));
+
+        using (IMqttClient publisher = new MqttClientFactory().CreateMqttClient())
+        {
+            await publisher.ConnectAsync(CreateOptionsBuilder($"{Prefix}-sentinel").Build()).WaitAsync(Timeout);
+            await publisher.PublishAsync(new MqttApplicationMessageBuilder()
+                .WithTopic(topic)
+                .WithPayload(sentinel)
+                .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+                .Build()).WaitAsync(Timeout);
+            await publisher.DisconnectAsync().WaitAsync(Timeout);
+        }
+
+        ConcurrentQueue<byte[]> replayed = new();
+        int releases = 0;
+        TaskCompletionSource<bool> sentinelReceived = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        using IMqttClient client = new MqttClientFactory().CreateMqttClient();
+        client.InspectPacketAsync += args =>
+        {
+            if (args.Direction == MqttPacketFlowDirection.Inbound && args.Buffer.Length > 0 && args.Buffer[0] >> 4 == PubRelType)
+                Interlocked.Increment(ref releases);
+
+            return Task.CompletedTask;
+        };
+        client.ApplicationMessageReceivedAsync += args =>
+        {
+            byte[] payload = args.ApplicationMessage.Payload.ToArray();
+
+            if (payload.AsSpan().SequenceEqual(sentinel))
+                sentinelReceived.TrySetResult(true);
+            else
+                replayed.Enqueue(payload);
+
+            return Task.CompletedTask;
+        };
+
+        MqttClientConnectResult result = await client.ConnectAsync(CreateOptionsBuilder(clientId)
+            .WithCleanStart(false)
+            .WithSessionExpiryInterval(0)
+            .Build()).WaitAsync(Timeout);
+
+        try
+        {
+            // Without a session, nothing is subscribed and the sentinel isn't delivered
+            if (result.IsSessionPresent)
+                await sentinelReceived.Task.WaitAsync(Timeout);
+        }
+        finally
+        {
+            await client.DisconnectAsync().WaitAsync(Timeout);
+        }
+
+        // The releases are sent before the sentinel, whose delivery was awaited
+        return new SessionReplay(result.IsSessionPresent, [.. replayed], releases);
     }
 
     protected override async Task StopClientsAsync()
@@ -187,6 +266,12 @@ public sealed class MqttTestHarness : BrokerTestHarness
             await DeleteSessionAsync(clientId);
         }
     }
+
+    private static MqttClientOptionsBuilder CreateOptionsBuilder(string clientId) =>
+        new MqttClientOptionsBuilder()
+            .WithTcpServer(MqttFixture.BrokerHost)
+            .WithProtocolVersion(MqttProtocolVersion.V500)
+            .WithClientId(clientId);
 
     // Deletes the session of a Silverback client, including a persistent one configured without an expiry, by connecting with a
     // clean session that expires on disconnect

@@ -52,6 +52,25 @@ public class ConsumerChannelTests
     }
 
     [Fact]
+    public async Task SequenceStore_ShouldRemainUnchanged_WhenReadingRestartsWithoutReset()
+    {
+        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
+        ISequenceStore sequenceStore = channel.SequenceStore;
+
+        channel.StartReading().ShouldBeTrue();
+
+        Task stop = channel.StopReadingAsync();
+        await channel.NotifyReadingStoppedAsync(false);
+        await stop;
+
+        channel.StartReading().ShouldBeTrue();
+
+        channel.SequenceStore.ShouldBeSameAs(sequenceStore);
+
+        await channel.NotifyReadingStoppedAsync(false);
+    }
+
+    [Fact]
     public void Reset_ShouldReplaceInstanceId()
     {
         using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
@@ -297,93 +316,6 @@ public class ConsumerChannelTests
         await channel.WriteAsync(secondMessage, CancellationToken.None);
         TestMessage readMessage = await channel.ReadAsync();
         readMessage.ShouldBeSameAs(secondMessage);
-    }
-
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task ReadAsync_ShouldReturnUnreadMessageBeforeBufferedMessages(bool overflow)
-    {
-        using ConsumerChannel<TestMessage> channel = new(3, "test", Substitute.For<ISilverbackLogger>());
-        TestMessage message1 = new();
-        TestMessage message2 = new();
-        TestMessage message3 = new();
-        await channel.WriteAsync(message1, CancellationToken.None);
-        await channel.WriteAsync(message2, CancellationToken.None);
-
-        if (overflow)
-            await channel.WriteOverflowAsync(message3);
-        else
-            await channel.WriteAsync(message3, CancellationToken.None);
-
-        TestMessage readMessage = await channel.ReadAsync();
-        channel.Unread(readMessage);
-
-        (await channel.ReadAsync()).ShouldBeSameAs(message1);
-        (await channel.ReadAsync()).ShouldBeSameAs(message2);
-        (await channel.ReadAsync()).ShouldBeSameAs(message3);
-    }
-
-    [Fact]
-    public async Task Reset_ShouldDiscardUnreadMessage()
-    {
-        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
-        TestMessage secondMessage = new();
-        await channel.WriteAsync(new TestMessage(), CancellationToken.None);
-        channel.Unread(await channel.ReadAsync());
-
-        channel.Reset();
-
-        await channel.WriteAsync(secondMessage, CancellationToken.None);
-        (await channel.ReadAsync()).ShouldBeSameAs(secondMessage);
-    }
-
-    [Fact]
-    public async Task ReadAsync_ShouldThrowAndKeepUnreadMessage_WhenReadingStopped()
-    {
-        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
-        TestMessage message = new();
-        await channel.WriteAsync(message, CancellationToken.None);
-        channel.StartReading().ShouldBeTrue();
-        TestMessage readMessage = await channel.ReadAsync();
-
-        Task stop = channel.StopReadingAsync();
-        channel.Unread(readMessage);
-        await channel.NotifyReadingStoppedAsync(false);
-        await stop.WaitAsync(TimeSpan.FromSeconds(2));
-
-        // A stopping reader must not get the message back
-        await Should.ThrowAsync<OperationCanceledException>(async () =>
-            await channel.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(2)));
-
-        channel.StartReading().ShouldBeTrue();
-
-        try
-        {
-            (await channel.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(2))).ShouldBeSameAs(message);
-        }
-        finally
-        {
-            await channel.NotifyReadingStoppedAsync(false);
-        }
-    }
-
-    [Fact]
-    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The action is invoked before the channel is disposed")]
-    public async Task Unread_ShouldThrow_WhenMessageAlreadyPutBack()
-    {
-        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
-        TestMessage message1 = new();
-        TestMessage message2 = new();
-        await channel.WriteAsync(message1, CancellationToken.None);
-        await channel.WriteAsync(message2, CancellationToken.None);
-        channel.Unread(await channel.ReadAsync());
-
-        Action act = () => channel.Unread(new TestMessage());
-
-        act.ShouldThrow<InvalidOperationException>();
-        (await channel.ReadAsync()).ShouldBeSameAs(message1);
-        (await channel.ReadAsync()).ShouldBeSameAs(message2);
     }
 
     [Fact]

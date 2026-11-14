@@ -346,7 +346,7 @@ Note that the message passed to `Publish` was published after the policy had bee
 When the consumed messages are part of a sequence (a batch, a chunked message, etc.), the error policy is applied to the whole sequence:
 
 - **Batch processing** (<xref:batch-processing>): if the subscriber throws, the whole batch is rolled back. `Retry` processes the whole batch again, and `Skip` skips all the messages in the batch.
-- **Chunking** (<xref:consuming-chunking>): all chunks belonging to the same message are retried or skipped together.
+- **Chunking** (<xref:consuming-chunking>): all chunks belonging to the same message are retried or skipped together. With MQTT, the chunks rejected by a client with batch processing are instead handled one by one, since chunking can't be combined with batch processing.
 - **MoveTo** can't move a sequence: the policy logs a warning and is skipped, falling back to the next policy in the chain (or stopping the consumer, if there is none). Don't rely on `MoveTo` with batch processing or chunked messages; use `Skip` with a [callback](#callbacks) instead.
 
 > [!Warning]

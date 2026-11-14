@@ -415,10 +415,13 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     ///     The <see cref="ISequenceStore" /> to be used.
     /// </param>
     /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the
+    ///     <see cref="ConsumerPipelineContext" />, which can be used to inspect the sequence the message was added to. The context may be
+    ///     disposed already.
     /// </returns>
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Context is disposed by the TransactionHandler")]
-    protected virtual async ValueTask HandleMessageAsync(
+    [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global", Justification = "Extension point for the broker-specific consumers")]
+    protected virtual async ValueTask<ConsumerPipelineContext> HandleMessageAsync(
         byte[]? message,
         IReadOnlyCollection<MessageHeader> headers,
         ConsumerEndpoint endpoint,
@@ -431,6 +434,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
 
         await ExecutePipelineAsync(context, _processingCancellationTokenSource.Token).ConfigureAwait(false);
+
+        return context;
     }
 
     /// <summary>
