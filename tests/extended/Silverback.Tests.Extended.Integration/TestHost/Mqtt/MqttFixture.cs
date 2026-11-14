@@ -4,8 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
@@ -13,7 +15,7 @@ using MQTTnet.Exceptions;
 
 namespace Silverback.Tests.Extended.Integration.TestHost.Mqtt;
 
-public sealed class MqttFixture : DockerTestsFixture
+public sealed partial class MqttFixture : DockerTestsFixture
 {
     public const string BrokerHost = "localhost";
 
@@ -61,6 +63,19 @@ public sealed class MqttFixture : DockerTestsFixture
         while (stopwatch.Elapsed < PropagationTimeout);
 
         throw new TimeoutException($"The subscriptions of {clientId} did not reach all the MQTT nodes. Last failure: {lastFailure}");
+    }
+
+    // The maximum number of QoS 1 and 2 deliveries waiting for acknowledgment per session, which the broker enforces regardless of a
+    // higher receive maximum requested by the client
+    public static async Task<int> GetMaxInflightAsync()
+    {
+        string configuration = await RunCliAsync(NodeContainers[0], "conf", "show", "mqtt");
+        Match match = MaxInflightRegex().Match(configuration);
+
+        if (!match.Success)
+            throw new InvalidOperationException($"The MQTT configuration doesn't contain max_inflight: {configuration}");
+
+        return int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
     }
 
     protected override async Task WaitForInfrastructureAsync()
@@ -196,6 +211,9 @@ public sealed class MqttFixture : DockerTestsFixture
 
     private static Task<string> RunCliAsync(string container, params string[] arguments) =>
         RunDockerAsync(CliTimeout, ["exec", container, "/opt/emqx/bin/emqx", "ctl", .. arguments]);
+
+    [GeneratedRegex(@"^\s*max_inflight\s*=\s*(\d+)\s*$", RegexOptions.Multiline)]
+    private static partial Regex MaxInflightRegex();
 
     private static async Task WaitUntilProxyAcceptsConnectionsAsync(Stopwatch stopwatch)
     {

@@ -185,7 +185,7 @@ public class MqttConsumerEndpointConfigurationTests
     }
 
     [Fact]
-    public void Validate_ShouldThrow_WhenBatchProcessingIsEnabled()
+    public void Validate_ShouldNotThrow_WhenBatchProcessingIsEnabled()
     {
         MqttConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
@@ -194,8 +194,7 @@ public class MqttConsumerEndpointConfigurationTests
 
         Action act = configuration.Validate;
 
-        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("Batch processing is currently not supported for MQTT.");
+        act.ShouldNotThrow();
     }
 
     private static MqttConsumerEndpointConfiguration GetValidConfiguration() =>

@@ -8,7 +8,7 @@ description: "Reference of the default headers Silverback adds to produced Kafka
 Silverback will add some headers to the produced messages. They may vary depending on the scenario.
 Here is the list of the default headers that may be sent.
 
-The static classes <xref:Silverback.Messaging.Messages.DefaultMessageHeaders> and <xref:Silverback.Messaging.Messages.KafkaMessageHeaders> contain all default header names constants.
+The static classes <xref:Silverback.Messaging.Messages.DefaultMessageHeaders>, <xref:Silverback.Messaging.Messages.KafkaMessageHeaders> and <xref:Silverback.Messaging.Messages.MqttMessageHeaders> contain all default header names constants.
 
 ## Default
 
@@ -22,8 +22,6 @@ The static classes <xref:Silverback.Messaging.Messages.DefaultMessageHeaders> an
 
 [!INCLUDE [MQTT headers](../../build/generated/headers-mqtt.md)]
 
-The constants in <xref:Silverback.Messaging.Messages.MqttMessageHeaders> are used internally to map some envelope headers to the corresponding MQTT 5 properties (response topic and correlation data) and to set the dynamic destination topic.
-
 ## Customizing Default Header Names
 
 The default header names can be overridden using the `WithCustomHeaderName` configuration method.
@@ -35,3 +33,6 @@ services.AddSilverback()
     .WithCustomHeaderName(DefaultMessageHeaders.ChunksCount, "x-ch-cnt")
     .AddBrokerClientsConfigurator<MyClientsConfigurator>();
 ```
+
+> [!Note]
+> The MQTT `x-chunk-message-id` header (<xref:Silverback.Messaging.Messages.MqttMessageHeaders>.`ChunkMessageId`) can't be renamed.

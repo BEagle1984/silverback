@@ -13,6 +13,10 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
     private static readonly string ClientId = $"testbench-consumer-{Environment.GetEnvironmentVariable("CONTAINER_NAME")}";
 
+    // The MQTT batch processing requires a separate client, since all the consumer endpoints of a client share the same batches.
+    // The batch size stays below the 32 unacknowledged messages that EMQX allows per session by default (max_inflight).
+    private static readonly string MqttBatchClientId = $"{ClientId}-batch";
+
     private static readonly Action<IErrorPolicyBuilder> DefaultErrorPolicy = policy => policy
         .Retry(5)
         .ThenSkip();
@@ -60,5 +64,14 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                         .AllowStreaming())
                     .Produce<MqttResponseMessage>(endpoint => endpoint
                         .ProduceTo("testbench/mqtt/responses")
-                        .WithAtMostOnceQoS())));
+                        .WithAtMostOnceQoS()))
+                .AddClient(client => client
+                    .WithClientId(MqttBatchClientId)
+                    .ConnectViaTcp("haproxy")
+                    .Consume<BatchMessage>(endpoint => endpoint
+                        .ConsumeFrom($"$share/group/{TopicNames.Mqtt.Batch}")
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(30, TimeSpan.FromSeconds(1))
+                        .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
+                        .OnError(DefaultErrorPolicy))));
 }

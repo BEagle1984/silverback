@@ -44,7 +44,7 @@ public class MqttProducerEndpointConfigurationTests
     }
 
     [Fact]
-    public void Validate_ShouldThrow_WhenChunkingIsEnabled()
+    public void Validate_ShouldNotThrow_WhenChunkingIsEnabled()
     {
         MqttProducerEndpointConfiguration configuration = GetValidConfiguration() with
         {
@@ -53,8 +53,7 @@ public class MqttProducerEndpointConfigurationTests
 
         Action act = configuration.Validate;
 
-        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("Chunking is currently not supported for MQTT.");
+        act.ShouldNotThrow();
     }
 
     private static MqttProducerEndpointConfiguration GetValidConfiguration() =>

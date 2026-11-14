@@ -3,15 +3,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using MQTTnet;
 using MQTTnet.Formatter;
+using MQTTnet.Protocol;
 using Shouldly;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Producing.EndpointResolvers;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -463,6 +467,241 @@ public class MqttClientConfigurationTests
         exception.Message.ShouldBe("AcknowledgmentTimeout must be greater than zero.");
     }
 
+    [Theory]
+    [InlineData(MqttQualityOfServiceLevel.AtMostOnce, null)]
+    [InlineData(MqttQualityOfServiceLevel.AtLeastOnce, 1)]
+    [InlineData(MqttQualityOfServiceLevel.ExactlyOnce, 1)]
+    public void Validate_ShouldNotThrow_WhenBatchProcessingIsValid(MqttQualityOfServiceLevel qualityOfServiceLevel, int? maxWaitTimeSeconds)
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            MaxDegreeOfParallelism = 10,
+            ConsumerEndpoints = GetBatchConsumerEndpoints(
+                qualityOfServiceLevel,
+                maxWaitTimeSeconds == null ? null : TimeSpan.FromSeconds(maxWaitTimeSeconds.Value),
+                "topic1",
+                "topic2")
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenBatchProcessingIsEnabledWithProtocolPriorTo500()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ProtocolVersion = MqttProtocolVersion.V311,
+            ConsumerEndpoints = GetBatchConsumerEndpoints(MqttQualityOfServiceLevel.AtMostOnce, null, "topic1")
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("Batch processing requires MQTT 5.");
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenBatchSizeIsOneWithProtocolPriorTo500()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ProtocolVersion = MqttProtocolVersion.V311,
+            ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+            [
+                new MqttConsumerEndpointConfiguration
+                {
+                    Topics = new ValueReadOnlyCollection<string>(["topic1"]),
+                    Deserializer = new JsonMessageDeserializer<TestEventOne>(),
+                    Batch = new BatchSettings { Size = 1 }
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenEndpointsHaveDifferentBatchSettings()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+            [
+                .. GetBatchConsumerEndpoints(MqttQualityOfServiceLevel.AtMostOnce, null, "topic1"),
+                new MqttConsumerEndpointConfiguration
+                {
+                    Topics = new ValueReadOnlyCollection<string>(["topic2"])
+                }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe(
+            "All consumer endpoints of the client must use the same batch settings. " +
+            "Use separate clients for the endpoints with different batch settings.");
+    }
+
+    [Theory]
+    [InlineData(MqttQualityOfServiceLevel.AtLeastOnce)]
+    [InlineData(MqttQualityOfServiceLevel.ExactlyOnce)]
+    public void Validate_ShouldThrow_WhenBatchMaxWaitTimeIsNotSetWithQosGreaterThanZero(MqttQualityOfServiceLevel qualityOfServiceLevel)
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ConsumerEndpoints = GetBatchConsumerEndpoints(qualityOfServiceLevel, null, "topic1")
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe(
+            "The batch MaxWaitTime must be set when consuming with QoS 1 or 2, since the broker stops delivering when too many " +
+            "messages are waiting for acknowledgment, which could prevent the batch from being completed.");
+    }
+
+    [Theory]
+    [InlineData(0, 6554, 10, 65535)]
+    [InlineData(100, 11, 10, 100)]
+    public void Validate_ShouldThrow_WhenBatchedMessagesExceedReceiveMaximum(
+        int receiveMaximum,
+        int maxDegreeOfParallelism,
+        int batchSize,
+        int effectiveReceiveMaximum)
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ReceiveMaximum = (ushort)receiveMaximum,
+            MaxDegreeOfParallelism = maxDegreeOfParallelism,
+            ConsumerEndpoints = GetBatchConsumerEndpoints(MqttQualityOfServiceLevel.AtLeastOnce, TimeSpan.FromSeconds(1), "topic1")
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe(
+            $"The batch size ({batchSize}) multiplied by the MaxDegreeOfParallelism ({maxDegreeOfParallelism}) exceeds the " +
+            $"ReceiveMaximum ({effectiveReceiveMaximum}), which limits the number of messages that can be waiting for acknowledgment. " +
+            "Lower the batch size or the MaxDegreeOfParallelism, or raise the ReceiveMaximum (see LimitUnacknowledgedPublications).");
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenBatchedMessagesMatchReceiveMaximum()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ReceiveMaximum = 100,
+            MaxDegreeOfParallelism = 10,
+            ConsumerEndpoints = GetBatchConsumerEndpoints(MqttQualityOfServiceLevel.AtLeastOnce, TimeSpan.FromSeconds(1), "topic1")
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenBatchedMessagesExceedReceiveMaximumWithQos0()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ReceiveMaximum = 10,
+            MaxDegreeOfParallelism = 10,
+            ConsumerEndpoints = GetBatchConsumerEndpoints(MqttQualityOfServiceLevel.AtMostOnce, null, "topic1")
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenChunkingIsEnabled()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ProducerEndpoints = GetChunkingProducerEndpoints()
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenEndpointsHaveDifferentBatchMaxWaitTime()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+            [
+                .. GetBatchConsumerEndpoints(MqttQualityOfServiceLevel.AtLeastOnce, TimeSpan.FromSeconds(1), "topic1"),
+                .. GetBatchConsumerEndpoints(MqttQualityOfServiceLevel.AtLeastOnce, TimeSpan.FromSeconds(2), "topic2")
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldStartWith("All consumer endpoints of the client must use the same batch settings.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenBatchMaxWaitTimeIsNotSetAndAnyEndpointHasQosGreaterThanZero()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+            [
+                .. GetBatchConsumerEndpoints(MqttQualityOfServiceLevel.AtMostOnce, null, "topic1"),
+                .. GetBatchConsumerEndpoints(MqttQualityOfServiceLevel.AtLeastOnce, null, "topic2")
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldStartWith("The batch MaxWaitTime must be set when consuming with QoS 1 or 2");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenChunkingIsEnabledForRetainedMessages()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ProducerEndpoints = new ValueReadOnlyCollection<MqttProducerEndpointConfiguration>(
+            [
+                GetChunkingProducerEndpoints().Single() with { Retain = true }
+            ])
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("Chunking can't be enabled for retained messages, since only the last chunk is retained.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenChunkingIsEnabledWithProtocolPriorTo500()
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            ProtocolVersion = MqttProtocolVersion.V311,
+            ProducerEndpoints = GetChunkingProducerEndpoints()
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("Chunking requires MQTT 5.");
+    }
+
     [Fact]
     public void GetMqttClientOptions_ShouldReturnClientOptions()
     {
@@ -528,4 +767,30 @@ public class MqttClientConfigurationTests
                 }
             ])
         };
+
+    private static ValueReadOnlyCollection<MqttConsumerEndpointConfiguration> GetBatchConsumerEndpoints(
+        MqttQualityOfServiceLevel qualityOfServiceLevel,
+        TimeSpan? maxWaitTime,
+        params string[] topics) =>
+        new(
+        [
+            .. topics.Select(topic => new MqttConsumerEndpointConfiguration
+            {
+                Topics = new ValueReadOnlyCollection<string>([topic]),
+                Deserializer = new JsonMessageDeserializer<TestEventOne>(),
+                QualityOfServiceLevel = qualityOfServiceLevel,
+                Batch = new BatchSettings { Size = 10, MaxWaitTime = maxWaitTime }
+            })
+        ]);
+
+    private static ValueReadOnlyCollection<MqttProducerEndpointConfiguration> GetChunkingProducerEndpoints() =>
+        new(
+        [
+            new MqttProducerEndpointConfiguration
+            {
+                EndpointResolver = new MqttStaticProducerEndpointResolver("topic1"),
+                Serializer = new JsonMessageSerializer(),
+                Chunk = new ChunkSettings { Size = 42 }
+            }
+        ]);
 }

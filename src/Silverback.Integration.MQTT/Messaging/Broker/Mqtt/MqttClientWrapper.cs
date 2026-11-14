@@ -355,7 +355,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             mqttApplicationMessage.CorrelationData = Convert.FromBase64String(correlationData);
 
         if (Configuration.AreHeadersSupported)
-            mqttApplicationMessage.UserProperties = queuedMessage.Headers?.ToUserProperties();
+            mqttApplicationMessage.UserProperties = queuedMessage.Headers?.ToUserProperties(queuedMessage.Endpoint.Configuration.Chunk is { Size: < int.MaxValue });
 
         while (!_mqttClient.IsConnected)
         {

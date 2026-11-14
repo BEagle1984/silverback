@@ -81,7 +81,7 @@ public sealed partial class ContainerLogParser : IDisposable
     [GeneratedRegex(@"Revoked partition (?<topicName>.+)\[(?<partition>\d+)\]")]
     private static partial Regex PartitionRevokedRegex();
 
-    [GeneratedRegex(@"Consumer subscribed to (?<topicName>.+?) |")]
+    [GeneratedRegex(@"Consumer subscribed to (?<topicName>.+?) \| ")]
     private static partial Regex TopicSubscribedRegex();
 
     [GeneratedRegex(@"All clients disconnected")]
@@ -372,8 +372,10 @@ public sealed partial class ContainerLogParser : IDisposable
 
         _mainViewModel.Logs.AddInformation(timestamp, message, _container);
 
-        foreach (string topicName in _container.SubscribedMqttTopics)
+        foreach (string topicFilter in _container.SubscribedMqttTopics)
         {
+            string topicName = SharedSubscriptionPrefixRegex().Replace(topicFilter, string.Empty);
+
             if (_mainViewModel.TryGetTopic(topicName, out TopicViewModel? topicViewModel) &&
                 topicViewModel is MqttTopicViewModel mqttTopicViewModel)
             {

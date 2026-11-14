@@ -83,6 +83,9 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         Client.Subscribed.AddHandler(OnClientSubscribedAsync);
         Client.Disconnecting.AddHandler(OnClientDisconnectingAsync);
         Client.Disconnected.AddHandler(OnClientDisconnectedAsync);
+
+        if (configuration.IsAcknowledgingBatches)
+            _logger.LogBatchProcessingEnabled(this);
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.Client" />
@@ -96,7 +99,9 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     /// <inheritdoc cref="Consumer{TIdentifier}.EndpointsConfiguration" />
     public new IReadOnlyCollection<MqttConsumerEndpointConfiguration> EndpointsConfiguration => Configuration.ConsumerEndpoints;
 
-    internal async Task HandleMessageAsync(ConsumedApplicationMessage message, ISequenceStore sequenceStore)
+    internal bool IsRunning => IsStartedAndNotStopping();
+
+    internal async Task<ConsumerPipelineContext> HandleMessageAsync(ConsumedApplicationMessage message, ISequenceStore sequenceStore)
     {
         _pendingMessagesCountdown.AddCount();
 
@@ -108,7 +113,8 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
             MqttConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(message.ApplicationMessage.Topic);
 
-            headers.AddIfNotExists(DefaultMessageHeaders.MessageKey, message.Id);
+            // The chunks of the same message are correlated by the message key
+            headers.AddIfNotExists(DefaultMessageHeaders.MessageKey, headers.GetValue(MqttMessageHeaders.ChunkMessageId) ?? message.Id);
 
             if (message.ApplicationMessage.ResponseTopic != null)
                 headers.AddIfNotExists(MqttMessageHeaders.ResponseTopic, message.ApplicationMessage.ResponseTopic);
@@ -116,11 +122,11 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
             if (message.ApplicationMessage.CorrelationData != null)
                 headers.AddIfNotExists(MqttMessageHeaders.CorrelationData, message.ApplicationMessage.CorrelationData.ToBase64String());
 
-            // If another message is still pending, cancel its task (might happen in case of timeout)
-            if (!_inProcessingMessages.TryAdd(message.Id, message))
+            // The same message is added again only when it's replayed after a rollback
+            if (_inProcessingMessages.GetOrAdd(message.Id, message) != message)
                 throw new InvalidOperationException("The message has been processed already.");
 
-            await HandleMessageAsync(
+            return await HandleMessageAsync(
                     message.ApplicationMessage.Payload.ToArray(),
                     headers,
                     endpoint,
@@ -132,6 +138,19 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         {
             _pendingMessagesCountdown.Signal();
         }
+    }
+
+    // Called by the MqttMessageIdentifiersTracker when the message is added to a sequence, which then commits or rolls it back
+    internal bool TryMarkTracked(MqttMessageIdentifier identifier)
+    {
+        if (identifier.ClientId != Configuration.ClientId ||
+            !_inProcessingMessages.TryGetValue(identifier.MessageId, out ConsumedApplicationMessage? message))
+        {
+            return false;
+        }
+
+        message.Channel.MarkTracked(message);
+        return true;
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.StartCoreAsync" />
@@ -166,32 +185,53 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     /// <inheritdoc cref="Consumer{TIdentifier}.CommitCoreAsync" />
     protected override async ValueTask CommitCoreAsync(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)
     {
-        ConsumedApplicationMessage? consumedMessage = PullPendingConsumedMessage(brokerMessageIdentifiers);
+        // Acknowledged in the order they were received. The messages processed in parallel, or skipped while a batch was pending, are
+        // acknowledged out of order with respect to the other messages, which the brokers accept since each acknowledgment carries its
+        // packet identifier.
+        List<ConsumedApplicationMessage> consumedMessages = PullPendingConsumedMessages(brokerMessageIdentifiers);
 
-        if (consumedMessage == null)
-            return;
+        // Marked before acknowledging the first one, since a rollback (e.g. of a sequence that failed earlier) mustn't replay them. The
+        // messages already scheduled for replay are left pending: they are processed and committed again by the replay.
+        bool[] isAcknowledged = [.. consumedMessages.Select(message => message.Channel.BeginAcknowledgment(message))];
 
-        try
+        for (int i = 0; i < consumedMessages.Count; i++)
         {
-            await AcknowledgeAsync(consumedMessage).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            // A delivery can't be acknowledged twice and only a new connection replays it: the failure must stop the channel reader
-            // like a fatal error, even if an error policy handles it, or the reader would wait forever. Wrapped because the reader
-            // would mistake an acknowledgment timeout for a cancellation and exit without disconnecting.
-            consumedMessage.TaskCompletionSource.SetException(new MqttAcknowledgeException("The message couldn't be acknowledged.", ex));
-            throw;
-        }
+            ConsumedApplicationMessage consumedMessage = consumedMessages[i];
 
-        consumedMessage.TaskCompletionSource.SetResult(true);
+            if (!isAcknowledged[i])
+                continue;
+
+            try
+            {
+                // A delivery of a disconnected session (e.g. lost while a previous acknowledgment was in progress) is replayed by the
+                // broker, and mustn't be acknowledged on the new connection
+                if (consumedMessage.Channel.IsPending(consumedMessage))
+                    await AcknowledgeAsync(consumedMessage).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                HandleAcknowledgeFailure(consumedMessages.Where((_, index) => index >= i && isAcknowledged[index]), ex);
+                throw;
+            }
+
+            consumedMessage.Channel.Acknowledged(consumedMessage);
+        }
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.RollbackCoreAsync" />
     protected override ValueTask RollbackCoreAsync(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)
     {
-        ConsumedApplicationMessage? consumedMessage = PullPendingConsumedMessage(brokerMessageIdentifiers);
-        consumedMessage?.TaskCompletionSource.SetResult(false);
+        foreach (IGrouping<ConsumerChannel, ConsumedApplicationMessage> channelMessages in PullPendingConsumedMessages(brokerMessageIdentifiers)
+                     .GroupBy(message => message.Channel))
+        {
+            ConsumerChannel channel = channelMessages.Key;
+
+            // The rolled back messages are replayed from memory, since MQTT can't seek. The reader is restarted, unless it's processing
+            // the rolled back message and reads it again right away, or it's stopping and replays the messages when restarted.
+            if (channel.Rollback([.. channelMessages]))
+                _channelsManager.RestartReading(channel);
+        }
+
         return default;
     }
 
@@ -250,8 +290,9 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         await StopAsync(false).ConfigureAwait(false);
         await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
 
-        // Old deliveries belong to the disconnected session and must be replayed by the broker
+        // Old deliveries belong to the disconnected session and must be replayed by the broker (as new deliveries)
         _channelsManager.ResetAll();
+        _inProcessingMessages.Clear();
         RevertConnectedStatus();
     }
 
@@ -262,13 +303,39 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
             SetConnectedStatus();
     }
 
-    private ConsumedApplicationMessage? PullPendingConsumedMessage(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)
+    private List<ConsumedApplicationMessage> PullPendingConsumedMessages(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)
     {
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-        string messageId = brokerMessageIdentifiers.Single().MessageId;
-        _inProcessingMessages.TryRemove(messageId, out ConsumedApplicationMessage? message);
-        return message;
+        List<ConsumedApplicationMessage> messages = new(brokerMessageIdentifiers.Count);
+
+        foreach (MqttMessageIdentifier identifier in brokerMessageIdentifiers)
+        {
+            if (_inProcessingMessages.TryRemove(identifier.MessageId, out ConsumedApplicationMessage? message))
+                messages.Add(message);
+        }
+
+        messages.Sort((x, y) => x.Position.CompareTo(y.Position));
+        return messages;
+    }
+
+    private void HandleAcknowledgeFailure(IEnumerable<ConsumedApplicationMessage> consumedMessages, Exception exception)
+    {
+        // A delivery can't be acknowledged twice and only a new connection replays it: the failure must stop the channel reader
+        // like a fatal error, even if an error policy handles it, or the reader would wait forever. Wrapped because the reader
+        // would mistake an acknowledgment timeout for a cancellation and exit without disconnecting.
+        MqttAcknowledgeException acknowledgeException = new("The message couldn't be acknowledged.", exception);
+        bool isObservedByReader = false;
+
+        // Checked and faulted atomically, since the reader can move past the message at any time
+        foreach (ConsumedApplicationMessage consumedMessage in consumedMessages)
+        {
+            isObservedByReader |= consumedMessage.Channel.FailAcknowledgment(consumedMessage, acknowledgeException);
+        }
+
+        // The reader isn't waiting for the messages of a sequence it moved past: disconnect directly
+        if (!isObservedByReader)
+            Task.Run(() => Client.DisconnectAsync().AsTask()).FireAndForget();
     }
 
     private async Task AcknowledgeAsync(ConsumedApplicationMessage consumedMessage)
