@@ -34,13 +34,4 @@ public sealed record MqttProducerEndpointConfiguration : ProducerEndpointConfigu
     ///     Gets a value indicating the behavior when no matching subscribers are found for the produced message.
     /// </summary>
     public NoMatchingSubscribersBehavior NoMatchingSubscribersBehavior { get; init; }
-
-    /// <inheritdoc cref="EndpointConfiguration.ValidateCore" />
-    protected override void ValidateCore()
-    {
-        base.ValidateCore();
-
-        if (Chunk is { Size: < int.MaxValue })
-            throw new BrokerConfigurationException("Chunking is currently not supported for MQTT.");
-    }
 }

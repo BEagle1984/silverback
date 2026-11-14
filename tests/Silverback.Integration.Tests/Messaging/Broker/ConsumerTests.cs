@@ -340,8 +340,8 @@ public class ConsumerTests
 
         public Action? StopCoreCallback { get; set; }
 
-        public ValueTask ConsumeAsync() =>
-            HandleMessageAsync([], [], TestConsumerEndpoint.GetDefault(), CurrentIdentifier, Substitute.For<ISequenceStore>());
+        public async ValueTask ConsumeAsync() =>
+            await HandleMessageAsync([], [], TestConsumerEndpoint.GetDefault(), CurrentIdentifier, Substitute.For<ISequenceStore>());
 
         protected override async ValueTask StartCoreAsync() => await StartGate;
 

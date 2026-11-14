@@ -153,6 +153,11 @@ public class MainViewModel : ViewModelBase
                 0.01));
         Topics.Add(
             new MqttTopicViewModel(
+                TopicNames.Mqtt.Batch,
+                TimeSpan.FromMilliseconds(50),
+                0.01));
+        Topics.Add(
+            new MqttTopicViewModel(
                 TopicNames.Mqtt.Unbounded,
                 TimeSpan.FromMilliseconds(50),
                 0.01));

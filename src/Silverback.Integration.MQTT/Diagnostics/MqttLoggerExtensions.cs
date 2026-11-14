@@ -39,6 +39,14 @@ internal static partial class MqttLoggerExtensions
     public static void LogNoMatchingSubscribers(this ISilverbackLogger logger, string topic) =>
         NoMatchingSubscribers(logger.InnerLogger, topic);
 
+    public static void LogBatchProcessingEnabled(this ISilverbackLogger logger, MqttConsumer consumer) =>
+        BatchProcessingEnabled(
+            logger.InnerLogger,
+            consumer.Configuration.MaxBatchedMessagesCount,
+            consumer.Configuration.BatchSize ?? 1,
+            consumer.Configuration.MaxDegreeOfParallelism,
+            consumer.DisplayName);
+
     public static void LogConnectError(
         this ISilverbackLogger logger,
         MqttClientWrapper client,
@@ -215,6 +223,24 @@ internal static partial class MqttLoggerExtensions
         "No matching subscribers found for the produced message | Topic: {Topic}",
         EventName = "Silverback.Integration.MQTT_NoMatchingSubscribers")]
     private static partial void NoMatchingSubscribers(ILogger logger, string topic);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a consumer with batch processing and QoS 1 or 2
+    ///     is created. The messages are acknowledged when their batch is processed, and the broker stops delivering when too many
+    ///     messages are waiting for acknowledgment: the broker must allow at least the logged number of unacknowledged messages.
+    /// </summary>
+    [LoggerMessage(
+        4014,
+        LogLevel.Information,
+        "Batch processing enabled: the broker must allow at least {MaxPendingMessages} unacknowledged messages " +
+        "(batch size {BatchSize}, max degree of parallelism {MaxDegreeOfParallelism}) | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.MQTT_BatchProcessingEnabled")]
+    private static partial void BatchProcessingEnabled(
+        ILogger logger,
+        long maxPendingMessages,
+        int batchSize,
+        int maxDegreeOfParallelism,
+        string consumerName);
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while connecting to the MQTT broker.

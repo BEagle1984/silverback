@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MQTTnet;
 using MQTTnet.Formatter;
+using MQTTnet.Protocol;
 using Silverback.Collections;
 using Silverback.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
@@ -80,6 +81,26 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     /// </summary>
     internal bool AreHeadersSupported => ProtocolVersion >= MqttProtocolVersion.V500;
 
+    /// <summary>
+    ///     Gets the batch size, or <c>null</c> if batch processing isn't enabled.
+    /// </summary>
+    internal int? BatchSize => ConsumerEndpoints.FirstOrDefault(endpoint => endpoint.Batch is { Size: > 1 })?.Batch?.Size;
+
+    /// <summary>
+    ///     Gets a value indicating whether the batches are acknowledged, which happens only with QoS 1 or 2.
+    /// </summary>
+    internal bool IsAcknowledgingBatches =>
+        BatchSize != null && ConsumerEndpoints.Any(endpoint => endpoint.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce);
+
+    /// <summary>
+    ///     Gets the number of deliveries that can be waiting for acknowledgment at the same time, since the batches are acknowledged when
+    ///     complete.
+    /// </summary>
+    internal long MaxBatchedMessagesCount => (long)(BatchSize ?? 1) * MaxDegreeOfParallelism;
+
+    // MQTTnet doesn't send the receive maximum if 0, and the protocol default applies
+    private int EffectiveReceiveMaximum => ReceiveMaximum == 0 ? ushort.MaxValue : ReceiveMaximum;
+
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
     {
@@ -132,6 +153,9 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
 
         if (AcknowledgmentTimeout <= TimeSpan.Zero)
             throw new BrokerConfigurationException($"{nameof(AcknowledgmentTimeout)} must be greater than zero.");
+
+        ValidateBatchProcessing();
+        ValidateChunking();
     }
 
     internal MqttClientOptions GetMqttClientOptions()
@@ -167,6 +191,63 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
                 "Cannot set MaxFailedAttempts on the error policies (except for the RetryPolicy) " +
                 "because headers (user properties) are not supported by MQTT prior to version 5.");
         }
+    }
+
+    private void ValidateBatchProcessing()
+    {
+        if (BatchSize is not { } batchSize)
+            return;
+
+        if (!AreHeadersSupported)
+            throw new BrokerConfigurationException("Batch processing requires MQTT 5.");
+
+        // All the endpoints of the client share the same channels and sequence stores, so a batch can contain messages from different
+        // endpoints (as with Kafka, when processing all partitions together)
+        if (ConsumerEndpoints.Select(endpoint => endpoint.Batch).Distinct().Skip(1).Any())
+        {
+            throw new BrokerConfigurationException(
+                "All consumer endpoints of the client must use the same batch settings. " +
+                "Use separate clients for the endpoints with different batch settings.");
+        }
+
+        // The deliveries are acknowledged only when the batch is complete
+        if (ConsumerEndpoints.All(endpoint => endpoint.QualityOfServiceLevel == MqttQualityOfServiceLevel.AtMostOnce))
+            return;
+
+        // The broker stops delivering when too many messages are waiting for acknowledgment, and a broker can enforce a limit lower than
+        // the receive maximum requested by the client: a batch could never be completed without a timeout
+        if (ConsumerEndpoints.First().Batch?.MaxWaitTime == null)
+        {
+            throw new BrokerConfigurationException(
+                "The batch MaxWaitTime must be set when consuming with QoS 1 or 2, since the broker stops delivering when too many " +
+                "messages are waiting for acknowledgment, which could prevent the batch from being completed.");
+        }
+
+        if (MaxBatchedMessagesCount > EffectiveReceiveMaximum)
+        {
+            throw new BrokerConfigurationException(
+                $"The batch size ({batchSize}) multiplied by the {nameof(MaxDegreeOfParallelism)} ({MaxDegreeOfParallelism}) exceeds " +
+                $"the {nameof(ReceiveMaximum)} ({EffectiveReceiveMaximum}), which limits the number of messages that can be waiting " +
+                $"for acknowledgment. Lower the batch size or the {nameof(MaxDegreeOfParallelism)}, or raise the {nameof(ReceiveMaximum)} " +
+                "(see LimitUnacknowledgedPublications).");
+        }
+    }
+
+    private void ValidateChunking()
+    {
+        MqttProducerEndpointConfiguration[] chunkingEndpoints =
+            [.. ProducerEndpoints.Where(endpoint => endpoint.Chunk is { Size: < int.MaxValue })];
+
+        if (chunkingEndpoints.Length == 0)
+            return;
+
+        // The chunks are correlated by the headers (user properties)
+        if (!AreHeadersSupported)
+            throw new BrokerConfigurationException("Chunking requires MQTT 5.");
+
+        // The broker retains only the last message of each topic, which is a single chunk
+        if (chunkingEndpoints.Any(endpoint => endpoint.Retain))
+            throw new BrokerConfigurationException("Chunking can't be enabled for retained messages, since only the last chunk is retained.");
     }
 
     // The messages are routed by topic and the broker delivers a copy per subscription, so a filter can't be subscribed more than once,

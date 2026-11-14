@@ -24,7 +24,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker;
 
-public class MqttConsumerTests
+public partial class MqttConsumerTests
 {
     private static readonly TimeSpan ReconnectTimeout = TimeSpan.FromSeconds(10);
 
