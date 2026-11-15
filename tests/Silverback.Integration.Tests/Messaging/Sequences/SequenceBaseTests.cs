@@ -1018,24 +1018,38 @@ public class SequenceBaseTests
     public async Task AddAsync_ShouldMeasureTimeoutAccordingToTimeoutMode(bool isAbsolute)
     {
         SequenceTimeoutMode timeoutMode = isAbsolute ? SequenceTimeoutMode.Absolute : SequenceTimeoutMode.Sliding;
-        using TimeoutTrackingTestSequence sequence = new(CreateContext(new HookLogger()), TimeSpan.FromSeconds(1), true, timeoutMode);
+        TimeSpan timeout = TimeSpan.FromSeconds(1);
+        using TimeoutTrackingTestSequence sequence = new(CreateContext(new HookLogger()), timeout, true, timeoutMode);
         Stopwatch stopwatch = Stopwatch.StartNew();
+        TimeSpan lastAddTime = TimeSpan.Zero;
+        TimeSpan maxGapBetweenAdds = TimeSpan.Zero;
 
         // The messages keep arriving more often than the timeout (1 second), for more than twice the timeout
         while (stopwatch.Elapsed < TimeSpan.FromMilliseconds(2500) && !sequence.TimeoutElapsed.IsCompleted)
         {
             await sequence.AddAsync(CreateEnvelope(), null, false).WaitAsync(Timeout);
+
+            TimeSpan addTime = stopwatch.Elapsed;
+            maxGapBetweenAdds = TimeSpan.FromTicks(Math.Max(maxGapBetweenAdds.Ticks, (addTime - lastAddTime).Ticks));
+            lastAddTime = addTime;
+
             await Task.Delay(100);
         }
 
+        bool isTimeoutElapsed = sequence.TimeoutElapsed.IsCompleted;
+        maxGapBetweenAdds = TimeSpan.FromTicks(Math.Max(maxGapBetweenAdds.Ticks, (stopwatch.Elapsed - lastAddTime).Ticks));
+
         if (isAbsolute)
         {
-            sequence.TimeoutElapsed.IsCompleted.ShouldBeTrue();
+            isTimeoutElapsed.ShouldBeTrue();
             stopwatch.Elapsed.ShouldBeGreaterThanOrEqualTo(TimeSpan.FromMilliseconds(990));
         }
         else
         {
-            sequence.TimeoutElapsed.IsCompleted.ShouldBeFalse();
+            // The sliding timeout may rightly elapse only if the test runner stalled for longer than the timeout between two messages
+            if (maxGapBetweenAdds < timeout * 0.9)
+                isTimeoutElapsed.ShouldBeFalse();
+
             await sequence.TimeoutElapsed.WaitAsync(Timeout);
         }
     }
