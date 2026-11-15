@@ -587,24 +587,24 @@ internal static partial class KafkaLoggerExtensions
     private static partial void StatisticsDeserializationError(ILogger logger, Exception exception);
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while the consumer leaves the
-    ///     group, before being closed.
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while the consumer prepares to be
+    ///     closed, leaving the group (unless it's a static member) and running the pending rebalance callbacks.
     /// </summary>
     [LoggerMessage(
         2044,
         LogLevel.Warning,
-        "Error occurred leaving the consumer group before closing the consumer | ConsumerName: {ConsumerName}",
+        "Error occurred preparing the consumer to be closed | ConsumerName: {ConsumerName}",
         EventName = "Silverback.Integration.Kafka_ConsumerLeaveGroupError")]
     private static partial void ConsumerLeaveGroupError(ILogger logger, string consumerName, Exception exception);
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer doesn't leave the group within the
-    ///     timeout (its assignment isn't released or the LeaveGroup request isn't sent), before being closed.
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer isn't ready to be closed within the
+    ///     timeout (e.g. its assignment isn't released or the LeaveGroup request isn't sent).
     /// </summary>
     [LoggerMessage(
         2045,
         LogLevel.Warning,
-        "The consumer group wasn't left within {Timeout}; the consumer will be closed anyway | ConsumerName: {ConsumerName}",
+        "The consumer wasn't ready to be closed within {Timeout}; it will be closed anyway | ConsumerName: {ConsumerName}",
         EventName = "Silverback.Integration.Kafka_ConsumerLeaveGroupTimeout")]
     private static partial void ConsumerLeaveGroupTimeout(ILogger logger, TimeSpan timeout, string consumerName);
 

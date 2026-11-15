@@ -227,6 +227,46 @@ public class RebalanceTests : KafkaTests
     }
 
     [Fact]
+    public async Task Rebalance_ShouldRevokePartitionsAndCommit_WhenStaticMemberDisconnects()
+    {
+        PartitionCallbacksHandler partitionCallbacksHandler = new();
+        int receivedMessages = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .WithGroupInstanceId("static-member")
+                    .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonBrokerClientCallback(partitionCallbacksHandler)
+            .AddDelegateSubscriber<TestEventWithKafkaKey>(HandleMessage));
+
+        void HandleMessage(TestEventWithKafkaKey dummy) => Interlocked.Increment(ref receivedMessages);
+
+        KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 5; i++)
+        {
+            await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = i });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        receivedMessages.ShouldBe(5);
+
+        await consumer.Client.DisconnectAsync();
+
+        // The static member doesn't unsubscribe, to keep its membership: closing it revokes its assignment and commits its offsets
+        partitionCallbacksHandler.RevokedPartitions[consumer].Count.ShouldBe(3);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
+    }
+
+    [Fact]
     public async Task Rebalance_ShouldCommitPendingOffsets()
     {
         int receivedMessages = 0;

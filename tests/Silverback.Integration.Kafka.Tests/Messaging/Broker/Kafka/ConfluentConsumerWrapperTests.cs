@@ -544,8 +544,8 @@ public class ConfluentConsumerWrapperTests
     [InlineData(null, null, null)]
     [InlineData(null, PartitionAssignmentStrategy.Range, null)]
     [InlineData(GroupProtocol.Classic, PartitionAssignmentStrategy.RoundRobin, null)]
-    [InlineData(null, PartitionAssignmentStrategy.CooperativeSticky, "instance-1")]
     [InlineData(GroupProtocol.Consumer, PartitionAssignmentStrategy.CooperativeSticky, null)]
+    [InlineData(GroupProtocol.Consumer, null, "instance-1")]
     public async Task DisconnectAsync_ShouldCloseOnceAssignmentIsReleased_WhenNotUsingCooperativeAssignmentStrategyWithDynamicMembership(
         GroupProtocol? groupProtocol,
         PartitionAssignmentStrategy? partitionAssignmentStrategy,
@@ -581,6 +581,71 @@ public class ConfluentConsumerWrapperTests
 
         nativeCalls.ShouldBe(["Unsubscribe", "Consume", "Consume", "Close"]);
         _loggerSubstitute.DidNotReceive(LogLevel.Warning, null, eventId: 2045);
+    }
+
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData(GroupProtocol.Classic, PartitionAssignmentStrategy.Range)]
+    [InlineData(null, PartitionAssignmentStrategy.CooperativeSticky)]
+    public async Task DisconnectAsync_ShouldCloseWithoutUnsubscribing_WhenStaticMemberOfClassicGroup(
+        GroupProtocol? groupProtocol,
+        PartitionAssignmentStrategy? partitionAssignmentStrategy)
+    {
+        await using ConfluentConsumerWrapper consumer =
+            await GetConnectedConsumerAsync(
+                groupProtocol: groupProtocol,
+                partitionAssignmentStrategy: partitionAssignmentStrategy,
+                groupInstanceId: "instance-1");
+        ConcurrentQueue<string> nativeCalls = [];
+
+        // The assignment isn't released before Close
+        _confluentConsumer.Assignment.Returns(_ => [new TopicPartition("topic", 0)]);
+        _confluentConsumer.MemberId.Returns("member-1");
+        RecordPauseAndClose(nativeCalls);
+        _confluentConsumer.When(native => native.Consume(Arg.Any<TimeSpan>())).Do(_ =>
+        {
+            // The consume loop polls until the disconnect stops it
+            if (!nativeCalls.IsEmpty)
+                nativeCalls.Enqueue("Consume");
+        });
+
+        await consumer.DisconnectAsync();
+
+        nativeCalls.ShouldBe(["Pause 0", "Consume", "Close"]);
+        _confluentConsumer.DidNotReceive().Unsubscribe();
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null, eventId: 2045);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldPauseNewAssignment_WhenStaticMemberOfClassicGroupPollsRecord()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync(groupInstanceId: "instance-1");
+        ConcurrentQueue<string> nativeCalls = [];
+        List<TopicPartition> assignment = [new("topic", 0)];
+
+        _confluentConsumer.Assignment.Returns(_ => assignment);
+        RecordPauseAndClose(nativeCalls);
+
+        // A callback run by the first poll assigns a partition, whose prefetched record the poll returns
+        _confluentConsumer.Consume(Arg.Any<TimeSpan>()).Returns<ConsumeResult<byte[]?, byte[]?>?>(_ =>
+        {
+            // The consume loop polls until the disconnect stops it
+            if (nativeCalls.IsEmpty)
+                return null;
+
+            nativeCalls.Enqueue("Consume");
+
+            if (nativeCalls.Count(call => call == "Consume") > 1)
+                return null;
+
+            assignment.Add(new TopicPartition("topic", 1));
+            return new ConsumeResult<byte[]?, byte[]?>();
+        });
+
+        await consumer.DisconnectAsync();
+
+        nativeCalls.ShouldBe(["Pause 0", "Consume", "Pause 0,1", "Consume", "Close"]);
+        _confluentConsumer.DidNotReceive().Unsubscribe();
     }
 
     [Fact]
@@ -738,5 +803,16 @@ public class ConfluentConsumerWrapperTests
         await consumer.ConnectAsync();
 
         return consumer;
+    }
+
+    private void RecordPauseAndClose(ConcurrentQueue<string> nativeCalls)
+    {
+        _confluentConsumer.When(native => native.Pause(Arg.Any<IEnumerable<TopicPartition>>())).Do(call =>
+        {
+            IEnumerable<int> partitions = call.Arg<IEnumerable<TopicPartition>>().Select(partition => partition.Partition.Value);
+            nativeCalls.Enqueue($"Pause {string.Join(',', partitions)}");
+        });
+
+        _confluentConsumer.When(native => native.Close()).Do(_ => nativeCalls.Enqueue("Close"));
     }
 }
