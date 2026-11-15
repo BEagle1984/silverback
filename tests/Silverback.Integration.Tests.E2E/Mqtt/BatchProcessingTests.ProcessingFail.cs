@@ -27,6 +27,7 @@ public partial class BatchProcessingTests
     {
         int receivedMessages = 0;
 
+        // Produce via a separate client, which is not disconnected when the consumer stops
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
             .AddSilverback()
@@ -34,11 +35,13 @@ public partial class BatchProcessingTests
             .AddMqttClients(clients => clients
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
-                    .WithClientId(DefaultClientId)
-                    .RequestPersistentSession()
+                    .WithClientId("producer")
                     .Produce<TestEventOne>(endpoint => endpoint
                         .ProduceTo(DefaultTopicName)
-                        .WithAtLeastOnceQoS())
+                        .WithAtLeastOnceQoS()))
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
@@ -488,6 +491,7 @@ public partial class BatchProcessingTests
     {
         int tryCount = 0;
 
+        // Produce via a separate client, which is not disconnected when the consumer stops
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
             .AddSilverback()
@@ -495,11 +499,13 @@ public partial class BatchProcessingTests
             .AddMqttClients(clients => clients
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
-                    .WithClientId(DefaultClientId)
-                    .RequestPersistentSession()
+                    .WithClientId("producer")
                     .Produce<TestEventOne>(endpoint => endpoint
                         .ProduceTo(DefaultTopicName)
-                        .WithAtLeastOnceQoS())
+                        .WithAtLeastOnceQoS()))
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
