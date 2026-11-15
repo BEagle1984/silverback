@@ -44,7 +44,7 @@ jobs:
             /n:silverback \
             /v:"$version" \
             /d:sonar.token="$SONAR_TOKEN" \
-            /d:sonar.exclusions="**/obj/**,**/*.dll,docs/**" \
+            /d:sonar.exclusions="**/obj/**,**/*.dll,docs/**,.claude/**" \
             /d:sonar.cs.opencover.reportsPaths="$GITHUB_WORKSPACE/**/coverage.*.opencover.xml" \
             /d:sonar.cs.vstest.reportsPaths="$GITHUB_WORKSPACE/tests/**/TestResults/*.trx"
       - name: Build (${{ env.BUILD_CONFIGURATION }})
