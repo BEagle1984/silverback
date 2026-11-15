@@ -272,7 +272,7 @@ public class OutboxWorkerServiceTests
         // The scheduled pass failed and is now waiting for the (very long) retry delay
         await Task.Delay(100);
 
-        await outboxWorkerService.ProcessUntilEmptyAsync(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(5));
+        await Should.NotThrowAsync(outboxWorkerService.ProcessUntilEmptyAsync(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(5)));
 
         await outboxWorkerService.StopAsync(CancellationToken.None);
     }

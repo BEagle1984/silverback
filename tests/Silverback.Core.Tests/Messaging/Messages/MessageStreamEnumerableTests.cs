@@ -542,8 +542,8 @@ public class MessageStreamEnumerableTests
         MessageStreamEnumerable<Message> stream = new();
         stream.Detach();
 
-        await stream.PushAsync(new Message(1)).WaitAsync(Timeout);
-        await stream.PushAsync(new Message(2)).WaitAsync(Timeout);
+        await Should.NotThrowAsync(stream.PushAsync(new Message(1)).WaitAsync(Timeout));
+        await Should.NotThrowAsync(stream.PushAsync(new Message(2)).WaitAsync(Timeout));
     }
 
     [Fact]
