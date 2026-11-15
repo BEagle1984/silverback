@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
@@ -319,6 +320,34 @@ public partial class ProducerEndpointTests : MqttTests
         await publisher.PublishEventAsync(new TestEventOne());
 
         GetDefaultTopicMessages().Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldNotBlockClient_WhenPublishingSynchronouslyAfterPublishingCollection()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        // Run without synchronization context, like most applications do
+        bool hasPublished = await Task.Run(async () =>
+        {
+            await publisher.PublishAsync(new[] { new TestEventOne(), new TestEventOne() }.AsEnumerable()).ConfigureAwait(false);
+
+            // Block the current thread as the synchronous publish would, but give up after the timeout to fail instead of hanging
+            return Task.Run(() => publisher.Publish(new TestEventOne())).Wait(TimeSpan.FromSeconds(5));
+        }).WaitAsync(TimeSpan.FromSeconds(10));
+
+        hasPublished.ShouldBeTrue();
+        GetDefaultTopicMessages().Count.ShouldBe(3);
     }
 
     private sealed class PublishOnStartHostedService : IHostedService
