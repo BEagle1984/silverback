@@ -38,11 +38,8 @@ public class ProducerPipelineContext<TState> : ProducerPipelineContext
     {
     }
 
-    internal Action<IBrokerMessageIdentifier?, TState>? OnSuccess { get; set; }
-
-    internal Action<Exception, TState>? OnError { get; set; }
-
-    internal TState? CallbackState { get; set; }
+    // Shared by the context and all its clones (e.g. one per chunk)
+    internal ProduceCallbackTracker<TState>? CallbackTracker { get; set; }
 
     /// <inheritdoc cref="ProducerPipelineContext.Clone" />
     public override ProducerPipelineContext Clone(IOutboundEnvelope? newEnvelope = null) =>
@@ -50,8 +47,6 @@ public class ProducerPipelineContext<TState> : ProducerPipelineContext
         {
             CurrentStepIndex = CurrentStepIndex,
             BrokerMessageIdentifier = BrokerMessageIdentifier,
-            OnSuccess = OnSuccess,
-            OnError = OnError,
-            CallbackState = CallbackState
+            CallbackTracker = CallbackTracker
         };
 }
