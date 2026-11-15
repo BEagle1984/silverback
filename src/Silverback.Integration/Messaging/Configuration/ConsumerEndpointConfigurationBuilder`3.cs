@@ -8,6 +8,7 @@ using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Consuming.Filter;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -167,6 +168,12 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     /// <summary>
     ///     Specifies that the message has to be silently ignored if no subscriber is handling it.
     /// </summary>
+    /// <remarks>
+    ///     An ignored message isn't added to the sequence it belongs to and doesn't count toward its length. A custom
+    ///     <see cref="ISequenceReader" /> whose sequences are completed by their last message, or by a total length equal to the fixed number
+    ///     of messages they are made of, doesn't complete a sequence whose last message (or any message, with a total length) is ignored,
+    ///     which is eventually aborted as incomplete. The built-in batches, chunked messages and streams aren't affected.
+    /// </remarks>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>

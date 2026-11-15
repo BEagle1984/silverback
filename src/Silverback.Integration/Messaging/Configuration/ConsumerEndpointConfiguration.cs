@@ -40,6 +40,11 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
     ///     Gets a value indicating whether an exception must be thrown if no subscriber is handling the
     ///     received message. The default is <c>true</c>.
     /// </summary>
+    /// <remarks>
+    ///     When <c>false</c>, an unhandled message is ignored without being added to the sequence it belongs to, which can prevent a custom
+    ///     sequence from being completed (see
+    ///     <see cref="ConsumerEndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.IgnoreUnhandledMessages" />).
+    /// </remarks>
     public bool ThrowIfUnhandled { get; init; } = true;
 
     /// <summary>
@@ -78,8 +83,8 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
     ///     </para>
     ///     <para>
     ///         A filtered message isn't added to the sequence it belongs to and doesn't count toward its length. A custom
-    ///         <see cref="ISequenceReader" /> whose sequences are completed by their last message or by their total length should therefore
-    ///         not be combined with a filter: a sequence whose last message (or any message, with a total length) is filtered out isn't
+    ///         <see cref="ISequenceReader" /> whose sequences are completed by their last message, or by a total length equal to the fixed
+    ///         number of messages they are made of, should therefore not be combined with a filter: a sequence whose last message (or any message, with a total length) is filtered out isn't
     ///         completed and is eventually aborted as incomplete. The built-in batches, chunked messages and streams aren't affected.
     ///     </para>
     /// </remarks>
