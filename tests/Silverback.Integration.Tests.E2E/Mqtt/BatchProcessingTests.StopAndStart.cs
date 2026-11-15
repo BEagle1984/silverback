@@ -32,7 +32,9 @@ public partial class BatchProcessingTests
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()

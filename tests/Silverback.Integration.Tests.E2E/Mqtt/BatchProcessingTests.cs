@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using MQTTnet.Protocol;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
@@ -28,8 +29,11 @@ public partial class BatchProcessingTests : MqttTests
     {
     }
 
-    [Fact]
-    public async Task Batch_ShouldConsumeAndAcknowledgeInBatch()
+    [Theory]
+    [InlineData(MqttQualityOfServiceLevel.AtMostOnce)]
+    [InlineData(MqttQualityOfServiceLevel.AtLeastOnce)]
+    [InlineData(MqttQualityOfServiceLevel.ExactlyOnce)]
+    public async Task Batch_ShouldConsumeAndAcknowledgeInBatch(MqttQualityOfServiceLevel qualityOfServiceLevel)
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
@@ -42,10 +46,12 @@ public partial class BatchProcessingTests : MqttTests
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithQualityOfServiceLevel(qualityOfServiceLevel))
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
-                        .WithAtLeastOnceQoS()
+                        .WithQualityOfServiceLevel(qualityOfServiceLevel)
                         .EnableBatchProcessing(10, TimeSpan.FromMinutes(5)))))
             .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync));
 
@@ -110,7 +116,9 @@ public partial class BatchProcessingTests : MqttTests
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
                     .EnableParallelProcessing(3)
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
@@ -153,8 +161,11 @@ public partial class BatchProcessingTests : MqttTests
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 
-    [Fact]
-    public async Task Batch_ShouldReplayBatchInOrder_WhenRetryPolicyIsApplied()
+    [Theory]
+    [InlineData(MqttQualityOfServiceLevel.AtMostOnce)]
+    [InlineData(MqttQualityOfServiceLevel.AtLeastOnce)]
+    [InlineData(MqttQualityOfServiceLevel.ExactlyOnce)]
+    public async Task Batch_ShouldReplayBatchInOrder_WhenRetryPolicyIsApplied(MqttQualityOfServiceLevel qualityOfServiceLevel)
     {
         TestingCollection<List<string?>> receivedBatches = [];
         int tryCount = 0;
@@ -167,10 +178,12 @@ public partial class BatchProcessingTests : MqttTests
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithQualityOfServiceLevel(qualityOfServiceLevel))
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
-                        .WithAtLeastOnceQoS()
+                        .WithQualityOfServiceLevel(qualityOfServiceLevel)
                         .EnableBatchProcessing(5, TimeSpan.FromMinutes(5))
                         .OnError(policy => policy.Retry(2)))))
             .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync));
@@ -222,7 +235,9 @@ public partial class BatchProcessingTests : MqttTests
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
                     .EnableParallelProcessing(2)
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
@@ -272,7 +287,9 @@ public partial class BatchProcessingTests : MqttTests
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
@@ -322,7 +339,9 @@ public partial class BatchProcessingTests : MqttTests
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
