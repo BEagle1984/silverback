@@ -35,6 +35,11 @@ public sealed class LogEventsCollector : ILoggerProvider, ILogger
     public bool ContainsSequenceAddCanceled(string sequenceType) =>
         Contains(IntegrationLogEvents.Tracing.EventId, $"skipping add to {sequenceType} ");
 
+    // Whether a sequence of the specified type started completing (e.g. because its max wait time elapsed): the trace is written right
+    // before its streams are completed
+    public bool ContainsSequenceCompleting(string sequenceType) =>
+        Contains(IntegrationLogEvents.Tracing.EventId, $"Completing {sequenceType} ");
+
     public ILogger CreateLogger(string categoryName) => this;
 
     public IDisposable? BeginScope<TState>(TState state)

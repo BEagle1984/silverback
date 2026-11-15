@@ -23,6 +23,7 @@ using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
@@ -704,6 +705,81 @@ public class SequenceBaseTests
         sequence.GetCommitIdentifiers().ShouldBe([firstEnvelope.BrokerMessageIdentifier]);
     }
 
+    [Theory]
+    [InlineData("completed")]
+    [InlineData("skipped")]
+    [InlineData("retried")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The subscriber task is awaited before the disposal")]
+    public async Task AddAsync_ShouldRefuseMessage_WhenSequenceIsCompletedAfterEnumerationIsAbortedBeforeMessageIsPulled(string outcome)
+    {
+        IErrorPolicy errorPolicy = outcome == "retried" ? new RetryErrorPolicy { MaxFailedAttempts = 2 } : new SkipMessageErrorPolicy();
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), errorPolicy), trackIdentifiers: true);
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+        RawInboundEnvelope secondEnvelope = CreateEnvelope();
+        TaskCompletionSource secondMessagePushed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>(
+        [
+            new DelegateMessageFilter(message =>
+            {
+                if (ReferenceEquals(message, secondEnvelope))
+                    secondMessagePushed.TrySetResult();
+
+                return true;
+            })
+        ]);
+        TaskCompletionSource firstMessagePulled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        using CancellationTokenSource subscriberCancellationTokenSource = new();
+
+        // The subscriber stops enumerating while waiting for the next message (e.g. canceled by its own token)
+        Task subscriberTask = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream.WithCancellation(subscriberCancellationTokenSource.Token))
+                {
+                    firstMessagePulled.TrySetResult();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Stopped enumerating
+            }
+        });
+
+        RawInboundEnvelope firstEnvelope = CreateEnvelope();
+        AddToSequenceResult firstResult = await sequence.AddAsync(firstEnvelope, null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+        await firstMessagePulled.Task.WaitAsync(Timeout);
+        await subscriberCancellationTokenSource.CancelAsync();
+        await subscriberTask.WaitAsync(Timeout);
+
+        // The next message is pushed, but nobody pulls it. The subscriber returned (abandoning the stream, see SubscribedMethodInvoker)
+        // and the sequence is completed (e.g. by the max wait time) before the early exit handling aborts it, acknowledging the push.
+        // The completion waits for the message being delivered to the stream, which the filter signals.
+        using HookChildSequence childSequence = new(ConsumerPipelineContextHelper.CreateSubstitute(), () => { });
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(secondEnvelope, childSequence, true);
+        await secondMessagePushed.Task.WaitAsync(Timeout);
+        ((MessageStreamEnumerable<IRawInboundEnvelope>)stream).Abandon();
+        await sequence.CompleteFromTestAsync().WaitAsync(Timeout);
+        sequence.IsComplete.ShouldBeTrue();
+
+        // Then the sequence is committed or, if the subscriber failed (rethrowing the cancellation), skipped or rolled back
+        if (outcome == "completed")
+            ((ISequenceImplementation)sequence).NotifyProcessingCompleted();
+        else
+            await sequence.AbortAsync(SequenceAbortReason.Error, new OperationCanceledException("test")).WaitAsync(Timeout);
+
+        AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+        // The message isn't committed (or skipped) with the sequence without being processed, but added to the next sequence, unless the
+        // sequence is rolled back, consuming the message again (an aborted result counts as handled, see AddToSequenceResult.Aborted)
+        result.IsSuccess.ShouldBe(outcome == "retried");
+        result.IsAborted.ShouldBe(outcome == "retried");
+        childSequence.Parent.ShouldBeNull();
+        sequence.Length.ShouldBe(1);
+        sequence.GetCommitIdentifiers().ShouldBe([firstEnvelope.BrokerMessageIdentifier]);
+    }
+
     [Fact]
     public async Task AddAsync_ShouldKeepSequenceLinked_WhenStreamsAreAbortedBeforeSequenceWhilePushing()
     {
@@ -1049,6 +1125,13 @@ public class SequenceBaseTests
         }
 
         private protected override bool IsMessageRefusedByAbortAddedToNextSequence => true;
+
+        public Task CompleteFromTestAsync() => CompleteAsync();
+    }
+
+    private sealed class DelegateMessageFilter(Func<object, bool> mustProcess) : IMessageFilter
+    {
+        public bool MustProcess(object message) => mustProcess(message);
     }
 
     // Runs the action when it's linked to the parent sequence, right before the message is pushed, to deterministically reproduce the

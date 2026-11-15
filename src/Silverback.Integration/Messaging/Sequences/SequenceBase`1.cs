@@ -66,7 +66,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     private TEnvelope? _pushedEnvelope;
 
     // Set by the subscriber pulling the envelope being pushed, so it only holds the last pulled envelope. The early exit handling reads
-    // it only after the subscribers returned, which orders the read after their pulls.
+    // it only after the subscribers returned, and AddCoreAsync only after the push completed, which orders the read after their pulls:
+    // a subscriber pulls the envelope before acknowledging its push (requesting the next message, or returning, see
+    // MessageStreamEnumerable.Abandon).
     private TEnvelope? _lastPulledEnvelope;
 
     private DateTime _timeoutExpiration = DateTime.MaxValue;
@@ -75,8 +77,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private bool _isTimeoutTimerInitialized;
 
-    // Set by AddCoreAsync when it refuses the message because the timeout elapsed or the sequence was aborted after being found pending
-    // (see IsMessageRefusedByAbortAddedToNextSequence): accessed only holding the add semaphore
+    // Set by AddCoreAsync when it refuses the message because the timeout elapsed, the sequence was aborted after being found pending or
+    // completed while pushing, or no subscriber pulled the message (see IsMessageRefusedByAbortAddedToNextSequence): accessed only holding
+    // the add semaphore
     private bool _isAddRefused;
 
     private bool _isDisposed;
@@ -219,7 +222,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     because the subscriber stopped enumerating it) is added to the next sequence when the abort commits the sequence, like the
     ///     message refused because of the timeout, instead of being left out (and committed with the next message without being
     ///     processed). Otherwise the abort decides for the refused message as well (e.g. the chunks of an aborted chunk sequence are
-    ///     skipped).
+    ///     skipped). It also refuses the message that no subscriber pulled, whose push was acknowledged by the completion of the
+    ///     streams whose subscriber stopped enumerating (see AddCoreAsync), adding it to the next sequence.
     /// </summary>
     private protected virtual bool IsMessageRefusedByAbortAddedToNextSequence => false;
 
@@ -404,7 +408,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </summary>
     /// <remarks>
     ///     The result is reliable once the subscribers returned, for example when the sequence is aborted because they stopped
-    ///     enumerating.
+    ///     enumerating, or once the push of the envelope completed, since a subscriber pulls it before acknowledging the push.
     /// </remarks>
     /// <param name="envelope">
     ///     The envelope that was added to the sequence.
@@ -538,6 +542,18 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             // once the abort completed
             _isAddRefused = true;
             throw new OperationCanceledException("The sequence was aborted.");
+        }
+
+        // The completion (e.g. by the max wait time) acknowledges the pending push of the streams whose subscriber stopped enumerating
+        // (see MessageStreamEnumerable.Abandon), as if the message had been processed. That holds when the subscriber stopped after
+        // pulling it (e.g. with a break), but not when it stopped while waiting for it (e.g. canceling the enumeration with its own
+        // token). A batch refuses the message that no subscriber pulled, which is added to the next batch, like when the subscribers
+        // stop enumerating before the abort (see above), instead of being committed without being processed.
+        if (IsRefusedMessageAddedToNextSequence && !IsLastPulled(envelope))
+        {
+            RemoveChildSequence(sequence);
+            _isAddRefused = true;
+            throw new OperationCanceledException("The message was acknowledged without being pulled by any subscriber.");
         }
 
         Length++; // Increment only after checking that the message was pushed to at least one stream
