@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
+using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
@@ -15,7 +17,7 @@ namespace Silverback.Tests.Integration.Messaging.Producing.Filter;
 public class GenericOutboundMessageFilterTests
 {
     [Fact]
-    public void ShouldProduce_ShouldEvaluateMessageFilter()
+    public async Task ShouldProduceAsync_ShouldEvaluateMessageFilter()
     {
         OutboundEnvelope<TestEventOne> envelope1 = new(
             new TestEventOne { Content = "yes" },
@@ -30,12 +32,12 @@ public class GenericOutboundMessageFilterTests
 
         GenericOutboundMessageFilter<TestEventOne> filter = new(testEventOne => testEventOne?.Content == "yes");
 
-        filter.ShouldProduce(envelope1).ShouldBeTrue();
-        filter.ShouldProduce(envelope2).ShouldBeFalse();
+        (await filter.ShouldProduceAsync(envelope1, CancellationToken.None)).ShouldBeTrue();
+        (await filter.ShouldProduceAsync(envelope2, CancellationToken.None)).ShouldBeFalse();
     }
 
     [Fact]
-    public void ShouldProduce_ShouldEvaluateEnvelopeFilter()
+    public async Task ShouldProduceAsync_ShouldEvaluateEnvelopeFilter()
     {
         OutboundEnvelope<TestEventOne> envelope1 = new(
             new TestEventOne { Content = "yes" },
@@ -50,12 +52,12 @@ public class GenericOutboundMessageFilterTests
 
         GenericOutboundMessageFilter<TestEventOne> filter = new(envelope => envelope.Message?.Content == "yes");
 
-        filter.ShouldProduce(envelope1).ShouldBeTrue();
-        filter.ShouldProduce(envelope2).ShouldBeFalse();
+        (await filter.ShouldProduceAsync(envelope1, CancellationToken.None)).ShouldBeTrue();
+        (await filter.ShouldProduceAsync(envelope2, CancellationToken.None)).ShouldBeFalse();
     }
 
     [Fact]
-    public void ShouldProduce_ShouldReturnFalse_WhenMessageTypeMismatch()
+    public async Task ShouldProduceAsync_ShouldReturnFalse_WhenMessageTypeMismatch()
     {
         OutboundEnvelope<TestEventOne> testEnvelope = new(
             new TestEventOne { Content = "yes" },
@@ -65,6 +67,6 @@ public class GenericOutboundMessageFilterTests
 
         GenericOutboundMessageFilter<TestEventTwo> filter = new(envelope => envelope.Message?.Content == "yes");
 
-        filter.ShouldProduce(testEnvelope).ShouldBeFalse();
+        (await filter.ShouldProduceAsync(testEnvelope, CancellationToken.None)).ShouldBeFalse();
     }
 }
