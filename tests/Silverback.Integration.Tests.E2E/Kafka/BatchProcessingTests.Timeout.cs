@@ -50,6 +50,57 @@ public partial class BatchProcessingTests
     }
 
     [Fact]
+    public async Task Batch_ShouldCompleteBatchAfterMaxWaitTimeFromFirstMessage_WhenMessagesKeepArriving()
+    {
+        TestingCollection<List<TestEventOne>> receivedBatches = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(1000, TimeSpan.FromMilliseconds(500)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<TestEventOne> list = [];
+            receivedBatches.Add(list);
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        // A message every 50 milliseconds, for at least 3 seconds: the batches are completed by the max wait time while the messages keep
+        // arriving, instead of only once the messages stop
+        for (int i = 1; i <= 60; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await Task.Delay(50);
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 60);
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        receivedBatches.Count.ShouldBeGreaterThanOrEqualTo(3);
+        receivedBatches.SelectMany(batch => batch).Select(message => message.ContentEventOne).ShouldBe(
+            Enumerable.Range(1, 60).Select(i => $"{i}"));
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(60);
+    }
+
+    [Fact]
     public async Task Batch_ShouldCompletePendingBatchAfterTimeout()
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];

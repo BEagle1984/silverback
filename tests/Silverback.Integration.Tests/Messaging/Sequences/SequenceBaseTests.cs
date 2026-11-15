@@ -825,6 +825,34 @@ public class SequenceBaseTests
         stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromMilliseconds(1600));
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task AddAsync_ShouldMeasureTimeoutAccordingToTimeoutMode(bool isAbsolute)
+    {
+        SequenceTimeoutMode timeoutMode = isAbsolute ? SequenceTimeoutMode.Absolute : SequenceTimeoutMode.Sliding;
+        using TimeoutTrackingTestSequence sequence = new(CreateContext(new HookLogger()), TimeSpan.FromSeconds(1), true, timeoutMode);
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        // The messages keep arriving more often than the timeout (1 second), for more than twice the timeout
+        while (stopwatch.Elapsed < TimeSpan.FromMilliseconds(2500) && !sequence.TimeoutElapsed.IsCompleted)
+        {
+            await sequence.AddAsync(CreateEnvelope(), null, false).WaitAsync(Timeout);
+            await Task.Delay(100);
+        }
+
+        if (isAbsolute)
+        {
+            sequence.TimeoutElapsed.IsCompleted.ShouldBeTrue();
+            stopwatch.Elapsed.ShouldBeGreaterThanOrEqualTo(TimeSpan.FromMilliseconds(990));
+        }
+        else
+        {
+            sequence.TimeoutElapsed.IsCompleted.ShouldBeFalse();
+            await sequence.TimeoutElapsed.WaitAsync(Timeout);
+        }
+    }
+
     [Fact]
     public async Task AddAsync_ShouldEnforceTimeoutAgainAtTimeoutInterval_WhenSequenceIsStillPendingOnceTimeoutElapsed()
     {
@@ -1055,15 +1083,22 @@ public class SequenceBaseTests
 
         private int _timeoutElapsedCount;
 
-        public TimeoutTrackingTestSequence(ConsumerPipelineContext context, TimeSpan timeout, bool abortsOnTimeout)
+        public TimeoutTrackingTestSequence(
+            ConsumerPipelineContext context,
+            TimeSpan timeout,
+            bool abortsOnTimeout,
+            SequenceTimeoutMode timeoutMode = SequenceTimeoutMode.Sliding)
             : base("timeout-tracking-test-sequence", context, enforceTimeout: true, timeout: timeout, trackIdentifiers: false)
         {
             _abortsOnTimeout = abortsOnTimeout;
+            TimeoutMode = timeoutMode;
         }
 
         public Task TimeoutElapsed => _timeoutElapsed.Task;
 
         public int TimeoutElapsedCount => Volatile.Read(ref _timeoutElapsedCount);
+
+        private protected override SequenceTimeoutMode TimeoutMode { get; }
 
         protected override Task OnTimeoutElapsedAsync()
         {

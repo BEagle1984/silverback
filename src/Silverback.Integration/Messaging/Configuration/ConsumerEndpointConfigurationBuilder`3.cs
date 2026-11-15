@@ -111,8 +111,8 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     ///     The number of messages to be processed in batch.
     /// </param>
     /// <param name="maxWaitTime">
-    ///     The maximum amount of time to wait for the batch to be filled. After this time the batch will be
-    ///     completed even if the specified <c>batchSize</c> is not reached.
+    ///     The maximum amount of time to wait for the batch to be filled, measured from its first message. After this time the batch
+    ///     will be completed even if the specified <c>batchSize</c> is not reached.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
