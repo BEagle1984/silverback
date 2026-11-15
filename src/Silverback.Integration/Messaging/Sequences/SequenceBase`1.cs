@@ -25,6 +25,8 @@ namespace Silverback.Messaging.Sequences;
 public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     where TEnvelope : IRawInboundEnvelope
 {
+    private const int MaxTimeoutCheckIntervalMilliseconds = 1000;
+
     private readonly MessageStreamProvider<TEnvelope> _streamProvider;
 
     private readonly bool _enforceTimeout;
@@ -733,7 +735,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _completeSemaphoreSlim.Wait();
     }
 
-    private bool IsTimeoutElapsed() => DateTime.UtcNow > _timeoutExpiration;
+    private bool IsTimeoutElapsed() => DateTime.UtcNow >= _timeoutExpiration;
 
     // The sequence aborted by the error policies (e.g. skipped) or because the subscriber stopped enumerating is committed, unless its
     // transaction was rolled back (e.g. to be retried). The other aborts (e.g. the incomplete sequences or the consumer stop) aren't
@@ -830,15 +832,26 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         Task.Run(async () =>
             {
-                int interval = (int)Math.Min(_timeout.TotalMilliseconds, 1000);
+                // The interval at which the timeout is enforced again, if the sequence is still pending once it elapsed (e.g. completing,
+                // or waiting for its other subscribers after a failure)
+                int retryInterval = (int)Math.Clamp(_timeout.TotalMilliseconds, 1, MaxTimeoutCheckIntervalMilliseconds);
 
                 // Stop also when disposed, since a child sequence can be disposed by its parent while still pending
                 while (IsPending && !_isDisposed)
                 {
-                    await Task.Delay(interval).ConfigureAwait(false);
+                    if (IsTimeoutElapsed())
+                    {
+                        if (!IsCompleting)
+                            await EnforceTimeoutAsync().ConfigureAwait(false);
 
-                    if (IsPending && !IsCompleting)
-                        await EnforceTimeoutAsync().ConfigureAwait(false);
+                        await Task.Delay(retryInterval).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    // Wake up when the timeout elapses, re-reading the expiration that each message may have moved forward, but at least
+                    // every second, to stop soon after the sequence ended
+                    double remaining = Math.Ceiling((_timeoutExpiration - DateTime.UtcNow).TotalMilliseconds);
+                    await Task.Delay((int)Math.Clamp(remaining, 1, MaxTimeoutCheckIntervalMilliseconds)).ConfigureAwait(false);
                 }
             })
             .FireAndForget();

@@ -8,13 +8,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.E2E.TestTypes;
+using Silverback.Tests.Integration.E2E.TestTypes.Logging;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
-using Silverback.Tests.Integration.E2E.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
@@ -454,10 +455,12 @@ public partial class BatchProcessingTests
     public async Task Batch_ShouldAddMessageToNextBatch_WhenRefusedByTimedOutBatchThatIsSkipped()
     {
         TestingCollection<List<string?>> successfulBatches = [];
-        TaskCompletionSource<bool> firstMessageReceived = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        BatchTimeoutGate batchTimeoutGate = new();
+        LogEventsCollector logEventsCollector = new();
 
         await Host.ConfigureServicesAndRunAsync(services => services
-            .AddLogging()
+            .AddSingleton(batchTimeoutGate)
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
                 .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -468,8 +471,9 @@ public partial class BatchProcessingTests
                     .CommitOffsetEach(1)
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
-                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(2))
+                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(1))
                         .OnError(policy => policy.Skip()))))
+            .AddTransientSequenceReader<GatedBatchSequenceReader>()
             .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
@@ -479,10 +483,9 @@ public partial class BatchProcessingTests
             await foreach (TestEventOne message in batch)
             {
                 list.Add(message.ContentEventOne);
-                firstMessageReceived.TrySetResult(true);
             }
 
-            // Skip the first batch, unless the timing didn't allow it to refuse the third message
+            // Skip the first batch
             if (list is ["1", "2"])
                 throw new InvalidOperationException("Skip!");
 
@@ -491,17 +494,17 @@ public partial class BatchProcessingTests
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
-        await BatchTimeoutTiming.ProduceWhileFirstBatchTimesOutAsync(
-            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" }).AsTask(),
-            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" }).AsTask(),
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await batchTimeoutGate.ProduceRefusedMessageAsync(
             () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" }).AsTask(),
-            firstMessageReceived.Task);
+            logEventsCollector);
 
         // The refused message isn't committed with the skipped batch, but added to the next one
         await AsyncTestingUtil.WaitAsync(() => successfulBatches.Any(batch => batch.Contains("3")));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        successfulBatches.SelectMany(batch => batch).ShouldContain("3");
+        successfulBatches.SelectMany(batch => batch).ShouldBe(["3"]);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
     }
 
@@ -509,11 +512,13 @@ public partial class BatchProcessingTests
     public async Task Batch_ShouldProcessRefusedMessageOnce_WhenTimedOutBatchIsRetried()
     {
         TestingCollection<List<string?>> successfulBatches = [];
-        TaskCompletionSource<bool> firstMessageReceived = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        BatchTimeoutGate batchTimeoutGate = new();
+        LogEventsCollector logEventsCollector = new();
         int failedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(services => services
-            .AddLogging()
+            .AddSingleton(batchTimeoutGate)
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
                 .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -524,29 +529,21 @@ public partial class BatchProcessingTests
                     .CommitOffsetEach(1)
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
-                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(2))
+                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(1))
                         .OnError(policy => policy.Retry(1)))))
+            .AddTransientSequenceReader<GatedBatchSequenceReader>()
             .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
             List<string?> list = [];
 
-            try
+            await foreach (TestEventOne message in batch)
             {
-                await foreach (TestEventOne message in batch)
-                {
-                    list.Add(message.ContentEventOne);
-                    firstMessageReceived.TrySetResult(true);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // A batch aborted by the rollback (e.g. started by the third message, if the timing didn't allow the refusal)
-                return;
+                list.Add(message.ContentEventOne);
             }
 
-            // Fail the first batch once, unless the timing didn't allow it to refuse the third message
+            // Fail the first batch once
             if (list is ["1", "2"] && Interlocked.Increment(ref failedBatches) == 1)
                 throw new InvalidOperationException("Retry!");
 
@@ -555,16 +552,17 @@ public partial class BatchProcessingTests
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
-        await BatchTimeoutTiming.ProduceWhileFirstBatchTimesOutAsync(
-            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" }).AsTask(),
-            () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" }).AsTask(),
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await batchTimeoutGate.ProduceRefusedMessageAsync(
             () => producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" }).AsTask(),
-            firstMessageReceived.Task);
+            logEventsCollector);
 
         await AsyncTestingUtil.WaitAsync(() => successfulBatches.Any(batch => batch.Contains("3")));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        // The refused message is consumed again after the seek and processed once (see SequenceBaseTests for the refusal itself)
+        // The refused message is consumed again after the seek and processed once
+        failedBatches.ShouldBe(1);
         successfulBatches.SelectMany(batch => batch).ShouldBe(["1", "2", "3"]);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
     }

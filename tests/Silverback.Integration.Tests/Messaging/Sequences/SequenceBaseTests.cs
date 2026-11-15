@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -807,6 +808,36 @@ public class SequenceBaseTests
         childSequence.Parent.ShouldBeNull();
     }
 
+    [Fact]
+    public async Task AddAsync_ShouldElapseTimeoutWhenDue()
+    {
+        using TimeoutTrackingTestSequence sequence = new(CreateContext(new HookLogger()), TimeSpan.FromSeconds(1), true);
+
+        await sequence.AddAsync(CreateEnvelope(), null, false).WaitAsync(Timeout);
+        await Task.Delay(100);
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        await sequence.AddAsync(CreateEnvelope(), null, false).WaitAsync(Timeout);
+        await sequence.TimeoutElapsed.WaitAsync(Timeout);
+
+        // The timeout elapses 1 second after the last message, instead of at the next timer tick (every second since the first message,
+        // about 1.9 seconds after the last one)
+        stopwatch.Elapsed.ShouldBeGreaterThanOrEqualTo(TimeSpan.FromMilliseconds(990));
+        stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromMilliseconds(1600));
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldEnforceTimeoutAgainAtTimeoutInterval_WhenSequenceIsStillPendingOnceTimeoutElapsed()
+    {
+        using TimeoutTrackingTestSequence sequence = new(CreateContext(new HookLogger()), TimeSpan.FromMilliseconds(200), false);
+
+        await sequence.AddAsync(CreateEnvelope(), null, false).WaitAsync(Timeout);
+        await sequence.TimeoutElapsed.WaitAsync(Timeout);
+        await Task.Delay(1000);
+
+        // About 5 times in a second, not in a tight loop
+        sequence.TimeoutElapsedCount.ShouldBeInRange(2, 10);
+    }
+
     private static async Task<AddToSequenceResult> AddRefusedByTimeoutAsync(string abort)
     {
         HookLogger logger = new();
@@ -942,7 +973,10 @@ public class SequenceBaseTests
         return ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider, transactionManager);
     }
 
-    private static TestSequence CreateSequence(HookLogger logger, ISequenceStore? sequenceStore = null)
+    private static TestSequence CreateSequence(HookLogger logger, ISequenceStore? sequenceStore = null) =>
+        new(CreateContext(logger, sequenceStore));
+
+    private static ConsumerPipelineContext CreateContext(HookLogger logger, ISequenceStore? sequenceStore = null)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
         {
@@ -954,11 +988,9 @@ public class SequenceBaseTests
             services.AddSingleton<ISilverbackLogger<SequenceBase<IRawInboundEnvelope>>>(logger);
         });
 
-        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
+        return ConsumerPipelineContextHelper.CreateSubstitute(
             serviceProvider: serviceProvider,
             sequenceStore: sequenceStore);
-
-        return new TestSequence(context);
     }
 
     private static RawInboundEnvelope CreateEnvelope() =>
@@ -1011,6 +1043,33 @@ public class SequenceBaseTests
                 _onLinking();
 
             Parent = parentSequence;
+        }
+    }
+
+    // Records the elapsed timeout, then aborts the sequence (as the base class does) or leaves it pending
+    private sealed class TimeoutTrackingTestSequence : SequenceBase<IRawInboundEnvelope>
+    {
+        private readonly TaskCompletionSource _timeoutElapsed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        private readonly bool _abortsOnTimeout;
+
+        private int _timeoutElapsedCount;
+
+        public TimeoutTrackingTestSequence(ConsumerPipelineContext context, TimeSpan timeout, bool abortsOnTimeout)
+            : base("timeout-tracking-test-sequence", context, enforceTimeout: true, timeout: timeout, trackIdentifiers: false)
+        {
+            _abortsOnTimeout = abortsOnTimeout;
+        }
+
+        public Task TimeoutElapsed => _timeoutElapsed.Task;
+
+        public int TimeoutElapsedCount => Volatile.Read(ref _timeoutElapsedCount);
+
+        protected override Task OnTimeoutElapsedAsync()
+        {
+            Interlocked.Increment(ref _timeoutElapsedCount);
+            _timeoutElapsed.TrySetResult();
+            return _abortsOnTimeout ? base.OnTimeoutElapsedAsync() : Task.CompletedTask;
         }
     }
 
