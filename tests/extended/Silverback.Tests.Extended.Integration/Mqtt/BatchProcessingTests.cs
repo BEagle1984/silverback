@@ -6,9 +6,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MQTTnet.Protocol;
 using Shouldly;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Tests.Extended.Integration.TestHost;
 using Silverback.Tests.Extended.Integration.TestHost.Mqtt;
@@ -46,6 +49,8 @@ public class BatchProcessingTests : BrokerHarnessTests<MqttTestHarness>
         Enumerated,
 
         Completed,
+
+        Failed,
 
         Aborted
     }
@@ -319,7 +324,72 @@ public class BatchProcessingTests : BrokerHarnessTests<MqttTestHarness>
         Harness.Logs.Errors.ShouldBeEmpty();
     }
 
+    [Fact]
+    public async Task Batch_ShouldReplayBatchFromMemoryAndAcknowledgeOnce_WhenRetryingFailedBatch()
+    {
+        int attempts = 0;
+        BatchRecorder batches = new(_ => Interlocked.Increment(ref attempts) == 1
+            ? Task.FromException(new InvalidOperationException("Simulated failure"))
+            : Task.CompletedTask);
+        await StartConsumerAsync(
+            MqttQualityOfServiceLevel.AtLeastOnce,
+            batches,
+            3,
+            UnreachableMaxWaitTime,
+            configureEndpoint: endpoint => endpoint.OnError(policy => policy.Retry(1)));
+
+        await PublishAsync(1, 3);
+        await Harness.WaitUntilAsync(() => batches.GetBatches(BatchState.Completed).Length == 1, "the batch to be retried");
+        await WaitUntilAcknowledgedAsync(3);
+
+        // The same messages are processed again, from memory: the broker doesn't deliver them twice
+        batches.GetBatches(BatchState.Failed).ShouldBe([[1, 2, 3]]);
+        batches.GetBatches(BatchState.Completed).ShouldBe([[1, 2, 3]]);
+        _recorder.GetDeliveries().Count.ShouldBe(3);
+        _recorder.Disconnections.ShouldBe(0);
+        ShouldLogOnlyProcessingErrors();
+
+        await VerifyNoUnacknowledgedDeliveriesAsync();
+    }
+
+    [Fact]
+    public async Task Batch_ShouldNotReplayBatchAndAcknowledgeOnce_WhenSkippingFailedBatch()
+    {
+        BatchRecorder batches = new(_ => Task.FromException(new InvalidOperationException("Simulated failure")));
+        await StartConsumerAsync(
+            MqttQualityOfServiceLevel.AtLeastOnce,
+            batches,
+            3,
+            UnreachableMaxWaitTime,
+            configureEndpoint: endpoint => endpoint.OnError(policy => policy.Skip()));
+
+        await PublishAsync(1, 3);
+        await Harness.WaitUntilAsync(() => batches.GetBatches(BatchState.Failed).Length == 1, "the batch to fail");
+        await WaitUntilAcknowledgedAsync(3);
+
+        // The consumption continues with the next batch, and the skipped one isn't processed again
+        await PublishAsync(4, 6);
+        await Harness.WaitUntilAsync(() => batches.GetBatches(BatchState.Failed).Length == 2, "the next batch to fail");
+        await WaitUntilAcknowledgedAsync(6);
+
+        batches.GetBatches(BatchState.Failed).ShouldBe([[1, 2, 3], [4, 5, 6]]);
+        batches.GetBatches(BatchState.Completed).ShouldBeEmpty();
+        _recorder.Disconnections.ShouldBe(0);
+        ShouldLogOnlyProcessingErrors();
+
+        await VerifyNoUnacknowledgedDeliveriesAsync();
+    }
+
     private static int GetNumber(byte[] payload) => JsonSerializer.Deserialize<BatchMessage>(payload)!.Number;
+
+    // The simulated failures are logged as batch processing errors, but nothing else may fail
+    private void ShouldLogOnlyProcessingErrors()
+    {
+        Harness.Logs.OfEvents(IntegrationLogEvents.SequenceProcessingError).ShouldNotBeEmpty();
+        Harness.Logs.Entries
+            .Where(entry => entry.Level >= LogLevel.Error && entry.EventId != IntegrationLogEvents.SequenceProcessingError.EventId)
+            .ShouldBeEmpty();
+    }
 
     // Starts a Silverback client consuming batches with a persistent session, plus a native client publishing the messages
     private async Task StartConsumerAsync(
@@ -327,18 +397,24 @@ public class BatchProcessingTests : BrokerHarnessTests<MqttTestHarness>
         BatchRecorder batches,
         int batchSize,
         TimeSpan maxWaitTime,
-        Action<MqttClientConfigurationBuilder>? configureClient = null)
+        Action<MqttClientConfigurationBuilder>? configureClient = null,
+        Action<MqttConsumerEndpointConfigurationBuilder<BatchMessage>>? configureEndpoint = null)
     {
         _qualityOfServiceLevel = qualityOfServiceLevel;
 
         Harness.AddClient(client =>
         {
             client.RequestPersistentSession(TimeSpan.FromMinutes(5))
-                .Consume<BatchMessage>(endpoint => endpoint
-                    .ConsumeFrom(Harness.Prefix)
-                    .WithQualityOfServiceLevel(qualityOfServiceLevel)
-                    .EnableBatchProcessing(batchSize, maxWaitTime)
-                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()));
+                .Consume<BatchMessage>(endpoint =>
+                {
+                    endpoint
+                        .ConsumeFrom(Harness.Prefix)
+                        .WithQualityOfServiceLevel(qualityOfServiceLevel)
+                        .EnableBatchProcessing(batchSize, maxWaitTime)
+                        .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader());
+
+                    configureEndpoint?.Invoke(endpoint);
+                });
 
             configureClient?.Invoke(client);
         });
@@ -472,7 +548,8 @@ public class BatchProcessingTests : BrokerHarnessTests<MqttTestHarness>
             string.Join(", ", _recorder.GetAcknowledgments().Select(item => $"{item.PacketIdentifier} (connection {item.Connection})")));
     }
 
-    // Records the batches received by the subscriber, optionally holding each batch after it was enumerated
+    // Records the batches received by the subscriber. A callback can hold each batch after it was enumerated, or fail it by throwing an
+    // InvalidOperationException (the batch is then recorded as failed)
     private sealed class BatchRecorder
     {
         private readonly System.Threading.Lock _lock = new();
@@ -515,7 +592,17 @@ public class BatchProcessingTests : BrokerHarnessTests<MqttTestHarness>
             SetState(recordedBatch, BatchState.Enumerated);
 
             if (_onEnumerated != null)
-                await _onEnumerated(GetNumbers(recordedBatch));
+            {
+                try
+                {
+                    await _onEnumerated(GetNumbers(recordedBatch));
+                }
+                catch (InvalidOperationException)
+                {
+                    SetState(recordedBatch, BatchState.Failed);
+                    throw;
+                }
+            }
 
             SetState(recordedBatch, BatchState.Completed);
         }
