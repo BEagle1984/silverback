@@ -12,6 +12,7 @@
     <File Path="nuget.config" />
     <File Path="nuget/pack.ps1" />
     <File Path="README.md" />
+    <File Path="release.ps1" />
     <File Path="Silverback.slnx.DotSettings" />
     <File Path="stylecop.json" />
   </Folder>
