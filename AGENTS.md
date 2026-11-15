@@ -35,7 +35,9 @@
 
 ## Release notes
 
-- Keep each entry in `docs/changelog/*.md` to one short line stating what changed or was fixed. Do not explain why or how, and do not turn it into a guide: the entry is only a hint, optionally pointing to the resolved issue or to the docs page with the details.
+- Write each entry in `docs/changelog/*.md` for the users, who don't know the internals. State what was added, changed or fixed as they would notice it (the behavior or symptom, the feature, the public types and settings, linked with `<xref:...>`), not how it was implemented. Leave out the internal names and mechanisms (e.g. sequences, rollbacks, pushes, internal overloads or helper classes), even when the fix was about them.
+- Keep each entry short and telegraphic, usually a single line, but longer when the extra detail is useful to the users. Mention the consequence of a bug when it helps the users recognize it (e.g. "which delayed the reassignment of its partitions until the session timeout"), but do not explain why or how it happened, and do not turn the entry into a guide: the entry is only a hint, optionally pointing to the resolved issue or to the docs page with the details.
+- A breaking change states what changed and what the users should check or update. When it's actually the fix of a documented behavior, say so.
 - Link the related GitHub issue (e.g. `[[#272](https://github.com/BEagle1984/silverback/issues/272)]`), not the pull request, unless the pull request itself carries significant information. Add no link when there is no issue.
 - Entries are grouped by area (e.g. Kafka, mocked Kafka and testing, MQTT, locks), not in chronological order. Insert a new entry next to the existing entries for the same area.
 - Do not add entries for changes that only touch tests, such as flaky test fixes.
