@@ -30,6 +30,11 @@ public sealed class LogEventsCollector : ILoggerProvider, ILogger
     public bool ContainsSequenceAborted(string sequenceTypeAndIdPrefix) =>
         Contains(IntegrationLogEvents.SequenceProcessingAborted.EventId, sequenceTypeAndIdPrefix);
 
+    // Whether adding a message to a sequence of the specified type was canceled (e.g. refused because the timeout of the sequence elapsed):
+    // the trace is written right after the cancellation, before waiting for the sequence to be processed
+    public bool ContainsSequenceAddCanceled(string sequenceType) =>
+        Contains(IntegrationLogEvents.Tracing.EventId, $"skipping add to {sequenceType} ");
+
     public ILogger CreateLogger(string categoryName) => this;
 
     public IDisposable? BeginScope<TState>(TState state)
