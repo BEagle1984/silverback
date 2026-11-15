@@ -42,9 +42,8 @@ public class ProducerPipelineContextTests
         clonedContext.Pipeline.ShouldBeSameAs(context.Pipeline);
         clonedContext.ServiceProvider.ShouldBeSameAs(context.ServiceProvider);
         clonedContext.CurrentStepIndex.ShouldBe(context.CurrentStepIndex);
-        clonedContext.OnSuccess.ShouldBe(context.OnSuccess);
-        clonedContext.OnError.ShouldBe(context.OnError);
-        clonedContext.CallbackState.ShouldBe(context.CallbackState);
+        clonedContext.CallbackTracker.ShouldNotBeNull();
+        clonedContext.CallbackTracker.ShouldBeSameAs(context.CallbackTracker);
     }
 
     [Fact]
@@ -77,9 +76,8 @@ public class ProducerPipelineContextTests
         clonedContext.Pipeline.ShouldBeSameAs(context.Pipeline);
         clonedContext.ServiceProvider.ShouldBeSameAs(context.ServiceProvider);
         clonedContext.CurrentStepIndex.ShouldBe(context.CurrentStepIndex);
-        clonedContext.OnSuccess.ShouldBe(context.OnSuccess);
-        clonedContext.OnError.ShouldBe(context.OnError);
-        clonedContext.CallbackState.ShouldBe(context.CallbackState);
+        clonedContext.CallbackTracker.ShouldNotBeNull();
+        clonedContext.CallbackTracker.ShouldBeSameAs(context.CallbackTracker);
     }
 
     private static ProducerPipelineContext CreateContext() => new(
@@ -89,19 +87,25 @@ public class ProducerPipelineContextTests
         (_, _) => ValueTask.CompletedTask,
         Substitute.For<IServiceProvider>());
 
-    private static ProducerPipelineContext<int> CreateContextWithCallbacks() => new(
-        Substitute.For<IOutboundEnvelope>(),
-        Substitute.For<IProducer>(),
-        [],
-        (_, _) => ValueTask.CompletedTask,
-        Substitute.For<IServiceProvider>())
+    private static ProducerPipelineContext<int> CreateContextWithCallbacks()
     {
-        OnSuccess = (_, _) =>
-        {
-        },
-        OnError = (_, _) =>
-        {
-        },
-        CallbackState = 42
-    };
+        ProducerPipelineContext<int> context = new(
+            Substitute.For<IOutboundEnvelope>(),
+            Substitute.For<IProducer>(),
+            [],
+            (_, _) => ValueTask.CompletedTask,
+            Substitute.For<IServiceProvider>());
+
+        context.CallbackTracker = new ProduceCallbackTracker<int>(
+            context,
+            (_, _) =>
+            {
+            },
+            (_, _) =>
+            {
+            },
+            42);
+
+        return context;
+    }
 }

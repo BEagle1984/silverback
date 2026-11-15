@@ -154,51 +154,63 @@ public abstract class Producer : IProducer, IDisposable
     {
         Check.NotNull(envelope, nameof(envelope));
 
-        try
-        {
-            ProducerPipelineContext<TState> context = new(
-                envelope,
-                this,
-                _behaviors,
-                static (finalContext, _) =>
+        ProducerPipelineContext<TState> context = new(
+            envelope,
+            this,
+            _behaviors,
+            static (finalContext, _) =>
+            {
+                static void OnSuccess(IBrokerMessageIdentifier? identifier, ProducerPipelineContext finalContext)
                 {
-                    static void OnSuccess(IBrokerMessageIdentifier? identifier, ProducerPipelineContext finalContext)
-                    {
-                        ProducerPipelineContext<TState> finalContextWithCallbacks = (ProducerPipelineContext<TState>)finalContext;
-                        ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = identifier;
-                        finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduced(finalContext.Envelope);
-                        finalContextWithCallbacks.OnSuccess!.Invoke(identifier, finalContextWithCallbacks.CallbackState!);
-                    }
+                    ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = finalContext.BrokerMessageIdentifier = identifier;
+                    finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduced(finalContext.Envelope);
+                    ((ProducerPipelineContext<TState>)finalContext).CallbackTracker!.OnProduced();
+                }
 
-                    static void OnError(Exception exception, ProducerPipelineContext finalContext)
-                    {
-                        ProducerPipelineContext<TState> finalContextWithCallbacks = (ProducerPipelineContext<TState>)finalContext;
-                        finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduceError(finalContext.Envelope, exception);
-                        finalContextWithCallbacks.OnError!.Invoke(exception, finalContextWithCallbacks.CallbackState!);
-                    }
+                static void OnError(Exception exception, ProducerPipelineContext finalContext)
+                {
+                    finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduceError(finalContext.Envelope, exception);
+                    ((ProducerPipelineContext<TState>)finalContext).CallbackTracker!.OnProduceFailed(exception);
+                }
 
+                // The final action is invoked once per produced message, which might be more than one (e.g. one per chunk)
+                ProduceCallbackTracker<TState> callbackTracker = ((ProducerPipelineContext<TState>)finalContext).CallbackTracker!;
+                callbackTracker.OnProducing();
+
+                try
+                {
                     ((Producer)finalContext.Producer).ProduceCore(
                         finalContext.Envelope,
                         OnSuccess,
                         OnError,
                         finalContext);
+                }
+                catch
+                {
+                    // Nothing was produced and no callback will be invoked, but a behavior might still handle the exception (e.g. retry)
+                    callbackTracker.OnProducingFailed();
+                    throw;
+                }
 
-                    return ValueTask.CompletedTask;
-                },
-                envelope.Context?.ServiceProvider ?? _serviceProvider)
-            {
-                OnSuccess = onSuccess,
-                OnError = onError,
-                CallbackState = state
-            };
+                return ValueTask.CompletedTask;
+            },
+            envelope.Context?.ServiceProvider ?? _serviceProvider);
 
+        context.CallbackTracker = new ProduceCallbackTracker<TState>(context, onSuccess, onError, state);
+
+        try
+        {
             ExecutePipelineAsync(context, CancellationToken.None).SafeWait();
         }
         catch (Exception ex)
         {
+            // The tracker is not released, so the callbacks are never invoked by the messages produced before the exception
             _logger.LogProduceError(envelope, ex);
             throw;
         }
+
+        // Invokes the callbacks right away if nothing was produced (e.g. filtered out) or everything was already acknowledged
+        context.CallbackTracker.OnPipelineCompleted();
     }
 
     /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?)" />
