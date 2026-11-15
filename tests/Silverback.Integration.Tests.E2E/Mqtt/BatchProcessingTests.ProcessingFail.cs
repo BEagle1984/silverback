@@ -36,7 +36,9 @@ public partial class BatchProcessingTests
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
                     .RequestPersistentSession()
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
@@ -92,7 +94,9 @@ public partial class BatchProcessingTests
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
                     .RequestPersistentSession()
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
@@ -143,7 +147,9 @@ public partial class BatchProcessingTests
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
                     .RequestPersistentSession()
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
@@ -219,7 +225,9 @@ public partial class BatchProcessingTests
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
@@ -299,7 +307,9 @@ public partial class BatchProcessingTests
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
                     .RequestPersistentSession()
-                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .WithAtLeastOnceQoS()
@@ -418,6 +428,176 @@ public partial class BatchProcessingTests
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldSkipBatchWithoutMoving_WhenMovePolicyCannotHandleSequences()
+    {
+        int tryCount = 0;
+        IMoveMessageErrorPolicyCallback callback = Substitute.For<IMoveMessageErrorPolicyCallback, ISkipMessageErrorPolicyCallback>();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(3, TimeSpan.FromMinutes(5))
+                        .OnError(policy => policy.MoveTo("other-topic").ThenSkip()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne unused in batch)
+            {
+                if (Interlocked.Increment(ref tryCount) == 3)
+                    throw new InvalidOperationException("Skip!");
+            }
+        }
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        // The move policy cannot handle sequences, so the failed batch falls through to the skip (not replayed) and is acknowledged
+        tryCount.ShouldBe(3);
+        await callback.DidNotReceive().OnMovingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>());
+        await ((ISkipMessageErrorPolicyCallback)callback).Received(1).OnSkippingMessageAsync(
+            Arg.Any<IRawInboundEnvelope>(),
+            Arg.Any<Exception>());
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldStopConsumerWithoutAcknowledging_WhenRetriesAreExhausted()
+    {
+        int tryCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(3, TimeSpan.FromMinutes(5))
+                        .OnError(policy => policy.Retry(1)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync));
+
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne unused in batch)
+            {
+                // Fail every attempt
+                Interlocked.Increment(ref tryCount);
+                throw new InvalidOperationException("Test");
+            }
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        // The batch is attempted once and retried once, then the default stop policy applies
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        tryCount.ShouldBe(2);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldReplayBatchToAllSubscribers_WhenOneSubscriberFails()
+    {
+        TestingCollection<string?> receivedByFirst = [];
+        TestingCollection<string?> receivedBySecond = [];
+        int secondMessageAttempts = 0;
+        IRetryErrorPolicyCallback callback = Substitute.For<IRetryErrorPolicyCallback>();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS())
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(3, TimeSpan.FromMinutes(5))
+                        .OnError(policy => policy.Retry(1)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(FailingSubscriberAsync)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(SecondSubscriberAsync)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        async Task FailingSubscriberAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne message in batch)
+            {
+                receivedByFirst.Add(message.ContentEventOne);
+
+                // Fail the first attempt only
+                if (message.ContentEventOne == "2" && Interlocked.Increment(ref secondMessageAttempts) == 1)
+                    throw new InvalidOperationException("Retry!");
+            }
+        }
+
+        async Task SecondSubscriberAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne message in batch)
+            {
+                receivedBySecond.Add(message.ContentEventOne);
+            }
+        }
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        // The retry policy replays the batch to both subscribers: the failing one fails at the second message, then succeeds
+        await callback.Received(1).OnRetryingMessageAsync(
+            Arg.Any<IRawInboundEnvelope>(),
+            Arg.Is<Exception>(exception => exception.Message == "Retry!"));
+        secondMessageAttempts.ShouldBe(2);
+        receivedByFirst.ShouldBe(["1", "2", "1", "2", "3"]);
+        receivedBySecond.TakeLast(3).ShouldBe(["1", "2", "3"]);
+        receivedBySecond.Count.ShouldBeGreaterThan(3);
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 }
