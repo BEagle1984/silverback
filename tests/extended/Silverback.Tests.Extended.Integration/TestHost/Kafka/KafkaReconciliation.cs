@@ -26,7 +26,8 @@ public sealed class KafkaReconciliation
         _run = run;
     }
 
-    public async Task ProduceAsync(int partitions, int count)
+    // Creates the records topic and the partition-aligned receipts topic, which the worker requires to record the assignments
+    public async Task CreateTopicsAsync(int partitions)
     {
         string[] topics = [_run.Prefix + "-records", _run.Prefix + "-receipts"];
         using IAdminClient admin = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = KafkaFixture.BootstrapServers }).Build();
@@ -37,6 +38,11 @@ public sealed class KafkaReconciliation
             ReplicationFactor = 1
         }));
         await KafkaFixture.WaitUntilTopicsArePropagatedAsync(topics, partitions);
+    }
+
+    public async Task ProduceAsync(int partitions, int count)
+    {
+        await CreateTopicsAsync(partitions);
 
         using IProducer<Null, byte[]> producer = new ProducerBuilder<Null, byte[]>(new ProducerConfig
         {
