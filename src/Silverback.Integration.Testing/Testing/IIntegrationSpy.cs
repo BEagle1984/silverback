@@ -39,7 +39,7 @@ public interface IIntegrationSpy
     /// <summary>
     ///     Gets the list of <see cref="IInboundEnvelope" /> corresponding to all the inbound messages that have been
     ///     processed by the consumer pipeline (except the ones that couldn't be deserialized, e.g. the ones with an
-    ///     empty body).
+    ///     empty body, and the ones skipped by the endpoint filter).
     /// </summary>
     IReadOnlyList<IInboundEnvelope> InboundEnvelopes { get; }
 }

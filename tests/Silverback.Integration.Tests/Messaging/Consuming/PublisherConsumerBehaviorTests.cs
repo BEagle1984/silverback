@@ -17,6 +17,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -149,6 +150,140 @@ public class PublisherConsumerBehaviorTests
         ISequence unboundedSequence = context.UnboundedSequence.ShouldNotBeNull();
         unboundedSequence.IsAborted.ShouldBeTrue();
         unboundedSequence.AbortReason.ShouldBeOneOf(SequenceAbortReason.EnumerationAborted, SequenceAbortReason.ConsumerAborted);
+    }
+
+    [Theory]
+    [InlineData(false, 1)]
+    [InlineData(true, 0)]
+    public async Task HandleAsync_ShouldPublishMessageUnlessFiltered(bool isFiltered, int expectedReceivedCount)
+    {
+        List<TestEventOne> receivedMessages = [];
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddDelegateSubscriber<TestEventOne>(receivedMessages.Add));
+        using ConsumerPipelineContext context = CreateContext(serviceProvider, isFiltered);
+        PublisherConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<PublisherConsumerBehavior>>());
+        bool nextCalled = false;
+
+        await behavior.HandleAsync(
+            context,
+            (_, _) =>
+            {
+                nextCalled = true;
+                return default;
+            },
+            CancellationToken.None);
+
+        receivedMessages.Count.ShouldBe(expectedReceivedCount);
+        nextCalled.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldNotThrow_WhenFilteredMessageIsUnhandled()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+        using ConsumerPipelineContext context = CreateContext(serviceProvider, true);
+        PublisherConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<PublisherConsumerBehavior>>());
+
+        Task handleTask = behavior.HandleAsync(context, (_, _) => default, CancellationToken.None).AsTask();
+
+        // The filtered message is handled like a message without subscribers when IgnoreUnhandledMessages is set
+        context.Envelope.Endpoint.Configuration.ThrowIfUnhandled.ShouldBeTrue();
+        await Should.NotThrowAsync(handleTask);
+    }
+
+    [Theory]
+    [InlineData(false, 1)]
+    [InlineData(true, 0)]
+    public async Task HandleAsync_ShouldPublishMessageInRawSequenceUnlessFiltered(bool isFiltered, int expectedReceivedCount)
+    {
+        List<TestEventOne> receivedMessages = [];
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddDelegateSubscriber<TestEventOne>(receivedMessages.Add));
+        ConsumerPipelineContext context = CreateContext(serviceProvider, isFiltered);
+        using ChunkSequence chunkSequence = new("chunk-sequence", 2, context); // Disposes the context
+        context.SetSequence(chunkSequence, true);
+        PublisherConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<PublisherConsumerBehavior>>());
+        bool nextCalled = false;
+
+        await behavior.HandleAsync(
+            context,
+            (_, _) =>
+            {
+                nextCalled = true;
+                return default;
+            },
+            CancellationToken.None);
+
+        receivedMessages.Count.ShouldBe(expectedReceivedCount);
+        nextCalled.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldNotStreamFilteredMessage()
+    {
+        int receivedCount = 0;
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleStreamAsync));
+
+        async Task HandleStreamAsync(IAsyncEnumerable<TestEventOne> stream)
+        {
+            await foreach (TestEventOne dummy in stream)
+            {
+                Interlocked.Increment(ref receivedCount);
+            }
+        }
+
+        using ConsumerPipelineContext context = CreateStreamingContext(serviceProvider);
+        ((InboundEnvelope)context.Envelope).IsFiltered = true;
+        PublisherConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<PublisherConsumerBehavior>>());
+        bool nextCalled = false;
+
+        await behavior.HandleAsync(
+            context,
+            (_, _) =>
+            {
+                nextCalled = true;
+                return default;
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The filtered message doesn't start the unbounded sequence (and therefore doesn't invoke the stream subscribers)
+        context.UnboundedSequence.ShouldBeNull();
+        context.SequenceStore.ShouldBeEmpty();
+        receivedCount.ShouldBe(0);
+        nextCalled.ShouldBeTrue();
+    }
+
+    private static ConsumerPipelineContext CreateContext(IServiceProvider serviceProvider, bool isFiltered = false)
+    {
+        TestConsumerEndpoint endpoint = TestConsumerEndpoint.GetDefault();
+        IConsumer consumer = Substitute.For<IConsumer>();
+        InboundEnvelope<TestEventOne> envelope = new(new TestEventOne(), Stream.Null, [], endpoint, consumer, new TestOffset())
+        {
+            IsFiltered = isFiltered
+        };
+
+        return ConsumerPipelineContextHelper.CreateSubstitute(
+            envelope,
+            serviceProvider,
+            consumer: consumer,
+            sequenceStore: new SequenceStore(new SilverbackLoggerSubstitute<SequenceStore>()));
     }
 
     private static ConsumerPipelineContext CreateStreamingContext(IServiceProvider serviceProvider)

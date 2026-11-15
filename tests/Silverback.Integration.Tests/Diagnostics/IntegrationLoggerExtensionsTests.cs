@@ -184,6 +184,25 @@ public class IntegrationLoggerExtensionsTests
     }
 
     [Fact]
+    public void LogInboundMessageFiltered_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogInboundMessageFiltered(envelope);
+
+        _loggerSubstitute.Received(
+            LogLevel.Information,
+            null,
+            "Message filtered | EndpointName: test, BrokerMessageId: 42",
+            1008);
+    }
+
+    [Fact]
     public void LogMessageAddedToSequence_ShouldLog()
     {
         RawInboundEnvelope envelope = new(

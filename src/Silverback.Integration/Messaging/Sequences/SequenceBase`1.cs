@@ -479,6 +479,26 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             _addCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
+            // The message rejected by the endpoint filter (see FilterConsumerBehavior) isn't pushed: like a message that no stream
+            // accepts (see below), it doesn't count toward the length, doesn't complete the sequence (see the remarks of
+            // ConsumerEndpointConfiguration.Filter) and isn't tracked, so it's committed with the next commit (Kafka) or acknowledged by
+            // the consumer (MQTT). The untracked message neither advances nor blocks the commit of the sequence, but the sequence linked
+            // above (e.g. its chunks) is completed with this one. A batch being completed concurrently (e.g. by its
+            // max wait time) may notify its processing completion without the link, which would never complete the linked sequence:
+            // refuse the message as when its push fails on the completed streams (see the catch block below), so that it's added to
+            // the next batch. Checked after linking, like the push: a completion whose snapshot of the linked sequences misses the link
+            // took it (under the same lock) after being marked as completing, so this check sees it.
+            if (envelope is InboundEnvelope { IsFiltered: true })
+            {
+                if (IsMessageRefusedByAbortAddedToNextSequence &&
+                    (IsCompleting || !IsPending || _streamProvider.IsCompletedOrAborted))
+                {
+                    throw new InvalidOperationException("The sequence is being completed or aborted.");
+                }
+
+                return AddToSequenceResult.Success(0);
+            }
+
             _pushedEnvelope = envelope;
 
             pushedStreamsCount = await _streamProvider.PushAsync(

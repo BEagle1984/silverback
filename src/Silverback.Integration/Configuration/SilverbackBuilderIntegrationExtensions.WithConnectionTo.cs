@@ -11,6 +11,7 @@ using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming;
 using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Filter;
 using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
@@ -114,6 +115,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         builder
             .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>()
             .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
+            .AddSingletonBrokerBehavior<FilterConsumerBehavior>()
             .AddSingletonBrokerBehavior<PublisherConsumerBehavior>();
 
         // Activity

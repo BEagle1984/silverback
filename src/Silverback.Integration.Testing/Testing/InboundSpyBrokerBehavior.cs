@@ -37,7 +37,9 @@ public class InboundSpyBrokerBehavior : IConsumerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope is IInboundEnvelope inboundEnvelope)
+        // Skip the messages rejected by the endpoint filter, which aren't delivered to the subscribers, like the subscriber-based spy does
+        // (see InboundSpySubscriber) and like the outbound spy, which doesn't get the filtered messages either
+        if (context.Envelope is IInboundEnvelope inboundEnvelope and not InboundEnvelope { IsFiltered: true })
             _integrationSpy.AddInboundEnvelope(inboundEnvelope);
 
         return next(context, cancellationToken);

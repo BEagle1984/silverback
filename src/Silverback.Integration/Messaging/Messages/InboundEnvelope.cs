@@ -59,4 +59,8 @@ internal record InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
     public bool IsTombstone => Message is null or ITombstone;
 
     public object? Message { get; set; }
+
+    // Set by the FilterConsumerBehavior when the endpoint filter rejects the message, which is then skipped like a message that no
+    // subscriber handles (see PublisherConsumerBehavior and SequenceBase)
+    internal bool IsFiltered { get; set; }
 }

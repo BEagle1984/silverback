@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Filter;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
@@ -59,6 +60,30 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
     ///     as expected. The default is <c>false</c>.
     /// </summary>
     public bool AllowStreaming { get; init; }
+
+    /// <summary>
+    ///     Gets the <see cref="IInboundMessageFilter" /> to be used to filter out the consumed messages that should not be processed. The
+    ///     filtered messages aren't delivered to any subscriber and are committed (or acknowledged) like the messages that no subscriber
+    ///     handles. The default is <c>null</c>.
+    /// </summary>
+    /// <remarks>
+    ///     When the filter is set via
+    ///     <see cref="ConsumerEndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.Filter{TFilter}()" />, the actual filter is
+    ///     resolved from the service provider for each message by the consumer pipeline. In that case, the value of this property only
+    ///     identifies the filter type and can't be invoked directly.
+    ///     <para>
+    ///         With batch processing, the filtered messages aren't part of any batch: Kafka commits them with the next commit of the same
+    ///         partition, so a partition whose latest messages are all filtered out keeps them uncommitted until a message of the
+    ///         partition is processed in a batch.
+    ///     </para>
+    ///     <para>
+    ///         A filtered message isn't added to the sequence it belongs to and doesn't count toward its length. A custom
+    ///         <see cref="ISequenceReader" /> whose sequences are completed by their last message or by their total length should therefore
+    ///         not be combined with a filter: a sequence whose last message (or any message, with a total length) is filtered out isn't
+    ///         completed and is eventually aborted as incomplete. The built-in batches, chunked messages and streams aren't affected.
+    ///     </para>
+    /// </remarks>
+    public IInboundMessageFilter? Filter { get; init; }
 
     /// <inheritdoc cref="EndpointConfiguration.ValidateCore" />
     protected override void ValidateCore()

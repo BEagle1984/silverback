@@ -26,6 +26,7 @@ using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Sequences;
@@ -885,6 +886,116 @@ public class SequenceBaseTests
     }
 
     [Fact]
+    public async Task AddAsync_ShouldSkipFilteredMessage()
+    {
+        using TrackingTestSequence sequence = new(CreateContext(new HookLogger()), 2);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        Task<List<IRawInboundEnvelope>> enumerationTask = Task.Run(async () =>
+        {
+            List<IRawInboundEnvelope> envelopes = [];
+
+            await foreach (IRawInboundEnvelope envelope in stream)
+            {
+                envelopes.Add(envelope);
+            }
+
+            return envelopes;
+        });
+        InboundEnvelope<TestEventOne> filteredEnvelope = CreateInboundEnvelope(true);
+        InboundEnvelope<TestEventOne> envelope1 = CreateInboundEnvelope();
+        InboundEnvelope<TestEventOne> envelope2 = CreateInboundEnvelope();
+
+        AddToSequenceResult filteredResult = await sequence.AddAsync(filteredEnvelope, null, true).WaitAsync(Timeout);
+
+        // Not pushed, counted or tracked, like a message that no stream accepts
+        filteredResult.IsSuccess.ShouldBeTrue();
+        filteredResult.PushedStreamsCount.ShouldBe(0);
+        sequence.Length.ShouldBe(0);
+        sequence.GetCommitIdentifiers().ShouldBeEmpty();
+
+        await sequence.AddAsync(envelope1, null, true).WaitAsync(Timeout);
+        await sequence.AddAsync(envelope2, null, true).WaitAsync(Timeout);
+        List<IRawInboundEnvelope> enumeratedEnvelopes = await enumerationTask.WaitAsync(Timeout);
+
+        sequence.IsComplete.ShouldBeTrue();
+        sequence.Length.ShouldBe(2);
+        enumeratedEnvelopes.ShouldBe([envelope1, envelope2]);
+        sequence.GetCommitIdentifiers().ShouldBe([envelope1.BrokerMessageIdentifier, envelope2.BrokerMessageIdentifier], true);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldNotThrow_WhenFilteredMessageIsUnhandled()
+    {
+        using TrackingTestSequence sequence = new(CreateContext(new HookLogger()), 2);
+
+        // No stream accepts the message, which would throw because of throwIfUnhandled if it wasn't filtered
+        AddToSequenceResult result = await sequence.AddAsync(CreateInboundEnvelope(true), null, true).WaitAsync(Timeout);
+
+        result.IsSuccess.ShouldBeTrue();
+        result.PushedStreamsCount.ShouldBe(0);
+        sequence.Length.ShouldBe(0);
+        sequence.GetCommitIdentifiers().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldLinkSequence_WhenMessageIsFiltered()
+    {
+        using TrackingTestSequence sequence = new(CreateContext(new HookLogger()), 2);
+        TestSequence childSequence = CreateSequence(new HookLogger()); // Disposed by the parent sequence
+
+        AddToSequenceResult result = await sequence.AddAsync(CreateInboundEnvelope(true), childSequence, false).WaitAsync(Timeout);
+
+        // The filtered message (e.g. chunked) joins the sequence like a message that no stream accepts, so that its sequence is
+        // committed or rolled back with it
+        result.IsSuccess.ShouldBeTrue();
+        childSequence.ParentSequence.ShouldBeSameAs(sequence);
+        sequence.Sequences.ShouldBe([childSequence]);
+        sequence.Length.ShouldBe(0);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
+    public async Task AddAsync_ShouldUnlinkSequence_WhenMessageIsFilteredWhileSequenceIsBeingCompleted(bool isFound)
+    {
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+
+        // Found in the store by the reader, otherwise it's the new sequence started by the added message
+        if (isFound)
+            ((ISequenceImplementation)sequence).SetIsNew(false);
+
+        // The sequence starts being completed (e.g. by the max wait time) while the chunk sequence of the filtered message is being
+        // linked, after the checks at the beginning of the add: the completion may notify the processing completion without the link
+        using HookChildSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            () => typeof(SequenceBase<IRawInboundEnvelope>)
+                .GetField("_isCompleting", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .SetValue(sequence, true));
+
+        AddToSequenceResult result = await sequence.AddAsync(CreateInboundEnvelope(true), childSequence, false).WaitAsync(Timeout);
+
+        // The message is refused like a pushed one (added to the next sequence, or sharing the outcome of the sequence it started),
+        // without leaving the chunk sequence linked to this one, which wouldn't complete it
+        result.IsSuccess.ShouldBe(!isFound);
+        result.IsAborted.ShouldBe(!isFound);
+        childSequence.Parent.ShouldBeNull();
+        sequence.Sequences.ShouldNotContain(childSequence);
+        sequence.Length.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldReturnAborted_WhenFilteredMessageIsAddedToAbortedSequence()
+    {
+        using TrackingTestSequence sequence = new(CreateContext(new HookLogger()), 2);
+        await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted).WaitAsync(Timeout);
+
+        AddToSequenceResult result = await sequence.AddAsync(CreateInboundEnvelope(true), null, false).WaitAsync(Timeout);
+
+        result.IsAborted.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task AddAsync_ShouldElapseTimeoutWhenDue()
     {
         using TimeoutTrackingTestSequence sequence = new(CreateContext(new HookLogger()), TimeSpan.FromSeconds(1), true);
@@ -1105,6 +1216,18 @@ public class SequenceBaseTests
             Substitute.For<IConsumer>(),
             new TestOffset());
 
+    private static InboundEnvelope<TestEventOne> CreateInboundEnvelope(bool isFiltered = false) =>
+        new(
+            new TestEventOne(),
+            Stream.Null,
+            [],
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset())
+        {
+            IsFiltered = isFiltered
+        };
+
     private sealed class TestSequence : SequenceBase<IRawInboundEnvelope>
     {
         public TestSequence(ConsumerPipelineContext context)
@@ -1114,6 +1237,16 @@ public class SequenceBaseTests
         }
 
         public Task CompleteFromTestAsync() => CompleteAsync();
+    }
+
+    // Tracks the identifiers of the added messages and completes once the specified number of messages is added, like a batch
+    private sealed class TrackingTestSequence : SequenceBase<IRawInboundEnvelope>
+    {
+        public TrackingTestSequence(ConsumerPipelineContext context, int totalLength)
+            : base("tracking-test-sequence", context, enforceTimeout: false, trackIdentifiers: true)
+        {
+            TotalLength = totalLength;
+        }
     }
 
     // Adds the message refused because of the abort to the next sequence, like the batches
