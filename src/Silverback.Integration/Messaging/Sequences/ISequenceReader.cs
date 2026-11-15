@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Sequences;
 
@@ -10,6 +11,13 @@ namespace Silverback.Messaging.Sequences;
 ///     Can recognize a message that belongs to a sequence and match it with the proper
 ///     <see cref="ISequence" /> instance.
 /// </summary>
+/// <remarks>
+///     The messages skipped without being delivered, because filtered out (see <see cref="ConsumerEndpointConfiguration.Filter" />) or
+///     ignored because no subscriber handles them (see <see cref="ConsumerEndpointConfiguration.ThrowIfUnhandled" />), aren't added to the
+///     sequence they belong to and don't count toward its length. A custom sequence completed by its last message, or by a total length
+///     equal to the fixed number of messages it is made of, therefore isn't completed when that message (or any message, with a total
+///     length) is skipped, and is eventually aborted as incomplete. The built-in batches, chunked messages and streams aren't affected.
+/// </remarks>
 public interface ISequenceReader
 {
     /// <summary>

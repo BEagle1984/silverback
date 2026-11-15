@@ -180,6 +180,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public int Length { get; protected set; }
 
     /// <inheritdoc cref="ISequence.TotalLength" />
+    /// <remarks>
+    ///     The messages skipped without being delivered (filtered out or ignored because unhandled) don't count toward the
+    ///     <see cref="Length" />. When the total length is the fixed number of messages the sequence is made of (e.g. in a custom
+    ///     sequence), a skipped message therefore prevents it from being reached and the sequence isn't completed (see
+    ///     <see cref="ISequenceReader" />). A sequence whose total length is just a capacity, like a batch, is filled by the next messages.
+    /// </remarks>
     public int? TotalLength { get; protected set; }
 
     /// <inheritdoc cref="ISequence.IsNew" />
@@ -606,6 +612,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     Implements the logic to recognize the last message in the sequence without relying on the TotalCount
     ///     property.
     /// </summary>
+    /// <remarks>
+    ///     It isn't invoked for the messages skipped without being delivered (filtered out or ignored because unhandled), so a sequence
+    ///     whose last message is skipped isn't completed (see <see cref="ISequenceReader" />).
+    /// </remarks>
     /// <param name="envelope">
     ///     The envelope to be added to the sequence.
     /// </param>
