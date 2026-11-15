@@ -60,7 +60,10 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
 
             // The extra 1 is to prevent the completion before the iteration is over and all messages are enqueued
             int pending = 1;
-            TaskCompletionSource<bool> taskCompletionSource = new();
+
+            // The result is set by the producer callbacks on the broker client's thread, which must not run the caller's continuation
+            // inline
+            TaskCompletionSource<bool> taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             await using ConfiguredAsyncDisposable disposable =
                 cancellationToken.Register(() => taskCompletionSource.TrySetCanceled(cancellationToken)).ConfigureAwait(false);
             Exception? produceException = null;
@@ -103,7 +106,10 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
         {
             // The extra 1 is to prevent the completion before the iteration is over and all messages are enqueued
             int pending = 1;
-            TaskCompletionSource<bool> taskCompletionSource = new();
+
+            // The result is set by the producer callbacks on the broker client's thread, which must not run the caller's continuation
+            // inline
+            TaskCompletionSource<bool> taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             await using ConfiguredAsyncDisposable disposable =
                 cancellationToken.Register(() => taskCompletionSource.TrySetCanceled(cancellationToken)).ConfigureAwait(false);
             Exception? produceException = null;
