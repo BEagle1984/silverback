@@ -157,25 +157,27 @@ function ConvertTo-GitHubMarkdown {
     $apiLinkRegex = [regex] '\[([^\]]+)\]\(xref:[A-Z][^)]*\)'
     $contentLinkRegex = [regex] '\[([^\]]+)\]\((?!https?://)([^)]+)\)'
 
-    # Remove the references to the documentation pages, e.g. "(see <xref:producing>)"
-    $seeAlsoRegex = [regex] ' ?\(see (also )?[^()]*\)'
+    # Remove the references to the documentation pages, e.g. "(see <xref:producing>)", "(see [Batches](xref:batch-processing))"
+    # or the trailing ", see [Streaming](xref:streaming)" in a parenthesis: the nested group matches the parentheses of a link
+    $seeAlsoRegex = [regex] ' ?\(see (also )?(?:[^()]|\([^()]*\))*\)'
+    $inlineSeeAlsoRegex = [regex] ', see (also )?(?:[^()]|\([^()]*\))*(?=\))'
+    $removeContentReferences = {
+        param($match)
+
+        $hasContentReferences =
+            $contentLinkRegex.IsMatch($match.Value) -or
+            @($xrefRegex.Matches($match.Value) | Where-Object { -not (Test-ApiUid $_.Groups[1].Value) }).Count -gt 0
+
+        if ($hasContentReferences) { "" } else { $match.Value }
+    }
 
     $result = foreach ($line in $Lines) {
         if ($line -match '^<p class="release-date">') {
             continue
         }
 
-        $line = $seeAlsoRegex.Replace(
-            $line,
-            {
-                param($match)
-
-                $hasContentReferences =
-                    $contentLinkRegex.IsMatch($match.Value) -or
-                    @($xrefRegex.Matches($match.Value) | Where-Object { -not (Test-ApiUid $_.Groups[1].Value) }).Count -gt 0
-
-                if ($hasContentReferences) { "" } else { $match.Value }
-            })
+        $line = $seeAlsoRegex.Replace($line, $removeContentReferences)
+        $line = $inlineSeeAlsoRegex.Replace($line, $removeContentReferences)
 
         $line = $apiLinkRegex.Replace($line, '`$1`')
         $line = $contentLinkRegex.Replace($line, '$1')
