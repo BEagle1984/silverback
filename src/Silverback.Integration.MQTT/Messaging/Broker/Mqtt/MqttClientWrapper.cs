@@ -125,14 +125,32 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         ];
     }
 
-    public Task UnsubscribeAsync() =>
-        _subscribedTopicsFilters.Length >= 1
-            ? _mqttClient.UnsubscribeAsync(
+    public async Task UnsubscribeAsync()
+    {
+        IReadOnlyCollection<MqttTopicFilter> topicFilters = SubscribedTopicsFilters;
+
+        if (topicFilters.Count == 0)
+            return;
+
+        // The disconnect waits for the unsubscription: bound it explicitly, rather than relying on the IMqttClient implementation to
+        // apply the configured timeout
+        using CancellationTokenSource timeoutCancellationTokenSource = new(Configuration.Timeout);
+
+        MqttClientUnsubscribeResult result = await _mqttClient.UnsubscribeAsync(
                 new MqttClientUnsubscribeOptions
                 {
-                    TopicFilters = [.. _subscribedTopicsFilters.Select(filter => filter.Topic)]
-                })
-            : Task.CompletedTask;
+                    TopicFilters = [.. topicFilters.Select(filter => filter.Topic)]
+                },
+                timeoutCancellationTokenSource.Token)
+            .ConfigureAwait(false);
+
+        // The broker rejects the single topic filters through the result codes, without failing
+        foreach (MqttClientUnsubscribeResultItem item in result.Items)
+        {
+            if (item.ResultCode is not (MqttClientUnsubscribeResultCode.Success or MqttClientUnsubscribeResultCode.NoSubscriptionExisted))
+                _logger.LogUnsubscriptionRejected(item.TopicFilter, item.ResultCode, this);
+        }
+    }
 
     protected override ValueTask ConnectCoreAsync()
     {
@@ -173,12 +191,42 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         _publishCancellationTokenSource?.Dispose();
         _publishCancellationTokenSource = null;
 
+        await UnsubscribeBeforeDisconnectingAsync().ConfigureAwait(false);
+
         if (_mqttClient.IsConnected)
         {
             await _mqttClient.DisconnectAsync().ConfigureAwait(false);
         }
 
         _mqttClientWasConnected = false;
+    }
+
+    // A broker can route a message to a disconnecting member of a shared subscription and drop it silently once the session ends
+    // (e.g. EMQX). Unsubscribing first removes the client from the share groups while the connection is still alive: a message
+    // routed to it in the meantime is still delivered and, left unacknowledged, it is redispatched when the session ends.
+    // A persistent session instead keeps its subscriptions, for the broker to queue the messages until the client reconnects.
+    // Without a shared subscription there is nothing to gain, since the messages of an ending session are discarded anyway.
+    // When disconnecting right after connecting, the SUBSCRIBE still being sent by the connection loop can reach the broker after the
+    // UNSUBSCRIBE: the client then disconnects while subscribed, as it would without unsubscribing.
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    private async Task UnsubscribeBeforeDisconnectingAsync()
+    {
+        if (!_mqttClient.IsConnected ||
+            Configuration.IsSessionPersistent ||
+            !SubscribedTopicsFilters.Any(filter => ParsedTopic.TrySplitSharedSubscription(filter.Topic, out _, out _)))
+        {
+            return;
+        }
+
+        try
+        {
+            await UnsubscribeAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            // The unsubscription is a best effort and must never prevent the disconnect
+            _logger.LogUnsubscribeError(this, ex);
+        }
     }
 
     private async Task ConnectAndKeepConnectionAliveAsync(CancellationToken cancellationToken)

@@ -81,8 +81,12 @@ public interface IMqttClientWrapper : IBrokerClient
     Task SubscribeAsync();
 
     /// <summary>
-    ///     Unsubscribes from all topics and stops consuming messages.
+    ///     Unsubscribes from the subscribed topics, excluding the topic filters rejected by the broker at the last subscription.
     /// </summary>
+    /// <remarks>
+    ///     The broker acknowledgment is awaited for up to the configured <see cref="MqttClientConfiguration.Timeout" />. The topic filters
+    ///     whose unsubscription is rejected by the broker are logged, without failing.
+    /// </remarks>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>

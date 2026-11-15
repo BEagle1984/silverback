@@ -262,6 +262,30 @@ public sealed class MqttLoggerExtensionsTests : IDisposable
     }
 
     [Fact]
+    public void LogUnsubscriptionRejected_ShouldLog()
+    {
+        _silverbackLogger.LogUnsubscriptionRejected("my/topic/#", MqttClientUnsubscribeResultCode.NotAuthorized, _mqttClientWrapper);
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            null,
+            "Unsubscription from my/topic/# rejected by the broker with result code NotAuthorized | ClientName: client1, ClientId: id1",
+            4044);
+    }
+
+    [Fact]
+    public void LogUnsubscribeError_ShouldLog()
+    {
+        _silverbackLogger.LogUnsubscribeError(_mqttClientWrapper, new MqttCommunicationTimedOutException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            typeof(MqttCommunicationTimedOutException),
+            "Error occurred unsubscribing before disconnecting from MQTT | ClientName: client1, ClientId: id1, Broker: Unspecified/test-broker:1234",
+            4043);
+    }
+
+    [Fact]
     public void LogMqttClientError_ShouldLog()
     {
         _silverbackLogger.LogMqttClientError(
