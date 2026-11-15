@@ -1,0 +1,25 @@
+name: Build the documentation
+description: Builds the documentation site and prepares it for GitHub Pages
+
+inputs:
+  github-token:
+    description: The token used by the contributors generator to call the GitHub API
+    required: true
+  output-path:
+    description: The folder to write the site ready to be published to
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Build the documentation
+      shell: pwsh
+      working-directory: docs
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: ./build.ps1 -NoServe
+    - name: Prepare the site
+      shell: pwsh
+      env:
+        OUTPUT_PATH: ${{ inputs.output-path }}
+      run: ./docs/prepare-site.ps1 -OutputPath $env:OUTPUT_PATH

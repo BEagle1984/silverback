@@ -1,0 +1,47 @@
+name: docs
+
+# Republishes the documentation between releases (the release workflow publishes it with each release). Run it on main, after
+# merging the release date pull request: the github-pages environment only accepts main and the release tags.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Shared with the release workflow, to deploy one site at a time
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install SDK 10.0.x
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build the documentation
+        uses: ./.github/actions/build-docs
+        with:
+          github-token: ${{ github.token }}
+          output-path: ${{ runner.temp }}/site
+      # deploy-pages fails if several artifacts have the same name, so each run attempt uploads its own
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          name: github-pages-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/site
+      - name: Deploy the documentation
+        id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}

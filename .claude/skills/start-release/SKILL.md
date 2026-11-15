@@ -19,7 +19,8 @@ In `Directory.Build.props`, set `BaseVersion` to the new version, keeping the `$
 
 Leave `BaseVersionSuffix` as it is unless the user asks for a pre-release (for example `-beta.1`).
 
-If the current version has no release notes date yet (see below), it was never released: ask whether to rename that chapter to the new version instead of adding another one.
+If the current version has no release notes date yet (see below) and its `v<version>` tag doesn't exist, it was never released
+(the release workflow adds the date through a pull request, so a released version can still lack it on `main` for a while): ask whether to rename that chapter to the new version instead of adding another one.
 
 ## 2. Add the release notes chapter
 

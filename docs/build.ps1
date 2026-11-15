@@ -1,3 +1,8 @@
+param(
+    # Only build the site, without serving it
+    [switch] $NoServe
+)
+
 if (Test-Path build) { Remove-Item build -Recurse -Force }
 
 # Build the src projects and the docs generator tools (solution filters don't support wildcards, so the filter is generated)
@@ -34,5 +39,11 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 dotnet tool restore
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-dotnet docfx --serve --port 4242
+if ($NoServe) {
+    dotnet docfx
+}
+else {
+    dotnet docfx --serve --port 4242
+}
+
 exit $LASTEXITCODE

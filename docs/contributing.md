@@ -20,7 +20,7 @@ Repository:
 `Directory.Build.props` contains the current NuGet package version. Update:
 
 - `<BaseVersion>`
-- `<VersionSuffix>`
+- `<BaseVersionSuffix>`
 
 ## Commits
 
@@ -28,9 +28,8 @@ Please follow the [Conventional Commits](https://www.conventionalcommits.org/) s
 
 ## Building NuGet Packages
 
-Packages can be built locally using `/nuget/Update.ps1`.
-
-Use `-l` to clear the local NuGet cache (useful when rebuilding the same version).
+Packages can be built locally using `/nuget/pack.ps1`, which writes them to the `/nuget` folder. Rebuilding the same version
+replaces the cached copies of the packages, so the freshly built ones are restored.
 
 ## Testing
 

@@ -1,7 +1,13 @@
 [CmdletBinding(SupportsShouldProcess)]
 param(
     # The version to publish (e.g. 5.7.0 or v5.7.0); defaults to the version in Directory.Build.props
-    [string] $Version
+    [string] $Version,
+
+    # Only write the release notes to this file, without publishing them
+    [string] $OutputPath,
+
+    # Publish the release notes previously written with -OutputPath, instead of converting them again
+    [string] $NotesPath
 )
 
 Set-StrictMode -Version Latest
@@ -223,6 +229,41 @@ $majorVersion = [int] $Matches[1]
 $isPrerelease = $Version.Contains('-')
 $changelogFileName = "$($majorVersion)00"
 
+if ($OutputPath -and $NotesPath) {
+    throw "-OutputPath and -NotesPath can't be combined."
+}
+
+# The .NET file APIs resolve the relative paths against the process directory, not the current PowerShell location
+if ($OutputPath) {
+    $OutputPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutputPath)
+}
+
+if ($NotesPath) {
+    $NotesPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($NotesPath)
+}
+
+if ($NotesPath) {
+    Write-Step "Reading the release notes from '$NotesPath'"
+    $notes = [IO.File]::ReadAllText($NotesPath)
+}
+else {
+    Write-Step "Reading the release notes"
+    $section = Get-ReleaseSection (Join-Path $changelogPath "$changelogFileName.md") $Version
+    $apiManifest = Get-ApiManifest (Join-Path $PSScriptRoot "api" ".manifest")
+    $contentPageLinks = Get-ContentPageLinks (Join-Path $PSScriptRoot "_site" "xrefmap.yml")
+    $anchor = $Version.ToLowerInvariant() -replace '[^0-9a-z-]', ''
+    $notes = (ConvertTo-GitHubMarkdown $section $apiManifest $contentPageLinks) +
+        "`n`nSee [docs](https://silverback-messaging.net/changelog/$changelogFileName.html#$anchor) for details.`n"
+}
+
+Write-Host $notes
+
+if ($OutputPath) {
+    [IO.File]::WriteAllText($OutputPath, $notes, [Text.UTF8Encoding]::new($false))
+    Write-Host "Wrote the release notes to '$OutputPath'."
+    return
+}
+
 Write-Step "Checking tag '$tag'"
 & gh api "repos/{owner}/{repo}/git/ref/tags/$tag" --silent 2>$null
 if ($LASTEXITCODE -ne 0) {
@@ -230,16 +271,6 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "The tag '$tag' exists."
-
-Write-Step "Reading the release notes"
-$section = Get-ReleaseSection (Join-Path $changelogPath "$changelogFileName.md") $Version
-$apiManifest = Get-ApiManifest (Join-Path $PSScriptRoot "api\.manifest")
-$contentPageLinks = Get-ContentPageLinks (Join-Path $PSScriptRoot "_site\xrefmap.yml")
-$anchor = $Version.ToLowerInvariant() -replace '[^0-9a-z-]', ''
-$notes = (ConvertTo-GitHubMarkdown $section $apiManifest $contentPageLinks) +
-    "`n`nSee [docs](https://silverback-messaging.net/changelog/$changelogFileName.html#$anchor) for details.`n"
-
-Write-Host $notes
 
 Write-Step "Publishing the GitHub release '$tag'"
 & gh release view $tag --json tagName 2>$null | Out-Null

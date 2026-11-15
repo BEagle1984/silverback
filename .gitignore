@@ -332,8 +332,9 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-# Nuget local report
-nuget/
+# Locally built NuGet packages
+nuget/*
+!nuget/pack.ps1
 
 # Coverage report
 /tests/**/coverage.cobertura.xml

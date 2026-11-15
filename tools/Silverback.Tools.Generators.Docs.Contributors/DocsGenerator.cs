@@ -54,6 +54,11 @@ internal static class DocsGenerator
         // The GitHub API rejects the requests without a user agent
         httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Silverback.Docs", "1.0"));
 
+        // The unauthenticated requests share a low per-IP rate limit, which the build agents easily exceed
+        string? token = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
+        if (!string.IsNullOrEmpty(token))
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         List<GitHubContributor>? contributors = await httpClient
             .GetFromJsonAsync<List<GitHubContributor>>(ContributorsUrl, JsonOptions)
             .ConfigureAwait(false);

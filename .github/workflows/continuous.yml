@@ -6,6 +6,8 @@ on:
       - main
   pull_request:
   workflow_dispatch:
+  # Called by the release workflow when it didn't run on the tagged commit yet
+  workflow_call:
 
 permissions:
   contents: read

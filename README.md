@@ -159,7 +159,7 @@ The v4 documentation is still available at [silverback-messaging.net/v4](https:/
 | [UpdateOlderVersions.ps1](tests/extended/UpdateOlderVersions.ps1)       | Scaffold another historical benchmark project                                                       |
 | [coverage.ps1](coverage.ps1)                                            | Build and test the main solution with coverage, then generate and open an HTML report               |
 | [docker-compose.yaml](docker-compose.yaml)                              | Local Kafka, Schema Registry, MQTT and PostgreSQL infrastructure, with administration UIs           |
-| [nuget/Update.ps1](nuget/Update.ps1)                                    | Build local Silverback packages for package-based development and samples                           |
+| [nuget/pack.ps1](nuget/pack.ps1)                                        | Build local Silverback packages for package-based development and samples                           |
 | [.NET tool manifest](.config/dotnet-tools.json)                         | Repository-local ReportGenerator installation used by the coverage script                           |
 
 ### Code and Documentation Generators
@@ -175,12 +175,33 @@ lives in [Silverback.Tools.Generators.Common](tools/Silverback.Tools.Generators.
 | [Docs.Headers](tools/Silverback.Tools.Generators.Docs.Headers)             | Generate message-header reference tables                                                        |
 | [Docs.LogEvents](tools/Silverback.Tools.Generators.Docs.LogEvents)         | Generate log-event reference tables                                                             |
 | [Docs.Contributors](tools/Silverback.Tools.Generators.Docs.Contributors)   | Generate the contributors grid from the GitHub API                                              |
-| [docs/build.ps1](docs/build.ps1)                                           | Build and serve the DocFX documentation locally; run from the docs directory                    |
-| [docs/publish.ps1](docs/publish.ps1)                                       | Publish the generated site through a separate gh-pages checkout; supports -NoPush               |
+| [docs/build.ps1](docs/build.ps1)                                           | Build and serve the DocFX documentation locally; run from the docs directory; supports -NoServe |
 
 Build automation is defined in [the main workflow](.github/workflows/continuous.yml), [the Sonar workflow](.github/workflows/sonar.yml),
-[the samples and extended tests build workflow](.github/workflows/other-projects.yml) and
-[the nightly extended integration tests workflow](.github/workflows/extended-integration-tests.yml).
+[the samples and extended tests build workflow](.github/workflows/other-projects.yml),
+[the nightly extended integration tests workflow](.github/workflows/extended-integration-tests.yml),
+[the release workflow](.github/workflows/release.yml) and [the documentation workflow](.github/workflows/docs.yml).
+
+### Releasing
+
+1. Make sure that `BaseVersion` and `BaseVersionSuffix` in [Directory.Build.props](Directory.Build.props) are the version to
+   release, and that the release notes in `docs/changelog` contain its section, with the heading
+   `## [1.2.3-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v1.2.3-beta.1)` (a prerelease section is renamed
+   for each prerelease, up to the final version).
+2. Optionally, check the tag before pushing it: `./.github/scripts/check-release.ps1 -Tag v1.2.3` (needs the tag created locally
+   and checked out, and the GitHub CLI).
+3. Tag the commit on `main` and push the tag: `git tag v1.2.3` and `git push origin v1.2.3`.
+4. The [release workflow](.github/workflows/release.yml) checks the version, the release notes, nuget.org and the GitHub release,
+   waits for or runs the continuous and extended integration tests on the tagged commit, then packs the packages and builds
+   the documentation with the release date.
+5. Approve the `nuget` environment deployment in the workflow run: the workflow pushes the packages to nuget.org (via trusted
+   publishing), publishes the documentation and the GitHub release, and opens a pull request with the release date.
+6. Merge the release date pull request, before renaming the release notes section for the next prerelease. It is opened by the
+   workflow, so the `continuous` workflow doesn't run on it and merging it needs the ruleset bypass.
+
+A failed release is resumed with "Re-run failed jobs" (if the tests failed, re-run the failed test workflow first). The release
+date is the day (UTC) the release is prepared, before the approval. Use the [documentation workflow](.github/workflows/docs.yml) on `main` to
+republish the documentation between releases.
 
 ## Community
 

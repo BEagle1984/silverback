@@ -27,9 +27,7 @@ jobs:
       # Build nuget packages
       - name: Build Silverback packages
         shell: pwsh
-        run: |
-          cd nuget
-          ./Update.ps1
+        run: ./nuget/pack.ps1
       - name: Set package source
         shell: pwsh
         run: |

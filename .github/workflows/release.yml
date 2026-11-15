@@ -1,0 +1,295 @@
+name: release
+
+# Releases the version of the pushed tag (e.g. v5.7.0 or v5.8.0-beta.1): checks it, makes sure that the continuous and extended
+# integration tests passed on the tagged commit, prepares the packages, the release date commit, the documentation and the
+# release notes, then (after approval) pushes the packages and publishes the rest. To resume a failed release, use "Re-run
+# failed jobs": re-running all the jobs fails the checks once the packages are pushed.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      # To check the GitHub Pages setup
+      pages: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      continuous_state: ${{ steps.check.outputs.continuous_state }}
+      continuous_run_id: ${{ steps.check.outputs.continuous_run_id }}
+      extended_state: ${{ steps.check.outputs.extended_state }}
+      extended_run_id: ${{ steps.check.outputs.extended_run_id }}
+    steps:
+      # The full history is needed to check that the tagged commit is on main
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Install SDK 10.0.x
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      - name: Check the release
+        id: check
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUGET_USER: ${{ vars.NUGET_USER }}
+        run: ./.github/scripts/check-release.ps1 -Tag $env:GITHUB_REF_NAME
+
+  # Each test workflow either runs now (if it didn't run on the tagged commit yet) or is awaited (if it's running), while it is
+  # skipped if it already succeeded. The check fails if its latest run on the tagged commit failed.
+  continuous:
+    needs: check
+    if: needs.check.outputs.continuous_state == 'missing'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/continuous.yml
+
+  continuous-wait:
+    needs: check
+    if: needs.check.outputs.continuous_state == 'running'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      actions: read
+    steps:
+      - name: Wait for the running continuous workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ needs.check.outputs.continuous_run_id }}
+        run: gh run watch "$RUN_ID" --repo "$GITHUB_REPOSITORY" --exit-status --interval 60 > /dev/null
+
+  extended:
+    needs: check
+    if: needs.check.outputs.extended_state == 'missing'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/extended-integration-tests.yml
+
+  extended-wait:
+    needs: check
+    if: needs.check.outputs.extended_state == 'running'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      actions: read
+    steps:
+      - name: Wait for the running extended integration tests workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ needs.check.outputs.extended_run_id }}
+        run: gh run watch "$RUN_ID" --repo "$GITHUB_REPOSITORY" --exit-status --interval 60 > /dev/null
+
+  pack:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install SDK 10.0.x
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      - name: Pack
+        shell: pwsh
+        run: ./nuget/pack.ps1
+      - name: Upload the packages
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: packages
+          path: |
+            nuget/*.nupkg
+            nuget/*.snupkg
+          if-no-files-found: error
+
+  prepare:
+    needs: check
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install SDK 10.0.x
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      - name: Write the release date
+        shell: pwsh
+        run: ./docs/set-release-date.ps1 -Version $env:VERSION
+      # Built before committing the date: the API pages link to the sources of the current commit, which has to be on GitHub
+      - name: Build the documentation
+        uses: ./.github/actions/build-docs
+        with:
+          github-token: ${{ github.token }}
+          output-path: ${{ runner.temp }}/site
+      # The commit is pushed only after the packages, as a bundle on top of the tagged commit. A prerelease released on the same
+      # day as the previous one doesn't change the date, so it doesn't need a commit.
+      - name: Commit the release date
+        run: |
+          mkdir -p "$RUNNER_TEMP/release"
+          if git diff --quiet -- docs/changelog; then
+            echo "The release date is already up to date."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --message "docs: add release date for v$VERSION" -- docs/changelog
+          git bundle create "$RUNNER_TEMP/release/release.bundle" "$GITHUB_SHA..HEAD"
+      - name: Write the GitHub release notes
+        shell: pwsh
+        run: ./docs/publish-release-notes.ps1 -Version $env:VERSION -OutputPath "$env:RUNNER_TEMP/release/notes.md"
+      - name: Upload the release
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release
+          path: ${{ runner.temp }}/release
+          if-no-files-found: error
+      # A regular artifact, turned into the Pages artifact only when deploying: the Pages artifacts expire after a day, which
+      # could be shorter than the wait for the approval
+      - name: Upload the site
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site
+          path: ${{ runner.temp }}/site
+          if-no-files-found: error
+
+  nuget:
+    needs: [check, continuous, continuous-wait, extended, extended-wait, pack, prepare]
+    # The test jobs that aren't needed are skipped, so the default success() condition can't be used
+    if: >-
+      !cancelled() &&
+      needs.check.result == 'success' &&
+      needs.pack.result == 'success' &&
+      needs.prepare.result == 'success' &&
+      (needs.check.outputs.continuous_state == 'success' || needs.continuous.result == 'success' || needs.continuous-wait.result == 'success') &&
+      (needs.check.outputs.extended_state == 'success' || needs.extended.result == 'success' || needs.extended-wait.result == 'success')
+    runs-on: ubuntu-latest
+    # Requires the approval of the maintainer
+    environment: nuget
+    permissions:
+      id-token: write
+    steps:
+      - name: Download the packages
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: packages
+          path: packages
+      - name: Install SDK 10.0.x
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      # Trusted publishing: exchanges the GitHub OIDC token for a short-lived API key
+      - name: Log in to nuget.org
+        id: login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ vars.NUGET_USER }}
+      # --skip-duplicate allows resuming a partial push. The symbol packages are pushed separately, since their automatic push
+      # along with the packages is skipped when a package already exists.
+      - name: Push the packages
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push "packages/*.nupkg" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate \
+            --no-symbols
+          dotnet nuget push "packages/*.snupkg" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+  pages:
+    needs: nuget
+    if: ${{ !cancelled() && needs.nuget.result == 'success' }}
+    runs-on: ubuntu-latest
+    # Shared with the documentation workflow, to deploy one site at a time
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Download the site
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: site
+          path: ${{ runner.temp }}/site
+      # deploy-pages fails if several artifacts have the same name, so each run attempt uploads its own
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          name: github-pages-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/site
+      - name: Deploy the documentation
+        id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
+
+  publish:
+    needs: [check, pages]
+    if: ${{ !cancelled() && needs.pages.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      # The full history is needed to verify the bundle, whose prerequisite is the tagged commit
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Download the release
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release
+          path: ${{ runner.temp }}/release
+      - name: Publish the GitHub release
+        shell: pwsh
+        run: ./docs/publish-release-notes.ps1 -Version $env:VERSION -NotesPath "$env:RUNNER_TEMP/release/notes.md"
+      - name: Open the release date pull request
+        run: |
+          bundle="$RUNNER_TEMP/release/release.bundle"
+          if [ ! -f "$bundle" ]; then
+            echo "The release date didn't change, so there is no pull request to open."
+            exit 0
+          fi
+
+          branch="release/$VERSION"
+          git bundle verify "$bundle"
+          git fetch "$bundle" HEAD
+          git push origin "FETCH_HEAD:refs/heads/$branch"
+
+          if [ -n "$(gh pr list --head "$branch" --state open --json number --jq '.[].number')" ]; then
+            echo "The pull request for $branch is already open."
+            exit 0
+          fi
+
+          gh pr create \
+            --base main \
+            --head "$branch" \
+            --title "docs: add release date for v$VERSION" \
+            --body "Adds the release date of v$VERSION to the release notes. Opened by the release workflow."

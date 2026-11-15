@@ -1,10 +1,15 @@
 name: extended-integration-tests
 
+# The release workflow recognizes the filtered runs by their name, since they don't run all the tests
+run-name: "extended-integration-tests${{ inputs.filter && format(' [filter: {0}]', inputs.filter) || '' }}"
+
 # Runs the extended integration tests against the real brokers of the root docker-compose.yaml. They take several minutes and
-# depend on real broker timings, so they run nightly and on demand rather than on each push, and aren't a required check.
+# depend on real broker timings, so they run nightly, on demand and before each release (called by the release workflow) rather
+# than on each push, and aren't a required check.
 on:
   schedule:
     - cron: '23 0 * * *'
+  workflow_call:
   workflow_dispatch:
     inputs:
       filter:
