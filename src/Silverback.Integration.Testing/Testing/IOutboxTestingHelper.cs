@@ -15,49 +15,123 @@ namespace Silverback.Testing;
 public interface IOutboxTestingHelper
 {
     /// <summary>
-    ///     Returns the messages that are currently pending in the outbox, without removing them.
+    ///     Returns the messages that are currently pending in all the outboxes, without removing them.
     /// </summary>
-    /// <param name="outboxSettings">
-    ///     The settings of the outbox to read. If not specified, all outboxes are considered.
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the pending messages.
     /// </returns>
-    ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(OutboxSettings? outboxSettings = null);
+    ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Returns the number of messages that are currently pending in the outbox.
+    ///     Returns the messages that are currently pending in the specified outbox, without removing them.
     /// </summary>
     /// <param name="outboxSettings">
-    ///     The settings of the outbox to read. If not specified, all outboxes are considered.
+    ///     The settings of the outbox to read.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the pending messages.
+    /// </returns>
+    ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Returns the number of messages that are currently pending in all the outboxes.
+    /// </summary>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the number of pending
     ///     messages.
     /// </returns>
-    ValueTask<int> GetLengthAsync(OutboxSettings? outboxSettings = null);
+    ValueTask<int> GetLengthAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Checks whether the outbox is empty.
+    ///     Returns the number of messages that are currently pending in the specified outbox.
     /// </summary>
     /// <param name="outboxSettings">
-    ///     The settings of the outbox to check. If not specified, all outboxes are considered.
+    ///     The settings of the outbox to read.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the number of pending
+    ///     messages.
+    /// </returns>
+    ValueTask<int> GetLengthAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Checks whether all the outboxes are empty.
+    /// </summary>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains <c>true</c> if the
+    ///     outboxes are empty, otherwise <c>false</c>.
+    /// </returns>
+    ValueTask<bool> IsEmptyAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Checks whether the specified outbox is empty.
+    /// </summary>
+    /// <param name="outboxSettings">
+    ///     The settings of the outbox to check.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains <c>true</c> if the outbox
     ///     is empty, otherwise <c>false</c>.
     /// </returns>
-    ValueTask<bool> IsEmptyAsync(OutboxSettings? outboxSettings = null);
+    ValueTask<bool> IsEmptyAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when the outboxes being drained have been emptied.
+    ///     Returns a <see cref="ValueTask" /> that completes when the outboxes being drained by a registered and not paused worker have
+    ///     been emptied.
     /// </summary>
     /// <param name="timeout">
-    ///     The time to wait for the outbox to be empty. The default is 30 seconds.
+    ///     The time to wait for the outboxes to be empty. The default is 30 seconds.
     /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> that completes when the outboxes are empty.
+    /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The timeout elapsed before the outboxes were emptied.
+    /// </exception>
+    ValueTask WaitUntilEmptyAsync(TimeSpan? timeout = null);
+
+    /// <summary>
+    ///     Returns a <see cref="ValueTask" /> that completes when the outboxes being drained by a registered and not paused worker have
+    ///     been emptied.
+    /// </summary>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> that completes when the outboxes are empty.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">
+    ///     The <paramref name="cancellationToken" /> was canceled before the outboxes were emptied.
+    /// </exception>
+    ValueTask WaitUntilEmptyAsync(CancellationToken cancellationToken);
+
+    /// <summary>
+    ///     Returns a <see cref="ValueTask" /> that completes when the specified outbox has been emptied, regardless of whether it's being
+    ///     drained by a worker.
+    /// </summary>
     /// <param name="outboxSettings">
-    ///     The settings of the outbox to wait for. If not specified, only the outboxes being drained by a registered and not paused
-    ///     worker are considered.
+    ///     The settings of the outbox to wait for.
+    /// </param>
+    /// <param name="timeout">
+    ///     The time to wait for the outbox to be empty. The default is 30 seconds.
     /// </param>
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when the outbox is empty.
@@ -65,17 +139,17 @@ public interface IOutboxTestingHelper
     /// <exception cref="TimeoutException">
     ///     The timeout elapsed before the outbox was emptied.
     /// </exception>
-    ValueTask WaitUntilEmptyAsync(TimeSpan? timeout = null, OutboxSettings? outboxSettings = null);
+    ValueTask WaitUntilEmptyAsync(OutboxSettings outboxSettings, TimeSpan? timeout = null);
 
     /// <summary>
-    ///     Returns a <see cref="ValueTask" /> that completes when the outboxes being drained have been emptied.
+    ///     Returns a <see cref="ValueTask" /> that completes when the specified outbox has been emptied, regardless of whether it's being
+    ///     drained by a worker.
     /// </summary>
+    /// <param name="outboxSettings">
+    ///     The settings of the outbox to wait for.
+    /// </param>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
-    /// </param>
-    /// <param name="outboxSettings">
-    ///     The settings of the outbox to wait for. If not specified, only the outboxes being drained by a registered and not paused
-    ///     worker are considered.
     /// </param>
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when the outbox is empty.
@@ -83,13 +157,24 @@ public interface IOutboxTestingHelper
     /// <exception cref="OperationCanceledException">
     ///     The <paramref name="cancellationToken" /> was canceled before the outbox was emptied.
     /// </exception>
-    ValueTask WaitUntilEmptyAsync(CancellationToken cancellationToken, OutboxSettings? outboxSettings = null);
+    ValueTask WaitUntilEmptyAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken);
 
     /// <summary>
-    ///     Removes all the pending messages from the outbox, without producing them.
+    ///     Removes all the pending messages from all the outboxes, without producing them.
+    /// </summary>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    ValueTask ClearAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Removes all the pending messages from the specified outbox, without producing them.
     /// </summary>
     /// <param name="outboxSettings">
-    ///     The settings of the outbox to clear. If not specified, all outboxes are cleared.
+    ///     The settings of the outbox to clear.
     /// </param>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
@@ -97,7 +182,7 @@ public interface IOutboxTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    ValueTask ClearAsync(OutboxSettings? outboxSettings = null, CancellationToken cancellationToken = default);
+    ValueTask ClearAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Runs the registered outbox workers right away, until the outboxes are empty. This is especially useful in combination with the

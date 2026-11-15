@@ -127,7 +127,7 @@ public class OutboxTestingHelperTests
         OutboxTestingHelper helper = fixture.Build();
 
         // The fixture's reader factory throws for the unknown settings
-        await Should.ThrowAsync<KeyNotFoundException>(helper.WaitUntilEmptyAsync(TimeSpan.FromMinutes(1), Outbox2).AsTask().WaitAsync(TimeSpan.FromSeconds(5)));
+        await Should.ThrowAsync<KeyNotFoundException>(helper.WaitUntilEmptyAsync(Outbox2, TimeSpan.FromMinutes(1)).AsTask().WaitAsync(TimeSpan.FromSeconds(5)));
     }
 
     [Fact]
@@ -138,6 +138,84 @@ public class OutboxTestingHelperTests
         await cancellationTokenSource.CancelAsync();
 
         await Should.ThrowAsync<OperationCanceledException>(helper.WaitUntilEmptyAsync(cancellationTokenSource.Token).AsTask());
+    }
+
+    [Fact]
+    public async Task WaitUntilEmptyAsync_ShouldWaitForSpecifiedOutbox_WhenSettingsAndTokenAreSpecified()
+    {
+        using Fixture fixture = new Fixture().AddOutbox(Outbox1, 2).AddOutbox(Outbox2, 0);
+        fixture.AddProducer(Outbox1);
+        fixture.AddProducer(Outbox2);
+        OutboxTestingHelper helper = fixture.Build();
+        using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(10));
+
+        await helper.WaitUntilEmptyAsync(Outbox2, cancellationTokenSource.Token);
+
+        Task waitTask = helper.WaitUntilEmptyAsync(Outbox1, cancellationTokenSource.Token).AsTask();
+        await Task.Delay(100);
+        waitTask.IsCompleted.ShouldBeFalse();
+
+        await helper.ClearAsync(Outbox1);
+
+        await waitTask.WaitAsync(TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public async Task WaitUntilEmptyAsync_ShouldThrowOperationCanceledException_WhenTokenIsCanceledForSpecifiedOutbox()
+    {
+        using Fixture fixture = new Fixture().AddOutbox(Outbox1, 2);
+        OutboxTestingHelper helper = fixture.Build();
+        using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromMilliseconds(200));
+
+        await Should.ThrowAsync<OperationCanceledException>(helper.WaitUntilEmptyAsync(Outbox1, cancellationTokenSource.Token).AsTask());
+    }
+
+    [Fact]
+    public async Task ReadMethods_ShouldThrowOperationCanceledException_WhenTokenIsCanceled()
+    {
+        using Fixture fixture = new Fixture().AddOutbox(Outbox1, 2);
+        fixture.AddWorker(Outbox1);
+        OutboxTestingHelper helper = fixture.Build();
+        using CancellationTokenSource cancellationTokenSource = new();
+        await cancellationTokenSource.CancelAsync();
+
+        await Should.ThrowAsync<OperationCanceledException>(helper.GetMessagesAsync(cancellationTokenSource.Token).AsTask());
+        await Should.ThrowAsync<OperationCanceledException>(helper.GetMessagesAsync(Outbox1, cancellationTokenSource.Token).AsTask());
+        await Should.ThrowAsync<OperationCanceledException>(helper.GetLengthAsync(cancellationTokenSource.Token).AsTask());
+        await Should.ThrowAsync<OperationCanceledException>(helper.GetLengthAsync(Outbox1, cancellationTokenSource.Token).AsTask());
+        await Should.ThrowAsync<OperationCanceledException>(helper.IsEmptyAsync(cancellationTokenSource.Token).AsTask());
+        await Should.ThrowAsync<OperationCanceledException>(helper.IsEmptyAsync(Outbox1, cancellationTokenSource.Token).AsTask());
+        await Should.ThrowAsync<OperationCanceledException>(helper.ClearAsync(cancellationTokenSource.Token).AsTask());
+        await Should.ThrowAsync<OperationCanceledException>(helper.ClearAsync(Outbox1, cancellationTokenSource.Token).AsTask());
+        (await helper.GetLengthAsync()).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task WaitUntilEmptyAsync_ShouldWaitForSpecifiedOutbox_WhenOnlySettingsAreSpecified()
+    {
+        using Fixture fixture = new Fixture().AddOutbox(Outbox1, 2);
+        OutboxTestingHelper helper = fixture.Build();
+
+        Task waitTask = helper.WaitUntilEmptyAsync(Outbox1).AsTask();
+        await Task.Delay(100);
+        waitTask.IsCompleted.ShouldBeFalse();
+
+        await helper.ClearAsync(Outbox1);
+
+        await waitTask.WaitAsync(TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public async Task SettingsOverloads_ShouldThrowArgumentNullException_WhenSettingsAreNull()
+    {
+        OutboxTestingHelper helper = new Fixture().Build();
+
+        await Should.ThrowAsync<ArgumentNullException>(helper.GetMessagesAsync(null!).AsTask());
+        await Should.ThrowAsync<ArgumentNullException>(helper.GetLengthAsync(null!).AsTask());
+        await Should.ThrowAsync<ArgumentNullException>(helper.IsEmptyAsync(null!).AsTask());
+        await Should.ThrowAsync<ArgumentNullException>(helper.ClearAsync(null!).AsTask());
+        await Should.ThrowAsync<ArgumentNullException>(helper.WaitUntilEmptyAsync(null!, TimeSpan.FromSeconds(1)).AsTask());
+        await Should.ThrowAsync<ArgumentNullException>(helper.WaitUntilEmptyAsync(null!, CancellationToken.None).AsTask());
     }
 
     [Fact]
@@ -155,8 +233,8 @@ public class OutboxTestingHelperTests
         (await helper.IsEmptyIgnoringErrorsAsync(null)).ShouldBeTrue();
 
         // The explicit settings are always honored
-        await Should.ThrowAsync<TimeoutException>(helper.WaitUntilEmptyAsync(TimeSpan.FromMilliseconds(200), Outbox2).AsTask());
-        await Should.ThrowAsync<TimeoutException>(helper.WaitUntilEmptyAsync(TimeSpan.FromMilliseconds(200), Outbox1).AsTask());
+        await Should.ThrowAsync<TimeoutException>(helper.WaitUntilEmptyAsync(Outbox2, TimeSpan.FromMilliseconds(200)).AsTask());
+        await Should.ThrowAsync<TimeoutException>(helper.WaitUntilEmptyAsync(Outbox1, TimeSpan.FromMilliseconds(200)).AsTask());
 
         // The full discovery is unaffected
         (await helper.IsEmptyAsync()).ShouldBeFalse();

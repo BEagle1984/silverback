@@ -34,80 +34,39 @@ internal sealed class OutboxTestingHelper : IOutboxTestingHelper
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
-    public async ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(OutboxSettings? outboxSettings = null)
-    {
-        List<OutboxMessage> messages = [];
+    public ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(CancellationToken cancellationToken = default) =>
+        GetMessagesCoreAsync(null, cancellationToken);
 
-        foreach (IOutboxReader reader in GetReaders(outboxSettings))
-        {
-            messages.AddRange(await ReadAsync(reader, int.MaxValue).ConfigureAwait(false));
-        }
+    public async ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(
+        OutboxSettings outboxSettings,
+        CancellationToken cancellationToken = default) =>
+        await GetMessagesCoreAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), cancellationToken).ConfigureAwait(false);
 
-        return messages;
-    }
+    public ValueTask<int> GetLengthAsync(CancellationToken cancellationToken = default) => GetLengthCoreAsync(null, cancellationToken);
 
-    public async ValueTask<int> GetLengthAsync(OutboxSettings? outboxSettings = null)
-    {
-        int length = 0;
+    public async ValueTask<int> GetLengthAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default) =>
+        await GetLengthCoreAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), cancellationToken).ConfigureAwait(false);
 
-        foreach (IOutboxReader reader in GetReaders(outboxSettings))
-        {
-            length += await reader.GetLengthAsync().ConfigureAwait(false);
-        }
+    public async ValueTask<bool> IsEmptyAsync(CancellationToken cancellationToken = default) =>
+        await GetLengthCoreAsync(null, cancellationToken).ConfigureAwait(false) == 0;
 
-        return length;
-    }
+    public async ValueTask<bool> IsEmptyAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default) =>
+        await GetLengthAsync(outboxSettings, cancellationToken).ConfigureAwait(false) == 0;
 
-    public async ValueTask<bool> IsEmptyAsync(OutboxSettings? outboxSettings = null) =>
-        await GetLengthAsync(outboxSettings).ConfigureAwait(false) == 0;
+    public ValueTask WaitUntilEmptyAsync(TimeSpan? timeout = null) => WaitUntilEmptyWithTimeoutAsync(null, timeout);
 
-    public async ValueTask WaitUntilEmptyAsync(TimeSpan? timeout = null, OutboxSettings? outboxSettings = null)
-    {
-        using CancellationTokenSource cancellationTokenSource = new(timeout ?? DefaultWaitTimeout);
+    public ValueTask WaitUntilEmptyAsync(CancellationToken cancellationToken) => WaitUntilEmptyCoreAsync(null, cancellationToken);
 
-        try
-        {
-            await WaitUntilEmptyAsync(cancellationTokenSource.Token, outboxSettings).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
-        {
-            throw new TimeoutException("Timeout elapsed before the outbox was emptied");
-        }
-    }
+    public async ValueTask WaitUntilEmptyAsync(OutboxSettings outboxSettings, TimeSpan? timeout = null) =>
+        await WaitUntilEmptyWithTimeoutAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), timeout).ConfigureAwait(false);
 
-    public async ValueTask WaitUntilEmptyAsync(CancellationToken cancellationToken, OutboxSettings? outboxSettings = null)
-    {
-        // Resolved up front, to throw right away if the specified outbox cannot be read (e.g. not configured)
-        List<IOutboxReader>? readers = outboxSettings == null ? null : [.. GetReaders(outboxSettings)];
+    public async ValueTask WaitUntilEmptyAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken) =>
+        await WaitUntilEmptyCoreAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), cancellationToken).ConfigureAwait(false);
 
-        while (true)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+    public ValueTask ClearAsync(CancellationToken cancellationToken = default) => ClearCoreAsync(null, cancellationToken);
 
-            if (await IsEmptyIgnoringErrorsAsync(readers).ConfigureAwait(false))
-                return;
-
-            await Task.Delay(50, cancellationToken).ConfigureAwait(false);
-        }
-    }
-
-    public async ValueTask ClearAsync(OutboxSettings? outboxSettings = null, CancellationToken cancellationToken = default)
-    {
-        foreach (IOutboxReader reader in GetReaders(outboxSettings))
-        {
-            while (true)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                List<OutboxMessage> messages = await ReadAsync(reader, ClearBatchSize).ConfigureAwait(false);
-
-                if (messages.Count == 0)
-                    break;
-
-                await reader.AcknowledgeAsync(messages).ConfigureAwait(false);
-            }
-        }
-    }
+    public async ValueTask ClearAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default) =>
+        await ClearCoreAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), cancellationToken).ConfigureAwait(false);
 
     public async ValueTask ProcessAsync(CancellationToken cancellationToken = default)
     {
@@ -188,18 +147,97 @@ internal sealed class OutboxTestingHelper : IOutboxTestingHelper
         }
     }
 
-    private static async Task<List<OutboxMessage>> ReadAsync(IOutboxReader reader, int count)
+    private static async Task<List<OutboxMessage>> ReadAsync(IOutboxReader reader, int count, CancellationToken cancellationToken)
     {
         List<OutboxMessage> messages = [];
 
         using IDisposableAsyncEnumerable<OutboxMessage> enumerable = await reader.GetAsync(count).ConfigureAwait(false);
 
-        await foreach (OutboxMessage message in enumerable.ConfigureAwait(false))
+        await foreach (OutboxMessage message in enumerable.WithCancellation(cancellationToken).ConfigureAwait(false))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             messages.Add(message);
         }
 
         return messages;
+    }
+
+    private async ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesCoreAsync(
+        OutboxSettings? outboxSettings,
+        CancellationToken cancellationToken)
+    {
+        List<OutboxMessage> messages = [];
+
+        foreach (IOutboxReader reader in GetReaders(outboxSettings))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            messages.AddRange(await ReadAsync(reader, int.MaxValue, cancellationToken).ConfigureAwait(false));
+        }
+
+        return messages;
+    }
+
+    private async ValueTask<int> GetLengthCoreAsync(OutboxSettings? outboxSettings, CancellationToken cancellationToken)
+    {
+        int length = 0;
+
+        foreach (IOutboxReader reader in GetReaders(outboxSettings))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            length += await reader.GetLengthAsync().ConfigureAwait(false);
+        }
+
+        return length;
+    }
+
+    private async ValueTask ClearCoreAsync(OutboxSettings? outboxSettings, CancellationToken cancellationToken)
+    {
+        foreach (IOutboxReader reader in GetReaders(outboxSettings))
+        {
+            while (true)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                List<OutboxMessage> messages = await ReadAsync(reader, ClearBatchSize, cancellationToken).ConfigureAwait(false);
+
+                if (messages.Count == 0)
+                    break;
+
+                await reader.AcknowledgeAsync(messages).ConfigureAwait(false);
+            }
+        }
+    }
+
+    private async ValueTask WaitUntilEmptyWithTimeoutAsync(OutboxSettings? outboxSettings, TimeSpan? timeout)
+    {
+        using CancellationTokenSource cancellationTokenSource = new(timeout ?? DefaultWaitTimeout);
+
+        try
+        {
+            await WaitUntilEmptyCoreAsync(outboxSettings, cancellationTokenSource.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
+        {
+            throw new TimeoutException("Timeout elapsed before the outbox was emptied");
+        }
+    }
+
+    private async ValueTask WaitUntilEmptyCoreAsync(OutboxSettings? outboxSettings, CancellationToken cancellationToken)
+    {
+        // Resolved up front, to throw right away if the specified outbox cannot be read (e.g. not configured)
+        List<IOutboxReader>? readers = outboxSettings == null ? null : [.. GetReaders(outboxSettings)];
+
+        while (true)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (await IsEmptyIgnoringErrorsAsync(readers).ConfigureAwait(false))
+                return;
+
+            await Task.Delay(50, cancellationToken).ConfigureAwait(false);
+        }
     }
 
     private List<OutboxWorkerService> GetWorkerServices(OutboxSettings? outboxSettings)
