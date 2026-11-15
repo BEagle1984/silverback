@@ -223,6 +223,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </summary>
     private protected virtual bool IsMessageRefusedByAbortAddedToNextSequence => false;
 
+    /// <summary>
+    ///     Gets how the timeout is measured: restarting with each added message (by default) or from the first message.
+    /// </summary>
+    private protected virtual SequenceTimeoutMode TimeoutMode => SequenceTimeoutMode.Sliding;
+
     // Not when the sequence is new, i.e. started by the refused message itself: it shares the message's context (and transaction), which
     // the message must not reuse for the next sequence, and the message shares its outcome instead (e.g. skipped or ignored with it)
     private bool IsRefusedMessageAddedToNextSequence => IsMessageRefusedByAbortAddedToNextSequence && !IsNew;
@@ -818,6 +823,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     private void ResetTimeout()
     {
         if (!_enforceTimeout || !IsPending)
+            return;
+
+        if (TimeoutMode == SequenceTimeoutMode.Absolute && _timeoutExpiration != DateTime.MaxValue)
             return;
 
         _timeoutExpiration = DateTime.UtcNow.Add(_timeout);

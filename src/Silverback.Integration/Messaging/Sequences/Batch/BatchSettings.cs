@@ -19,7 +19,7 @@ public sealed record BatchSettings : IValidatableSettings
     public int Size { get; init; } = 1;
 
     /// <summary>
-    ///     Gets the maximum amount of time to wait for the batch to be filled. After this time the
+    ///     Gets the maximum amount of time to wait for the batch to be filled, measured from its first message. After this time the
     ///     batch will be completed even if the specified <c>Size</c> is not reached.
     /// </summary>
     public TimeSpan? MaxWaitTime { get; init; }

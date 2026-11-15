@@ -14,7 +14,7 @@ Process multiple consumed messages in a single batch to reduce per-message overh
 
 ## Consumer Configuration
 
-Enable batch processing by calling `EnableBatchProcessing` on the consumer endpoint.
+Enable batch processing by calling `EnableBatchProcessing` on the consumer endpoint. A batch is completed when it reaches the specified size or when the optional max wait time has elapsed since its first message, whichever comes first.
 
 # [Kafka](#tab/kafka)
 ```csharp

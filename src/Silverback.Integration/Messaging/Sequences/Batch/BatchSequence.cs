@@ -51,6 +51,9 @@ public class BatchSequence : Sequence
     // The message refused because the batch was aborted after being found pending is added to the next batch, if the abort commits it
     private protected override bool IsMessageRefusedByAbortAddedToNextSequence => true;
 
+    // The max wait time runs from the first message, so that a steady flow of messages can't hold the batch back until it's full
+    private protected override SequenceTimeoutMode TimeoutMode => SequenceTimeoutMode.Absolute;
+
     /// <summary>
     ///     Called when the timeout is elapsed. In this special case the sequence is completed instead of aborted.
     /// </summary>
