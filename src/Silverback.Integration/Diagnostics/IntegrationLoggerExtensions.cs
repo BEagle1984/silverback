@@ -82,6 +82,17 @@ internal static partial class IntegrationLoggerExtensions
     public static void LogOutboundMessageFiltered(this ISilverbackLogger logger, IOutboundEnvelope envelope) =>
         OutboundMessageFiltered(logger.InnerLogger, envelope.EndpointConfiguration.DisplayName);
 
+    public static void LogInboundMessageFiltered(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.InboundMessageFiltered))
+            return;
+
+        InboundMessageFiltered(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString());
+    }
+
     public static void LogMessageAddedToSequence(
         this ISilverbackLogger logger,
         IRawInboundEnvelope envelope,
@@ -487,6 +498,17 @@ internal static partial class IntegrationLoggerExtensions
         "Message filtered | EndpointName: {EndpointName}",
         EventName = "Silverback.Integration_OutboundMessageFiltered")]
     private static partial void OutboundMessageFiltered(ILogger logger, string endpointName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a consumed message is filtered out by the filter
+    ///     configured for the endpoint, which skips it like a message that no subscriber handles.
+    /// </summary>
+    [LoggerMessage(
+        1008,
+        LogLevel.Information,
+        "Message filtered | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_InboundMessageFiltered")]
+    private static partial void InboundMessageFiltered(ILogger logger, string endpointName, string brokerMessageId);
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an inbound message is added to

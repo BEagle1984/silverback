@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Filter;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
@@ -46,6 +47,8 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     private IDecryptionSettings? _encryptionSettings;
 
     private bool? _allowUnboundedSequences;
+
+    private IInboundMessageFilter? _filter;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerEndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}" /> class.
@@ -210,7 +213,8 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
             },
             ThrowIfUnhandled = _throwIfUnhandled ?? configuration.ThrowIfUnhandled,
             Encryption = _encryptionSettings ?? configuration.Encryption,
-            AllowStreaming = _allowUnboundedSequences ?? configuration.AllowStreaming
+            AllowStreaming = _allowUnboundedSequences ?? configuration.AllowStreaming,
+            Filter = _filter ?? configuration.Filter
         };
 
         configuration.Validate();

@@ -1,13 +1,13 @@
 ---
 uid: consuming
-description: "Configure Kafka and MQTT consumers in .NET, handle consumed messages in subscribers, tune parallelism and apply error handling rules."
+description: "Configure Kafka and MQTT consumers in .NET, handle consumed messages in subscribers, filter them per endpoint, tune parallelism and apply error handling rules."
 ---
 
 # Consuming Messages
 
 A consumer reads messages from the broker and dispatches them to your subscribers via the Silverback message bus.
 
-This guide covers the basics: configuring consumers, handling messages, parallelism, and error handling.
+This guide covers the basics: configuring consumers, handling and filtering messages, parallelism, and error handling.
 
 ## Configure a Consumer
 
@@ -87,6 +87,66 @@ Subscriber methods can be synchronous or asynchronous (`Task`/`ValueTask`). A me
 > Batch processing has further limitations, see [Multiple Subscribers](xref:batch-processing#multiple-subscribers).
 
 For higher throughput, consider <xref:batch-processing>.
+
+## Filtering
+
+You can add a predicate to an endpoint to skip the consumed messages that shouldn't be processed. The predicate can take either the message or the envelope (`IInboundEnvelope<MyMessage>`), for example to check the headers. It doesn't apply to the messages of other types, which are always processed, and it receives a `null` message for a tombstone.
+
+```csharp
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(clients => clients
+        .WithBootstrapServers(...)
+        .AddConsumer("consumer1", consumer => consumer
+            .Consume<MyMessage>("endpoint1", endpoint => endpoint
+                .ConsumeFrom("my-topic")
+                .Filter(message => message?.Region == "EU"))
+            .Consume<MyMessage>("endpoint2", endpoint => endpoint
+                .ConsumeFrom("my-other-topic")
+                .Filter(envelope => envelope.Headers.GetValue("x-tenant") == "my-tenant"))));
+```
+
+For more complex logic, implement an <xref:Silverback.Messaging.Consuming.Filter.IInboundMessageFilter>, which can also be asynchronous. Pass an instance of it to `Filter`, or use `Filter<TFilter>()` to resolve it via DI (so you can inject services).
+
+```csharp
+public class MyMessageFilter : IInboundMessageFilter
+{
+    private readonly IFeatureFlags _featureFlags;
+
+    public MyMessageFilter(IFeatureFlags featureFlags)
+    {
+        _featureFlags = featureFlags;
+    }
+
+    public async ValueTask<bool> ShouldProcessAsync(IInboundEnvelope envelope, CancellationToken cancellationToken) =>
+        envelope.Message is not MyMessage message ||
+        await _featureFlags.IsEnabledAsync(message.Feature, cancellationToken).ConfigureAwait(false);
+}
+```
+
+```csharp
+services
+    .AddScoped<MyMessageFilter>()
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(clients => clients
+        .WithBootstrapServers(...)
+        .AddConsumer("consumer1", consumer => consumer
+            .Consume<MyMessage>("endpoint1", endpoint => endpoint
+                .ConsumeFrom("my-topic")
+                .Filter<MyMessageFilter>())));
+```
+
+When using `Filter<TFilter>()`, the filter type must be registered in the service collection. It's resolved for each message from that message's own service scope (a scope is created for each consumed message), so it can also be registered as scoped. With batch processing or streaming, the subscriber instead runs in the scope of the first message of the batch or stream, so a scoped service isn't shared between the filter and the subscriber, except for that first message.
+
+The filtered messages aren't delivered to any subscriber and are committed (Kafka) or acknowledged (MQTT) like the messages that no subscriber handles, even without `IgnoreUnhandledMessages`. Each filtered message is logged with the `InboundMessageFiltered` event, at Information level, which can be changed with `WithLogLevels` (see <xref:logging>). The filter is applied after the message is deserialized (once all its chunks are received, if chunked), validated and its headers mapped, so the validation also applies to the messages that are then filtered out. An exception thrown by the filter is handled by the error policy, like any processing error.
+
+With batch processing, the filtered messages don't count toward the batch size and aren't part of any batch. MQTT acknowledges them without waiting for a batch, except a filtered message that starts a new batch, which is acknowledged once that batch is processed. Kafka commits them with the next commit of the same partition, since the Kafka offsets are committed cumulatively. A partition whose latest messages are all filtered out therefore keeps them uncommitted until a message of the partition is processed in a batch: they show up in the consumer lag and are consumed (and filtered) again after a restart or a rebalance.
+
+An endpoint applies a single filter: each `Filter` call replaces the previous one, so combine all conditions in the same filter.
+
+> [!Note]
+> The subscriber filters, such as the <xref:Silverback.Messaging.Subscribers.ConsumerNameFilterAttribute> (see <xref:multiple-consumers>), only decide which subscribers receive a message, while the endpoint filter skips the message for all the subscribers.
 
 ## Parallelism
 

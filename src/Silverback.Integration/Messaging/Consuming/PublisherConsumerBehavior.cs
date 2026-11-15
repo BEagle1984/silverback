@@ -48,19 +48,27 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
+        // The message rejected by the endpoint filter (see FilterConsumerBehavior) isn't published, nor streamed, and is then committed
+        // like a message that no subscriber handles, also when chunked (RawSequence). The other sequences (e.g. a batch) are published
+        // anyway and skip the message instead (see SequenceBase).
+        bool isFiltered = context.Envelope is InboundEnvelope { IsFiltered: true };
+
         if (context.Sequence != null)
         {
             if (context.Sequence is RawSequence)
             {
-                await PublishEnvelopeAsync(context, context.Envelope.Endpoint.Configuration.ThrowIfUnhandled, cancellationToken)
-                    .ConfigureAwait(false);
+                if (!isFiltered)
+                {
+                    await PublishEnvelopeAsync(context, context.Envelope.Endpoint.Configuration.ThrowIfUnhandled, cancellationToken)
+                        .ConfigureAwait(false);
+                }
             }
             else
             {
                 await PublishSequenceAsync(context.Sequence, context, cancellationToken).ConfigureAwait(false);
             }
         }
-        else
+        else if (!isFiltered)
         {
             bool throwIfUnhandled = context.Envelope.Endpoint.Configuration.ThrowIfUnhandled;
 

@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Consuming;
+using Silverback.Messaging.Consuming.Filter;
 using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
@@ -138,6 +139,11 @@ public static class BrokerBehaviorsSortIndexes
         ///     The <see cref="HeadersReaderConsumerBehavior" /> sort index.
         /// </summary>
         public const int HeadersReader = 1000;
+
+        /// <summary>
+        ///     The <see cref="FilterConsumerBehavior" /> sort index.
+        /// </summary>
+        public const int Filter = 1050;
 
         /// <summary>
         ///     The <see cref="SequencerConsumerBehavior" /> sort index.
