@@ -180,8 +180,18 @@ internal static class SubscribedMethodInvoker
             ? envelope.Message
             : message;
 
+    // A subscriber that may consume the stream synchronously blocks its thread until the stream completes: run it on a dedicated
+    // thread rather than on the thread pool, which would otherwise starve when many streams are open at once (e.g. one batch per
+    // partition), including the continuations that push the messages into those streams
     private static Task<object?> InvokeWithActivityWithoutBlockingAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>
-        Task.Run(() => InvokeWithActivityAsync(subscribedMethod, target, arguments).AsTask());
+        subscribedMethod.MayBlockOnStream
+            ? Task.Factory.StartNew(
+                    () => InvokeWithActivityAsync(subscribedMethod, target, arguments).AsTask(),
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach,
+                    TaskScheduler.Default)
+                .Unwrap()
+            : Task.Run(() => InvokeWithActivityAsync(subscribedMethod, target, arguments).AsTask());
 
     private static ValueTask<object?> InvokeWithActivityAsync(
         SubscribedMethod subscribedMethod,

@@ -98,6 +98,11 @@ public async Task HandleAsync(IAsyncEnumerable<IInboundEnvelope<MyMessage>> enve
 > [!Tip]
 > While the batch is enumerated, the current `Activity` continues the trace of the message being processed. Avoid buffering the batch (e.g. with `ToList()`) if the trace of each message must be preserved. See <xref:consuming-tracing> for details.
 
+> [!Note]
+> A subscriber that consumes the batch synchronously, through an `IEnumerable<T>`, an `IMessageStreamEnumerable<T>` enumerated with `foreach` or an `IObservable<T>` (after calling `AsObservable()` from the [Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx) package), blocks its thread until the batch is complete. Each batch being processed at the same time (e.g. one per Kafka partition) would block a thread pool thread and, with many of them, starve the thread pool. Every subscriber to one of these types is therefore invoked on a dedicated thread, created for each batch.
+>
+> Prefer `IAsyncEnumerable<T>`, especially with many partitions: it doesn't block any thread while waiting for the next message and needs no dedicated thread. An `async` subscriber leaves the dedicated thread at its first `await`: if it then enumerates an `IEnumerable<T>` (or an `IMessageStreamEnumerable<T>` with `foreach`), it blocks a thread pool thread from then on.
+
 ## Multiple Subscribers
 
 When multiple subscribers handle the same batch (see also <xref:consuming>), each of them receives its own stream, with the messages of the batch that match its message type and filters:
@@ -150,7 +155,7 @@ public async Task HandleAsync(IAsyncEnumerable<MyMessage> messages)
 }
 ```
 
-The subscriber is invoked when the first message is consumed and receives all the following messages through the same stream. It can subscribe to the same types as for the batches, or to an `IMessageStreamObservable<T>` after calling `AsObservable()` from the [Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx) package.
+The subscriber is invoked when the first message is consumed and receives all the following messages through the same stream. It can subscribe to the same types as for the batches, or to an `IMessageStreamObservable<T>` after calling `AsObservable()` from the [Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx) package. As with the batches, a subscriber that consumes the stream synchronously is invoked on a dedicated thread, which it keeps for the whole stream (see [Subscribing to Batches](#subscribing-to-batches)).
 
 - With Kafka, a stream per partition is created by default, or a single one for all the partitions with `ProcessAllPartitionsTogether`, in which case the streaming endpoint must be the only endpoint of the consumer. With MQTT, all the streaming endpoints of the client share a stream per parallel execution (a single one by default).
 - Each message is committed as soon as the subscriber requests the next one.

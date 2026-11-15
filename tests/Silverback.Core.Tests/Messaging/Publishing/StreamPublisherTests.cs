@@ -773,6 +773,75 @@ public class StreamPublisherTests
         await CompleteAndWaitForSubscribersAsync(streamProvider, tasks);
     }
 
+    [Fact]
+    public async Task PublishAsync_ShouldInvokeSubscribersOnDedicatedThread_WhenStreamMayBeConsumedSynchronously()
+    {
+        TestingCollection<string> poolThreadSubscribers = [];
+        TestingCollection<string> dedicatedThreadSubscribers = [];
+        int receivedEvents = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IEnumerable<IEvent>>(HandleEnumerable)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(HandleMessageStreamEnumerable)
+            .AddDelegateSubscriber<IAsyncEnumerable<IEvent>>(HandleAsyncEnumerableAsync));
+
+        void HandleEnumerable(IEnumerable<IEvent> enumerable)
+        {
+            TrackThread("IEnumerable");
+
+            foreach (IEvent dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedEvents);
+            }
+        }
+
+        void HandleMessageStreamEnumerable(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            TrackThread("IMessageStreamEnumerable");
+
+            foreach (IEvent dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedEvents);
+            }
+        }
+
+        async Task HandleAsyncEnumerableAsync(IAsyncEnumerable<IEvent> enumerable)
+        {
+            TrackThread("IAsyncEnumerable");
+
+            await foreach (IEvent dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedEvents);
+            }
+        }
+
+        void TrackThread(string subscriber)
+        {
+            if (Thread.CurrentThread.IsThreadPoolThread)
+                poolThreadSubscribers.Add(subscriber);
+            else
+                dedicatedThreadSubscribers.Add(subscriber);
+        }
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider = new();
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
+
+        await streamProvider.PushAsync(new TestEventOne());
+
+        await AsyncTestingUtil.WaitAsync(() => receivedEvents >= 3);
+
+        await CompleteAndWaitForSubscribersAsync(streamProvider, tasks);
+
+        receivedEvents.ShouldBe(3);
+        dedicatedThreadSubscribers.ShouldBe(["IEnumerable", "IMessageStreamEnumerable"], ignoreOrder: true);
+        poolThreadSubscribers.ShouldBe(["IAsyncEnumerable"]);
+    }
+
     private static async Task CompleteAndWaitForSubscribersAsync(MessageStreamProvider streamProvider, IEnumerable<Task> subscriberTasks)
     {
         await streamProvider.CompleteAsync().AsTask().WaitAsync(Timeout);

@@ -482,6 +482,57 @@ public class StreamPublisherTests
         await CompleteAndWaitForSubscribersAsync(stream, tasks);
     }
 
+    [Fact]
+    public async Task Publish_ShouldInvokeSubscribersOnDedicatedThread()
+    {
+        TestingCollection<string> poolThreadSubscribers = [];
+        TestingCollection<string> dedicatedThreadSubscribers = [];
+        int receivedEvents = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AsObservable()
+            .AddDelegateSubscriber<IObservable<IEvent>>(HandleObservable)
+            .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(HandleMessageStreamObservable));
+
+        void HandleObservable(IObservable<IEvent> observable)
+        {
+            TrackThread("IObservable");
+            observable.Subscribe(_ => Interlocked.Increment(ref receivedEvents));
+        }
+
+        void HandleMessageStreamObservable(IMessageStreamObservable<IEvent> observable)
+        {
+            TrackThread("IMessageStreamObservable");
+            observable.Subscribe(_ => Interlocked.Increment(ref receivedEvents));
+        }
+
+        void TrackThread(string subscriber)
+        {
+            if (Thread.CurrentThread.IsThreadPoolThread)
+                poolThreadSubscribers.Add(subscriber);
+            else
+                dedicatedThreadSubscribers.Add(subscriber);
+        }
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider = new();
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
+
+        await streamProvider.PushAsync(new TestEventOne());
+
+        await AsyncTestingUtil.WaitAsync(() => receivedEvents >= 2);
+
+        await CompleteAndWaitForSubscribersAsync(streamProvider, tasks);
+
+        receivedEvents.ShouldBe(2);
+        dedicatedThreadSubscribers.ShouldBe(["IObservable", "IMessageStreamObservable"], ignoreOrder: true);
+        poolThreadSubscribers.ShouldBeEmpty();
+    }
+
     private static async Task CompleteAndWaitForSubscribersAsync(MessageStreamProvider streamProvider, IEnumerable<Task> subscriberTasks)
     {
         await streamProvider.CompleteAsync().AsTask().WaitAsync(Timeout);

@@ -98,6 +98,13 @@ public class SubscribedMethod
     }
 
     /// <summary>
+    ///     Gets a value indicating whether the method subscribes a stream that it may consume synchronously, blocking its thread
+    ///     until the stream completes (e.g. an <see cref="IEnumerable{T}" /> or an <see cref="IObservable{T}" />). Only an
+    ///     <see cref="IAsyncEnumerable{T}" /> is known to be consumed without blocking.
+    /// </summary>
+    internal bool MayBlockOnStream { get; private set; }
+
+    /// <summary>
     ///     Resolves an instance of the type declaring the subscribed method.
     /// </summary>
     /// <param name="serviceProvider">
@@ -116,6 +123,12 @@ public class SubscribedMethod
 
         _additionalArgumentsResolvers = [.. argumentsResolver.GetAdditionalArgumentsResolvers(this)];
 
+        MayBlockOnStream = MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver &&
+                           !IsAsyncEnumerable(MessageParameter.ParameterType);
+
         return this;
     }
+
+    private static bool IsAsyncEnumerable(Type type) =>
+        type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IAsyncEnumerable<>);
 }
