@@ -13,6 +13,7 @@ using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Logging;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -500,6 +501,81 @@ public partial class BatchProcessingTests
         receivedMessages.ShouldBe(["1", "2", "3"]);
         offsetCommittedCallback.CallsCount.ShouldBe(3);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Batch_ShouldAddMessageToNextBatch_WhenEnumerationIsCanceledBeforePullingItAndTimeoutCompletesBatch(bool rethrowCancellation)
+    {
+        TestingCollection<string?> receivedMessages = [];
+        int receivedBatches = 0;
+        LogEventsCollector logEventsCollector = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(1))
+                        .OnError(policy => policy.Skip()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            if (Interlocked.Increment(ref receivedBatches) > 1)
+            {
+                await foreach (TestEventOne message in batch)
+                {
+                    receivedMessages.Add(message.ContentEventOne);
+                }
+
+                return;
+            }
+
+            // Stop enumerating the first batch with an own token, while waiting for the second message
+            using CancellationTokenSource cancellationTokenSource = new();
+
+            try
+            {
+                await foreach (TestEventOne message in batch.WithCancellation(cancellationTokenSource.Token))
+                {
+                    receivedMessages.Add(message.ContentEventOne);
+                    await cancellationTokenSource.CancelAsync();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Return (or rethrow, failing the batch, which is then skipped) once the max wait time is completing the batch. The
+                // second message, added right away, is pushed without being pulled, and the completion waits for the pending push. This
+                // reproduces the bug only if the second message is added within the max wait time (see the SequenceBaseTests for the
+                // deterministic reproduction): on a slow machine, it can also be refused by the completion or added to a new batch,
+                // reaching the next batch as well.
+                await AsyncTestingUtil.WaitAsync(() => logEventsCollector.ContainsSequenceCompleting(nameof(BatchSequence)));
+
+                if (rethrowCancellation)
+                    throw;
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+
+        await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        // The second message isn't committed (or skipped) with the first batch without being processed, but added to the next one
+        receivedBatches.ShouldBe(2);
+        receivedMessages.ShouldBe(["1", "2"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 
     [Fact]
