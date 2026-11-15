@@ -227,19 +227,9 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         _consumerGroup.Unsubscribe(this);
         Subscription.Clear();
 
-        // Like librdkafka, revoke the assignment of the consumer leaving the group, which the group's rebalance doesn't include. A
-        // manual assignment isn't revoked, nor are the partitions that a concurrent rebalance is already revoking.
-        List<TopicPartition> assignment;
-
-        lock (_assignmentStateLock)
-        {
-            assignment = [.. _assignment.Where(partition => !_revokingPartitions.Contains(partition))];
-        }
-
         try
         {
-            if (subscribed && assignment.Count > 0)
-                OnPartitionsRevoked(assignment);
+            RevokeAssignmentOnLeave(subscribed);
         }
         finally
         {
@@ -402,15 +392,31 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public void Close()
     {
+        bool subscribed = Subscription.Count > 0;
+
         _consumerGroup.Remove(this);
-        ClearClassicMemberId();
+        Subscription.Clear();
+
+        // Like librdkafka, revoke the assignment of a consumer closed while still subscribed (e.g. a static member, which doesn't
+        // unsubscribe in order to keep its membership)
+        try
+        {
+            RevokeAssignmentOnLeave(subscribed);
+        }
+        finally
+        {
+            ClearClassicMemberId();
+        }
     }
 
     public void SetSaslCredentials(string username, string password) => throw new NotSupportedException();
 
+    // Like Confluent.Kafka disposing a consumer that wasn't closed, leave the group without running the rebalance callbacks
     public void Dispose()
     {
-        Close();
+        _consumerGroup.Remove(this);
+        Subscription.Clear();
+        ClearClassicMemberId();
         IsDisposed = true;
     }
 
@@ -895,6 +901,24 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         if (string.IsNullOrEmpty(Config.GroupId))
             throw new ArgumentException("'group.id' configuration parameter is required and was not specified.");
+    }
+
+    // Like librdkafka, revoke the assignment of the consumer leaving the group, which the group's rebalance doesn't include. A manual
+    // assignment isn't revoked, nor are the partitions that a concurrent rebalance is already revoking.
+    private void RevokeAssignmentOnLeave(bool subscribed)
+    {
+        if (!subscribed)
+            return;
+
+        List<TopicPartition> assignment;
+
+        lock (_assignmentStateLock)
+        {
+            assignment = [.. _assignment.Where(partition => !_revokingPartitions.Contains(partition))];
+        }
+
+        if (assignment.Count > 0)
+            OnPartitionsRevoked(assignment);
     }
 
     private void ClearClassicMemberId()

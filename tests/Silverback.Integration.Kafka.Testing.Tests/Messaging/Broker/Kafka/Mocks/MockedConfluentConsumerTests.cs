@@ -194,6 +194,92 @@ public class MockedConfluentConsumerTests
     }
 
     [Fact]
+    public void Close_ShouldRevokeAssignment_WhenStillSubscribed()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0, Partition1] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+        List<TopicPartition> revokedPartitions = [];
+
+        consumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            revokedPartitions.AddRange(partitions.Select(partition => partition.TopicPartition));
+            return partitions;
+        };
+
+        consumer.Subscribe("topic");
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+
+        consumer.Close();
+
+        revokedPartitions.ShouldBe([Partition0, Partition1], ignoreOrder: true);
+        consumer.Assignment.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Close_ShouldNotRevokeAssignmentAgain_WhenUnsubscribed()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+        int revokedCallbacks = 0;
+
+        consumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            revokedCallbacks++;
+            return partitions;
+        };
+
+        consumer.Subscribe("topic");
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+        consumer.Unsubscribe();
+
+        consumer.Close();
+
+        revokedCallbacks.ShouldBe(1);
+    }
+
+    [Fact]
+    public void Dispose_ShouldNotRevokeAssignment()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+        int revokedCallbacks = 0;
+
+        consumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            revokedCallbacks++;
+            return partitions;
+        };
+
+        consumer.Subscribe("topic");
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+
+        consumer.Dispose();
+
+        revokedCallbacks.ShouldBe(0);
+        consumer.MemberId.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Close_ShouldNotRevokeManualAssignment()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new();
+        MockedConfluentConsumer consumer = GetConsumer(consumerGroup);
+        int revokedCallbacks = 0;
+
+        consumer.PartitionsRevokedHandler = (_, partitions) =>
+        {
+            revokedCallbacks++;
+            return partitions;
+        };
+
+        consumer.Assign([new TopicPartitionOffset(Partition0, Offset.Unset)]);
+
+        consumer.Close();
+
+        revokedCallbacks.ShouldBe(0);
+    }
+
+    [Fact]
     public void MemberId_ShouldBeClearedAfterRevocation_WhenUnsubscribing()
     {
         FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
