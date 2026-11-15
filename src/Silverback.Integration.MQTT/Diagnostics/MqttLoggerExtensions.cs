@@ -106,6 +106,26 @@ internal static partial class MqttLoggerExtensions
             client.DisplayName,
             client.Configuration.ClientId);
 
+    public static void LogUnsubscriptionRejected(
+        this ISilverbackLogger logger,
+        string topicPattern,
+        MqttClientUnsubscribeResultCode resultCode,
+        MqttClientWrapper client) =>
+        UnsubscriptionRejected(
+            logger.InnerLogger,
+            topicPattern,
+            resultCode,
+            client.DisplayName,
+            client.Configuration.ClientId);
+
+    public static void LogUnsubscribeError(this ISilverbackLogger logger, MqttClientWrapper client, Exception exception) =>
+        UnsubscribeError(
+            logger.InnerLogger,
+            client.DisplayName,
+            client.Configuration.ClientId,
+            client.Configuration.Channel?.ToString() ?? string.Empty,
+            exception);
+
     public static void LogMqttClientError(
         this ISilverbackLogger logger,
         string? source,
@@ -324,6 +344,33 @@ internal static partial class MqttLoggerExtensions
         ILogger logger,
         string topicPattern,
         MqttClientSubscribeResultCode resultCode,
+        string clientName,
+        string clientId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while unsubscribing the topic
+    ///     filters before disconnecting from the MQTT broker. The client disconnects anyway.
+    /// </summary>
+    [LoggerMessage(
+        4043,
+        LogLevel.Warning,
+        "Error occurred unsubscribing before disconnecting from MQTT | ClientName: {ClientName}, ClientId: {ClientId}, Broker: {Broker}",
+        EventName = "Silverback.Integration.MQTT_UnsubscribeError")]
+    private static partial void UnsubscribeError(ILogger logger, string clientName, string clientId, string broker, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the broker rejects the unsubscription from a topic
+    ///     or pattern.
+    /// </summary>
+    [LoggerMessage(
+        4044,
+        LogLevel.Warning,
+        "Unsubscription from {TopicPattern} rejected by the broker with result code {ResultCode} | ClientName: {ClientName}, ClientId: {ClientId}",
+        EventName = "Silverback.Integration.MQTT_UnsubscriptionRejected")]
+    private static partial void UnsubscriptionRejected(
+        ILogger logger,
+        string topicPattern,
+        MqttClientUnsubscribeResultCode resultCode,
         string clientName,
         string clientId);
 

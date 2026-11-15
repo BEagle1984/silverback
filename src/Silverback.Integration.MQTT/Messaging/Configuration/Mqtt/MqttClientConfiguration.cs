@@ -98,6 +98,12 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     /// </summary>
     internal long MaxBatchedMessagesCount => (long)(BatchSize ?? 1) * MaxDegreeOfParallelism;
 
+    /// <summary>
+    ///     Gets a value indicating whether the requested session outlives the connection. In MQTT 5 it depends on the session expiry
+    ///     interval only, since the clean session flag is the clean start flag.
+    /// </summary>
+    internal bool IsSessionPersistent => ProtocolVersion >= MqttProtocolVersion.V500 ? SessionExpiryInterval > 0 : !CleanSession;
+
     // MQTTnet doesn't send the receive maximum if 0, and the protocol default applies
     private int EffectiveReceiveMaximum => ReceiveMaximum == 0 ? ushort.MaxValue : ReceiveMaximum;
 

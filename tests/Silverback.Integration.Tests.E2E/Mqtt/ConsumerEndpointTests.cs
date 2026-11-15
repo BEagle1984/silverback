@@ -290,8 +290,10 @@ public partial class ConsumerEndpointTests : MqttTests
         envelopesTwoClient4.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"]);
     }
 
-    [Fact]
-    public async Task ConsumerEndpoint_ShouldConsumeAfterStopAndStart()
+    [Theory]
+    [InlineData(DefaultTopicName)]
+    [InlineData($"$share/group1/{DefaultTopicName}")] // Unsubscribed before disconnecting, but not when stopping
+    public async Task ConsumerEndpoint_ShouldConsumeAfterStopAndStart(string topicFilter)
     {
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -301,7 +303,8 @@ public partial class ConsumerEndpointTests : MqttTests
                 .ConnectViaTcp("e2e-mqtt-broker")
                 .AddClient(client => client
                     .WithClientId(DefaultClientId)
-                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(topicFilter))))
             .AddIntegrationSpyAndSubscriber());
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();

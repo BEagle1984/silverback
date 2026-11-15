@@ -49,6 +49,8 @@ MQTT 5 shared subscriptions allow multiple clients to share the load of a subscr
 
 Silverback strips the `$share/{group}/` prefix when matching the received messages to the endpoint.
 
+Before disconnecting, a client with shared subscriptions, whose session ends with the connection, unsubscribes its topic filters and waits for the broker to confirm, so that it leaves the share groups while still connected. Otherwise, a broker could route a message to the disconnecting client and drop it when the session ends. A client with a [persistent session](xref:mqtt#persistent-sessions) keeps its subscriptions, for the broker to queue the messages until it reconnects. If the unsubscription fails or doesn't complete within the configured timeout, or the broker rejects it, Silverback logs a warning (`UnsubscribeError` or `UnsubscriptionRejected`) and disconnects anyway.
+
 ## Rejected Subscriptions
 
 If the broker rejects a subscription (e.g. because the client isn't authorized to subscribe the topic), Silverback logs an error (`SubscriptionRejected`) and the other topic filters of the client remain subscribed. If all the topic filters are rejected, the consumer isn't reported as connected. The rejected topic filters are subscribed again only when the client reconnects.

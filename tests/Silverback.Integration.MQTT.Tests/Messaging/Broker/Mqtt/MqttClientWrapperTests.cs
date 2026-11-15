@@ -4,12 +4,15 @@
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
+using MQTTnet.Exceptions;
+using MQTTnet.Formatter;
 using NSubstitute;
 using Shouldly;
 using Silverback.Diagnostics;
@@ -139,6 +142,171 @@ public class MqttClientWrapperTests
         subscribed.ShouldBe(expectedSubscribed);
         client.SubscribedTopicsFilters.Select(filter => filter.Topic).ShouldBe(rejectAll ? [] : ["topic1"]);
         client.IsConnected.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldUnsubscribeBeforeDisconnecting()
+    {
+        await using SubscriberHarness harness = new();
+        await harness.ConnectAsync();
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        harness.NativeCalls.ToArray().ShouldBe(["Subscribe", "Unsubscribe", "Disconnect"]);
+        harness.UnsubscribedTopicFilters.ShouldBe(["$share/group/topic1", "topic2"]);
+        harness.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Theory]
+    [InlineData(MqttProtocolVersion.V500, true, 0U, true)]
+    [InlineData(MqttProtocolVersion.V500, false, 0U, true)]
+    [InlineData(MqttProtocolVersion.V500, true, 3600U, false)]
+    [InlineData(MqttProtocolVersion.V500, false, uint.MaxValue, false)]
+    [InlineData(MqttProtocolVersion.V311, true, 0U, true)]
+    [InlineData(MqttProtocolVersion.V311, true, 3600U, true)] // The session expiry interval doesn't exist in MQTT 3.1.1
+    [InlineData(MqttProtocolVersion.V311, false, 0U, false)]
+    public async Task DisconnectAsync_ShouldUnsubscribeOnlyWhenSessionEndsOnDisconnect(
+        MqttProtocolVersion protocolVersion,
+        bool cleanSession,
+        uint sessionExpiryInterval,
+        bool shouldUnsubscribe)
+    {
+        await using SubscriberHarness harness = new(configuration => configuration with
+        {
+            ProtocolVersion = protocolVersion,
+            CleanSession = cleanSession,
+            SessionExpiryInterval = sessionExpiryInterval
+        });
+        await harness.ConnectAsync();
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        harness.NativeCalls.ToArray().ShouldBe(shouldUnsubscribe ? ["Subscribe", "Unsubscribe", "Disconnect"] : ["Subscribe", "Disconnect"]);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldNotUnsubscribe_WhenPersistentSessionIsRequested()
+    {
+        await using SubscriberHarness harness = new(configureBuilder: builder => builder.RequestPersistentSession());
+        await harness.ConnectAsync();
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        harness.NativeCalls.ToArray().ShouldBe(["Subscribe", "Disconnect"]);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DisconnectAsync_ShouldNotUnsubscribe_WhenNotConnected(bool connectionLost)
+    {
+        await using SubscriberHarness harness = new();
+
+        if (connectionLost)
+        {
+            await harness.ConnectAsync();
+            harness.LoseConnection();
+        }
+        else
+        {
+            harness.LoseConnection();
+            await harness.Client.ConnectAsync();
+        }
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        harness.NativeCalls.ToArray().ShouldBe(connectionLost ? ["Subscribe"] : []);
+        harness.Client.Status.ShouldBe(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldLogAndDisconnect_WhenUnsubscribeFails()
+    {
+        await using SubscriberHarness harness = new();
+        harness.UnsubscribeException = new InvalidOperationException("Unsubscribe failed.");
+        await harness.ConnectAsync();
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        harness.NativeCalls.ToArray().ShouldBe(["Subscribe", "Unsubscribe", "Disconnect"]);
+        harness.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        harness.Logger.Received(
+            LogLevel.Warning,
+            typeof(InvalidOperationException),
+            eventId: MqttLogEvents.UnsubscribeError.EventId.Id);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldLogAndDisconnect_WhenBrokerRejectsUnsubscription()
+    {
+        await using SubscriberHarness harness = new();
+        harness.UnsubscribeResultCodes["$share/group/topic1"] = MqttClientUnsubscribeResultCode.NotAuthorized;
+        harness.UnsubscribeResultCodes["topic2"] = MqttClientUnsubscribeResultCode.NoSubscriptionExisted;
+        await harness.ConnectAsync();
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        harness.NativeCalls.ToArray().ShouldBe(["Subscribe", "Unsubscribe", "Disconnect"]);
+        harness.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        harness.Logger.Received(
+            LogLevel.Warning,
+            null,
+            "Unsubscription from $share/group/topic1 rejected by the broker with result code NotAuthorized | ClientName: client1, ClientId: test-client",
+            MqttLogEvents.UnsubscriptionRejected.EventId.Id);
+
+        // No subscription existing (e.g. rejected at subscription time) isn't reported
+        harness.Logger.DidNotReceive(
+            LogLevel.Warning,
+            null,
+            "Unsubscription from topic2 rejected by the broker with result code NoSubscriptionExisted | ClientName: client1, ClientId: test-client",
+            MqttLogEvents.UnsubscriptionRejected.EventId.Id);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldLogAndDisconnect_WhenUnsubscribeTimesOut()
+    {
+        await using SubscriberHarness harness = new(timeout: TimeSpan.FromMilliseconds(100));
+        harness.HangUnsubscribe = true;
+        await harness.ConnectAsync();
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        harness.NativeCalls.ToArray().ShouldBe(["Subscribe", "Unsubscribe", "Disconnect"]);
+        harness.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        harness.Logger.Received(
+            LogLevel.Warning,
+            typeof(MqttCommunicationTimedOutException),
+            eventId: MqttLogEvents.UnsubscribeError.EventId.Id);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldUnsubscribeOnlyTopicFiltersGrantedByBroker()
+    {
+        await using SubscriberHarness harness = new(topics: ["$share/group/topic1", "topic2", "topic3"]);
+        harness.SubscribeResultCodes["topic2"] = MqttClientSubscribeResultCode.NotAuthorized;
+        await harness.ConnectAsync();
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        harness.NativeCalls.ToArray().ShouldBe(["Subscribe", "Unsubscribe", "Disconnect"]);
+        harness.UnsubscribedTopicFilters.ShouldBe(["$share/group/topic1", "topic3"]);
+    }
+
+    [Theory]
+    [InlineData("topic1", null)]
+    [InlineData("$share/group/topic1", "$share/group/topic1")]
+    public async Task DisconnectAsync_ShouldNotUnsubscribe_WhenNoSharedSubscriptionIsSubscribed(string topic, string? rejectedTopic)
+    {
+        await using SubscriberHarness harness = new(topics: [topic, "topic2"]);
+
+        if (rejectedTopic != null)
+            harness.SubscribeResultCodes[rejectedTopic] = MqttClientSubscribeResultCode.NotAuthorized;
+
+        await harness.ConnectAsync();
+
+        await harness.Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+
+        harness.NativeCalls.ToArray().ShouldBe(["Subscribe", "Disconnect"]);
     }
 
     [Fact]
@@ -460,6 +628,143 @@ public class MqttClientWrapperTests
         while (!condition())
         {
             await Task.Delay(10, cancellation.Token);
+        }
+    }
+
+    private sealed class SubscriberHarness : IAsyncDisposable
+    {
+        private readonly IMqttClient _nativeClient = Substitute.For<IMqttClient>();
+
+        private readonly TaskCompletionSource<bool> _subscribed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        private bool _isConnected;
+
+        private bool _connectionUnavailable;
+
+        public SubscriberHarness(
+            Func<MqttClientConfiguration, MqttClientConfiguration>? configure = null,
+            Func<MqttClientConfigurationBuilder, MqttClientConfigurationBuilder>? configureBuilder = null,
+            TimeSpan? timeout = null,
+            string[]? topics = null)
+        {
+            _nativeClient.IsConnected.Returns(_ => _isConnected);
+
+            _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
+            {
+                if (_connectionUnavailable)
+                    throw new InvalidOperationException("The broker is unavailable.");
+
+                _isConnected = true;
+
+                return new MqttClientConnectResult();
+            });
+
+            _nativeClient.SubscribeAsync(Arg.Any<MqttClientSubscribeOptions>(), Arg.Any<CancellationToken>()).Returns(call =>
+            {
+                NativeCalls.Enqueue("Subscribe");
+
+                return Task.FromResult(
+                    new MqttClientSubscribeResult(
+                        0,
+                        [
+                            .. call.Arg<MqttClientSubscribeOptions>().TopicFilters.Select(filter =>
+                                new MqttClientSubscribeResultItem(
+                                    filter,
+                                    SubscribeResultCodes.GetValueOrDefault(filter.Topic, MqttClientSubscribeResultCode.GrantedQoS1)))
+                        ],
+                        string.Empty,
+                        []));
+            });
+
+            _nativeClient.UnsubscribeAsync(Arg.Any<MqttClientUnsubscribeOptions>(), Arg.Any<CancellationToken>()).Returns(async call =>
+            {
+                NativeCalls.Enqueue("Unsubscribe");
+                UnsubscribedTopicFilters = call.Arg<MqttClientUnsubscribeOptions>().TopicFilters;
+
+                if (UnsubscribeException != null)
+                    throw UnsubscribeException;
+
+                // Like MQTTnet, which fails the pending request when the token is canceled
+                if (HangUnsubscribe)
+                {
+                    await Task.Delay(System.Threading.Timeout.Infinite, call.Arg<CancellationToken>())
+                        .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                    throw new MqttCommunicationTimedOutException();
+                }
+
+                return new MqttClientUnsubscribeResult(
+                    0,
+                    [
+                        .. UnsubscribedTopicFilters.Select(filter =>
+                            new MqttClientUnsubscribeResultItem(
+                                filter,
+                                UnsubscribeResultCodes.GetValueOrDefault(filter, MqttClientUnsubscribeResultCode.Success)))
+                    ],
+                    string.Empty,
+                    []);
+            });
+
+            _nativeClient.DisconnectAsync(Arg.Any<MqttClientDisconnectOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
+            {
+                NativeCalls.Enqueue("Disconnect");
+                _isConnected = false;
+
+                return Task.CompletedTask;
+            });
+
+            MqttClientConfigurationBuilder builder = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
+                .ConnectViaTcp("test-broker")
+                .WithClientId("test-client")
+                .WithTimeout(timeout ?? TimeSpan.FromSeconds(30))
+                .Consume(endpoint => endpoint.ConsumeFrom(topics ?? ["$share/group/topic1", "topic2"]));
+            MqttClientConfiguration configuration = (configureBuilder?.Invoke(builder) ?? builder).Build();
+            Client = new MqttClientWrapper(
+                "client1",
+                _nativeClient,
+                configure?.Invoke(configuration) ?? configuration,
+                Substitute.For<IBrokerClientCallbacksInvoker>(),
+                Logger);
+
+            Client.Subscribed.AddHandler(_ =>
+            {
+                _subscribed.TrySetResult(true);
+
+                return ValueTask.CompletedTask;
+            });
+        }
+
+        public MqttClientWrapper Client { get; }
+
+        public SilverbackLoggerSubstitute<MqttClientWrapper> Logger { get; } = new();
+
+        public ConcurrentQueue<string> NativeCalls { get; } = new();
+
+        public IReadOnlyCollection<string>? UnsubscribedTopicFilters { get; private set; }
+
+        public Dictionary<string, MqttClientSubscribeResultCode> SubscribeResultCodes { get; } = [];
+
+        public Dictionary<string, MqttClientUnsubscribeResultCode> UnsubscribeResultCodes { get; } = [];
+
+        public Exception? UnsubscribeException { get; set; }
+
+        public bool HangUnsubscribe { get; set; }
+
+        public async Task ConnectAsync()
+        {
+            await Client.ConnectAsync();
+            await _subscribed.Task.WaitAsync(Timeout);
+        }
+
+        public void LoseConnection()
+        {
+            _connectionUnavailable = true;
+            _isConnected = false;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await Client.DisposeAsync();
+            _nativeClient.Dispose();
         }
     }
 
