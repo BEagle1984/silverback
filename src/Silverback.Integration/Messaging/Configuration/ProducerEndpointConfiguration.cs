@@ -68,6 +68,12 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
     /// <summary>
     ///     Gets the <see cref="IOutboundMessageFilter" /> to be used to filter out messages that should not be produced.
     /// </summary>
+    /// <remarks>
+    ///     When the filter is set via
+    ///     <see cref="ProducerEndpointConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}.Filter{TFilter}()" />, the actual
+    ///     filter is resolved from the service provider for each message by the producer pipeline. In that case, the value of this property
+    ///     only identifies the filter type and can't be invoked directly.
+    /// </remarks>
     public IOutboundMessageFilter? Filter { get; init; }
 
     /// <summary>

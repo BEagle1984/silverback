@@ -32,18 +32,22 @@ public class FilterProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Filter;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Producer.EndpointConfiguration.Filter != null &&
-            !context.Producer.EndpointConfiguration.Filter.ShouldProduce(context.Envelope))
+        IOutboundMessageFilter? filter = context.Producer.EndpointConfiguration.Filter;
+
+        if (filter is ServiceProviderOutboundMessageFilter serviceProviderFilter)
+            filter = serviceProviderFilter.Resolve(context.ServiceProvider);
+
+        if (filter != null && !await filter.ShouldProduceAsync(context.Envelope, cancellationToken).ConfigureAwait(false))
         {
             _logger.LogOutboundMessageFiltered(context.Envelope);
-            return ValueTask.CompletedTask;
+            return;
         }
 
-        return next(context, cancellationToken);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 }

@@ -107,7 +107,7 @@ public abstract class Producer : IProducer, IDisposable
 
                     return ValueTask.CompletedTask;
                 },
-                _serviceProvider);
+                envelope.Context?.ServiceProvider ?? _serviceProvider);
 
             ExecutePipelineAsync(context, CancellationToken.None).SafeWait();
 

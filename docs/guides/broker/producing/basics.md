@@ -283,6 +283,43 @@ services.AddSilverback()
                 .Filter(message => message.Number % 2 == 1))));
 ```
 
+For more complex logic, implement an <xref:Silverback.Messaging.Producing.Filter.IOutboundMessageFilter>, which can also be asynchronous. Pass an instance of it to `Filter`, or use `Filter<TFilter>()` to resolve it via DI (so you can inject services).
+
+```csharp
+public class MyMessageFilter : IOutboundMessageFilter
+{
+    private readonly IFeatureFlags _featureFlags;
+
+    public MyMessageFilter(IFeatureFlags featureFlags)
+    {
+        _featureFlags = featureFlags;
+    }
+
+    public async ValueTask<bool> ShouldProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken) =>
+        envelope.Message is MyMessage message &&
+        await _featureFlags.IsEnabledAsync(message.Feature, cancellationToken).ConfigureAwait(false);
+}
+```
+
+```csharp
+services
+    .AddSingleton<MyMessageFilter>()
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(clients => clients
+        .WithBootstrapServers(...)
+        .AddProducer(producer => producer
+            .Produce<MyMessage>(endpoint => endpoint
+                .ProduceTo("my-topic")
+                .Filter<MyMessageFilter>())));
+```
+
+When using `Filter<TFilter>()`, the filter type must be registered in the service collection. It's resolved for each message from the same scope as the <xref:Silverback.Messaging.Publishing.IPublisher> that published it, or from the root service provider when there's no such scope (e.g. when the message is produced directly via the <xref:Silverback.Messaging.Broker.IProducer> or moved by an error policy). Therefore, prefer a singleton registration. Register the filter as scoped only if all messages are published via an <xref:Silverback.Messaging.Publishing.IPublisher> resolved from a scope, since a scoped service must not be resolved from the root service provider, and avoid transient disposable filters, which the root service provider would keep alive until the application shuts down.
+
+The filter might also be invoked while the caller synchronously waits for the message to be produced, for example when using the synchronous <xref:Silverback.Messaging.Broker.IProducer> or <xref:Silverback.Messaging.Publishing.IPublisher> methods or when publishing a batch. Use `ConfigureAwait(false)` when awaiting and keep the asynchronous work short, to avoid deadlocks and blocked threads.
+
+An endpoint applies a single filter: each `Filter` call replaces the previous one, so combine all conditions in the same filter.
+
 ## Additional Resources
 
 - [API Reference](xref:Silverback)

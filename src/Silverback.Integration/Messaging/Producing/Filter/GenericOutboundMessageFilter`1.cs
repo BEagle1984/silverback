@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -41,14 +43,14 @@ public class GenericOutboundMessageFilter<TMessage> : IOutboundMessageFilter
         _filter = Check.NotNull(filter, nameof(filter));
     }
 
-    /// <inheritdoc cref="IOutboundMessageFilter.ShouldProduce" />
-    public bool ShouldProduce(IOutboundEnvelope envelope)
+    /// <inheritdoc cref="IOutboundMessageFilter.ShouldProduceAsync" />
+    public ValueTask<bool> ShouldProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken)
     {
         Check.NotNull(envelope, nameof(envelope));
 
         if (envelope is not IOutboundEnvelope<TMessage> typedEnvelope)
-            return false;
+            return ValueTask.FromResult(false);
 
-        return _filter.Invoke(typedEnvelope);
+        return ValueTask.FromResult(_filter.Invoke(typedEnvelope));
     }
 }
