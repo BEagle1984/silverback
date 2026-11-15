@@ -224,6 +224,11 @@ Policies can be chained to define an escalation path. Start the chain with one o
     .ThenMoveTo("dead-letter"))
 ```
 
+<figure>
+	<a href="~/images/diagrams/error-policies-chain.svg"><img src="~/images/diagrams/error-policies-chain.svg" alt="Chained error policies"/></a>
+    <figcaption>The failed message is retried with escalating intervals and finally moved to the dead-letter topic.</figcaption>
+</figure>
+
 The policies are evaluated in order, each time the processing fails, and the first policy that can handle the error is applied. A policy is skipped if:
 
 - its maximum number of attempts (`Retry(n)`, `WithMaxRetries(n)`) has been exceeded;

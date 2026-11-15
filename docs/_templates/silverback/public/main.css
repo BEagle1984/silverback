@@ -344,13 +344,9 @@ figure img {
     max-width: 100%;
     height: auto;
     padding: 12px;
-    background: #ffffff;
+    background: var(--sb-surface);
     border: 1px solid var(--sb-border);
     border-radius: 10px;
-}
-
-[data-bs-theme="dark"] figure img {
-    filter: brightness(0.92);
 }
 
 figcaption {

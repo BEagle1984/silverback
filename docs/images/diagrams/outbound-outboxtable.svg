@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 698 248" width="698" height="248" role="img" aria-labelledby="title desc">
+  <title id="title">Transactional outbox</title>
+  <desc id="desc">The producer stores three messages in the outbox table, in the same database transaction as the other changes. The outbox worker then produces them to the topic, from which the consumer reads them.</desc>
+  <defs>
+    <style>
+      .label { font: 600 12px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .09em; fill: #6b7685; }
+      .sub { font: 600 11px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .06em; fill: #6b7685; }
+      .num { font: 700 15px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #ffffff; }
+      .small { font: 700 11px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #ffffff; }
+      .title { font: 700 13px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .09em; fill: #3b82f6; }
+      .text { font: 600 14px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #7d8796; }
+      .card { fill: rgba(139, 149, 163, .10); stroke: rgba(139, 149, 163, .38); stroke-width: 1.25; }
+      .group { fill: rgba(139, 149, 163, .08); stroke: rgba(139, 149, 163, .55); stroke-width: 1.25; stroke-dasharray: 5 4; }
+      .slot { fill: none; stroke: rgba(139, 149, 163, .45); stroke-width: 1.25; stroke-dasharray: 4 4; }
+      .flow { fill: none; stroke: #8b95a3; stroke-width: 2; stroke-linecap: round; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M2 1.5 L8 5 L2 8.5" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text class="label" x="72" y="26" text-anchor="middle">PRODUCER</text>
+  <text class="label" x="227" y="26" text-anchor="middle">OUTBOX TABLE</text>
+  <text class="label" x="443" y="26" text-anchor="middle">TOPIC</text>
+  <text class="label" x="632" y="26" text-anchor="middle">CONSUMER</text>
+
+  <!-- Database transaction -->
+  <rect class="group" x="16" y="40" width="280" height="196" rx="14"/>
+  <text class="sub" x="156" y="224" text-anchor="middle">SAME DB TRANSACTION</text>
+
+  <!-- Producer -->
+  <rect class="card" x="30" y="54" width="84" height="152" rx="12"/>
+  <rect x="53" y="68" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="72" y="87" dy=".35em" text-anchor="middle">1</text>
+  <rect x="53" y="111" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="72" y="130" dy=".35em" text-anchor="middle">2</text>
+  <rect x="53" y="154" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="72" y="173" dy=".35em" text-anchor="middle">3</text>
+  <line class="flow" x1="124" y1="130" x2="160" y2="130" marker-end="url(#arrow)"/>
+
+  <!-- Outbox table -->
+  <path class="card" d="M172 74 a55 12 0 0 1 110 0 v108 a55 12 0 0 1 -110 0 z"/>
+  <ellipse cx="227" cy="74" rx="55" ry="12" fill="none" stroke="rgba(139, 149, 163, .38)" stroke-width="1.25"/>
+  <rect x="192" y="100" width="70" height="22" rx="8" fill="#3b82f6"/><text class="small" x="227" y="111" dy=".35em" text-anchor="middle">1</text>
+  <rect x="192" y="128" width="70" height="22" rx="8" fill="#ea580c"/><text class="small" x="227" y="139" dy=".35em" text-anchor="middle">2</text>
+  <rect x="192" y="156" width="70" height="22" rx="8" fill="#059669"/><text class="small" x="227" y="167" dy=".35em" text-anchor="middle">3</text>
+  <text class="sub" x="328" y="116" text-anchor="middle">worker</text>
+  <line class="flow" x1="300" y1="130" x2="350" y2="130" marker-end="url(#arrow)"/>
+
+  <!-- Topic -->
+  <rect class="card" x="360" y="97" width="166" height="66" rx="12"/>
+  <rect x="376" y="111" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="395" y="130" dy=".35em" text-anchor="middle">1</text>
+  <rect x="424" y="111" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="443" y="130" dy=".35em" text-anchor="middle">2</text>
+  <rect x="472" y="111" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="491" y="130" dy=".35em" text-anchor="middle">3</text>
+  <line class="flow" x1="538" y1="130" x2="578" y2="130" marker-end="url(#arrow)"/>
+
+  <!-- Consumer -->
+  <rect class="card" x="590" y="54" width="84" height="152" rx="12"/>
+  <rect x="613" y="68" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="632" y="87" dy=".35em" text-anchor="middle">1</text>
+  <rect x="613" y="111" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="632" y="130" dy=".35em" text-anchor="middle">2</text>
+  <rect x="613" y="154" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="632" y="173" dy=".35em" text-anchor="middle">3</text>
+</svg>

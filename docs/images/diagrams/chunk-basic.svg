@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 702 212" width="702" height="212" role="img" aria-labelledby="title desc">
+  <title id="title">Chunking</title>
+  <desc id="desc">The producer splits three large messages into chunks. The chunks are written to the topic and the consumer reassembles them into the original messages.</desc>
+  <defs>
+    <style>
+      .label { font: 600 12px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .09em; fill: #6b7685; }
+      .sub { font: 600 11px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .06em; fill: #6b7685; }
+      .num { font: 700 15px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #ffffff; }
+      .small { font: 700 11px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #ffffff; }
+      .title { font: 700 13px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .09em; fill: #3b82f6; }
+      .text { font: 600 14px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #7d8796; }
+      .card { fill: rgba(139, 149, 163, .10); stroke: rgba(139, 149, 163, .38); stroke-width: 1.25; }
+      .group { fill: rgba(139, 149, 163, .08); stroke: rgba(139, 149, 163, .55); stroke-width: 1.25; stroke-dasharray: 5 4; }
+      .slot { fill: none; stroke: rgba(139, 149, 163, .45); stroke-width: 1.25; stroke-dasharray: 4 4; }
+      .flow { fill: none; stroke: #8b95a3; stroke-width: 2; stroke-linecap: round; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M2 1.5 L8 5 L2 8.5" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text class="label" x="86" y="26" text-anchor="middle">PRODUCER</text>
+  <text class="label" x="351" y="26" text-anchor="middle">TOPIC</text>
+  <text class="label" x="615" y="26" text-anchor="middle">CONSUMER</text>
+
+  <!-- Producer -->
+  <rect class="card" x="24" y="40" width="125" height="158" rx="12"/>
+  <rect x="38" y="54" width="97" height="38" rx="8" fill="#3b82f6"/><text class="num" x="86.5" y="73" dy=".35em" text-anchor="middle">1</text>
+  <rect x="38" y="100" width="47" height="38" rx="8" fill="#ea580c"/><text class="num" x="61.5" y="119" dy=".35em" text-anchor="middle">2</text>
+  <rect x="38" y="146" width="72" height="38" rx="8" fill="#059669"/><text class="num" x="74" y="165" dy=".35em" text-anchor="middle">3</text>
+  <line class="flow" x1="161" y1="119" x2="207" y2="119" marker-end="url(#arrow)"/>
+
+  <!-- Topic -->
+  <rect class="card" x="219" y="86" width="264" height="66" rx="12"/>
+  <rect x="235" y="100" width="22" height="38" rx="6" fill="#3b82f6"/><text class="small" x="246" y="119" dy=".35em" text-anchor="middle">1</text>
+  <rect x="260" y="100" width="22" height="38" rx="6" fill="#3b82f6"/><text class="small" x="271" y="119" dy=".35em" text-anchor="middle">1</text>
+  <rect x="285" y="100" width="22" height="38" rx="6" fill="#3b82f6"/><text class="small" x="296" y="119" dy=".35em" text-anchor="middle">1</text>
+  <rect x="310" y="100" width="22" height="38" rx="6" fill="#3b82f6"/><text class="small" x="321" y="119" dy=".35em" text-anchor="middle">1</text>
+  <rect x="340" y="100" width="22" height="38" rx="6" fill="#ea580c"/><text class="small" x="351" y="119" dy=".35em" text-anchor="middle">2</text>
+  <rect x="365" y="100" width="22" height="38" rx="6" fill="#ea580c"/><text class="small" x="376" y="119" dy=".35em" text-anchor="middle">2</text>
+  <rect x="395" y="100" width="22" height="38" rx="6" fill="#059669"/><text class="small" x="406" y="119" dy=".35em" text-anchor="middle">3</text>
+  <rect x="420" y="100" width="22" height="38" rx="6" fill="#059669"/><text class="small" x="431" y="119" dy=".35em" text-anchor="middle">3</text>
+  <rect x="445" y="100" width="22" height="38" rx="6" fill="#059669"/><text class="small" x="456" y="119" dy=".35em" text-anchor="middle">3</text>
+  <line class="flow" x1="495" y1="119" x2="541" y2="119" marker-end="url(#arrow)"/>
+
+  <!-- Consumer -->
+  <rect class="card" x="553" y="40" width="125" height="158" rx="12"/>
+  <rect x="567" y="54" width="97" height="38" rx="8" fill="#3b82f6"/><text class="num" x="615.5" y="73" dy=".35em" text-anchor="middle">1</text>
+  <rect x="567" y="100" width="47" height="38" rx="8" fill="#ea580c"/><text class="num" x="590.5" y="119" dy=".35em" text-anchor="middle">2</text>
+  <rect x="567" y="146" width="72" height="38" rx="8" fill="#059669"/><text class="num" x="603" y="165" dy=".35em" text-anchor="middle">3</text>
+</svg>

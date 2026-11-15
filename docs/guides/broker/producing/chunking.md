@@ -8,7 +8,7 @@ description: "Split large messages into chunks on the producer side to stay unde
 When dealing with large messages, it might be necessary to split them into smaller parts to avoid issues with the broker or the consumer. This process is called **chunking** and is especially useful with Kafka, which has a maximum message size limit, or with the MQTT brokers limiting the message size.
 
 <figure>
-	<a href="~/images/diagrams/chunk-basic.png"><img src="~/images/diagrams/chunk-basic.png" alt="Chunking diagram: a large message is split into smaller chunks."></a>
+	<a href="~/images/diagrams/chunk-basic.svg"><img src="~/images/diagrams/chunk-basic.svg" alt="Chunking diagram: a large message is split into smaller chunks."></a>
     <figcaption>The messages are being split into small chunks.</figcaption>
 </figure>
 

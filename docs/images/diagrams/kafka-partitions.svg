@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 534 240" width="534" height="240" role="img" aria-labelledby="title desc">
+  <title id="title">Parallel processing of the Kafka partitions</title>
+  <desc id="desc">A topic with three partitions. The consumer processes the partitions concurrently, while the messages of each partition are processed sequentially.</desc>
+  <defs>
+    <style>
+      .label { font: 600 12px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .09em; fill: #6b7685; }
+      .sub { font: 600 11px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .06em; fill: #6b7685; }
+      .num { font: 700 15px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #ffffff; }
+      .small { font: 700 11px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #ffffff; }
+      .title { font: 700 13px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .09em; fill: #3b82f6; }
+      .text { font: 600 14px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #7d8796; }
+      .card { fill: rgba(139, 149, 163, .10); stroke: rgba(139, 149, 163, .38); stroke-width: 1.25; }
+      .group { fill: rgba(139, 149, 163, .08); stroke: rgba(139, 149, 163, .55); stroke-width: 1.25; stroke-dasharray: 5 4; }
+      .slot { fill: none; stroke: rgba(139, 149, 163, .45); stroke-width: 1.25; stroke-dasharray: 4 4; }
+      .flow { fill: none; stroke: #8b95a3; stroke-width: 2; stroke-linecap: round; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M2 1.5 L8 5 L2 8.5" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text class="label" x="122" y="26" text-anchor="middle">TOPIC</text>
+  <text class="label" x="411" y="26" text-anchor="middle">CONSUMER</text>
+
+  <!-- Topic -->
+  <rect class="card" x="24" y="40" width="196" height="186" rx="12"/>
+
+  <!-- Consumer -->
+  <rect class="card" x="312" y="40" width="198" height="186" rx="12"/>
+  <text class="sub" x="40" y="77" dy=".35em">P0</text>
+  <rect x="72" y="58" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="91" y="77" dy=".35em" text-anchor="middle">1</text>
+  <rect x="120" y="58" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="139" y="77" dy=".35em" text-anchor="middle">2</text>
+  <rect x="168" y="58" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="187" y="77" dy=".35em" text-anchor="middle">3</text>
+  <line class="flow" x1="232" y1="77" x2="300" y2="77" marker-end="url(#arrow)"/>
+  <rect class="group" x="326" y="54" width="170" height="46" rx="10"/>
+  <rect x="336" y="58" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="355" y="77" dy=".35em" text-anchor="middle">1</text>
+  <path d="M380.5 72 L385.5 77 L380.5 82" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="392" y="58" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="411" y="77" dy=".35em" text-anchor="middle">2</text>
+  <path d="M436.5 72 L441.5 77 L436.5 82" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="448" y="58" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="467" y="77" dy=".35em" text-anchor="middle">3</text>
+  <text class="sub" x="40" y="133" dy=".35em">P1</text>
+  <rect x="72" y="114" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="91" y="133" dy=".35em" text-anchor="middle">1</text>
+  <rect x="120" y="114" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="139" y="133" dy=".35em" text-anchor="middle">2</text>
+  <rect x="168" y="114" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="187" y="133" dy=".35em" text-anchor="middle">3</text>
+  <line class="flow" x1="232" y1="133" x2="300" y2="133" marker-end="url(#arrow)"/>
+  <rect class="group" x="326" y="110" width="170" height="46" rx="10"/>
+  <rect x="336" y="114" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="355" y="133" dy=".35em" text-anchor="middle">1</text>
+  <path d="M380.5 128 L385.5 133 L380.5 138" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="392" y="114" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="411" y="133" dy=".35em" text-anchor="middle">2</text>
+  <path d="M436.5 128 L441.5 133 L436.5 138" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="448" y="114" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="467" y="133" dy=".35em" text-anchor="middle">3</text>
+  <text class="sub" x="40" y="189" dy=".35em">P2</text>
+  <rect x="72" y="170" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="91" y="189" dy=".35em" text-anchor="middle">1</text>
+  <rect x="120" y="170" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="139" y="189" dy=".35em" text-anchor="middle">2</text>
+  <rect x="168" y="170" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="187" y="189" dy=".35em" text-anchor="middle">3</text>
+  <line class="flow" x1="232" y1="189" x2="300" y2="189" marker-end="url(#arrow)"/>
+  <rect class="group" x="326" y="166" width="170" height="46" rx="10"/>
+  <rect x="336" y="170" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="355" y="189" dy=".35em" text-anchor="middle">1</text>
+  <path d="M380.5 184 L385.5 189 L380.5 194" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="392" y="170" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="411" y="189" dy=".35em" text-anchor="middle">2</text>
+  <path d="M436.5 184 L441.5 189 L436.5 194" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="448" y="170" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="467" y="189" dy=".35em" text-anchor="middle">3</text>
+</svg>

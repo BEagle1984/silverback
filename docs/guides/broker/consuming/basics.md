@@ -155,6 +155,11 @@ Kafka and MQTT have different parallelism models:
 - **Kafka**: parallelism is enabled by default. Messages from different partitions can be processed concurrently; messages within the same partition are always processed sequentially.
 - **MQTT**: processing is sequential by default; you can enable parallel processing.
 
+<figure>
+	<a href="~/images/diagrams/kafka-partitions.svg"><img src="~/images/diagrams/kafka-partitions.svg" alt="Kafka partitions processed in parallel"/></a>
+    <figcaption>The Kafka partitions are processed concurrently, while the messages of each partition are processed sequentially.</figcaption>
+</figure>
+
 ### Kafka
 
 Limit the maximum degree of parallelism:

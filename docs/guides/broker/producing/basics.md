@@ -98,7 +98,7 @@ Alternatively to the extension methods you can use the <xref:Silverback.Messagin
 The `Produce<TMessage>` method is used to configure the specified message type to be routed through the producer. The `ProduceTo` method specifies the topic to which the messages should be sent. Each endpoint can be configured with additional settings, such as specific headers or message properties, or a different serialization strategy.
 
 <figure>
-	<a href="~/images/diagrams/outbound-routing.png"><img src="~/images/diagrams/outbound-routing.png" alt="Outbound routing diagram"/></a>
+	<a href="~/images/diagrams/outbound-routing.svg"><img src="~/images/diagrams/outbound-routing.svg" alt="Outbound routing diagram"/></a>
     <figcaption>The messages are dynamically routed to the appropriate endpoint.</figcaption>
 </figure>
 

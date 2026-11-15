@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 244" width="760" height="244" role="img" aria-labelledby="title desc">
+  <title id="title">Batch processing</title>
+  <desc id="desc">A producer writes four messages to a topic. The consumer receives them grouped in two batches of two messages each.</desc>
+  <defs>
+    <style>
+      .label { font: 600 12px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .09em; fill: #6b7685; }
+      .sub { font: 600 11px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .06em; fill: #6b7685; }
+      .num { font: 700 15px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #ffffff; }
+      .small { font: 700 11px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #ffffff; }
+      .title { font: 700 13px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; letter-spacing: .09em; fill: #3b82f6; }
+      .text { font: 600 14px Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; fill: #7d8796; }
+      .card { fill: rgba(139, 149, 163, .10); stroke: rgba(139, 149, 163, .38); stroke-width: 1.25; }
+      .group { fill: rgba(139, 149, 163, .08); stroke: rgba(139, 149, 163, .55); stroke-width: 1.25; stroke-dasharray: 5 4; }
+      .slot { fill: none; stroke: rgba(139, 149, 163, .45); stroke-width: 1.25; stroke-dasharray: 4 4; }
+      .flow { fill: none; stroke: #8b95a3; stroke-width: 2; stroke-linecap: round; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M2 1.5 L8 5 L2 8.5" fill="none" stroke="#8b95a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text class="label" x="66" y="26" text-anchor="middle">PRODUCER</text>
+  <text class="label" x="307" y="26" text-anchor="middle">TOPIC</text>
+  <text class="label" x="628" y="26" text-anchor="middle">CONSUMER</text>
+
+  <!-- Producer -->
+  <rect class="card" x="24" y="40" width="84" height="195" rx="12"/>
+  <rect x="47" y="54" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="66" y="73" dy=".35em" text-anchor="middle">1</text>
+  <rect x="47" y="97" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="66" y="116" dy=".35em" text-anchor="middle">2</text>
+  <rect x="47" y="140" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="66" y="159" dy=".35em" text-anchor="middle">3</text>
+  <rect x="47" y="183" width="38" height="38" rx="8" fill="#db2777"/><text class="num" x="66" y="202" dy=".35em" text-anchor="middle">4</text>
+  <line class="flow" x1="120" y1="134" x2="164" y2="134" marker-end="url(#arrow)"/>
+
+  <!-- Topic -->
+  <rect class="card" x="176" y="101" width="262" height="66" rx="12"/>
+  <rect x="192" y="115" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="211" y="134" dy=".35em" text-anchor="middle">1</text>
+  <rect x="240" y="115" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="259" y="134" dy=".35em" text-anchor="middle">2</text>
+  <rect x="288" y="115" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="307" y="134" dy=".35em" text-anchor="middle">3</text>
+  <rect x="336" y="115" width="38" height="38" rx="8" fill="#db2777"/><text class="num" x="355" y="134" dy=".35em" text-anchor="middle">4</text>
+  <rect class="slot" x="384.5" y="115.5" width="37" height="37" rx="8"/>
+  <line class="flow" x1="450" y1="134" x2="508" y2="134" marker-end="url(#arrow)"/>
+
+  <!-- Consumer -->
+  <rect class="card" x="520" y="40" width="216" height="188" rx="12"/>
+  <rect class="group" x="536" y="54" width="184" height="70" rx="10"/>
+  <text class="sub" x="554" y="89" dy=".35em">BATCH 1</text>
+  <rect x="624" y="70" width="38" height="38" rx="8" fill="#3b82f6"/><text class="num" x="643" y="89" dy=".35em" text-anchor="middle">1</text>
+  <rect x="668" y="70" width="38" height="38" rx="8" fill="#ea580c"/><text class="num" x="687" y="89" dy=".35em" text-anchor="middle">2</text>
+  <rect class="group" x="536" y="144" width="184" height="70" rx="10"/>
+  <text class="sub" x="554" y="179" dy=".35em">BATCH 2</text>
+  <rect x="624" y="160" width="38" height="38" rx="8" fill="#059669"/><text class="num" x="643" y="179" dy=".35em" text-anchor="middle">3</text>
+  <rect x="668" y="160" width="38" height="38" rx="8" fill="#db2777"/><text class="num" x="687" y="179" dy=".35em" text-anchor="middle">4</text>
+</svg>

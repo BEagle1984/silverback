@@ -8,7 +8,7 @@ description: "Encrypt produced messages end to end with symmetric encryption, us
 The end-to-end message encryption in Silverback is handled transparently in the producer and consumer and works independently from the used <xref:serialization> or other features like <xref:producing-chunking>.
 
 <figure>
-	<a href="~/images/diagrams/encryption.png"><img src="~/images/diagrams/encryption.png" alt="End-to-end message encryption and decryption."></a>
+	<a href="~/images/diagrams/encryption.svg"><img src="~/images/diagrams/encryption.svg" alt="End-to-end message encryption and decryption."></a>
     <figcaption>The messages are transparently encrypted and decrypted.</figcaption>
 </figure>
 

@@ -8,7 +8,7 @@ description: "Process consumed Kafka and MQTT messages in batches to cut per-mes
 Process multiple consumed messages in a single batch to reduce per-message overhead (DB commits, network IO, etc.). Use batching when throughput matters and a small additional latency is acceptable.
 
 <figure>
-	<a href="~/images/diagrams/inbound-batch.png"><img src="~/images/diagrams/inbound-batch.png" alt="Batch processing diagram"/></a>
+	<a href="~/images/diagrams/inbound-batch.svg"><img src="~/images/diagrams/inbound-batch.svg" alt="Batch processing diagram"/></a>
     <figcaption>Messages are collected and delivered as batches.</figcaption>
 </figure>
 
@@ -126,6 +126,11 @@ When multiple subscribers handle the same batch (see also <xref:consuming>), eac
 ## Streaming
 
 As an alternative to batch processing, `AllowStreaming` lets a subscriber consume all the messages of an endpoint through a single, unbounded stream. Prefer batch processing whenever possible: streaming is more fragile and some features, like the error policies, aren't available.
+
+<figure>
+	<a href="~/images/diagrams/inbound-stream.svg"><img src="~/images/diagrams/inbound-stream.svg" alt="Streaming diagram"/></a>
+    <figcaption>The messages are delivered one after the other through a single, unbounded stream.</figcaption>
+</figure>
 
 # [Kafka](#tab/kafka)
 ```csharp
