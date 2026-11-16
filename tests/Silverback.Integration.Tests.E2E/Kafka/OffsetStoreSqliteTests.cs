@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
@@ -219,6 +220,68 @@ public class OffsetStoreSqliteTests : KafkaTests
 
         await AsyncTestingUtil.WaitAsync(() => received >= 13);
         received.ShouldBe(13);
+    }
+
+    [Fact]
+    public async Task OffsetStore_ShouldStoreOffsetWithoutTransaction_WhenMessageIsSkipped()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        int received = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                .AddSqliteKafkaOffsetStore())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableOffsetsCommit()
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(database.ConnectionString))
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Skip()))))
+            .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleAsync)
+            .AddIntegrationSpy());
+
+        // The offset is stored in the transaction, which is rolled back by the failure
+        async Task HandleAsync(TestEventOne message, KafkaOffsetStoreScope offsetStoreScope)
+        {
+            await using SqliteConnection connection = new(database.ConnectionString);
+            await connection.OpenAsync();
+            await using DbTransaction transaction = await connection.BeginTransactionAsync();
+
+            offsetStoreScope.EnlistTransaction(transaction);
+            Interlocked.Increment(ref received);
+
+            await offsetStoreScope.StoreOffsetsAsync();
+
+            throw new InvalidOperationException("Skip!");
+        }
+
+        KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        received.ShouldBe(2);
+
+        await consumer.Client.DisconnectAsync();
+
+        // The offsets of the skipped messages are stored outside the failed transaction
+        await consumer.Client.ConnectAsync();
+        await Helper.WaitUntilConnectedAsync();
+
+        await producer.ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        received.ShouldBe(3);
     }
 
     [Fact]

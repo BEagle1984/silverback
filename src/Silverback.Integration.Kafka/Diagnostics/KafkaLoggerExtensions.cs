@@ -6,6 +6,7 @@ using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 
 namespace Silverback.Diagnostics;
 
@@ -120,6 +121,18 @@ internal static partial class KafkaLoggerExtensions
             GetErrorReason(error),
             (int)error.Code,
             consumer.DisplayName);
+    }
+
+    public static void LogSkippedOffsetsStoreError(
+        this ISilverbackLogger logger,
+        KafkaOffsetStoreScope offsetStoreScope,
+        KafkaConsumer consumer,
+        Exception exception)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.SkippedOffsetsStoreError))
+            return;
+
+        SkippedOffsetsStoreError(logger.InnerLogger, offsetStoreScope.GetOffsetsToStoreLogString(), consumer.DisplayName, exception);
     }
 
     public static void LogConsumerStatisticsReceived(this ISilverbackLogger logger, string statisticsJson, KafkaConsumer consumer) =>
@@ -607,6 +620,23 @@ internal static partial class KafkaLoggerExtensions
         "The consumer wasn't ready to be closed within {Timeout}; it will be closed anyway | ConsumerName: {ConsumerName}",
         EventName = "Silverback.Integration.Kafka_ConsumerLeaveGroupTimeout")]
     private static partial void ConsumerLeaveGroupTimeout(ILogger logger, TimeSpan timeout, string consumerName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the offsets of the messages skipped without being
+    ///     processed (e.g. a message or sequence skipped or moved by the error policies, or an incomplete sequence) cannot be stored to the
+    ///     client side offset store, even after a retry.
+    /// </summary>
+    /// <remarks>
+    ///     The consumer is committed anyway: the stored offsets are updated by the next processed message, and until then the skipped
+    ///     messages are consumed (and skipped or moved) again if the consumer is restarted or the partition is reassigned.
+    /// </remarks>
+    [LoggerMessage(
+        2046,
+        LogLevel.Error,
+        "Error occurred storing the offsets of the skipped messages to the client side offset store; the messages might be consumed" +
+        " again after a restart or rebalance | Offsets: {Offsets}, ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.Kafka_SkippedOffsetsStoreError")]
+    private static partial void SkippedOffsetsStoreError(ILogger logger, string offsets, string consumerName, Exception exception);
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a poll timeout is notified.

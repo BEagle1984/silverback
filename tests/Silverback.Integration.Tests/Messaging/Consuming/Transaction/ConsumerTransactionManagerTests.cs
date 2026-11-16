@@ -241,6 +241,7 @@ public class ConsumerTransactionManagerTests
         await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
         ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
 
         await transaction.RollbackAsync(null, commitConsumer: true);
 
@@ -248,6 +249,101 @@ public class ConsumerTransactionManagerTests
         await context.Consumer.Received(1).CommitAsync(
             Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single() == identifier));
         await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        counter.SkippingCount.ShouldBe(1);
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task RollbackAsync_ShouldRaiseSkippingBetweenAbortingAndAbortedBeforeCommitting_WhenCommittingConsumer()
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
+        List<string> calls = [];
+        ConsumerPipelineContext? skippingContext = null;
+        transaction.Aborting.AddHandler(_ =>
+        {
+            calls.Add("aborting");
+            return ValueTask.CompletedTask;
+        });
+        transaction.Skipping.AddHandler(pipelineContext =>
+        {
+            skippingContext = pipelineContext;
+            calls.Add("skipping");
+            return ValueTask.CompletedTask;
+        });
+        transaction.Aborted.AddHandler(_ =>
+        {
+            calls.Add("aborted");
+            return ValueTask.CompletedTask;
+        });
+        context.Consumer.CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>()).Returns(_ =>
+        {
+            calls.Add("commit");
+            return ValueTask.CompletedTask;
+        });
+
+        await transaction.RollbackAsync(null, commitConsumer: true);
+
+        // The commit events aren't raised: the transaction is aborted
+        calls.ShouldBe(["aborting", "skipping", "commit", "aborted"]);
+        skippingContext.ShouldBeSameAs(context);
+        counter.CommittingCount.ShouldBe(0);
+        counter.CommittedCount.ShouldBe(0);
+        counter.AbortingCount.ShouldBe(1);
+        counter.AbortedCount.ShouldBe(1);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RollbackAsync_ShouldNotRaiseSkipping_WhenNotCommittingConsumer(bool stopConsuming)
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
+
+        await transaction.RollbackAsync(null, stopConsuming: stopConsuming);
+
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        counter.SkippingCount.ShouldBe(0);
+        counter.CommittingCount.ShouldBe(0);
+        counter.AbortedCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task CommitAsync_ShouldNotRaiseSkipping()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
+
+        await transaction.CommitAsync();
+
+        counter.SkippingCount.ShouldBe(0);
+        counter.CommittingCount.ShouldBe(1);
+        counter.CommittedCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task RollbackAsync_ShouldThrowWithoutCommitting_WhenSkippingHandlerFails()
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
+        transaction.Skipping.AddHandler(_ => ValueTask.FromException(new InvalidOperationException("Handler failed.")));
+
+        Task<bool> Act() => transaction.RollbackAsync(null, commitConsumer: true);
+
+        // The error policies handle the failed rollback (e.g. the skip policy reconnects the consumer)
+        AggregateException exception = await Should.ThrowAsync<AggregateException>(Act);
+        exception.InnerExceptions.ShouldHaveSingleItem().Message.ShouldBe("Handler failed.");
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        counter.AbortedCount.ShouldBe(0);
     }
 
     [Theory]
@@ -262,6 +358,7 @@ public class ConsumerTransactionManagerTests
             context,
             Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>(),
             processingCancellationTokenSource.Token);
+        EventsCounter counter = new(transaction);
 
         // The stop removes the pending sequences from the store without rolling them back: the commit could commit their messages
         if (isStopping)
@@ -271,6 +368,7 @@ public class ConsumerTransactionManagerTests
 
         await context.Consumer.Received(isStopping ? 0 : 1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
         await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        counter.SkippingCount.ShouldBe(isStopping ? 0 : 1);
     }
 
     [Theory]
@@ -295,6 +393,7 @@ public class ConsumerTransactionManagerTests
             context,
             Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>(),
             processingCancellationTokenSource.Token);
+        EventsCounter counter = new(transaction);
 
         // The skipped sequence itself (e.g. a chunked message failing before being added to the batch) doesn't count
         ChunkSequence skippedSequence = await store.AddAsync(new ChunkSequence("skipped", 5, context));
@@ -311,6 +410,9 @@ public class ConsumerTransactionManagerTests
         // With Kafka the commit would implicitly commit the other sequence (or the one aborted by the stop), while with MQTT nothing else
         // would acknowledge the messages of the skipped sequence
         await consumer.Received(expectedIsCommitted ? 1 : 0).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        counter.SkippingCount.ShouldBe(expectedIsCommitted ? 1 : 0);
+        counter.CommittingCount.ShouldBe(0);
+        counter.CommittedCount.ShouldBe(0);
     }
 
     [Fact]
@@ -320,6 +422,7 @@ public class ConsumerTransactionManagerTests
         using ConsumerPipelineContext sequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
         using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
         ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
 
         await store.AddAsync(new ChunkSequence("123", 5, sequenceContext));
 
@@ -327,6 +430,7 @@ public class ConsumerTransactionManagerTests
 
         await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
         await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        counter.SkippingCount.ShouldBe(0);
     }
 
     [Theory]
@@ -337,6 +441,7 @@ public class ConsumerTransactionManagerTests
         await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
         ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
 
         // E.g. a batch completed by its max wait time, while being processed or handled by its error policies
         using ConsumerPipelineContext sequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
@@ -354,6 +459,7 @@ public class ConsumerTransactionManagerTests
 
             await context.Consumer.Received(isResolved ? 1 : 0).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
             await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+            counter.SkippingCount.ShouldBe(isResolved ? 1 : 0);
         }
         finally
         {
@@ -388,6 +494,7 @@ public class ConsumerTransactionManagerTests
         using ConsumerPipelineContext sequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
         using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
         ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
 
         await store.AddAsync(new UnboundedSequence("unbounded", unboundedSequenceContext));
         await store.AddAsync(new ChunkSequence("123", 5, sequenceContext));
@@ -396,6 +503,7 @@ public class ConsumerTransactionManagerTests
 
         await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
         await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        counter.SkippingCount.ShouldBe(0);
     }
 
     [Fact]
@@ -419,5 +527,47 @@ public class ConsumerTransactionManagerTests
         }
 
         public Task CompleteFromTestAsync() => CompleteAsync();
+    }
+
+    private sealed class EventsCounter
+    {
+        public EventsCounter(ConsumerTransactionManager transaction)
+        {
+            transaction.Committing.AddHandler(_ =>
+            {
+                CommittingCount++;
+                return ValueTask.CompletedTask;
+            });
+            transaction.Committed.AddHandler(_ =>
+            {
+                CommittedCount++;
+                return ValueTask.CompletedTask;
+            });
+            transaction.Aborting.AddHandler(_ =>
+            {
+                AbortingCount++;
+                return ValueTask.CompletedTask;
+            });
+            transaction.Aborted.AddHandler(_ =>
+            {
+                AbortedCount++;
+                return ValueTask.CompletedTask;
+            });
+            transaction.Skipping.AddHandler(_ =>
+            {
+                SkippingCount++;
+                return ValueTask.CompletedTask;
+            });
+        }
+
+        public int CommittingCount { get; private set; }
+
+        public int CommittedCount { get; private set; }
+
+        public int AbortingCount { get; private set; }
+
+        public int AbortedCount { get; private set; }
+
+        public int SkippingCount { get; private set; }
     }
 }

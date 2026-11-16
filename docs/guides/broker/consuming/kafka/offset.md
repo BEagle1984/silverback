@@ -14,7 +14,15 @@ This feature is primarily meant to enable **exactly-once processing** *with resp
 
 in the **same database transaction**.
 
-If the transaction commits, both the data and the new offset are persisted. If it rolls back, neither is persisted and the messages will be re-consumed.
+If the transaction commits, both the data and the new offset are persisted. If it rolls back, neither is persisted and the messages will be re-consumed, unless the [error policies](xref:error-policies) skip or move them: their offsets are then stored outside the failed transaction, so that they aren't skipped or moved again. The offsets of the messages that are discarded without reaching the subscribers (e.g., a duplicated chunk or the chunks of an incomplete chunked message) are stored as well, unless a batch or another sequence is still pending: they're then stored with the next commit, not to skip the pending messages after a restart.
+
+Like the Kafka commit, an offset lower than the one already committed by the consumer isn't stored (e.g., the offset of an incomplete chunked message aborted after the next messages were committed), also when the Kafka offsets commit is disabled, unless the partition was sought via <xref:Silverback.Messaging.Broker.IKafkaConsumer.Seek(Confluent.Kafka.TopicPartitionOffset)> since it was assigned, and neither are the offsets of a partition being rolled back. If the partition is revoked while a message is being processed, its offset is stored anyway when the message is committed (atomically with your changes, if stored in your transaction), so that the message isn't processed again after the partition is reassigned. The offsets of the skipped or moved messages of a revoked partition aren't stored instead, so these messages are consumed again by the next owner of the partition.
+
+> [!Note]
+> If the offsets of a skipped or moved message cannot be stored, the store is retried once and then the error is logged (`SkippedOffsetsStoreError`, see [Logging](xref:logging)). The message is skipped or moved anyway and the stored offsets are updated by the next processed message. If the consumer is restarted (or the partition is reassigned) before, the message is consumed and skipped or moved again.
+
+> [!Note]
+> Since the offsets of the skipped or moved messages are stored outside any transaction, their store can complete after a concurrent store of a higher offset, e.g., when an incomplete chunked message is aborted by its sequence timeout while the next messages are being committed. The stored offset then moves back below the one stored by the concurrent commit until the next message is committed, and some messages may be consumed again after a restart or rebalance (also when the Kafka offsets commit is enabled, since the consumer is repositioned based on the stored offsets). In this case the messages are delivered at least once, so design your subscribers to be idempotent.
 
 > [!Important]
 > Client-side offset storage is not a Kafka feature. It’s an application pattern.

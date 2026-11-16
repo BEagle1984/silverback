@@ -24,6 +24,8 @@ public partial class ErrorPoliciesTests
 {
     private const int ChunksCount = 3;
 
+    private const string MoveTargetTopicName = "other-topic";
+
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     public static TheoryData<string, string, bool> ErrorPolicy_ShouldHandleFailure_TestData
     {
@@ -31,7 +33,7 @@ public partial class ErrorPoliciesTests
         {
             TheoryData<string, string, bool> data = [];
 
-            foreach (string policy in new[] { "retry", "skip", "stop" })
+            foreach (string policy in new[] { "retry", "skip", "move", "stop" })
             {
                 foreach (string commitMode in new[] { "auto", "manual", "disabled", "store" })
                 {
@@ -66,9 +68,15 @@ public partial class ErrorPoliciesTests
                 .WithConnectionToMessageBroker(options => options
                     .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
                     .AddInMemoryKafkaOffsetStore())
-                .AddKafkaClients(clients => clients
-                    .WithBootstrapServers("PLAINTEXT://e2e")
-                    .AddConsumer(consumer => ConfigureConsumer(consumer, policy, commitMode, batchSize)));
+                .AddKafkaClients(clients =>
+                {
+                    clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(consumer => ConfigureConsumer(consumer, policy, commitMode, batchSize));
+
+                    if (policy == "move")
+                        clients.AddProducer(producer => producer.Produce(endpoint => endpoint.ProduceTo(MoveTargetTopicName)));
+                });
 
             if (batch)
                 silverback.AddDelegateSubscriber<IEnumerable<TestEventOne>>(messages => HandleMessages([.. messages]));
@@ -104,17 +112,17 @@ public partial class ErrorPoliciesTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = content });
         }
 
-        bool isStopping = policy == "stop";
+        // The move policy can't handle the batches, which stop the consumer
+        bool isStopping = policy == "stop" || policy == "move" && batch;
+        bool isSkipping = policy == "skip" || policy == "move" && !batch;
         bool isCommitting = commitMode is "auto" or "manual";
 
         await WaitUntilCompletedAsync(consumer, isStopping, isCommitting);
 
-        string[] expectedMessages = policy switch
-        {
-            "stop" => [.. chunks[0], .. chunks[1]],
-            "skip" => [.. chunks[0], .. chunks[1], .. chunks[2]],
-            _ => [.. chunks[0], .. chunks[1], .. chunks[1], .. chunks[2]]
-        };
+        string[] expectedMessages =
+            isStopping ? [.. chunks[0], .. chunks[1]] :
+            isSkipping ? [.. chunks[0], .. chunks[1], .. chunks[2]] :
+            [.. chunks[0], .. chunks[1], .. chunks[1], .. chunks[2]];
 
         lock (received)
         {
@@ -122,6 +130,9 @@ public partial class ErrorPoliciesTests
         }
 
         AssertConsumerStatus(consumer, isStopping, disconnectionsCount);
+
+        if (policy == "move")
+            Helper.GetTopic(MoveTargetTopicName).MessagesCount.ShouldBe(isStopping ? 0 : 1);
 
         // Only the chunk preceding the failure is completed, when the consumer stops
         int completedMessagesCount = isStopping ? batchSize : ChunksCount * batchSize;

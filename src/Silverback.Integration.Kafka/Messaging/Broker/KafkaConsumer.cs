@@ -396,6 +396,40 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         }
     }
 
+    /// <summary>
+    ///     Returns the specified offsets that can be stored to the client side offset store right now: the ones that the commit would
+    ///     commit (not lower than the offset already committed, of a partition that is still owned, i.e. neither revoked nor being rolled
+    ///     back) and, if <paramref name="includeRevokedPartitions" /> is <c>true</c>, the ones of the revoked partitions.
+    /// </summary>
+    /// <remarks>
+    ///     Used by the client side offset store, to store the same offsets that the consumer commits. The only exception are the offsets
+    ///     of the messages processed while their partition is being revoked (see <see cref="KafkaOffsetStoreScope.StoreOffsetsAsync" />):
+    ///     the consumer doesn't commit them, but they're stored atomically with the changes done by the subscribers, so that the next
+    ///     owner of the partition doesn't process them again. The offsets of a partition being rolled back are never stored, like they
+    ///     aren't committed: the rollback seeks back to the lowest rolled back offset, which may precede them, and the stored offset must
+    ///     not skip the rolled back messages if they aren't processed again (e.g., because the consumer is stopped).
+    /// </remarks>
+    /// <param name="offsets">
+    ///     The offsets to be stored.
+    /// </param>
+    /// <param name="includeRevokedPartitions">
+    ///     Whether the offsets of the revoked partitions can be stored as well.
+    /// </param>
+    /// <returns>
+    ///     The offsets that can be stored.
+    /// </returns>
+    internal IReadOnlyCollection<KafkaOffset> GetStorableOffsets(IEnumerable<KafkaOffset> offsets, bool includeRevokedPartitions)
+    {
+        lock (_assignmentLock)
+        {
+            return
+            [
+                .. offsets.Where(offset => IsCommittableOffsetCore(offset) ||
+                                           includeRevokedPartitions && !IsNotRevoked(offset.TopicPartition))
+            ];
+        }
+    }
+
     internal bool OnPollTimeout(LogMessage logMessage)
     {
         if (Configuration.EnableAutoRecovery)

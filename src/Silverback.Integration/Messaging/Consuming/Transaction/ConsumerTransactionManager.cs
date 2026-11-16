@@ -67,6 +67,9 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     /// <inheritdoc cref="IConsumerTransactionManager.Aborted" />
     public AsyncEvent<ConsumerPipelineContext> Aborted { get; } = new();
 
+    /// <inheritdoc cref="IConsumerTransactionManager.Skipping" />
+    public AsyncEvent<ConsumerPipelineContext> Skipping { get; } = new();
+
     /// <summary>
     ///     Gets a value indicating whether the transaction was rolled back without committing the consumer (e.g. to retry the message),
     ///     so that the rolled back messages and the later ones are consumed again. It's set as soon as the rollback starts.
@@ -200,6 +203,18 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         return IsConsumerStopped;
     }
 
+    /// <summary>
+    ///     Returns a value indicating whether the consumer can be committed for the message that doesn't belong to a sequence and wasn't
+    ///     processed (e.g. skipped by the error policies or by the sequencer), without implicitly committing the messages of the other
+    ///     sequences, which are pending or not resolved yet, or which the consumer stop aborted without rolling them back.
+    /// </summary>
+    /// <returns>
+    ///     A value indicating whether the consumer can be committed.
+    /// </returns>
+    internal bool CanCommitUnprocessedMessage() =>
+        !_processingCancellationToken.IsCancellationRequested &&
+        _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0 && !HasUnresolvedSequences();
+
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged by the consumer")]
     private async Task TryStopConsumerAfterFailureAsync()
     {
@@ -259,11 +274,10 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
             // Not while the consumer is stopping either: the stop aborts the pending sequences and removes them from the store without
             // rolling them back (Kafka consumes them again from the first uncommitted offset after the restart), so the commit could
             // commit their messages. The skipped message is consumed (and skipped) again after the restart.
-            if (_context.Sequence != null
-                    ? CanCommitSequence()
-                    : !_processingCancellationToken.IsCancellationRequested &&
-                      _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0 && !HasUnresolvedSequences())
+            if (_context.Sequence != null ? CanCommitSequence() : CanCommitUnprocessedMessage())
             {
+                await Skipping.InvokeAsync(_context).ConfigureAwait(false);
+
                 await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
             }
         }

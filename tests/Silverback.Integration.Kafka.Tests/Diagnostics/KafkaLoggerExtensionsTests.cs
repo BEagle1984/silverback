@@ -15,6 +15,7 @@ using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Producing.EndpointResolvers;
+using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -273,6 +274,27 @@ public sealed class KafkaLoggerExtensionsTests : IDisposable
             null,
             "Error occurred committing offset test[2]@42: 'Broker: Request timed out' (7) | ConsumerName: consumer1",
             2038);
+    }
+
+    [Fact]
+    public void LogSkippedOffsetsStoreError_ShouldLog()
+    {
+        ISequence sequence = Substitute.For<ISequence>();
+        sequence.GetCommitIdentifiers().Returns(
+        [
+            new KafkaOffset("topic1", 2, 42),
+            new KafkaOffset("topic2", 3, 13)
+        ]);
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(consumer: _consumer, sequence: sequence);
+        KafkaOffsetStoreScope offsetStoreScope = new(Substitute.For<IKafkaOffsetStore>(), context);
+
+        _silverbackLogger.LogSkippedOffsetsStoreError(offsetStoreScope, _consumer, new InvalidOperationException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            typeof(InvalidOperationException),
+            "Error occurred storing the offsets of the skipped messages to the client side offset store; the messages might be consumed again after a restart or rebalance | Offsets: topic1[2]@42, topic2[3]@13, ConsumerName: consumer1",
+            2046);
     }
 
     [Fact]

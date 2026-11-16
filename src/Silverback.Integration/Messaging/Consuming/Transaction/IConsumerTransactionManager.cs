@@ -15,6 +15,9 @@ public interface IConsumerTransactionManager
     /// <summary>
     ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired before the consumer is committed.
     /// </summary>
+    /// <remarks>
+    ///     It isn't fired when the consumer is committed by the rollback, without processing the message (see <see cref="Skipping" />).
+    /// </remarks>
     AsyncEvent<ConsumerPipelineContext> Committing { get; }
 
     /// <summary>
@@ -31,6 +34,24 @@ public interface IConsumerTransactionManager
     ///     Gets the <see cref="AsyncEvent{TArg}" /> that is after the consumer is aborted.
     /// </summary>
     AsyncEvent<ConsumerPipelineContext> Aborted { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the rollback commits the consumer without processing the message,
+    ///     for example when the message is skipped or moved by the error policies or when an incomplete sequence is aborted.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         It's fired right before the consumer is committed (after <see cref="Aborting" /> and before <see cref="Aborted" />) and
+    ///         only if the commit actually happens. The commit is deferred, and the event isn't fired, when other sequences are pending
+    ///         or still being processed, or when the consumer is stopping. <see cref="Committing" /> and <see cref="Committed" /> aren't
+    ///         fired in this case.
+    ///     </para>
+    ///     <para>
+    ///         The transaction failed: the handlers must not rely on the storage transaction enlisted by the subscribers, which is
+    ///         rolled back. An exception thrown by a handler fails the rollback and the consumer isn't committed.
+    ///     </para>
+    /// </remarks>
+    AsyncEvent<ConsumerPipelineContext> Skipping { get; }
 
     /// <summary>
     ///     Commits the transaction.
