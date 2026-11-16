@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -180,6 +181,95 @@ public partial class ChunkingTests
         await Task.Delay(500);
 
         batchesCount.ShouldBe(retryBeforeStopping ? 3 : 1);
+        stopCalls.ShouldBe(1);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Chunking_ShouldStopConsumerAndDisconnect_WhenDeserializationFailsWhileJsonConsumedInBatch(bool retryBeforeStopping)
+    {
+        TestingCollection<List<string?>> batches = [];
+        int stopCalls = 0;
+        int retryCalls = 0;
+
+        IStopConsumerErrorPolicyCallback stopCallback = Substitute.For<IStopConsumerErrorPolicyCallback>();
+        stopCallback.OnStoppingConsumerAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(_ =>
+            {
+                Interlocked.Increment(ref stopCalls);
+                return Task.CompletedTask;
+            });
+        IRetryErrorPolicyCallback retryCallback = Substitute.For<IRetryErrorPolicyCallback>();
+        retryCallback.OnRetryingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(_ =>
+            {
+                Interlocked.Increment(ref retryCalls);
+                return Task.CompletedTask;
+            });
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(3)
+                        .OnError(policy =>
+                        {
+                            if (retryBeforeStopping)
+                                policy.Retry(1).ThenStop();
+                            else
+                                policy.Stop();
+                        }))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonErrorPolicyCallback(stopCallback)
+            .AddSingletonErrorPolicyCallback(retryCallback)
+            .AddIntegrationSpy());
+
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+            batches.Add(list);
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] chunks = ChunksHelper.SerializeAndSplitIntoChunks("Long message A", 3);
+        byte[][] invalidChunks = [.. "{ invalid json"u8.ToArray().Chunk(7)];
+
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            await producer.RawProduceAsync(chunks[i], HeadersHelper.GetChunkHeaders("A", i, chunks.Length, typeof(TestEventOne)));
+        }
+
+        // The second chunked message can't be deserialized while the batch is pending
+        for (int i = 0; i < invalidChunks.Length; i++)
+        {
+            await producer.RawProduceAsync(
+                invalidChunks[i],
+                HeadersHelper.GetChunkHeaders("B", i, invalidChunks.Length, typeof(TestEventOne)));
+        }
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected, TimeSpan.FromSeconds(10));
+
+        batches.Count.ShouldBe(retryBeforeStopping ? 2 : 1);
+        batches.ShouldAllBe(batch => batch.Count == 1 && batch[0] == "Long message A");
+        retryCalls.ShouldBe(retryBeforeStopping ? 1 : 0);
         stopCalls.ShouldBe(1);
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
