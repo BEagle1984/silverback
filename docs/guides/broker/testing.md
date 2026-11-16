@@ -150,6 +150,29 @@ Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
 > Don’t assert immediately after producing/publishing. Always wait for the broker pipeline to finish.
 > With mocked brokers you typically want `WaitUntilAllMessagesAreConsumedAsync()`.
 
+### Produce to a Consumed Endpoint
+
+<xref:Silverback.Testing.ITestingHelper.GetProducerForEndpoint(System.String)> returns a producer for the endpoint with the specified topic or friendly name. It's handy to simulate the messages sent by another application, without configuring a producer for each consumed topic.
+
+```csharp
+IProducer producer = Helper.GetProducerForEndpoint("test-topic");
+await producer.ProduceAsync(new SomeMessage());
+
+await Helper.WaitUntilAllMessagesAreConsumedAsync();
+```
+
+If a producer endpoint has that name, its producer is returned. Otherwise, a new producer is created, mirroring the configuration of the consumer endpoint:
+
+- **Serializer**: the serializer matching the consumer's deserializer (e.g. JSON, string, binary or raw messages, Newtonsoft.Json, or Avro, Protobuf and JSON with the same schema registry and subject name strategy).
+- **Encryption**: the messages are encrypted with the same algorithm, key and initialization vector the consumer decrypts them with. When the consumer gets the key from a key provider, the key is retrieved by calling the provider with a `null` key identifier and the messages are produced without a key identifier. To test the key rotation, create a producer encrypting with `EncryptUsingAes(key, keyIdentifier)` via `GetProducer` instead (see the Kafka and MQTT specifics below).
+- **Kafka partition**: the statically assigned partition, if any (the first one, if the topic is assigned several partitions). When the endpoint is resolved by its friendly name, its first topic (or partition) is used.
+- **MQTT topic, QoS and protocol version**: the message is published to the topic (without the `$share/{group}/` prefix of the shared subscriptions), with the consumer endpoint's quality of service level and the client's protocol version. When the endpoint is resolved by its friendly name, the first topic is used.
+
+The Kafka topic patterns and the MQTT wildcard topic filters can't be produced to: pass a concrete topic, matching the pattern or the filter, instead. Resolving an endpoint that only subscribes patterns or wildcard filters by its friendly name throws an `InvalidOperationException`, unless the friendly name is itself a topic matching them. A friendly name always takes precedence over a topic with the same name.
+
+> [!Note]
+> The connection security settings aren't mirrored: the producer gets only the bootstrap servers (Kafka) or the broker endpoint and whether TLS is enabled (MQTT), but not the security protocol, the SASL settings, the credentials, the TLS options or the user properties. This doesn't matter with the mocked brokers, but use <xref:Silverback.Testing.IKafkaTestingHelper.GetProducer(System.Action{Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder})> or <xref:Silverback.Testing.IMqttTestingHelper.GetProducer(System.Action{Silverback.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilder})> to configure the producer explicitly when testing against a real broker.
+
 ## Inspecting Messages with the Integration Spy
 
 When you need to assert what was produced/consumed (including headers, raw payload, endpoint name, etc.), enable the integration spy:
