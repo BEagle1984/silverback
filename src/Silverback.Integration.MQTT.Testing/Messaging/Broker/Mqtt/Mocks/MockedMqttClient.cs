@@ -77,14 +77,21 @@ public sealed class MockedMqttClient : IMqttClient
 
         _connecting = true;
 
-        Options = options;
+        try
+        {
+            Options = options;
 
-        _broker.Connect(this);
+            await Task.Delay(_mockOptions.ConnectionDelay, cancellationToken).ConfigureAwait(false);
 
-        await Task.Delay(_mockOptions.ConnectionDelay, cancellationToken).ConfigureAwait(false);
+            // Register the session only once the connection succeeded, so that a canceled attempt leaves no trace
+            _broker.Connect(this);
 
-        IsConnected = true;
-        _connecting = false;
+            IsConnected = true;
+        }
+        finally
+        {
+            _connecting = false;
+        }
 
         return new MqttClientConnectResult();
     }
