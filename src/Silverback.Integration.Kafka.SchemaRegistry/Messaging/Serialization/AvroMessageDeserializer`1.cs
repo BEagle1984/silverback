@@ -40,8 +40,12 @@ public class AvroMessageDeserializer<TMessage> : SchemaRegistryMessageDeserializ
     public AvroDeserializerConfig? AvroDeserializerConfig { get; }
 
     /// <inheritdoc cref="SchemaRegistryMessageDeserializer{TMessage}.GetCompatibleSerializer" />
-    public override IMessageSerializer GetCompatibleSerializer() =>
-        new AvroMessageSerializer<TMessage>(
-            SchemaRegistryClient,
-            new AvroSerializerConfig(AvroDeserializerConfig));
+    public override IMessageSerializer GetCompatibleSerializer()
+    {
+        AvroSerializerConfig? serializerConfig = AvroDeserializerConfig == null
+            ? null
+            : new AvroSerializerConfig(AvroDeserializerConfig.GetSettingsSharedWithSerializer("avro"));
+
+        return new AvroMessageSerializer<TMessage>(SchemaRegistryClient, serializerConfig);
+    }
 }

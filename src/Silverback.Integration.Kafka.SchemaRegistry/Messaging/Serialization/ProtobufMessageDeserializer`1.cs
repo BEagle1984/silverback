@@ -41,8 +41,12 @@ public class ProtobufMessageDeserializer<TMessage> : SchemaRegistryMessageDeseri
     public ProtobufDeserializerConfig? ProtobufDeserializerConfig { get; }
 
     /// <inheritdoc cref="SchemaRegistryMessageDeserializer{TMessage}.GetCompatibleSerializer" />
-    public override IMessageSerializer GetCompatibleSerializer() =>
-        new ProtobufMessageSerializer<TMessage>(
-            SchemaRegistryClient,
-            new ProtobufSerializerConfig(ProtobufDeserializerConfig));
+    public override IMessageSerializer GetCompatibleSerializer()
+    {
+        ProtobufSerializerConfig? serializerConfig = ProtobufDeserializerConfig == null
+            ? null
+            : new ProtobufSerializerConfig(ProtobufDeserializerConfig.GetSettingsSharedWithSerializer("protobuf"));
+
+        return new ProtobufMessageSerializer<TMessage>(SchemaRegistryClient, serializerConfig);
+    }
 }

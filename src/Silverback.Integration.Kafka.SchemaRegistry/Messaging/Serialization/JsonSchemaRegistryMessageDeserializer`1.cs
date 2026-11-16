@@ -51,8 +51,12 @@ public class JsonSchemaRegistryMessageDeserializer<TMessage> : SchemaRegistryMes
     public NewtonsoftJsonSchemaGeneratorSettings? JsonSchemaGeneratorSettings { get; }
 
     /// <inheritdoc cref="SchemaRegistryMessageDeserializer{TMessage}.GetCompatibleSerializer" />
-    public override IMessageSerializer GetCompatibleSerializer() => new JsonSchemaRegistryMessageSerializer<TMessage>(
-        SchemaRegistryClient,
-        new JsonSerializerConfig(JsonDeserializerConfig),
-        JsonSchemaGeneratorSettings);
+    public override IMessageSerializer GetCompatibleSerializer()
+    {
+        JsonSerializerConfig? serializerConfig = JsonDeserializerConfig == null
+            ? null
+            : new JsonSerializerConfig(JsonDeserializerConfig.GetSettingsSharedWithSerializer("json"));
+
+        return new JsonSchemaRegistryMessageSerializer<TMessage>(SchemaRegistryClient, serializerConfig, JsonSchemaGeneratorSettings);
+    }
 }

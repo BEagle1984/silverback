@@ -20,7 +20,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
-public class TestingHelperTests : KafkaTests
+public partial class TestingHelperTests : KafkaTests
 {
     public TestingHelperTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
