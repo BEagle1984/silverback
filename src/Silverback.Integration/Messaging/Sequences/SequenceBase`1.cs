@@ -82,6 +82,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     // the add semaphore
     private bool _isAddRefused;
 
+    // Set when the abort starts (holding the complete semaphore) if the sequence is aborted with its parent, sharing its outcome (see
+    // AbortWithParentAsync): read by the abort only
+    private bool _isAbortedWithParent;
+
     private bool _isDisposed;
 
     /// <summary>
@@ -270,6 +274,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
     }
 
+    /// <inheritdoc cref="ISequenceImplementation.AbortWithParentAsync" />
+    Task ISequenceImplementation.AbortWithParentAsync(SequenceAbortReason reason, Exception? exception) =>
+        AbortAsync(reason, exception, true);
+
     /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
     public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
         StreamProvider.CreateStream<TMessage>(filters);
@@ -345,32 +353,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     }
 
     /// <inheritdoc cref="ISequence.AbortAsync" />
-    public async Task AbortAsync(SequenceAbortReason reason, Exception? exception = null)
-    {
-        if (reason == SequenceAbortReason.None)
-            throw new ArgumentOutOfRangeException(nameof(reason), reason, "Reason not specified.");
-
-        if (reason == SequenceAbortReason.Error && exception == null)
-            throw new ArgumentNullException(nameof(exception), "The exception must be specified if the reason is Error.");
-
-        if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
-            return;
-
-        bool isAbortStarted;
-
-        try
-        {
-            isAbortStarted = BeginAbortCore(reason, exception);
-        }
-        finally
-        {
-            _completeSemaphoreSlim.Release();
-        }
-
-        // Multiple calls to AbortAsync should wait until the sequence is aborted for real; otherwise the TransactionHandlerConsumerBehavior
-        // could continue before the abort is done, preventing the error policies to be correctly and successfully applied.
-        await (isAbortStarted ? AbortCoreAsync(exception) : _abortingTaskCompletionSource!.Task).ConfigureAwait(false);
-    }
+    public Task AbortAsync(SequenceAbortReason reason, Exception? exception = null) => AbortAsync(reason, exception, false);
 
     /// <inheritdoc cref="ISequence.GetCommitIdentifiers" />
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers()
@@ -912,12 +895,41 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             .FireAndForget();
     }
 
+    private async Task AbortAsync(SequenceAbortReason reason, Exception? exception, bool isAbortedWithParent)
+    {
+        if (reason == SequenceAbortReason.None)
+            throw new ArgumentOutOfRangeException(nameof(reason), reason, "Reason not specified.");
+
+        if (reason == SequenceAbortReason.Error && exception == null)
+            throw new ArgumentNullException(nameof(exception), "The exception must be specified if the reason is Error.");
+
+        if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
+            return;
+
+        bool isAbortStarted;
+
+        try
+        {
+            isAbortStarted = BeginAbortCore(reason, exception, isAbortedWithParent);
+        }
+        finally
+        {
+            _completeSemaphoreSlim.Release();
+        }
+
+        // Multiple calls to AbortAsync should wait until the sequence is aborted for real; otherwise the TransactionHandlerConsumerBehavior
+        // could continue before the abort is done, preventing the error policies to be correctly and successfully applied.
+        await (isAbortStarted ? AbortCoreAsync(exception) : _abortingTaskCompletionSource!.Task).ConfigureAwait(false);
+    }
+
     // Must be called holding the complete semaphore. Returns false if the sequence was already aborted, otherwise the caller has to
     // complete the abort calling AbortCoreAsync after releasing the complete semaphore.
-    private bool BeginAbortCore(SequenceAbortReason reason, Exception? exception)
+    private bool BeginAbortCore(SequenceAbortReason reason, Exception? exception, bool isAbortedWithParent = false)
     {
         if (IsAborted)
             return false;
+
+        _isAbortedWithParent = isAbortedWithParent;
 
         // Set the completion source, the reason and the exception before switching the state, for the readers checking IsAborted
         // without the complete semaphore
@@ -973,11 +985,31 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             }
 
             await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+
+            await AbortPendingChildSequencesAsync().ConfigureAwait(false);
         }
         finally
         {
             // Complete the abort even if it failed, not to block forever the callers waiting for it (e.g. Dispose)
             _abortingTaskCompletionSource?.TrySetResult(true);
+        }
+    }
+
+    // A child sequence can still be pending when the parent is aborted (e.g., the chunk sequence of a binary message, which is added to the
+    // batch with its first chunk). It shares the outcome of the abort, which committed or rolled back its messages as well: abort it before
+    // it's disposed with this sequence, so that the message being added to it is handled as aborted, instead of being added to a new
+    // sequence created on the context that the dispose releases while its pipeline still runs. Its next messages (e.g., the remaining
+    // chunks, when the parent was skipped) are then skipped as incomplete. The stop aborts all the pending sequences instead, the child
+    // ones included, rolling them back (see SequenceEnumerableExtensions.AbortAllAsync).
+    private async Task AbortPendingChildSequencesAsync()
+    {
+        if (AbortReason is SequenceAbortReason.ConsumerAborted or SequenceAbortReason.Disposing)
+            return;
+
+        foreach (ISequenceImplementation sequence in GetSequencesSnapshot().OfType<ISequenceImplementation>())
+        {
+            if (sequence.IsPending)
+                await sequence.AbortWithParentAsync(AbortReason, AbortException).ConfigureAwait(false);
         }
     }
 
@@ -988,6 +1020,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         try
         {
+            // The abort of the parent sequence completed the transaction, which covers the messages of this sequence as well
+            if (_isAbortedWithParent)
+            {
+                ((ISequenceImplementation)this).NotifyProcessingCompleted();
+                return true;
+            }
+
             switch (AbortReason)
             {
                 case SequenceAbortReason.Error:
@@ -1040,6 +1079,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private void LogAbort()
     {
+        // The error or the incomplete sequence was logged by the parent sequence
+        if (_isAbortedWithParent)
+        {
+            _logger.LogSequenceAborted(this, AbortReason);
+            return;
+        }
+
         switch (AbortReason)
         {
             case SequenceAbortReason.Error:

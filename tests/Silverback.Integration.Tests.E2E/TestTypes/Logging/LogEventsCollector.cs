@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.E2E.TestTypes.Logging;
 
 public sealed class LogEventsCollector : ILoggerProvider, ILogger
 {
-    private readonly ConcurrentQueue<(EventId EventId, string Message)> _logEvents = new();
+    private readonly ConcurrentQueue<(EventId EventId, string Message, Exception? Exception)> _logEvents = new();
 
     public bool Contains(EventId eventId, string text) =>
         _logEvents.Any(logEvent => logEvent.EventId == eventId && logEvent.Message.Contains(text, StringComparison.Ordinal));
@@ -40,6 +40,13 @@ public sealed class LogEventsCollector : ILoggerProvider, ILogger
     public bool ContainsSequenceCompleting(string sequenceType) =>
         Contains(IntegrationLogEvents.Tracing.EventId, $"Completing {sequenceType} ");
 
+    // Whether a fatal error was logged processing a consumed message (optionally only for the exceptions matching the predicate): the
+    // exception reached the FatalExceptionLoggerConsumerBehavior, which disconnects the client
+    public bool ContainsProcessingFatalError(Func<Exception?, bool>? exceptionPredicate = null) =>
+        _logEvents.Any(logEvent =>
+            logEvent.EventId == IntegrationLogEvents.ProcessingConsumedMessageFatalError.EventId &&
+            (exceptionPredicate == null || exceptionPredicate(logEvent.Exception)));
+
     public ILogger CreateLogger(string categoryName) => this;
 
     public IDisposable? BeginScope<TState>(TState state)
@@ -54,7 +61,7 @@ public sealed class LogEventsCollector : ILoggerProvider, ILogger
         TState state,
         Exception? exception,
         Func<TState, Exception?, string> formatter) =>
-        _logEvents.Enqueue((eventId, formatter(state, exception)));
+        _logEvents.Enqueue((eventId, formatter(state, exception), exception));
 
     public void Dispose()
     {

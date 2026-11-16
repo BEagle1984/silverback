@@ -61,4 +61,21 @@ internal interface ISequenceImplementation : ISequence
     ///     The exception to be set.
     /// </param>
     void NotifyProcessingFailed(Exception exception);
+
+    /// <summary>
+    ///     Aborts the sequence, which is still pending when its parent sequence is aborted, sharing the outcome of the parent. The abort of
+    ///     the parent already completed the transaction (e.g., applying the error policies), which covers the messages of this sequence as
+    ///     well: the sequence is removed from the store and its processing is notified as completed, without committing or rolling back
+    ///     its own transaction.
+    /// </summary>
+    /// <param name="reason">
+    ///     The reason the parent sequence was aborted.
+    /// </param>
+    /// <param name="exception">
+    ///     The exception the parent sequence was aborted with, if any.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task AbortWithParentAsync(SequenceAbortReason reason, Exception? exception);
 }
