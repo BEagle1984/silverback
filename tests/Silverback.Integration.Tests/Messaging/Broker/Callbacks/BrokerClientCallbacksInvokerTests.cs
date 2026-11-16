@@ -3,9 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Shouldly;
@@ -123,21 +123,28 @@ public class BrokerClientCallbacksInvokerTests
         substituteServiceProvider.ReceivedWithAnyArgs(1).GetService(null!);
     }
 
-    [Fact(Skip = "TODO: Check why this was the expected behavior")]
-    [SuppressMessage("Usage", "xUnit1004:Test methods should not be skipped", Justification = "To be reviewed")]
-    public void Invoke_ShouldSwallowHandlerExceptions()
+    [Fact]
+    public void Invoke_ShouldLogAndRethrowHandlerExceptions()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
-            .AddFakeLogger()
+            .AddLoggerSubstitute()
             .AddSilverback()
             .WithConnectionToMessageBroker()
             .AddTransientBrokerClientCallback<ThrowingCallbackOneHandler>());
 
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
+        LoggerSubstitute<BrokerClientCallbacksInvoker> logger = (LoggerSubstitute<BrokerClientCallbacksInvoker>)serviceProvider
+            .GetRequiredService<ILogger<BrokerClientCallbacksInvoker>>();
 
         Action act = () => invoker.Invoke<ICallbackOne>(handler => handler.Handle());
 
-        act.ShouldNotThrow();
+        BrokerClientCallbackInvocationException exception = act.ShouldThrow<BrokerClientCallbackInvocationException>();
+        exception.InnerException.ShouldBeOfType<InvalidOperationException>();
+        logger.Received(
+            LogLevel.Error,
+            typeof(BrokerClientCallbackInvocationException),
+            "Error occurred invoking callback handlers",
+            1103);
     }
 
     [Fact]
@@ -294,21 +301,28 @@ public class BrokerClientCallbacksInvokerTests
         substituteServiceProvider.ReceivedWithAnyArgs(1).GetService(null!);
     }
 
-    [Fact(Skip = "TODO: Check why this was the expected behavior")]
-    [SuppressMessage("Usage", "xUnit1004:Test methods should not be skipped", Justification = "To be reviewed")]
-    public Task InvokeAsync_ShouldSwallowHandlerExceptions()
+    [Fact]
+    public async Task InvokeAsync_ShouldLogAndRethrowHandlerExceptions()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
-            .AddFakeLogger()
+            .AddLoggerSubstitute()
             .AddSilverback()
             .WithConnectionToMessageBroker()
             .AddTransientBrokerClientCallback<ThrowingCallbackOneHandlerAsync>());
 
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
+        LoggerSubstitute<BrokerClientCallbacksInvoker> logger = (LoggerSubstitute<BrokerClientCallbacksInvoker>)serviceProvider
+            .GetRequiredService<ILogger<BrokerClientCallbacksInvoker>>();
 
         Func<Task> act = () => invoker.InvokeAsync<ICallbackOneAsync>(handler => handler.HandleAsync()).AsTask();
 
-        return act.ShouldNotThrowAsync();
+        BrokerClientCallbackInvocationException exception = await act.ShouldThrowAsync<BrokerClientCallbackInvocationException>();
+        exception.InnerException.ShouldBeOfType<InvalidOperationException>();
+        logger.Received(
+            LogLevel.Error,
+            typeof(BrokerClientCallbackInvocationException),
+            "Error occurred invoking callback handlers",
+            1103);
     }
 
     [Fact]
