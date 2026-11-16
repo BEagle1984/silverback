@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -167,7 +166,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         if (messageKey == null)
             return GetNextRoundRobinPartition(topic);
 
-        return messageKey.Last() % topic.Partitions.Count;
+        return messageKey[^1] % topic.Partitions.Count;
     }
 
     private int PushToTopic(TopicPartition topicPartition, Message<byte[]?, byte[]?> message, out Offset offset)

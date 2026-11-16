@@ -128,12 +128,9 @@ internal sealed class ClientSession : IDisposable, IClientSession
     {
         lock (_subscriptions)
         {
-            foreach (Subscription subscription in _subscriptions)
+            foreach (Subscription subscription in _subscriptions.Where(subscription => subscription.IsMatch(message, clientOptions)))
             {
-                if (subscription.IsMatch(message, clientOptions))
-                {
-                    yield return subscription;
-                }
+                yield return subscription;
             }
         }
     }

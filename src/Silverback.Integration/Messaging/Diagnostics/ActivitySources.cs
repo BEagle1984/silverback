@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Silverback.Messaging.Messages;
 
@@ -59,6 +60,7 @@ internal static class ActivitySources
         return activity;
     }
 
+    [SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "The private fields of Activity are the only way to make the ambient activity continue the one created from the message headers")]
     public static void UpdateConsumeActivity(IRawInboundEnvelope envelope)
     {
         Activity? currentActivity = Activity.Current;

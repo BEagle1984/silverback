@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace Silverback.Diagnostics;
@@ -13,6 +14,7 @@ public interface ISilverbackLogger
     /// <summary>
     ///     Gets the underlying <see cref="ILogger" />.
     /// </summary>
+    [SuppressMessage("Minor Code Smell", "S6669:Logger field or property name should comply with a naming convention", Justification = "InnerLogger is a public API member and the name clearly states that it exposes the wrapped logger")]
     ILogger InnerLogger { get; }
 
     /// <summary>

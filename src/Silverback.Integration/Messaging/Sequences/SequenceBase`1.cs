@@ -441,6 +441,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a flag indicating whether
     ///     the operation was successful and the number of streams that have been actually pushed.
     /// </returns>
+    [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "Adding a message to a sequence is concurrency-sensitive and splitting it would obscure the locking and state transitions.")]
     protected virtual async Task<AddToSequenceResult> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
         if (!IsPending)

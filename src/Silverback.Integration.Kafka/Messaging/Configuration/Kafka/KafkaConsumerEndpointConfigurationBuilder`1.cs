@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -50,6 +51,8 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
+    [SuppressMessage("Minor Code Smell", "S3878:Arrays should not be created for params parameters", Justification = "Passing the topic directly would resolve to this same overload and recurse, so the collection expression targets the params string[] overload")]
+    [SuppressMessage("Minor Code Smell", "S3220:Method calls should not resolve ambiguously to overloads with \"params\"", Justification = "Passing the topic directly would resolve to this same overload and recurse, so the collection expression targets the params string[] overload")]
     public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(string topic) =>
         ConsumeFrom([Check.NotNullOrEmpty(topic, nameof(topic))]);
 

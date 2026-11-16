@@ -21,14 +21,13 @@ internal class ConsumerCollection : IConsumerCollection, IAsyncDisposable
 
     public void Add(IConsumer consumer)
     {
-        foreach (string? friendlyName in consumer.EndpointsConfiguration.Select(configuration => configuration.FriendlyName))
-        {
-            if (!string.IsNullOrEmpty(friendlyName) && _consumers.Values.Any(existingConsumer => existingConsumer.EndpointsConfiguration
-                .Any(configuration => configuration.FriendlyName == friendlyName)))
-            {
-                throw new InvalidOperationException($"A consumer endpoint with the name '{friendlyName}' has already been added.");
-            }
-        }
+        string? duplicateFriendlyName = consumer.EndpointsConfiguration
+            .Select(configuration => configuration.FriendlyName)
+            .FirstOrDefault(friendlyName => !string.IsNullOrEmpty(friendlyName) && _consumers.Values.Any(existingConsumer =>
+                existingConsumer.EndpointsConfiguration.Any(configuration => configuration.FriendlyName == friendlyName)));
+
+        if (duplicateFriendlyName != null)
+            throw new InvalidOperationException($"A consumer endpoint with the name '{duplicateFriendlyName}' has already been added.");
 
         if (!_consumers.TryAdd(consumer.Name, consumer))
             throw new InvalidOperationException($"A consumer with name '{consumer.Name}' has already been added.");

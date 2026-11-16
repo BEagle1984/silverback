@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -24,6 +25,7 @@ internal static class JsonSerializerSettingsComparer
 {
     private static readonly JsonSerializerSettings EmptySettings = new();
 
+    [SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "The private fields of JsonSerializerSettings must be read to compare the settings, since the getters return defaults or have side effects")]
     private static readonly FieldInfo[] ComparedFields =
         typeof(JsonSerializerSettings).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 

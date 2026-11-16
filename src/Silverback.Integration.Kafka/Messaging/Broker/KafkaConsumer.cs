@@ -626,6 +626,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "Concurrency-sensitive channels restart, where splitting would obscure the stop and restart ordering")]
     private async Task RestartChannelsAfterRollbackAsync(Task stopping, IReadOnlyCollection<RollbackPartition> partitions)
     {
         try

@@ -2,12 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
 ///     Wraps a raw message <see cref="string" />.
 /// </summary>
+[SuppressMessage("Major Code Smell", "S4035:Classes implementing \"IEquatable<T>\" should be sealed", Justification = "StringMessage<T> derives from it, and Equals compares the runtime types as well as the content, so the equality is safe for derived types")]
 public class StringMessage : IEquatable<StringMessage>
 {
     /// <summary>

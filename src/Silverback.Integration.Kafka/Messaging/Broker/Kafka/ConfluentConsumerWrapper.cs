@@ -18,6 +18,8 @@ namespace Silverback.Messaging.Broker.Kafka;
 
 internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrapper
 {
+    private const string NotConnectedMessage = "The consumer is not connected.";
+
     private static readonly TimeSpan LeaveGroupPollTimeout = TimeSpan.FromMilliseconds(100);
 
     private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
@@ -91,7 +93,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     public IConsumerGroupMetadata GetConsumerGroupMetadata()
     {
         if (Status != ClientStatus.Initialized)
-            throw new InvalidOperationException("The consumer is not connected.");
+            throw new InvalidOperationException(NotConnectedMessage);
 
         lock (_confluentConsumerLock)
         {
@@ -102,7 +104,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     public ConsumeResult<byte[]?, byte[]?>? Consume(TimeSpan timeout)
     {
         if (Status is not (ClientStatus.Initialized or ClientStatus.Initializing))
-            throw new InvalidOperationException("The consumer is not connected.");
+            throw new InvalidOperationException(NotConnectedMessage);
 
         if (_confluentConsumer == null)
             throw new InvalidOperationException("The underlying consumer is not initialized.");
@@ -115,7 +117,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     public void StoreOffset(TopicPartitionOffset topicPartitionOffset)
     {
         if (Status is not (ClientStatus.Initialized or ClientStatus.Disconnecting))
-            throw new InvalidOperationException("The consumer is not connected.");
+            throw new InvalidOperationException(NotConnectedMessage);
 
         lock (_confluentConsumerLock)
         {
@@ -126,7 +128,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     public void Commit()
     {
         if (Status is not ClientStatus.Initialized and not ClientStatus.Disconnecting)
-            throw new InvalidOperationException("The consumer is not connected.");
+            throw new InvalidOperationException(NotConnectedMessage);
 
         try
         {
@@ -173,7 +175,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     public void Seek(TopicPartitionOffset topicPartitionOffset)
     {
         if (Status != ClientStatus.Initialized)
-            throw new InvalidOperationException("The consumer is not connected.");
+            throw new InvalidOperationException(NotConnectedMessage);
 
         lock (_confluentConsumerLock)
         {
@@ -184,7 +186,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     public void Pause(IEnumerable<TopicPartition> partitions)
     {
         if (Status != ClientStatus.Initialized)
-            throw new InvalidOperationException("The consumer is not connected.");
+            throw new InvalidOperationException(NotConnectedMessage);
 
         lock (_confluentConsumerLock)
         {
@@ -195,7 +197,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     public void Resume(IEnumerable<TopicPartition> partitions)
     {
         if (Status != ClientStatus.Initialized)
-            throw new InvalidOperationException("The consumer is not connected.");
+            throw new InvalidOperationException(NotConnectedMessage);
 
         lock (_confluentConsumerLock)
         {
@@ -206,7 +208,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     public IReadOnlyList<TopicPartitionOffset> OffsetsForTimes(IEnumerable<TopicPartitionTimestamp> timestampsToSearch, TimeSpan timeout)
     {
         if (Status != ClientStatus.Initialized)
-            throw new InvalidOperationException("The consumer is not connected.");
+            throw new InvalidOperationException(NotConnectedMessage);
 
         // The lookup blocks until the broker responds or times out: holding the lock only delays a concurrent disconnect or native call
         lock (_confluentConsumerLock)
@@ -290,6 +292,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     // member), Close revokes the assignment as it did before leaving the group was introduced, while discarding the assignments arriving
     // afterwards.
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged, the consumer is closed anyway")]
+    [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "Sequential close preparation of the consumer, where splitting would obscure the ordering of the native calls")]
     private void PrepareClose(IConsumer<byte[]?, byte[]?> confluentConsumer)
     {
         bool isClassicStaticMember = Configuration.GroupProtocol != GroupProtocol.Consumer &&

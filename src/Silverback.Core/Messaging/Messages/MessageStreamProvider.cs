@@ -3,12 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Messages;
 
+[SuppressMessage("Major Code Smell", "S3881:\"IDisposable\" should be implemented correctly", Justification = "The abstract Dispose is implemented by the single sealed derived class, so the full dispose pattern is not needed")]
+[SuppressMessage("Minor Code Smell", "S1694:An abstract class should have both abstract and concrete methods", Justification = "The class is only the non-generic base of MessageStreamProvider<TMessage>, and an interface would not add anything here")]
 internal abstract class MessageStreamProvider : IMessageStreamProvider, IDisposable
 {
     /// <inheritdoc cref="IMessageStreamProvider.MessageType" />

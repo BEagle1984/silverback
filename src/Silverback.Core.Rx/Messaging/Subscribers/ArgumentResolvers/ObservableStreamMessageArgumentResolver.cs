@@ -41,6 +41,7 @@ public class ObservableStreamMessageArgumentResolver : IStreamEnumerableMessageA
     }
 
     /// <inheritdoc cref="IStreamEnumerableMessageArgumentResolver.GetValue" />
+    [SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "Only the private generic factory method declared in this same class is looked up, to be closed over the runtime message type")]
     public ILazyArgumentValue GetValue(
         IMessageStreamProvider streamProvider,
         Type targetMessageType,
@@ -48,7 +49,7 @@ public class ObservableStreamMessageArgumentResolver : IStreamEnumerableMessageA
     {
         Check.NotNull(streamProvider, nameof(streamProvider));
 
-        _createObservableMethodInfo ??= GetType().GetMethod(
+        _createObservableMethodInfo ??= typeof(ObservableStreamMessageArgumentResolver).GetMethod(
             "CreateObservable",
             BindingFlags.Static | BindingFlags.NonPublic);
 

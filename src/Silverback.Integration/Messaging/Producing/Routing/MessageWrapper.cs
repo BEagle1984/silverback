@@ -15,6 +15,14 @@ namespace Silverback.Messaging.Producing.Routing;
 
 internal class MessageWrapper : IMessageWrapper
 {
+    private const string EnumerableBatchMultipleEndpointsErrorMessage =
+        "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
+        "Please materialize into a List or an array or any type implementing IReadOnlyCollection.";
+
+    private const string AsyncEnumerableBatchMultipleEndpointsErrorMessage =
+        "Cannot route an IAsyncEnumerable batch of messages to multiple endpoints. " +
+        "Please materialize into a List or an array or any type implementing IReadOnlyCollection.";
+
     public static MessageWrapper Instance => field ??= new MessageWrapper();
 
     public async Task WrapAndProduceAsync<TMessage>(
@@ -283,8 +291,7 @@ internal class MessageWrapper : IMessageWrapper
         if (producers.Count > 1)
         {
             throw new RoutingException(
-                "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+                EnumerableBatchMultipleEndpointsErrorMessage);
         }
 
         IProducer producer = producers.First();
@@ -338,8 +345,7 @@ internal class MessageWrapper : IMessageWrapper
         if (producers.Count > 1)
         {
             throw new RoutingException(
-                "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+                EnumerableBatchMultipleEndpointsErrorMessage);
         }
 
         IProducer producer = producers.First();
@@ -393,8 +399,7 @@ internal class MessageWrapper : IMessageWrapper
         if (producers.Count > 1)
         {
             throw new RoutingException(
-                "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+                EnumerableBatchMultipleEndpointsErrorMessage);
         }
 
         IProducer producer = producers.First();
@@ -451,8 +456,7 @@ internal class MessageWrapper : IMessageWrapper
         if (producers.Count > 1)
         {
             throw new RoutingException(
-                "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+                EnumerableBatchMultipleEndpointsErrorMessage);
         }
 
         IProducer producer = producers.First();
@@ -507,8 +511,7 @@ internal class MessageWrapper : IMessageWrapper
         if (producers.Count > 1)
         {
             throw new RoutingException(
-                "Cannot route an IAsyncEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+                AsyncEnumerableBatchMultipleEndpointsErrorMessage);
         }
 
         IProducer producer = producers.First();
@@ -562,8 +565,7 @@ internal class MessageWrapper : IMessageWrapper
         if (producers.Count > 1)
         {
             throw new RoutingException(
-                "Cannot route an IAsyncEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+                AsyncEnumerableBatchMultipleEndpointsErrorMessage);
         }
 
         IProducer producer = producers.First();
@@ -617,8 +619,7 @@ internal class MessageWrapper : IMessageWrapper
         if (producers.Count > 1)
         {
             throw new RoutingException(
-                "Cannot route an IAsyncEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+                AsyncEnumerableBatchMultipleEndpointsErrorMessage);
         }
 
         IProducer producer = producers.First();
@@ -675,8 +676,7 @@ internal class MessageWrapper : IMessageWrapper
         if (producers.Count > 1)
         {
             throw new RoutingException(
-                "Cannot route an IAsyncEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+                AsyncEnumerableBatchMultipleEndpointsErrorMessage);
         }
 
         IProducer producer = producers.First();

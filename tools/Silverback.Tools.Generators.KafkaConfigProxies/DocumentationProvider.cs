@@ -59,6 +59,7 @@ public static class DocumentationProvider
         }
     }
 
+    [SuppressMessage("Major Code Smell", "S1479:\"switch\" statements with many \"case\" clauses should have only one statement", Justification = "The switch is a flat lookup table of the documentation of each setting, and each case only appends its summary lines")]
     private static void AppendSummaryForClientConfig(StringBuilder builder, PropertyInfo property)
     {
         switch (property.Name)

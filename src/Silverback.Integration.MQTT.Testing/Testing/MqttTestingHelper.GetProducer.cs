@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -37,6 +38,7 @@ public partial class MqttTestingHelper
     }
 
     /// <inheritdoc cref="ITestingHelper.GetProducerForEndpoint" />
+    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "TODO tracked in the IDE")]
     protected override IProducer? GetProducerForConsumer(IConsumerCollection consumers, string endpointName)
     {
         (MqttClientConfiguration? clientConfiguration, MqttConsumerEndpointConfiguration? endpointConfiguration) =
@@ -83,6 +85,7 @@ public partial class MqttTestingHelper
     }
 
     // TODO: Test all cases
+    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "TODO tracked in the IDE")]
     private static void MapEndpoint(
         MqttProducerEndpointConfigurationBuilder<object> endpoint,
         MqttConsumerEndpointConfiguration endpointConfiguration)

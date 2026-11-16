@@ -26,6 +26,7 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
     private bool _isDisposed;
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception rethrown by the Subscribe method")]
+    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "Open item: waiting for the subscription can't be canceled yet")]
     public MessageStreamObservable(IMessageStreamEnumerable<TMessage> messageStreamEnumerable)
     {
         Task.Run(async () =>

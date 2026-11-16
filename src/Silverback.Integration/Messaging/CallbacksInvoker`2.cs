@@ -17,6 +17,8 @@ internal abstract class CallbacksInvoker<TCallbackBase, TException>
     where TCallbackBase : class
     where TException : Exception
 {
+    private const string SeeInnerExceptionMessage = "See inner exception for details.";
+
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
     private readonly ISilverbackLogger _logger;
@@ -82,7 +84,7 @@ internal abstract class CallbacksInvoker<TCallbackBase, TException>
         {
             throw CreateInvocationException(
                 "An exception has been thrown by the callback. " +
-                "See inner exception for details.",
+                SeeInnerExceptionMessage,
                 ex);
         }
     }
@@ -97,7 +99,7 @@ internal abstract class CallbacksInvoker<TCallbackBase, TException>
         {
             throw CreateInvocationException(
                 "An exception has been thrown by the callback. " +
-                "See inner exception for details.",
+                SeeInnerExceptionMessage,
                 ex);
         }
     }
@@ -125,7 +127,7 @@ internal abstract class CallbacksInvoker<TCallbackBase, TException>
         {
             throw CreateInvocationException(
                 $"Error occurred invoking the callbacks of type {typeof(TCallback).Name}. " +
-                "See inner exception for details.",
+                SeeInnerExceptionMessage,
                 ex);
         }
         finally
@@ -157,7 +159,7 @@ internal abstract class CallbacksInvoker<TCallbackBase, TException>
         {
             throw CreateInvocationException(
                 $"Error occurred invoking the callbacks of type {typeof(TCallback).Name}. " +
-                "See inner exception for details.",
+                SeeInnerExceptionMessage,
                 ex);
         }
         finally

@@ -145,10 +145,10 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             .ConfigureAwait(false);
 
         // The broker rejects the single topic filters through the result codes, without failing
-        foreach (MqttClientUnsubscribeResultItem item in result.Items)
+        foreach (MqttClientUnsubscribeResultItem item in result.Items.Where(
+                     item => item.ResultCode is not (MqttClientUnsubscribeResultCode.Success or MqttClientUnsubscribeResultCode.NoSubscriptionExisted)))
         {
-            if (item.ResultCode is not (MqttClientUnsubscribeResultCode.Success or MqttClientUnsubscribeResultCode.NoSubscriptionExisted))
-                _logger.LogUnsubscriptionRejected(item.TopicFilter, item.ResultCode, this);
+            _logger.LogUnsubscriptionRejected(item.TopicFilter, item.ResultCode, this);
         }
     }
 

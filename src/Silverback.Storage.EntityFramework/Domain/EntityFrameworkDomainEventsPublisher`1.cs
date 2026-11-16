@@ -99,18 +99,21 @@ public class EntityFrameworkDomainEventsPublisher<TDbContext>
         IStorageTransaction? newStorageTransaction = null;
         IStorageTransaction? previousStorageTransaction = null;
 
-        if (contextTransaction == null && existingStorageTransaction != null)
+        if (contextTransaction == null)
         {
             // If the DbContext transaction is not set, we ensure that the storage won't use a transaction either
-            previousStorageTransaction = existingStorageTransaction;
-            _publisher.Context.ClearStorageTransaction();
+            if (existingStorageTransaction != null)
+            {
+                previousStorageTransaction = existingStorageTransaction;
+                _publisher.Context.ClearStorageTransaction();
+            }
         }
-        else if (contextTransaction != null && existingStorageTransaction == null)
+        else if (existingStorageTransaction == null)
         {
             // If the DbContext transaction is set, we ensure that the storage will use it
             newStorageTransaction = _publisher.EnlistDbTransaction(contextTransaction);
         }
-        else if (contextTransaction != null && existingStorageTransaction != null && contextTransaction != existingStorageTransaction.UnderlyingTransaction)
+        else if (contextTransaction != existingStorageTransaction.UnderlyingTransaction)
         {
             // If both transactions are set, but they are different, we ensure that the storage will use the DbContext transaction
             previousStorageTransaction = existingStorageTransaction;
@@ -157,18 +160,21 @@ public class EntityFrameworkDomainEventsPublisher<TDbContext>
         IStorageTransaction? newStorageTransaction = null;
         IStorageTransaction? previousStorageTransaction = null;
 
-        if (contextTransaction == null && existingStorageTransaction != null)
+        if (contextTransaction == null)
         {
             // If the DbContext transaction is not set, we ensure that the storage won't use a transaction either
-            previousStorageTransaction = existingStorageTransaction;
-            _publisher.Context.ClearStorageTransaction();
+            if (existingStorageTransaction != null)
+            {
+                previousStorageTransaction = existingStorageTransaction;
+                _publisher.Context.ClearStorageTransaction();
+            }
         }
-        else if (contextTransaction != null && existingStorageTransaction == null)
+        else if (existingStorageTransaction == null)
         {
             // If the DbContext transaction is set, we ensure that the storage will use it
             newStorageTransaction = _publisher.EnlistDbTransaction(contextTransaction);
         }
-        else if (contextTransaction != null && existingStorageTransaction != null && contextTransaction != existingStorageTransaction.UnderlyingTransaction)
+        else if (contextTransaction != existingStorageTransaction.UnderlyingTransaction)
         {
             // If both transactions are set, but they are different, we ensure that the storage will use the DbContext transaction
             previousStorageTransaction = existingStorageTransaction;

@@ -181,6 +181,7 @@ internal static class KafkaEventsBinder
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    [SuppressMessage("Major Code Smell", "S2589:Boolean expressions should not be gratuitous", Justification = "False positive: handled is set inside the handler action invoked by callbacksInvoker")]
     private static void OnError(
         Error error,
         IConfluentConsumerWrapper consumerWrapper,
@@ -209,6 +210,7 @@ internal static class KafkaEventsBinder
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    [SuppressMessage("Major Code Smell", "S2589:Boolean expressions should not be gratuitous", Justification = "False positive: handled is set inside the handler action invoked by callbacksInvoker")]
     private static void OnLog(
         LogMessage logMessage,
         IConfluentProducerWrapper producerWrapper,
@@ -249,6 +251,7 @@ internal static class KafkaEventsBinder
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    [SuppressMessage("Major Code Smell", "S2589:Boolean expressions should not be gratuitous", Justification = "False positive: handled is set inside the handler action invoked by callbacksInvoker")]
     private static void OnLog(
         LogMessage logMessage,
         IConfluentConsumerWrapper consumerWrapper,

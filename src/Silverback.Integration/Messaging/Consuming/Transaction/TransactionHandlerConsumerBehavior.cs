@@ -289,6 +289,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync")]
+    [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "The sequence abort, commit and rollback handling is concurrency-sensitive and is kept in one place to preserve the ordering of its steps.")]
     private async Task AwaitSequenceProcessingAsync(ISequence sequence, Task? processingTask, CancellationToken cancellationToken)
     {
         ConsumerPipelineContext context = sequence.Context;

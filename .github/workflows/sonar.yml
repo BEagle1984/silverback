@@ -33,6 +33,17 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
       # Build, test and analyze
+      # Rules ignored for the whole repository, because they are systematic false positives in this codebase (they are
+      # ignored here and not in .editorconfig, because the scanner doesn't reliably honor the .editorconfig severities):
+      # - S2436 (too many generic parameters): the fluent configuration API needs them by design
+      # - S8949 (pass the cancellation token): the stop, complete and dispose paths deliberately don't use the token of
+      #   the operation they cancel
+      # - S1133 (remove the deprecated code): the obsolete members are kept until the next major version
+      # - S2326 (unused type parameter): the typed marker interfaces (e.g. ICommand<TResult>) exist for the type parameter
+      # - S2955 (unconstrained generic compared to null): the null checks on the generic messages and items are intentional
+      # - S8677 (Write-Host in a function): the scripts log with Write-Host on purpose, since Write-Output would mix the
+      #   log lines into the functions' return values
+      # - S6698 (password in docker-compose.yaml): it's the password of the local PostgreSQL used by the tests
       - name: Prepare code analysis on SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -47,6 +58,21 @@ jobs:
             /d:sonar.qualitygate.wait=true \
             /d:sonar.qualitygate.timeout=300 \
             /d:sonar.exclusions="**/obj/**,**/*.dll,docs/**,.claude/**" \
+            /d:sonar.issue.ignore.multicriteria="generics,cancellation,obsolete,markers,nullcheck,writehost,password" \
+            /d:sonar.issue.ignore.multicriteria.generics.ruleKey=csharpsquid:S2436 \
+            /d:sonar.issue.ignore.multicriteria.generics.resourceKey="**/*.cs" \
+            /d:sonar.issue.ignore.multicriteria.cancellation.ruleKey=csharpsquid:S8949 \
+            /d:sonar.issue.ignore.multicriteria.cancellation.resourceKey="**/*.cs" \
+            /d:sonar.issue.ignore.multicriteria.obsolete.ruleKey=csharpsquid:S1133 \
+            /d:sonar.issue.ignore.multicriteria.obsolete.resourceKey="**/*.cs" \
+            /d:sonar.issue.ignore.multicriteria.markers.ruleKey=csharpsquid:S2326 \
+            /d:sonar.issue.ignore.multicriteria.markers.resourceKey="**/*.cs" \
+            /d:sonar.issue.ignore.multicriteria.nullcheck.ruleKey=csharpsquid:S2955 \
+            /d:sonar.issue.ignore.multicriteria.nullcheck.resourceKey="**/*.cs" \
+            /d:sonar.issue.ignore.multicriteria.writehost.ruleKey=powershelldre:S8677 \
+            /d:sonar.issue.ignore.multicriteria.writehost.resourceKey="**/*.ps1" \
+            /d:sonar.issue.ignore.multicriteria.password.ruleKey=secrets:S6698 \
+            /d:sonar.issue.ignore.multicriteria.password.resourceKey=docker-compose.yaml \
             /d:sonar.cs.opencover.reportsPaths="$GITHUB_WORKSPACE/TestResults/**/coverage.opencover.*.xml" \
             /d:sonar.cs.vstest.reportsPaths="$GITHUB_WORKSPACE/TestResults/**/*.trx"
       - name: Build (${{ env.BUILD_CONFIGURATION }})

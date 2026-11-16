@@ -20,5 +20,6 @@ public sealed class BinaryMessageSerializerBuilder
     /// </returns>
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Ready for extension")]
     [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global", Justification = "Ready for extension")]
+    [SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static", Justification = "Instance method kept so that the builder can be extended with settings later")]
     public IMessageSerializer Build() => new BinaryMessageSerializer();
 }

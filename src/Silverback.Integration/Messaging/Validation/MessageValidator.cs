@@ -45,8 +45,9 @@ internal static class MessageValidator
         List<ValidationResult> results = [];
         validationResults = results;
         bool result = Validator.TryValidateObject(obj, validationContext, results, true);
+        bool nestedObjectsResult = ValidateNestedObjects(obj, results);
 
-        return result & ValidateNestedObjects(obj, results);
+        return result && nestedObjectsResult;
     }
 
     private static bool ValidateNestedObjects(object obj, List<ValidationResult> results)

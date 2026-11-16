@@ -169,6 +169,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             await previousSequence.AbortAsync(SequenceAbortReason.ConsumerAborted, exception).ConfigureAwait(false);
     }
 
+    [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "The sequence lookup, creation and abort handling is concurrency-sensitive and is kept in one place to preserve the ordering of its steps.")]
     private async Task<ISequence?> AddMessageToSequenceAsync(
         ConsumerPipelineContext context,
         ConsumerBehaviorHandler next,

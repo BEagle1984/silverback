@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,6 +65,7 @@ internal sealed class TypeSubscription : ISubscription
     // If _autoSubscribeAllPublicMethods is set to true, we return all public methods,
     // discarding the ones with no parameters (that would cause an exception later on) and
     // the ones inherited from the base classes (to avoid calling object.Equals and similar methods).
+    [SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "Non-public methods must be discovered because they can be decorated with [Subscribe]")]
     private IEnumerable<MethodInfo> GetMethods(Type type) =>
         type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             .Where(methodInfo =>

@@ -161,7 +161,7 @@ public class ConsumerChannelsManagerTests
                 },
                 canceledPolling.Token);
 
-            await endOfPartitionReported.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            (await endOfPartitionReported.Task.WaitAsync(TimeSpan.FromSeconds(5))).ShouldBeTrue();
         }
         finally
         {

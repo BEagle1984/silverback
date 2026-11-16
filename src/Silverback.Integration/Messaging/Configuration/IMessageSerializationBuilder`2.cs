@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Configuration;
@@ -14,6 +15,7 @@ namespace Silverback.Messaging.Configuration;
 /// <typeparam name="TBuilder">
 ///     The actual builder type.
 /// </typeparam>
+[SuppressMessage("Major Code Smell", "S3246:Generic type parameters should be co/contravariant when possible", Justification = "TBuilder is the self-referencing builder type returned for chaining, so variance would add nothing to the public API")]
 public interface IMessageSerializationBuilder<TMessage, TBuilder>
 {
     /// <summary>

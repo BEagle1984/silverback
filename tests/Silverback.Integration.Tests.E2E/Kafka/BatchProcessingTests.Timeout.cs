@@ -47,7 +47,7 @@ public partial class BatchProcessingTests
 
         await producer.ProduceAsync(new TestEventOne());
 
-        await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        (await received.Task.WaitAsync(TimeSpan.FromSeconds(5))).ShouldBeTrue();
     }
 
     [Fact]
@@ -267,6 +267,7 @@ public partial class BatchProcessingTests
 
     [Fact]
     [SuppressMessage("Style", "IDE0305:Simplify collection initialization", Justification = "Use ToList to make it blocking")]
+    [SuppressMessage("Major Code Smell", "S2925:\"Thread.Sleep\" should not be used in tests", Justification = "The synchronous subscriber must block the thread to let the batch time out while it is being enumerated.")]
     public async Task Batch_ShouldProcessAllConsumedMessagesWhenTimingOutWhileSynchronouslyEnumerating()
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];

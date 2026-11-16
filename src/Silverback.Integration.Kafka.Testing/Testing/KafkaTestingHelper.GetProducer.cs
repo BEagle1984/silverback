@@ -101,6 +101,7 @@ public partial class KafkaTestingHelper
             KafkaTopicPattern.IsMatch(topicPartition.Topic, topic, KafkaTopicPattern.IsFullMatchRequired(consumerConfiguration.GroupProtocol)));
 
     // TODO: Test all cases
+    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "TODO tracked in the IDE")]
     private static void MapEndpoint(
         KafkaProducerEndpointConfigurationBuilder<object> endpoint,
         KafkaConsumerEndpointConfiguration endpointConfiguration,

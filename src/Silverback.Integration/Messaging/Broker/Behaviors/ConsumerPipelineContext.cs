@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -176,11 +177,8 @@ public sealed class ConsumerPipelineContext : IDisposable
         if (Sequence != null)
             identifiers.UnionWith(Sequence.GetRollbackIdentifiers());
 
-        foreach (ISequence pendingSequence in SequenceStore.GetPendingSequences())
-        {
-            if (pendingSequence != Sequence)
-                identifiers.UnionWith(pendingSequence.GetRollbackIdentifiers());
-        }
+        foreach (ISequence pendingSequence in SequenceStore.GetPendingSequences().Where(sequence => sequence != Sequence))
+            identifiers.UnionWith(pendingSequence.GetRollbackIdentifiers());
 
         return identifiers;
     }

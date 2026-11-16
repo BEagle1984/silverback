@@ -1347,6 +1347,7 @@ public partial class KafkaClientsConfigurationBuilder
         return this;
     }
 
+    [SuppressMessage("Minor Code Smell", "S3267:Loops should be simplified with \"LINQ\" expressions", Justification = "The loop applies the shared action to both the producer and consumer actions, which a LINQ projection would not express more clearly")]
     internal KafkaClientsConfigurationActions GetConfigurationActions()
     {
         foreach (Action<KafkaProducerConfigurationBuilder> defaultAction in _defaultProducerConfigurationActions)

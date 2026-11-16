@@ -36,12 +36,24 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
         return registeredSchema.Id;
     }
 
+    public async Task<int> RegisterSchemaAsync(string subject, string avroSchema, bool normalize = false)
+    {
+        RegisteredSchema schema = await RegisterSchemaAsync(subject, avroSchema, SchemaType.Avro, normalize).ConfigureAwait(false);
+        return schema.Id;
+    }
+
     public Task<RegisteredSchema> RegisterSchemaWithResponseAsync(string subject, Schema schema, bool normalize = false) =>
         RegisterSchemaAsync(subject, schema.SchemaString, schema.SchemaType, normalize);
 
     public async Task<int> GetSchemaIdAsync(string subject, string avroSchema, bool normalize = false)
     {
         RegisteredSchema registeredSchema = await GetSchemaAsync(subject, avroSchema, SchemaType.Avro, normalize).ConfigureAwait(false);
+        return registeredSchema.Id;
+    }
+
+    public async Task<int> GetSchemaIdAsync(string subject, Schema schema, bool normalize = false)
+    {
+        RegisteredSchema registeredSchema = await GetSchemaAsync(subject, schema.SchemaString, schema.SchemaType, normalize).ConfigureAwait(false);
         return registeredSchema.Id;
     }
 
@@ -143,19 +155,9 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
         }
     }
 
-    public async Task<int> RegisterSchemaAsync(string subject, string avroSchema, bool normalize = false)
-    {
-        RegisteredSchema schema = await RegisterSchemaAsync(subject, avroSchema, SchemaType.Avro, normalize).ConfigureAwait(false);
-        return schema.Id;
-    }
-
-    public async Task<int> GetSchemaIdAsync(string subject, Schema schema, bool normalize = false)
-    {
-        RegisteredSchema registeredSchema = await GetSchemaAsync(subject, schema.SchemaString, schema.SchemaType, normalize).ConfigureAwait(false);
-        return registeredSchema.Id;
-    }
-
     public Task<Schema> GetSchemaAsync(int id, string? format = null) => throw new NotSupportedException();
+
+    public Task<string> GetSchemaAsync(string subject, int version) => throw new NotSupportedException();
 
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Only synchronized when writing")]
     public Task<Schema> GetSchemaBySubjectAndIdAsync(string subject, int id, string? format = null)
@@ -174,8 +176,6 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 
     [SuppressMessage("ReSharper", "MethodOverloadWithOptionalParameter", Justification = "Same as in the implemented interface")]
     public Task<RegisteredSchema> GetRegisteredSchemaAsync(string subject, int version, bool ignoreDeletedSchemas = true) => throw new NotSupportedException();
-
-    public Task<string> GetSchemaAsync(string subject, int version) => throw new NotSupportedException();
 
     public Task<RegisteredSchema> GetLatestSchemaAsync(string subject)
     {
