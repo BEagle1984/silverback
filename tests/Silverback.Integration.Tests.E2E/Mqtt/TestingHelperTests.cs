@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Mqtt;
 
-public class TestingHelperTests : MqttTests
+public partial class TestingHelperTests : MqttTests
 {
     public TestingHelperTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)

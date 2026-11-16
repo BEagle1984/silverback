@@ -107,16 +107,15 @@ public partial class KafkaTestingHelper
         KafkaConsumerEndpointConfiguration endpointConfiguration,
         TopicPartition topicPartition)
     {
-        endpoint.SerializeUsing(endpointConfiguration.Deserializer.GetCompatibleSerializer());
+        endpoint.MirrorConsumerEndpoint(endpointConfiguration);
         endpoint.ProduceTo(topicPartition);
     }
 
-    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "TODO tracked in the IDE")]
     private IProducer CreateProducer(
         KafkaConsumerConfiguration consumerConfiguration,
         KafkaConsumerEndpointConfiguration endpointConfiguration,
         TopicPartition topicPartition) =>
         GetProducer(producer => producer
             .WithBootstrapServers(consumerConfiguration.BootstrapServers)
-            .Produce<object>(endpoint => MapEndpoint(endpoint, endpointConfiguration, topicPartition))); // TODO: Map other settings (e.g. encryption)
+            .Produce<object>(endpoint => MapEndpoint(endpoint, endpointConfiguration, topicPartition)));
 }

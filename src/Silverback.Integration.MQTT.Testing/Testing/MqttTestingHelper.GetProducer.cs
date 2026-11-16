@@ -38,7 +38,6 @@ public partial class MqttTestingHelper
     }
 
     /// <inheritdoc cref="ITestingHelper.GetProducerForEndpoint" />
-    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "TODO tracked in the IDE")]
     protected override IProducer? GetProducerForConsumer(IConsumerCollection consumers, string endpointName)
     {
         (MqttClientConfiguration? clientConfiguration, MqttConsumerEndpointConfiguration? endpointConfiguration) =
@@ -52,7 +51,7 @@ public partial class MqttTestingHelper
         if (clientConfiguration == null || endpointConfiguration == null)
             return null;
 
-        return GetProducer(builder => MapConfiguration(builder, endpointConfiguration, clientConfiguration)); // TODO: Map other settings (e.g. encryption)
+        return GetProducer(builder => MapConfiguration(builder, endpointConfiguration, clientConfiguration));
     }
 
     private static void MapConfiguration(
@@ -90,7 +89,7 @@ public partial class MqttTestingHelper
         MqttProducerEndpointConfigurationBuilder<object> endpoint,
         MqttConsumerEndpointConfiguration endpointConfiguration)
     {
-        endpoint.SerializeUsing(endpointConfiguration.Deserializer.GetCompatibleSerializer());
+        endpoint.MirrorConsumerEndpoint(endpointConfiguration);
 
         string topic = endpointConfiguration.Topics.First(topic => topic == endpointConfiguration.RawName);
 
