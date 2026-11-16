@@ -2122,36 +2122,53 @@ public partial class KafkaConsumerTests
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Epoch is used by record equality in assignment assertions.")]
     private sealed record Delivery(int Partition, long Offset, int Epoch);
 
-    private sealed class BoundaryOffsets(KafkaOffset offset, Action? beforeFilter, Action? beforeVersions) : IReadOnlyCollection<KafkaOffset>
+    private sealed class BoundaryOffsets : IReadOnlyCollection<KafkaOffset>
     {
+        private readonly KafkaOffset _offset;
+
+        private readonly Action? _beforeFilter;
+
+        private readonly Action? _beforeVersions;
+
+        public BoundaryOffsets(KafkaOffset offset, Action? beforeFilter, Action? beforeVersions)
+        {
+            _offset = offset;
+            _beforeFilter = beforeFilter;
+            _beforeVersions = beforeVersions;
+        }
+
         public int Count => 1;
 
         public IEnumerator<KafkaOffset> GetEnumerator()
         {
-            beforeFilter?.Invoke();
-            yield return offset;
-            beforeVersions?.Invoke();
+            _beforeFilter?.Invoke();
+            yield return _offset;
+            _beforeVersions?.Invoke();
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-    private sealed class HarnessConsumer(
-        IConfluentConsumerWrapper client,
-        KafkaConsumerConfiguration configuration,
-        IBrokerBehaviorsProvider<IConsumerBehavior> behaviors,
-        ISilverbackLogger<KafkaConsumer> logger,
-        IServiceProvider? serviceProvider = null)
-        : KafkaConsumer(
-            "consumer",
-            client,
-            configuration,
-            behaviors,
-            Substitute.For<IBrokerClientCallbacksInvoker>(),
-            Substitute.For<IKafkaOffsetStoreFactory>(),
-            serviceProvider ?? Substitute.For<IServiceProvider>(),
-            logger)
+    private sealed class HarnessConsumer : KafkaConsumer
     {
+        public HarnessConsumer(
+            IConfluentConsumerWrapper client,
+            KafkaConsumerConfiguration configuration,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviors,
+            ISilverbackLogger<KafkaConsumer> logger,
+            IServiceProvider? serviceProvider = null)
+            : base(
+                "consumer",
+                client,
+                configuration,
+                behaviors,
+                Substitute.For<IBrokerClientCallbacksInvoker>(),
+                Substitute.For<IKafkaOffsetStoreFactory>(),
+                serviceProvider ?? Substitute.For<IServiceProvider>(),
+                logger)
+        {
+        }
+
         public ValueTask RollbackCoreForTestAsync(IReadOnlyCollection<KafkaOffset> offsets) => RollbackCoreAsync(offsets);
     }
 

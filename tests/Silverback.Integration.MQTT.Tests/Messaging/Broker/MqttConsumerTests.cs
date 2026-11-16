@@ -931,13 +931,20 @@ public partial class MqttConsumerTests
         }
     }
 
-    private sealed class BackpressureBlockingBehavior(int degreeOfParallelism) : IConsumerBehavior
+    private sealed class BackpressureBlockingBehavior : IConsumerBehavior
     {
+        private readonly int _degreeOfParallelism;
+
         private TaskCompletionSource<bool>[] _release = [];
 
         private int _started;
 
         private int _expectedMessages;
+
+        public BackpressureBlockingBehavior(int degreeOfParallelism)
+        {
+            _degreeOfParallelism = degreeOfParallelism;
+        }
 
         public int SortIndex => 0;
 
@@ -951,7 +958,7 @@ public partial class MqttConsumerTests
         {
             _release =
             [
-                .. Enumerable.Range(0, degreeOfParallelism)
+                .. Enumerable.Range(0, _degreeOfParallelism)
                     .Select(_ => new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously))
             ];
             _started = 0;
@@ -977,9 +984,9 @@ public partial class MqttConsumerTests
             {
                 int number = context.Envelope.RawMessage!.ReadByte();
 
-                if (number < degreeOfParallelism)
+                if (number < _degreeOfParallelism)
                 {
-                    if (Interlocked.Increment(ref _started) == degreeOfParallelism)
+                    if (Interlocked.Increment(ref _started) == _degreeOfParallelism)
                         AllStarted.TrySetResult(true);
 
                     await _release[number].Task.WaitAsync(TimeSpan.FromSeconds(30), CancellationToken.None);

@@ -12,11 +12,19 @@ namespace Silverback.Messaging.Messages;
 /// <typeparam name="T">
 ///     The type discriminator.
 /// </typeparam>
-/// <param name="content">
-///     The message content.
-/// </param>
-public sealed class RawMessage<T>(Stream? content) : RawMessage(content)
+public sealed class RawMessage<T> : RawMessage
 {
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="RawMessage{T}" /> class.
+    /// </summary>
+    /// <param name="content">
+    ///     The message content.
+    /// </param>
+    public RawMessage(Stream? content)
+        : base(content)
+    {
+    }
+
     /// <summary>
     ///     Implicitly converts a <see cref="byte" /> array to a <see cref="RawMessage{T}" />.
     /// </summary>

@@ -1276,9 +1276,16 @@ public class SequenceBaseTests
         public Task CompleteFromTestAsync() => CompleteAsync();
     }
 
-    private sealed class DelegateMessageFilter(Func<object, bool> mustProcess) : IMessageFilter
+    private sealed class DelegateMessageFilter : IMessageFilter
     {
-        public bool MustProcess(object message) => mustProcess(message);
+        private readonly Func<object, bool> _mustProcess;
+
+        public DelegateMessageFilter(Func<object, bool> mustProcess)
+        {
+            _mustProcess = mustProcess;
+        }
+
+        public bool MustProcess(object message) => _mustProcess(message);
     }
 
     // Runs the action when it's linked to the parent sequence, right before the message is pushed, to deterministically reproduce the

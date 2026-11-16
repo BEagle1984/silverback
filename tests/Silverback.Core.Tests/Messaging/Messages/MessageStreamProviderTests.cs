@@ -1112,14 +1112,22 @@ public class MessageStreamProviderTests
 
     private class TestCommandOne : IMessage;
 
-    private sealed class BlockingMessageFilter(
-        ManualResetEventSlim entered,
-        ManualResetEventSlim continueProcessing) : IMessageFilter
+    private sealed class BlockingMessageFilter : IMessageFilter
     {
+        private readonly ManualResetEventSlim _entered;
+
+        private readonly ManualResetEventSlim _continueProcessing;
+
+        public BlockingMessageFilter(ManualResetEventSlim entered, ManualResetEventSlim continueProcessing)
+        {
+            _entered = entered;
+            _continueProcessing = continueProcessing;
+        }
+
         public bool MustProcess(object message)
         {
-            entered.Set();
-            continueProcessing.Wait();
+            _entered.Set();
+            _continueProcessing.Wait();
             return true;
         }
     }

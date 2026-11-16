@@ -17,6 +17,7 @@
 - Use braces for loops, following the repository's Rider settings. Keep simple single-statement guards compact where the surrounding code does so.
 - Keep formatting and readability changes behavior-preserving; do not combine them with unrelated refactoring or bug fixes.
 - Do not add a trailing period to simple, single-sentence code comments.
+- Use primary constructors (positional parameters) for records, but never for classes or structs: declare a regular constructor, assigning the dependencies to `private readonly` fields.
 - Name internal implementation methods with the `Core` suffix, before `Async` when applicable: `Stop` -> `StopCore`, `StopAsync` -> `StopCoreAsync`.
 - Synchronize shared state with `lock`, `SemaphoreSlim`, `Interlocked` or tasks. Do not use `volatile` or `Volatile.Read`/`Volatile.Write` "just in case" or for weakly ordered CPUs: use them only where the code relies on the order of reads or writes of different fields without a lock, or on a loop without calls seeing a new value, and name that order in a comment.
 - Before considering a change done, check the changed C# files for the Rider inspection warnings, which the build does not report: `dotnet jb inspectcode Silverback.slnx --no-build --include="<file>;<file>" --severity=WARNING --format=Text --output=<report>`, with the report in the operating system's temporary directory (it takes about 1.5 minutes). Fix the warnings, or suppress false positives with `[SuppressMessage("ReSharper", "<InspectionId>", Justification = "...")]`, as the surrounding code does.

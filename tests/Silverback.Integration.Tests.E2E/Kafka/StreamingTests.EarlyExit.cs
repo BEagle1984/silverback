@@ -1264,13 +1264,23 @@ public partial class StreamingTests
                 Thread.Sleep(100);
         }
 
-        private sealed class TrackingFilter(FirstStreamTracker tracker, string subscriberName) : IMessageFilter
+        private sealed class TrackingFilter : IMessageFilter
         {
+            private readonly FirstStreamTracker _tracker;
+
+            private readonly string _subscriberName;
+
+            public TrackingFilter(FirstStreamTracker tracker, string subscriberName)
+            {
+                _tracker = tracker;
+                _subscriberName = subscriberName;
+            }
+
             public bool MustProcess(object message)
             {
                 // The filters are evaluated against the published stream provider as well, before its messages are pushed
                 if (message is not IMessageStreamProvider)
-                    tracker.OnFiltering(subscriberName);
+                    _tracker.OnFiltering(_subscriberName);
 
                 return true;
             }

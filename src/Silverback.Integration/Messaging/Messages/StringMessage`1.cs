@@ -11,11 +11,19 @@ namespace Silverback.Messaging.Messages;
 /// <typeparam name="T">
 ///     The type discriminator.
 /// </typeparam>
-/// <param name="content">
-///     The message content.
-/// </param>
-public sealed class StringMessage<T>(string? content) : StringMessage(content)
+public sealed class StringMessage<T> : StringMessage
 {
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="StringMessage{T}" /> class.
+    /// </summary>
+    /// <param name="content">
+    ///     The message content.
+    /// </param>
+    public StringMessage(string? content)
+        : base(content)
+    {
+    }
+
     /// <summary>
     ///     Implicitly converts a <see cref="string" /> to a <see cref="StringMessage{T}" />.
     /// </summary>

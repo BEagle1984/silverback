@@ -458,8 +458,10 @@ public partial class MqttConsumerTests
 
     // Adds the messages to batches, tracking their identifiers like a sequence does, and hands the complete batches over to be committed
     // or rolled back
-    private sealed class BatchTrackingBehavior(int batchSize) : IConsumerBehavior
+    private sealed class BatchTrackingBehavior : IConsumerBehavior
     {
+        private readonly int _batchSize;
+
         private readonly System.Threading.Lock _lock = new();
 
         private readonly List<IBrokerMessageIdentifier> _pendingBatch = [];
@@ -468,6 +470,11 @@ public partial class MqttConsumerTests
             Channel.CreateUnbounded<IReadOnlyList<IBrokerMessageIdentifier>>();
 
         private MqttMessageIdentifiersTracker? _tracker;
+
+        public BatchTrackingBehavior(int batchSize)
+        {
+            _batchSize = batchSize;
+        }
 
         public int SortIndex => 0;
 
@@ -523,7 +530,7 @@ public partial class MqttConsumerTests
                 _tracker.TrackIdentifier(identifier);
                 _pendingBatch.Add(identifier);
 
-                if (_pendingBatch.Count < batchSize)
+                if (_pendingBatch.Count < _batchSize)
                     return null;
 
                 IBrokerMessageIdentifier[] completedBatch = [.. _pendingBatch];

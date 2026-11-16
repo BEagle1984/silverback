@@ -29,8 +29,13 @@ namespace Silverback.Tests.Integration.E2E;
 [Trait("Type", "E2E")]
 [Trait("Broker", "Kafka")]
 [Trait("Broker", "MQTT")]
-public class BrokerClientsShutdownTests(ITestOutputHelper testOutputHelper) : E2ETests(testOutputHelper)
+public class BrokerClientsShutdownTests : E2ETests
 {
+    public BrokerClientsShutdownTests(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
+    {
+    }
+
     [Theory]
     [InlineData(false, false, false, false)]
     [InlineData(false, false, false, true)]

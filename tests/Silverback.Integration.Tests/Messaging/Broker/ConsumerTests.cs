@@ -448,11 +448,13 @@ public class ConsumerTests
         return new TestConsumer(client, behaviorsProvider);
     }
 
-    private sealed class TestConsumer(
-        IBrokerClient client,
-        IBrokerBehaviorsProvider<IConsumerBehavior> behaviors)
-        : Consumer<TestOffset>("test", client, [], behaviors, Substitute.For<IServiceProvider>(), Substitute.For<ISilverbackLogger<IConsumer>>())
+    private sealed class TestConsumer : Consumer<TestOffset>
     {
+        public TestConsumer(IBrokerClient client, IBrokerBehaviorsProvider<IConsumerBehavior> behaviors)
+            : base("test", client, [], behaviors, Substitute.For<IServiceProvider>(), Substitute.For<ISilverbackLogger<IConsumer>>())
+        {
+        }
+
         public List<TestOffset?> StopRequests { get; } = [];
 
         public bool Started => IsStarted;
@@ -526,9 +528,16 @@ public class ConsumerTests
         }
     }
 
-    private sealed class StopRequestingBehavior(bool triggerReconnect) : IConsumerBehavior
+    private sealed class StopRequestingBehavior : IConsumerBehavior
     {
         private static readonly TimeSpan StopRequestTimeout = TimeSpan.FromSeconds(2);
+
+        private readonly bool _triggerReconnect;
+
+        public StopRequestingBehavior(bool triggerReconnect)
+        {
+            _triggerReconnect = triggerReconnect;
+        }
 
         public int SortIndex => 0;
 
@@ -554,7 +563,7 @@ public class ConsumerTests
 
                 // Stop without waiting for the processing itself, as the error policies do when the processing fails, or reconnect, as
                 // they do when the rollback fails
-                Task stopRequest = triggerReconnect
+                Task stopRequest = _triggerReconnect
                     ? context.Consumer.TriggerReconnectAsync().AsTask()
                     : context.Consumer.StopAsync(context.Envelope.BrokerMessageIdentifier, false).AsTask();
                 StopRequested.TrySetResult(true);
