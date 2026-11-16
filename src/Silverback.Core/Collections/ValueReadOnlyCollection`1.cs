@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using JetBrains.Annotations;
 using Silverback.Util;
@@ -61,6 +62,7 @@ public sealed class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IE
         obj != null && (ReferenceEquals(this, obj) || obj is ValueReadOnlyCollection<T> coll && Equals(coll));
 
     /// <inheritdoc cref="object.GetHashCode" />
+    [SuppressMessage("Minor Bug", "S2955:Generic parameters not constrained to reference types should not be compared to \"null\"", Justification = "The null check is intentional, to hash the null elements (including the null Nullable<T> values) as 0")]
     public override int GetHashCode() =>
         unchecked(_collection.Aggregate(
             0,

@@ -269,6 +269,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         }
     }
 
+    [SuppressMessage("Minor Bug", "S2955:Generic parameters not constrained to reference types should not be compared to \"null\"", Justification = "The null check is intentional: it skips the null messages and is simply never true for a non-nullable value type")]
     private IEnumerable<TMessage> GetEnumerable()
     {
         while (WaitForNextAsync(CancellationToken.None).SafeWait())
@@ -286,6 +287,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     }
 
     [SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Reviewed")]
+    [SuppressMessage("Minor Bug", "S2955:Generic parameters not constrained to reference types should not be compared to \"null\"", Justification = "The null check is intentional: it skips the null messages and is simply never true for a non-nullable value type")]
     private async IAsyncEnumerable<TMessage> GetAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken)
     {
         while (await WaitForNextAsync(cancellationToken).ConfigureAwait(false))

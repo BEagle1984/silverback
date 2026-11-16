@@ -295,6 +295,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         _disposed = true;
     }
 
+    [SuppressMessage("Minor Bug", "S2955:Generic parameters not constrained to reference types should not be compared to \"null\"", Justification = "The null check is intentional: a null message is never pushed, and the check is simply never true for a non-nullable value type")]
     private static bool PushIfCompatibleType(
         ILazyMessageStreamEnumerable lazyStream,
         TMessage message,
