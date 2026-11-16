@@ -21,9 +21,9 @@ internal static class SilverbackDbContextFactory
 
         return transaction?.Connection != null
             ? (TDbContext)FindConstructorWithDbConnection(typeof(TDbContext), transaction.Connection.GetType()).Invoke(
-            [
-                transaction.Connection
-            ])
+                [
+                    transaction.Connection
+                ])
             : serviceProvider.GetRequiredService<IDbContextFactory<TDbContext>>().CreateDbContext();
     }
 

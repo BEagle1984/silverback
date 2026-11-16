@@ -361,7 +361,7 @@ public sealed class MqttTestHarness : BrokerTestHarness
 
         public void Bind(IMqttNetLogger target) => _target = target;
 
-        public void Publish(MqttNetLogLevel logLevel, string source, string message, object[] parameters, Exception exception) =>
-            _target?.Publish(logLevel, source, message, parameters, exception);
+        public void Publish(MqttNetLogLevel level, string source, string message, object[] parameters, Exception exception) =>
+            _target?.Publish(level, source, message, parameters, exception);
     }
 }

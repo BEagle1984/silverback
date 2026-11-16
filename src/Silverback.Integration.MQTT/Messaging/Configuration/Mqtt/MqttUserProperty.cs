@@ -11,6 +11,12 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 ///     A user property to be sent with the <i>CONNECT</i> packet. It can be used to send connection related properties from the client to
 ///     the server.
 /// </summary>
+/// <param name="Name">
+///     The property name.
+/// </param>
+/// <param name="Value">
+///     The property value.
+/// </param>
 public record MqttUserProperty(string Name, string? Value) : IValidatableSettings
 {
     /// <summary>

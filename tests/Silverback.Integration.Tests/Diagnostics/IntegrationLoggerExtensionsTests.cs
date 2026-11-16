@@ -860,8 +860,8 @@ public class IntegrationLoggerExtensionsTests
 
         public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 
-        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 
-        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? message, IReadOnlyCollection<MessageHeader>? headers = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }
 }

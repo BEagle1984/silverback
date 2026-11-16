@@ -147,11 +147,13 @@ public sealed class ContainersOrchestrator : IDisposable
         container.Stop();
 
     private ContainerInstanceViewModel[] GetExistingContainers(string imageName, string imageTag) =>
-        [.. _mainViewModel.ContainerInstances
+    [
+        .. _mainViewModel.ContainerInstances
             .Reverse()
             .Where(
                 container => container.ContainerService.Image.Name == imageName && container.ContainerService.Image.Tag == imageTag &&
-                             container.Status == ContainerStatus.Running)];
+                             container.Status == ContainerStatus.Running)
+    ];
 
     private void IncrementInstances(DockerImage dockerImage, int count, ContainerInstanceViewModel[] existingContainers)
     {

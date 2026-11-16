@@ -288,9 +288,9 @@ public class ConfluentConsumerWrapperTests
         await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync(false);
         KafkaException exception = partitionError
             ? new TopicPartitionOffsetException(
-            [
-                new TopicPartitionOffsetError(new TopicPartitionOffset("topic", 0, 1), new Error(ErrorCode.UnknownMemberId))
-            ])
+                [
+                    new TopicPartitionOffsetError(new TopicPartitionOffset("topic", 0, 1), new Error(ErrorCode.UnknownMemberId))
+                ])
             : new KafkaException(new Error(ErrorCode.UnknownMemberId));
         _confluentConsumer.Commit().Returns(_ => throw exception);
 

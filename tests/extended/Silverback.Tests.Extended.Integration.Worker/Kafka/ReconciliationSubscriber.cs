@@ -80,27 +80,27 @@ internal sealed class ReconciliationSubscriber :
         }
     }
 
-    public IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(IReadOnlyCollection<TopicPartition> partitions, IKafkaConsumer consumer)
+    public IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(IReadOnlyCollection<TopicPartition> topicPartitions, IKafkaConsumer consumer)
     {
-        foreach (TopicPartition partition in partitions)
+        foreach (TopicPartition partition in topicPartitions)
         {
             int epoch = _epochs.AddOrUpdate(partition.Partition.Value, 1, (_, previous) => previous + 1);
             WriteAsync(new ProcessingReceipt("assigned", _member, epoch, partition.Partition.Value, -1, -1)).GetAwaiter().GetResult();
         }
 
-        Console.WriteLine($"ASSIGNED {string.Join(", ", partitions)}");
+        Console.WriteLine($"ASSIGNED {string.Join(", ", topicPartitions)}");
 
         return null;
     }
 
-    public void OnPartitionsRevoked(IReadOnlyCollection<TopicPartitionOffset> partitions, IKafkaConsumer consumer)
+    public void OnPartitionsRevoked(IReadOnlyCollection<TopicPartitionOffset> topicPartitionsOffset, IKafkaConsumer consumer)
     {
-        foreach (TopicPartitionOffset partition in partitions)
+        foreach (TopicPartitionOffset partition in topicPartitionsOffset)
         {
             WriteAsync(new ProcessingReceipt("revoked", _member, _epochs[partition.Partition.Value], partition.Partition.Value, -1, -1)).GetAwaiter().GetResult();
         }
 
-        Console.WriteLine($"REVOKED {string.Join(", ", partitions)}");
+        Console.WriteLine($"REVOKED {string.Join(", ", topicPartitionsOffset)}");
     }
 
     public void OnOffsetsCommitted(CommittedOffsets offsets, IKafkaConsumer consumer)

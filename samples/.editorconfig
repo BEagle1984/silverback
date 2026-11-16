@@ -42,6 +42,8 @@ dotnet_diagnostic.SA1408.severity = none
 dotnet_diagnostic.SA1413.severity = none
 # SA1503: The opening and closing curly brackets for a C# statement have been omitted
 dotnet_diagnostic.SA1503.severity = none
+# SA1504: All accessors should be single-line or multi-line - conflicts with IDE0027 (expression-bodied accessors)
+dotnet_diagnostic.SA1504.severity = none
 # SA1600: A C# code element is missing a documentation header
 dotnet_diagnostic.SA1600.severity = none
 # SA1633: A C# code file is missing a standard file header

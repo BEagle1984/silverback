@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Confluent.SchemaRegistry;
@@ -39,7 +40,7 @@ internal static class SchemaNormalizer
             property.Remove();
         }
 
-        foreach (JProperty property in properties.OrderBy(p => p.Name))
+        foreach (JProperty property in properties.OrderBy(p => p.Name, StringComparer.Ordinal))
         {
             jObject.Add(property);
         }

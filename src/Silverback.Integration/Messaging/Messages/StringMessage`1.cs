@@ -11,6 +11,9 @@ namespace Silverback.Messaging.Messages;
 /// <typeparam name="T">
 ///     The type discriminator.
 /// </typeparam>
+/// <param name="content">
+///     The message content.
+/// </param>
 public sealed class StringMessage<T>(string? content) : StringMessage(content)
 {
     /// <summary>
