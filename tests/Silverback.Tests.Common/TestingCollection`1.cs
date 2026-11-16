@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Silverback.Tests;
 
-// TODO: Use in E2E tests
 public class TestingCollection<T> : IReadOnlyList<T>
 {
     private readonly List<T> _items = [];

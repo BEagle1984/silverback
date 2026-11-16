@@ -112,12 +112,16 @@ public class InMemoryOutboxTests
     {
         InMemoryOutbox outbox = new();
         outbox.Add(new OutboxMessage(null, null, "1"));
+        DateTime firstAddedAt = DateTime.UtcNow;
 
         await Task.Delay(100);
 
         outbox.Add(new OutboxMessage(null, null, "2"));
 
-        outbox.GetMaxAge().ShouldBeGreaterThan(TimeSpan.FromMilliseconds(90));
+        // Measured with the clock used by the outbox: Task.Delay runs on a coarser clock and can end a few milliseconds early
+        TimeSpan minExpectedAge = DateTime.UtcNow - firstAddedAt;
+
+        outbox.GetMaxAge().ShouldBeGreaterThanOrEqualTo(minExpectedAge);
     }
 
     [Fact]

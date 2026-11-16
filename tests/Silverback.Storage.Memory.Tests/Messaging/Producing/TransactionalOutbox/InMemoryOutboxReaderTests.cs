@@ -202,16 +202,18 @@ public class InMemoryOutboxReaderTests
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
 
         outbox.Add(new OutboxMessage([0x01], null, "test"));
+        DateTime firstAddedAt = DateTime.UtcNow;
         await Task.Delay(100);
         outbox.Add(new OutboxMessage([0x02], null, "test"));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
+        // Measured with the clock used by the outbox: Task.Delay runs on a coarser clock and can end a few milliseconds early
+        TimeSpan minExpectedAge = DateTime.UtcNow - firstAddedAt;
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
-        // TODO: Revert assert to >=100 and figure out why it fails in the pipeline
-        maxAge.ShouldBeGreaterThan(TimeSpan.FromMilliseconds(90));
+        maxAge.ShouldBeGreaterThanOrEqualTo(minExpectedAge);
     }
 
     [Fact]
