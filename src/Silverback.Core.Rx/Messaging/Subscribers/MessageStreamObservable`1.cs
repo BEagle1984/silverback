@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,80 +11,45 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers;
 
-internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservable<TMessage>, IDisposable
+internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservable<TMessage>
 {
-    private readonly Subject<TMessage> _subject = new();
+    private readonly IMessageStreamEnumerable<TMessage> _messageStreamEnumerable;
 
-    private readonly SemaphoreSlim _subscribeSemaphore = new(0, 1);
+    private int _isSubscribed;
 
-    private readonly SemaphoreSlim _completeSemaphore = new(0, 1);
-
-    private IDisposable? _subscription;
-
-    private Exception? _exception;
-
-    private bool _isDisposed;
-
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception rethrown by the Subscribe method")]
-    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "Open item: waiting for the subscription can't be canceled yet")]
     public MessageStreamObservable(IMessageStreamEnumerable<TMessage> messageStreamEnumerable)
     {
-        Task.Run(async () =>
-            {
-                try
-                {
-                    await _subscribeSemaphore.WaitAsync().ConfigureAwait(false); // TODO: Cancellation?
-
-                    if (_isDisposed)
-                        return;
-
-                    await foreach (TMessage message in messageStreamEnumerable.ConfigureAwait(false))
-                    {
-                        _subject.OnNext(message);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _exception = ex;
-                }
-                finally
-                {
-                    _subject.OnCompleted();
-
-                    _subscription?.Dispose();
-
-                    _completeSemaphore.Release();
-                }
-            })
-            .FireAndForget();
-    }
-
-    public void Dispose()
-    {
-        _isDisposed = true;
-        _completeSemaphore.Dispose();
-        _subscribeSemaphore.Dispose();
-        _subscription?.Dispose();
-        _subscription = null;
-        _subject.Dispose();
+        _messageStreamEnumerable = messageStreamEnumerable;
     }
 
     IDisposable IObservable<TMessage>.Subscribe(IObserver<TMessage> observer)
     {
-        lock (_subject)
+        if (Interlocked.Exchange(ref _isSubscribed, 1) != 0)
+            throw new InvalidOperationException("This observable can be subscribed only once.");
+
+        // The stream is enumerated on the thread pool, while this thread blocks until the enumeration completes and
+        // rethrows any exception with its original stack trace
+        Task.Run(() => PumpAsync(observer)).SafeWait();
+
+        // The subscription was already disposed when the enumeration completed
+        return Disposable.Empty;
+    }
+
+    private async Task PumpAsync(IObserver<TMessage> observer)
+    {
+        using Subject<TMessage> subject = new();
+        using IDisposable subscription = subject.Subscribe(observer);
+
+        try
         {
-            if (_subscription != null)
-                throw new InvalidOperationException("This observable can be subscribed only once.");
-
-            _subscription = _subject.Subscribe(observer);
+            await foreach (TMessage message in _messageStreamEnumerable.ConfigureAwait(false))
+            {
+                subject.OnNext(message);
+            }
         }
-
-        _subscribeSemaphore.Release();
-        _completeSemaphore.Wait();
-
-        if (_exception != null)
-            throw _exception;
-
-        return _subscription;
+        finally
+        {
+            subject.OnCompleted();
+        }
     }
 }

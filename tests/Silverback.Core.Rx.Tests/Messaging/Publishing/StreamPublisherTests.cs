@@ -394,6 +394,63 @@ public class StreamPublisherTests
     }
 
     [Fact]
+    public async Task Publish_ShouldNotStall_WhenObservableSubscriberReturnsWithoutSubscribing()
+    {
+        int receivedStreams = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AsObservable()
+            .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle));
+
+        void Handle(IMessageStreamObservable<IEvent> observable) => Interlocked.Increment(ref receivedStreams);
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider = new();
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
+
+        Task<int> pushTask = streamProvider.PushAsync(new TestEventOne());
+
+        await Task.WhenAll(tasks).WaitAsync(Timeout);
+        await streamProvider.SubscribersReturnedTask.WaitAsync(Timeout);
+        receivedStreams.ShouldBe(1);
+
+        await streamProvider.CompleteAsync().AsTask().WaitAsync(Timeout);
+        (await pushTask.WaitAsync(Timeout)).ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Publish_ShouldRethrowAndAbort_WhenObservableSubscriberThrowsWithoutSubscribing()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AsObservable()
+            .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle));
+
+        static void Handle(IMessageStreamObservable<IEvent> observable) => throw new TestException();
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider = new();
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
+
+        Task<int> pushTask = streamProvider.PushAsync(new TestEventOne());
+
+        Exception? processingException = await Record.ExceptionAsync(() => tasks.Single().WaitAsync(Timeout));
+        processingException.ShouldBeOfType<TestException>();
+
+        streamProvider.Abort();
+
+        Exception? pushException = await Record.ExceptionAsync(() => pushTask.WaitAsync(Timeout));
+        pushException.ShouldBeAssignableTo<OperationCanceledException>();
+    }
+
+    [Fact]
     public async Task Publish_ShouldStreamEnvelopes()
     {
         int receivedStreams = 0;
