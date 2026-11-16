@@ -4,6 +4,8 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using MQTTnet.Formatter;
+using MQTTnet.Protocol;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
@@ -280,5 +282,55 @@ public partial class TestingHelperTests
 
         Helper.GetMessages("e2e/shared").Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Endpoint.RawName.ShouldBe("e2e/shared");
+    }
+
+    [Theory]
+    [InlineData(MqttQualityOfServiceLevel.AtMostOnce)]
+    [InlineData(MqttQualityOfServiceLevel.AtLeastOnce)]
+    [InlineData(MqttQualityOfServiceLevel.ExactlyOnce)]
+    public async Task GetProducerForEndpoint_ShouldMirrorQualityOfServiceLevel(MqttQualityOfServiceLevel qosLevel)
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithQualityOfServiceLevel(qosLevel))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        GetDefaultTopicMessages().ShouldHaveSingleItem().QualityOfServiceLevel.ShouldBe(qosLevel);
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem();
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldMirrorProtocolVersion()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .UseProtocolVersion(MqttProtocolVersion.V311)
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventOne { ContentEventOne = "v3" });
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        // The user properties (headers) are not supported by MQTT prior to version 5
+        GetDefaultTopicMessages().ShouldHaveSingleItem().UserProperties.ShouldBeNull();
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("v3");
     }
 }

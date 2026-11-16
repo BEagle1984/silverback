@@ -121,6 +121,7 @@ public partial class MqttTestingHelper
 
         builder
             .WithClientId($"test-{Guid.NewGuid():N}")
+            .UseProtocolVersion(clientConfiguration.ProtocolVersion)
             .DisableParallelProcessing()
             .Produce<object>(endpoint => MapEndpoint(endpoint, endpointConfiguration, topic));
     }
@@ -133,6 +134,7 @@ public partial class MqttTestingHelper
         string topic)
     {
         endpoint.MirrorConsumerEndpoint(endpointConfiguration);
+        endpoint.WithQualityOfServiceLevel(endpointConfiguration.QualityOfServiceLevel);
         endpoint.ProduceTo(topic);
     }
 
