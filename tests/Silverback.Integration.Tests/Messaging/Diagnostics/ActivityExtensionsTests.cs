@@ -138,7 +138,7 @@ public class ActivityExtensionsTests
         activity.Start();
         activity.SetMessageHeaders(headers);
 
-        headers.ShouldNotContain(h => h.Name == DefaultMessageHeaders.TraceBaggage);
+        headers.ShouldNotContain(header => header.Name == DefaultMessageHeaders.TraceBaggage);
     }
 
     [Fact]

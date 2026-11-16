@@ -652,7 +652,7 @@ public class OutboxWorkerServiceTests
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration(endpointName) { FriendlyName = endpointName });
         producer
-            .When(p => p.RawProduce(
+            .When(substitute => substitute.RawProduce(
                 Arg.Any<byte[]>(),
                 Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                 Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
@@ -667,7 +667,7 @@ public class OutboxWorkerServiceTests
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic") { FriendlyName = "one" });
         producer
-            .When(p => p.RawProduce(
+            .When(substitute => substitute.RawProduce(
                 Arg.Any<byte[]>(),
                 Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                 Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),

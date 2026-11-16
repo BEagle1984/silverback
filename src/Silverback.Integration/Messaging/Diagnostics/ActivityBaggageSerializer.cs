@@ -16,7 +16,7 @@ internal static class ActivityBaggageSerializer
     public static string Serialize(IEnumerable<KeyValuePair<string, string?>> baggage) =>
         string.Join(
             BaggageItemSeparator.ToString(CultureInfo.InvariantCulture),
-            baggage.Select(b => b.Key + ItemKeyValueSeparator + b.Value));
+            baggage.Select(item => item.Key + ItemKeyValueSeparator + item.Value));
 
     public static IReadOnlyCollection<KeyValuePair<string, string>> Deserialize(string baggage)
     {

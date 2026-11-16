@@ -40,7 +40,7 @@ internal static class SchemaNormalizer
             property.Remove();
         }
 
-        foreach (JProperty property in properties.OrderBy(p => p.Name, StringComparer.Ordinal))
+        foreach (JProperty property in properties.OrderBy(property => property.Name, StringComparer.Ordinal))
         {
             jObject.Add(property);
         }

@@ -65,7 +65,7 @@ internal static class EnumerableSortExtensionsCopy
         [
             .. sortables.Where(sorted => sorted.SortIndex <= 0).Cast<T>()
                 .Union(notSortables)
-                .Union(sortables.Where(b => b.SortIndex > 0).Cast<T>())
+                .Union(sortables.Where(sorted => sorted.SortIndex > 0).Cast<T>())
         ];
     }
 }
