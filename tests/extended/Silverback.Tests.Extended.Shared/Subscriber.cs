@@ -85,6 +85,11 @@ public class Subscriber
     {
         List<IInboundEnvelope<BatchMessage2>> envelopes = [.. batch];
 
+        foreach (IInboundEnvelope<TestBenchMessage> envelope in envelopes)
+        {
+            LogMessageProcessing(envelope);
+        }
+
         await _publisher.WrapAndPublishBatchAsync(
             envelopes.Where(envelope => envelope.Message != null).Select(envelope => envelope.Message!),
             message => new KafkaResponseMessage { MessageId = message.MessageId },
@@ -134,6 +139,8 @@ public class Subscriber
             return;
         }
 
+        LogMessageProcessing(envelope);
+
         if (envelope.Message.SimulatedProcessingTime > TimeSpan.Zero)
             await Task.Delay(envelope.Message.SimulatedProcessingTime);
 
@@ -146,6 +153,8 @@ public class Subscriber
 
             if (envelope.Message.SimulatedFailuresCount >= failedAttempts)
             {
+                LogSimulatedFailure(envelope);
+
                 throw new SimulatedFailureException(
                     $"Simulating exception processing message '{envelope.Message.MessageId}' from topic '{envelope.Endpoint.RawName}'. " +
                     $"(SimulatedFailuresCount={envelope.Message.SimulatedFailuresCount}, " +
@@ -163,6 +172,18 @@ public class Subscriber
                 break;
         }
     }
+
+    private void LogMessageProcessing(IInboundEnvelope<TestBenchMessage> envelope) =>
+        _logger.LogInformation(
+            "Processing message {MessageId} from topic {TopicName}",
+            envelope.Message?.MessageId,
+            envelope.Endpoint.RawName);
+
+    private void LogSimulatedFailure(IInboundEnvelope<TestBenchMessage> envelope) =>
+        _logger.LogInformation(
+            "Simulated failure processing message {MessageId} from topic {TopicName}",
+            envelope.Message?.MessageId,
+            envelope.Endpoint.RawName);
 
     private void LogMessageProcessed(IInboundEnvelope<TestBenchMessage> envelope) =>
         _logger.LogInformation(

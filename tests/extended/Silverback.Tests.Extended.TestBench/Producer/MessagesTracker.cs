@@ -48,6 +48,8 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
         _mainViewModel.GetTopic(message.TargetTopicName).Statistics.IncrementProduceErrorsCount();
     }
 
+    public bool IsPending(string messageId) => _pendingMessages.ContainsKey(messageId);
+
     public TopicViewModel? TrackConsumed(string subscribedTopicName)
     {
         _mainViewModel.OverallMessagesStatistics.IncrementConsumedCount();

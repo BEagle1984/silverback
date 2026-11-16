@@ -71,12 +71,12 @@ public class TraceViewModel : ViewModelBase
     public void TraceProduced(string messageId, TopicViewModel topic, LogEntry logEntry) =>
         Trace(messageId, topic, MessageTraceStatus.Produced, logEntry);
 
+    // Only the messages already traced are updated, to avoid leaving the leftovers of previous sessions pending forever
     public void TraceProcessing(string messageId, TopicViewModel topic, LogEntry logEntry) =>
-        Trace(messageId, topic, MessageTraceStatus.Processing, logEntry);
+        Trace(messageId, topic, MessageTraceStatus.Processing, logEntry, false);
 
-    // TODO: Trace processing error
     public void TraceProcessingError(string messageId, TopicViewModel topic, LogEntry logEntry) =>
-        Trace(messageId, topic, MessageTraceStatus.ProcessingError, logEntry);
+        Trace(messageId, topic, MessageTraceStatus.ProcessingError, logEntry, false);
 
     public void TraceLost(string messageId, TopicViewModel topic, LogEntry logEntry) =>
         Trace(messageId, topic, MessageTraceStatus.Lost, logEntry);
@@ -94,8 +94,11 @@ public class TraceViewModel : ViewModelBase
             _ => true
         };
 
-    private void Trace(string messageId, TopicViewModel topic, MessageTraceStatus status, LogEntry logEntry)
+    private void Trace(string messageId, TopicViewModel topic, MessageTraceStatus status, LogEntry logEntry, bool createIfMissing = true)
     {
+        if (!createIfMissing && !_traces.ContainsKey(messageId))
+            return;
+
         _traces.AddOrUpdate(
             messageId,
             _ =>

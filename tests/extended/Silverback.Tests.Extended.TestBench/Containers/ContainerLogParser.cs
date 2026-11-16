@@ -66,8 +66,14 @@ public sealed partial class ContainerLogParser : IDisposable
     [GeneratedRegex(@"Application is shutting down\.\.\.")]
     private static partial Regex ApplicationShuttingDownRegex();
 
-    [GeneratedRegex(@"Processing consumed message.*EndpointName: (?<topicName>.*?)(?=,.*?messageId: (?<messageId>.+?)(?=,|$))")]
+    [GeneratedRegex(@"^Processing consumed message \| EndpointName: (?<topicName>[^,]+), BrokerMessageId: ")]
+    private static partial Regex MessageConsumedRegex();
+
+    [GeneratedRegex(@"^Processing message (?<messageId>\S+) from topic (?<topicName>\S+)")]
     private static partial Regex MessageProcessingRegex();
+
+    [GeneratedRegex(@"^Simulated failure processing message (?<messageId>\S+) from topic (?<topicName>\S+)")]
+    private static partial Regex MessageProcessingErrorRegex();
 
     [GeneratedRegex(@"Successfully processed message (?<messageId>[^']+) from topic (?<topicName>[^\s]+)")]
     private static partial Regex MessageProcessedRegex();
@@ -173,7 +179,13 @@ public sealed partial class ContainerLogParser : IDisposable
 
     private void ParseInfoMessage(string message, DateTime timestamp)
     {
+        if (MatchConsumed(message))
+            return;
+
         if (MatchProcessing(message, timestamp))
+            return;
+
+        if (MatchProcessingError(message, timestamp))
             return;
 
         if (MatchProcessed(message, timestamp))
@@ -200,6 +212,19 @@ public sealed partial class ContainerLogParser : IDisposable
     private void ParseVerboseMessage(string message, DateTime timestamp) =>
         MatchAllClientsDisconnected(message, timestamp);
 
+    private bool MatchConsumed(string message)
+    {
+        Match match = MessageConsumedRegex().Match(message);
+
+        if (!match.Success)
+            return false;
+
+        _container.Statistics.IncrementConsumedMessagesCount();
+        _messagesTracker.TrackConsumed(match.Groups["topicName"].Value);
+
+        return true;
+    }
+
     private bool MatchProcessing(string message, DateTime timestamp)
     {
         Match match = MessageProcessingRegex().Match(message);
@@ -207,12 +232,31 @@ public sealed partial class ContainerLogParser : IDisposable
         if (!match.Success)
             return false;
 
-        _container.Statistics.IncrementConsumedMessagesCount();
-        TopicViewModel? topicViewModel = _messagesTracker.TrackConsumed(match.Groups["topicName"].Value);
-
-        if (topicViewModel != null)
+        // Finished messages are not reopened by a late or duplicate delivery
+        if (_messagesTracker.IsPending(match.Groups["messageId"].Value) &&
+            _mainViewModel.TryGetTopic(match.Groups["topicName"].Value, out TopicViewModel? topicViewModel))
         {
             _mainViewModel.Trace.TraceProcessing(
+                match.Groups["messageId"].Value,
+                topicViewModel,
+                new LogEntry(timestamp, message, _container));
+        }
+
+        return true;
+    }
+
+    private bool MatchProcessingError(string message, DateTime timestamp)
+    {
+        Match match = MessageProcessingErrorRegex().Match(message);
+
+        if (!match.Success)
+            return false;
+
+        // Finished messages are not reopened by a late or duplicate delivery
+        if (_messagesTracker.IsPending(match.Groups["messageId"].Value) &&
+            _mainViewModel.TryGetTopic(match.Groups["topicName"].Value, out TopicViewModel? topicViewModel))
+        {
+            _mainViewModel.Trace.TraceProcessingError(
                 match.Groups["messageId"].Value,
                 topicViewModel,
                 new LogEntry(timestamp, message, _container));
