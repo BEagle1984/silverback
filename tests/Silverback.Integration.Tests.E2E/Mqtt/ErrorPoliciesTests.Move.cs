@@ -4,6 +4,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
@@ -54,6 +55,44 @@ public partial class ErrorPoliciesTests
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
         messages.Count.ShouldBe(1);
         messages[0].Payload.ToArray().ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task MovePolicy_ShouldStopConsumerWithoutAcknowledging_WhenMoveFails()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("other-topic"))
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.MoveTo(
+                            "other-topic",
+                            movePolicy => movePolicy.Transform(
+                                _ => throw new InvalidOperationException("Move failed!")))))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
+
+        static void HandleMessage(IIntegrationEvent unused) => throw new InvalidOperationException("Move!");
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(1);
+        Helper.GetMessages("other-topic").Count.ShouldBe(0);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -138,5 +177,6 @@ public partial class ErrorPoliciesTests
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
         messages.Count.ShouldBe(1);
         messages[0].Payload.ToArray().ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 }

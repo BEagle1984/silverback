@@ -13,6 +13,5 @@ public partial class ErrorPoliciesTests : KafkaTests
     public ErrorPoliciesTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
     {
-        // TODO: Test rollback always called with all kind of policies
     }
 }

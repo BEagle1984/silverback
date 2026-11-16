@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +46,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
@@ -55,6 +57,48 @@ public partial class ErrorPoliciesTests
         IInMemoryTopic otherTopic = Helper.GetTopic("other-topic");
         otherTopic.MessagesCount.ShouldBe(1);
         otherTopic.GetAllMessages()[0].Value.ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task MovePolicy_ShouldStopConsumerWithoutCommitting_WhenMoveFails()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce(endpoint => endpoint.ProduceTo("other-topic")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.MoveTo(
+                            "other-topic",
+                            movePolicy => movePolicy.Transform(
+                                _ => throw new InvalidOperationException("Move failed!")))))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
+
+        static void HandleMessage(IIntegrationEvent unused) => throw new InvalidOperationException("Move!");
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Stopped);
+
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+        Helper.GetTopic("other-topic").MessagesCount.ShouldBe(0);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+
+        await consumer.Client.ConnectAsync();
+        await AsyncTestingUtil.WaitAsync(() => Helper.Spy.InboundEnvelopes.Count > 1);
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBeGreaterThan(1);
     }
 
     [Fact]
@@ -129,6 +173,7 @@ public partial class ErrorPoliciesTests
         await producer.ProduceAsync(new TestEventOne());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
@@ -141,6 +186,7 @@ public partial class ErrorPoliciesTests
         IInMemoryTopic otherTopic = Helper.GetTopic("other-topic");
         otherTopic.MessagesCount.ShouldBe(1);
         otherTopic.GetAllMessages()[0].Value.ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
     }
 
     [Fact]
