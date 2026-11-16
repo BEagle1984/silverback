@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
 using Silverback.Testing;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.TestHost;
 

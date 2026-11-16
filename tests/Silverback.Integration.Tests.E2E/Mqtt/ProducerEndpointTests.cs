@@ -22,7 +22,6 @@ using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Tests.Integration.E2E.Util;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Mqtt;
 

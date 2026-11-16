@@ -20,7 +20,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Silverback.Tests.Extended.Integration.TestHost.Mqtt;
 

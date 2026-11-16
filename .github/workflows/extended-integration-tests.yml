@@ -54,16 +54,16 @@ jobs:
             filter_args=(--filter "$TEST_FILTER")
           fi
 
-          dotnet test tests/extended/Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj \
+          dotnet test --project tests/extended/Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj \
             --configuration "$BUILD_CONFIGURATION" \
             --no-build \
             "${filter_args[@]}" \
-            --logger trx \
-            --logger "console;verbosity=normal" \
-            --blame-hang-timeout 15m \
-            --blame-hang-dump-type mini \
+            --report-trx \
+            --hangdump \
+            --hangdump-timeout 15m \
+            --hangdump-type Mini \
             --results-directory "$RUNNER_TEMP/integration" \
-            -- RunConfiguration.TreatNoTestsAsError=true
+            --results-directory-layout per-module
       - name: Capture broker logs
         if: failure()
         run: |

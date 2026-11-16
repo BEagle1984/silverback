@@ -34,7 +34,6 @@ using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Unbounded;
 using Silverback.Messaging.Serialization;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker;
 

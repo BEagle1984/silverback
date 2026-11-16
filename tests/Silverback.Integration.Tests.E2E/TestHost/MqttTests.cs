@@ -7,7 +7,6 @@ using MQTTnet;
 using Silverback.Messaging.Broker.Mqtt.Mocks;
 using Silverback.Testing;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost;
 

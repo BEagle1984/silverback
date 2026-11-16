@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Testing;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost;
 

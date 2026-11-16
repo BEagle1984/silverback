@@ -13,7 +13,7 @@ using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 

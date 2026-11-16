@@ -11,7 +11,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 

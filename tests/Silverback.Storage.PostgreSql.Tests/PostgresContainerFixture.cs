@@ -54,13 +54,14 @@ public class PostgresContainerFixture : IAsyncLifetime
         return _connectionString.Replace("{database}", databaseName, StringComparison.Ordinal);
     }
 
-    public Task InitializeAsync() => WaitForConnectionAsync();
+    public ValueTask InitializeAsync() => new(WaitForConnectionAsync());
 
-    public Task DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         _postgresContainer.Stop();
         _postgresContainer.Dispose();
-        return Task.CompletedTask;
+        GC.SuppressFinalize(this);
+        return ValueTask.CompletedTask;
     }
 
     private async Task WaitForConnectionAsync()

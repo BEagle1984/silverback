@@ -1,24 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TestsTargetFrameworks)</TargetFrameworks>
+    <OutputType>Exe</OutputType>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <RootNamespace>Silverback.Tests.Core.Rx</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="coverlet.MTP"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="Microsoft.Testing.Extensions.HangDump"/>
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport"/>
     <PackageReference Include="Shouldly"/>
-    <PackageReference Include="xunit"/>
-    <PackageReference Include="xunit.runner.visualstudio">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="xunit.v3"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Core.Rx\Silverback.Core.Rx.csproj"/>

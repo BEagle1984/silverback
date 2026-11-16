@@ -11,7 +11,7 @@ using Confluent.Kafka.Admin;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Silverback.Tests.Extended.Integration.TestHost.Kafka;
 

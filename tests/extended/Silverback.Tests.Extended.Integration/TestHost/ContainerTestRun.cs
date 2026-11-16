@@ -11,7 +11,7 @@ using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Model.Builders;
 using Ductus.FluentDocker.Services;
 using Shouldly;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Silverback.Tests.Extended.Integration.TestHost;
 

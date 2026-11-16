@@ -10,7 +10,7 @@ are in `AGENTS.md` and apply here as well. This file adds the commands and the a
 
 ```shell
 dotnet build Silverback.slnx
-dotnet test Silverback.slnx
+dotnet test --solution Silverback.slnx
 ```
 
 - CI builds with `-c Release -warnaserror`. Analyzers run with `AnalysisMode=All`, StyleCop and `EnforceCodeStyleInBuild`, so any analyzer
@@ -18,8 +18,10 @@ dotnet test Silverback.slnx
 - CI runs the tests in two passes without Docker: `--filter "Type!=E2E&Dependency!=Docker&CI!=Skip"` (unit), then
   `--filter "Type=E2E&Dependency!=Docker&CI!=Skip"` (E2E). Tests tagged `Dependency=Docker` (PostgreSQL) need `docker compose up -d` in
   the repository root.
-- The tests use xUnit v2 on VSTest, so they accept the standard filters. Example for a single class:
-  `dotnet test tests/Silverback.Integration.Kafka.Tests --filter "FullyQualifiedName~KafkaConsumerEndpointsCacheTests"`.
+- The tests use xUnit v3 on Microsoft Testing Platform (`global.json` sets the runner), so `dotnet test` takes `--solution` or `--project` and
+  the MTP options (e.g. `--report-trx`, `--coverlet`, `--hangdump`). xUnit accepts the usual `--filter` expressions. A project that has no
+  test matching the filter fails with exit code 8, so a solution-wide filtered run needs `--ignore-exit-code 8`, as in CI. Example for a
+  single class: `dotnet test --project tests/Silverback.Integration.Kafka.Tests --filter "FullyQualifiedName~KafkaConsumerEndpointsCacheTests"`.
 - `./coverage.ps1` builds and tests with coverage and opens an HTML report.
 - `docs/build.ps1`, run from `docs/`, builds and serves the DocFX site. It first runs the generators that produce the header and log-event
   reference tables.

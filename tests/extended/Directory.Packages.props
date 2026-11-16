@@ -2,7 +2,6 @@
   <Import Project="../../Directory.Packages.props"/>
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.15"/>
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.15"/>
     <PackageVersion Include="Serilog" Version="4.4.0"/>
     <PackageVersion Include="Serilog.Enrichers.Activity" Version="1.0.0.3"/>
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="10.0.0"/>

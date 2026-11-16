@@ -12,7 +12,6 @@ using Shouldly;
 using Silverback.Tests.Extended.Integration.TestHost;
 using Silverback.Tests.Extended.Integration.TestHost.Kafka;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Silverback.Tests.Extended.Integration.Kafka;
 

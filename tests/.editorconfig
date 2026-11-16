@@ -68,5 +68,10 @@ dotnet_diagnostic.VSTHRD111.severity = none
 # VSTHRD200: Naming styles (Async suffix)
 dotnet_diagnostic.VSTHRD200.severity = none
 
+# xunit.analyzers
+# xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken
+# (same rationale as resharper_method_supports_cancellation_highlighting below)
+dotnet_diagnostic.xUnit1051.severity = none
+
 # Resharper
 resharper_method_supports_cancellation_highlighting = none

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Shouldly;
 using Silverback.Configuration;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Silverback.Tests.Extended.Integration.TestHost;
 

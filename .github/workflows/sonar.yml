@@ -45,39 +45,47 @@ jobs:
             /v:"$version" \
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.exclusions="**/obj/**,**/*.dll,docs/**,.claude/**" \
-            /d:sonar.cs.opencover.reportsPaths="$GITHUB_WORKSPACE/**/coverage.*.opencover.xml" \
-            /d:sonar.cs.vstest.reportsPaths="$GITHUB_WORKSPACE/tests/**/TestResults/*.trx"
+            /d:sonar.cs.opencover.reportsPaths="$GITHUB_WORKSPACE/TestResults/**/coverage.opencover.*.xml" \
+            /d:sonar.cs.vstest.reportsPaths="$GITHUB_WORKSPACE/TestResults/**/*.trx"
       - name: Build (${{ env.BUILD_CONFIGURATION }})
         run: |
           dotnet build Silverback.slnx --configuration "$BUILD_CONFIGURATION"
       - name: Run unit tests
         run: |
-          dotnet test Silverback.slnx \
+          dotnet test --solution Silverback.slnx \
             --configuration "$BUILD_CONFIGURATION" \
             --no-build \
-            --verbosity Normal \
-            --logger trx \
-            --blame-hang-timeout 5m \
-            --blame-hang-dump-type mini \
+            --ignore-exit-code 8 \
+            --report-trx \
+            --hangdump \
+            --hangdump-timeout 5m \
+            --hangdump-type Mini \
+            --results-directory TestResults/unit \
+            --results-directory-layout per-module \
             --filter "Type!=E2E&Dependency!=Docker&CI!=Skip" \
-            --collect "Code coverage" \
-            -p:CollectCoverage=true \
-            -p:CoverletOutputFormat=opencover%2ccobertura \
-            -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
+            --coverlet \
+            --coverlet-output-format opencover \
+            --coverlet-exclude "[xunit.*]*" \
+            --coverlet-exclude "[Silverback.Tests.*]*" \
+            --coverlet-exclude-assemblies-without-sources MissingAll
       - name: Run E2E tests
         run: |
-          dotnet test Silverback.slnx \
+          dotnet test --solution Silverback.slnx \
             --configuration "$BUILD_CONFIGURATION" \
             --no-build \
-            --verbosity Normal \
-            --logger trx \
-            --blame-hang-timeout 5m \
-            --blame-hang-dump-type mini \
+            --ignore-exit-code 8 \
+            --report-trx \
+            --hangdump \
+            --hangdump-timeout 5m \
+            --hangdump-type Mini \
+            --results-directory TestResults/e2e \
+            --results-directory-layout per-module \
             --filter "Type=E2E&Dependency!=Docker&CI!=Skip" \
-            --collect "Code coverage" \
-            -p:CollectCoverage=true \
-            -p:CoverletOutputFormat=opencover%2ccobertura \
-            -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
+            --coverlet \
+            --coverlet-output-format opencover \
+            --coverlet-exclude "[xunit.*]*" \
+            --coverlet-exclude "[Silverback.Tests.*]*" \
+            --coverlet-exclude-assemblies-without-sources MissingAll
       - name: Run SonarCloud analysis
         if: ${{ !cancelled() }}
         env:
@@ -89,8 +97,10 @@ jobs:
         if: failure()
         run: |
           mkdir -p "$RUNNER_TEMP/blame"
-          # Skip the copies attached to the TRX results (TestResults/<run>/In/<machine>/)
-          find tests -path '*/TestResults/*' -not -path '*/In/*' \( -name 'Sequence_*.xml' -o -name '*.dmp' \) -exec cp --parents {} "$RUNNER_TEMP/blame" \;
+          # TestResults doesn't exist if the job failed before running the tests
+          if [ -d TestResults ]; then
+            find TestResults -name '*.dmp' -exec cp --parents {} "$RUNNER_TEMP/blame" \;
+          fi
       - name: Publish hang dumps
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

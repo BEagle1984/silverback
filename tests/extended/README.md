@@ -47,7 +47,7 @@ Docker with Linux containers and the .NET 10 SDK are required. The Kafka tests s
 The Compose images are pinned, so that local and CI runs use the same broker versions. The fixtures reuse the existing Compose containers as they are (`--no-recreate`), so after `docker-compose.yaml` changes (images or service settings), recreate the containers once by running `docker compose up -d kafka-1 kafka-2 schema-registry emqx1 emqx2 haproxy` from the repository root. Kafka containers created from a 3.x image fail the consumer-protocol cases.
 
 ```shell
-dotnet test tests/extended/Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj --logger trx --results-directory tests/extended/TestResults
+dotnet test --project tests/extended/Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj --report-trx --results-directory tests/extended/TestResults
 ```
 
 Traits describe the dependency, broker and purpose independently:

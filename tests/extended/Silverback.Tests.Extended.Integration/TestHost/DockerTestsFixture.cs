@@ -60,7 +60,7 @@ public abstract class DockerTestsFixture : IAsyncLifetime
         return result;
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         Directory.CreateDirectory(Path.Combine(RepositoryRoot, "tests/extended/artifacts"));
 
@@ -82,7 +82,11 @@ public abstract class DockerTestsFixture : IAsyncLifetime
         await InitializeCoreAsync();
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    public ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+        return ValueTask.CompletedTask;
+    }
 
     protected abstract Task WaitForInfrastructureAsync();
 

@@ -22,7 +22,6 @@ using Silverback.Tests.Integration.E2E.TestTypes.Logging;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 

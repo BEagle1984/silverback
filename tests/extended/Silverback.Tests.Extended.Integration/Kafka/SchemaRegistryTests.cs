@@ -25,7 +25,6 @@ using Silverback.Tests.Extended.Integration.TestHost;
 using Silverback.Tests.Extended.Integration.TestHost.Kafka;
 using Silverback.Tests.Extended.Integration.TestHost.Kafka.SchemaRegistry;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Silverback.Tests.Extended.Integration.Kafka;
 

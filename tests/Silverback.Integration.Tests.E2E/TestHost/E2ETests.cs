@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.TestHost;
 

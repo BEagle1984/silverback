@@ -13,7 +13,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Tests.Extended.Integration.TestHost;
 using Silverback.Tests.Extended.Integration.TestHost.Mqtt;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Silverback.Tests.Extended.Integration.Mqtt;
 
