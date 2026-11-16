@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -126,8 +125,6 @@ public partial class MqttTestingHelper
             .Produce<object>(endpoint => MapEndpoint(endpoint, endpointConfiguration, topic));
     }
 
-    // TODO: Test all cases
-    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "TODO tracked in the IDE")]
     private static void MapEndpoint(
         MqttProducerEndpointConfigurationBuilder<object> endpoint,
         MqttConsumerEndpointConfiguration endpointConfiguration,

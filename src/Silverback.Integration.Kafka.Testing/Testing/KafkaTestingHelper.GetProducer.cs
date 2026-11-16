@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
@@ -100,8 +99,6 @@ public partial class KafkaTestingHelper
             KafkaTopicPattern.IsPattern(topicPartition.Topic) == isPattern &&
             KafkaTopicPattern.IsMatch(topicPartition.Topic, topic, KafkaTopicPattern.IsFullMatchRequired(consumerConfiguration.GroupProtocol)));
 
-    // TODO: Test all cases
-    [SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "TODO tracked in the IDE")]
     private static void MapEndpoint(
         KafkaProducerEndpointConfigurationBuilder<object> endpoint,
         KafkaConsumerEndpointConfiguration endpointConfiguration,

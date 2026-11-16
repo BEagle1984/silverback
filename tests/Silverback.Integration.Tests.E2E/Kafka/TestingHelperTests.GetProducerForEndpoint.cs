@@ -2,15 +2,22 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using Confluent.SchemaRegistry;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Messaging.BinaryMessages;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
@@ -20,6 +27,209 @@ public partial class TestingHelperTests
     private static readonly byte[] AesEncryptionKey = BytesUtil.GetRandomBytes(32);
 
     private static readonly byte[] AesEncryptionKey2 = BytesUtil.GetRandomBytes(32);
+
+    [Theory]
+    [InlineData(DefaultTopicName)]
+    [InlineData("producer")]
+    public async Task GetProducerForEndpoint_ShouldReturnConfiguredProducer_WhenProducerEndpointExists(string endpointName)
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>("producer", endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .DecryptUsingAes(AesEncryptionKey))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducerForEndpoint(endpointName);
+
+        producer.ShouldBeSameAs(Host.ServiceProvider.GetRequiredService<IProducerCollection>().ShouldHaveSingleItem());
+        producer.EndpointConfiguration.FriendlyName.ShouldBe("producer");
+        producer.EndpointConfiguration.Encryption.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldThrow_WhenNoEndpointFound()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>("producer", endpoint => endpoint.ProduceTo("topic1")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume("consumer", endpoint => endpoint.ConsumeFrom("topic2"))))
+            .AddIntegrationSpyAndSubscriber());
+
+        Action act = () => Helper.GetProducerForEndpoint("topic3");
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("No producer and no consumer found for endpoint 'topic3'.");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldProduceToStaticPartition_WhenResolvedByTopicName()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition("topic1", 1), new TopicPartition(DefaultTopicName, 3)))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        IInboundEnvelope envelope = Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem();
+        envelope.BrokerMessageIdentifier.ShouldBeOfType<KafkaOffset>().TopicPartition.ShouldBe(new TopicPartition(DefaultTopicName, 3));
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldProduceToFirstStaticPartition_WhenResolvedByFriendlyName()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(
+                        "static",
+                        endpoint => endpoint.ConsumeFrom(new TopicPartition(DefaultTopicName, 3), new TopicPartition(DefaultTopicName, 1)))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint("static").ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        IInboundEnvelope envelope = Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem();
+        envelope.BrokerMessageIdentifier.ShouldBeOfType<KafkaOffset>().TopicPartition.ShouldBe(new TopicPartition(DefaultTopicName, 3));
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldMirrorJsonDeserializer()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).DeserializeJson())))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventTwo { ContentEventTwo = "json" });
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.ShouldHaveSingleItem().EndpointConfiguration.Serializer.ShouldBeOfType<JsonMessageSerializer>();
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeOfType<TestEventTwo>().ContentEventTwo.ShouldBe("json");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldMirrorNewtonsoftJsonDeserializer()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).DeserializeJsonUsingNewtonsoft())))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventTwo { ContentEventTwo = "newtonsoft" });
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.ShouldHaveSingleItem().EndpointConfiguration.Serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeOfType<TestEventTwo>().ContentEventTwo.ShouldBe("newtonsoft");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldMirrorStringDeserializer()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).ConsumeStrings())))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new StringMessage("text"));
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.ShouldHaveSingleItem().EndpointConfiguration.Serializer.ShouldBeOfType<StringMessageSerializer>();
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeAssignableTo<StringMessage>().ShouldNotBeNull().Content.ShouldBe("text");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldMirrorBinaryMessageDeserializer()
+    {
+        byte[] content = BytesUtil.GetRandomBytes();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).ConsumeBinaryMessages())))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new BinaryMessage { Content = new MemoryStream(content) });
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.ShouldHaveSingleItem().EndpointConfiguration.Serializer.ShouldBeOfType<BinaryMessageSerializer>();
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeAssignableTo<IBinaryMessage>().ShouldNotBeNull()
+            .Content.ReadAll().ShouldBe(content);
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldMirrorRawDeserializer()
+    {
+        byte[] content = BytesUtil.GetRandomBytes();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).ConsumeRaw())))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(RawMessage.FromByteArray(content));
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.ShouldHaveSingleItem().EndpointConfiguration.Serializer.ShouldBeOfType<RawMessageSerializer>();
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeAssignableTo<RawMessage>().ShouldNotBeNull()
+            .Content.ReadAll().ShouldBe(content);
+    }
 
     [Fact]
     public async Task GetProducerForEndpoint_ShouldEncrypt_WhenConsumerDecryptsUsingAes()
@@ -212,6 +422,120 @@ public partial class TestingHelperTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeOfType<AvroMessage>().number.ShouldBe("42");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldMirrorProtobufDeserializer()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<ProtobufMessage>(endpoint => endpoint
+                        .DeserializeProtobuf(protobuf => protobuf.ConnectToSchemaRegistry("http://e2e:4242"))
+                        .ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new ProtobufMessage { Number = "42" });
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeOfType<ProtobufMessage>().Number.ShouldBe("42");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldMirrorJsonSchemaRegistryDeserializer()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .DeserializeJsonUsingSchemaRegistry(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
+                        .ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventOne { ContentEventOne = "json-schema" });
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("json-schema");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldProduceToTopic_WhenEndpointUsesPartitionOffsetsProvider()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(
+                        "provider",
+                        endpoint => endpoint.ConsumeFrom(
+                            DefaultTopicName,
+                            partitions => partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Beginning))))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventOne { ContentEventOne = "by-topic" });
+        await Helper.GetProducerForEndpoint("provider").ProduceAsync(new TestEventOne { ContentEventOne = "by-name" });
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
+            .ShouldBe(["by-topic", "by-name"], true);
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldProduceToFirstPartition_WhenNameIsRawNameOfMultiPartitionEndpoint()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(new TopicPartition(DefaultTopicName, 1), new TopicPartition(DefaultTopicName, 3)))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint($"{DefaultTopicName}[1],{DefaultTopicName}[3]").ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        IInboundEnvelope envelope = Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem();
+        envelope.BrokerMessageIdentifier.ShouldBeOfType<KafkaOffset>().TopicPartition.ShouldBe(new TopicPartition(DefaultTopicName, 1));
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldProduceToPartition_WhenNameIsRawNameOfSinglePartitionEndpoint()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition(DefaultTopicName, 3)))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint($"{DefaultTopicName}[3]").ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        IInboundEnvelope envelope = Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem();
+        envelope.BrokerMessageIdentifier.ShouldBeOfType<KafkaOffset>().TopicPartition.ShouldBe(new TopicPartition(DefaultTopicName, 3));
     }
 
     private sealed record CustomDecryptionSettings : IDecryptionSettings

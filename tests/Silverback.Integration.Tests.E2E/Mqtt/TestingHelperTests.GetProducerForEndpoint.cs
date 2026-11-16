@@ -44,6 +44,30 @@ public partial class TestingHelperTests
         Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("encrypted");
     }
 
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldEncryptUsingKeyFromProvider_WhenConsumerUsesKeyProvider()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .DecryptUsingAes(keyIdentifier =>
+                            keyIdentifier == null ? AesEncryptionKey : throw new ArgumentException("Unknown key.", nameof(keyIdentifier))))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint(DefaultTopicName).ProduceAsync(new TestEventOne { ContentEventOne = "encrypted" });
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.ShouldHaveSingleItem().RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("encrypted");
+    }
+
     [Theory]
     [InlineData("e2e/topic1")]
     [InlineData("e2e/topic2")]
