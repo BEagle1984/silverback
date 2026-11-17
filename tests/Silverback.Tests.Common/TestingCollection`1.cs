@@ -11,9 +11,27 @@ public class TestingCollection<T> : IReadOnlyList<T>
 {
     private readonly List<T> _items = [];
 
-    public int Count => _items.Count;
+    public int Count
+    {
+        get
+        {
+            lock (_items)
+            {
+                return _items.Count;
+            }
+        }
+    }
 
-    public T this[int index] => _items[index];
+    public T this[int index]
+    {
+        get
+        {
+            lock (_items)
+            {
+                return _items[index];
+            }
+        }
+    }
 
     public void Add(T item) => AddIfNotNull(item);
 
@@ -36,7 +54,17 @@ public class TestingCollection<T> : IReadOnlyList<T>
         return ValueTask.CompletedTask;
     }
 
-    public IEnumerator<T> GetEnumerator() => _items.GetEnumerator();
+    public IEnumerator<T> GetEnumerator()
+    {
+        T[] snapshot;
+
+        lock (_items)
+        {
+            snapshot = [.. _items];
+        }
+
+        return ((IEnumerable<T>)snapshot).GetEnumerator();
+    }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
