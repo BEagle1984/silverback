@@ -602,6 +602,25 @@ public class IntegrationLoggerExtensionsTests
     }
 
     [Fact]
+    public void LogRollbackAfterFailureFailed_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogRollbackAfterFailureFailed(envelope, new InvalidOperationException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            typeof(InvalidOperationException),
+            "Error occurred rolling back the transaction after the processing failed; the consumer will be stopped | EndpointName: test, BrokerMessageId: 42",
+            1063);
+    }
+
+    [Fact]
     public void LogStoringIntoOutbox_ShouldLog()
     {
         OutboundEnvelope envelope = new(

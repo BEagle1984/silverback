@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Diagnostics;
@@ -122,6 +123,127 @@ public class ConsumerTransactionManagerTests
         transaction.IsConsumerStopped.ShouldBeTrue();
         await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
         await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task RollbackAndStopConsumerAfterFailureAsync_ShouldRollBackWithoutCommittingAndStopConsumer()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
+
+        await transaction.RollbackAndStopConsumerAfterFailureAsync(new InvalidOperationException("test"));
+
+        counter.AbortingCount.ShouldBe(1);
+        counter.AbortedCount.ShouldBe(1);
+        counter.SkippingCount.ShouldBe(0);
+        transaction.IsConsumerRolledBack.ShouldBeTrue();
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Theory]
+    [InlineData("rolled back")]
+    [InlineData("skipped")]
+    [InlineData("rollback failed")]
+    [InlineData("committed")]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task RollbackAndStopConsumerAfterFailureAsync_ShouldOnlyStopConsumer_WhenTransactionAlreadyCompleted(string scenario)
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+
+        // The error policy completed the transaction before the error handling failed (e.g., a callback failed afterwards)
+        switch (scenario)
+        {
+            case "rolled back":
+                await transaction.RollbackAsync(null, stopConsuming: false);
+                break;
+            case "skipped":
+                await transaction.RollbackAsync(null, true);
+                break;
+            case "rollback failed":
+                context.Consumer.RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>())
+                    .Returns(_ => ValueTask.FromException(new InvalidOperationException("Rollback failed.")));
+                await Should.ThrowAsync<InvalidOperationException>(() => transaction.RollbackAsync(null, stopConsuming: false));
+                break;
+            default:
+                await transaction.CommitAsync();
+                break;
+        }
+
+        EventsCounter counter = new(transaction);
+        context.Consumer.ClearReceivedCalls();
+
+        await transaction.RollbackAndStopConsumerAfterFailureAsync(new InvalidOperationException("test"));
+
+        counter.AbortingCount.ShouldBe(0);
+        counter.AbortedCount.ShouldBe(0);
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task RollbackAndStopConsumerAfterFailureAsync_ShouldRollBack_WhenCommitFailed()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        context.Consumer.CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>())
+            .Returns(_ => ValueTask.FromException(new InvalidOperationException("Commit failed.")));
+        await Should.ThrowAsync<InvalidOperationException>(transaction.CommitAsync);
+
+        await transaction.RollbackAndStopConsumerAfterFailureAsync(new InvalidOperationException("test"));
+
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Theory]
+    [InlineData("aborting handler failed")]
+    [InlineData("stop failed")]
+    [InlineData("consumer rollback failed")]
+    [InlineData("aborted handler failed")]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task RollbackAndStopConsumerAfterFailureAsync_ShouldStopConsumerAndLogWithoutThrowing_WhenRollbackFails(string scenario)
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        SilverbackLoggerSubstitute<ConsumerTransactionManager> logger = new();
+        ConsumerTransactionManager transaction = new(context, logger);
+
+        switch (scenario)
+        {
+            case "aborting handler failed":
+                transaction.Aborting.AddHandler(_ => ValueTask.FromException(new InvalidOperationException("Handler failed.")));
+                break;
+            case "stop failed":
+                context.Consumer.StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>())
+                    .Returns(_ => ValueTask.FromException(new InvalidOperationException("Stop failed.")));
+                break;
+            case "consumer rollback failed":
+                context.Consumer.RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>())
+                    .Returns(_ => ValueTask.FromException(new InvalidOperationException("Rollback failed.")));
+                break;
+            default:
+                transaction.Aborted.AddHandler(_ => ValueTask.FromException(new InvalidOperationException("Handler failed.")));
+                break;
+        }
+
+        // The exception thrown by the error handling is rethrown instead
+        await transaction.RollbackAndStopConsumerAfterFailureAsync(new InvalidOperationException("test"));
+
+        transaction.IsConsumerStopped.ShouldBe(scenario == "stop failed");
+        transaction.IsConsumerRolledBack.ShouldBeTrue();
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+
+        // The rollback failure is logged, since nothing else logs the exceptions thrown by the Aborting and Aborted handlers
+        logger.Received(
+            LogLevel.Warning,
+            scenario.EndsWith("handler failed", StringComparison.Ordinal) ? typeof(AggregateException) : typeof(InvalidOperationException),
+            eventId: 1063);
     }
 
     [Theory]

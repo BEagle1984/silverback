@@ -139,8 +139,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
                 return _abortTask;
             }
 
-            // A commit that failed before reaching the consumer doesn't complete the transaction: it can still be rolled back
-            if (_commitTask != null && (_isConsumerCommitted || !_commitTask.IsCompleted))
+            if (IsCommittedOrCommitting())
             {
                 if (throwIfAlreadyCommitted)
                     throw new InvalidOperationException("The transaction already completed.");
@@ -204,6 +203,19 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     }
 
     /// <summary>
+    ///     Checks whether the exception is the cancellation requested by the consumer stop (see <see cref="StopCancellationHelper" />),
+    ///     according to the cancellation token passed to the consumer pipeline that created the transaction.
+    /// </summary>
+    /// <param name="exception">
+    ///     The exception thrown by the processing or the commit.
+    /// </param>
+    /// <returns>
+    ///     <c>true</c> if the operation was canceled by the consumer stop, otherwise <c>false</c>.
+    /// </returns>
+    internal bool IsStopCancellation(Exception exception) =>
+        StopCancellationHelper.IsStopCancellation(exception, _processingCancellationToken);
+
+    /// <summary>
     ///     Returns a value indicating whether the consumer can be committed for the message that doesn't belong to a sequence and wasn't
     ///     processed (e.g. skipped by the error policies or by the sequencer), without implicitly committing the messages of the other
     ///     sequences, which are pending or not resolved yet, or which the consumer stop aborted without rolling them back.
@@ -214,6 +226,55 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     internal bool CanCommitUnprocessedMessage() =>
         !_processingCancellationToken.IsCancellationRequested &&
         _context.SequenceStore.GetPendingSequences(includeChildren: true).Count == 0 && !HasUnresolvedSequences();
+
+    /// <summary>
+    ///     Rolls back the transaction without committing the consumer and stops the consumer, when the error handling fails (e.g., an
+    ///     error policy callback throws or the move policy fails to produce the message) or when the error policies don't handle the failed
+    ///     commit of a sequence whose enumeration was aborted, as the rollback does when the error policies don't handle the error. If the
+    ///     transaction was already committed or aborted (e.g., by the error policy, before failing), the consumer is just stopped.
+    /// </summary>
+    /// <remarks>
+    ///     It never throws, so that the exception thrown by the failed operation is rethrown instead. The consumer is stopped even if the
+    ///     rollback fails, and the rollback failure is logged.
+    /// </remarks>
+    /// <param name="exception">
+    ///     The exception that caused the rollback.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged, and the exception thrown by the failed operation is rethrown instead")]
+    internal async Task RollbackAndStopConsumerAfterFailureAsync(Exception exception)
+    {
+        Task<bool>? rollbackTask = null;
+
+        lock (_syncLock)
+        {
+            if (_abortTask == null && !IsCommittedOrCommitting())
+                rollbackTask = _abortTask = RollbackCoreAsync(exception, false, true);
+        }
+
+        if (rollbackTask == null)
+        {
+            await TryStopConsumerAfterFailureAsync().ConfigureAwait(false);
+            return;
+        }
+
+        try
+        {
+            await rollbackTask.ConfigureAwait(false);
+        }
+        catch (Exception rollbackException)
+        {
+            // The rollback stops the consumer even when it fails (see RollbackCoreAsync). Log the failure, since nothing else logs the
+            // exception thrown by the Aborting or Aborted handlers (e.g., rolling back the storage transaction of the subscribers).
+            _logger.LogRollbackAfterFailureFailed(_context.Envelope, rollbackException);
+        }
+    }
+
+    // A commit that failed before reaching the consumer doesn't complete the transaction: it can still be rolled back. Must be called
+    // holding the lock.
+    private bool IsCommittedOrCommitting() => _commitTask != null && (_isConsumerCommitted || !_commitTask.IsCompleted);
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged by the consumer")]
     private async Task TryStopConsumerAfterFailureAsync()

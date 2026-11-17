@@ -12,10 +12,12 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Logging;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -65,6 +67,150 @@ public partial class BatchProcessingTests
         receivedMessages.ShouldBe(2);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
         Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Batch_ShouldRollBackAndStopConsumer_WhenErrorHandlingFails(bool isCompletedByTimeout)
+    {
+        TransactionEventsTracker transactionEventsTracker = new();
+
+        // The error handling fails, since the callback invoked by the skip error policy throws
+        ISkipMessageErrorPolicyCallback callback = Substitute.For<ISkipMessageErrorPolicyCallback>();
+        callback.OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(Task.FromException(new InvalidOperationException("Callback failed.")));
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(isCompletedByTimeout ? 10 : 3, TimeSpan.FromMilliseconds(300))
+                        .OnError(policy => policy.Skip()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonBrokerBehavior(transactionEventsTracker)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        // When the batch is completed by its max wait time, the subscriber fails while no message is being added
+        async ValueTask HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne message in batch)
+            {
+                if (!isCompletedByTimeout && message.ContentEventOne == "Message 2")
+                    throw new InvalidOperationException("Test");
+            }
+
+            throw new InvalidOperationException("Test");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 2" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 3" });
+
+        // The batch transaction is rolled back, raising the Aborting and Aborted events, as when the error policies don't handle the error
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await AsyncTestingUtil.WaitAsync(
+            () => consumer.StatusInfo.Status == ConsumerStatus.Stopped && transactionEventsTracker.Events.Contains("Aborted"),
+            TimeSpan.FromSeconds(10));
+
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        transactionEventsTracker.Events.ShouldBe(["Aborting", "Aborted"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+        await callback.Received(1).OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>());
+    }
+
+    [Theory]
+    [InlineData("stop")]
+    [InlineData("retry")]
+    [InlineData("skip")]
+    public async Task Batch_ShouldApplyErrorPolicy_WhenCommitFailsAfterEnumerationIsAborted(string policy)
+    {
+        List<string> receivedMessages = [];
+        LogEventsCollector logEventsCollector = new();
+
+        // The first commit fails, as when a Committing handler throws (e.g., the client-side offset store fails)
+        TransactionEventsTracker transactionEventsTracker = new(failingCommitsCount: 1);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(3)
+                        .OnError(errorPolicy => ConfigureErrorPolicy(errorPolicy, policy)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonBrokerBehavior(transactionEventsTracker));
+
+        // The subscriber stops enumerating each batch after its first message: the next messages are added to the next batch
+        async ValueTask HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne message in batch)
+            {
+                lock (receivedMessages)
+                {
+                    receivedMessages.Add(message.ContentEventOne!);
+                }
+
+                break;
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 2" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 3" });
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+
+        if (policy == "stop")
+        {
+            // The batch transaction is rolled back after the failed commit, raising the Aborting and Aborted events, and the consumer is
+            // stopped and disconnected, as when the commit of a completed batch fails
+            await AsyncTestingUtil.WaitAsync(
+                () => consumer.Client.Status == ClientStatus.Disconnected && transactionEventsTracker.Events.Contains("Aborted"),
+                TimeSpan.FromSeconds(10));
+
+            consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+            consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+            receivedMessages.ShouldBe(["Message 1"]);
+            transactionEventsTracker.Events.ShouldBe(["Committing", "Aborting", "Aborted"]);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+        }
+        else
+        {
+            // The batch is retried (consuming its message again) or skipped, as when the commit of a completed batch fails
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
+            consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
+            receivedMessages.ShouldBe(
+                policy == "retry"
+                    ? ["Message 1", "Message 1", "Message 2", "Message 3"]
+                    : ["Message 1", "Message 2", "Message 3"]);
+            transactionEventsTracker.Events.Take(3).ShouldBe(["Committing", "Aborting", "Aborted"]);
+            transactionEventsTracker.Events.Count(transactionEvent => transactionEvent == "Aborted").ShouldBe(1);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+            logEventsCollector.ContainsProcessingFatalError().ShouldBeFalse();
+        }
+
+        // The commit exception is logged once, as when the commit of a completed batch fails
+        logEventsCollector.Count(IntegrationLogEvents.SequenceProcessingError.EventId).ShouldBe(1);
     }
 
     [Theory]
@@ -1002,5 +1148,21 @@ public partial class BatchProcessingTests
 
         await Helper.WaitUntilAllMessagesAreCommittedAsync();
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
+    }
+
+    private static void ConfigureErrorPolicy(IErrorPolicyBuilder errorPolicy, string policy)
+    {
+        switch (policy)
+        {
+            case "retry":
+                errorPolicy.Retry(1);
+                break;
+            case "skip":
+                errorPolicy.Skip();
+                break;
+            default:
+                errorPolicy.Stop();
+                break;
+        }
     }
 }

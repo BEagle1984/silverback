@@ -1102,8 +1102,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
                     break;
                 case SequenceAbortReason.EnumerationAborted:
-                    if (CompletesTransactionOnAbort)
-                        await Context.TransactionManager.CommitAsync().ConfigureAwait(false);
+                    if (CompletesTransactionOnAbort && await TryCommitAsync().ConfigureAwait(false) is { } commitException)
+                        return await HandleCommitFailureAsync(commitException).ConfigureAwait(false);
 
                     done = false;
                     break;
@@ -1134,6 +1134,69 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
 
         return done;
+    }
+
+    // The subscribers stopped enumerating the sequence: commit it, returning the exception if the commit fails
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Handled by the caller")]
+    private async Task<Exception?> TryCommitAsync()
+    {
+        try
+        {
+            await Context.TransactionManager.CommitAsync().ConfigureAwait(false);
+            return null;
+        }
+        catch (Exception exception)
+        {
+            return exception;
+        }
+    }
+
+    // The commit of the sequence whose subscribers stopped enumerating it failed (e.g., a Committing handler threw): handle it like the
+    // failed commit of a completed sequence, which aborts it because of the error (see TransactionHandlerConsumerBehavior), switching the
+    // abort reason to Error, applying the error policies (e.g., retrying it) and logging the error (see LogAbort). The reason is switched
+    // holding the add semaphore, before the processing is notified, so that the message being added sees it once the abort completed.
+    // If the error policies don't handle the error, the transaction is rolled back without committing the consumer and the consumer is
+    // stopped, like when the error handling fails (see ErrorPoliciesHelper), since the transaction may have been committed to the consumer
+    // already (e.g., a Committed handler threw): the consumer is just stopped then. The commit exception is notified, and therefore
+    // rethrown to the reader awaiting the sequence (if any).
+    // The cancellation requested by the consumer stop (an OperationCanceledException thrown while the processing token is canceled) isn't
+    // a failure, as for the completed sequence, which is then aborted as ConsumerAborted (see StopCancellationHelper.GetSequenceAbortReason):
+    // the sequence is rolled back as when the consumer aborts it, without applying the error policies, logging the error or stopping the
+    // consumer, which is already stopping. Like that abort, it returns false if the transaction was already committed to the consumer.
+    private async Task<bool> HandleCommitFailureAsync(Exception exception)
+    {
+        if (Context.TransactionManager is ConsumerTransactionManager stoppingTransactionManager &&
+            stoppingTransactionManager.IsStopCancellation(exception))
+        {
+            AbortReason = SequenceAbortReason.ConsumerAborted;
+            AbortException = exception;
+
+            bool isRolledBack = await stoppingTransactionManager.RollbackAsync(
+                    exception,
+                    throwIfAlreadyCommitted: false,
+                    stopConsuming: false)
+                .ConfigureAwait(false);
+
+            ((ISequenceImplementation)this).NotifyProcessingCompleted();
+            return isRolledBack;
+        }
+
+        AbortReason = SequenceAbortReason.Error;
+        AbortException = exception;
+
+        if (await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception).ConfigureAwait(false))
+        {
+            ((ISequenceImplementation)this).NotifyProcessingCompleted();
+            return true;
+        }
+
+        if (Context.TransactionManager is ConsumerTransactionManager transactionManager)
+            await transactionManager.RollbackAndStopConsumerAfterFailureAsync(exception).ConfigureAwait(false);
+        else
+            await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+
+        ((ISequenceImplementation)this).NotifyProcessingFailed(exception);
+        return true;
     }
 
     private void LogAbort()

@@ -153,8 +153,9 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
     // The failure of the outer sequence the message is added to (e.g., the batch a chunked message is added to by the processing of its
     // chunk sequence), while the inner sequence is still referenced, is handled by aborting the outer sequence, unless it was aborted for a
-    // reason that doesn't handle failures (e.g., the subscriber stopped enumerating it and its commit failed), applying the error policies
-    // to the inner sequence then:
+    // reason that doesn't handle failures (e.g., because incomplete), applying the error policies to the inner sequence then. The outer
+    // sequence whose commit failed after the subscriber stopped enumerating it handles the failure, since it's then aborted because of the
+    // error (see SequenceBase):
     // - Any failure of the message that joined the outer sequence is a failure of the outer sequence, as for the messages pushed directly
     //   to it (see HandleSequenceExceptionAsync), whatever the exception (e.g., the failure pushing the message to the batch, or completing
     //   the batch whose streams were aborted).
@@ -268,7 +269,8 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     }
 
     // The sequence was aborted because of an error and its error handling stopped the consumer (its processing might have been completed
-    // already, e.g., when it's a chunk sequence added to a batch, which completes it, failing afterwards)
+    // already, e.g., when it's a chunk sequence added to a batch, which completes it, failing afterwards). The sequence whose commit failed
+    // after the subscribers stopped enumerating it is aborted because of the error as well (see SequenceBase).
     private static ConsumerTransactionManager? GetTransactionManagerIfStoppedByErrorHandling(ISequence sequence) =>
         sequence.AbortReason == SequenceAbortReason.Error &&
         sequence.Context.TransactionManager is ConsumerTransactionManager { IsConsumerStopped: true } transactionManager
@@ -354,6 +356,13 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
                     if (context.Sequence is ISequenceImplementation sequenceImpl)
                         sequenceImpl.NotifyProcessingCompleted();
+                }
+                else if (processedSequence.ParentSequence == null)
+                {
+                    // Aborted while being completed (e.g., by its max wait time, elapsed after the subscriber returned, see
+                    // SequenceBase.CompleteAsync): await the abort, which commits it or handles the failure of the commit, before checking
+                    // whether its error handling stopped the consumer
+                    await processedSequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
                 }
             }
         }

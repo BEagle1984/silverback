@@ -351,6 +351,18 @@ internal static partial class IntegrationLoggerExtensions
             exception);
     }
 
+    public static void LogRollbackAfterFailureFailed(this ISilverbackLogger logger, IRawInboundEnvelope envelope, Exception exception)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.RollbackAfterFailureFailed))
+            return;
+
+        RollbackAfterFailureFailed(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            exception);
+    }
+
     public static void LogStoringIntoOutbox(this ISilverbackLogger logger, IOutboundEnvelope envelope) =>
         StoringIntoOutbox(
             logger.InnerLogger,
@@ -871,6 +883,20 @@ internal static partial class IntegrationLoggerExtensions
         "the consumer will be reconnected | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
         EventName = "Silverback.Integration_RollbackToSkipFailed")]
     private static partial void RollbackToSkipFailed(ILogger logger, string endpointName, string brokerMessageId, Exception exception);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the rollback of the transaction fails with an
+    ///     exception, after the error handling failed (e.g., an error policy callback threw) or after the error policies didn't handle the
+    ///     failed commit of a sequence whose enumeration was aborted. The consumer is stopped anyway and the exception of the failed
+    ///     operation is rethrown and logged instead.
+    /// </summary>
+    [LoggerMessage(
+        1063,
+        LogLevel.Warning,
+        "Error occurred rolling back the transaction after the processing failed; the consumer will be stopped " +
+        "| EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
+        EventName = "Silverback.Integration_RollbackAfterFailureFailed")]
+    private static partial void RollbackAfterFailureFailed(ILogger logger, string endpointName, string brokerMessageId, Exception exception);
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is being written

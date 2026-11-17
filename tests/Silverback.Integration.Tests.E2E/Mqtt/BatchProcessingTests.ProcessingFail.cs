@@ -7,14 +7,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Integration.E2E.TestTypes;
+using Silverback.Tests.Integration.E2E.TestTypes.Logging;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
@@ -70,6 +74,163 @@ public partial class BatchProcessingTests
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
         receivedMessages.ShouldBe(2);
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(3);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Batch_ShouldRollBackAndStopConsumerWithoutAcknowledging_WhenErrorHandlingFails(bool isCompletedByTimeout)
+    {
+        TransactionEventsTracker transactionEventsTracker = new();
+
+        // The error handling fails, since the callback invoked by the skip error policy throws
+        ISkipMessageErrorPolicyCallback callback = Substitute.For<ISkipMessageErrorPolicyCallback>();
+        callback.OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(Task.FromException(new InvalidOperationException("Callback failed.")));
+
+        // Produce via a separate client, which is not disconnected when the consumer stops
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId("producer")
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS()))
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(isCompletedByTimeout ? 10 : 3, TimeSpan.FromMilliseconds(300))
+                        .OnError(policy => policy.Skip()))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonBrokerBehavior(transactionEventsTracker)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        // When the batch is completed by its max wait time, the subscriber fails while no message is being added
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne message in batch)
+            {
+                if (!isCompletedByTimeout && message.ContentEventOne == "2")
+                    throw new InvalidOperationException("Test");
+            }
+
+            throw new InvalidOperationException("Test");
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        // The batch transaction is rolled back, raising the Aborting and Aborted events, as when the error policies don't handle the error
+        await AsyncTestingUtil.WaitAsync(
+            () => consumer.Client.Status == ClientStatus.Disconnected && transactionEventsTracker.Events.Contains("Aborted"),
+            TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        transactionEventsTracker.Events.ShouldBe(["Aborting", "Aborted"]);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(3);
+        await callback.Received(1).OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>());
+    }
+
+    [Theory]
+    [InlineData("stop")]
+    [InlineData("retry")]
+    [InlineData("skip")]
+    public async Task Batch_ShouldApplyErrorPolicy_WhenCommitFailsAfterEnumerationIsAborted(string policy)
+    {
+        List<string> receivedMessages = [];
+        LogEventsCollector logEventsCollector = new();
+
+        // The first commit fails, as when a Committing handler throws
+        TransactionEventsTracker transactionEventsTracker = new(failingCommitsCount: 1);
+
+        // Produce via a separate client, which is not disconnected when the consumer stops
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId("producer")
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS()))
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(3, TimeSpan.FromSeconds(10))
+                        .OnError(errorPolicy => ConfigureErrorPolicy(errorPolicy, policy)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonBrokerBehavior(transactionEventsTracker));
+
+        // The subscriber stops enumerating each batch after its first message: the next messages are added to the next batch
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne message in batch)
+            {
+                lock (receivedMessages)
+                {
+                    receivedMessages.Add(message.ContentEventOne!);
+                }
+
+                break;
+            }
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        if (policy == "stop")
+        {
+            // The batch transaction is rolled back after the failed commit, raising the Aborting and Aborted events, and the consumer is
+            // stopped and disconnected without acknowledging the messages, as when the commit of a completed batch fails
+            await AsyncTestingUtil.WaitAsync(
+                () => consumer.Client.Status == ClientStatus.Disconnected && transactionEventsTracker.Events.Contains("Aborted"),
+                TimeSpan.FromSeconds(10));
+
+            consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+            consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+            receivedMessages.ShouldBe(["1"]);
+            transactionEventsTracker.Events.ShouldBe(["Committing", "Aborting", "Aborted"]);
+            DefaultClientSession.GetPendingMessagesCount().ShouldBe(3);
+        }
+        else
+        {
+            // The batch is retried (consuming its message again) or skipped, as when the commit of a completed batch fails
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
+            consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
+            receivedMessages.ShouldBe(policy == "retry" ? ["1", "1", "2", "3"] : ["1", "2", "3"]);
+            transactionEventsTracker.Events.Take(3).ShouldBe(["Committing", "Aborting", "Aborted"]);
+            transactionEventsTracker.Events.Count(transactionEvent => transactionEvent == "Aborted").ShouldBe(1);
+            DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+            logEventsCollector.ContainsProcessingFatalError().ShouldBeFalse();
+        }
+
+        // The commit exception is logged once, as when the commit of a completed batch fails
+        logEventsCollector.Count(IntegrationLogEvents.SequenceProcessingError.EventId).ShouldBe(1);
     }
 
     [Theory]
@@ -605,5 +766,21 @@ public partial class BatchProcessingTests
         receivedBySecond.TakeLast(3).ShouldBe(["1", "2", "3"]);
         receivedBySecond.Count.ShouldBeGreaterThan(3);
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    private static void ConfigureErrorPolicy(IErrorPolicyBuilder errorPolicy, string policy)
+    {
+        switch (policy)
+        {
+            case "retry":
+                errorPolicy.Retry(1);
+                break;
+            case "skip":
+                errorPolicy.Skip();
+                break;
+            default:
+                errorPolicy.Stop();
+                break;
+        }
     }
 }

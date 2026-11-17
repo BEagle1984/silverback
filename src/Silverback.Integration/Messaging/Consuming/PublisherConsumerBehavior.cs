@@ -287,7 +287,9 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
         try
         {
-            if (await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false))
+            // The transaction of the context isn't the one of the failed processing, since no message was being added: the consumer is
+            // just stopped if the error handling fails
+            if (await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception, isRollbackOnFailure: false).ConfigureAwait(false))
                 return;
 
             await context.Consumer.StopAsync(context.Envelope.BrokerMessageIdentifier, false).ConfigureAwait(false);

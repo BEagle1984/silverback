@@ -7,12 +7,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
@@ -175,6 +177,67 @@ public partial class StreamingTests
     }
 
     [Fact]
+    public async Task Streaming_ShouldRollBackFailedMessageAndDisconnectWithoutAcknowledging_WhenErrorHandlingFails()
+    {
+        List<TestEventOne> receivedMessages = [];
+        TransactionEventsTracker transactionEventsTracker = new();
+
+        // The error handling fails, since the callback invoked when the consumer is stopped throws (the error policies can't be used
+        // when streaming)
+        IStopConsumerErrorPolicyCallback callback = Substitute.For<IStopConsumerErrorPolicyCallback>();
+        callback.OnStoppingConsumerAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(Task.FromException(new InvalidOperationException("Callback failed.")));
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddSingletonBrokerBehavior(transactionEventsTracker)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        async ValueTask HandleUnboundedStream(IAsyncEnumerable<TestEventOne> enumerable)
+        {
+            await foreach (TestEventOne message in enumerable)
+            {
+                receivedMessages.Add(message);
+
+                if (receivedMessages.Count == 2)
+                    throw new InvalidOperationException("Test");
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        // The first message is acknowledged by its own pipeline, while the failed one is rolled back, raising the Aborting and Aborted
+        // events, as when the error policies don't handle the error
+        MqttConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>().Single();
+        await AsyncTestingUtil.WaitAsync(() =>
+            consumer.Client.Status == ClientStatus.Disconnected && transactionEventsTracker.Events.Contains("Aborted"));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        receivedMessages.Count.ShouldBe(2);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(2);
+        transactionEventsTracker.Events.Where(transactionEvent => transactionEvent.StartsWith("Abort", StringComparison.Ordinal))
+            .ShouldBe(["Aborting", "Aborted"]);
+        transactionEventsTracker.Events.Count(transactionEvent => transactionEvent == "Committed").ShouldBe(1);
+    }
+
+    [Fact]
     public async Task Streaming_ShouldApplyErrorPolicyOnceAndDisconnect_WhenConcurrentProcessingFailsWhileNoMessageIsPushed()
     {
         int subscriberCallsCount = 0;
@@ -235,6 +298,67 @@ public partial class StreamingTests
         stoppingCalls.Count.ShouldBe(1);
         stoppingCalls[0].Content.ShouldBe("1");
         stoppingCalls[0].Exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe("Test");
+    }
+
+    [Fact]
+    public async Task Streaming_ShouldDisconnectWithoutRollingBackAcknowledgedMessage_WhenErrorHandlingFailsWhileNoMessageIsPushed()
+    {
+        TaskCompletionSource secondMessageReceived = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TransactionEventsTracker transactionEventsTracker = new();
+
+        // The error handling fails, since the callback invoked when the consumer is stopped throws
+        StopCallback callback = new(() => Task.FromException(new InvalidOperationException("Callback failed.")));
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .AllowStreaming())))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream)
+            .AddSingletonBrokerBehavior(transactionEventsTracker)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        Task HandleUnboundedStream(IAsyncEnumerable<TestEventOne> enumerable) =>
+            Parallel.ForEachAsync(enumerable, new ParallelOptions { MaxDegreeOfParallelism = 2 }, ProcessMessageAsync);
+
+        async ValueTask ProcessMessageAsync(TestEventOne message, CancellationToken cancellationToken)
+        {
+            if (message.ContentEventOne != "1")
+            {
+                secondMessageReceived.TrySetResult();
+                return;
+            }
+
+            // Fail once the second message is acknowledged, while the stream waits for the next message
+            await AsyncTestingUtil.WaitAsync(() =>
+                secondMessageReceived.Task.IsCompleted && DefaultClientSession.GetPendingMessagesCount() == 0);
+            throw new InvalidOperationException("Test");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+
+        MqttConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>().Single();
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        // The error handling is applied to the message that started the stream, which was acknowledged by its own pipeline: the consumer
+        // is just stopped, without rolling back its transaction again
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+        callback.StoppingCalls.Count.ShouldBe(1);
+        transactionEventsTracker.Events.ShouldNotContain("Aborting");
+        transactionEventsTracker.Events.ShouldNotContain("Aborted");
+        transactionEventsTracker.Events.Count(transactionEvent => transactionEvent == "Committed").ShouldBe(2);
     }
 
     [Fact]

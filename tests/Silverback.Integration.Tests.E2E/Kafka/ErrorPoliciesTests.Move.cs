@@ -87,8 +87,10 @@ public partial class ErrorPoliciesTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
 
+        // The error handling stops the consumer before the exception reaches the reader, which then disconnects the client: wait for the
+        // disconnection before reconnecting, otherwise the reconnected client could be disconnected again
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Stopped);
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
 
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);

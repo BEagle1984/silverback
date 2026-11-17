@@ -351,6 +351,7 @@ Note that the message passed to `Publish` was published after the policy had bee
 When the consumed messages are part of a sequence (a batch, a chunked message, etc.), the error policy is applied to the whole sequence:
 
 - **Batch processing** (<xref:batch-processing>): if the subscriber throws, the whole batch is rolled back. `Retry` processes the whole batch again, and `Skip` skips all the messages in the batch.
+- **Commit failures**: if committing a sequence fails (e.g., a handler of the <xref:Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.Committing> event throws), the error policy is applied as when the subscriber throws, also when the subscriber stopped enumerating the sequence early (e.g., leaving the batch with a `break`): `Retry` processes the sequence again, `Skip` skips it and `Stop` rolls it back and stops the consumer.
 - **Chunking** (<xref:consuming-chunking>): all chunks belonging to the same message are retried or skipped together. With MQTT, the chunks rejected by a client with batch processing are instead handled one by one, since chunking can't be combined with batch processing.
 - **MoveTo** can't move a sequence: the policy logs a warning and is skipped, falling back to the next policy in the chain (or stopping the consumer, if there is none). Don't rely on `MoveTo` with batch processing or chunked messages; use `Skip` with a [callback](#callbacks) instead.
 
@@ -430,7 +431,7 @@ public class MyErrorPolicy : IErrorPolicy
     .OnError(new MyErrorPolicy()))
 ```
 
-`HandleErrorAsync` returns `true` if the error was handled, or `false` to rethrow the exception and stop the consumer. The implementation is responsible for completing the consumer transaction via the <xref:Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager>.
+`HandleErrorAsync` returns `true` if the error was handled, or `false` to rethrow the exception and stop the consumer. The implementation is responsible for completing the consumer transaction via the <xref:Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager>. If `HandleErrorAsync` throws before completing it, Silverback rolls the transaction back without committing the consumer and stops the consumer.
 
 Alternatively, derive from <xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase> and <xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyImplementation> to benefit from the built-in support for the apply rules and the maximum attempts.
 

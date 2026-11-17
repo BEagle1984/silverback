@@ -638,6 +638,128 @@ public class SequenceBaseTests
     }
 
     [Theory]
+    [InlineData("committing handler failed", true)]
+    [InlineData("consumer commit failed", true)]
+    [InlineData("committed handler failed", false)]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task AbortAsync_ShouldRollBackAndStopConsumer_WhenCommitFailsAfterEnumerationAbortedAndErrorIsNotHandled(
+        string scenario,
+        bool shouldRollBack)
+    {
+        using ConsumerPipelineContext transactionContext = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transactionManager = new(transactionContext, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        List<string> transactionEvents = TrackTransactionEvents(transactionManager);
+
+        switch (scenario)
+        {
+            case "committing handler failed":
+                transactionManager.Committing.AddHandler(_ => ValueTask.FromException(new InvalidOperationException("Commit failed.")));
+                break;
+            case "consumer commit failed":
+                transactionContext.Consumer.CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>())
+                    .Returns(_ => ValueTask.FromException(new InvalidOperationException("Commit failed.")));
+                break;
+            default:
+                transactionManager.Committed.AddHandler(_ => ValueTask.FromException(new InvalidOperationException("Commit failed.")));
+                break;
+        }
+
+        using TestSequence sequence = new(ConsumerPipelineContextHelper.CreateSubstitute(transactionManager: transactionManager));
+
+        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
+
+        // The failed commit is handled like the failure of the sequence, applying the error policies (the default stop policy doesn't
+        // handle it). The commit exception is notified, and therefore rethrown to the reader awaiting the sequence, while the transaction
+        // is rolled back without committing the consumer and the consumer is stopped. The transaction committed to the consumer can't be
+        // rolled back anymore: the consumer is just stopped.
+        Exception? exception = await Record.ExceptionAsync(() => sequence.ProcessingCompletedTask.WaitAsync(Timeout));
+        exception.ShouldNotBeNull();
+        (exception.InnerException ?? exception).Message.ShouldBe("Commit failed.");
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
+        sequence.AbortException.ShouldBe(exception);
+        transactionEvents.ShouldBe(shouldRollBack ? ["Aborting", "Aborted"] : []);
+        transactionManager.IsConsumerRolledBack.ShouldBe(shouldRollBack);
+        await transactionContext.Consumer.Received(1).StopAsync(transactionContext.Envelope.BrokerMessageIdentifier, false);
+        await transactionContext.Consumer.Received(shouldRollBack ? 1 : 0)
+            .RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Theory]
+    [InlineData("retry")]
+    [InlineData("skip")]
+    public async Task AbortAsync_ShouldApplyErrorPolicies_WhenCommitFailsAfterEnumerationAborted(string policy)
+    {
+        using ConsumerPipelineContext transactionContext = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transactionManager = new(transactionContext, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        List<string> transactionEvents = TrackTransactionEvents(transactionManager);
+        transactionManager.Committing.AddHandler(_ => ValueTask.FromException(new InvalidOperationException("Commit failed.")));
+        HookLogger logger = new();
+        bool isErrorLogged = false;
+        logger.OnLog("Error occurred processing {SequenceType} {SequenceId} | Length: {SequenceLength}", () => isErrorLogged = true);
+        IErrorPolicy errorPolicy = policy == "retry" ? new RetryErrorPolicy() : new SkipMessageErrorPolicy();
+        using TestSequence sequence = new(CreateErrorPolicyContext(logger, errorPolicy, transactionManager));
+
+        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
+
+        // The failed commit is handled like the failure of the sequence, applying the error policies and logging the error
+        await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
+        Exception abortException = sequence.AbortException.ShouldNotBeNull();
+        (abortException.InnerException ?? abortException).Message.ShouldBe("Commit failed.");
+        isErrorLogged.ShouldBeTrue();
+        transactionEvents.ShouldBe(["Aborting", "Aborted"]);
+        transactionManager.IsConsumerRolledBack.ShouldBe(policy == "retry");
+        await transactionContext.Consumer.Received(policy == "retry" ? 1 : 0)
+            .RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await transactionContext.Consumer.Received(policy == "skip" ? 1 : 0)
+            .CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await transactionContext.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task AbortAsync_ShouldRollBackWithoutApplyingErrorPolicies_WhenCommitIsCanceledByConsumerStopAfterEnumerationAborted(
+        bool isConsumerStopping)
+    {
+        using ConsumerPipelineContext transactionContext = ConsumerPipelineContextHelper.CreateSubstitute();
+
+        // The token passed to the consumer pipeline is canceled when the consumer is stopping
+        ConsumerTransactionManager transactionManager = new(
+            transactionContext,
+            Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>(),
+            new CancellationToken(isConsumerStopping));
+        List<string> transactionEvents = TrackTransactionEvents(transactionManager);
+
+        // The consumer commit throws an OperationCanceledException, which reaches the commit caller unwrapped (unlike the exceptions
+        // thrown by the Committing and Committed handlers, which are wrapped in an AggregateException)
+        transactionContext.Consumer.CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>())
+            .Returns(_ => ValueTask.FromException(new OperationCanceledException("Commit canceled.")));
+
+        HookLogger logger = new();
+        bool isErrorLogged = false;
+        logger.OnLog("Error occurred processing {SequenceType} {SequenceId} | Length: {SequenceLength}", () => isErrorLogged = true);
+        using TestSequence sequence = new(CreateErrorPolicyContext(logger, new RetryErrorPolicy(), transactionManager));
+
+        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
+
+        // The cancellation requested by the consumer stop isn't a failure, as when the commit of a completed sequence is canceled (see
+        // StopCancellationHelper.GetSequenceAbortReason): the sequence is rolled back as when the consumer aborts it, without applying
+        // the error policies, logging the error or stopping the consumer. Any other cancellation is handled by the error policies, which
+        // retry the sequence.
+        await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
+        sequence.AbortReason.ShouldBe(isConsumerStopping ? SequenceAbortReason.ConsumerAborted : SequenceAbortReason.Error);
+        sequence.AbortException.ShouldBeOfType<OperationCanceledException>();
+        isErrorLogged.ShouldBe(!isConsumerStopping);
+        sequence.Context.Consumer.Received(isConsumerStopping ? 0 : 1).IncrementFailedAttempts(Arg.Any<IRawInboundEnvelope>());
+        transactionEvents.ShouldBe(["Aborting", "Aborted"]);
+        transactionManager.IsConsumerRolledBack.ShouldBeTrue();
+        await transactionContext.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await transactionContext.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+    }
+
+    [Theory]
     [InlineData("skip")]
     [InlineData("enumeration-aborted")]
     public async Task AddAsync_ShouldFailWithoutAborting_WhenRefusedByTimeoutAndSequenceIsCommittedOnAbort(string abort)
@@ -1407,10 +1529,27 @@ public class SequenceBaseTests
         return childAddTask;
     }
 
+    private static List<string> TrackTransactionEvents(ConsumerTransactionManager transactionManager)
+    {
+        List<string> transactionEvents = [];
+        transactionManager.Aborting.AddHandler(_ => TrackTransactionEvent("Aborting"));
+        transactionManager.Aborted.AddHandler(_ => TrackTransactionEvent("Aborted"));
+        return transactionEvents;
+
+        ValueTask TrackTransactionEvent(string transactionEvent)
+        {
+            transactionEvents.Add(transactionEvent);
+            return ValueTask.CompletedTask;
+        }
+    }
+
     private static TimeoutTestSequence CreateTimeoutSequence(HookLogger logger, IErrorPolicy errorPolicy) =>
         new(CreateErrorPolicyContext(logger, errorPolicy));
 
-    private static ConsumerPipelineContext CreateErrorPolicyContext(HookLogger logger, IErrorPolicy errorPolicy)
+    private static ConsumerPipelineContext CreateErrorPolicyContext(
+        HookLogger logger,
+        IErrorPolicy errorPolicy,
+        ConsumerTransactionManager? transactionManager = null)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
         {
@@ -1430,7 +1569,7 @@ public class SequenceBaseTests
             new TestOffset());
 
         // A real transaction manager, tracking whether the error policy rolled back the consumer
-        ConsumerTransactionManager transactionManager = new(
+        transactionManager ??= new ConsumerTransactionManager(
             ConsumerPipelineContextHelper.CreateSubstitute(),
             Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
 

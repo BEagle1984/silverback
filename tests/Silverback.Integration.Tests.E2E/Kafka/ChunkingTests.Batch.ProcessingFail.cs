@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
@@ -486,5 +487,136 @@ public partial class ChunkingTests
         consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
         consumer.StatusInfo.History.ShouldNotContain(change => change.Status == ConsumerStatus.Stopped);
         logEventsCollector.ContainsProcessingFatalError().ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData("stop")]
+    [InlineData("retry")]
+    [InlineData("skip")]
+    public async Task Chunking_ShouldApplyErrorPolicy_WhenCommitFailsAfterEnumerationStopsWhileBinaryMessageConsumedInBatch(string policy)
+    {
+        TestingCollection<List<string?>> batches = [];
+        LogEventsCollector logEventsCollector = new();
+        int batchesCount = 0;
+
+        // The first commit fails, as when a Committing handler throws (e.g., the client-side offset store fails)
+        TransactionEventsTracker transactionEventsTracker = new(failingCommitsCount: 1);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<BinaryMessage>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(3)
+                        .OnError(errorPolicy =>
+                        {
+                            switch (policy)
+                            {
+                                case "retry":
+                                    errorPolicy.Retry(1);
+                                    break;
+                                case "skip":
+                                    errorPolicy.Skip();
+                                    break;
+                                default:
+                                    errorPolicy.Stop();
+                                    break;
+                            }
+                        }))))
+            .AddDelegateSubscriber<IAsyncEnumerable<BinaryMessage>>(HandleBatchAsync)
+            .AddSingletonBrokerBehavior(transactionEventsTracker));
+
+        async Task HandleBatchAsync(IAsyncEnumerable<BinaryMessage> batch)
+        {
+            bool isFirstBatch = Interlocked.Increment(ref batchesCount) == 1;
+            List<string?> list = [];
+            batches.Add(list);
+
+            await foreach (BinaryMessage message in batch)
+            {
+                // Stop enumerating the first batch while the second binary message is partly read: its first chunk is still being pushed
+                // and its next chunks are pending, so its chunk sequence is aborted with the batch
+                if (isFirstBatch && list.Count == 1)
+                {
+                    byte[] buffer = new byte[5];
+                    await message.Content!.ReadExactlyAsync(buffer);
+                    break;
+                }
+
+                byte[]? readAll = await message.Content.ReadAllAsync();
+                list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] chunks1 = [.. "Long message 1"u8.ToArray().Chunk(5)];
+        byte[][] chunks2 = [.. "Long message 2"u8.ToArray().Chunk(5)];
+
+        for (int i = 0; i < chunks1.Length; i++)
+        {
+            await producer.RawProduceAsync(chunks1[i], HeadersHelper.GetChunkHeaders("1", i, chunks1.Length));
+        }
+
+        for (int i = 0; i < chunks2.Length; i++)
+        {
+            await producer.RawProduceAsync(chunks2[i], HeadersHelper.GetChunkHeaders("2", i, chunks2.Length));
+        }
+
+        for (int i = 3; i <= 5; i++)
+        {
+            await producer.RawProduceAsync(Encoding.UTF8.GetBytes($"Message {i}"), HeadersHelper.GetChunkHeaders($"{i}", 0, 1));
+        }
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+
+        switch (policy)
+        {
+            case "retry":
+                // The batch is consumed again, as when the commit of a completed batch fails
+                await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 7);
+
+                batches.Count.ShouldBeGreaterThanOrEqualTo(2);
+                batches[0].ShouldBe(["Long message 1"]);
+                batches[1].ShouldBe(["Long message 1", "Long message 2", "Message 3"]);
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(7);
+                consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
+                consumer.StatusInfo.History.ShouldNotContain(change => change.Status == ConsumerStatus.Stopped);
+                logEventsCollector.ContainsProcessingFatalError().ShouldBeFalse();
+                break;
+            case "skip":
+                // The batch is skipped with the remaining chunks of the binary message, as when the commit of a completed batch fails
+                await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 9);
+
+                batches.Count.ShouldBe(2);
+                batches[0].ShouldBe(["Long message 1"]);
+                batches[1].ShouldBe(["Message 3", "Message 4", "Message 5"]);
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(9);
+                consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
+                consumer.StatusInfo.History.ShouldNotContain(change => change.Status == ConsumerStatus.Stopped);
+                logEventsCollector.ContainsProcessingFatalError().ShouldBeFalse();
+                break;
+            default:
+                // The batch is rolled back and the consumer is stopped and disconnected, as when the commit of a completed batch fails
+                await AsyncTestingUtil.WaitAsync(
+                    () => consumer.Client.Status == ClientStatus.Disconnected && transactionEventsTracker.Events.Contains("Aborted"),
+                    TimeSpan.FromSeconds(10));
+
+                batchesCount.ShouldBe(1);
+                consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+                consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+                break;
+        }
+
+        // The commit exception is logged once (the chunk sequence aborted with the batch isn't logged as failed)
+        transactionEventsTracker.Events.Take(3).ShouldBe(["Committing", "Aborting", "Aborted"]);
+        logEventsCollector.Count(IntegrationLogEvents.SequenceProcessingError.EventId).ShouldBe(1);
     }
 }

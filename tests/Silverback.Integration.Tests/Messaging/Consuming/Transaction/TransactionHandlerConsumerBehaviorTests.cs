@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
@@ -103,6 +104,7 @@ public class TransactionHandlerConsumerBehaviorTests
     [InlineData(false, false, false, true, false)]
     [InlineData(true, true, false, false, true)]
     [InlineData(false, false, true, false, true)]
+    [InlineData(false, true, false, true, false)]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task HandleAsync_ShouldCommitOrAbort_WhenProcessingCompleted(
         bool isPending,
@@ -338,6 +340,150 @@ public class TransactionHandlerConsumerBehaviorTests
         await Should.ThrowAsync<OperationCanceledException>(handling.WaitAsync(Timeout));
         context.Consumer.Received(1).IncrementFailedAttempts(context.Envelope);
         context.Envelope.Headers.Contains(DefaultMessageHeaders.FailedAttempts).ShouldBeTrue();
+        await context.Consumer.Received(1).StopAsync(offset, false);
+    }
+
+    [Theory]
+    [InlineData("error policy callback failed")]
+    [InlineData("stop callback failed")]
+    [InlineData("publishing failed")]
+    public async Task HandleAsync_ShouldRollBackAndStopConsumer_WhenErrorHandlingFails(string scenario)
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(
+            offset,
+            errorPolicy: scenario switch
+            {
+                "error policy callback failed" => new SkipMessageErrorPolicy(),
+                "publishing failed" => new StopConsumerErrorPolicy { MessageToPublishFactory = (_, _) => throw new InvalidOperationException("Callback failed.") },
+                _ => null
+            },
+            callback: scenario switch
+            {
+                "error policy callback failed" => CreateFailingSkipCallback(),
+                "stop callback failed" => CreateFailingStopCallback(),
+                _ => null
+            });
+        List<string> transactionEvents = [];
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        Task Act() => behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                TrackTransactionEvents(pipelineContext, transactionEvents);
+                throw new InvalidOperationException("Processing failed.");
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The transaction is rolled back without committing the consumer, as when the error policies don't handle the error, and the
+        // exception thrown by the error handling is rethrown
+        Exception? exception = await Record.ExceptionAsync(Act);
+        exception.ShouldNotBeNull();
+        (exception.InnerException ?? exception).Message.ShouldBe("Callback failed.");
+        transactionEvents.ShouldBe(["Aborting", "Aborted"]);
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).RollbackAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single().Equals(offset)));
+        await context.Consumer.Received(1).StopAsync(offset, false);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldStopConsumerWithoutRollingBackAgain_WhenErrorHandlingFailsAfterErrorPolicyRolledBack()
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(
+            offset,
+            errorPolicy: new RetryErrorPolicy { MessageToPublishFactory = (_, _) => throw new InvalidOperationException("Factory failed.") });
+        List<string> transactionEvents = [];
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        Task Act() => behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                TrackTransactionEvents(pipelineContext, transactionEvents);
+                throw new InvalidOperationException("Processing failed.");
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The retry error policy rolled back the transaction before the error handling failed
+        InvalidOperationException exception = await Should.ThrowAsync<InvalidOperationException>(Act);
+        exception.Message.ShouldBe("Factory failed.");
+        transactionEvents.ShouldBe(["Aborting", "Aborted"]);
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).StopAsync(offset, false);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldRethrowErrorHandlingExceptionStopConsumerAndLog_WhenRollbackAfterErrorHandlingFailureFails()
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(offset, callback: CreateFailingStopCallback(), useLoggerSubstitute: true);
+        LoggerSubstitute<ConsumerTransactionManager> logger =
+            (LoggerSubstitute<ConsumerTransactionManager>)context.ServiceProvider.GetRequiredService<ILogger<ConsumerTransactionManager>>();
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        Task Act() => behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.TransactionManager.Aborting.AddHandler(_ => throw new InvalidOperationException("Rollback failed."));
+                throw new InvalidOperationException("Processing failed.");
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        ErrorPolicyCallbackInvocationException exception = await Should.ThrowAsync<ErrorPolicyCallbackInvocationException>(Act);
+        exception.InnerException.ShouldNotBeNull().Message.ShouldBe("Callback failed.");
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).StopAsync(offset, false);
+
+        // The rollback failure isn't hidden: it's logged, while the exception thrown by the error handling is rethrown
+        logger.Received(LogLevel.Warning, typeof(InvalidOperationException), eventId: 1063, exceptionMessage: "Rollback failed.");
+    }
+
+    [Theory]
+    [InlineData("error policy callback failed")]
+    [InlineData("stop callback failed")]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task HandleAsync_ShouldRollBackSequenceAndStopConsumer_WhenSequenceErrorHandlingFails(string scenario)
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(
+            offset,
+            errorPolicy: scenario == "error policy callback failed" ? new SkipMessageErrorPolicy() : null,
+            callback: scenario == "error policy callback failed" ? CreateFailingSkipCallback() : CreateFailingStopCallback());
+        using CancellationTokenSource cancellationTokenSource = new();
+        TestSequence sequence = new(context, 10);
+        TaskCompletionSource processingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        List<string> transactionEvents = [];
+        StopConsumerOnRequest(context, cancellationTokenSource);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                TrackTransactionEvents(pipelineContext, transactionEvents);
+                pipelineContext.SetSequence(sequence, true);
+                pipelineContext.ProcessingTask = processingTaskCompletionSource.Task;
+                return ValueTask.CompletedTask;
+            },
+            cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        // The subscriber fails while no message is being added (e.g., after the batch was completed by its max wait time) and the error
+        // handling applied by the sequence abort fails
+        processingTaskCompletionSource.SetException(new InvalidOperationException("Processing failed."));
+
+        await sequence.DisposedTask.WaitAsync(Timeout);
+
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
+        ErrorPolicyCallbackInvocationException processingException =
+            await Should.ThrowAsync<ErrorPolicyCallbackInvocationException>(sequence.ProcessingCompletedTask);
+        processingException.InnerException.ShouldNotBeNull().Message.ShouldBe("Callback failed.");
+        transactionEvents.ShouldBe(["Aborting", "Aborted"]);
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
         await context.Consumer.Received(1).StopAsync(offset, false);
     }
 
@@ -869,6 +1015,7 @@ public class TransactionHandlerConsumerBehaviorTests
     [InlineData("error handling failed")]
     [InlineData("error policy failed")]
     [InlineData("processing already completed")]
+    [InlineData("commit failed after enumeration aborted")]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task HandleAsync_ShouldDisconnectClient_WhenSequenceErrorHandlingStopsConsumer(string scenario)
     {
@@ -899,6 +1046,12 @@ public class TransactionHandlerConsumerBehaviorTests
             context,
             (pipelineContext, _) =>
             {
+                if (scenario == "commit failed after enumeration aborted")
+                {
+                    pipelineContext.TransactionManager.Committing.AddHandler(_ =>
+                        ValueTask.FromException(new InvalidOperationException("Commit failed.")));
+                }
+
                 pipelineContext.SetSequence(sequence, true);
                 pipelineContext.ProcessingTask = processingTaskCompletionSource.Task;
                 return ValueTask.CompletedTask;
@@ -910,10 +1063,15 @@ public class TransactionHandlerConsumerBehaviorTests
         // policy applied by the sequence abort stops the consumer, canceling the token, but no reader rethrows the exception. When the
         // error handling fails (the stop callback or the callback of the skip error policy throws), the consumer is stopped before the
         // exception is rethrown. The processing of the sequence might be completed already (e.g., a chunk sequence completed by the
-        // batch it joined, whose own abort fails, failing the message being pushed to it).
+        // batch it joined, whose own abort fails, failing the message being pushed to it). The failed commit of the sequence whose
+        // subscriber stopped enumerating it is handled like an error as well.
         if (scenario == "aborted by error")
         {
             await sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test"));
+            processingTaskCompletionSource.SetResult();
+        }
+        else if (scenario == "commit failed after enumeration aborted")
+        {
             processingTaskCompletionSource.SetResult();
         }
         else
@@ -927,6 +1085,57 @@ public class TransactionHandlerConsumerBehaviorTests
         await disconnectedTaskCompletionSource.Task.WaitAsync(Timeout);
 
         sequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
+        await context.Consumer.Received(1).StopAsync(offset, false);
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The abort completes before the client is disconnected, which the test waits for.")]
+    public async Task HandleAsync_ShouldDisconnectClient_WhenCommitFailureOfSequenceAbortedWhileCompletingStopsConsumer()
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(offset);
+        using CancellationTokenSource cancellationTokenSource = new();
+        SequenceAbortReason abortReason = SequenceAbortReason.EnumerationAborted;
+        ISequence sequence = Substitute.For<ISequence>();
+        sequence.Context.Returns(context);
+        sequence.ParentSequence.Returns((ISequence?)null);
+        sequence.IsCompleting.Returns(true);
+        sequence.IsAborted.Returns(true);
+        sequence.AbortReason.Returns(_ => abortReason);
+        TaskCompletionSource disconnectedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        context.Consumer.Client.DisconnectAsync().Returns(_ =>
+        {
+            disconnectedTaskCompletionSource.TrySetResult();
+            return ValueTask.CompletedTask;
+        });
+        StopConsumerOnRequest(context, cancellationTokenSource);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // The max wait time aborted the sequence while it was being completed, after the subscriber returned (see
+        // SequenceBase.CompleteAsync): the abort, still in progress when the awaiter checks the sequence, commits it and the error handling
+        // of the failed commit stops the consumer, switching the abort reason to Error
+        sequence.AbortAsync(SequenceAbortReason.EnumerationAborted, Arg.Any<Exception?>()).Returns(async _ =>
+        {
+            await Task.Delay(50);
+            abortReason = SequenceAbortReason.Error;
+            await ((ConsumerTransactionManager)context.TransactionManager).RollbackAndStopConsumerAfterFailureAsync(
+                new InvalidOperationException("Commit failed."));
+        });
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                pipelineContext.ProcessingTask = Task.CompletedTask;
+                return ValueTask.CompletedTask;
+            },
+            cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        await disconnectedTaskCompletionSource.Task.WaitAsync(Timeout);
+
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
         await context.Consumer.Received(1).StopAsync(offset, false);
     }
 
@@ -1089,13 +1298,18 @@ public class TransactionHandlerConsumerBehaviorTests
         IBrokerMessageIdentifier identifier,
         Func<IAsyncEnumerable<IRawInboundEnvelope>, Task>? batchSubscriber = null,
         IErrorPolicy? errorPolicy = null,
-        IErrorPolicyCallback? callback = null)
+        IErrorPolicyCallback? callback = null,
+        bool useLoggerSubstitute = false)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
         {
+            if (useLoggerSubstitute)
+                services.AddLoggerSubstitute(LogLevel.Trace);
+            else
+                services.AddFakeLogger();
+
             SilverbackBuilder silverbackBuilder = services
                 .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-                .AddFakeLogger()
                 .AddSilverback()
                 .WithConnectionToMessageBroker();
 
@@ -1130,6 +1344,24 @@ public class TransactionHandlerConsumerBehaviorTests
         callback.OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
             .Returns(Task.FromException(new InvalidOperationException("Callback failed.")));
         return callback;
+    }
+
+    private static void TrackTransactionEvents(ConsumerPipelineContext context, List<string> transactionEvents)
+    {
+        context.TransactionManager.Committing.AddHandler(_ => TrackTransactionEvent("Committing"));
+        context.TransactionManager.Committed.AddHandler(_ => TrackTransactionEvent("Committed"));
+        context.TransactionManager.Aborting.AddHandler(_ => TrackTransactionEvent("Aborting"));
+        context.TransactionManager.Aborted.AddHandler(_ => TrackTransactionEvent("Aborted"));
+
+        ValueTask TrackTransactionEvent(string transactionEvent)
+        {
+            lock (transactionEvents)
+            {
+                transactionEvents.Add(transactionEvent);
+            }
+
+            return ValueTask.CompletedTask;
+        }
     }
 
     // The stop error policy stops the consumer, which cancels the token passed to the pipeline

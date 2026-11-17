@@ -2,16 +2,20 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
@@ -173,6 +177,67 @@ public class ErrorPoliciesHelperTests
         await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ApplyErrorPoliciesAsync_ShouldRollBackUnlessDisabledAndStopConsumer_WhenErrorHandlingThrows(bool isRollbackOnFailure)
+    {
+        ISkipMessageErrorPolicyCallback skipCallback = Substitute.For<ISkipMessageErrorPolicyCallback>();
+        skipCallback.OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>())
+            .Returns(Task.FromException(new InvalidOperationException("Skip callback failed.")));
+        ServiceProvider serviceProvider = BuildServiceProvider(builder => builder.AddSingletonErrorPolicyCallback(skipCallback));
+        ConsumerPipelineContext context = CreateContext(
+            new SkipMessageErrorPolicy(),
+            serviceProvider: serviceProvider,
+            isTransactionManagerInitialized: true);
+        ConsumerTransactionManager transactionManager = (ConsumerTransactionManager)context.TransactionManager;
+        int abortedCount = 0;
+        transactionManager.Aborted.AddHandler(_ =>
+        {
+            abortedCount++;
+            return ValueTask.CompletedTask;
+        });
+
+        Func<Task> act = () => ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, _exception, isRollbackOnFailure);
+
+        // The rollback is disabled when the context isn't the one of the failed message (e.g., the unbounded sequence aborted while no
+        // message was being added)
+        ErrorPolicyCallbackInvocationException exception = await act.ShouldThrowAsync<ErrorPolicyCallbackInvocationException>();
+        exception.InnerException?.Message.ShouldBe("Skip callback failed.");
+        abortedCount.ShouldBe(isRollbackOnFailure ? 1 : 0);
+        transactionManager.IsConsumerRolledBack.ShouldBe(isRollbackOnFailure);
+        await context.Consumer.Received(isRollbackOnFailure ? 1 : 0).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+    }
+
+    [Fact]
+    public async Task ApplyErrorPoliciesAsync_ShouldRollBackStopConsumerAndRethrow_WhenIncrementingFailedAttemptsThrows()
+    {
+        ConsumerPipelineContext context = CreateContext(new SkipMessageErrorPolicy(), isTransactionManagerInitialized: true);
+        context.Consumer.IncrementFailedAttempts(context.Envelope).Returns(_ => throw new InvalidOperationException("Increment failed."));
+        ConsumerTransactionManager transactionManager = (ConsumerTransactionManager)context.TransactionManager;
+        int abortedCount = 0;
+        transactionManager.Aborted.AddHandler(_ =>
+        {
+            abortedCount++;
+            return ValueTask.CompletedTask;
+        });
+
+        Func<Task> act = () => ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, _exception);
+
+        // The bookkeeping failure is an error handling failure: the stop callbacks are invoked, the transaction is rolled back without
+        // committing the consumer and the consumer is stopped
+        InvalidOperationException exception = await act.ShouldThrowAsync<InvalidOperationException>();
+        exception.Message.ShouldBe("Increment failed.");
+        _callback.Invocations.ShouldBe([nameof(IStopConsumerErrorPolicyCallback.OnStoppingConsumerAsync)]);
+        abortedCount.ShouldBe(1);
+        transactionManager.IsConsumerRolledBack.ShouldBeTrue();
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+    }
+
     private static ServiceProvider BuildServiceProvider(Action<SilverbackBuilder> configureBuilder)
     {
         ServiceCollection services = [];
@@ -190,7 +255,8 @@ public class ErrorPoliciesHelperTests
     private ConsumerPipelineContext CreateContext(
         IErrorPolicy errorPolicy,
         int failedAttempts = 1,
-        IServiceProvider? serviceProvider = null)
+        IServiceProvider? serviceProvider = null,
+        bool isTransactionManagerInitialized = false)
     {
         IConsumer consumer = Substitute.For<IConsumer>();
         InboundEnvelope envelope = new(
@@ -204,6 +270,11 @@ public class ErrorPoliciesHelperTests
             new TestOffset());
         consumer.IncrementFailedAttempts(envelope).Returns(failedAttempts);
 
-        return ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider ?? _serviceProvider, consumer: consumer);
+        if (!isTransactionManagerInitialized)
+            return ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider ?? _serviceProvider, consumer: consumer);
+
+        ConsumerPipelineContext context = new(envelope, consumer, Substitute.For<ISequenceStore>(), [], serviceProvider ?? _serviceProvider);
+        context.TransactionManager = new ConsumerTransactionManager(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        return context;
     }
 }
