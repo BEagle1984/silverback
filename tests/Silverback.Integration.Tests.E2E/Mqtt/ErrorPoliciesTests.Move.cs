@@ -336,4 +336,66 @@ public partial class ErrorPoliciesTests
         messages[0].Payload.ToArray().ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
+
+    [Fact]
+    public async Task MovePolicy_ShouldMoveAndAcknowledgeMessage_WhenOtherEndpointBatchIsPending()
+    {
+        TestingCollection<List<string?>> receivedBatches = [];
+
+        // The endpoints of a client share the batch: only a message failing before being added to it (e.g. not deserializable) is
+        // moved while the batch is pending
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("other-topic"))
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom("e2e/batch")
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(3, TimeSpan.FromMinutes(5)))
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom("e2e/move")
+                        .WithAtLeastOnceQoS()
+                        .EnableBatchProcessing(3, TimeSpan.FromMinutes(5))
+                        .OnError(policy => policy.MoveTo("other-topic")))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync));
+
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+            receivedBatches.Add(list);
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+            }
+        }
+
+        IProducer batchProducer = Helper.GetProducerForEndpoint("e2e/batch");
+        IProducer moveProducer = Helper.GetProducerForEndpoint("e2e/move");
+
+        await batchProducer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await AsyncTestingUtil.WaitAsync(() => receivedBatches.Count == 1);
+
+        await moveProducer.RawProduceAsync("not json"u8.ToArray());
+
+        // The moved message is acknowledged right away, while the batch is pending
+        await AsyncTestingUtil.WaitAsync(() =>
+            Helper.GetMessages("other-topic").Count == 1 && DefaultClientSession.GetPendingMessagesCount("e2e/move") == 0);
+        Helper.GetMessages("other-topic").ShouldHaveSingleItem().Payload.ToArray().ShouldBe("not json"u8.ToArray());
+        DefaultClientSession.GetPendingMessagesCount("e2e/move").ShouldBe(0);
+        DefaultClientSession.GetPendingMessagesCount("e2e/batch").ShouldBe(1);
+
+        await moveProducer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await batchProducer.ProduceAsync(new TestEventOne { ContentEventOne = "3" });
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedBatches.ShouldHaveSingleItem().ShouldBe(["1", "2", "3"]);
+        Helper.GetMessages("other-topic").Count.ShouldBe(1);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
 }
