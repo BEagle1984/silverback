@@ -96,6 +96,8 @@ public class SequenceBaseTests
     [InlineData(SequenceAbortReason.Error)]
     [InlineData(SequenceAbortReason.EnumerationAborted)]
     [InlineData(SequenceAbortReason.IncompleteSequence)]
+    [InlineData(SequenceAbortReason.ConsumerAborted)]
+    [InlineData(SequenceAbortReason.Disposing)]
     public async Task AbortAsync_ShouldAbortPendingChildSequenceWithoutCompletingItsTransaction(SequenceAbortReason reason)
     {
         using AbortTestSequence parentSequence = new(
@@ -124,9 +126,42 @@ public class SequenceBaseTests
     }
 
     [Theory]
-    [InlineData(SequenceAbortReason.ConsumerAborted)]
-    [InlineData(SequenceAbortReason.Disposing)]
-    public async Task AbortAsync_ShouldNotAbortPendingChildSequence_WhenConsumerAbortedOrDisposing(SequenceAbortReason reason)
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Dispose_ShouldAbortPendingChildSequenceWithoutCompletingItsTransaction(bool isParentComplete)
+    {
+        AbortTestSequence parentSequence = new(
+            CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()),
+            trackIdentifiers: true);
+        ((ISequenceImplementation)parentSequence).SetIsNew(false);
+        IConsumerTransactionManager childTransactionManager = Substitute.For<IConsumerTransactionManager>();
+        ISequenceStore childSequenceStore = Substitute.For<ISequenceStore>();
+        using TestSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(transactionManager: childTransactionManager, sequenceStore: childSequenceStore));
+        Task<AddToSequenceResult> childAddTask = await AddPendingChildSequenceAsync(parentSequence, childSequence);
+
+        // E.g. the batch completed and committed while the binary message added to it wasn't read to the end
+        if (isParentComplete)
+        {
+            await parentSequence.CompleteFromTestAsync().WaitAsync(Timeout);
+            parentSequence.IsComplete.ShouldBeTrue();
+        }
+
+        await Task.Run(parentSequence.Dispose).WaitAsync(Timeout);
+
+        // The child sequence shares the outcome of the parent and the message being added is aborted with it, instead of being refused
+        // and added to a new sequence created on the context released by the dispose
+        AddToSequenceResult childResult = await childAddTask.WaitAsync(Timeout);
+        childResult.IsAborted.ShouldBeTrue();
+        childSequence.IsAborted.ShouldBeTrue();
+        childSequence.AbortReason.ShouldBe(isParentComplete ? SequenceAbortReason.EnumerationAborted : SequenceAbortReason.Disposing);
+        await childSequenceStore.Received(1).RemoveAsync(childSequence.SequenceId);
+        childTransactionManager.ReceivedCalls().ShouldBeEmpty();
+        await childSequence.ProcessingCompletedTask.WaitAsync(Timeout);
+    }
+
+    [Fact]
+    public async Task AbortPendingChildSequencesAsync_ShouldAbortPendingChildSequence_WhenComplete()
     {
         using AbortTestSequence parentSequence = new(
             CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()),
@@ -135,23 +170,137 @@ public class SequenceBaseTests
         IConsumerTransactionManager childTransactionManager = Substitute.For<IConsumerTransactionManager>();
         using TestSequence childSequence = new(ConsumerPipelineContextHelper.CreateSubstitute(transactionManager: childTransactionManager));
         Task<AddToSequenceResult> childAddTask = await AddPendingChildSequenceAsync(parentSequence, childSequence);
+        await parentSequence.CompleteFromTestAsync().WaitAsync(Timeout);
 
-        await parentSequence.AbortAsync(reason).WaitAsync(Timeout);
-        await Task.WhenAny(childAddTask, Task.Delay(100));
-
-        // The stop aborts every pending sequence instead, child sequences included (see SequenceEnumerableExtensions.AbortAllAsync)
-        childAddTask.IsCompleted.ShouldBeFalse();
-        childSequence.IsPending.ShouldBeTrue();
-        childSequence.AbortReason.ShouldBe(SequenceAbortReason.None);
-        childTransactionManager.ReceivedCalls().ShouldBeEmpty();
-
-        // Aborted on its own, the child sequence rolls back its own transaction
-        await childSequence.AbortAsync(SequenceAbortReason.ConsumerAborted).WaitAsync(Timeout);
+        // The subscribers of the completed sequence returned without reading the child sequence to the end
+        await ((ISequenceImplementation)parentSequence).AbortPendingChildSequencesAsync().WaitAsync(Timeout);
 
         AddToSequenceResult childResult = await childAddTask.WaitAsync(Timeout);
         childResult.IsAborted.ShouldBeTrue();
+        childSequence.AbortReason.ShouldBe(SequenceAbortReason.EnumerationAborted);
+        childTransactionManager.ReceivedCalls().ShouldBeEmpty();
+        parentSequence.IsComplete.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task AbortPendingChildSequencesAsync_ShouldNotAbortChildSequence_WhenCompleting()
+    {
+        using AbortTestSequence parentSequence = new(
+            CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()),
+            trackIdentifiers: true);
+        ((ISequenceImplementation)parentSequence).SetIsNew(false);
+        IConsumerTransactionManager childTransactionManager = Substitute.For<IConsumerTransactionManager>();
+        ISequenceStore childSequenceStore = Substitute.For<ISequenceStore>();
+        using TestSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(transactionManager: childTransactionManager, sequenceStore: childSequenceStore));
+        AddToSequenceResult parentResult = await parentSequence.AddAsync(CreateEnvelope(), childSequence, false).WaitAsync(Timeout);
+        parentResult.IsSuccess.ShouldBeTrue();
+        await parentSequence.CompleteFromTestAsync().WaitAsync(Timeout);
+        await using IAsyncEnumerator<IRawInboundEnvelope> childEnumerator =
+            childSequence.CreateStream<IRawInboundEnvelope>().GetAsyncEnumerator();
+        Task<AddToSequenceResult> childAddTask = childSequence.AddAsync(CreateEnvelope(), null, true);
+        (await childEnumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeTrue();
+
+        // The child sequence is completing (e.g. its last message was read to the end), waiting for the subscriber to acknowledge the push,
+        // while the subscribers of the completed parent sequence return
+        Task childCompleteTask = childSequence.CompleteFromTestAsync();
+        await AsyncTestingUtil.WaitAsync(() => childSequence.IsCompleting);
+        childSequence.IsCompleting.ShouldBeTrue();
+        Task abortTask = ((ISequenceImplementation)parentSequence).AbortPendingChildSequencesAsync();
+        (await childEnumerator.MoveNextAsync().AsTask().WaitAsync(Timeout)).ShouldBeFalse();
+        await Task.WhenAll(abortTask, childCompleteTask).WaitAsync(Timeout);
+
+        AddToSequenceResult childResult = await childAddTask.WaitAsync(Timeout);
+        childResult.IsSuccess.ShouldBeTrue();
+        childSequence.IsComplete.ShouldBeTrue();
+        childSequence.AbortReason.ShouldBe(SequenceAbortReason.None);
+        await childSequenceStore.DidNotReceive().RemoveAsync(Arg.Any<string>());
+        childTransactionManager.ReceivedCalls().ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
+    public async Task AbortPendingChildSequencesAsync_ShouldNotAbortChildSequenceOfRefusedMessage_WhenCompletedWhileLinking(bool isDisposed)
+    {
+        using AbortTestSequence parentSequence = new(
+            CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()),
+            trackIdentifiers: true);
+        ((ISequenceImplementation)parentSequence).SetIsNew(false);
+        ISequenceStore childSequenceStore = Substitute.For<ISequenceStore>();
+        Task? completeTask = null;
+        Task? abortTask = null;
+
+        // The sequence is completed (e.g. by the max wait time) while the chunk sequence of the next message is being linked, and its
+        // subscribers return (or it's disposed) right away, before the add refuses the message and unlinks the chunk sequence. The add
+        // waits a bit, to let the abort of the child sequences run before the refusal if it doesn't wait for the add.
+        using HookChildSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: childSequenceStore),
+            () =>
+            {
+                completeTask = parentSequence.CompleteFromTestAsync();
+                Task task = isDisposed
+                    ? Task.Run(parentSequence.Dispose)
+                    : ((ISequenceImplementation)parentSequence).AbortPendingChildSequencesAsync();
+                abortTask = task;
+                SpinWait.SpinUntil(() => task.IsCompleted, TimeSpan.FromMilliseconds(200));
+            });
+
+        Task<AddToSequenceResult> addTask = parentSequence.AddAsync(CreateEnvelope(), childSequence, true);
+        (abortTask != null).ShouldBeTrue();
+        await Task.WhenAll(completeTask!, abortTask!).WaitAsync(Timeout);
+        ((ISequenceImplementation)parentSequence).NotifyProcessingCompleted();
+        AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+        // The message is refused and added to the next sequence with its chunk sequence, which is left pending
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        parentSequence.IsComplete.ShouldBeTrue();
+        childSequence.Parent.ShouldBeNull();
+        childSequence.IsPending.ShouldBeTrue();
+        await childSequenceStore.DidNotReceive().RemoveAsync(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task AbortWithParentAsync_ShouldNotAbortChildSequence_WhenComplete()
+    {
+        ISequenceStore childSequenceStore = Substitute.For<ISequenceStore>();
+        using TestSequence childSequence = new(ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: childSequenceStore));
+        childSequence.CreateStream<IRawInboundEnvelope>();
+        await childSequence.CompleteFromTestAsync().WaitAsync(Timeout);
+        childSequence.IsComplete.ShouldBeTrue();
+
+        // E.g. the child sequence was found pending, then its last message was read before the parent aborted it
+        await ((ISequenceImplementation)childSequence).AbortWithParentAsync(SequenceAbortReason.EnumerationAborted, null).WaitAsync(Timeout);
+
+        childSequence.IsComplete.ShouldBeTrue();
+        childSequence.AbortReason.ShouldBe(SequenceAbortReason.None);
+        await childSequenceStore.DidNotReceive().RemoveAsync(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task AbortParentsOfPendingSequencesAsync_ShouldAbortPendingParentWithItsPendingChildSequence()
+    {
+        using AbortTestSequence parentSequence = new(
+            CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()),
+            trackIdentifiers: true);
+        ((ISequenceImplementation)parentSequence).SetIsNew(false);
+        using TestSequence childSequence = new(ConsumerPipelineContextHelper.CreateSubstitute());
+        using TestSequence otherSequence = CreateSequence(new HookLogger());
+        Task<AddToSequenceResult> childAddTask = await AddPendingChildSequenceAsync(parentSequence, childSequence);
+
+        // E.g. the store of a stopping channel, whose reader is blocked pushing the message to the child sequence
+        await new ISequence[] { parentSequence, childSequence, otherSequence }
+            .AbortParentsOfPendingSequencesAsync(SequenceAbortReason.ConsumerAborted)
+            .AsTask()
+            .WaitAsync(Timeout);
+
+        AddToSequenceResult childResult = await childAddTask.WaitAsync(Timeout);
+        childResult.IsAborted.ShouldBeTrue();
+        parentSequence.AbortReason.ShouldBe(SequenceAbortReason.ConsumerAborted);
         childSequence.AbortReason.ShouldBe(SequenceAbortReason.ConsumerAborted);
-        await childTransactionManager.Received(1).RollbackAsync(null, throwIfAlreadyCommitted: false, stopConsuming: false);
+        otherSequence.IsPending.ShouldBeTrue();
     }
 
     [Fact]

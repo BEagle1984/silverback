@@ -136,10 +136,23 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         {
             await processingTask.ConfigureAwait(false);
 
-            // Abort only parent sequences and don't consider the enumeration as aborted if the
-            // sequence is actually complete (check IsCompleting first, since it's reset only after the state is switched to complete)
-            if (sequence.ParentSequence != null || sequence.IsCompleting || sequence.IsComplete)
+            // Abort only parent sequences
+            if (sequence.ParentSequence != null)
                 return;
+
+            // Don't consider the enumeration as aborted if the sequence is actually complete (check IsCompleting first, since it's reset
+            // only after the state is switched to complete). Its child sequences still pending (e.g., a binary message that the subscriber
+            // didn't read to the end) are aborted with it instead, since the push of their next message would otherwise wait forever,
+            // while the pipeline of the message being pushed is the one that completes and commits the sequence, if it started it. The
+            // message being added to the sequence is awaited first, since it may be refused, unlinking its child sequence (see
+            // SequenceBase).
+            if (sequence.IsCompleting || sequence.IsComplete)
+            {
+                if (sequence is ISequenceImplementation sequenceImplementation)
+                    await sequenceImplementation.AbortPendingChildSequencesAsync().ConfigureAwait(false);
+
+                return;
+            }
 
             // Call AbortAsync to abort the uncompleted sequence to avoid unreleased locks.
             // The reason behind this call here may be counterintuitive, but with
@@ -167,6 +180,31 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     {
         if (previousSequence is { ParentSequence: null })
             await previousSequence.AbortAsync(SequenceAbortReason.ConsumerAborted, exception).ConfigureAwait(false);
+    }
+
+    // The stop aborts the parents of the pending child sequences as soon as the reading is canceled, since the reader may be blocked
+    // pushing the next message to a child sequence that nothing reads anymore (e.g., the next chunk of a binary message that the subscriber
+    // of the batch skipped), see SequenceEnumerableExtensions.AbortParentsOfPendingSequencesAsync. The previous sequence linked to this one
+    // after the stop took its snapshot (e.g., while the message was being deserialized) isn't covered: abort this sequence like the stop
+    // would, aborting the previous sequence with it. Checked after linking, with a full fence, so that either this check sees the reading
+    // canceled or the snapshot of the stop sees the link. A sequence being completed isn't aborted: its pending child sequences are aborted
+    // once its subscribers returned (see MonitorProcessingTaskAsync).
+    private static async Task AbortIfPendingSequenceLinkedWhileStoppingAsync(
+        ConsumerPipelineContext context,
+        ISequence sequence,
+        ISequence? previousSequence,
+        CancellationToken cancellationToken)
+    {
+        if (previousSequence == null || previousSequence == sequence || previousSequence.ParentSequence != sequence)
+            return;
+
+        Interlocked.MemoryBarrier();
+
+        if (previousSequence.IsPending && sequence is { IsPending: true, IsCompleting: false } &&
+            IsStoppingOrReadingCanceled(context, cancellationToken))
+        {
+            await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted).ConfigureAwait(false);
+        }
     }
 
     [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "The sequence lookup, creation and abort handling is concurrency-sensitive and is kept in one place to preserve the ordering of its steps.")]
@@ -217,10 +255,14 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             // If the sequence was new, it means it was never handed over to the transaction handler
             // (no message was added to the sequence so far, the timeout elapsed before the sequence
             // was used).
+            // A child sequence is disposed by its parent instead (e.g., the chunk sequence of a binary message aborted with the batch it
+            // was added to), with which it may share the context.
             if (!addToSequenceResult.IsSuccess && sequence.IsNew)
             {
                 await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
-                sequence.Dispose();
+
+                if (sequence.ParentSequence == null)
+                    sequence.Dispose();
             }
 
             // Remove the sequence if it refuses the message again without being aborted (e.g., a child sequence disposed by its parent
@@ -259,6 +301,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         else
         {
             _logger.LogMessageAddedToSequence(context.Envelope, sequence);
+
+            await AbortIfPendingSequenceLinkedWhileStoppingAsync(context, sequence, previousSequence, cancellationToken).ConfigureAwait(false);
         }
 
         return sequence;

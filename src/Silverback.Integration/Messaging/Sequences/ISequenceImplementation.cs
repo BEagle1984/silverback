@@ -63,13 +63,14 @@ internal interface ISequenceImplementation : ISequence
     void NotifyProcessingFailed(Exception exception);
 
     /// <summary>
-    ///     Aborts the sequence, which is still pending when its parent sequence is aborted, sharing the outcome of the parent. The abort of
-    ///     the parent already completed the transaction (e.g., applying the error policies), which covers the messages of this sequence as
-    ///     well: the sequence is removed from the store and its processing is notified as completed, without committing or rolling back
-    ///     its own transaction.
+    ///     Aborts the sequence, which is still pending when its parent sequence is aborted or disposed, sharing the outcome of the parent.
+    ///     The abort or the completion of the parent already completed the transaction (e.g., applying the error policies, or committing
+    ///     it), which covers the messages of this sequence as well: the sequence is removed from the store and its processing is notified
+    ///     as completed, without committing or rolling back its own transaction. A sequence that completed in the meantime isn't aborted.
     /// </summary>
     /// <param name="reason">
-    ///     The reason the parent sequence was aborted.
+    ///     The reason the parent sequence was aborted, or <see cref="SequenceAbortReason.EnumerationAborted" /> if it completed, since its
+    ///     subscribers didn't read this sequence to the end.
     /// </param>
     /// <param name="exception">
     ///     The exception the parent sequence was aborted with, if any.
@@ -78,4 +79,15 @@ internal interface ISequenceImplementation : ISequence
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     Task AbortWithParentAsync(SequenceAbortReason reason, Exception? exception);
+
+    /// <summary>
+    ///     Aborts the child sequences that are still pending once the subscribers of the completed sequence returned (e.g., the chunk
+    ///     sequence of a binary message that wasn't read to the end), since nothing will read them anymore. They share the outcome of this
+    ///     sequence (see <see cref="AbortWithParentAsync" />). The message being added to this sequence, if any, is awaited first, since
+    ///     the child sequence of a refused message is added to the next sequence with it.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task AbortPendingChildSequencesAsync();
 }

@@ -278,6 +278,31 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     Task ISequenceImplementation.AbortWithParentAsync(SequenceAbortReason reason, Exception? exception) =>
         AbortAsync(reason, exception, true);
 
+    /// <inheritdoc cref="ISequenceImplementation.AbortPendingChildSequencesAsync" />
+    /// <remarks>
+    ///     The message being added to them counts as processed, as when the subscribers stop enumerating a sequence. The abort of this
+    ///     sequence aborts them instead, if it's aborted in the meantime, and so does the disposal, if it's disposed in the meantime.
+    /// </remarks>
+    async Task ISequenceImplementation.AbortPendingChildSequencesAsync()
+    {
+        // Wait for the message being added to this sequence, like the abort does (see AbortCoreAsync): the add may link the child sequence
+        // (e.g., the chunk sequence of a binary message) and then refuse the message, since this sequence is being completed, unlinking it.
+        // The refused message is added to the next sequence with its child sequence, which therefore must not be aborted with this one.
+        // The next adds are refused before linking (this sequence is complete) or unlink the child sequence before releasing the semaphore.
+        if (!await WaitIfNotDisposedAsync(_addSemaphoreSlim).ConfigureAwait(false))
+            return;
+
+        try
+        {
+            if (!IsAborted)
+                await AbortPendingChildSequencesAsync(SequenceAbortReason.EnumerationAborted, null).ConfigureAwait(false);
+        }
+        finally
+        {
+            _addSemaphoreSlim.Release();
+        }
+    }
+
     /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
     public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
         StreamProvider.CreateStream<TMessage>(filters);
@@ -682,6 +707,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _logger.LogSequenceDisposing(this);
 
         _abortingTaskCompletionSource?.Task.SafeWait();
+
         _addCancellationTokenSource.Cancel();
 
         WaitAddAndCompleteSemaphores();
@@ -698,6 +724,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             WaitAddAndCompleteSemaphores();
         }
+
+        // Holding the semaphores, so that the message being added (if any) was either added or refused, unlinking its child sequence (see
+        // AbortPendingChildSequencesAsync), and before disposing the child sequences (and the context they may share with this sequence)
+        AbortPendingChildSequencesBeforeDispose();
 
         // Stop the callers still waiting for the semaphores, since disposing them doesn't complete the pending waits. Do it only after
         // acquiring the semaphores for the last time, since the abandoned waits must never be granted.
@@ -910,6 +940,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         try
         {
+            // The child sequence completed in the meantime (e.g., its last message was read just before the parent was completed): it's
+            // complete and committed with the parent, which doesn't decide its outcome anymore
+            if (isAbortedWithParent && IsComplete)
+                return;
+
             isAbortStarted = BeginAbortCore(reason, exception, isAbortedWithParent);
         }
         finally
@@ -986,7 +1021,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
-            await AbortPendingChildSequencesAsync().ConfigureAwait(false);
+            await AbortPendingChildSequencesAsync(AbortReason, AbortException).ConfigureAwait(false);
         }
         finally
         {
@@ -995,22 +1030,46 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
     }
 
-    // A child sequence can still be pending when the parent is aborted (e.g., the chunk sequence of a binary message, which is added to the
-    // batch with its first chunk). It shares the outcome of the abort, which committed or rolled back its messages as well: abort it before
-    // it's disposed with this sequence, so that the message being added to it is handled as aborted, instead of being added to a new
-    // sequence created on the context that the dispose releases while its pipeline still runs. Its next messages (e.g., the remaining
-    // chunks, when the parent was skipped) are then skipped as incomplete. The stop aborts all the pending sequences instead, the child
-    // ones included, rolling them back (see SequenceEnumerableExtensions.AbortAllAsync).
-    private async Task AbortPendingChildSequencesAsync()
+    // A child sequence can still be pending when the parent is aborted or disposed (e.g., the chunk sequence of a binary message, which is
+    // added to the batch with its first chunk and isn't complete if the subscriber didn't read the whole message). It shares the outcome of
+    // the parent, whose abort or completion committed or rolled back its messages as well: abort it before it's disposed with this
+    // sequence, so that the message being added to it is handled as aborted, instead of being added to a new sequence created on the
+    // context that the dispose releases while its pipeline still runs, or its push waiting forever for a reader. Its next messages (e.g.,
+    // the remaining chunks, when the parent was skipped or committed) are then skipped as incomplete.
+    // The snapshot is taken once the message being added to this sequence (if any) was added or refused, since the add links the child
+    // sequence before pushing the message and unlinks it if the message is refused (e.g., when this sequence is being completed): the
+    // callers acquire the add semaphore first (the abort, the disposal and the completed sequence whose subscribers returned). It is never
+    // held by the push of the next message to the child sequence, which only holds the add semaphore of the child sequence.
+    // Its processing is notified as completed first, as the parent notifies its linked sequences when its own processing completes (see
+    // CompleteLinkedSequence), so that the pipeline of the message being added to it doesn't resume synchronously within its abort.
+    // A child sequence being completed (e.g., its last message was read to the end, completing its streams and therefore possibly letting
+    // the subscribers of this sequence return) isn't aborted: it completes on its own, and is committed with this sequence. IsCompleting is
+    // checked first, since it's reset only after the state is switched to complete. The abort is skipped as well if it starts completing
+    // after this check (see AbortAsync).
+    private async Task AbortPendingChildSequencesAsync(SequenceAbortReason reason, Exception? exception)
     {
-        if (AbortReason is SequenceAbortReason.ConsumerAborted or SequenceAbortReason.Disposing)
-            return;
-
         foreach (ISequenceImplementation sequence in GetSequencesSnapshot().OfType<ISequenceImplementation>())
         {
-            if (sequence.IsPending)
-                await sequence.AbortWithParentAsync(AbortReason, AbortException).ConfigureAwait(false);
+            if (sequence.IsCompleting || !sequence.IsPending)
+                continue;
+
+            sequence.NotifyProcessingCompleted();
+            await sequence.AbortWithParentAsync(reason, exception).ConfigureAwait(false);
         }
+    }
+
+    // The child sequences still pending when this sequence is disposed weren't aborted with it, because it completed (e.g., a batch whose
+    // subscriber returned without reading the whole binary message added to it) or was disposed while pending: nothing will read them
+    // anymore. They share the outcome of this sequence: committed with it if complete (as when the subscriber stops enumerating, the
+    // message being added to them counts as processed), otherwise rolled back with it.
+    private void AbortPendingChildSequencesBeforeDispose()
+    {
+        if (IsAborted)
+            AbortPendingChildSequencesAsync(AbortReason, AbortException).SafeWait();
+        else if (IsComplete)
+            AbortPendingChildSequencesAsync(SequenceAbortReason.EnumerationAborted, null).SafeWait();
+        else
+            AbortPendingChildSequencesAsync(SequenceAbortReason.Disposing, null).SafeWait();
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception notified")]

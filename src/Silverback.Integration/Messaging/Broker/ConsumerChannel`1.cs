@@ -191,6 +191,8 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         if (!_readCancellationTokenSource.IsCancellationRequested)
             await _readCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
+        // The reader might never stop otherwise, being blocked pushing a message to a child sequence that nothing reads anymore
+        await SequenceStore.AbortParentsOfPendingSequencesAsync(SequenceAbortReason.ConsumerAborted).ConfigureAwait(false);
         await SequenceStore.AwaitAllProcessingAsync().ConfigureAwait(false);
 
         if (_isReading == 0)
