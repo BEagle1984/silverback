@@ -90,6 +90,9 @@ public partial class ErrorPoliciesTests
             case "stop":
                 errorPolicy.Stop();
                 break;
+            case "move":
+                errorPolicy.MoveTo(MoveTargetTopicName);
+                break;
             default:
                 errorPolicy.Retry(10);
                 break;

@@ -214,6 +214,163 @@ public partial class BatchProcessingTests
     }
 
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Batch_ShouldStopConsumerAndDisconnect_WhenCommitFailsAfterConsumerIsCommitted(bool isCompletedByTimeout)
+    {
+        List<string> receivedMessages = [];
+        LogEventsCollector logEventsCollector = new();
+
+        // The first commit fails after the consumer was committed, as when a Committed handler throws
+        TransactionEventsTracker transactionEventsTracker = new(failingCommitsCount: 1, isFailingAfterConsumerCommit: true);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(isCompletedByTimeout ? 10 : 3, TimeSpan.FromMilliseconds(300)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonBrokerBehavior(transactionEventsTracker));
+
+        // When the batch is completed by its max wait time, no message is being added to it when its commit fails, so no reader rethrows
+        // the exception
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne message in batch)
+            {
+                lock (receivedMessages)
+                {
+                    receivedMessages.Add(message.ContentEventOne!);
+                }
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 2" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 3" });
+
+        // The transaction can't be rolled back anymore: the consumer is just stopped and disconnected, since the stop error policy doesn't
+        // handle the error, instead of consuming the next messages
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected, TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        receivedMessages.ShouldBe(["Message 1", "Message 2", "Message 3"]);
+        transactionEventsTracker.Events.ShouldBe(["Committing", "Committed"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+
+        // The commit exception is logged and rethrown to the message completing the batch (if any), which logs it as fatal, instead of the
+        // failure of the rollback
+        logEventsCollector.Count(IntegrationLogEvents.SequenceProcessingError.EventId).ShouldBe(1);
+        logEventsCollector.ContainsProcessingFatalError(exception =>
+                exception?.GetBaseException() is not InvalidOperationException { Message: "Commit failed." })
+            .ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData("retry", "size")]
+    [InlineData("retry", "timeout")]
+    [InlineData("retry", "break")]
+    [InlineData("skip", "size")]
+    [InlineData("skip", "timeout")]
+    [InlineData("skip", "break")]
+    public async Task Batch_ShouldStopConsumerWithoutApplyingErrorPolicy_WhenCommitFailsAfterConsumerIsCommitted(
+        string policy,
+        string completion)
+    {
+        bool isCompletedByTimeout = completion == "timeout";
+        bool isEnumerationAborted = completion == "break";
+        List<string> receivedMessages = [];
+        LogEventsCollector logEventsCollector = new();
+        IStopConsumerErrorPolicyCallback callback = (IStopConsumerErrorPolicyCallback)Substitute.For(
+            [typeof(IStopConsumerErrorPolicyCallback), typeof(IRetryErrorPolicyCallback), typeof(ISkipMessageErrorPolicyCallback)],
+            []);
+
+        // The first commit fails after the consumer was committed, as when a Committed handler throws
+        TransactionEventsTracker transactionEventsTracker = new(failingCommitsCount: 1, isFailingAfterConsumerCommit: true);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(
+                            isCompletedByTimeout ? 10 : 3,
+                            isCompletedByTimeout ? TimeSpan.FromMilliseconds(300) : TimeSpan.FromSeconds(10))
+                        .OnError(errorPolicy => ConfigureErrorPolicy(errorPolicy, policy)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddSingletonBrokerBehavior(transactionEventsTracker)
+            .AddSingletonErrorPolicyCallback(callback));
+
+        // The subscriber that stops enumerating the batch after its first message makes the abort of its enumeration commit the batch, while
+        // no message is being added to the batch completed by its max wait time when its commit fails
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            await foreach (TestEventOne message in batch)
+            {
+                lock (receivedMessages)
+                {
+                    receivedMessages.Add(message.ContentEventOne!);
+                }
+
+                if (isEnumerationAborted)
+                    break;
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= (isCompletedByTimeout ? 3 : 6); i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"Message {i}" });
+        }
+
+        // The transaction can't be rolled back anymore: the policy isn't applied, since retrying or skipping the batch requires rolling it
+        // back, and the consumer is stopped and disconnected, as with the stop policy and as for a single message
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await AsyncTestingUtil.WaitAsync(
+            () => consumer.Client.Status == ClientStatus.Disconnected && consumer.StatusInfo.Status == ConsumerStatus.Stopped,
+            TimeSpan.FromSeconds(10));
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        receivedMessages.ShouldBe(isEnumerationAborted ? ["Message 1"] : ["Message 1", "Message 2", "Message 3"]);
+        transactionEventsTracker.Events.ShouldBe(["Committing", "Committed"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(isEnumerationAborted ? 1 : 3);
+
+        // Only the stop callbacks are invoked
+        await callback.Received(1).OnStoppingConsumerAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>());
+        callback.ReceivedCalls().Count().ShouldBe(1);
+
+        // The commit exception is logged once and rethrown to the message completing the batch (none when the batch is completed by its max
+        // wait time), which logs it as fatal, instead of the failure of the rollback
+        logEventsCollector.Count(IntegrationLogEvents.SequenceProcessingError.EventId).ShouldBe(1);
+        logEventsCollector.Count(IntegrationLogEvents.RollbackToRetryFailed.EventId).ShouldBe(0);
+        logEventsCollector.Count(IntegrationLogEvents.RollbackToSkipFailed.EventId).ShouldBe(0);
+        logEventsCollector.Count(IntegrationLogEvents.ProcessingConsumedMessageFatalError.EventId).ShouldBe(isCompletedByTimeout ? 0 : 1);
+        logEventsCollector.ContainsProcessingFatalError(exception =>
+                exception?.GetBaseException() is not InvalidOperationException { Message: "Commit failed." })
+            .ShouldBeFalse();
+    }
+
+    [Theory]
     [InlineData(typeof(InvalidOperationException))]
     [InlineData(typeof(OperationCanceledException))]
     [InlineData(typeof(TaskCanceledException))] // E.g., an HttpClient timeout, which isn't caused by the consumer stop

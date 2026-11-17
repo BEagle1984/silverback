@@ -532,15 +532,19 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
         try
         {
+            // The commit of the message might have failed after the consumer was committed (e.g., a Committed handler threw): the
+            // transaction can't be rolled back anymore then, so the error policies aren't applied and the consumer is just stopped, as for
+            // a sequence whose commit fails after the consumer was committed (see SequenceBase)
             bool handled = !IsHandledByUnboundedSequenceAbort(context, exception) &&
-                           await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false);
+                           await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception, isStopIfRollbackPrevented: true)
+                               .ConfigureAwait(false);
 
             if (!handled)
             {
                 if (context.Sequence != null && (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))
                     await context.Sequence.Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
                 else
-                    await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+                    await ErrorPoliciesHelper.RollbackOrStopConsumerAsync(context, exception).ConfigureAwait(false);
             }
 
             return handled;

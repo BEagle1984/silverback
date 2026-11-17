@@ -106,6 +106,22 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     /// </summary>
     internal int? StoppedConsumerStartGeneration { get; private set; }
 
+    /// <summary>
+    ///     Gets a value indicating whether the transaction can't be rolled back anymore, because it was committed to the consumer (e.g., by
+    ///     the commit that failed afterwards, because a <see cref="Committed" /> handler threw) or is being committed. The rollback throws
+    ///     or returns <c>false</c> then (see <see cref="RollbackAsync" />).
+    /// </summary>
+    internal bool IsRollbackPrevented
+    {
+        get
+        {
+            lock (_syncLock)
+            {
+                return IsCommittedOrCommitting();
+            }
+        }
+    }
+
     /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
     public Task CommitAsync()
     {
@@ -230,8 +246,9 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     /// <summary>
     ///     Rolls back the transaction without committing the consumer and stops the consumer, when the error handling fails (e.g., an
     ///     error policy callback throws or the move policy fails to produce the message) or when the error policies don't handle the failed
-    ///     commit of a sequence whose enumeration was aborted, as the rollback does when the error policies don't handle the error. If the
-    ///     transaction was already committed or aborted (e.g., by the error policy, before failing), the consumer is just stopped.
+    ///     commit of a message or a sequence, as the rollback does when the error policies don't handle the error. If the transaction was
+    ///     already committed or aborted (e.g., committed to the consumer by the commit that failed afterwards, or aborted by the error policy
+    ///     before failing), the consumer is just stopped.
     /// </summary>
     /// <remarks>
     ///     It never throws, so that the exception thrown by the failed operation is rethrown instead. The consumer is stopped even if the

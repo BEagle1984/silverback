@@ -1095,9 +1095,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                     if (!CompletesTransactionOnAbort)
                         break;
 
-                    if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!).ConfigureAwait(false))
+                    // The commit of the completed sequence might have failed after the consumer was committed (e.g., a Committed handler
+                    // threw): the error policies aren't applied then and the consumer is just stopped, as for a single message
+                    if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!, isStopIfRollbackPrevented: true)
+                            .ConfigureAwait(false))
                     {
-                        await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+                        await ErrorPoliciesHelper.RollbackOrStopConsumerAsync(Context, exception!).ConfigureAwait(false);
 
                         ((ISequenceImplementation)this).NotifyProcessingFailed(exception!);
                         return true;
@@ -1160,8 +1163,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     // holding the add semaphore, before the processing is notified, so that the message being added sees it once the abort completed.
     // If the error policies don't handle the error, the transaction is rolled back without committing the consumer and the consumer is
     // stopped, like when the error handling fails (see ErrorPoliciesHelper), since the transaction may have been committed to the consumer
-    // already (e.g., a Committed handler threw): the consumer is just stopped then. The commit exception is notified, and therefore
-    // rethrown to the reader awaiting the sequence (if any).
+    // already (e.g., a Committed handler threw): the error policies aren't applied and the consumer is just stopped then, as for a single
+    // message (see TransactionHandlerConsumerBehavior). The commit exception is notified, and therefore rethrown to the reader awaiting the
+    // sequence (if any).
     // The cancellation requested by the consumer stop (an OperationCanceledException thrown while the processing token is canceled) isn't
     // a failure, as for the completed sequence, which is then aborted as ConsumerAborted (see StopCancellationHelper.GetSequenceAbortReason):
     // the sequence is rolled back as when the consumer aborts it, without applying the error policies, logging the error or stopping the
@@ -1187,7 +1191,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         AbortReason = SequenceAbortReason.Error;
         AbortException = exception;
 
-        if (await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception).ConfigureAwait(false))
+        if (await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception, isStopIfRollbackPrevented: true).ConfigureAwait(false))
         {
             ((ISequenceImplementation)this).NotifyProcessingCompleted();
             return true;

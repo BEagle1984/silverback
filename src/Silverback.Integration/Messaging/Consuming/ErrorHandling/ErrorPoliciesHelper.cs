@@ -15,11 +15,16 @@ internal static class ErrorPoliciesHelper
 {
     // The transaction of the context is rolled back when the error handling fails, unless isRollbackOnFailure is false because the
     // context isn't the one of the failed message (e.g., the unbounded sequence aborted while no message was being added, whose
-    // context is the one of the message that started it, committed by its own pipeline): the consumer is just stopped then
+    // context is the one of the message that started it, committed by its own pipeline): the consumer is just stopped then.
+    // When isStopIfRollbackPrevented is true and the transaction can't be rolled back anymore, because the commit of the message failed
+    // after the consumer was committed (e.g., a Committed handler threw), the error policies aren't applied and the error is handled as
+    // when no policy handles it, stopping the consumer: retrying, skipping or moving the message requires rolling back its transaction,
+    // and would only invoke the callbacks of the policy, fail to roll back the already processed and committed message and reconnect.
     public static async Task<bool> ApplyErrorPoliciesAsync(
         ConsumerPipelineContext context,
         Exception exception,
-        bool isRollbackOnFailure = true)
+        bool isRollbackOnFailure = true,
+        bool isStopIfRollbackPrevented = false)
     {
         ErrorPolicyCallbacksInvoker? callbacksInvoker = null;
         bool handled;
@@ -35,7 +40,8 @@ internal static class ErrorPoliciesHelper
             IErrorPolicyImplementation errorPolicyImplementation =
                 context.Envelope.Endpoint.Configuration.ErrorPolicy.Build(context.ServiceProvider);
 
-            handled = errorPolicyImplementation.CanHandle(context, exception) &&
+            handled = !(isStopIfRollbackPrevented && IsRollbackPrevented(context)) &&
+                      errorPolicyImplementation.CanHandle(context, exception) &&
                       await errorPolicyImplementation.HandleErrorAsync(context, exception).ConfigureAwait(false);
         }
         catch (Exception)
@@ -67,6 +73,24 @@ internal static class ErrorPoliciesHelper
         return false;
     }
 
+    // The error policies don't handle the error: roll back the transaction, which stops the consumer. The transaction can't be rolled back
+    // anymore when the commit failed after the consumer was committed (e.g., a Committed handler threw): just stop the consumer then, as
+    // when the commit of the sequence whose subscribers stopped enumerating it fails (see SequenceBase.HandleCommitFailureAsync), instead
+    // of failing the rollback. The failed rollback would leave the consumer running when no reader awaits the sequence (e.g., a batch
+    // completed by its max wait time) and rethrow the rollback exception instead of the commit exception otherwise, to the reader of the
+    // sequence or to the pipeline of the message that doesn't belong to a sequence, which logs it as fatal and disconnects the client.
+    public static async Task RollbackOrStopConsumerAsync(ConsumerPipelineContext context, Exception exception)
+    {
+        if (context.TransactionManager is not ConsumerTransactionManager transactionManager)
+        {
+            await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+            return;
+        }
+
+        if (!await transactionManager.RollbackAsync(exception, throwIfAlreadyCommitted: false).ConfigureAwait(false))
+            await transactionManager.RollbackAndStopConsumerAfterFailureAsync(exception).ConfigureAwait(false);
+    }
+
     // Stop the consumer when the error handling fails, before rethrowing the exception: no reader rethrows it when no reader awaits the
     // failed sequence (e.g., a batch completed by its max wait time), and the consumer must be stopped before the next sequence can start
     // and commit the failed one with it (Kafka). The transaction is rolled back first, without committing the consumer, as when the error
@@ -90,6 +114,9 @@ internal static class ErrorPoliciesHelper
             // The exception thrown by the error handling is rethrown instead
         }
     }
+
+    private static bool IsRollbackPrevented(ConsumerPipelineContext context) =>
+        context.TransactionManager is ConsumerTransactionManager { IsRollbackPrevented: true };
 
     private static ValueTask InvokeStopCallbacksAsync(
         ErrorPolicyCallbacksInvoker callbacksInvoker,

@@ -346,12 +346,18 @@ public class SkippedMessagesNotifier : ISkipMessageErrorPolicyCallback
 
 Note that the message passed to `Publish` was published after the policy had been applied, while the callbacks are invoked before it.
 
+## Commit Failures
+
+If committing the consumed message fails (e.g., a handler of the <xref:Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.Committing> event throws), the error policy is applied as when the subscriber throws: `Retry` processes the message again, `Skip` skips it, `MoveTo` moves it and `Stop` rolls it back and stops the consumer.
+
+If the commit failed after the consumer was committed (e.g., a handler of the <xref:Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.Committed> event throws), the message was already processed and committed and can't be rolled back anymore. Since `Retry`, `Skip` and `MoveTo` all require rolling back the message, the error policies aren't applied and the consumer is stopped, whatever policy is configured: the error is logged, the <xref:Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback> callbacks are invoked and the client is disconnected, as when `Stop` applies. The callbacks of the other policies aren't invoked, and the committed message isn't processed again when the consumer is restarted.
+
 ## Batches, Chunking and Sequences
 
 When the consumed messages are part of a sequence (a batch, a chunked message, etc.), the error policy is applied to the whole sequence:
 
 - **Batch processing** (<xref:batch-processing>): if the subscriber throws, the whole batch is rolled back. `Retry` processes the whole batch again, and `Skip` skips all the messages in the batch.
-- **Commit failures**: if committing a sequence fails (e.g., a handler of the <xref:Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.Committing> event throws), the error policy is applied as when the subscriber throws, also when the subscriber stopped enumerating the sequence early (e.g., leaving the batch with a `break`): `Retry` processes the sequence again, `Skip` skips it and `Stop` rolls it back and stops the consumer.
+- **Commit failures**: if committing a sequence fails, the error policy is applied as for a single message (see [Commit Failures](#commit-failures)), also when the subscriber stopped enumerating the sequence early (e.g., leaving the batch with a `break`): `Retry` processes the sequence again, `Skip` skips it and `Stop` rolls it back and stops the consumer. If the commit failed after the consumer was committed, the sequence can't be rolled back anymore: as for a single message, the error policies aren't applied and the consumer is stopped, whatever policy is configured, invoking only the <xref:Silverback.Messaging.Consuming.ErrorHandling.IStopConsumerErrorPolicyCallback> callbacks, and the committed sequence isn't processed again when the consumer is restarted.
 - **Chunking** (<xref:consuming-chunking>): all chunks belonging to the same message are retried or skipped together. With MQTT, the chunks rejected by a client with batch processing are instead handled one by one, since chunking can't be combined with batch processing.
 - **MoveTo** can't move a sequence: the policy logs a warning and is skipped, falling back to the next policy in the chain (or stopping the consumer, if there is none). Don't rely on `MoveTo` with batch processing or chunked messages; use `Skip` with a [callback](#callbacks) instead.
 
