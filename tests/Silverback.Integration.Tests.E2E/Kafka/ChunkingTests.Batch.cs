@@ -1295,6 +1295,263 @@ public partial class ChunkingTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(4);
     }
 
+    [Fact]
+    public async Task Chunking_ShouldNotCommitPendingBatch_WhenSkippedBinaryMessageInBatchTimesOut()
+    {
+        TestingCollection<List<string?>> batches = [];
+        LogEventsCollector logEventsCollector = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .Consume<BinaryMessage>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithSequenceTimeout(TimeSpan.FromSeconds(1))
+                        .EnableBatchProcessing(3))))
+            .AddDelegateSubscriber<IAsyncEnumerable<BinaryMessage>>(HandleBatchAsync)
+            .AddIntegrationSpy());
+
+        async Task HandleBatchAsync(IAsyncEnumerable<BinaryMessage> batch)
+        {
+            List<string?> list = [];
+            batches.Add(list);
+
+            await foreach (BinaryMessage message in batch)
+            {
+                // Skip the second binary message: the push of its next chunk is pending, stalling the batch (which has no max wait time)
+                // until the sequence timeout aborts the chunk sequence on its own
+                if (list.Count == 1)
+                {
+                    list.Add(null);
+                    continue;
+                }
+
+                byte[]? readAll = await message.Content.ReadAllAsync();
+                list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] chunks1 = [.. "Long message 1"u8.ToArray().Chunk(5)];
+        byte[][] chunks2 = [.. "Long message 2"u8.ToArray().Chunk(5)];
+
+        for (int i = 0; i < chunks1.Length; i++)
+        {
+            await producer.RawProduceAsync(chunks1[i], HeadersHelper.GetChunkHeaders("1", i, chunks1.Length));
+        }
+
+        for (int i = 0; i < chunks2.Length; i++)
+        {
+            await producer.RawProduceAsync(chunks2[i], HeadersHelper.GetChunkHeaders("2", i, chunks2.Length));
+        }
+
+        // The chunk sequence of the skipped binary message is aborted as incomplete, and its remaining chunk discarded, while the batch is
+        // still pending: committing them would implicitly commit the batch before it's processed
+        await AsyncTestingUtil.WaitAsync(() => logEventsCollector.Count(IntegrationLogEvents.IncompleteSequenceAborted.EventId) > 0);
+        await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count == 6);
+
+        batches.ShouldBe([["Long message 1", null]]);
+        logEventsCollector.GetStoredKafkaOffsets().ShouldBeEmpty();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+
+        // The disconnect rolls back the pending batch, which is consumed again after reconnecting
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+
+        await consumer.Client.ConnectAsync();
+        await Helper.WaitUntilConnectedAsync();
+
+        await producer.RawProduceAsync("Message 3"u8.ToArray(), HeadersHelper.GetChunkHeaders("3", 0, 1));
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        batches.Count.ShouldBe(2);
+        batches[1].ShouldBe(["Long message 1", null, "Message 3"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(7);
+        logEventsCollector.GetStoredKafkaOffsets().ShouldBe([7]);
+        logEventsCollector.ContainsProcessingFatalError().ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(5, false)]
+    [InlineData(6, false)]
+    [InlineData(6, true)]
+    public async Task Chunking_ShouldMoveOnOrStop_WhenSkippedBinaryMessageStartingBatchTimesOut(int readBytes, bool isDisconnected)
+    {
+        TestingCollection<List<string?>> batches = [];
+        LogEventsCollector logEventsCollector = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .Consume<BinaryMessage>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithSequenceTimeout(TimeSpan.FromSeconds(1))
+                        .EnableBatchProcessing(3))))
+            .AddDelegateSubscriber<IAsyncEnumerable<BinaryMessage>>(HandleBatchAsync)
+            .AddIntegrationSpy());
+
+        async Task HandleBatchAsync(IAsyncEnumerable<BinaryMessage> batch)
+        {
+            List<string?> list = [];
+            batches.Add(list);
+
+            await foreach (BinaryMessage message in batch)
+            {
+                // Move on without fully reading the binary message starting the first batch (which has no max wait time): the push of the
+                // chunk being read (the next chunk, if the first one was read to the end) is pending, stalling the batch until the sequence
+                // timeout aborts the chunk sequence on its own, while the batch subscriber waits for the next message
+                if (list.Count == 0 && batches.Count == 1)
+                {
+                    if (readBytes > 0)
+                    {
+                        byte[] buffer = new byte[readBytes];
+                        await message.Content!.ReadExactlyAsync(buffer);
+                    }
+
+                    list.Add(null);
+                    continue;
+                }
+
+                byte[]? readAll = await message.Content.ReadAllAsync();
+                list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] chunks1 = [.. "Long message 1"u8.ToArray().Chunk(5)];
+
+        for (int i = 0; i < chunks1.Length; i++)
+        {
+            await producer.RawProduceAsync(chunks1[i], HeadersHelper.GetChunkHeaders("1", i, chunks1.Length));
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => logEventsCollector.Count(IntegrationLogEvents.IncompleteSequenceAborted.EventId) > 0);
+
+        // The reader must neither wait for the batch subscriber, which waits for the next message, nor block the stop
+        if (isDisconnected)
+        {
+            IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+            await consumer.Client.DisconnectAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+
+            await consumer.Client.ConnectAsync();
+            await Helper.WaitUntilConnectedAsync();
+        }
+
+        await producer.RawProduceAsync("Message 2"u8.ToArray(), HeadersHelper.GetChunkHeaders("2", 0, 1));
+        await producer.RawProduceAsync("Message 3"u8.ToArray(), HeadersHelper.GetChunkHeaders("3", 0, 1));
+        await Helper.WaitUntilAllMessagesAreCommittedAsync(TimeSpan.FromSeconds(10));
+
+        // The binary message is committed with the batch, or rolled back with it and consumed again
+        batches.Count.ShouldBe(isDisconnected ? 2 : 1);
+        batches[^1].ShouldBe([isDisconnected ? "Long message 1" : null, "Message 2", "Message 3"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
+        logEventsCollector.GetStoredKafkaOffsets().ShouldBe([5]);
+        logEventsCollector.ContainsProcessingFatalError().ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task Chunking_ShouldNotCommitPendingBatch_WhenBinaryMessageBeingReadInBatchIsAbortedAsIncomplete(
+        bool startsBatch,
+        bool isFirstChunkRedelivered)
+    {
+        TestingCollection<List<string?>> batches = [];
+        LogEventsCollector logEventsCollector = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .Consume<BinaryMessage>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(startsBatch ? 3 : 4))))
+            .AddDelegateSubscriber<IAsyncEnumerable<BinaryMessage>>(HandleBatchAsync)
+            .AddIntegrationSpy());
+
+        async Task HandleBatchAsync(IAsyncEnumerable<BinaryMessage> batch)
+        {
+            List<string?> list = [];
+            batches.Add(list);
+
+            await foreach (BinaryMessage message in batch)
+            {
+                // The binary message whose last chunk is missing is aborted as incomplete while being read, by the first chunk of the next
+                // chunked message (or by its own first chunk, delivered again), which is added to the same batch
+                try
+                {
+                    byte[]? readAll = await message.Content.ReadAllAsync();
+                    list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
+                }
+                catch (Exception)
+                {
+                    list.Add("failed");
+                }
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] chunks1 = [.. "Long message 1"u8.ToArray().Chunk(5)];
+        byte[][] chunks2 = [.. "Long message 2"u8.ToArray().Chunk(5)];
+        string secondMessageKey = isFirstChunkRedelivered ? "1" : "2";
+
+        if (!startsBatch)
+            await producer.RawProduceAsync("Message 0"u8.ToArray(), HeadersHelper.GetChunkHeaders("0", 0, 1));
+
+        await producer.RawProduceAsync(chunks1[0], HeadersHelper.GetChunkHeaders("1", 0, chunks1.Length));
+        await producer.RawProduceAsync(chunks1[1], HeadersHelper.GetChunkHeaders("1", 1, chunks1.Length));
+
+        for (int i = 0; i < chunks2.Length; i++)
+        {
+            await producer.RawProduceAsync(chunks2[i], HeadersHelper.GetChunkHeaders(secondMessageKey, i, chunks2.Length));
+        }
+
+        // The abort of the binary message being read doesn't commit the pending batch, which is committed once complete
+        await AsyncTestingUtil.WaitAsync(() => logEventsCollector.Count(IntegrationLogEvents.IncompleteSequenceAborted.EventId) > 0);
+        await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count == (startsBatch ? 5 : 6));
+
+        logEventsCollector.GetStoredKafkaOffsets().ShouldBeEmpty();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+
+        await producer.RawProduceAsync("Message 3"u8.ToArray(), HeadersHelper.GetChunkHeaders("3", 0, 1));
+        await Helper.WaitUntilAllMessagesAreCommittedAsync(TimeSpan.FromSeconds(10));
+
+        int messagesCount = startsBatch ? 6 : 7;
+        batches.Count.ShouldBe(1);
+        batches[0].ShouldBe(startsBatch ? ["failed", "Long message 2", "Message 3"] : ["Message 0", "failed", "Long message 2", "Message 3"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(messagesCount);
+        logEventsCollector.GetStoredKafkaOffsets().ShouldBe([messagesCount]);
+        logEventsCollector.ContainsProcessingFatalError().ShouldBeFalse();
+    }
+
     [Theory]
     [InlineData("timeout")]
     [InlineData("next chunked message")]

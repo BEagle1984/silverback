@@ -1079,8 +1079,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         try
         {
-            // The abort of the parent sequence completed the transaction, which covers the messages of this sequence as well
-            if (_isAbortedWithParent)
+            // The abort of the parent sequence completed the transaction, which covers the messages of this sequence as well. The child
+            // sequence aborted on its own as incomplete (e.g., the chunk sequence of a binary message that the batch subscriber skipped,
+            // timing out while the batch is pending) shares the outcome of the parent as well, whose commit or rollback covers its
+            // messages: committing it here would commit the parent (the sequence of the shared context) before it's processed.
+            if (_isAbortedWithParent || AbortReason == SequenceAbortReason.IncompleteSequence && ParentSequence != null)
             {
                 ((ISequenceImplementation)this).NotifyProcessingCompleted();
                 return true;

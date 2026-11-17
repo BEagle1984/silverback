@@ -290,7 +290,20 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
             try
             {
-                await context.Sequence.AwaitProcessingAsync(true).ConfigureAwait(false);
+                // The child sequence aborted on its own as incomplete shares the outcome of its parent, and its abort completes its
+                // processing (see SequenceBase). Its context might be the one of the parent (e.g., the batch started by the binary message
+                // whose chunk sequence timed out), whose subscribers wait for the next messages: don't wait for them.
+                if (context.Sequence is ISequenceImplementation
+                    {
+                        AbortReason: SequenceAbortReason.IncompleteSequence, ParentSequence: not null
+                    } childSequence)
+                {
+                    await childSequence.ProcessingCompletedTask.ConfigureAwait(false);
+                }
+                else
+                {
+                    await context.Sequence.AwaitProcessingAsync(true).ConfigureAwait(false);
+                }
             }
             finally
             {
