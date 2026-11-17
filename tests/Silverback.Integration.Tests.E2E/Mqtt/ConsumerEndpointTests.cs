@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using MQTTnet.Formatter;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
@@ -420,6 +421,112 @@ public partial class ConsumerEndpointTests : MqttTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne).ShouldBe(["1", "1"]);
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task ConsumerEndpoint_ShouldConsumeUnacknowledgedMessageAgain_WhenMqtt311PersistentSessionIsResumed()
+    {
+        int tryCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .UseProtocolVersion(MqttProtocolVersion.V311)
+                .AddClient(client => client
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS()))
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS())))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage)
+            .AddIntegrationSpy());
+
+        void HandleMessage(TestEventOne message)
+        {
+            if (Interlocked.Increment(ref tryCount) == 1)
+                throw new InvalidOperationException("First attempt failed.");
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(1);
+
+        // Like a broker, the session requested without the clean session flag redelivers the unacknowledged message
+        await consumer.Client.ConnectAsync();
+
+        await Helper.WaitUntilConnectedAsync();
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        tryCount.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne).ShouldBe(["1", "1"]);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task ConsumerEndpoint_ShouldNotConsumeUnacknowledgedMessageAgain_WhenSessionExpiresOnDisconnect()
+    {
+        int tryCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS()))
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .WithSessionExpiration(TimeSpan.Zero)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS())))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage)
+            .AddIntegrationSpy());
+
+        void HandleMessage(TestEventOne message)
+        {
+            if (Interlocked.Increment(ref tryCount) == 1)
+                throw new InvalidOperationException("First attempt failed.");
+        }
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+
+        // Like a broker, the MQTT 5 session with an expiry interval of 0 ends on disconnect, even without the clean start flag
+        await consumer.Client.ConnectAsync();
+
+        await Helper.WaitUntilConnectedAsync();
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        tryCount.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne).ShouldBe(["1", "2"]);
+        Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount().ShouldBe(0);
     }
 
     [Fact]

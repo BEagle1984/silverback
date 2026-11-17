@@ -5,6 +5,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
@@ -73,6 +74,7 @@ public partial class ErrorPoliciesTests
                     .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("other-topic"))
                     .Consume(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
                         .OnError(policy => policy.MoveTo(
                             "other-topic",
                             movePolicy => movePolicy.Transform(
@@ -93,6 +95,161 @@ public partial class ErrorPoliciesTests
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(1);
         Helper.GetMessages("other-topic").Count.ShouldBe(0);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task MovePolicy_ShouldConsumeMessageAgain_WhenMoveFailedAndPersistentSessionIsResumed()
+    {
+        int moveCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("other-topic"))
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .OnError(policy => policy.MoveTo("other-topic", movePolicy => movePolicy.Transform(FailFirstMove))))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
+
+        void FailFirstMove(IOutboundEnvelope? unused)
+        {
+            if (Interlocked.Increment(ref moveCount) == 1)
+                throw new InvalidOperationException("Move failed!");
+        }
+
+        static void HandleMessage(IIntegrationEvent unused) => throw new InvalidOperationException("Move!");
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(1);
+
+        // Like a broker, the persistent session redelivers the unacknowledged QoS 1 message when it's resumed
+        await consumer.Client.ConnectAsync();
+
+        await Helper.WaitUntilConnectedAsync();
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        moveCount.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne).ShouldBe(["1", "1"]);
+        Helper.GetMessages("other-topic").Count.ShouldBe(1);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task MovePolicy_ShouldNotConsumeMessageAgain_WhenMoveFailedAndCleanSessionIsStarted()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestCleanSession()
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("other-topic"))
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .OnError(policy => policy.MoveTo(
+                            "other-topic",
+                            movePolicy => movePolicy.Transform(
+                                _ => throw new InvalidOperationException("Move failed!")))))))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage)
+            .AddIntegrationSpy());
+
+        static void HandleMessage(TestEventOne message)
+        {
+            if (message.ContentEventOne == "1")
+                throw new InvalidOperationException("Move!");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+
+        // Like a broker, the clean session discards the unacknowledged message on disconnect
+        await consumer.Client.ConnectAsync();
+
+        await Helper.WaitUntilConnectedAsync();
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne).ShouldBe(["1", "2"]);
+        Helper.GetMessages("other-topic").Count.ShouldBe(0);
+        Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task MovePolicy_ShouldNotConsumeMessageAgain_WhenMoveFailedWithAtMostOnceQoSAndPersistentSessionIsResumed()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .RequestPersistentSession()
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("other-topic"))
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithAtMostOnceQoS()
+                        .OnError(policy => policy.MoveTo(
+                            "other-topic",
+                            movePolicy => movePolicy.Transform(
+                                _ => throw new InvalidOperationException("Move failed!")))))))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage)
+            .AddIntegrationSpy());
+
+        static void HandleMessage(TestEventOne message)
+        {
+            if (message.ContentEventOne == "1")
+                throw new InvalidOperationException("Move!");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+
+        // Like a broker, the persistent session never redelivers a QoS 0 message: it's lost and no longer pending
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
+
+        await consumer.Client.ConnectAsync();
+
+        await Helper.WaitUntilConnectedAsync();
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne).ShouldBe(["1", "2"]);
+        Helper.GetMessages("other-topic").Count.ShouldBe(0);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 
     [Fact]

@@ -110,6 +110,7 @@ public partial class ErrorPoliciesTests
                     .RequestPersistentSession()
                     .Consume(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
                         .OnError(policy => policy.Retry(10)))))
             .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
             .AddIntegrationSpy());

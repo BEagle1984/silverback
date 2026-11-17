@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
+using MQTTnet.Formatter;
 using MQTTnet.Protocol;
 using NSubstitute;
 using Shouldly;
@@ -538,9 +539,162 @@ public class InMemoryMqttBrokerTests
         await publisher.PublishAsync(CreateMessage("topic", "2", messageQualityOfServiceLevel));
         await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
 
-        // The redelivered message would precede the newer one, while the unacknowledged deliveries are still counted as pending
+        // The redelivered message would precede the newer one, while the lost delivery is no longer counted as pending
         GetPayloads(received).ShouldBe(["1", "2"]);
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(1);
+        broker.GetClientSession("consumer").GetPendingMessagesCount("topic").ShouldBe(1);
+
+        // The acknowledgment of the lost delivery mustn't acknowledge the newer message
+        await received.First().AcknowledgeAsync(CancellationToken.None);
+
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(1);
+
+        await received.Last().AcknowledgeAsync(CancellationToken.None);
+
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(0);
+        broker.GetClientSession("consumer").GetPendingMessagesCount("topic").ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldReturn_WhenAtMostOnceDeliveryWasLostOnDisconnect()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingClientAsync(
+            broker,
+            "consumer",
+            false,
+            received,
+            MqttQualityOfServiceLevel.AtMostOnce);
+        MqttClientOptions options = consumer.Options!;
+
+        await publisher.PublishAsync(CreateMessage("topic", "1"));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+        await consumer.ConnectAsync(options);
+
+        // The QoS 0 delivery is never redelivered: waiting for it would never end on the resumed session
+        await WaitUntilAllMessagesAreConsumedAsync(broker);
+
+        received.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldNotRedeliverUnacknowledgedMessages_WhenMqtt5SessionExpiresOnDisconnect()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MqttClientOptions options = CreateMqtt5ClientOptions("consumer", false, 0);
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, received);
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+
+        // Without the clean start flag, the session still ends on disconnect, since it doesn't outlive the connection
+        await consumer.ConnectAsync(options);
+        await SubscribeAsync(consumer, "topic", MqttQualityOfServiceLevel.AtLeastOnce);
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+
+        GetPayloads(received).ShouldBe(["1", "2"]);
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldRedeliverUnacknowledgedMessages_WhenMqtt5SessionWithExpiryIsResumed()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MqttClientOptions options = CreateMqtt5ClientOptions("consumer", false, 60);
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, received);
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+
+        await consumer.ConnectAsync(options);
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+
+        GetPayloads(received).ShouldBe(["1", "1"]);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldResumeMqtt5SessionWithExpiry_WhenReconnectingWithoutExpiry()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingMqtt5ClientAsync(
+            broker,
+            CreateMqtt5ClientOptions("consumer", false, 60),
+            received);
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
+
+        // The session outlived the previous connection, so it's resumed with its subscription and the queued messages, regardless of
+        // the expiry interval of the new connection
+        await consumer.ConnectAsync(CreateMqtt5ClientOptions("consumer", false, 0));
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 3);
+
+        GetPayloads(received).ShouldBe(["1", "1", "2"]);
+
+        // The session ends with the new connection, which has no expiry interval
+        await consumer.DisconnectAsync();
+
+        Should.Throw<InvalidOperationException>(() => broker.GetClientSession("consumer"));
+    }
+
+    [Fact]
+    public async Task Connect_ShouldTakeOverMqtt5SessionWithoutExpiry_WhenReconnectingWhileConnected()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MqttClientOptions options = CreateMqtt5ClientOptions("consumer", false, 0);
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, received);
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+
+        // The session doesn't end with the connection that is taken over, since it continues with the new one
+        await consumer.ConnectAsync(options);
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+
+        GetPayloads(received).ShouldBe(["1", "1"]);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldDiscardPersistentSession_WhenMqtt5CleanStartIsRequested()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received = new();
+        MqttClientOptions options = CreateMqtt5ClientOptions("consumer", true, 60);
+        MockedMqttClient consumer = await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, received);
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !received.IsEmpty);
+        await consumer.DisconnectAsync();
+
+        // The session with an expiry interval outlives the connection, even if it was created with the clean start flag
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
         broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(2);
+
+        // The clean start discards it when reconnecting
+        await consumer.ConnectAsync(options);
+        await SubscribeAsync(consumer, "topic", MqttQualityOfServiceLevel.AtLeastOnce);
+        await publisher.PublishAsync(CreateMessage("topic", "3", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
+
+        GetPayloads(received).ShouldBe(["1", "3"]);
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(1);
     }
 
     [Fact]
@@ -593,6 +747,37 @@ public class InMemoryMqttBrokerTests
         await AsyncTestingUtil.WaitAsync(() => received.Count >= 2);
 
         GetPayloads(received).ShouldBe(["1", "1"]);
+    }
+
+    private static MqttClientOptions CreateMqtt5ClientOptions(string clientId, bool cleanStart, uint sessionExpiryInterval) =>
+        new MqttClientOptionsBuilder()
+            .WithClientId(clientId)
+            .WithTcpServer("server")
+            .WithProtocolVersion(MqttProtocolVersion.V500)
+            .WithCleanStart(cleanStart)
+            .WithSessionExpiryInterval(sessionExpiryInterval)
+            .Build();
+
+    private static async Task<MockedMqttClient> CreateManuallyAcknowledgingMqtt5ClientAsync(
+        InMemoryMqttBroker broker,
+        MqttClientOptions options,
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received)
+    {
+        IMockedMqttOptions mockOptions = Substitute.For<IMockedMqttOptions>();
+        mockOptions.ConnectionDelay.Returns(TimeSpan.Zero);
+
+        MockedMqttClient client = new(broker, mockOptions);
+        client.ApplicationMessageReceivedAsync += args =>
+        {
+            args.AutoAcknowledge = false;
+            received.Enqueue(args);
+            return Task.CompletedTask;
+        };
+
+        await client.ConnectAsync(options);
+        await SubscribeAsync(client, "topic", MqttQualityOfServiceLevel.AtLeastOnce);
+
+        return client;
     }
 
     private static string[] GetPayloads(IEnumerable<MqttApplicationMessageReceivedEventArgs> received) =>
@@ -649,6 +834,7 @@ public class InMemoryMqttBrokerTests
                 .WithClientId(clientId)
                 .WithTcpServer(server)
                 .WithCleanSession(cleanSession)
+                .WithSessionExpiryInterval(cleanSession ? 0 : uint.MaxValue)
                 .Build());
 
         return client;

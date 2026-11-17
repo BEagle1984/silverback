@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
+using MQTTnet.Formatter;
 using MQTTnet.Packets;
 using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -53,15 +54,25 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
         lock (_sessions)
         {
-            Disconnect(client);
+            // Like the broker, close the connection still open: the session continues with the new connection, regardless of whether
+            // it would outlive the closed one
+            if (TryGetClientSession(client, out ClientSession? session))
+                session.Disconnect();
 
-            if (!TryGetClientSession(client, out ClientSession? session))
+            // Like the broker, discard the existing session when a clean session (MQTT 3.1.1) or a clean start (MQTT 5) is requested
+            if (session != null && client.Options.CleanSession)
+            {
+                RemoveClientSession(client);
+                session = null;
+            }
+
+            if (session == null)
             {
                 session = new ClientSession(client);
                 _sessions.Add(GetClientSessionKey(client), session);
             }
 
-            session.Connect();
+            session.Connect(IsSessionPersistent(client.Options));
         }
     }
 
@@ -79,7 +90,8 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
             session.Disconnect();
 
-            if (client.Options.CleanSession)
+            // The options of the connection that is closed decide whether the session outlives it, not the client's current ones
+            if (!session.IsPersistent)
                 RemoveClientSession(client);
         }
     }
@@ -173,6 +185,11 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     }
 
     private static string GetClientSessionKey(MockedMqttClient client) => $"{client.Options?.ClientId}|{client.Options?.ChannelOptions}";
+
+    // Like the broker, keep the session after the disconnection only if it's persistent. In MQTT 5 it depends on the session expiry
+    // interval only, since the clean session flag is the clean start flag. The expiry itself isn't simulated.
+    private static bool IsSessionPersistent(MqttClientOptions options) =>
+        options.ProtocolVersion >= MqttProtocolVersion.V500 ? options.SessionExpiryInterval > 0 : !options.CleanSession;
 
     private bool TryGetClientSession(MockedMqttClient client, [NotNullWhen(true)] out ClientSession? session) =>
         _sessions.TryGetValue(GetClientSessionKey(client), out session);

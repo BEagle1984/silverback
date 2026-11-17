@@ -25,10 +25,10 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     private readonly ConcurrentDictionary<string, int> _pendingMessagesCountByTopic = new();
 
-    // Synchronizes the delivery and acknowledgment of the QoS 1 and 2 messages with the disconnection
+    // Synchronizes the delivery and acknowledgment of the messages with the disconnection
     private readonly System.Threading.Lock _deliveryLock = new();
 
-    // The QoS 1 and 2 messages delivered during the current connection and not acknowledged yet, in delivery order
+    // The messages delivered during the current connection and not acknowledged yet, in delivery order
     private readonly List<PendingMessage> _unacknowledgedMessages = [];
 
     // The QoS 1 and 2 messages delivered during a previous connection and not acknowledged, to be redelivered in order before the
@@ -51,12 +51,16 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     public bool IsConnected { get; private set; }
 
-    public void Connect()
+    // Whether the session outlives the current (or last) connection, according to the options it was established with
+    public bool IsPersistent { get; private set; }
+
+    public void Connect(bool isPersistent)
     {
         if (IsConnected)
             return;
 
         IsConnected = true;
+        IsPersistent = isPersistent;
 
         if (_readCancellationTokenSource.IsCancellationRequested)
             _readCancellationTokenSource = new CancellationTokenSource();
@@ -87,7 +91,15 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
             // Like the broker, redeliver the unacknowledged QoS 1 and 2 messages first when the session is resumed. They precede the
             // messages still to be redelivered, which weren't delivered again during this connection.
-            _messagesToRedeliver.InsertRange(0, _unacknowledgedMessages);
+            _messagesToRedeliver.InsertRange(
+                0,
+                _unacknowledgedMessages.Where(message => message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce));
+
+            // A QoS 0 delivery is never redelivered: the message is lost and no longer pending
+            _unacknowledgedMessages
+                .Where(message => message.QualityOfServiceLevel == MqttQualityOfServiceLevel.AtMostOnce)
+                .ForEach(RemovePendingMessage);
+
             _unacknowledgedMessages.Clear();
         }
     }
@@ -185,9 +197,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
                 if (TryDequeueMessage(out PendingMessage? message))
                 {
-                    if (message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce)
-                        _unacknowledgedMessages.Add(message);
-
+                    _unacknowledgedMessages.Add(message);
                     return message;
                 }
             }
@@ -219,15 +229,12 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     private async Task DeliverAsync(PendingMessage message, int connectionIndex)
     {
-        // Don't deliver a QoS 1 or 2 message through a closed connection, since it's already queued for redelivery. This narrows the
-        // window between the read and the delivery, without closing it.
-        if (message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce)
+        // Don't deliver a message through a closed connection, since it's already queued for redelivery (QoS 1 and 2) or lost (QoS 0).
+        // This narrows the window between the read and the delivery, without closing it.
+        lock (_deliveryLock)
         {
-            lock (_deliveryLock)
-            {
-                if (connectionIndex != _connectionIndex)
-                    return;
-            }
+            if (connectionIndex != _connectionIndex)
+                return;
         }
 
         Delivery delivery = new(message, connectionIndex);
@@ -253,19 +260,22 @@ internal sealed class ClientSession : IDisposable, IClientSession
         if (!delivery.TrySetAcknowledged())
             return;
 
-        if (delivery.Message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce)
+        lock (_deliveryLock)
         {
-            lock (_deliveryLock)
-            {
-                // Like the broker, ignore the acknowledgment sent after the connection is closed: the message will be redelivered
-                if (delivery.ConnectionIndex != _connectionIndex || !_unacknowledgedMessages.Remove(delivery.Message))
-                    return;
-            }
+            // Like the broker, ignore the acknowledgment sent after the connection is closed: the message will be redelivered (QoS 1
+            // and 2) or was lost and is no longer pending already (QoS 0)
+            if (delivery.ConnectionIndex != _connectionIndex || !_unacknowledgedMessages.Remove(delivery.Message))
+                return;
         }
 
+        RemovePendingMessage(delivery.Message);
+    }
+
+    private void RemovePendingMessage(PendingMessage message)
+    {
         Interlocked.Decrement(ref _pendingMessagesCount);
         _pendingMessagesCountByTopic.AddOrUpdate(
-            delivery.Message.ApplicationMessage.Topic,
+            message.ApplicationMessage.Topic,
             _ => 0,
             (_, count) => count - 1);
     }

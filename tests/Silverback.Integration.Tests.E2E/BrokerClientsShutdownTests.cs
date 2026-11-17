@@ -225,7 +225,8 @@ public class BrokerClientsShutdownTests : E2ETests
                         .WithClientId("shutdown-consumer")
                         .Consume<TestEventOne>(endpoint =>
                         {
-                            endpoint.ConsumeFrom(inputTopic).OnError(policy => policy.Skip());
+                            // QoS 1, since a QoS 0 delivery is lost on disconnect and is no longer pending, even if not acknowledged
+                            endpoint.ConsumeFrom(inputTopic).WithAtLeastOnceQoS().OnError(policy => policy.Skip());
 
                             if (batchProcessing)
                                 endpoint.EnableBatchProcessing(1);
