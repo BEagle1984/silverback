@@ -45,6 +45,9 @@ services.AddSilverback()
 > [!Note]
 > With Kafka, a batch per topic partition is created by default. You can decide to process all partitions together by calling `ProcessAllPartitionsTogether` on the consumer configuration and that will create a single batch for all the topics consumed by the consumer, which must then use the same batch settings for all its endpoints (see [Parallelism](xref:consuming#parallelism)).
 
+> [!Note]
+> With Kafka, the batches can contain chunked messages. See [Chunked Messages in Batches](xref:consuming-chunking#chunked-messages-in-batches) for the limitations when the subscriber doesn't read a chunked `BinaryMessage` to the end, and for the commit of the discarded chunks.
+
 > [!Important]
 > **MQTT Notes**
 >

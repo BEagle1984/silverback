@@ -860,7 +860,8 @@ public class OffsetStoreInMemoryTests : KafkaTests
                     .Consume(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .EnableBatchProcessing(2))))
-            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync));
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddIntegrationSpy());
 
         async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
         {
@@ -897,18 +898,19 @@ public class OffsetStoreInMemoryTests : KafkaTests
             await producer.RawProduceAsync([.. rawMessage.Skip(10)], HeadersHelper.GetChunkHeaders("1", 1, 2, typeof(TestEventOne)));
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        // The disconnect awaits the processing of the consumed messages and aborts the pending batch (the skipped chunk isn't committed,
+        // so the helper can't wait for it to be consumed)
+        await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count == 3);
+        await consumer.Client.DisconnectAsync();
 
-        // The skipped chunk is committed without reaching the subscribers, but its offset isn't stored, since it would skip the
-        // chunked message in the pending batch after the restart
+        // The skipped chunk isn't committed, nor its offset stored, since it would skip the chunked message in the pending batch after
+        // the restart
         Host.ServiceProvider
             .GetRequiredService<IKafkaOffsetStoreFactory>()
             .GetStore(consumer.Configuration.ClientSideOffsetStore!, Host.ServiceProvider)
             .GetStoredOffsets(DefaultGroupId)
             .ShouldBeEmpty();
 
-        // The disconnect aborts the pending batch
-        await consumer.Client.DisconnectAsync();
         await consumer.Client.ConnectAsync();
         await Helper.WaitUntilConnectedAsync();
 

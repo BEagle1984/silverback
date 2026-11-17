@@ -62,8 +62,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
             if (context.Sequence == null)
             {
-                await context.TransactionManager.CommitAsync().ConfigureAwait(false);
-                context.Dispose();
+                await CommitAndDisposeAsync(context).ConfigureAwait(false);
             }
             else
             {
@@ -107,6 +106,31 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
                 throw;
         }
     }
+
+    private static async Task CommitAndDisposeAsync(ConsumerPipelineContext context)
+    {
+        if (CanCommit(context))
+            await context.TransactionManager.CommitAsync().ConfigureAwait(false);
+
+        context.Dispose();
+    }
+
+    // The message that doesn't belong to a sequence and is discarded before being published (e.g., a duplicated chunk or a chunk of an
+    // incomplete sequence, skipped by the sequencer) isn't committed while other sequences are pending or unresolved (e.g., the batch that
+    // a chunked message was added to), or while the consumer is stopping, when the commit is cumulative (Kafka): it would implicitly commit
+    // their messages before they're processed. As when the error policies skip a message (see ConsumerTransactionManager.RollbackCoreAsync),
+    // it's committed by the next commit or it's consumed, and discarded, again after the restart. With MQTT, the message must be
+    // acknowledged anyway, since nothing else would acknowledge it.
+    private static bool CanCommit(ConsumerPipelineContext context) =>
+        IsPublished(context) ||
+        context.Consumer is not ICumulativeCommitConsumer ||
+        context.TransactionManager is not ConsumerTransactionManager transactionManager ||
+        transactionManager.CanCommitUnprocessedMessage();
+
+    // The pipeline steps are never stepped back, so the current one is the last step that the message reached
+    private static bool IsPublished(ConsumerPipelineContext context) =>
+        context.CurrentStepIndex >= context.Pipeline.Count ||
+        context.Pipeline[context.CurrentStepIndex].SortIndex >= BrokerBehaviorsSortIndexes.Consumer.Publisher;
 
     // Check IsCompleting first, since it's reset only after the state is switched to complete
     private static bool IsCompletingOrComplete(ISequence sequence) => sequence.IsCompleting || sequence.IsComplete;

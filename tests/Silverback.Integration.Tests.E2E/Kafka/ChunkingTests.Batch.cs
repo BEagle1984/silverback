@@ -1122,6 +1122,180 @@ public partial class ChunkingTests
     }
 
     [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Chunking_ShouldCommitInOrder_WhenRemainingChunksAreDiscardedWhileBatchStartedByBinaryMessageIsCommitted(bool isPartlyRead)
+    {
+        TestingCollection<List<string?>> batches = [];
+        LogEventsCollector logEventsCollector = new();
+        HoldFirstChunkCommitBehavior holdCommitBehavior = new("1");
+        NotifyChunkProcessedBehavior lastChunkProcessedBehavior = new("1", 2);
+        int batchesCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .Consume<BinaryMessage>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(200)))))
+            .AddSingletonBrokerBehavior(holdCommitBehavior)
+            .AddSingletonBrokerBehavior(lastChunkProcessedBehavior)
+            .AddDelegateSubscriber<IAsyncEnumerable<BinaryMessage>>(HandleBatchAsync)
+            .AddIntegrationSpy());
+
+        async Task HandleBatchAsync(IAsyncEnumerable<BinaryMessage> batch)
+        {
+            bool isFirstBatch = Interlocked.Increment(ref batchesCount) == 1;
+            List<string?> list = [];
+            batches.Add(list);
+
+            await foreach (BinaryMessage message in batch)
+            {
+                // Move on without fully reading the binary message starting the first batch: the push of its first chunk, acknowledged
+                // only when the next chunk is read, is still pending when the batch completes because of its max wait time
+                if (isFirstBatch)
+                {
+                    if (isPartlyRead)
+                    {
+                        byte[] buffer = new byte[5];
+                        await message.Content!.ReadExactlyAsync(buffer);
+                    }
+
+                    list.Add(null);
+                    continue;
+                }
+
+                byte[]? readAll = await message.Content.ReadAllAsync();
+                list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
+            }
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] chunks1 = [.. "Long message 1"u8.ToArray().Chunk(5)];
+        chunks1.Length.ShouldBe(3);
+
+        for (int i = 0; i < chunks1.Length; i++)
+        {
+            await producer.RawProduceAsync(chunks1[i], HeadersHelper.GetChunkHeaders("1", i, chunks1.Length));
+        }
+
+        // The batch is completed by its max wait time and its commit is held, while the remaining chunks of the binary message are discarded
+        // as incomplete: committing them now would implicitly commit the batch before its own commit, whose lower offset would then be
+        // dropped as already committed (the commit is released in any case, not to block the test host disposal)
+        long committedOffsetsCountWhileHeld;
+
+        try
+        {
+            await holdCommitBehavior.ReachedTask.WaitAsync(TimeSpan.FromSeconds(10));
+            await lastChunkProcessedBehavior.ProcessedTask.WaitAsync(TimeSpan.FromSeconds(10));
+            committedOffsetsCountWhileHeld = DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
+        }
+        finally
+        {
+            holdCommitBehavior.Release();
+        }
+
+        committedOffsetsCountWhileHeld.ShouldBe(0);
+
+        // The batch commit covers the first chunk, which joined the batch, while the discarded chunks are committed only by the next commit
+        // (accepted limitation, see the consuming chunking guide)
+        await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+
+        await producer.RawProduceAsync("Message 2"u8.ToArray(), HeadersHelper.GetChunkHeaders("2", 0, 1));
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        batches.Count.ShouldBe(2);
+        batches[0].ShouldBe([null]);
+        batches[1].ShouldBe(["Message 2"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(4);
+        logEventsCollector.GetStoredKafkaOffsets().ShouldBe(
+            [1, 4],
+            customMessage: "The batch must be committed first and the discarded chunks only by the next commit");
+        logEventsCollector.ContainsProcessingFatalError().ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData("incomplete")]
+    [InlineData("duplicated")]
+    public async Task Chunking_ShouldNotCommitPastPendingBatch_WhenChunkIsDiscardedWithoutProcessing(string scenario)
+    {
+        TestingCollection<List<string?>> batches = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync)
+            .AddIntegrationSpy());
+
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+            }
+
+            batches.Add(list);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] chunks1 = ChunksHelper.SerializeAndSplitIntoChunks("Long message 1", 2);
+        byte[][] chunks2 = ChunksHelper.SerializeAndSplitIntoChunks("Long message 2", 3);
+
+        // The chunked message is complete and added to the batch, which is still pending
+        await producer.RawProduceAsync(chunks1[0], HeadersHelper.GetChunkHeaders("1", 0, chunks1.Length, typeof(TestEventOne)));
+        await producer.RawProduceAsync(chunks1[1], HeadersHelper.GetChunkHeaders("1", 1, chunks1.Length, typeof(TestEventOne)));
+
+        // The chunk of a sequence whose beginning was never consumed, or the chunk consumed again after the sequence was completed
+        if (scenario == "incomplete")
+            await producer.RawProduceAsync(chunks2[1], HeadersHelper.GetChunkHeaders("2", 1, chunks2.Length, typeof(TestEventOne)));
+        else
+            await producer.RawProduceAsync(chunks1[1], HeadersHelper.GetChunkHeaders("1", 1, chunks1.Length, typeof(TestEventOne)));
+
+        // The disconnect awaits the processing of the consumed messages and aborts the pending batch (the discarded chunk isn't committed,
+        // so the helper can't wait for it to be consumed)
+        await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count == 3);
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync();
+
+        // The discarded chunk isn't committed, since it would implicitly commit the chunked message in the pending batch
+        batches.ShouldBeEmpty();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+
+        await consumer.Client.ConnectAsync();
+        await Helper.WaitUntilConnectedAsync();
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" });
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        // The chunked message is consumed again after reconnecting and the batch commit includes the discarded chunk
+        batches.Count.ShouldBe(1);
+        batches[0].ShouldBe(["Long message 1", "3"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(4);
+    }
+
+    [Theory]
     [InlineData("timeout")]
     [InlineData("next chunked message")]
     public async Task Chunking_ShouldNotMoveCommittedOffsetBack_WhenIncompleteMessageIsAbortedAfterBatchIsCommitted(string abortTrigger)
@@ -1192,6 +1366,77 @@ public partial class ChunkingTests
 
         // The batch isn't consumed again after reconnecting
         batches.ShouldBe([["1", "2"], ["3", "4"]]);
+    }
+
+    // Holds the commit of the transaction of the first chunk of the message with the specified key, which is the commit of the batch that
+    // the chunk starts, so that the next messages are consumed while the completed batch isn't committed yet
+    private sealed class HoldFirstChunkCommitBehavior : IConsumerBehavior
+    {
+        private readonly string _messageKey;
+
+        private readonly TaskCompletionSource _reachedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        private readonly TaskCompletionSource _releaseTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public HoldFirstChunkCommitBehavior(string messageKey)
+        {
+            _messageKey = messageKey;
+        }
+
+        public Task ReachedTask => _reachedTaskCompletionSource.Task;
+
+        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.TransactionHandler + 1;
+
+        public void Release() => _releaseTaskCompletionSource.TrySetResult();
+
+        public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
+        {
+            if (context.Envelope.Headers.GetValue(KafkaMessageHeaders.MessageKey) == _messageKey &&
+                context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) == 0)
+            {
+                context.TransactionManager.Committing.AddHandler(_ => new ValueTask(HoldAsync()));
+            }
+
+            return next(context, cancellationToken);
+        }
+
+        private Task HoldAsync()
+        {
+            _reachedTaskCompletionSource.TrySetResult();
+            return _releaseTaskCompletionSource.Task;
+        }
+    }
+
+    // Notifies when the pipeline of the chunk with the specified index of the message with the specified key returned from the transaction
+    // handler, which commits it if it's discarded without being processed and the commit doesn't skip any pending or unresolved sequence
+    private sealed class NotifyChunkProcessedBehavior : IConsumerBehavior
+    {
+        private readonly string _messageKey;
+
+        private readonly int _chunkIndex;
+
+        private readonly TaskCompletionSource _processedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public NotifyChunkProcessedBehavior(string messageKey, int chunkIndex)
+        {
+            _messageKey = messageKey;
+            _chunkIndex = chunkIndex;
+        }
+
+        public Task ProcessedTask => _processedTaskCompletionSource.Task;
+
+        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.TransactionHandler - 1;
+
+        public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
+        {
+            bool isNotifiedChunk = context.Envelope.Headers.GetValue(KafkaMessageHeaders.MessageKey) == _messageKey &&
+                                   context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) == _chunkIndex;
+
+            await next(context, cancellationToken);
+
+            if (isNotifiedChunk)
+                _processedTaskCompletionSource.TrySetResult();
+        }
     }
 
     // Holds the first consumed binary message with the specified key right before it's added to the batch, after its chunk sequence was

@@ -41,7 +41,7 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
             // ISilverbackContext is the one of the current async flow instead, which belongs to another message when the transaction is
             // completed by another pipeline (e.g., an incomplete chunked message aborted by the next message).
             context.SilverbackContext.SetKafkaOffsetStoreScope(offsetStoreScope);
-            context.TransactionManager.Committing.AddHandler(committingContext => StoreOffsetsAsync(offsetStoreScope, committingContext));
+            context.TransactionManager.Committing.AddHandler(_ => StoreOffsetsAsync(offsetStoreScope));
             context.TransactionManager.Skipping.AddHandler(skippedContext => StoreSkippedOffsetsAsync(offsetStoreScope, skippedContext));
         }
 
@@ -53,26 +53,10 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
             context.ServiceProvider.GetRequiredService<IKafkaOffsetStoreFactory>().GetStore(storeSettings, context.ServiceProvider),
             context);
 
-    // The offsets are stored in the storage transaction enlisted by the subscriber, if any. The message that doesn't belong to a sequence
-    // and is committed without being published (e.g., a duplicated chunk skipped by the sequencer) is committed by the transaction
-    // handler even while other sequences are pending or unresolved (e.g., the batch that a chunked message was added to): its offset
-    // isn't stored then, since it would skip their messages after the restart, but by the next commit.
-    private static ValueTask StoreOffsetsAsync(KafkaOffsetStoreScope offsetStoreScope, ConsumerPipelineContext context)
-    {
-        if (context.Sequence == null && !IsPublished(context) &&
-            context.TransactionManager is ConsumerTransactionManager transactionManager &&
-            !transactionManager.CanCommitUnprocessedMessage())
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        return new ValueTask(offsetStoreScope.StoreOffsetsAsync());
-    }
-
-    // The pipeline steps are never stepped back, so the current one is the last step that the message reached
-    private static bool IsPublished(ConsumerPipelineContext context) =>
-        context.CurrentStepIndex >= context.Pipeline.Count ||
-        context.Pipeline[context.CurrentStepIndex].SortIndex >= BrokerBehaviorsSortIndexes.Consumer.Publisher;
+    // The offsets are stored in the storage transaction enlisted by the subscriber, if any. The message committed without being published
+    // (e.g., a duplicated chunk skipped by the sequencer) isn't committed, nor stored, while other sequences are pending or unresolved
+    // (see TransactionHandlerConsumerBehavior), since it would skip their messages after the restart.
+    private static ValueTask StoreOffsetsAsync(KafkaOffsetStoreScope offsetStoreScope) => new(offsetStoreScope.StoreOffsetsAsync());
 
     // The storage transaction enlisted by the subscriber (if any) failed together with the message: the offsets are stored outside it. A
     // failure is retried once right away and then logged, letting the error policy complete: the message was already skipped or moved and

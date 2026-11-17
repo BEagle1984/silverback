@@ -3,13 +3,16 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes.Logging;
 
-public sealed class LogEventsCollector : ILoggerProvider, ILogger
+public sealed partial class LogEventsCollector : ILoggerProvider, ILogger
 {
     private readonly ConcurrentQueue<(EventId EventId, string Message, Exception? Exception)> _logEvents = new();
 
@@ -49,6 +52,17 @@ public sealed class LogEventsCollector : ILoggerProvider, ILogger
             logEvent.EventId == IntegrationLogEvents.ProcessingConsumedMessageFatalError.EventId &&
             (exceptionPredicate == null || exceptionPredicate(logEvent.Exception)));
 
+    // The offsets stored by the Kafka consumers to be committed (the next offset to be consumed), in the order they were stored: the trace
+    // is written right before the offset is stored
+    public IReadOnlyList<long> GetStoredKafkaOffsets() =>
+    [
+        .. _logEvents
+            .Where(logEvent => logEvent.EventId == IntegrationLogEvents.Tracing.EventId)
+            .Select(logEvent => StoredOffsetRegex().Match(logEvent.Message))
+            .Where(match => match.Success)
+            .Select(match => long.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture))
+    ];
+
     public ILogger CreateLogger(string categoryName) => this;
 
     public IDisposable? BeginScope<TState>(TState state)
@@ -69,4 +83,7 @@ public sealed class LogEventsCollector : ILoggerProvider, ILogger
     {
         // Nothing to dispose
     }
+
+    [GeneratedRegex(@"^Storing offset .+@(\d+) \|", RegexOptions.CultureInvariant)]
+    private static partial Regex StoredOffsetRegex();
 }
