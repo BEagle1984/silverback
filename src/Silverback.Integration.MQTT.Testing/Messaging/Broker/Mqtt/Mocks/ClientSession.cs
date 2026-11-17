@@ -47,18 +47,20 @@ internal sealed class ClientSession : IDisposable, IClientSession
         Client = Check.NotNull(client, nameof(client));
     }
 
-    public MockedMqttClient Client { get; }
+    // The client owning the current (or last) connection. It changes when another client instance connects with the same client id.
+    public MockedMqttClient Client { get; private set; }
 
     public bool IsConnected { get; private set; }
 
     // Whether the session outlives the current (or last) connection, according to the options it was established with
     public bool IsPersistent { get; private set; }
 
-    public void Connect(bool isPersistent)
+    public void Connect(MockedMqttClient client, bool isPersistent)
     {
         if (IsConnected)
             return;
 
+        Client = Check.NotNull(client, nameof(client));
         IsConnected = true;
         IsPersistent = isPersistent;
 
@@ -73,7 +75,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
         }
 
         CancellationToken cancellationToken = _readCancellationTokenSource.Token;
-        Task.Run(() => ReadChannelAsync(connectionIndex, cancellationToken)).FireAndForget();
+        Task.Run(() => ReadChannelAsync(client, connectionIndex, cancellationToken)).FireAndForget();
     }
 
     public void Disconnect()
@@ -177,11 +179,11 @@ internal sealed class ClientSession : IDisposable, IClientSession
         _readCancellationTokenSource.Dispose();
     }
 
-    private async Task ReadChannelAsync(int connectionIndex, CancellationToken cancellationToken)
+    private async Task ReadChannelAsync(MockedMqttClient client, int connectionIndex, CancellationToken cancellationToken)
     {
         while (await TryReadNextMessageAsync(connectionIndex, cancellationToken).ConfigureAwait(false) is { } message)
         {
-            await DeliverAsync(message, connectionIndex).ConfigureAwait(false);
+            await DeliverAsync(client, message, connectionIndex).ConfigureAwait(false);
         }
     }
 
@@ -227,7 +229,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
         return _channel.Reader.TryRead(out message);
     }
 
-    private async Task DeliverAsync(PendingMessage message, int connectionIndex)
+    private async Task DeliverAsync(MockedMqttClient client, PendingMessage message, int connectionIndex)
     {
         // Don't deliver a message through a closed connection, since it's already queued for redelivery (QoS 1 and 2) or lost (QoS 0).
         // This narrows the window between the read and the delivery, without closing it.
@@ -240,7 +242,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
         Delivery delivery = new(message, connectionIndex);
 
         MqttApplicationMessageReceivedEventArgs eventArgs = new(
-            Client.Options?.ClientId,
+            client.Options?.ClientId,
             message.ApplicationMessage,
             new MqttPublishPacket(),
             (_, _) =>
@@ -249,7 +251,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
                 return Task.CompletedTask;
             });
 
-        await Client.HandleMessageReceivedAsync(eventArgs).ConfigureAwait(false);
+        await client.HandleMessageReceivedAsync(eventArgs).ConfigureAwait(false);
 
         if (eventArgs.AutoAcknowledge)
             Acknowledge(delivery);

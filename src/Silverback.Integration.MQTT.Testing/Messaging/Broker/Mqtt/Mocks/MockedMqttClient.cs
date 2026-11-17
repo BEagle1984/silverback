@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Diagnostics.PacketInspection;
+using MQTTnet.Formatter;
 using MQTTnet.Packets;
 using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -60,7 +61,7 @@ public sealed class MockedMqttClient : IMqttClient
     public event Func<InspectMqttPacketEventArgs, Task>? InspectPacketAsync;
 
     /// <inheritdoc cref="IMqttClient.IsConnected" />
-    public bool IsConnected { get; private set; }
+    public bool IsConnected { get; internal set; }
 
     /// <inheritdoc cref="IMqttClient.Options" />
     public MqttClientOptions? Options { get; private set; }
@@ -83,10 +84,9 @@ public sealed class MockedMqttClient : IMqttClient
 
             await Task.Delay(_mockOptions.ConnectionDelay, cancellationToken).ConfigureAwait(false);
 
-            // Register the session only once the connection succeeded, so that a canceled attempt leaves no trace
+            // The session is registered only once the connection succeeded, so that a canceled attempt leaves no trace. The broker
+            // sets IsConnected together with the registration, like a real client that reports it only after the CONNACK.
             _broker.Connect(this);
-
-            IsConnected = true;
         }
         finally
         {
@@ -161,6 +161,20 @@ public sealed class MockedMqttClient : IMqttClient
 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose() => _isDisposed = true;
+
+    // Called by the broker, after it reset IsConnected, when another client instance connects with the same client id. Like MQTTnet,
+    // report the connection as lost: MQTT 5 brokers send a DISCONNECT packet with the session taken over reason, while MQTT 3.1.1
+    // brokers just close the connection.
+    internal void OnSessionTakenOver()
+    {
+        MqttClientDisconnectReason reason = Options?.ProtocolVersion >= MqttProtocolVersion.V500
+            ? MqttClientDisconnectReason.SessionTakenOver
+            : MqttClientDisconnectReason.NormalDisconnection;
+
+        MqttClientDisconnectedEventArgs eventArgs = new(true, null, reason, string.Empty, [], null);
+
+        Task.Run(() => DisconnectedAsync?.Invoke(eventArgs) ?? Task.CompletedTask).FireAndForget();
+    }
 
     [SuppressMessage("Usage", "VSTHRD110", MessageId = "Observe result of async calls", Justification = "False positive")]
     internal Task HandleMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs) =>

@@ -671,6 +671,201 @@ public class InMemoryMqttBrokerTests
     }
 
     [Fact]
+    public async Task Connect_ShouldTakeOverPersistentSession_WhenAnotherClientConnectsWithSameClientId()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> oldReceived = new();
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> newReceived = new();
+        MqttClientOptions options = CreateMqtt5ClientOptions("consumer", false, uint.MaxValue);
+        MockedMqttClient oldClient = await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, oldReceived);
+        List<MqttClientDisconnectedEventArgs> disconnections = [];
+        oldClient.DisconnectedAsync += args =>
+        {
+            disconnections.Add(args);
+            return Task.CompletedTask;
+        };
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !oldReceived.IsEmpty);
+
+        MockedMqttClient newClient = await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, newReceived, false);
+        await AsyncTestingUtil.WaitAsync(() => !newReceived.IsEmpty);
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => newReceived.Count >= 2);
+
+        // The old client observes the disconnection, doesn't receive anything else and doesn't affect the new connection
+        await AsyncTestingUtil.WaitAsync(() => disconnections.Count > 0);
+        disconnections.Single().Reason.ShouldBe(MqttClientDisconnectReason.SessionTakenOver);
+        disconnections.Single().ClientWasConnected.ShouldBeTrue();
+        oldClient.IsConnected.ShouldBeFalse();
+        newClient.IsConnected.ShouldBeTrue();
+        GetPayloads(oldReceived).ShouldBe(["1"]);
+        GetPayloads(newReceived).ShouldBe(["1", "2"]);
+
+        await oldClient.DisconnectAsync();
+        await Should.ThrowAsync<InvalidOperationException>(() => oldClient.PublishAsync(CreateMessage("topic", "x")));
+        await publisher.PublishAsync(CreateMessage("topic", "3", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => newReceived.Count >= 3);
+
+        GetPayloads(newReceived).ShouldBe(["1", "2", "3"]);
+        GetPayloads(oldReceived).ShouldBe(["1"]);
+        newClient.IsConnected.ShouldBeTrue();
+
+        foreach (MqttApplicationMessageReceivedEventArgs eventArgs in newReceived.Skip(1))
+        {
+            await eventArgs.AcknowledgeAsync(CancellationToken.None);
+        }
+
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldDisconnectMqtt311ClientWithoutReasonOrConnectResult_WhenAnotherClientConnectsWithSameClientId()
+    {
+        using InMemoryMqttBroker broker = new();
+        IMockedMqttOptions mockOptions = Substitute.For<IMockedMqttOptions>();
+        mockOptions.ConnectionDelay.Returns(TimeSpan.Zero);
+        MqttClientOptions options = new MqttClientOptionsBuilder()
+            .WithClientId("consumer")
+            .WithTcpServer("server")
+            .WithProtocolVersion(MqttProtocolVersion.V311)
+            .WithCleanSession(false)
+            .Build();
+        MockedMqttClient oldClient = new(broker, mockOptions);
+        List<MqttClientDisconnectedEventArgs> disconnections = [];
+        oldClient.DisconnectedAsync += args =>
+        {
+            disconnections.Add(args);
+            return Task.CompletedTask;
+        };
+        await oldClient.ConnectAsync(options);
+
+        await new MockedMqttClient(broker, mockOptions).ConnectAsync(options);
+
+        // Like MQTTnet, since the broker just closes the connection
+        await AsyncTestingUtil.WaitAsync(() => disconnections.Count > 0);
+        disconnections.Single().Reason.ShouldBe(MqttClientDisconnectReason.NormalDisconnection);
+        disconnections.Single().ClientWasConnected.ShouldBeTrue();
+        disconnections.Single().ConnectResult.ShouldBeNull();
+        disconnections.Single().Exception.ShouldBeNull();
+        oldClient.IsConnected.ShouldBeFalse();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The callback runs while awaiting ConnectAsync, before the broker is disposed")]
+    public async Task Connect_ShouldKeepTakenOverClientDisconnected_WhenSessionIsTakenOverWhileConnecting()
+    {
+        using InMemoryMqttBroker broker = new();
+        IMockedMqttOptions mockOptions = Substitute.For<IMockedMqttOptions>();
+        mockOptions.ConnectionDelay.Returns(TimeSpan.Zero);
+        MqttClientOptions options = CreateMqtt5ClientOptions("consumer", false, uint.MaxValue);
+        IInMemoryMqttBroker wrappingBroker = Substitute.For<IInMemoryMqttBroker>();
+        MockedMqttClient oldClient = new(wrappingBroker, mockOptions);
+        MockedMqttClient newClient = new(broker, mockOptions);
+
+        // Another client takes over the session right after the first one registered it, before its ConnectAsync completes
+        wrappingBroker.When(wrapped => wrapped.Connect(Arg.Any<MockedMqttClient>())).Do(
+            callInfo =>
+            {
+                broker.Connect(callInfo.Arg<MockedMqttClient>());
+                newClient.ConnectAsync(options).GetAwaiter().GetResult();
+            });
+
+        await oldClient.ConnectAsync(options);
+
+        oldClient.IsConnected.ShouldBeFalse();
+        newClient.IsConnected.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Connect_ShouldStartCleanSession_WhenAnotherClientConnectsWithSameClientIdAndSessionIsNotPersistent()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> oldReceived = new();
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> newReceived = new();
+        MqttClientOptions options = CreateMqtt5ClientOptions("consumer", false, 0);
+        await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, oldReceived);
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !oldReceived.IsEmpty);
+
+        MockedMqttClient newClient = await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, newReceived, false);
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
+        await Task.Delay(100);
+
+        // The session ended with the connection that was taken over, so neither its subscription nor its unacknowledged message survive
+        newReceived.ShouldBeEmpty();
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(0);
+
+        await SubscribeAsync(newClient, "topic", MqttQualityOfServiceLevel.AtLeastOnce);
+        await publisher.PublishAsync(CreateMessage("topic", "3", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !newReceived.IsEmpty);
+
+        GetPayloads(newReceived).ShouldBe(["3"]);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldStartCleanSession_WhenAnotherClientConnectsWithSameClientIdAndCleanStart()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> oldReceived = new();
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> newReceived = new();
+        MockedMqttClient oldClient = await CreateManuallyAcknowledgingMqtt5ClientAsync(
+            broker,
+            CreateMqtt5ClientOptions("consumer", false, uint.MaxValue),
+            oldReceived);
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !oldReceived.IsEmpty);
+
+        MockedMqttClient newClient = await CreateManuallyAcknowledgingMqtt5ClientAsync(
+            broker,
+            CreateMqtt5ClientOptions("consumer", true, uint.MaxValue),
+            newReceived,
+            false);
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
+        await Task.Delay(100);
+
+        // The previous session, with its subscriptions and pending messages, is discarded
+        oldClient.IsConnected.ShouldBeFalse();
+        newClient.IsConnected.ShouldBeTrue();
+        newReceived.ShouldBeEmpty();
+        broker.GetClientSession("consumer").GetPendingMessagesCount().ShouldBe(0);
+
+        await SubscribeAsync(newClient, "topic", MqttQualityOfServiceLevel.AtLeastOnce);
+        await publisher.PublishAsync(CreateMessage("topic", "3", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !newReceived.IsEmpty);
+
+        GetPayloads(newReceived).ShouldBe(["3"]);
+        GetPayloads(oldReceived).ShouldBe(["1"]);
+    }
+
+    [Fact]
+    public async Task Connect_ShouldResumeSession_WhenAnotherClientConnectsWithSameClientIdAfterDisconnect()
+    {
+        using InMemoryMqttBroker broker = new();
+        MockedMqttClient publisher = await CreateConnectedClientAsync(broker);
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> oldReceived = new();
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> newReceived = new();
+        MqttClientOptions options = CreateMqtt5ClientOptions("consumer", false, uint.MaxValue);
+        MockedMqttClient oldClient = await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, oldReceived);
+
+        await publisher.PublishAsync(CreateMessage("topic", "1", MqttQualityOfServiceLevel.AtLeastOnce));
+        await AsyncTestingUtil.WaitAsync(() => !oldReceived.IsEmpty);
+        await oldClient.DisconnectAsync();
+        await publisher.PublishAsync(CreateMessage("topic", "2", MqttQualityOfServiceLevel.AtLeastOnce));
+
+        await CreateManuallyAcknowledgingMqtt5ClientAsync(broker, options, newReceived, false);
+        await AsyncTestingUtil.WaitAsync(() => newReceived.Count >= 2);
+
+        GetPayloads(newReceived).ShouldBe(["1", "2"]);
+        GetPayloads(oldReceived).ShouldBe(["1"]);
+    }
+
+    [Fact]
     public async Task Connect_ShouldDiscardPersistentSession_WhenMqtt5CleanStartIsRequested()
     {
         using InMemoryMqttBroker broker = new();
@@ -761,7 +956,8 @@ public class InMemoryMqttBrokerTests
     private static async Task<MockedMqttClient> CreateManuallyAcknowledgingMqtt5ClientAsync(
         InMemoryMqttBroker broker,
         MqttClientOptions options,
-        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received)
+        ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> received,
+        bool subscribe = true)
     {
         IMockedMqttOptions mockOptions = Substitute.For<IMockedMqttOptions>();
         mockOptions.ConnectionDelay.Returns(TimeSpan.Zero);
@@ -775,7 +971,9 @@ public class InMemoryMqttBrokerTests
         };
 
         await client.ConnectAsync(options);
-        await SubscribeAsync(client, "topic", MqttQualityOfServiceLevel.AtLeastOnce);
+
+        if (subscribe)
+            await SubscribeAsync(client, "topic", MqttQualityOfServiceLevel.AtLeastOnce);
 
         return client;
     }

@@ -52,12 +52,32 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         if (client.Options == null)
             throw new InvalidOperationException("Client options not set.");
 
+        MockedMqttClient? takenOverClient = null;
+
         lock (_sessions)
         {
             // Like the broker, close the connection still open: the session continues with the new connection, regardless of whether
-            // it would outlive the closed one
+            // it would outlive the closed one. If it belongs to another client instance, that client is disconnected (session takeover).
             if (TryGetClientSession(client, out ClientSession? session))
+            {
+                if (session.IsConnected && session.Client != client)
+                {
+                    takenOverClient = session.Client;
+
+                    // Reset inside the lock, so that the old client never reports itself connected while the session is not its own
+                    takenOverClient.IsConnected = false;
+                }
+
                 session.Disconnect();
+
+                // A session that doesn't outlive its connection ends with the connection that is taken over, so the new client gets
+                // a clean one
+                if (takenOverClient != null && !session.IsPersistent)
+                {
+                    RemoveClientSession(client);
+                    session = null;
+                }
+            }
 
             // Like the broker, discard the existing session when a clean session (MQTT 3.1.1) or a clean start (MQTT 5) is requested
             if (session != null && client.Options.CleanSession)
@@ -72,8 +92,13 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
                 _sessions.Add(GetClientSessionKey(client), session);
             }
 
-            session.Connect(IsSessionPersistent(client.Options));
+            session.Connect(client, IsSessionPersistent(client.Options));
+
+            // Set together with the registration, so that a client reporting IsConnected can always publish
+            client.IsConnected = true;
         }
+
+        takenOverClient?.OnSessionTakenOver();
     }
 
     public void Disconnect(MockedMqttClient client)
@@ -85,7 +110,8 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
         lock (_sessions)
         {
-            if (!TryGetClientSession(client, out ClientSession? session))
+            // Ignore the client that lost the session to another client instance with the same client id
+            if (!TryGetClientSession(client, out ClientSession? session) || session.Client != client)
                 return;
 
             session.Disconnect();
@@ -107,7 +133,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     {
         lock (_sessions)
         {
-            if (!TryGetClientSession(client, out ClientSession? session))
+            if (!TryGetClientSession(client, out ClientSession? session) || session.Client != client)
                 return;
 
             session.Subscribe(topicFilters);
@@ -118,7 +144,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     {
         lock (_sessions)
         {
-            if (!TryGetClientSession(client, out ClientSession? session))
+            if (!TryGetClientSession(client, out ClientSession? session) || session.Client != client)
                 return;
 
             session.Unsubscribe(topics);
@@ -131,7 +157,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
         lock (_sessions)
         {
-            if (!TryGetClientSession(client, out ClientSession? publisherSession) || !publisherSession.IsConnected)
+            if (!TryGetClientSession(client, out ClientSession? publisherSession) || !publisherSession.IsConnected || publisherSession.Client != client)
                 throw new InvalidOperationException("The client is not connected.");
 
             receivers = GetReceivers(message, clientOptions);

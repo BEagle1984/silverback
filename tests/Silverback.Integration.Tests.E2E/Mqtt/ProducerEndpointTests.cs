@@ -202,7 +202,7 @@ public partial class ProducerEndpointTests : MqttTests
                     .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
                     .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
                 .AddClient(client => client
-                    .WithClientId(DefaultClientId)
+                    .WithClientId(DefaultClientId + "-2")
                     .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic3")))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
