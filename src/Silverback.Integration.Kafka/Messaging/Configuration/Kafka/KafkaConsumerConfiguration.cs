@@ -99,7 +99,8 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     /// <remarks>
     ///     Setting this value to <c>false</c> implicitly sets the <see cref="MaxDegreeOfParallelism" /> to 1. All the endpoints must then
     ///     use the same batch settings, since the batches can also span across the endpoints, and a streaming endpoint must be the only
-    ///     endpoint of the consumer.
+    ///     endpoint of the consumer. Chunked messages aren't supported when the partitions aren't processed independently: the chunks of a
+    ///     message would be interleaved with the messages of the other partitions, which discard it as incomplete.
     /// </remarks>
     public bool ProcessPartitionsIndependently
     {

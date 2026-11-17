@@ -348,12 +348,12 @@ public partial class KafkaConsumerConfigurationBuilder
 
     /// <summary>
     ///     Specifies that all partitions must be processed together. This means that a single stream will published for the messages from
-    ///     all the partitions and the sequences (<see cref="ChunkSequence" />, <see cref="BatchSequence" />, ...) can span across the
-    ///     partitions.
+    ///     all the partitions and the sequences (<see cref="BatchSequence" />, ...) can span across the partitions.
     /// </summary>
     /// <remarks>
     ///     The batches can also span across the endpoints, therefore all the endpoints must use the same batch settings. A streaming
-    ///     endpoint must be the only endpoint of the consumer.
+    ///     endpoint must be the only endpoint of the consumer. Chunked messages (<see cref="ChunkSequence" />) aren't supported: the chunks
+    ///     of a message would be interleaved with the messages of the other partitions, which discard it as incomplete.
     /// </remarks>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
