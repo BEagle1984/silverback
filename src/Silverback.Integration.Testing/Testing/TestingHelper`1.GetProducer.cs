@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Util;
 
 namespace Silverback.Testing;
 
@@ -16,8 +17,9 @@ public abstract partial class TestingHelper
     /// <inheritdoc cref="ITestingHelper.GetProducerForEndpoint" />
     public IProducer GetProducerForEndpoint(string endpointName)
     {
-        IProducer? producer = _producers?.FirstOrDefault(producer => producer.EndpointConfiguration.RawName == endpointName ||
-                                                                     producer.EndpointConfiguration.FriendlyName == endpointName);
+        Check.NotNull(endpointName, nameof(endpointName));
+
+        IProducer? producer = GetConfiguredProducer(endpointName);
 
         if (producer != null)
             return producer;
@@ -43,9 +45,7 @@ public abstract partial class TestingHelper
     ///     The <see cref="ProducerEndpointConfiguration" />.
     /// </returns>
     protected ProducerEndpointConfiguration? GetProducerEndpointConfiguration(string endpointName) =>
-        _producers?
-            .Select(producer => producer.EndpointConfiguration)
-            .FirstOrDefault(configuration => configuration.RawName == endpointName || configuration.FriendlyName == endpointName);
+        GetConfiguredProducer(endpointName)?.EndpointConfiguration;
 
     /// <summary>
     ///     Gets an existing producer for the endpoint consumed by the specified consumer or initializes a new one mirroring the
@@ -61,4 +61,9 @@ public abstract partial class TestingHelper
     ///     The <see cref="IProducer" />.
     /// </returns>
     protected abstract IProducer? GetProducerForConsumer(IConsumerCollection consumers, string endpointName);
+
+    // The friendly name takes precedence over the topic name
+    private IProducer? GetConfiguredProducer(string endpointName) =>
+        _producers?.FirstOrDefault(producer => producer.EndpointConfiguration.FriendlyName == endpointName) ??
+        _producers?.FirstOrDefault(producer => producer.EndpointConfiguration.RawName == endpointName);
 }

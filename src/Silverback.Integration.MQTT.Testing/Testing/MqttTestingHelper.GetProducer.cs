@@ -49,9 +49,15 @@ public partial class MqttTestingHelper
                 .SelectMany(consumer => consumer.Configuration.ConsumerEndpoints.Select(endpoint => (consumer.Configuration, endpoint)))
         ];
 
+        // The friendly name takes precedence over the topic name
         (MqttClientConfiguration? namedClientConfiguration, MqttConsumerEndpointConfiguration? namedEndpointConfiguration) =
-            endpoints.FirstOrDefault(tuple => tuple.EndpointConfiguration.RawName == endpointName ||
-                                              tuple.EndpointConfiguration.FriendlyName == endpointName);
+            endpoints.Find(tuple => tuple.EndpointConfiguration.FriendlyName == endpointName);
+
+        if (namedClientConfiguration == null || namedEndpointConfiguration == null)
+        {
+            (namedClientConfiguration, namedEndpointConfiguration) =
+                endpoints.Find(tuple => tuple.EndpointConfiguration.RawName == endpointName);
+        }
 
         if (namedClientConfiguration != null && namedEndpointConfiguration != null)
             return CreateProducerForNamedEndpoint(namedClientConfiguration, namedEndpointConfiguration, endpointName);

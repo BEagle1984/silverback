@@ -76,6 +76,96 @@ public partial class TestingHelperTests
         act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("No producer and no consumer found for endpoint 'topic3'.");
     }
 
+    // The enumeration order of the configured producers depends on the registration order (e.g., reversed), so both registration orders are
+    // covered, to be sure that the producer producing to the topic is enumerated before the one named after it in one of them
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task GetProducerForEndpoint_ShouldReturnProducerWithFriendlyName_WhenOtherProducerProducesToTopicWithSameName(bool topicProducerFirst)
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer =>
+                {
+                    if (topicProducerFirst)
+                        producer.Produce<TestEventOne>("other", endpoint => endpoint.ProduceTo("orders"));
+
+                    producer.Produce<TestEventTwo>("orders", endpoint => endpoint.ProduceTo("orders-eu"));
+
+                    if (!topicProducerFirst)
+                        producer.Produce<TestEventOne>("other", endpoint => endpoint.ProduceTo("orders"));
+                }))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducerForEndpoint("orders");
+
+        producer.EndpointConfiguration.FriendlyName.ShouldBe("orders");
+        producer.EndpointConfiguration.RawName.ShouldBe("orders-eu");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldProduceToEndpointWithFriendlyName_WhenOtherEndpointSubscribesTopicWithSameName()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume("other", endpoint => endpoint.ConsumeFrom("orders"))
+                    .Consume("orders", endpoint => endpoint.ConsumeFrom("orders-eu"))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint("orders").ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Endpoint.RawName.ShouldBe("orders-eu");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldThrow_WhenEndpointNameIsTopicPattern()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic-a"))))
+            .AddIntegrationSpyAndSubscriber());
+
+        Action act = () => Helper.GetProducerForEndpoint("^topic-");
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldStartWith("Cannot produce to '^topic-', since it is a topic pattern.");
+    }
+
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldThrow_WhenEndpointNameIsNull()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        Action act = () => Helper.GetProducerForEndpoint(null!);
+
+        act.ShouldThrow<ArgumentNullException>();
+    }
+
     [Fact]
     public async Task GetProducerForEndpoint_ShouldProduceToStaticPartition_WhenResolvedByTopicName()
     {

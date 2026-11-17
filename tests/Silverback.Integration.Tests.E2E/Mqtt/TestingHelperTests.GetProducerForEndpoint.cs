@@ -113,6 +113,27 @@ public partial class TestingHelperTests
     }
 
     [Fact]
+    public async Task GetProducerForEndpoint_ShouldProduceToEndpointWithFriendlyName_WhenOtherEndpointSubscribesTopicWithSameName()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Consume("other", endpoint => endpoint.ConsumeFrom("e2e/orders"))
+                    .Consume("e2e/orders", endpoint => endpoint.ConsumeFrom("e2e/orders-eu"))))
+            .AddIntegrationSpyAndSubscriber());
+
+        await Helper.GetProducerForEndpoint("e2e/orders").ProduceAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.ShouldHaveSingleItem().Endpoint.RawName.ShouldBe("e2e/orders-eu");
+    }
+
+    [Fact]
     public async Task GetProducerForEndpoint_ShouldProduceToFirstConcreteTopic_WhenNamedEndpointSubscribesWildcardFilterFirst()
     {
         await Host.ConfigureServicesAndRunAsync(services => services

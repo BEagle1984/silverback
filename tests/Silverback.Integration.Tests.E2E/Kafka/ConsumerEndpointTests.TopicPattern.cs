@@ -301,6 +301,28 @@ public partial class ConsumerEndpointTests
         exception.Message.ShouldStartWith("Cannot produce to the endpoint 'pattern (^topic-)', since it only subscribes topic patterns.");
     }
 
+    [Fact]
+    public async Task GetProducerForEndpoint_ShouldThrow_WhenEndpointOnlySubscribesTopicPatternAndFriendlyNameMatchesOtherEndpoint()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>("orders", endpoint => endpoint.ConsumeFrom("^orders-"))
+                    .Consume<TestEventOne>("all", endpoint => endpoint.ConsumeFrom("^.*"))))
+            .AddIntegrationSpyAndSubscriber());
+
+        // The friendly name isn't resolved as a topic subscribed by another endpoint
+        Action act = () => Helper.GetProducerForEndpoint("orders");
+
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldStartWith("Cannot produce to the endpoint 'orders (^orders-)', since it only subscribes topic patterns.");
+    }
+
     private IProducer GetProducer(string topic) =>
         Helper.GetProducer(producer => producer
             .WithBootstrapServers("PLAINTEXT://e2e")

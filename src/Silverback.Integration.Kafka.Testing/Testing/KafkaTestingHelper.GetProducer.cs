@@ -49,15 +49,18 @@ public partial class KafkaTestingHelper
                 .SelectMany(consumer => consumer.Configuration.Endpoints.Select(endpoint => (consumer.Configuration, endpoint)))
         ];
 
+        // The friendly name takes precedence over the topic name
         (KafkaConsumerConfiguration? namedConsumerConfiguration, KafkaConsumerEndpointConfiguration? namedEndpointConfiguration) =
-            endpoints.FirstOrDefault(tuple => tuple.EndpointConfiguration.RawName == endpointName ||
-                                              tuple.EndpointConfiguration.FriendlyName == endpointName);
+            endpoints.Find(tuple => tuple.EndpointConfiguration.FriendlyName == endpointName);
 
-        TopicPartitionOffset? namedEndpointTopicPartition =
-            namedEndpointConfiguration?.TopicPartitions.FirstOrDefault(topicPartition => !KafkaTopicPattern.IsPattern(topicPartition.Topic));
+        if (namedConsumerConfiguration == null || namedEndpointConfiguration == null)
+        {
+            (namedConsumerConfiguration, namedEndpointConfiguration) =
+                endpoints.Find(tuple => tuple.EndpointConfiguration.RawName == endpointName);
+        }
 
-        if (namedConsumerConfiguration != null && namedEndpointConfiguration != null && namedEndpointTopicPartition != null)
-            return CreateProducer(namedConsumerConfiguration, namedEndpointConfiguration, namedEndpointTopicPartition.TopicPartition);
+        if (namedConsumerConfiguration != null && namedEndpointConfiguration != null)
+            return CreateProducerForNamedEndpoint(namedConsumerConfiguration, namedEndpointConfiguration, endpointName);
 
         // A topic name is resolved to the endpoint subscribing it, giving precedence to the names over the patterns (a pattern can't be a
         // topic name)
@@ -80,10 +83,10 @@ public partial class KafkaTestingHelper
             return CreateProducer(consumerConfiguration, endpointConfiguration, topicPartition);
         }
 
-        if (namedEndpointConfiguration != null)
+        if (KafkaTopicPattern.IsPattern(endpointName))
         {
             throw new InvalidOperationException(
-                $"Cannot produce to the endpoint '{namedEndpointConfiguration.DisplayName}', since it only subscribes topic patterns. " +
+                $"Cannot produce to '{endpointName}', since it is a topic pattern. " +
                 "Get a producer for one of the matching topics instead, specifying its name.");
         }
 
@@ -106,6 +109,26 @@ public partial class KafkaTestingHelper
     {
         endpoint.MirrorConsumerEndpoint(endpointConfiguration);
         endpoint.ProduceTo(topicPartition);
+    }
+
+    private IProducer CreateProducerForNamedEndpoint(
+        KafkaConsumerConfiguration consumerConfiguration,
+        KafkaConsumerEndpointConfiguration endpointConfiguration,
+        string endpointName)
+    {
+        TopicPartitionOffset? topicPartition =
+            endpointConfiguration.TopicPartitions.FirstOrDefault(topicPartition => !KafkaTopicPattern.IsPattern(topicPartition.Topic));
+
+        if (topicPartition != null)
+            return CreateProducer(consumerConfiguration, endpointConfiguration, topicPartition.TopicPartition);
+
+        // The friendly name can be a topic matching the endpoint's own patterns, but it must not be resolved to another endpoint
+        if (!KafkaTopicPattern.IsPattern(endpointName) && IsSubscribing(consumerConfiguration, endpointConfiguration, endpointName, true))
+            return CreateProducer(consumerConfiguration, endpointConfiguration, new TopicPartition(endpointName, Partition.Any));
+
+        throw new InvalidOperationException(
+            $"Cannot produce to the endpoint '{endpointConfiguration.DisplayName}', since it only subscribes topic patterns. " +
+            "Get a producer for one of the matching topics instead, specifying its name.");
     }
 
     private IProducer CreateProducer(
