@@ -27,7 +27,7 @@ public partial class StreamingTests : KafkaTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToStream()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -70,7 +70,7 @@ public partial class StreamingTests : KafkaTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToEnvelopesStream()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -113,7 +113,7 @@ public partial class StreamingTests : KafkaTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToStreamAndEnumeratingAsynchronously()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -156,7 +156,7 @@ public partial class StreamingTests : KafkaTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToEnumerable()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -199,7 +199,7 @@ public partial class StreamingTests : KafkaTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToAsyncEnumerable()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -242,7 +242,7 @@ public partial class StreamingTests : KafkaTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToObservable()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()

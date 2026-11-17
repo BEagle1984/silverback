@@ -119,7 +119,7 @@ public partial class ChunkingTests
         string policy,
         bool isConsumedInBatch)
     {
-        List<string> receivedMessages = [];
+        TestingCollection<string> receivedMessages = [];
         LogEventsCollector logEventsCollector = new();
         IStopConsumerErrorPolicyCallback callback = (IStopConsumerErrorPolicyCallback)Substitute.For(
             [typeof(IStopConsumerErrorPolicyCallback), typeof(IRetryErrorPolicyCallback), typeof(ISkipMessageErrorPolicyCallback)],
@@ -176,10 +176,7 @@ public partial class ChunkingTests
         {
             byte[]? content = await message.Content.ReadAllAsync();
 
-            lock (receivedMessages)
-            {
-                receivedMessages.Add(Encoding.UTF8.GetString(content!));
-            }
+            receivedMessages.Add(Encoding.UTF8.GetString(content!));
         }
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);

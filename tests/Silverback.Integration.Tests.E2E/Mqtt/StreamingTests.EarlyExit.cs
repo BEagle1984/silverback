@@ -30,7 +30,7 @@ public partial class StreamingTests
     public async Task Streaming_ShouldAcknowledgeAndPublishNewStream_WhenEnumerationIsAbortedWithoutException()
     {
         int invocationsCount = 0;
-        List<string?> receivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -83,7 +83,7 @@ public partial class StreamingTests
     public async Task Streaming_ShouldAcknowledgeAndPublishNewStream_WhenReturningAfterFirstMessage()
     {
         int invocationsCount = 0;
-        List<string?> receivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -128,7 +128,7 @@ public partial class StreamingTests
     public async Task Streaming_ShouldAcknowledgeAndPublishNewStream_WhenEnumerationIsAbortedAndOtherStreamSubscriberNeverReceivesMessages()
     {
         int invocationsCount = 0;
-        List<string?> receivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -191,7 +191,7 @@ public partial class StreamingTests
     public async Task Streaming_ShouldAcknowledgeAndPublishToOtherSubscribers_WhenStreamIsNotEnumerated()
     {
         int invocationsCount = 0;
-        List<string?> receivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -239,7 +239,7 @@ public partial class StreamingTests
     public async Task Streaming_ShouldPublishMessageToNewStream_WhenEnumerationIsCanceledBeforeReceivingIt()
     {
         int invocationsCount = 0;
-        List<string?> receivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
         TaskCompletionSource enumerationCanceledTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
         HoldMessageBehavior holdMessageBehavior = new("2");
 
@@ -308,7 +308,7 @@ public partial class StreamingTests
     public async Task Streaming_ShouldNotAcknowledgeMessage_WhenSubscriberReturnsBecauseConsumerIsStopping()
     {
         int tryCount = 0;
-        List<string?> receivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
         TaskCompletionSource processingStartedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -368,7 +368,7 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldNotAcknowledgeMessageNotReceived_WhenSubscriberReturnsBecauseConsumerIsStopping()
     {
-        List<string?> receivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
         HoldMessageBehavior holdMessageBehavior = new("2");
         TaskCompletionSource enumerationCanceledTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -449,8 +449,8 @@ public partial class StreamingTests
     {
         int invocationsCount = 0;
         int otherInvocationsCount = 0;
-        List<string?> receivedMessages = [];
-        List<string?> otherReceivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
+        TestingCollection<string?> otherReceivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()

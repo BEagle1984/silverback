@@ -25,7 +25,7 @@ public partial class StreamingTests
     public async Task Streaming_ShouldAbortEnumeration_WhenDisconnecting()
     {
         bool aborted = false;
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -74,7 +74,7 @@ public partial class StreamingTests
     public async Task Streaming_ShouldCompleteObservable_WhenDisconnecting()
     {
         bool completed = false;
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -111,7 +111,7 @@ public partial class StreamingTests
     {
         int invocationsCount = 0;
         int canceledCount = 0;
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()

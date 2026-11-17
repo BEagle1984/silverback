@@ -27,7 +27,7 @@ public partial class StreamingTests
     {
         int invocationsCount = 0;
         int tryCount = 0;
-        List<string?> receivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
         TaskCompletionSource processingStartedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -90,7 +90,7 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldReplayPendingMessagesOfEachParallelExecution_WhenConsumerIsStoppedAndRestarted()
     {
-        ConcurrentQueue<List<int>> receivedStreams = [];
+        TestingCollection<List<int>> receivedStreams = [];
         ConcurrentDictionary<int, bool> processedMessages = new();
         int startedCount = 0;
         TaskCompletionSource processingStartedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -113,7 +113,7 @@ public partial class StreamingTests
         async Task HandleUnboundedStream(IMessageStreamEnumerable<TestEventOne> stream, CancellationToken cancellationToken)
         {
             List<int> list = [];
-            receivedStreams.Enqueue(list);
+            receivedStreams.Add(list);
 
             await foreach (TestEventOne message in stream)
             {

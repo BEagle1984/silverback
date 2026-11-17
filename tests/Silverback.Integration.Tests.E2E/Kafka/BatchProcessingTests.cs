@@ -793,10 +793,10 @@ public partial class BatchProcessingTests : KafkaTests
     public async Task Batch_ShouldUpdateActivity_WhenSubscribingToAsyncEnumerable()
     {
         List<string> expectedTraceIds = [];
-        List<string> actualTraceIds = [];
-        List<string> batchStartTraceIds = [];
-        List<string> batchEndTraceIds = [];
-        List<string> sequenceIds = [];
+        TestingCollection<string> actualTraceIds = [];
+        TestingCollection<string> batchStartTraceIds = [];
+        TestingCollection<string> batchEndTraceIds = [];
+        TestingCollection<string> sequenceIds = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()

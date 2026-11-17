@@ -27,7 +27,7 @@ public partial class StreamingTests : MqttTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndAcknowledge_WhenSubscribingToStream()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         HoldMessageBehavior holdMessageBehavior = new("1");
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -75,7 +75,7 @@ public partial class StreamingTests : MqttTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndAcknowledge_WhenSubscribingToEnvelopesStream()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         HoldMessageBehavior holdMessageBehavior = new("1");
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -122,7 +122,7 @@ public partial class StreamingTests : MqttTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndAcknowledge_WhenSubscribingToStreamAndEnumeratingAsynchronously()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         HoldMessageBehavior holdMessageBehavior = new("1");
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -169,7 +169,7 @@ public partial class StreamingTests : MqttTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndAcknowledge_WhenSubscribingToEnumerable()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         HoldMessageBehavior holdMessageBehavior = new("1");
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -216,7 +216,7 @@ public partial class StreamingTests : MqttTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndAcknowledge_WhenSubscribingToAsyncEnumerable()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         HoldMessageBehavior holdMessageBehavior = new("1");
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -263,7 +263,7 @@ public partial class StreamingTests : MqttTests
     [Fact]
     public async Task Streaming_ShouldConsumeAndAcknowledge_WhenSubscribingToObservable()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         HoldMessageBehavior holdMessageBehavior = new("1");
 
         await Host.ConfigureServicesAndRunAsync(services => services

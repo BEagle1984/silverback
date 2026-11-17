@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -563,7 +562,7 @@ public partial class ConsumerEndpointTests : KafkaTests
     [Fact]
     public async Task ConsumerEndpoint_ShouldLimitParallelism()
     {
-        List<TestEventWithKafkaKey> receivedMessages = [];
+        TestingCollection<TestEventWithKafkaKey> receivedMessages = [];
         TaskCompletionSource<bool> taskCompletionSource = new();
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -581,10 +580,7 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         async Task HandleMessage(TestEventWithKafkaKey message)
         {
-            lock (receivedMessages)
-            {
-                receivedMessages.Add(message);
-            }
+            receivedMessages.Add(message);
 
             await taskCompletionSource.Task;
         }

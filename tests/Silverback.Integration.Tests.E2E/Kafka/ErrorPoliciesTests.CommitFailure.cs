@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +26,7 @@ public partial class ErrorPoliciesTests
     [Fact]
     public async Task StopPolicy_ShouldStopConsumerAndDisconnect_WhenCommitFailsAfterConsumerIsCommitted()
     {
-        List<string> receivedMessages = [];
+        TestingCollection<string> receivedMessages = [];
         LogEventsCollector logEventsCollector = new();
 
         // The first commit fails after the consumer was committed, as when a Committed handler throws
@@ -49,13 +48,7 @@ public partial class ErrorPoliciesTests
             .AddDelegateSubscriber<TestEventOne>(HandleMessage)
             .AddSingletonBrokerBehavior(transactionEventsTracker));
 
-        void HandleMessage(TestEventOne message)
-        {
-            lock (receivedMessages)
-            {
-                receivedMessages.Add(message.ContentEventOne!);
-            }
-        }
+        void HandleMessage(TestEventOne message) => receivedMessages.Add(message.ContentEventOne!);
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 1" });
@@ -89,7 +82,7 @@ public partial class ErrorPoliciesTests
     [InlineData("move")]
     public async Task ErrorPolicy_ShouldNotBeApplied_WhenCommitFailsAfterConsumerIsCommitted(string policy)
     {
-        List<string> receivedMessages = [];
+        TestingCollection<string> receivedMessages = [];
         LogEventsCollector logEventsCollector = new();
         IStopConsumerErrorPolicyCallback callback = (IStopConsumerErrorPolicyCallback)Substitute.For(
             [
@@ -122,13 +115,7 @@ public partial class ErrorPoliciesTests
             .AddSingletonBrokerBehavior(transactionEventsTracker)
             .AddSingletonErrorPolicyCallback(callback));
 
-        void HandleMessage(TestEventOne message)
-        {
-            lock (receivedMessages)
-            {
-                receivedMessages.Add(message.ContentEventOne!);
-            }
-        }
+        void HandleMessage(TestEventOne message) => receivedMessages.Add(message.ContentEventOne!);
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 1" });
@@ -170,7 +157,7 @@ public partial class ErrorPoliciesTests
     [InlineData("move")]
     public async Task ErrorPolicy_ShouldBeApplied_WhenCommitFailsBeforeConsumerIsCommitted(string policy)
     {
-        List<string> receivedMessages = [];
+        TestingCollection<string> receivedMessages = [];
         LogEventsCollector logEventsCollector = new();
 
         // The first commit fails before the consumer is committed, as when a Committing handler throws (e.g., the client-side offset store
@@ -195,13 +182,7 @@ public partial class ErrorPoliciesTests
             .AddDelegateSubscriber<TestEventOne>(HandleMessage)
             .AddSingletonBrokerBehavior(transactionEventsTracker));
 
-        void HandleMessage(TestEventOne message)
-        {
-            lock (receivedMessages)
-            {
-                receivedMessages.Add(message.ContentEventOne!);
-            }
-        }
+        void HandleMessage(TestEventOne message) => receivedMessages.Add(message.ContentEventOne!);
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 1" });

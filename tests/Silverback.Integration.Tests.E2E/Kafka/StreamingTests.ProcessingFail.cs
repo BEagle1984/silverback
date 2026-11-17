@@ -25,7 +25,7 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldDisconnect_WhenAsyncEnumerableProcessingFails()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -73,7 +73,7 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldDisconnect_WhenObservableProcessingFails()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -123,7 +123,7 @@ public partial class StreamingTests
     [InlineData(2)]
     public async Task Streaming_ShouldApplyErrorPolicyOnceToFailedMessage_WhenProcessingFails(int failingMessageNumber)
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         StopCallback callback = new();
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -174,7 +174,7 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldRollBackFailedMessageAndDisconnect_WhenErrorHandlingFails()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         TransactionEventsTracker transactionEventsTracker = new();
 
         // The error handling fails, since the callback invoked when the consumer is stopped throws (the error policies can't be used
@@ -239,8 +239,8 @@ public partial class StreamingTests
     public async Task Streaming_ShouldApplyErrorPolicyOnceToFailedMessage_WhenProcessingFailsWhileOtherSubscriberIsEnumerating(
         Type exceptionType)
     {
-        List<string?> receivedMessages = [];
-        List<string?> otherReceivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
+        TestingCollection<string?> otherReceivedMessages = [];
         StopCallback callback = new();
 
         // The other subscriber is registered first: the test fails if the cancellation of its stream, aborted because of the failure, is
@@ -364,7 +364,7 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldStopWithoutApplyingErrorPolicy_WhenSeveralSubscribersAreWaitingForNextMessage()
     {
-        List<string?> receivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
         StopCallback callback = new();
 
         await Host.ConfigureServicesAndRunAsync(services => services

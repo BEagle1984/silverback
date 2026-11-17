@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,11 +19,11 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldTagActivityWithKafkaKeyAndOffset()
     {
-        ConcurrentQueue<Activity> stoppedActivities = [];
+        TestingCollection<Activity> stoppedActivities = [];
         using ActivityListener listener = new();
         listener.ShouldListenTo = source => source.Name == "Silverback.Integration.Produce";
         listener.Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded;
-        listener.ActivityStopped = stoppedActivities.Enqueue;
+        listener.ActivityStopped = stoppedActivities.Add;
         ActivitySource.AddActivityListener(listener);
 
         await Host.ConfigureServicesAndRunAsync(services => services

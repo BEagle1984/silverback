@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,7 +26,7 @@ public partial class ChunkingTests
         BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
         byte[] rawMessage1 = message1.Content.ReadAll()!;
         byte[] rawMessage2 = message2.Content.ReadAll()!;
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -101,7 +100,7 @@ public partial class ChunkingTests
         BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
         byte[] rawMessage1 = message1.Content.ReadAll()!;
         byte[] rawMessage2 = message2.Content.ReadAll()!;
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -175,7 +174,7 @@ public partial class ChunkingTests
         BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
         byte[] rawMessage1 = message1.Content.ReadAll()!;
         byte[] rawMessage2 = message2.Content.ReadAll()!;
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()

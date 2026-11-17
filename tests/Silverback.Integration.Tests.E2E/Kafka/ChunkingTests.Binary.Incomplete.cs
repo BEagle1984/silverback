@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +23,7 @@ public partial class ChunkingTests
     {
         byte[] rawMessage1 = BytesUtil.GetRandomBytes(30);
         byte[] rawMessage2 = BytesUtil.GetRandomBytes(27);
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
         int aborted = 0;
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -90,7 +89,7 @@ public partial class ChunkingTests
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes(30);
 
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
         bool aborted = false;
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -166,7 +165,7 @@ public partial class ChunkingTests
         byte[] rawMessage1 = BytesUtil.GetRandomBytes();
         byte[] rawMessage2 = BytesUtil.GetRandomBytes();
 
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()

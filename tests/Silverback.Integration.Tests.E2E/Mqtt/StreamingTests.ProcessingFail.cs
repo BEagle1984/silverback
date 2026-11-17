@@ -25,7 +25,7 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldDisconnect_WhenAsyncEnumerableProcessingFails()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -74,7 +74,7 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldDisconnect_WhenObservableProcessingFails()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -124,7 +124,7 @@ public partial class StreamingTests
     [InlineData(2)]
     public async Task Streaming_ShouldApplyErrorPolicyOnceToFailedMessage_WhenProcessingFails(int failingMessageNumber)
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         StopCallback callback = new();
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -179,7 +179,7 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldRollBackFailedMessageAndDisconnectWithoutAcknowledging_WhenErrorHandlingFails()
     {
-        List<TestEventOne> receivedMessages = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
         TransactionEventsTracker transactionEventsTracker = new();
 
         // The error handling fails, since the callback invoked when the consumer is stopped throws (the error policies can't be used

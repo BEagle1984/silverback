@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +21,7 @@ public partial class ConsumerEndpointTests
     [Fact]
     public async Task ConsumerEndpoint_ShouldDisposeScopedServices()
     {
-        ConcurrentBag<ScopedService> scopedServices = [];
+        TestingCollection<ScopedService> scopedServices = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -59,7 +58,7 @@ public partial class ConsumerEndpointTests
     [Fact]
     public async Task ConsumerEndpoint_ShouldDisposeScopedServices_WhenBatchProcessing()
     {
-        ConcurrentBag<ScopedService> scopedServices = [];
+        TestingCollection<ScopedService> scopedServices = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -104,7 +103,7 @@ public partial class ConsumerEndpointTests
     [Fact]
     public async Task ConsumerEndpoint_ShouldDisposeScopedServices_WhenBatchProcessingWithTimeout()
     {
-        ConcurrentBag<ScopedService> scopedServices = [];
+        TestingCollection<ScopedService> scopedServices = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()

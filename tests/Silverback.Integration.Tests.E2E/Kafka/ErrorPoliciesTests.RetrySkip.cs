@@ -142,7 +142,7 @@ public partial class ErrorPoliciesTests
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
         byte[] invalidRawMessage = "<what?!>"u8.ToArray();
-        List<List<TestEventOne>> receivedBatches = [];
+        TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -210,7 +210,7 @@ public partial class ErrorPoliciesTests
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
         byte[] invalidRawMessage = "<what?!>"u8.ToArray();
-        List<List<TestEventOne>> receivedBatches = [];
+        TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(services => services

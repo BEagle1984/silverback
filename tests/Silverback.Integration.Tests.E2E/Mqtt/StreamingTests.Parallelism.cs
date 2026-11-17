@@ -71,8 +71,8 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldPublishSingleStream_WhenNotProcessingInParallel()
     {
-        List<TestEventOne> receivedMessages = [];
-        ConcurrentBag<IMessageStreamEnumerable<TestEventOne>> receivedStreams = [];
+        TestingCollection<TestEventOne> receivedMessages = [];
+        TestingCollection<IMessageStreamEnumerable<TestEventOne>> receivedStreams = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()

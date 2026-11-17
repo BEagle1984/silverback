@@ -372,7 +372,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
     [Fact]
     public async Task OffsetStore_ShouldStoreOffset_WhenMessageIsSkipped()
     {
-        List<string> received = [];
+        TestingCollection<string> received = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -393,10 +393,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
 
         void HandleMessage(TestEventOne message)
         {
-            lock (received)
-            {
-                received.Add(message.ContentEventOne!);
-            }
+            received.Add(message.ContentEventOne!);
 
             if (message.ContentEventOne == "2")
                 throw new InvalidOperationException("Skip!");
@@ -420,10 +417,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         // The skipped message isn't consumed (and skipped) again after reconnecting
-        lock (received)
-        {
-            received.ShouldBe(["1", "2", "3"]);
-        }
+        received.ShouldBe(["1", "2", "3"]);
 
         GetStoredOffset(consumer).ShouldBe(2);
     }
@@ -431,7 +425,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
     [Fact]
     public async Task OffsetStore_ShouldStoreOffset_WhenMessageIsMoved()
     {
-        List<string> received = [];
+        TestingCollection<string> received = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -454,10 +448,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
 
         void HandleMessage(TestEventOne message)
         {
-            lock (received)
-            {
-                received.Add(message.ContentEventOne!);
-            }
+            received.Add(message.ContentEventOne!);
 
             if (message.ContentEventOne == "2")
                 throw new InvalidOperationException("Move!");
@@ -483,10 +474,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         // The moved message isn't consumed (and moved) again after reconnecting
-        lock (received)
-        {
-            received.ShouldBe(["1", "2", "3"]);
-        }
+        received.ShouldBe(["1", "2", "3"]);
 
         otherTopic.MessagesCount.ShouldBe(1);
         GetStoredOffset(consumer).ShouldBe(2);
@@ -495,7 +483,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
     [Fact]
     public async Task OffsetStore_ShouldStoreBatchOffsets_WhenBatchIsSkipped()
     {
-        List<string> received = [];
+        TestingCollection<string> received = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -519,9 +507,9 @@ public class OffsetStoreInMemoryTests : KafkaTests
         {
             List<string> contents = [.. batch.Select(message => message.ContentEventOne!)];
 
-            lock (received)
+            foreach (string content in contents)
             {
-                received.AddRange(contents);
+                received.Add(content);
             }
 
             if (contents.Contains("3"))
@@ -550,10 +538,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         // The skipped batch isn't consumed (and skipped) again after reconnecting
-        lock (received)
-        {
-            received.ShouldBe(["1", "2", "3", "4", "5", "6"]);
-        }
+        received.ShouldBe(["1", "2", "3", "4", "5", "6"]);
 
         GetStoredOffset(consumer).ShouldBe(5);
     }
@@ -563,7 +548,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
     [InlineData(true)]
     public async Task OffsetStore_ShouldStoreOffset_WhenMessageThatCannotBeDeserializedIsSkippedOrMoved(bool move)
     {
-        List<string> received = [];
+        TestingCollection<string> received = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -591,13 +576,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
                             }))))
             .AddDelegateSubscriber<TestEventOne>(HandleMessage));
 
-        void HandleMessage(TestEventOne message)
-        {
-            lock (received)
-            {
-                received.Add(message.ContentEventOne!);
-            }
-        }
+        void HandleMessage(TestEventOne message) => received.Add(message.ContentEventOne!);
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -619,10 +598,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         // The message isn't consumed (and skipped or moved) again after reconnecting
-        lock (received)
-        {
-            received.ShouldBe(["1", "3"]);
-        }
+        received.ShouldBe(["1", "3"]);
 
         Helper.GetTopic(MoveTargetTopicName).MessagesCount.ShouldBe(move ? 1 : 0);
         GetStoredOffset(consumer).ShouldBe(2);
@@ -633,7 +609,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
     [InlineData(true)]
     public async Task OffsetStore_ShouldRetryStoringOffset_WhenStoreFailsOnceForSkippedOrMovedMessage(bool move)
     {
-        List<string> received = [];
+        TestingCollection<string> received = [];
         LogEventsCollector logEventsCollector = new();
         FailingKafkaOffsetStore offsetStore = new(failuresCount: 1);
 
@@ -663,10 +639,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
 
         void HandleMessage(TestEventOne message)
         {
-            lock (received)
-            {
-                received.Add(message.ContentEventOne!);
-            }
+            received.Add(message.ContentEventOne!);
 
             if (message.ContentEventOne == "2")
                 throw new InvalidOperationException("Skip or move!");
@@ -692,10 +665,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         // The message isn't consumed (and skipped or moved) again after reconnecting
-        lock (received)
-        {
-            received.ShouldBe(["1", "2", "3"]);
-        }
+        received.ShouldBe(["1", "2", "3"]);
 
         Helper.GetTopic(MoveTargetTopicName).MessagesCount.ShouldBe(move ? 1 : 0);
         offsetStore.GetStoredOffsets(DefaultGroupId).Single().Offset.Value.ShouldBe(2);
@@ -706,7 +676,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
     [InlineData(true)]
     public async Task OffsetStore_ShouldLogErrorAndCommit_WhenStoreFailsForSkippedOrMovedMessage(bool move)
     {
-        List<string> received = [];
+        TestingCollection<string> received = [];
         LogEventsCollector logEventsCollector = new();
         FailingKafkaOffsetStore offsetStore = new(failuresCount: int.MaxValue);
 
@@ -737,10 +707,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
 
         void HandleMessage(TestEventOne message)
         {
-            lock (received)
-            {
-                received.Add(message.ContentEventOne!);
-            }
+            received.Add(message.ContentEventOne!);
 
             if (message.ContentEventOne == "2")
                 throw new InvalidOperationException("Skip or move!");
@@ -775,10 +742,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
         await Helper.WaitUntilAllMessagesAreCommittedAsync();
 
         // The message was skipped or moved only once
-        lock (received)
-        {
-            received.ShouldBe(["1", "2", "3", "4"]);
-        }
+        received.ShouldBe(["1", "2", "3", "4"]);
 
         Helper.GetTopic(MoveTargetTopicName).MessagesCount.ShouldBe(move ? 1 : 0);
         offsetStore.SkippedOffsetsStoreAttempts.ShouldBe(2);
@@ -843,7 +807,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
     {
         TestEventOne message = new() { ContentEventOne = "chunked" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
-        List<List<string?>> completedBatches = [];
+        TestingCollection<List<string?>> completedBatches = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -872,10 +836,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
                 contents.Add(batchMessage.ContentEventOne);
             }
 
-            lock (completedBatches)
-            {
-                completedBatches.Add(contents);
-            }
+            completedBatches.Add(contents);
         }
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
@@ -918,10 +879,7 @@ public class OffsetStoreInMemoryTests : KafkaTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         // The chunked message is consumed again after reconnecting
-        lock (completedBatches)
-        {
-            completedBatches.ShouldBe([["chunked", "3"]]);
-        }
+        completedBatches.ShouldBe([["chunked", "3"]]);
 
         GetStoredOffset(consumer).ShouldBe(3);
     }

@@ -562,7 +562,7 @@ public class InboundMessageFilterTests : KafkaTests
     public async Task Filter_ShouldEvaluateFilterAgain_WhenRetrying()
     {
         TestingCollection<string?> receivedContents = [];
-        ConcurrentQueue<string?> evaluatedContents = new();
+        TestingCollection<string?> evaluatedContents = [];
         int failedCount = 0;
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -579,7 +579,7 @@ public class InboundMessageFilterTests : KafkaTests
                         .Filter(
                             message =>
                             {
-                                evaluatedContents.Enqueue(message?.ContentEventOne);
+                                evaluatedContents.Add(message?.ContentEventOne);
                                 return message?.ContentEventOne != "discard";
                             })
                         .OnError(policy => policy.Retry(2)))))

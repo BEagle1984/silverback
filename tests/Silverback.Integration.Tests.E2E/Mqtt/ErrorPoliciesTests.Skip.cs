@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -76,8 +75,8 @@ public partial class ErrorPoliciesTests
     public async Task SkipPolicy_ShouldSkipMessage_WhenOtherEndpointIsStreaming()
     {
         int streamsCount = 0;
-        ConcurrentQueue<string?> streamedMessages = [];
-        ConcurrentQueue<string?> receivedMessages = [];
+        TestingCollection<string?> streamedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -102,7 +101,7 @@ public partial class ErrorPoliciesTests
 
             foreach (TestEventOne message in stream)
             {
-                streamedMessages.Enqueue(message.ContentEventOne);
+                streamedMessages.Add(message.ContentEventOne);
             }
         }
 
@@ -111,14 +110,14 @@ public partial class ErrorPoliciesTests
             if (message.ContentEventTwo == "fail")
                 throw new InvalidOperationException("Test");
 
-            receivedMessages.Enqueue(message.ContentEventTwo);
+            receivedMessages.Add(message.ContentEventTwo);
         }
 
         IProducer streamProducer = Helper.GetProducerForEndpoint("e2e/stream");
         IProducer skipProducer = Helper.GetProducerForEndpoint("e2e/skip");
 
         await streamProducer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
-        await AsyncTestingUtil.WaitAsync(() => !streamedMessages.IsEmpty);
+        await AsyncTestingUtil.WaitAsync(() => streamedMessages.Count > 0);
 
         await skipProducer.ProduceAsync(new TestEventTwo { ContentEventTwo = "fail" });
         await skipProducer.ProduceAsync(new TestEventTwo { ContentEventTwo = "2" });
@@ -199,8 +198,8 @@ public partial class ErrorPoliciesTests
     [Fact]
     public async Task SkipPolicy_ShouldSkipAndAcknowledgeMessage_WhenOtherEndpointChunkedMessageIsIncomplete()
     {
-        ConcurrentQueue<string?> receivedChunkedMessages = [];
-        ConcurrentQueue<string?> receivedMessages = [];
+        TestingCollection<string?> receivedChunkedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
         ISkipMessageErrorPolicyCallback callback = Substitute.For<ISkipMessageErrorPolicyCallback>();
         callback.OnSkippingMessageAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>()).Returns(Task.CompletedTask);
 
@@ -219,8 +218,8 @@ public partial class ErrorPoliciesTests
                         .ConsumeFrom("e2e/skip")
                         .WithAtLeastOnceQoS()
                         .OnError(policy => policy.Skip()))))
-            .AddDelegateSubscriber<TestEventOne>(message => receivedChunkedMessages.Enqueue(message.ContentEventOne))
-            .AddDelegateSubscriber<TestEventTwo>(message => receivedMessages.Enqueue(message.ContentEventTwo))
+            .AddDelegateSubscriber<TestEventOne>(message => receivedChunkedMessages.Add(message.ContentEventOne))
+            .AddDelegateSubscriber<TestEventTwo>(message => receivedMessages.Add(message.ContentEventTwo))
             .AddSingletonErrorPolicyCallback(callback));
 
         IProducer chunkedProducer = Helper.GetProducerForEndpoint("e2e/chunked");

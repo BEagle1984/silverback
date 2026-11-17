@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,8 +19,8 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldPublishStreamPerPartition_WhenProcessingPartitionsIndependently()
     {
-        ConcurrentBag<TestEventWithKafkaKey> receivedMessages = [];
-        ConcurrentBag<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = [];
+        TestingCollection<TestEventWithKafkaKey> receivedMessages = [];
+        TestingCollection<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -64,8 +63,8 @@ public partial class StreamingTests
     [Fact]
     public async Task Streaming_ShouldPublishSingleStream_WhenProcessingAllPartitionsTogether()
     {
-        ConcurrentBag<TestEventWithKafkaKey> receivedMessages = [];
-        ConcurrentBag<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = [];
+        TestingCollection<TestEventWithKafkaKey> receivedMessages = [];
+        TestingCollection<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()

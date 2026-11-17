@@ -134,7 +134,7 @@ public partial class BatchProcessingTests
     [InlineData("skip")]
     public async Task Batch_ShouldApplyErrorPolicy_WhenCommitFailsAfterEnumerationIsAborted(string policy)
     {
-        List<string> receivedMessages = [];
+        TestingCollection<string> receivedMessages = [];
         LogEventsCollector logEventsCollector = new();
 
         // The first commit fails, as when a Committing handler throws (e.g., the client-side offset store fails)
@@ -162,10 +162,7 @@ public partial class BatchProcessingTests
         {
             await foreach (TestEventOne message in batch)
             {
-                lock (receivedMessages)
-                {
-                    receivedMessages.Add(message.ContentEventOne!);
-                }
+                receivedMessages.Add(message.ContentEventOne!);
 
                 break;
             }
@@ -218,7 +215,7 @@ public partial class BatchProcessingTests
     [InlineData(true)]
     public async Task Batch_ShouldStopConsumerAndDisconnect_WhenCommitFailsAfterConsumerIsCommitted(bool isCompletedByTimeout)
     {
-        List<string> receivedMessages = [];
+        TestingCollection<string> receivedMessages = [];
         LogEventsCollector logEventsCollector = new();
 
         // The first commit fails after the consumer was committed, as when a Committed handler throws
@@ -246,10 +243,7 @@ public partial class BatchProcessingTests
         {
             await foreach (TestEventOne message in batch)
             {
-                lock (receivedMessages)
-                {
-                    receivedMessages.Add(message.ContentEventOne!);
-                }
+                receivedMessages.Add(message.ContentEventOne!);
             }
         }
 
@@ -290,7 +284,7 @@ public partial class BatchProcessingTests
     {
         bool isCompletedByTimeout = completion == "timeout";
         bool isEnumerationAborted = completion == "break";
-        List<string> receivedMessages = [];
+        TestingCollection<string> receivedMessages = [];
         LogEventsCollector logEventsCollector = new();
         IStopConsumerErrorPolicyCallback callback = (IStopConsumerErrorPolicyCallback)Substitute.For(
             [typeof(IStopConsumerErrorPolicyCallback), typeof(IRetryErrorPolicyCallback), typeof(ISkipMessageErrorPolicyCallback)],
@@ -325,10 +319,7 @@ public partial class BatchProcessingTests
         {
             await foreach (TestEventOne message in batch)
             {
-                lock (receivedMessages)
-                {
-                    receivedMessages.Add(message.ContentEventOne!);
-                }
+                receivedMessages.Add(message.ContentEventOne!);
 
                 if (isEnumerationAborted)
                     break;
@@ -376,8 +367,8 @@ public partial class BatchProcessingTests
     [InlineData(typeof(TaskCanceledException))] // E.g., an HttpClient timeout, which isn't caused by the consumer stop
     public async Task Batch_ShouldStopConsumer_WhenProcessingFailsWhileOtherSubscriberIsEnumerating(Type exceptionType)
     {
-        List<string?> receivedMessages = [];
-        List<string?> otherReceivedMessages = [];
+        TestingCollection<string?> receivedMessages = [];
+        TestingCollection<string?> otherReceivedMessages = [];
         IStopConsumerErrorPolicyCallback callback = Substitute.For<IStopConsumerErrorPolicyCallback>();
 
         // The other subscriber is registered first: the test fails if the cancellation of its stream, aborted because of the failure, is

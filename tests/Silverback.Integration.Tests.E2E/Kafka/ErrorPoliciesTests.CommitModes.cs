@@ -57,7 +57,7 @@ public partial class ErrorPoliciesTests
                 .Select(index => index.ToString(CultureInfo.InvariantCulture))
                 .Chunk(batchSize)
         ];
-        List<string> received = [];
+        TestingCollection<string> received = [];
         int failuresCount = 0;
 
         await Host.ConfigureServicesAndRunAsync(services =>
@@ -87,9 +87,9 @@ public partial class ErrorPoliciesTests
         // The second chunk fails, with the offsets of the first one already committed or stored
         void HandleMessages(IReadOnlyCollection<TestEventOne> messages)
         {
-            lock (received)
+            foreach (TestEventOne message in messages)
             {
-                received.AddRange(messages.Select(message => message.ContentEventOne!));
+                received.Add(message.ContentEventOne!);
             }
 
             if (messages.First().ContentEventOne == chunks[1][0] && Interlocked.Increment(ref failuresCount) == 1)
@@ -124,10 +124,7 @@ public partial class ErrorPoliciesTests
             isSkipping ? [.. chunks[0], .. chunks[1], .. chunks[2]] :
             [.. chunks[0], .. chunks[1], .. chunks[1], .. chunks[2]];
 
-        lock (received)
-        {
-            received.ShouldBe(expectedMessages);
-        }
+        received.ShouldBe(expectedMessages);
 
         AssertConsumerStatus(consumer, isStopping, disconnectionsCount);
 

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -36,7 +35,7 @@ public partial class ChunkingTests
             ContentType = "text/plain"
         };
 
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -73,7 +72,7 @@ public partial class ChunkingTests
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedBinaryMessageWithIsLastChunkHeader()
     {
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -120,7 +119,7 @@ public partial class ChunkingTests
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedBinaryMessageWithChunksCountHeader()
     {
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -167,7 +166,7 @@ public partial class ChunkingTests
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedBinaryMessageWithMessageIdHeader()
     {
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -214,7 +213,7 @@ public partial class ChunkingTests
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedBinaryMessageWithMessageTypeHeader()
     {
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -263,7 +262,7 @@ public partial class ChunkingTests
     {
         byte[] rawMessage1 = Encoding.UTF8.GetBytes("Message 1");
         byte[] rawMessage2 = Encoding.UTF8.GetBytes("Message 2");
-        List<byte[]?> receivedFiles = [];
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
