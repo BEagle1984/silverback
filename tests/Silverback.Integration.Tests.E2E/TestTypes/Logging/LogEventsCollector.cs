@@ -16,6 +16,8 @@ public sealed class LogEventsCollector : ILoggerProvider, ILogger
     public bool Contains(EventId eventId, string text) =>
         _logEvents.Any(logEvent => logEvent.EventId == eventId && logEvent.Message.Contains(text, StringComparison.Ordinal));
 
+    public int Count(EventId eventId) => _logEvents.Count(logEvent => logEvent.EventId == eventId);
+
     // Whether a channel started stopping, because of a stop or, with Kafka, of a rollback or a revocation (the MQTT rollback doesn't write
     // this trace): it's written right before the reading of the channel is canceled
     public bool ContainsChannelStopping() =>

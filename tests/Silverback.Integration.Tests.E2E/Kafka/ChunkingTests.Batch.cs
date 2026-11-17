@@ -8,13 +8,16 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestTypes;
+using Silverback.Tests.Integration.E2E.TestTypes.Logging;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
@@ -554,5 +557,78 @@ public partial class ChunkingTests
         batches[0].ShouldBe(["Long message 1"]);
         batches[1].ShouldBe(["Long message 1", "Long message 2", "Message 3"]);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(7);
+    }
+
+    [Theory]
+    [InlineData("timeout")]
+    [InlineData("next chunked message")]
+    public async Task Chunking_ShouldNotMoveCommittedOffsetBack_WhenIncompleteMessageIsAbortedAfterBatchIsCommitted(string abortTrigger)
+    {
+        TestingCollection<List<string?>> batches = [];
+        LogEventsCollector logEventsCollector = new();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging(logging => logging.AddProvider(logEventsCollector))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .WithSequenceTimeout(TimeSpan.FromSeconds(abortTrigger == "timeout" ? 1 : 600))
+                        .EnableBatchProcessing(2))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatchAsync));
+
+        async Task HandleBatchAsync(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<string?> list = [];
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message.ContentEventOne);
+            }
+
+            batches.Add(list);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        byte[][] chunks1 = ChunksHelper.SerializeAndSplitIntoChunks("Long message 1", 3);
+        byte[][] chunks2 = ChunksHelper.SerializeAndSplitIntoChunks("Long message 2", 3);
+
+        // The first chunk of a message that is never completed, followed by a batch that is committed while the chunked message is pending
+        // (the batch doesn't wait for the chunk sequence, which is aborted only by its timeout or by the next chunked message)
+        await producer.RawProduceAsync(chunks1[0], HeadersHelper.GetChunkHeaders("1", 0, chunks1.Length, typeof(TestEventOne)));
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        batches.ShouldBe([["1", "2"]]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+
+        if (abortTrigger != "timeout")
+            await producer.RawProduceAsync(chunks2[0], HeadersHelper.GetChunkHeaders("2", 0, chunks2.Length, typeof(TestEventOne)));
+
+        await AsyncTestingUtil.WaitAsync(() => logEventsCollector.Count(IntegrationLogEvents.IncompleteSequenceAborted.EventId) > 0);
+
+        // The aborted chunked message is skipped without moving the committed offset back before the batch
+        logEventsCollector.Count(IntegrationLogEvents.IncompleteSequenceAborted.EventId).ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+
+        IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
+        await consumer.Client.DisconnectAsync();
+        await consumer.Client.ConnectAsync();
+        await Helper.WaitUntilConnectedAsync();
+
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "4" });
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        // The batch isn't consumed again after reconnecting
+        batches.ShouldBe([["1", "2"], ["3", "4"]]);
     }
 }

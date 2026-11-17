@@ -57,6 +57,16 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     // committing, so the rollback must not consume those records again
     private readonly Dictionary<TopicPartition, Offset> _commitFailedOffsets = [];
 
+    // The highest offset committed in each partition since it was assigned. A lower offset isn't committed anymore, since moving the
+    // committed offset back would consume the later messages again after a restart, e.g. when an incomplete chunked message is aborted by
+    // its timeout after the next messages were committed in a batch.
+    private readonly Dictionary<TopicPartition, Offset> _highestCommittedOffsets = [];
+
+    // The partitions sought via Seek since they were assigned, whose highest committed offset isn't tracked anymore: the records polled
+    // before the seek (e.g., the one being processed, if sought by its subscriber) are still committed afterwards and, seeking back, their
+    // offsets would prevent the records consumed again from being committed.
+    private readonly HashSet<TopicPartition> _soughtPartitions = [];
+
     private Task _channelsStopping = Task.CompletedTask;
 
     private int _messagesSinceCommit;
@@ -177,6 +187,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
             _offsets.UntrackPartition(topicPartitionOffset.TopicPartition);
             _offsets.TrackOffset(topicPartitionOffset);
             _commitFailedOffsets.Remove(topicPartitionOffset.TopicPartition);
+
+            // The records consumed again after seeking back must be committed again
+            _highestCommittedOffsets.Remove(topicPartitionOffset.TopicPartition);
+            _soughtPartitions.Add(topicPartitionOffset.TopicPartition);
         }
     }
 
@@ -203,6 +217,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
             foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
             {
                 _rollingBackPartitions.Remove(topicPartitionOffset.TopicPartition);
+                _highestCommittedOffsets.Remove(topicPartitionOffset.TopicPartition);
+                _soughtPartitions.Remove(topicPartitionOffset.TopicPartition);
                 IncrementAssignmentVersion(topicPartitionOffset.TopicPartition);
                 _revokedPartitions.Remove(topicPartitionOffset.TopicPartition);
                 _offsets.TrackOffset(topicPartitionOffset);
@@ -244,6 +260,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
                 _revokedPartitions.Add(partition);
                 _rollingBackPartitions.Remove(partition);
                 _commitFailedOffsets.Remove(partition);
+                _highestCommittedOffsets.Remove(partition);
+                _soughtPartitions.Remove(partition);
                 IncrementAssignmentVersion(partition);
             }
 
@@ -474,16 +492,21 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         {
             // A non-blocking stop marks the consumer stopped before its completed batches finish committing.
             // Channel ownership remains valid until draining removes the channel.
+            KafkaOffset[] offsets = [.. brokerMessageIdentifiers.Where(IsCommittableOffsetCore)];
             bool stored = false;
 
             try
             {
-                foreach (KafkaOffset offset in brokerMessageIdentifiers.Where(IsOwnedOffset))
+                foreach (KafkaOffset offset in offsets)
                 {
                     // Tracked as committed only once stored: a record whose offset couldn't be stored must still be consumed again
                     // after a restart (or a shared rollback)
                     StoreOffset(new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1));
                     _offsets.Commit(offset);
+
+                    if (!_soughtPartitions.Contains(offset.TopicPartition))
+                        _highestCommittedOffsets[offset.TopicPartition] = offset.Offset;
+
                     stored = true;
                 }
 
@@ -492,7 +515,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
             }
             catch (Exception) when (Configuration.ClientSideOffsetStore != null)
             {
-                foreach (KafkaOffset offset in brokerMessageIdentifiers.Where(IsOwnedOffset))
+                foreach (KafkaOffset offset in offsets)
                 {
                     _commitFailedOffsets[offset.TopicPartition] = offset.Offset;
                 }
@@ -620,6 +643,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
             _offsets.Clear();
             _rollbackPausedPartitions.Clear();
             _commitFailedOffsets.Clear();
+            _highestCommittedOffsets.Clear();
+            _soughtPartitions.Clear();
         }
 
         return StartAsync();
@@ -784,6 +809,12 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         IsNotRevoked(offset.TopicPartition) && !_rollingBackPartitions.Contains(offset.TopicPartition) &&
         _channelsManager.GetChannel(offset.TopicPartition) is { } channel &&
         (!offset.HasSourceChannel || offset.BelongsToChannel(channel.InstanceId));
+
+    // Must be called while holding the assignment lock. The offset already committed can be committed again (e.g., by the error policy
+    // skipping the message whose commit failed).
+    private bool IsCommittableOffsetCore(KafkaOffset offset) =>
+        IsOwnedOffset(offset) &&
+        (!_highestCommittedOffsets.TryGetValue(offset.TopicPartition, out Offset committedOffset) || offset.Offset >= committedOffset);
 
     private void StartConsumeLoopHandler()
     {

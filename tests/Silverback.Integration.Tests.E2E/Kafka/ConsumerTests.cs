@@ -345,6 +345,119 @@ public class ConsumerTests : KafkaTests
     }
 
     [Fact]
+    public async Task Seek_ShouldCommitLowerOffsets_WhenSeekingBack()
+    {
+        TestingCollection<string?> received = [];
+        TaskCompletionSource release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessageAsync));
+
+        // The second message is held when consumed again, after seeking back
+        async Task HandleMessageAsync(TestEventOne message)
+        {
+            received.Add(message.ContentEventOne);
+
+            if (message.ContentEventOne == "2" && received.Count > 3)
+                await release.Task;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+
+        KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
+        consumer.Seek(new TopicPartitionOffset(DefaultTopicName, 0, 0));
+
+        // The records consumed again are committed again, from the offset sought
+        await AsyncTestingUtil.WaitAsync(() => received.Count == 5);
+        await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) == 1);
+        long committedOffsetsCount = DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
+
+        // Released before asserting, so that a failed assertion doesn't hang the consumer stop
+        release.SetResult();
+        committedOffsetsCount.ShouldBe(1);
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        received.ShouldBe(["1", "2", "3", "1", "2", "3"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task Seek_ShouldCommitLowerOffsets_WhenSeekingBackWhileProcessing()
+    {
+        TestingCollection<string?> received = [];
+        TaskCompletionSource release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoCommit()
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessageAsync));
+
+        // The third message seeks back while being processed, so that it's committed after the seek, and the second message is held when
+        // consumed again
+        async Task HandleMessageAsync(TestEventOne message)
+        {
+            received.Add(message.ContentEventOne);
+
+            if (message.ContentEventOne == "3" && received.Count == 3)
+            {
+                Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single()
+                    .Seek(new TopicPartitionOffset(DefaultTopicName, 0, 0));
+            }
+
+            if (message.ContentEventOne == "2" && received.Count > 3)
+                await release.Task;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        // The records consumed again are committed again, from the offset sought, although the commit of the third message followed the seek
+        await AsyncTestingUtil.WaitAsync(() => received.Count == 5);
+        await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) == 1);
+        long committedOffsetsCount = DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
+
+        // Released before asserting, so that a failed assertion doesn't hang the consumer stop
+        release.SetResult();
+        committedOffsetsCount.ShouldBe(1);
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        received.ShouldBe(["1", "2", "3", "1", "2", "3"]);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+    }
+
+    [Fact]
     public async Task StopAsync_ShouldCancelProcessing()
     {
         bool received = false;
