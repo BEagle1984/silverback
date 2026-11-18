@@ -24,7 +24,7 @@ internal class DelegatedProducer<T> : DelegatedProducer
         IServiceProvider serviceProvider)
         : base(endpointConfiguration, serviceProvider)
     {
-        _delegate = Check.NotNull(produceDelegate, nameof(produceDelegate));
+        _delegate = Check.NotNull(produceDelegate);
         _state = state;
     }
 

@@ -77,7 +77,7 @@ internal sealed class SequenceStore : ISequenceStore
     public async ValueTask<TSequence> AddAsync<TSequence>(TSequence sequence)
         where TSequence : class, ISequence
     {
-        Check.NotNull(sequence, nameof(sequence));
+        Check.NotNull(sequence);
         Check.ThrowObjectDisposedIf(IsDisposed, this);
 
         _logger.LogSequenceAddedToStore(sequence, _id);

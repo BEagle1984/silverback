@@ -47,7 +47,7 @@ public static class ProducerEndpointConfigurationBuilderSchemaRegistryExtensions
         where TConfiguration : ProducerEndpointConfiguration<TEndpoint>
         where TBuilder : ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
     {
-        Check.NotNull(endpointBuilder, nameof(endpointBuilder));
+        Check.NotNull(endpointBuilder);
 
         endpointBuilder.DisableMessageValidation(); // Implicit
 
@@ -94,7 +94,7 @@ public static class ProducerEndpointConfigurationBuilderSchemaRegistryExtensions
         where TConfiguration : ProducerEndpointConfiguration<TEndpoint>
         where TBuilder : ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
     {
-        Check.NotNull(endpointBuilder, nameof(endpointBuilder));
+        Check.NotNull(endpointBuilder);
 
         endpointBuilder.DisableMessageValidation(); // Implicit
 
@@ -141,7 +141,7 @@ public static class ProducerEndpointConfigurationBuilderSchemaRegistryExtensions
         where TConfiguration : ProducerEndpointConfiguration<TEndpoint>
         where TBuilder : ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
     {
-        Check.NotNull(endpointBuilder, nameof(endpointBuilder));
+        Check.NotNull(endpointBuilder);
 
         endpointBuilder.DisableMessageValidation(); // Implicit
 

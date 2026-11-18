@@ -34,7 +34,7 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
     /// </returns>
     public static BrokerOptionsBuilder AddKafka(this BrokerOptionsBuilder brokerOptionsBuilder)
     {
-        Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
+        Check.NotNull(brokerOptionsBuilder);
 
         if (brokerOptionsBuilder.SilverbackBuilder.Services.ContainsAny<KafkaClientsConfigurationActions>())
             return brokerOptionsBuilder;

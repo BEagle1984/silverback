@@ -49,7 +49,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     public MessageHeader this[int index]
     {
         get => _list[index];
-        set => _list[index] = Check.NotNull(value, nameof(value));
+        set => _list[index] = Check.NotNull(value);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// </param>
     public string? this[string name]
     {
-        get => GetValue(Check.NotNull(name, nameof(name)), true);
+        get => GetValue(Check.NotNull(name), true);
         set => AddOrReplace(name, value);
     }
 
@@ -73,7 +73,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="value">
     ///     The header value.
     /// </param>
-    public void Add(string name, object? value) => Add(new MessageHeader(Check.NotNull(name, nameof(name)), value));
+    public void Add(string name, object? value) => Add(new MessageHeader(Check.NotNull(name), value));
 
     /// <summary>
     ///     Adds a new header.
@@ -84,7 +84,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="value">
     ///     The header value.
     /// </param>
-    public void Add(string name, string? value) => Add(new MessageHeader(Check.NotNull(name, nameof(name)), value));
+    public void Add(string name, string? value) => Add(new MessageHeader(Check.NotNull(name), value));
 
     /// <summary>
     ///     Adds a new header.
@@ -92,7 +92,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="header">
     ///     The header to be added.
     /// </param>
-    public void Add(MessageHeader header) => _list.Add(Check.NotNull(header, nameof(header)));
+    public void Add(MessageHeader header) => _list.Add(Check.NotNull(header));
 
     /// <summary>
     ///     Adds the new headers.
@@ -100,7 +100,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="headers">
     ///     The headers to be added.
     /// </param>
-    public void AddRange(IEnumerable<MessageHeader> headers) => _list.AddRange(Check.NotNull(headers, nameof(headers)));
+    public void AddRange(IEnumerable<MessageHeader> headers) => _list.AddRange(Check.NotNull(headers));
 
     /// <summary>
     ///     Removes all headers with the specified name.
@@ -140,7 +140,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// </param>
     public void AddOrReplace(string name, string? newValue)
     {
-        Check.NotNull(name, nameof(name));
+        Check.NotNull(name);
 
         if (Replace(name, newValue) == 0)
             Add(name, newValue);
@@ -174,7 +174,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// </returns>
     public int Replace(string name, string? newValue)
     {
-        Check.NotNull(name, nameof(name));
+        Check.NotNull(name);
 
         int replaced = 0;
 
@@ -213,7 +213,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// </param>
     public void AddIfNotExists(string name, string? newValue)
     {
-        Check.NotNull(name, nameof(name));
+        Check.NotNull(name);
 
         if (!Contains(name))
             Add(name, newValue);

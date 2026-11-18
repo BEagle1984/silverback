@@ -26,7 +26,7 @@ public sealed class OffsetsTracker : IBrokerMessageIdentifiersTracker
     /// </param>
     public void TrackOffset(KafkaOffset offset)
     {
-        Check.NotNull(offset, nameof(offset));
+        Check.NotNull(offset);
 
         _commitOffsets.AddOrUpdate(
             offset.TopicPartition,
@@ -69,7 +69,7 @@ public sealed class OffsetsTracker : IBrokerMessageIdentifiersTracker
     /// </param>
     public void Commit(KafkaOffset offset)
     {
-        Check.NotNull(offset, nameof(offset));
+        Check.NotNull(offset);
 
         _rollbackOffsets.AddOrUpdate(
             offset.TopicPartition,

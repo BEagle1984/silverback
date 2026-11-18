@@ -85,7 +85,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder OnError(IErrorPolicy errorPolicy)
     {
-        _errorPolicy = Check.NotNull(errorPolicy, nameof(errorPolicy));
+        _errorPolicy = Check.NotNull(errorPolicy);
         return This;
     }
 
@@ -100,7 +100,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder OnError(Action<IErrorPolicyBuilder> errorPolicyBuilderAction)
     {
-        Check.NotNull(errorPolicyBuilderAction, nameof(errorPolicyBuilderAction));
+        Check.NotNull(errorPolicyBuilderAction);
 
         ErrorPolicyBuilder errorPolicyBuilder = new();
         errorPolicyBuilderAction.Invoke(errorPolicyBuilder);

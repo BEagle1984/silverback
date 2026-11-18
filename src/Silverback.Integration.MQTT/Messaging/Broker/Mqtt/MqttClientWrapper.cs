@@ -57,10 +57,10 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         ISilverbackLogger logger)
         : base(name, logger)
     {
-        Configuration = Check.NotNull(configuration, nameof(configuration));
-        _mqttClient = Check.NotNull(mqttClient, nameof(mqttClient));
-        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
-        _logger = Check.NotNull(logger, nameof(logger));
+        Configuration = Check.NotNull(configuration);
+        _mqttClient = Check.NotNull(mqttClient);
+        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker);
+        _logger = Check.NotNull(logger);
 
         _subscribedTopicsFilters =
         [

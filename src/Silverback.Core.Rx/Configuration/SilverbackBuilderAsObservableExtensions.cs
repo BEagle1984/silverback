@@ -27,7 +27,7 @@ public static class SilverbackBuilderAsObservableExtensions
     /// </returns>
     public static SilverbackBuilder AsObservable(this SilverbackBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services
             .AddSingleton<IArgumentResolver, ObservableStreamMessageArgumentResolver>()

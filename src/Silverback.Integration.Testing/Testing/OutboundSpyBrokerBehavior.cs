@@ -25,7 +25,7 @@ public class OutboundSpyBrokerBehavior : IProducerBehavior
     /// </param>
     public OutboundSpyBrokerBehavior(IntegrationSpy integrationSpy)
     {
-        _integrationSpy = Check.NotNull(integrationSpy, nameof(integrationSpy));
+        _integrationSpy = Check.NotNull(integrationSpy);
     }
 
     /// <inheritdoc cref="ISorted.SortIndex" />
@@ -34,8 +34,8 @@ public class OutboundSpyBrokerBehavior : IProducerBehavior
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
     public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         _integrationSpy.AddOutboundEnvelope(context.Envelope);
 

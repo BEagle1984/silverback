@@ -39,8 +39,8 @@ public class EnumerableMessagesReturnValueHandler : IReturnValueHandler
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(IPublisher publisher, object returnValue)
     {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.NotNull(returnValue, nameof(returnValue));
+        Check.NotNull(publisher);
+        Check.NotNull(returnValue);
 
         ((IEnumerable<object>)returnValue).ForEach(message => publisher.Publish(message));
     }
@@ -48,8 +48,8 @@ public class EnumerableMessagesReturnValueHandler : IReturnValueHandler
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
     public async ValueTask HandleAsync(IPublisher publisher, object returnValue)
     {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.NotNull(returnValue, nameof(returnValue));
+        Check.NotNull(publisher);
+        Check.NotNull(returnValue);
 
         await ((IEnumerable<object>)returnValue).ForEachAsync(message => publisher.PublishAsync(message)).ConfigureAwait(false);
     }

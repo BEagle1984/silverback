@@ -30,8 +30,8 @@ public static class SilverbackBuilderKafkaExtensions
         this SilverbackBuilder silverbackBuilder,
         Action<KafkaClientsConfigurationBuilder> configureAction)
     {
-        Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(silverbackBuilder);
+        Check.NotNull(configureAction);
 
         return silverbackBuilder.AddBrokerClientsConfigurator(_ => new KafkaBrokerClientsConfigurator(configureAction));
     }

@@ -24,5 +24,5 @@ public static class PublisherKafkaTransactionExtensions
     ///     The created <see cref="IKafkaTransaction" />.
     /// </returns>
     public static IKafkaTransaction InitKafkaTransaction(this IPublisher publisher, string? transactionalIdSuffix = null) =>
-        Check.NotNull(publisher, nameof(publisher)).Context.InitKafkaTransaction(transactionalIdSuffix);
+        Check.NotNull(publisher).Context.InitKafkaTransaction(transactionalIdSuffix);
 }

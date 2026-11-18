@@ -21,7 +21,7 @@ public class ObservableStreamMessageArgumentResolver : IStreamEnumerableMessageA
     /// <inheritdoc cref="IArgumentResolver.CanResolve" />
     public bool CanResolve(Type parameterType)
     {
-        Check.NotNull(parameterType, nameof(parameterType));
+        Check.NotNull(parameterType);
 
         if (!parameterType.IsGenericType)
             return false;
@@ -35,7 +35,7 @@ public class ObservableStreamMessageArgumentResolver : IStreamEnumerableMessageA
     /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />
     public Type GetMessageType(Type parameterType)
     {
-        Check.NotNull(parameterType, nameof(parameterType));
+        Check.NotNull(parameterType);
 
         return parameterType.GetGenericArguments()[0];
     }
@@ -47,7 +47,7 @@ public class ObservableStreamMessageArgumentResolver : IStreamEnumerableMessageA
         Type targetMessageType,
         IReadOnlyCollection<IMessageFilter>? filters = null)
     {
-        Check.NotNull(streamProvider, nameof(streamProvider));
+        Check.NotNull(streamProvider);
 
         _createObservableMethodInfo ??= typeof(ObservableStreamMessageArgumentResolver).GetMethod(
             "CreateObservable",

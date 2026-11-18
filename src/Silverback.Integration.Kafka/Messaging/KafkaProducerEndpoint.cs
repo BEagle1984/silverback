@@ -39,9 +39,9 @@ public record KafkaProducerEndpoint : ProducerEndpoint<KafkaProducerEndpointConf
     ///     The producer configuration.
     /// </param>
     public KafkaProducerEndpoint(TopicPartition topicPartition, KafkaProducerEndpointConfiguration configuration)
-        : base(Check.NotNull(topicPartition, nameof(topicPartition)).Topic, configuration)
+        : base(Check.NotNull(topicPartition).Topic, configuration)
     {
-        TopicPartition = Check.NotNull(topicPartition, nameof(topicPartition));
+        TopicPartition = Check.NotNull(topicPartition);
     }
 
     /// <summary>

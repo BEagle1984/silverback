@@ -25,7 +25,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder SerializeUsing(IMessageSerializer serializer)
     {
-        _serializer = Check.NotNull(serializer, nameof(serializer));
+        _serializer = Check.NotNull(serializer);
         return This;
     }
 

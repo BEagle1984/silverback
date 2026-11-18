@@ -32,8 +32,8 @@ public abstract class DistributedBackgroundService : BackgroundService
     /// </param>
     protected DistributedBackgroundService(IDistributedLock distributedLock, ISilverbackLogger<DistributedBackgroundService> logger)
     {
-        DistributedLock = Check.NotNull(distributedLock, nameof(distributedLock));
-        _logger = Check.NotNull(logger, nameof(logger));
+        DistributedLock = Check.NotNull(distributedLock);
+        _logger = Check.NotNull(logger);
     }
 
     /// <summary>

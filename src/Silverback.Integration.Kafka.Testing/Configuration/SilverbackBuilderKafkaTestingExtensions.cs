@@ -35,7 +35,7 @@ public static class SilverbackBuilderKafkaTestingExtensions
         this SilverbackBuilder builder,
         Action<IMockedKafkaOptionsBuilder>? optionsAction = null)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services
             .RemoveAll<IConfluentConsumerBuilder>()
@@ -68,7 +68,7 @@ public static class SilverbackBuilderKafkaTestingExtensions
     /// </returns>
     public static SilverbackBuilder UseMockedConfluentSchemaRegistry(this SilverbackBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services
             .RemoveAll<IConfluentSchemaRegistryClientFactory>()

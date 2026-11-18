@@ -25,7 +25,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder DeserializeUsing(IMessageDeserializer deserializer)
     {
-        _deserializer = Check.NotNull(deserializer, nameof(deserializer));
+        _deserializer = Check.NotNull(deserializer);
         return This;
     }
 

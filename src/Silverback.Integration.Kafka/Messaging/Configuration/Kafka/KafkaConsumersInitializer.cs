@@ -39,12 +39,12 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
         ISilverbackLogger<KafkaConsumersInitializer> logger)
         : base(serviceProvider, logger)
     {
-        _configurationActions = Check.NotNull(configurationActions, nameof(configurationActions));
-        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
-        _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
-        _silverbackLoggerFactory = Check.NotNull(silverbackLoggerFactory, nameof(silverbackLoggerFactory));
-        _consumerLogger = Check.NotNull(consumerLogger, nameof(consumerLogger));
-        _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
+        _configurationActions = Check.NotNull(configurationActions);
+        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker);
+        _offsetStoreFactory = Check.NotNull(offsetStoreFactory);
+        _silverbackLoggerFactory = Check.NotNull(silverbackLoggerFactory);
+        _consumerLogger = Check.NotNull(consumerLogger);
+        _behaviorsProvider = Check.NotNull(behaviorsProvider);
     }
 
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Lifecycle handled by the ConsumerCollection")]

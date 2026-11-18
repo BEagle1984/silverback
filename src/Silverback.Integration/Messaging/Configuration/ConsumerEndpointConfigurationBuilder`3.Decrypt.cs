@@ -24,7 +24,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder Decrypt(IDecryptionSettings encryptionSettings)
     {
-        _encryptionSettings = Check.NotNull(encryptionSettings, nameof(encryptionSettings));
+        _encryptionSettings = Check.NotNull(encryptionSettings);
         return This;
     }
 

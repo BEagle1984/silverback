@@ -68,7 +68,7 @@ public abstract class SchemaRegistrySerializerBuilder<TBuilder>
     /// </returns>
     public TBuilder UseModel(Type messageType)
     {
-        _messageType = Check.NotNull(messageType, nameof(messageType));
+        _messageType = Check.NotNull(messageType);
         return This;
     }
 
@@ -83,7 +83,7 @@ public abstract class SchemaRegistrySerializerBuilder<TBuilder>
     /// </returns>
     public TBuilder ConnectToSchemaRegistry(Action<KafkaSchemaRegistryConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(configurationBuilderAction);
         KafkaSchemaRegistryConfigurationBuilder builder = new();
         configurationBuilderAction.Invoke(builder);
         _schemaRegistryConfiguration = builder.Build();

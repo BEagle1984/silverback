@@ -35,7 +35,7 @@ internal abstract class CallbacksInvoker<TCallbackBase, TException>
         ISilverbackLogger logger)
     {
         _logger = logger;
-        _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
+        _serviceScopeFactory = Check.NotNull(serviceScopeFactory);
 
         applicationLifetime?.ApplicationStopping.Register(() => _appStopping = true);
     }

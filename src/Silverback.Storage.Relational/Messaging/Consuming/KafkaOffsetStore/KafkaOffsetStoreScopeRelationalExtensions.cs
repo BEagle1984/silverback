@@ -22,7 +22,7 @@ public static class KafkaOffsetStoreScopeRelationalExtensions
     ///     The transaction to be used.
     /// </param>
     public static void EnlistTransaction(this KafkaOffsetStoreScope scope, IStorageTransaction transaction) =>
-        Check.NotNull(scope, nameof(scope)).SilverbackContext.EnlistTransaction(transaction);
+        Check.NotNull(scope).SilverbackContext.EnlistTransaction(transaction);
 
     /// <summary>
     ///     Specifies the <see cref="DbTransaction" /> to be used for storage operations.
@@ -37,5 +37,5 @@ public static class KafkaOffsetStoreScopeRelationalExtensions
     ///     The <see cref="IStorageTransaction" />.
     /// </returns>
     public static IStorageTransaction EnlistTransaction(this KafkaOffsetStoreScope scope, DbTransaction dbTransaction) =>
-        Check.NotNull(scope, nameof(scope)).SilverbackContext.EnlistDbTransaction(dbTransaction);
+        Check.NotNull(scope).SilverbackContext.EnlistDbTransaction(dbTransaction);
 }

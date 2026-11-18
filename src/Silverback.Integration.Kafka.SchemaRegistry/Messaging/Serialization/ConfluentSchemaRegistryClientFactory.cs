@@ -15,7 +15,7 @@ internal class ConfluentSchemaRegistryClientFactory : IConfluentSchemaRegistryCl
 
     public ISchemaRegistryClient GetClient(Action<KafkaSchemaRegistryConfigurationBuilder> builderAction)
     {
-        Check.NotNull(builderAction, nameof(builderAction));
+        Check.NotNull(builderAction);
 
         KafkaSchemaRegistryConfigurationBuilder builder = new();
         builderAction.Invoke(builder);

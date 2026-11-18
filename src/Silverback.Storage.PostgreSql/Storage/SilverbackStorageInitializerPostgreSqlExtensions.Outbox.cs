@@ -27,7 +27,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreatePostgreSqlOutboxAsync(this SilverbackStorageInitializer initializer, string connectionString) =>
-        initializer.CreatePostgreSqlOutboxAsync(new PostgreSqlOutboxSettings(Check.NotNull(connectionString, nameof(connectionString))));
+        initializer.CreatePostgreSqlOutboxAsync(new PostgreSqlOutboxSettings(Check.NotNull(connectionString)));
 
     /// <summary>
     ///     Creates the PostgreSql outbox table.
@@ -43,7 +43,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     /// </returns>
     public static Task CreatePostgreSqlOutboxAsync(this SilverbackStorageInitializer initializer, PostgreSqlOutboxSettings settings)
     {
-        Check.NotNull(settings, nameof(settings));
+        Check.NotNull(settings);
         return initializer.CreatePostgreSqlOutboxAsync(settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
@@ -71,9 +71,9 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
         string tableName,
         TimeSpan timeout)
     {
-        Check.NotNull(initializer, nameof(initializer));
-        Check.NotNullOrEmpty(connectionString, nameof(connectionString));
-        Check.NotNullOrEmpty(tableName, nameof(tableName));
+        Check.NotNull(initializer);
+        Check.NotNullOrEmpty(connectionString);
+        Check.NotNullOrEmpty(tableName);
 
         PostgreSqlDataAccess dataAccess = new(connectionString);
 

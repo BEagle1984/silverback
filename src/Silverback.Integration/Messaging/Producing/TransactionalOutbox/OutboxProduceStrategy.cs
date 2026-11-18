@@ -37,7 +37,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
     /// </param>
     public OutboxProduceStrategy(OutboxSettings settings)
     {
-        Settings = Check.NotNull(settings, nameof(settings));
+        Settings = Check.NotNull(settings);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
     /// <inheritdoc cref="IProduceStrategy.Build" />
     public IProduceStrategyImplementation Build(ISilverbackContext context, ProducerEndpointConfiguration endpointConfiguration)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         _outboxWriter ??= context.ServiceProvider.GetRequiredService<OutboxWriterFactory>().GetWriter(Settings, context.ServiceProvider);
         _logger ??= context.ServiceProvider.GetRequiredService<ISilverbackLogger<OutboxProduceStrategy>>();

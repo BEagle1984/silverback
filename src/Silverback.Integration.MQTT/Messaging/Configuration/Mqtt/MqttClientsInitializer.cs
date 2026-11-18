@@ -38,12 +38,12 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
         ISilverbackLogger<MqttClientsInitializer> logger)
         : base(serviceProvider, logger)
     {
-        _configurationActions = Check.NotNull(configurationActions, nameof(configurationActions));
-        _clientWrapperFactory = Check.NotNull(clientWrapperFactory, nameof(clientWrapperFactory));
-        _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
-        _producerBehaviorsProvider = Check.NotNull(producerBehaviorsProvider, nameof(producerBehaviorsProvider));
-        _consumerLogger = Check.NotNull(consumerLogger, nameof(consumerLogger));
-        _consumerBehaviorsProvider = Check.NotNull(consumerBehaviorsProvider, nameof(consumerBehaviorsProvider));
+        _configurationActions = Check.NotNull(configurationActions);
+        _clientWrapperFactory = Check.NotNull(clientWrapperFactory);
+        _producerLogger = Check.NotNull(producerLogger);
+        _producerBehaviorsProvider = Check.NotNull(producerBehaviorsProvider);
+        _consumerLogger = Check.NotNull(consumerLogger);
+        _consumerBehaviorsProvider = Check.NotNull(consumerBehaviorsProvider);
     }
 
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Lifecycle handled by the ProducerCollection")]

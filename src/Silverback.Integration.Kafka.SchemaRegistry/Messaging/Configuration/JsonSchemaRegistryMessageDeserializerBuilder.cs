@@ -46,7 +46,7 @@ public class JsonSchemaRegistryMessageDeserializerBuilder : SchemaRegistryDeseri
     /// </returns>
     public JsonSchemaRegistryMessageDeserializerBuilder Configure(Action<KafkaJsonDeserializerConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(configurationBuilderAction);
 
         KafkaJsonDeserializerConfigurationBuilder builder = new();
         configurationBuilderAction.Invoke(builder);
@@ -67,7 +67,7 @@ public class JsonSchemaRegistryMessageDeserializerBuilder : SchemaRegistryDeseri
     [Obsolete("Use the Configure overload taking a KafkaJsonDeserializerConfigurationBuilder instead.")]
     public JsonSchemaRegistryMessageDeserializerBuilder Configure(Action<JsonDeserializerConfig> configureAction)
     {
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(configureAction);
 
         _jsonDeserializerConfig = new JsonDeserializerConfig();
         configureAction.Invoke(_jsonDeserializerConfig);
@@ -86,7 +86,7 @@ public class JsonSchemaRegistryMessageDeserializerBuilder : SchemaRegistryDeseri
     /// </returns>
     public JsonSchemaRegistryMessageDeserializerBuilder ConfigureSchemaGenerator(Action<JsonSchemaGeneratorSettings> configureAction)
     {
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(configureAction);
 
         _jsonSchemaGeneratorSettings = new NewtonsoftJsonSchemaGeneratorSettings();
         configureAction.Invoke(_jsonSchemaGeneratorSettings);

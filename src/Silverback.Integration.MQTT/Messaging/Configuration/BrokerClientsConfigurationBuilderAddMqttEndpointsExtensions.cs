@@ -30,8 +30,8 @@ public static class BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions
         this BrokerClientsConfigurationBuilder brokerClientsConfigurationBuilder,
         Action<MqttClientsConfigurationBuilder> mqttEndpointsBuilderAction)
     {
-        Check.NotNull(brokerClientsConfigurationBuilder, nameof(brokerClientsConfigurationBuilder));
-        Check.NotNull(mqttEndpointsBuilderAction, nameof(mqttEndpointsBuilderAction));
+        Check.NotNull(brokerClientsConfigurationBuilder);
+        Check.NotNull(mqttEndpointsBuilderAction);
 
         MqttClientsConfigurationBuilder mqttClientsBuilder = new();
         mqttEndpointsBuilderAction.Invoke(mqttClientsBuilder);

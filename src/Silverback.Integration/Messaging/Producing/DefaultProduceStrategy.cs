@@ -47,7 +47,7 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
     {
         public Task ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken)
         {
-            Check.NotNull(envelope, nameof(envelope));
+            Check.NotNull(envelope);
 
             return envelope.Producer.ProduceAsync(envelope, cancellationToken).AsTask();
         }
@@ -56,7 +56,7 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
         [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "False positive.")]
         public async Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken)
         {
-            Check.NotNull(envelopes, nameof(envelopes));
+            Check.NotNull(envelopes);
 
             // The extra 1 is to prevent the completion before the iteration is over and all messages are enqueued
             int pending = 1;

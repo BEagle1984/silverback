@@ -29,11 +29,11 @@ internal sealed class BrokerClientsConnectorService : IHostedLifecycleService
         IHostApplicationLifetime applicationLifetime,
         IBrokerClientsConnector connector)
     {
-        _connector = Check.NotNull(connector, nameof(connector));
-        _clientConnectionOptions = Check.NotNull(clientConnectionOptions, nameof(clientConnectionOptions));
+        _connector = Check.NotNull(connector);
+        _clientConnectionOptions = Check.NotNull(clientConnectionOptions);
         _shutdownTask = new Lazy<Task>(ShutdownAsync);
 
-        Check.NotNull(applicationLifetime, nameof(applicationLifetime));
+        Check.NotNull(applicationLifetime);
         applicationLifetime.ApplicationStarted.Register(OnApplicationStarted);
         applicationLifetime.ApplicationStopping.Register(OnApplicationStopping);
 

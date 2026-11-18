@@ -15,8 +15,8 @@ internal sealed class InMemoryTopic : IInMemoryTopic
 
     public InMemoryTopic(string name, string bootstrapServers, int partitions)
     {
-        Name = Check.NotNullOrEmpty(name, nameof(name));
-        BootstrapServers = Check.NotNullOrEmpty(bootstrapServers, nameof(bootstrapServers));
+        Name = Check.NotNullOrEmpty(name);
+        BootstrapServers = Check.NotNullOrEmpty(bootstrapServers);
 
         if (partitions < 1)
             throw new ArgumentOutOfRangeException(nameof(partitions), partitions, "The number of partition must be a positive number greater or equal to 1.");

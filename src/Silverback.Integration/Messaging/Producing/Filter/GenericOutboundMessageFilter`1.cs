@@ -27,7 +27,7 @@ public class GenericOutboundMessageFilter<TMessage> : IOutboundMessageFilter
     /// </param>
     public GenericOutboundMessageFilter(Func<TMessage?, bool> filter)
     {
-        Check.NotNull(filter, nameof(filter));
+        Check.NotNull(filter);
 
         _filter = envelope => filter.Invoke(envelope.Message);
     }
@@ -40,13 +40,13 @@ public class GenericOutboundMessageFilter<TMessage> : IOutboundMessageFilter
     /// </param>
     public GenericOutboundMessageFilter(Func<IOutboundEnvelope<TMessage>, bool> filter)
     {
-        _filter = Check.NotNull(filter, nameof(filter));
+        _filter = Check.NotNull(filter);
     }
 
     /// <inheritdoc cref="IOutboundMessageFilter.ShouldProduceAsync" />
     public ValueTask<bool> ShouldProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         if (envelope is not IOutboundEnvelope<TMessage> typedEnvelope)
             return ValueTask.FromResult(false);

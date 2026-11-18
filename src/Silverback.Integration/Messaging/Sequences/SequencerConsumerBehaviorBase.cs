@@ -45,8 +45,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         IEnumerable<ISequenceReader> sequenceReaders,
         ISilverbackLogger<SequencerConsumerBehaviorBase> logger)
     {
-        _sequenceReaders = [.. Check.NotNull(sequenceReaders, nameof(sequenceReaders)).SortBySortIndex()];
-        _logger = Check.NotNull(logger, nameof(logger));
+        _sequenceReaders = [.. Check.NotNull(sequenceReaders).SortBySortIndex()];
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="ISorted.SortIndex" />
@@ -55,8 +55,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
     public virtual async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         ISequenceReader? sequenceReader = await _sequenceReaders
             .FirstOrDefaultAsync(reader => reader.CanHandleAsync(context))

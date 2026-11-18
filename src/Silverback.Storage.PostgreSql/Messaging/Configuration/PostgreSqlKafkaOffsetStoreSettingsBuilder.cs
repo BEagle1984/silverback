@@ -42,7 +42,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettin
     /// </returns>
     public PostgreSqlKafkaOffsetStoreSettingsBuilder UseTable(string tableName)
     {
-        _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
+        _tableName = Check.NotNullOrEmpty(tableName);
         return this;
     }
 

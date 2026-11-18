@@ -23,8 +23,8 @@ public class ActivityProducerBehavior : IProducerBehavior
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
     public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         Activity activity = ActivitySources.StartProduceActivity(context.Envelope);
         context.Activity = activity;

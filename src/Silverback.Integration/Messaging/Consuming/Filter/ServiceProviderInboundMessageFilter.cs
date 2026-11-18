@@ -21,7 +21,7 @@ internal sealed record ServiceProviderInboundMessageFilter(Type FilterType) : II
 {
     public IInboundMessageFilter Resolve(IServiceProvider serviceProvider)
     {
-        Check.NotNull(serviceProvider, nameof(serviceProvider));
+        Check.NotNull(serviceProvider);
 
         return (IInboundMessageFilter)serviceProvider.GetRequiredService(FilterType);
     }

@@ -20,7 +20,7 @@ public record MqttProducerEndpoint : ProducerEndpoint<MqttProducerEndpointConfig
     ///     The producer configuration.
     /// </param>
     public MqttProducerEndpoint(string topic, MqttProducerEndpointConfiguration configuration)
-        : base(Check.NotNull(topic, nameof(topic)), configuration)
+        : base(Check.NotNull(topic), configuration)
     {
         Topic = topic;
     }

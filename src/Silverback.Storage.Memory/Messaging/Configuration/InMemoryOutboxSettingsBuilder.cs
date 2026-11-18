@@ -24,7 +24,7 @@ public class InMemoryOutboxSettingsBuilder : IOutboxSettingsImplementationBuilde
     /// </returns>
     public InMemoryOutboxSettingsBuilder WithName(string outboxName)
     {
-        _outboxName = Check.NotNullOrEmpty(outboxName, nameof(outboxName));
+        _outboxName = Check.NotNullOrEmpty(outboxName);
         return this;
     }
 

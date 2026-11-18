@@ -24,7 +24,7 @@ public class InMemoryKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettings
     /// </returns>
     public InMemoryKafkaOffsetStoreSettingsBuilder WithName(string offsetStoreName)
     {
-        _offsetStoreName = Check.NotNullOrEmpty(offsetStoreName, nameof(offsetStoreName));
+        _offsetStoreName = Check.NotNullOrEmpty(offsetStoreName);
         return this;
     }
 

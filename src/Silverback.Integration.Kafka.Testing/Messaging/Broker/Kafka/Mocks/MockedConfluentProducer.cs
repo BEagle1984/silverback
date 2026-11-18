@@ -31,9 +31,9 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         IInMemoryTopicCollection topics,
         IInMemoryTransactionManager transactionManager)
     {
-        _config = Check.NotNull(config, nameof(config));
-        _topics = Check.NotNull(topics, nameof(topics));
-        _transactionManager = Check.NotNull(transactionManager, nameof(transactionManager));
+        _config = Check.NotNull(config);
+        _topics = Check.NotNull(topics);
+        _transactionManager = Check.NotNull(transactionManager);
 
         Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
     }
@@ -57,7 +57,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         Message<byte[]?, byte[]?> message,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(message, nameof(message));
+        Check.NotNull(message);
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         int partitionIndex = PushToTopic(topicPartition, message, out Offset offset);
@@ -86,7 +86,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         Message<byte[]?, byte[]?> message,
         Action<DeliveryReport<byte[]?, byte[]?>>? deliveryHandler = null)
     {
-        Check.NotNull(message, nameof(message));
+        Check.NotNull(message);
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         try

@@ -44,7 +44,7 @@ public abstract class SchemaRegistryMessageSerializer<TMessage> : IMessageSerial
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
     public async ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
     {
-        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(endpoint);
 
         if (message == null)
             return null;

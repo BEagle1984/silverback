@@ -36,7 +36,7 @@ public class SequencerConsumerBehavior : SequencerConsumerBehaviorBase
     /// <inheritdoc cref="SequencerConsumerBehaviorBase.HandleAsync" />
     public override async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        ISequenceImplementation? rawSequence = Check.NotNull(context, nameof(context)).Sequence as ISequenceImplementation;
+        ISequenceImplementation? rawSequence = Check.NotNull(context).Sequence as ISequenceImplementation;
 
         try
         {
@@ -60,7 +60,7 @@ public class SequencerConsumerBehavior : SequencerConsumerBehaviorBase
     /// <inheritdoc cref="SequencerConsumerBehaviorBase.PublishSequenceAsync" />
     protected override ValueTask PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(next);
 
         return next(context, cancellationToken);
     }

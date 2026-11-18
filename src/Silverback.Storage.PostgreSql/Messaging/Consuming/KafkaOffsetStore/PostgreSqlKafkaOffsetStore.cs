@@ -32,7 +32,7 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
     /// </param>
     public PostgreSqlKafkaOffsetStore(PostgreSqlKafkaOffsetStoreSettings settings)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
+        _settings = Check.NotNull(settings);
         _dataAccess = new PostgreSqlDataAccess(_settings.ConnectionString);
 
         _getQuerySql = $"SELECT \"Topic\", \"Partition\", \"Offset\" FROM \"{settings.TableName}\" WHERE \"GroupId\" = @GroupId";
@@ -58,7 +58,7 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
     public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null) =>
         _dataAccess.ExecuteNonQueryAsync(
-            Check.NotNull(offsets, nameof(offsets)),
+            Check.NotNull(offsets),
             _insertOrReplaceSql,
             [
                 new NpgsqlParameter("@GroupId", NpgsqlDbType.Text)

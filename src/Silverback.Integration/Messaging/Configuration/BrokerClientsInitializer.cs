@@ -32,8 +32,8 @@ public abstract class BrokerClientsInitializer : IBrokerClientsInitializer
     protected BrokerClientsInitializer(IServiceProvider serviceProvider, ISilverbackLogger<IBrokerClientsInitializer> logger)
     {
         // Ensure that the root service provider is used to resolve the needed service, to avoid premature disposal
-        ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider)).GetRequiredService<RootServiceProvider>().ServiceProvider;
-        _logger = Check.NotNull(logger, nameof(logger));
+        ServiceProvider = Check.NotNull(serviceProvider).GetRequiredService<RootServiceProvider>().ServiceProvider;
+        _logger = Check.NotNull(logger);
 
         _producers = serviceProvider.GetRequiredService<ProducerCollection>();
         _consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
@@ -59,7 +59,7 @@ public abstract class BrokerClientsInitializer : IBrokerClientsInitializer
     /// </param>
     protected void AddClient(IBrokerClient client)
     {
-        Check.NotNull(client, nameof(client));
+        Check.NotNull(client);
 
         _clients.Add(client);
         _logger.LogBrokerClientCreated(client);
@@ -77,10 +77,10 @@ public abstract class BrokerClientsInitializer : IBrokerClientsInitializer
     /// </param>
     protected void AddProducer(IProducer producer, bool routing = true)
     {
-        Check.NotNull(producer, nameof(producer));
+        Check.NotNull(producer);
 
         _producers.Add(
-            Check.NotNull(producer, nameof(producer)),
+            Check.NotNull(producer),
             routing && producer.EndpointConfiguration.MessageType != typeof(object));
 
         _logger.LogProducerCreated(producer);
@@ -94,7 +94,7 @@ public abstract class BrokerClientsInitializer : IBrokerClientsInitializer
     /// </param>
     protected void AddConsumer(IConsumer consumer)
     {
-        Check.NotNull(consumer, nameof(consumer));
+        Check.NotNull(consumer);
 
         _consumers.Add(consumer);
 

@@ -24,9 +24,9 @@ internal sealed class BrokerClientsBootstrapper
         IBrokerClientCallbacksInvoker callbackInvoker,
         ISilverbackLogger<BrokerClientsConfigurationBuilder> logger)
     {
-        _scopeFactory = Check.NotNull(scopeFactory, nameof(scopeFactory));
-        _callbackInvoker = Check.NotNull(callbackInvoker, nameof(callbackInvoker));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _scopeFactory = Check.NotNull(scopeFactory);
+        _callbackInvoker = Check.NotNull(callbackInvoker);
+        _logger = Check.NotNull(logger);
     }
 
     public async ValueTask InitializeAllAsync()

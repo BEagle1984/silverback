@@ -20,7 +20,7 @@ public record MqttConsumerEndpoint : ConsumerEndpoint<MqttConsumerEndpointConfig
     ///     The consumer configuration.
     /// </param>
     public MqttConsumerEndpoint(string topic, MqttConsumerEndpointConfiguration configuration)
-        : base(Check.NotNull(topic, nameof(topic)), configuration)
+        : base(Check.NotNull(topic), configuration)
     {
         Topic = topic;
     }

@@ -43,7 +43,7 @@ public sealed class StringMessageDeserializerBuilder
     /// </returns>
     public StringMessageDeserializerBuilder UseDiscriminator(Type type)
     {
-        Check.NotNull(type, nameof(type));
+        Check.NotNull(type);
         _type = typeof(StringMessage<>).MakeGenericType(type);
         return this;
     }

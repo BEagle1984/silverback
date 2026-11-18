@@ -30,7 +30,7 @@ public class FilterConsumerBehavior : IConsumerBehavior
     /// </param>
     public FilterConsumerBehavior(ISilverbackLogger<FilterConsumerBehavior> logger)
     {
-        _logger = Check.NotNull(logger, nameof(logger));
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="ISorted.SortIndex" />
@@ -39,8 +39,8 @@ public class FilterConsumerBehavior : IConsumerBehavior
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
     public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         IInboundMessageFilter? filter = context.Envelope.Endpoint.Configuration.Filter;
 

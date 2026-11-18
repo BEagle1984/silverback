@@ -39,8 +39,8 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
     public ConsumerChannelsManager(MqttConsumer consumer, ISilverbackLogger logger)
         : base(consumer, logger)
     {
-        _consumer = Check.NotNull(consumer, nameof(consumer));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _consumer = Check.NotNull(consumer);
+        _logger = Check.NotNull(logger);
 
         _channels =
         [

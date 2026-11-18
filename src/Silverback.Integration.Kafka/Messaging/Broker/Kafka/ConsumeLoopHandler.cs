@@ -43,10 +43,10 @@ internal sealed class ConsumeLoopHandler : IDisposable
         OffsetsTracker offsetsTracker,
         ISilverbackLogger logger)
     {
-        _consumer = Check.NotNull(consumer, nameof(consumer));
-        _channelsManager = Check.NotNull(channelsManager, nameof(channelsManager));
-        _offsetsTracker = Check.NotNull(offsetsTracker, nameof(offsetsTracker));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _consumer = Check.NotNull(consumer);
+        _channelsManager = Check.NotNull(channelsManager);
+        _offsetsTracker = Check.NotNull(offsetsTracker);
+        _logger = Check.NotNull(logger);
     }
 
     public string Id { get; } = Guid.NewGuid().ToString();

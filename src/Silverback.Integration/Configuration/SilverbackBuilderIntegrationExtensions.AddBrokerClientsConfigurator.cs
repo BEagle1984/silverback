@@ -28,7 +28,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     public static SilverbackBuilder AddBrokerClientsConfigurator<TConfigurator>(this SilverbackBuilder builder)
         where TConfigurator : class, IBrokerClientsConfigurator
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddScoped<IBrokerClientsConfigurator, TConfigurator>();
 
@@ -49,7 +49,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddBrokerClientsConfigurator(this SilverbackBuilder builder, Type configuratorType)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddScoped(typeof(IBrokerClientsConfigurator), configuratorType);
 
@@ -72,7 +72,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         this SilverbackBuilder builder,
         Func<IServiceProvider, IBrokerClientsConfigurator> implementationFactory)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddScoped(implementationFactory);
 

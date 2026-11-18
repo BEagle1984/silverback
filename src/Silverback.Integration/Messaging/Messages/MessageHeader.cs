@@ -37,7 +37,7 @@ public record MessageHeader
     [JsonConstructor]
     public MessageHeader(string name, string? value)
     {
-        Name = Check.NotNullOrEmpty(name, nameof(name));
+        Name = Check.NotNullOrEmpty(name);
         Value = value;
     }
 

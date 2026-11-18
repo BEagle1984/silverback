@@ -35,11 +35,11 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
         ISilverbackLogger<KafkaProducersInitializer> logger)
         : base(serviceProvider, logger)
     {
-        _configurationActions = Check.NotNull(configurationActions, nameof(configurationActions));
-        _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
-        _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
-        _confluentProducerWrapperFactory = Check.NotNull(confluentProducerWrapperFactory, nameof(confluentProducerWrapperFactory));
-        _transactionalProducers = Check.NotNull(transactionalProducers, nameof(transactionalProducers));
+        _configurationActions = Check.NotNull(configurationActions);
+        _producerLogger = Check.NotNull(producerLogger);
+        _behaviorsProvider = Check.NotNull(behaviorsProvider);
+        _confluentProducerWrapperFactory = Check.NotNull(confluentProducerWrapperFactory);
+        _transactionalProducers = Check.NotNull(transactionalProducers);
     }
 
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Lifecycle handled by the ProducerCollection")]

@@ -19,7 +19,7 @@ public sealed class MqttStaticProducerEndpointResolver
     ///     The target topic.
     /// </param>
     public MqttStaticProducerEndpointResolver(string topic)
-        : base(Check.NotNullOrEmpty(topic, nameof(topic)))
+        : base(Check.NotNullOrEmpty(topic))
     {
         Topic = topic;
     }

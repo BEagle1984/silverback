@@ -19,12 +19,12 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
     public InMemoryTransactionManager(IInMemoryTopicCollection topics)
     {
-        _topics = Check.NotNull(topics, nameof(topics));
+        _topics = Check.NotNull(topics);
     }
 
     public Guid InitTransaction(string transactionalId)
     {
-        Check.NotNull(transactionalId, nameof(transactionalId));
+        Check.NotNull(transactionalId);
 
         lock (_producersInfo)
         {

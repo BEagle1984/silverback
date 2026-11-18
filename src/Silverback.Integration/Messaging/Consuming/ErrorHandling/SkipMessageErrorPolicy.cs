@@ -67,8 +67,8 @@ public record SkipMessageErrorPolicy : ErrorPolicyBase
             ConsumerPipelineContext context,
             Exception exception)
         {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(exception, nameof(exception));
+            Check.NotNull(context);
+            Check.NotNull(exception);
 
             _logger.LogMessageSkipped(context.Envelope);
 

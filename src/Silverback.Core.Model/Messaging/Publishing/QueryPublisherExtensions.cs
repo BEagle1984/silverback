@@ -35,7 +35,7 @@ public static class QueryPublisherExtensions
     ///     The query result.
     /// </returns>
     public static TResult ExecuteQuery<TResult>(this IPublisher publisher, IQuery<TResult> queryMessage, bool throwIfUnhandled = true) =>
-        Check.NotNull(publisher, nameof(publisher)).Publish<TResult>(queryMessage, throwIfUnhandled).Single();
+        Check.NotNull(publisher).Publish<TResult>(queryMessage, throwIfUnhandled).Single();
 
     /// <summary>
     ///     Executes the specified query forwarding it to its subscribers via the message bus and the
@@ -62,7 +62,7 @@ public static class QueryPublisherExtensions
         this IPublisher publisher,
         IQuery<TResult> queryMessage,
         CancellationToken cancellationToken = default) =>
-        (await Check.NotNull(publisher, nameof(publisher)).PublishAsync<TResult>(queryMessage, true, cancellationToken).ConfigureAwait(false))
+        (await Check.NotNull(publisher).PublishAsync<TResult>(queryMessage, true, cancellationToken).ConfigureAwait(false))
         .Single();
 
     /// <summary>
@@ -94,6 +94,6 @@ public static class QueryPublisherExtensions
         IQuery<TResult> queryMessage,
         bool throwIfUnhandled,
         CancellationToken cancellationToken = default) =>
-        (await Check.NotNull(publisher, nameof(publisher)).PublishAsync<TResult>(queryMessage, throwIfUnhandled, cancellationToken).ConfigureAwait(false))
+        (await Check.NotNull(publisher).PublishAsync<TResult>(queryMessage, throwIfUnhandled, cancellationToken).ConfigureAwait(false))
         .Single();
 }

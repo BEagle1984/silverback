@@ -22,7 +22,7 @@ public static class PublisherStorageExtensions
     ///     The transaction to be used.
     /// </param>
     public static void EnlistTransaction(this IPublisher publisher, IStorageTransaction transaction) =>
-        Check.NotNull(publisher, nameof(publisher)).Context.EnlistTransaction(transaction);
+        Check.NotNull(publisher).Context.EnlistTransaction(transaction);
 
     /// <summary>
     ///     Specifies the <see cref="DbTransaction" /> to be used for storage operations.
@@ -40,5 +40,5 @@ public static class PublisherStorageExtensions
     ///     The <see cref="IStorageTransaction" />.
     /// </returns>
     public static IStorageTransaction EnlistDbTransaction(this IPublisher publisher, DbTransaction dbTransaction, bool ownTransaction = true) =>
-        Check.NotNull(publisher, nameof(publisher)).Context.EnlistDbTransaction(dbTransaction, ownTransaction);
+        Check.NotNull(publisher).Context.EnlistDbTransaction(dbTransaction, ownTransaction);
 }

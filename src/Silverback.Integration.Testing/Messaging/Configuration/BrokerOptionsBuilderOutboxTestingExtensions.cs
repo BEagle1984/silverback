@@ -33,7 +33,7 @@ public static class BrokerOptionsBuilderOutboxTestingExtensions
     /// </returns>
     public static BrokerOptionsBuilder UseManualOutboxWorker(this BrokerOptionsBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         // The host calls StartingAsync of all the IHostedLifecycleService before starting any service, so the workers are suspended
         // before they run, regardless of the registration order
@@ -66,7 +66,7 @@ public static class BrokerOptionsBuilderOutboxTestingExtensions
     /// </returns>
     public static BrokerOptionsBuilder BypassOutbox(this BrokerOptionsBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         OutboxReaderFactory? readerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxReaderFactory>();
         OutboxWriterFactory? writerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxWriterFactory>();

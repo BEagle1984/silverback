@@ -43,8 +43,8 @@ public static class OutboundEnvelopeFactory
         IProducer producer,
         ISilverbackContext? context = null)
     {
-        Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
-        Check.NotNull(producer, nameof(producer));
+        Check.NotNull(endpointConfiguration);
+        Check.NotNull(producer);
 
         return message == null
             ? new OutboundEnvelope(null, headers, endpointConfiguration, producer, context)
@@ -72,7 +72,7 @@ public static class OutboundEnvelopeFactory
     /// </returns>
     public static IOutboundEnvelope CreateEnvelope(object? message, IOutboundEnvelope originalEnvelope)
     {
-        Check.NotNull(originalEnvelope, nameof(originalEnvelope));
+        Check.NotNull(originalEnvelope);
 
         return CreateEnvelope(
             message,

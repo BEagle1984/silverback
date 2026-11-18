@@ -22,7 +22,7 @@ public static class KafkaEnvelopeExtensions
     ///     The Kafka message key.
     /// </returns>
     public static string? GetKafkaKey(this IBrokerEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(KafkaMessageHeaders.MessageKey);
+        Check.NotNull(envelope).Headers.GetValue(KafkaMessageHeaders.MessageKey);
 
     /// <summary>
     ///     Sets the key of the message to be produced to Kafka.
@@ -38,7 +38,7 @@ public static class KafkaEnvelopeExtensions
     /// </returns>
     public static IOutboundEnvelope SetKafkaKey(this IOutboundEnvelope envelope, string key)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
         envelope.AddOrReplaceHeader(KafkaMessageHeaders.MessageKey, key);
         return envelope;
     }
@@ -53,7 +53,7 @@ public static class KafkaEnvelopeExtensions
     ///     The timestamp of the message.
     /// </returns>
     public static DateTime? GetKafkaTimestamp(this IRawInboundEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp)?.ToUniversalTime();
+        Check.NotNull(envelope).Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp)?.ToUniversalTime();
 
     /// <summary>
     ///     Gets the offset of the message consumed from Kafka.
@@ -65,7 +65,7 @@ public static class KafkaEnvelopeExtensions
     ///     The offset of the message.
     /// </returns>
     public static KafkaOffset GetKafkaOffset(this IRawInboundEnvelope envelope) =>
-        (KafkaOffset)Check.NotNull(envelope, nameof(envelope)).BrokerMessageIdentifier;
+        (KafkaOffset)Check.NotNull(envelope).BrokerMessageIdentifier;
 
     /// <summary>
     ///     Gets the destination topic.
@@ -77,7 +77,7 @@ public static class KafkaEnvelopeExtensions
     ///     The destination topic.
     /// </returns>
     public static string? GetKafkaDestinationTopic(this IOutboundEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(KafkaMessageHeaders.DestinationTopic);
+        Check.NotNull(envelope).Headers.GetValue(KafkaMessageHeaders.DestinationTopic);
 
     /// <summary>
     ///     Gets destination partition.
@@ -89,7 +89,7 @@ public static class KafkaEnvelopeExtensions
     ///     The destination partition.
     /// </returns>
     public static int? GetKafkaDestinationPartition(this IOutboundEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue<int>(KafkaMessageHeaders.DestinationPartition);
+        Check.NotNull(envelope).Headers.GetValue<int>(KafkaMessageHeaders.DestinationPartition);
 
     /// <summary>
     ///     Sets the destination topic.
@@ -108,7 +108,7 @@ public static class KafkaEnvelopeExtensions
     /// </returns>
     public static IOutboundEnvelope SetKafkaDestinationTopic(this IOutboundEnvelope envelope, string destinationTopic, int? destinationPartition = null)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
         envelope.Headers.AddOrReplace(KafkaMessageHeaders.DestinationTopic, destinationTopic);
 
         if (destinationPartition != null)
@@ -131,7 +131,7 @@ public static class KafkaEnvelopeExtensions
     /// </returns>
     public static IOutboundEnvelope SetKafkaDestinationPartition(this IOutboundEnvelope envelope, int destinationPartition)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
         envelope.Headers.AddOrReplace(KafkaMessageHeaders.DestinationPartition, destinationPartition);
         return envelope;
     }

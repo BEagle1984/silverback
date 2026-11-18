@@ -22,8 +22,8 @@ public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerEndpoi
     /// <inheritdoc cref="IBrokerActivityEnricher.EnrichOutboundActivity" />
     public void EnrichOutboundActivity(Activity activity, IOutboundEnvelope envelope)
     {
-        Check.NotNull(activity, nameof(activity));
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(activity);
+        Check.NotNull(envelope);
 
         Enrich(activity, (KafkaOffset?)envelope.BrokerMessageIdentifier, envelope.Headers);
     }
@@ -31,8 +31,8 @@ public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerEndpoi
     /// <inheritdoc cref="IBrokerActivityEnricher.EnrichInboundActivity" />
     public void EnrichInboundActivity(Activity activity, IRawInboundEnvelope envelope)
     {
-        Check.NotNull(activity, nameof(activity));
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(activity);
+        Check.NotNull(envelope);
 
         Enrich(activity, (KafkaOffset)envelope.BrokerMessageIdentifier, envelope.Headers);
     }

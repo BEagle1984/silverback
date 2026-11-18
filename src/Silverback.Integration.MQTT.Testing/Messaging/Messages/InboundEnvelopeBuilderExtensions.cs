@@ -30,7 +30,7 @@ public static class InboundEnvelopeBuilderExtensions
         this InboundEnvelopeBuilder<TMessage> builder,
         byte[] correlationData)
         where TMessage : class =>
-        Check.NotNull(builder, nameof(builder)).AddHeader(MqttMessageHeaders.CorrelationData, correlationData.ToBase64String());
+        Check.NotNull(builder).AddHeader(MqttMessageHeaders.CorrelationData, correlationData.ToBase64String());
 
     /// <summary>
     ///     Sets the topic from which the message was consumed.
@@ -51,5 +51,5 @@ public static class InboundEnvelopeBuilderExtensions
         this InboundEnvelopeBuilder<TMessage> builder,
         string topic)
         where TMessage : class =>
-        Check.NotNull(builder, nameof(builder)).WithEndpoint(new MqttConsumerEndpoint(topic, new MqttConsumerEndpointConfiguration()));
+        Check.NotNull(builder).WithEndpoint(new MqttConsumerEndpoint(topic, new MqttConsumerEndpointConfiguration()));
 }

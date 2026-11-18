@@ -52,7 +52,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         this SilverbackBuilder builder,
         Action<BrokerOptionsBuilder>? optionsAction = null)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         AddClientsManagement(builder);
         AddOutboundRouting(builder);

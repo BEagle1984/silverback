@@ -32,8 +32,8 @@ public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
     /// </param>
     public MockedConfluentProducerBuilder(IInMemoryTopicCollection topics, IInMemoryTransactionManager transactionManager)
     {
-        _topics = Check.NotNull(topics, nameof(topics));
-        _transactionManager = Check.NotNull(transactionManager, nameof(transactionManager));
+        _topics = Check.NotNull(topics);
+        _transactionManager = Check.NotNull(transactionManager);
     }
 
     /// <inheritdoc cref="IConfluentProducerBuilder.SetConfiguration" />

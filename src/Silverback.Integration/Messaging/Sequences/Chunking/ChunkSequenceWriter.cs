@@ -30,14 +30,14 @@ public class ChunkSequenceWriter : ISequenceWriter
     /// </param>
     public ChunkSequenceWriter(IChunkEnricherFactory chunkEnricherFactory, IServiceProvider serviceProvider)
     {
-        _chunkEnricherFactory = Check.NotNull(chunkEnricherFactory, nameof(chunkEnricherFactory));
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        _chunkEnricherFactory = Check.NotNull(chunkEnricherFactory);
+        _serviceProvider = Check.NotNull(serviceProvider);
     }
 
     /// <inheritdoc cref="ISequenceWriter.CanHandle" />
     public bool CanHandle(IOutboundEnvelope envelope)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         ChunkSettings? chunkSettings = envelope.EndpointConfiguration.Chunk;
         if (chunkSettings == null || chunkSettings.Size == int.MaxValue)
@@ -58,7 +58,7 @@ public class ChunkSequenceWriter : ISequenceWriter
     /// <inheritdoc cref="ISequenceWriter.ProcessMessageAsync" />
     public async IAsyncEnumerable<IOutboundEnvelope> ProcessMessageAsync(IOutboundEnvelope envelope)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         if (envelope.RawMessage == null)
             throw new InvalidOperationException("RawMessage is null");

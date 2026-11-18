@@ -108,8 +108,8 @@ public record RetryErrorPolicy : ErrorPolicyBase
             ConsumerPipelineContext context,
             Exception exception)
         {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(exception, nameof(exception));
+            Check.NotNull(context);
+            Check.NotNull(exception);
 
             if (!await TryRollbackAsync(context, exception).ConfigureAwait(false))
             {

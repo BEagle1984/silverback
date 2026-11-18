@@ -26,8 +26,8 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     /// </param>
     public KafkaOffset(TopicPartitionOffset topicPartitionOffset)
         : this(
-            Check.NotNull(topicPartitionOffset, nameof(topicPartitionOffset)).TopicPartition,
-            Check.NotNull(topicPartitionOffset, nameof(topicPartitionOffset)).Offset.Value)
+            Check.NotNull(topicPartitionOffset).TopicPartition,
+            Check.NotNull(topicPartitionOffset).Offset.Value)
     {
     }
 
@@ -44,7 +44,7 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     ///     The offset in the partition.
     /// </param>
     public KafkaOffset(string topic, int partition, long offset)
-        : this(new TopicPartition(Check.NotNull(topic, nameof(topic)), partition), offset)
+        : this(new TopicPartition(Check.NotNull(topic), partition), offset)
     {
     }
 
@@ -59,8 +59,8 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     /// </param>
     public KafkaOffset(TopicPartition topicPartition, Offset offset)
     {
-        TopicPartition = Check.NotNull(topicPartition, nameof(topicPartition));
-        Offset = Check.NotNull(offset, nameof(offset));
+        TopicPartition = Check.NotNull(topicPartition);
+        Offset = Check.NotNull(offset);
     }
 
     internal KafkaOffset(TopicPartitionOffset topicPartitionOffset, Guid sourceChannelInstanceId)

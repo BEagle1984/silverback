@@ -47,9 +47,9 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     ///     The function returning the target partition index for the message being produced.
     /// </param>
     public KafkaDynamicProducerEndpointResolver(string topic, Func<IOutboundEnvelope<TMessage>, int> partitionFunction)
-        : base(Check.NotNullOrEmpty(topic, nameof(topic)))
+        : base(Check.NotNullOrEmpty(topic))
     {
-        Check.NotNull(partitionFunction, nameof(partitionFunction));
+        Check.NotNull(partitionFunction);
 
         _topicPartitionFunction = envelope => new TopicPartition(topic, partitionFunction.Invoke(envelope));
     }
@@ -74,7 +74,7 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     public KafkaDynamicProducerEndpointResolver(Func<IOutboundEnvelope<TMessage>, string> topicFunction)
         : base($"dynamic-{Guid.NewGuid():N}")
     {
-        Check.NotNull(topicFunction, nameof(topicFunction));
+        Check.NotNull(topicFunction);
 
         _topicPartitionFunction = envelope => new TopicPartition(topicFunction.Invoke(envelope), Partition.Any);
     }
@@ -109,8 +109,8 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
         Func<IOutboundEnvelope<TMessage>, int> partitionFunction)
         : base($"dynamic-{Guid.NewGuid():N}")
     {
-        Check.NotNull(topicFunction, nameof(topicFunction));
-        Check.NotNull(partitionFunction, nameof(partitionFunction));
+        Check.NotNull(topicFunction);
+        Check.NotNull(partitionFunction);
 
         _topicPartitionFunction = envelope => new TopicPartition(topicFunction.Invoke(envelope), partitionFunction.Invoke(envelope));
     }
@@ -135,7 +135,7 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     public KafkaDynamicProducerEndpointResolver(Func<IOutboundEnvelope<TMessage>, TopicPartition> topicPartitionFunction)
         : base($"dynamic-{Guid.NewGuid():N}")
     {
-        Check.NotNull(topicPartitionFunction, nameof(topicPartitionFunction));
+        Check.NotNull(topicPartitionFunction);
 
         _topicPartitionFunction = topicPartitionFunction;
     }
@@ -187,10 +187,10 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
         string topicFormatString,
         Func<IOutboundEnvelope<TMessage>, string[]> topicArgumentsFunction,
         Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
-        : base(Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString)))
+        : base(Check.NotNullOrEmpty(topicFormatString))
     {
-        Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
-        Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
+        Check.NotNullOrEmpty(topicFormatString);
+        Check.NotNull(topicArgumentsFunction);
 
         string FormatTopic(IOutboundEnvelope<TMessage> envelope) =>
             string.Format(CultureInfo.InvariantCulture, topicFormatString, topicArgumentsFunction.Invoke(envelope));
@@ -203,10 +203,10 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     internal KafkaDynamicProducerEndpointResolver(
         Type resolverType,
         Func<IOutboundEnvelope<TMessage>, TopicPartition> topicPartitionFunction)
-        : base($"dynamic-{Check.NotNull(resolverType, nameof(resolverType)).Name}-{Guid.NewGuid():N}")
+        : base($"dynamic-{Check.NotNull(resolverType).Name}-{Guid.NewGuid():N}")
     {
-        Check.NotNull(resolverType, nameof(resolverType));
-        Check.NotNull(topicPartitionFunction, nameof(topicPartitionFunction));
+        Check.NotNull(resolverType);
+        Check.NotNull(topicPartitionFunction);
 
         _topicPartitionFunction = topicPartitionFunction;
     }
@@ -214,7 +214,7 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     /// <inheritdoc cref="DynamicProducerEndpointResolver{TMessage,TEndpoint,TConfiguration}.SerializeEndpoint" />
     protected override string SerializeEndpoint(KafkaProducerEndpoint endpoint)
     {
-        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(endpoint);
 
         return $"{endpoint.TopicPartition.Topic}|{endpoint.TopicPartition.Partition.Value}";
     }
@@ -224,7 +224,7 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
         string serializedEndpoint,
         KafkaProducerEndpointConfiguration configuration)
     {
-        Check.NotNull(serializedEndpoint, nameof(serializedEndpoint));
+        Check.NotNull(serializedEndpoint);
 
         string[] parts = serializedEndpoint.Split('|');
 

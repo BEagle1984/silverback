@@ -27,7 +27,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder AddHeader(string name, object? value)
     {
-        Check.NotNullOrEmpty(name, nameof(name));
+        Check.NotNullOrEmpty(name);
         return AddMessageEnricher(new StaticOutboundHeadersEnricher(name, value));
     }
 
@@ -49,7 +49,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder AddHeader<TMessageChildType>(string name, object? value)
         where TMessageChildType : TMessage
     {
-        Check.NotNullOrEmpty(name, nameof(name));
+        Check.NotNullOrEmpty(name);
 
         return AddMessageEnricher(new GenericOutboundHeadersEnricher<TMessageChildType>(name, value));
     }
@@ -68,8 +68,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder AddHeader(string name, Func<TMessage?, object?> valueProvider)
     {
-        Check.NotNullOrEmpty(name, nameof(name));
-        Check.NotNull(valueProvider, nameof(valueProvider));
+        Check.NotNullOrEmpty(name);
+        Check.NotNull(valueProvider);
 
         return AddMessageEnricher(new GenericOutboundHeadersEnricher<TMessage>(name, valueProvider));
     }
@@ -93,8 +93,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder AddHeader<TMessageChildType>(string name, Func<TMessageChildType?, object?> valueProvider)
         where TMessageChildType : TMessage
     {
-        Check.NotNullOrEmpty(name, nameof(name));
-        Check.NotNull(valueProvider, nameof(valueProvider));
+        Check.NotNullOrEmpty(name);
+        Check.NotNull(valueProvider);
 
         return AddMessageEnricher(new GenericOutboundHeadersEnricher<TMessageChildType>(name, valueProvider));
     }
@@ -113,8 +113,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder AddHeader(string name, Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
     {
-        Check.NotNullOrEmpty(name, nameof(name));
-        Check.NotNull(valueProvider, nameof(valueProvider));
+        Check.NotNullOrEmpty(name);
+        Check.NotNull(valueProvider);
 
         return AddMessageEnricher(new GenericOutboundHeadersEnricher<TMessage>(name, valueProvider));
     }
@@ -138,8 +138,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder AddHeader<TMessageChildType>(string name, Func<IOutboundEnvelope<TMessageChildType>, object?> valueProvider)
         where TMessageChildType : TMessage
     {
-        Check.NotNullOrEmpty(name, nameof(name));
-        Check.NotNull(valueProvider, nameof(valueProvider));
+        Check.NotNullOrEmpty(name);
+        Check.NotNull(valueProvider);
 
         return AddMessageEnricher(new GenericOutboundHeadersEnricher<TMessageChildType>(name, valueProvider));
     }

@@ -21,8 +21,8 @@ public class HeadersWriterProducerBehavior : IProducerBehavior
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
     public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         IEnumerable<MessageHeader> headers = HeaderAttributeHelper.GetHeaders(context.Envelope.Message);
         headers.ForEach(header => context.Envelope.Headers.AddOrReplace(header.Name, header.Value));

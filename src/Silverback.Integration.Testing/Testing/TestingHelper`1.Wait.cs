@@ -150,7 +150,7 @@ public abstract partial class TestingHelper
         string[] endpointNames,
         CancellationToken cancellationToken)
     {
-        Check.NotNull(waitAction, nameof(waitAction));
+        Check.NotNull(waitAction);
 
         try
         {

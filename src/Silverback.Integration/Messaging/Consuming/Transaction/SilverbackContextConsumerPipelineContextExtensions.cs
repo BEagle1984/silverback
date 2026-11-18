@@ -24,7 +24,7 @@ public static class SilverbackContextConsumerPipelineContextExtensions
     ///     The <see cref="ConsumerPipelineContext" />.
     /// </returns>
     public static ConsumerPipelineContext GetConsumerPipelineContext(this ISilverbackContext context) =>
-        Check.NotNull(context, nameof(context)).GetObject<ConsumerPipelineContext>(ConsumerPipelineContextObjectTypeId);
+        Check.NotNull(context).GetObject<ConsumerPipelineContext>(ConsumerPipelineContextObjectTypeId);
 
     /// <summary>
     ///     Checks whether a <see cref="ConsumerPipelineContext" /> is set and returns it.
@@ -39,8 +39,8 @@ public static class SilverbackContextConsumerPipelineContextExtensions
     ///     A value indicating whether the <see cref="ConsumerPipelineContext" /> was found.
     /// </returns>
     public static bool TryGetConsumerPipelineContext(this ISilverbackContext context, out ConsumerPipelineContext? pipelineContext) =>
-        Check.NotNull(context, nameof(context)).TryGetObject(ConsumerPipelineContextObjectTypeId, out pipelineContext);
+        Check.NotNull(context).TryGetObject(ConsumerPipelineContextObjectTypeId, out pipelineContext);
 
     internal static void SetConsumerPipelineContext(this ISilverbackContext context, ConsumerPipelineContext pipelineContext) =>
-        Check.NotNull(context, nameof(context)).SetObject(ConsumerPipelineContextObjectTypeId, pipelineContext);
+        Check.NotNull(context).SetObject(ConsumerPipelineContextObjectTypeId, pipelineContext);
 }

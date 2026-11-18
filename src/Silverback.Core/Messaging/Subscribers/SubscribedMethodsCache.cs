@@ -28,7 +28,7 @@ internal sealed class SubscribedMethodsCache
 
     public SubscribedMethodsCache(BusOptions options)
     {
-        _options = Check.NotNull(options, nameof(options));
+        _options = Check.NotNull(options);
     }
 
     public IReadOnlyList<SubscribedMethod> GetExclusiveMethods(object message, IServiceProvider serviceProvider) =>

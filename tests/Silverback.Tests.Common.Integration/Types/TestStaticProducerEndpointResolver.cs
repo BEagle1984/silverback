@@ -10,7 +10,7 @@ public sealed class TestStaticProducerEndpointResolver
     : StaticProducerEndpointResolver<TestProducerEndpoint, TestProducerEndpointConfiguration>
 {
     public TestStaticProducerEndpointResolver(string topic)
-        : base(Check.NotNullOrEmpty(topic, nameof(topic)))
+        : base(Check.NotNullOrEmpty(topic))
     {
         Topic = topic;
     }

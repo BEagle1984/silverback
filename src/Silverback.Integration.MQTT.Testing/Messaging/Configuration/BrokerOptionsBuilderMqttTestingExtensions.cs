@@ -32,7 +32,7 @@ public static class BrokerOptionsBuilderMqttTestingExtensions
         this BrokerOptionsBuilder brokerOptionsBuilder,
         Action<IMockedMqttOptionsBuilder>? optionsAction = null)
     {
-        Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
+        Check.NotNull(brokerOptionsBuilder);
 
         brokerOptionsBuilder.AddMqtt();
         brokerOptionsBuilder.SilverbackBuilder.UseMockedMqtt(optionsAction);

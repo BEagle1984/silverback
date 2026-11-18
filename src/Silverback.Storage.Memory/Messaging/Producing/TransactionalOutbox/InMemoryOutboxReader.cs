@@ -24,7 +24,7 @@ public class InMemoryOutboxReader : IOutboxReader
     /// </param>
     public InMemoryOutboxReader(InMemoryOutbox outbox)
     {
-        _outbox = Check.NotNull(outbox, nameof(outbox));
+        _outbox = Check.NotNull(outbox);
     }
 
     /// <inheritdoc cref="IOutboxReader.GetAsync" />
@@ -43,7 +43,7 @@ public class InMemoryOutboxReader : IOutboxReader
     /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
     public Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
         _outbox.Remove(outboxMessages);
         return Task.CompletedTask;
     }

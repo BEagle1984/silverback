@@ -26,7 +26,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder EnableStorage(this SilverbackBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         if (!builder.Services.ContainsAny<SilverbackStorageInitializer>())
         {

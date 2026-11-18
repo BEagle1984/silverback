@@ -41,9 +41,9 @@ public class EntityFrameworkLock : TableBasedDistributedLock
         ISilverbackLogger<EntityFrameworkLock> logger)
         : base(settings, logger)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
-        _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _settings = Check.NotNull(settings);
+        _serviceScopeFactory = Check.NotNull(serviceScopeFactory);
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="TableBasedDistributedLock.TryAcquireLockAsync" />

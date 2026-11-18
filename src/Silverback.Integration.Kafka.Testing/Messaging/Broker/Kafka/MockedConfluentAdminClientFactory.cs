@@ -29,10 +29,10 @@ public class MockedConfluentAdminClientFactory : ConfluentAdminClientFactoryBase
     public MockedConfluentAdminClientFactory(IInMemoryTopicCollection topics, IProducerCollection producers, IConsumerCollection consumers)
         : base(producers, consumers)
     {
-        _topics = Check.NotNull(topics, nameof(topics));
+        _topics = Check.NotNull(topics);
     }
 
     /// <inheritdoc cref="ConfluentAdminClientFactoryBase.GetClient(AdminClientConfig)" />
     public override IAdminClient GetClient(AdminClientConfig config) =>
-        new MockedConfluentAdminClient(Check.NotNull(config, nameof(config)), _topics);
+        new MockedConfluentAdminClient(Check.NotNull(config), _topics);
 }

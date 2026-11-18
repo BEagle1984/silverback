@@ -25,7 +25,7 @@ public static partial class BrokerOptionsBuilderEntityFrameworkExtensions
     /// </returns>
     public static BrokerOptionsBuilder AddEntityFrameworkOutbox(this BrokerOptionsBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         OutboxReaderFactory? readerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxReaderFactory>();
         OutboxWriterFactory? writerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxWriterFactory>();

@@ -23,7 +23,7 @@ public abstract record ConsumerEndpoint : Endpoint
     protected ConsumerEndpoint(string rawName, ConsumerEndpointConfiguration configuration)
         : base(rawName, configuration)
     {
-        Configuration = Check.NotNull(configuration, nameof(configuration));
+        Configuration = Check.NotNull(configuration);
     }
 
     /// <summary>

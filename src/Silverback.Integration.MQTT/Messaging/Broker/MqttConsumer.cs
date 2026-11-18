@@ -68,14 +68,14 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         : base(
             name,
             client,
-            Check.NotNull(configuration, nameof(configuration)).ConsumerEndpoints,
+            Check.NotNull(configuration).ConsumerEndpoints,
             behaviorsProvider,
             serviceProvider,
             logger)
     {
-        Client = Check.NotNull(client, nameof(client));
-        Configuration = Check.NotNull(configuration, nameof(configuration));
-        _logger = Check.NotNull(logger, nameof(logger));
+        Client = Check.NotNull(client);
+        Configuration = Check.NotNull(configuration);
+        _logger = Check.NotNull(logger);
 
         _channelsManager = new ConsumerChannelsManager(this, logger);
         _endpointsCache = new MqttConsumerEndpointsCache(client.Configuration);
@@ -306,7 +306,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private List<ConsumedApplicationMessage> PullPendingConsumedMessages(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)
     {
-        Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+        Check.NotNull(brokerMessageIdentifiers);
 
         List<ConsumedApplicationMessage> messages = new(brokerMessageIdentifiers.Count);
 

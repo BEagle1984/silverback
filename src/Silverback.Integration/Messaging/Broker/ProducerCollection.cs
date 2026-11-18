@@ -26,7 +26,7 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 
     public void Add(IProducer producer, bool routing = true)
     {
-        Check.NotNull(producer, nameof(producer));
+        Check.NotNull(producer);
 
         _producers.Add(new ProducerItem(producer, routing));
 

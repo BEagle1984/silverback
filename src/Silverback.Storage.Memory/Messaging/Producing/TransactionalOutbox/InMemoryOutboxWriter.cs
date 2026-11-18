@@ -30,8 +30,8 @@ public class InMemoryOutboxWriter : IOutboxWriter
     /// </param>
     public InMemoryOutboxWriter(InMemoryOutbox outbox, ISilverbackLogger<InMemoryOutboxWriter> logger)
     {
-        _outbox = Check.NotNull(outbox, nameof(outbox));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _outbox = Check.NotNull(outbox);
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="AddAsync(OutboxMessage,ISilverbackContext,CancellationToken)" />
@@ -49,7 +49,7 @@ public class InMemoryOutboxWriter : IOutboxWriter
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         WarnIfTransaction(context);
 
@@ -69,7 +69,7 @@ public class InMemoryOutboxWriter : IOutboxWriter
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         WarnIfTransaction(context);
 

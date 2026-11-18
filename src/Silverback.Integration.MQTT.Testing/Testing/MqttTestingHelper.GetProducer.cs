@@ -19,7 +19,7 @@ public partial class MqttTestingHelper
     /// <inheritdoc cref="IMqttTestingHelper.GetProducer" />
     public IProducer GetProducer(Action<MqttClientConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(configurationBuilderAction);
 
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         MqttClientsInitializer clientsInitializer = scope.ServiceProvider.GetService<MqttClientsInitializer>() ??
@@ -40,7 +40,7 @@ public partial class MqttTestingHelper
     /// <inheritdoc cref="ITestingHelper.GetProducerForEndpoint" />
     protected override IProducer? GetProducerForConsumer(IConsumerCollection consumers, string endpointName)
     {
-        Check.NotNull(endpointName, nameof(endpointName));
+        Check.NotNull(endpointName);
 
         List<(MqttClientConfiguration ClientConfiguration, MqttConsumerEndpointConfiguration EndpointConfiguration)> endpoints =
         [

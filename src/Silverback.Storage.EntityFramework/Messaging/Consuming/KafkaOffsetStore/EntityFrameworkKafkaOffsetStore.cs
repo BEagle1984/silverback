@@ -33,8 +33,8 @@ public class EntityFrameworkKafkaOffsetStore : IKafkaOffsetStore
     /// </param>
     public EntityFrameworkKafkaOffsetStore(EntityFrameworkKafkaOffsetStoreSettings settings, IServiceScopeFactory serviceScopeFactory)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
-        _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
+        _settings = Check.NotNull(settings);
+        _serviceScopeFactory = Check.NotNull(serviceScopeFactory);
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.GetStoredOffsets" />
@@ -66,7 +66,7 @@ public class EntityFrameworkKafkaOffsetStore : IKafkaOffsetStore
             .ToListAsync()
             .ConfigureAwait(false);
 
-        foreach (KafkaOffset offset in Check.NotNull(offsets, nameof(offsets)))
+        foreach (KafkaOffset offset in Check.NotNull(offsets))
         {
             SilverbackStoredOffset? storedOffset = storedOffsets.FirstOrDefault(storedOffset =>
                 storedOffset.Topic == offset.TopicPartition.Topic &&

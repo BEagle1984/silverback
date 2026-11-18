@@ -36,7 +36,7 @@ public sealed class ChunkStream : Stream
     /// </param>
     public ChunkStream(IMessageStreamEnumerable<IRawInboundEnvelope> source)
     {
-        Check.NotNull(source, nameof(source));
+        Check.NotNull(source);
 
         _source = source;
     }
@@ -68,7 +68,7 @@ public sealed class ChunkStream : Stream
 
     /// <inheritdoc cref="Stream.Read(byte[], int, int)" />
     public override int Read(byte[] buffer, int offset, int count) =>
-        Read(Check.NotNull(buffer, nameof(buffer)).AsSpan(offset, count));
+        Read(Check.NotNull(buffer).AsSpan(offset, count));
 
     /// <inheritdoc cref="Stream.Read(Span{byte})" />
     public override int Read(Span<byte> buffer)
@@ -91,7 +91,7 @@ public sealed class ChunkStream : Stream
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        Check.NotNull(buffer, nameof(buffer));
+        Check.NotNull(buffer);
 
         if (!await ReadCurrentMessageAsync(cancellationToken).ConfigureAwait(false))
             return 0;

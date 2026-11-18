@@ -26,7 +26,7 @@ public class MqttClientWebSocketConfigurationBuilder
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "Declared as string in the underlying library")]
     public MqttClientWebSocketConfigurationBuilder WithUri(string uri)
     {
-        Check.NotNullOrEmpty(uri, nameof(uri));
+        Check.NotNullOrEmpty(uri);
         _webSocketConfiguration = _webSocketConfiguration with { Uri = uri };
         return this;
     }
@@ -47,7 +47,7 @@ public class MqttClientWebSocketConfigurationBuilder
         string address,
         Action<MqttClientWebSocketProxyConfigurationBuilder>? proxyConfigurationBuilderAction = null)
     {
-        Check.NotNullOrEmpty(address, nameof(address));
+        Check.NotNullOrEmpty(address);
 
         MqttClientWebSocketProxyConfigurationBuilder proxyBuilder = new();
         proxyBuilder.WithAddress(address);

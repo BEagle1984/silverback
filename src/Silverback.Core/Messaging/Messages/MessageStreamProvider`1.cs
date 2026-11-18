@@ -121,7 +121,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         object? onPullActionArgument = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(message, nameof(message));
+        Check.NotNull(message);
 
         if (_completed || _aborted)
             throw new InvalidOperationException("The streams are already completed or aborted.");

@@ -17,7 +17,7 @@ public class StreamEnumerableMessageArgumentResolver : IStreamEnumerableMessageA
     /// <inheritdoc cref="IArgumentResolver.CanResolve" />
     public bool CanResolve(Type parameterType)
     {
-        Check.NotNull(parameterType, nameof(parameterType));
+        Check.NotNull(parameterType);
 
         if (!parameterType.IsGenericType)
             return false;
@@ -32,7 +32,7 @@ public class StreamEnumerableMessageArgumentResolver : IStreamEnumerableMessageA
     /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />
     public Type GetMessageType(Type parameterType)
     {
-        Check.NotNull(parameterType, nameof(parameterType));
+        Check.NotNull(parameterType);
 
         return parameterType.GetGenericArguments()[0];
     }
@@ -43,7 +43,7 @@ public class StreamEnumerableMessageArgumentResolver : IStreamEnumerableMessageA
         Type targetMessageType,
         IReadOnlyCollection<IMessageFilter>? filters = null)
     {
-        Check.NotNull(streamProvider, nameof(streamProvider));
+        Check.NotNull(streamProvider);
 
         return (ILazyArgumentValue)streamProvider.CreateLazyStream(targetMessageType, filters);
     }

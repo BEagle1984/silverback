@@ -26,9 +26,9 @@ internal class StoredOffsetsLoader
         KafkaConsumerConfiguration configuration,
         IServiceProvider serviceProvider)
     {
-        _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
-        _configuration = Check.NotNull(configuration, nameof(configuration));
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        _offsetStoreFactory = Check.NotNull(offsetStoreFactory);
+        _configuration = Check.NotNull(configuration);
+        _serviceProvider = Check.NotNull(serviceProvider);
     }
 
     public void LoadStoredOffsets()

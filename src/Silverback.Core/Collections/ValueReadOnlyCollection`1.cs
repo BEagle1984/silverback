@@ -26,7 +26,7 @@ public sealed class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IE
     /// </param>
     public ValueReadOnlyCollection(IEnumerable<T> collection)
     {
-        _collection = Check.NotNull(collection, nameof(collection)).AsReadOnlyCollection();
+        _collection = Check.NotNull(collection).AsReadOnlyCollection();
     }
 
     /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />

@@ -32,7 +32,7 @@ public abstract class StaticProducerEndpointResolver<TEndpoint, TConfiguration>
     /// </param>
     protected StaticProducerEndpointResolver(string rawName)
     {
-        RawName = Check.NotNullOrEmpty(rawName, nameof(rawName));
+        RawName = Check.NotNullOrEmpty(rawName);
     }
 
     /// <inheritdoc cref="IProducerEndpointResolver.RawName" />
@@ -70,7 +70,7 @@ public abstract class StaticProducerEndpointResolver<TEndpoint, TConfiguration>
 
     /// <inheritdoc cref="IProducerEndpointResolver.GetEndpoint" />
     public ProducerEndpoint GetEndpoint(IOutboundEnvelope envelope) =>
-        GetEndpoint((TConfiguration)Check.NotNull(envelope, nameof(envelope)).EndpointConfiguration);
+        GetEndpoint((TConfiguration)Check.NotNull(envelope).EndpointConfiguration);
 
     /// <inheritdoc cref="IStaticProducerEndpointResolver.GetEndpoint(ProducerEndpointConfiguration)" />
     public TEndpoint GetEndpoint(TConfiguration configuration) =>

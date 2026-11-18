@@ -30,8 +30,8 @@ public sealed class BinaryMessageDeserializer<TModel> : IBinaryMessageDeserializ
         MessageHeaderCollection headers,
         ConsumerEndpoint endpoint)
     {
-        Check.NotNull(headers, nameof(headers));
-        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(headers);
+        Check.NotNull(endpoint);
 
         Type type = SerializationHelper.GetTypeFromHeaders(headers, _type);
 

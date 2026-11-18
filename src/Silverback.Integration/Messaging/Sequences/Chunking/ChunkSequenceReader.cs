@@ -26,7 +26,7 @@ public class ChunkSequenceReader : SequenceReaderBase
     /// <inheritdoc cref="SequenceReaderBase.CanHandleAsync" />
     public override ValueTask<bool> CanHandleAsync(ConsumerPipelineContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         int? chunkIndex = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex);
         int? chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
@@ -39,7 +39,7 @@ public class ChunkSequenceReader : SequenceReaderBase
     /// <inheritdoc cref="SequenceReaderBase.GetSequenceIdAsync" />
     protected override ValueTask<string> GetSequenceIdAsync(ConsumerPipelineContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         string messageKey = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageKey) ??
                             "[no-key]";
@@ -50,7 +50,7 @@ public class ChunkSequenceReader : SequenceReaderBase
     /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />
     protected override ValueTask<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         int chunkIndex = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
                          throw new InvalidOperationException("Chunk index header not found.");
@@ -62,7 +62,7 @@ public class ChunkSequenceReader : SequenceReaderBase
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Stream ownership is transferred to the envelope")]
     protected override ISequence CreateNewSequenceCore(string sequenceId, ConsumerPipelineContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         int? chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
 

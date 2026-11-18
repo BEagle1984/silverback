@@ -22,7 +22,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
 
     protected DataAccess(string connectionString)
     {
-        _connectionString = Check.NotNullOrEmpty(connectionString, nameof(connectionString));
+        _connectionString = Check.NotNullOrEmpty(connectionString);
     }
 
     public IReadOnlyCollection<T> ExecuteQuery<T>(Func<DbDataReader, T> projection, string sql, TParameter[]? parameters, TimeSpan timeout)

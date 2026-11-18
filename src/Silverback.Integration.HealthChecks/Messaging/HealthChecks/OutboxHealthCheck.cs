@@ -45,7 +45,7 @@ public class OutboxHealthCheck : IHealthCheck
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception returned in the result")]
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         try
         {

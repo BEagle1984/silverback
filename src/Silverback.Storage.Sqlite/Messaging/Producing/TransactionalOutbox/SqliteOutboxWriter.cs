@@ -31,7 +31,7 @@ public class SqliteOutboxWriter : IOutboxWriter
     /// </param>
     public SqliteOutboxWriter(SqliteOutboxSettings settings)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
+        _settings = Check.NotNull(settings);
         _dataAccess = new SqliteDataAccess(settings.ConnectionString);
 
         _insertSql = $"INSERT INTO {settings.TableName} (" +
@@ -49,7 +49,7 @@ public class SqliteOutboxWriter : IOutboxWriter
     /// <inheritdoc cref="AddAsync(OutboxMessage,ISilverbackContext,CancellationToken)" />
     public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessage, nameof(outboxMessage));
+        Check.NotNull(outboxMessage);
 
         return _dataAccess.ExecuteNonQueryAsync(
             _insertSql,
@@ -82,7 +82,7 @@ public class SqliteOutboxWriter : IOutboxWriter
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         return _dataAccess.ExecuteNonQueryAsync(
             outboxMessages,
@@ -113,7 +113,7 @@ public class SqliteOutboxWriter : IOutboxWriter
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         return _dataAccess.ExecuteNonQueryAsync(
             outboxMessages,

@@ -28,7 +28,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddTransientSequenceReader(this SilverbackBuilder builder, Type readerType)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddTransient(typeof(ISequenceReader), readerType);
 
@@ -70,7 +70,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         this SilverbackBuilder builder,
         Func<IServiceProvider, ISequenceReader> implementationFactory)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddTransient(implementationFactory);
 
@@ -92,7 +92,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddSingletonSequenceReader(this SilverbackBuilder builder, Type readerType)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddSingleton(typeof(ISequenceReader), readerType);
 
@@ -133,7 +133,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         this SilverbackBuilder builder,
         Func<IServiceProvider, ISequenceReader> implementationFactory)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddSingleton(implementationFactory);
 
@@ -155,7 +155,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddSingletonSequenceReader(this SilverbackBuilder builder, ISequenceReader implementationInstance)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddSingleton(implementationInstance);
 

@@ -29,8 +29,8 @@ public sealed class PostgreSqlAdvisoryLock : DistributedLock
     /// </param>
     public PostgreSqlAdvisoryLock(PostgreSqlAdvisoryLockSettings settings, ISilverbackLogger<PostgreSqlAdvisoryLock> logger)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _settings = Check.NotNull(settings);
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="DistributedLock.AcquireCoreAsync" />

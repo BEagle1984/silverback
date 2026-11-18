@@ -17,7 +17,7 @@ public abstract partial class TestingHelper
     /// <inheritdoc cref="ITestingHelper.GetProducerForEndpoint" />
     public IProducer GetProducerForEndpoint(string endpointName)
     {
-        Check.NotNull(endpointName, nameof(endpointName));
+        Check.NotNull(endpointName);
 
         IProducer? producer = GetConfiguredProducer(endpointName);
 

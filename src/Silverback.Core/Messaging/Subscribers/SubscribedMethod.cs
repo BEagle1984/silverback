@@ -37,9 +37,9 @@ public class SubscribedMethod
         MethodInfo methodInfo,
         SubscriptionOptions options)
     {
-        _targetTypeFactory = Check.NotNull(targetTypeFactory, nameof(targetTypeFactory));
-        MethodInfo = Check.NotNull(methodInfo, nameof(methodInfo));
-        Options = Check.NotNull(options, nameof(options));
+        _targetTypeFactory = Check.NotNull(targetTypeFactory);
+        MethodInfo = Check.NotNull(methodInfo);
+        Options = Check.NotNull(options);
 
         Parameters = methodInfo.GetParameters();
         ReturnType = MethodReturnType.CreateFromMethodInfo(methodInfo);

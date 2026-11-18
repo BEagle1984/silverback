@@ -35,8 +35,8 @@ public class EntityFrameworkOutboxWriter : IOutboxWriter
     /// </param>
     public EntityFrameworkOutboxWriter(EntityFrameworkOutboxSettings settings, IServiceScopeFactory serviceScopeFactory)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
-        _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
+        _settings = Check.NotNull(settings);
+        _serviceScopeFactory = Check.NotNull(serviceScopeFactory);
     }
 
     /// <inheritdoc cref="AddAsync(OutboxMessage,ISilverbackContext?,CancellationToken)" />
@@ -52,7 +52,7 @@ public class EntityFrameworkOutboxWriter : IOutboxWriter
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider, context);
@@ -76,7 +76,7 @@ public class EntityFrameworkOutboxWriter : IOutboxWriter
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider, context);

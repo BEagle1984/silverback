@@ -30,7 +30,7 @@ public class AsyncEvent<TArg>
     /// </param>
     public void AddHandler(Func<TArg, ValueTask> handler)
     {
-        Check.NotNull(handler, nameof(handler));
+        Check.NotNull(handler);
 
         lock (_lockObject)
         {
@@ -47,7 +47,7 @@ public class AsyncEvent<TArg>
     /// </param>
     public void RemoveHandler(Func<TArg, ValueTask> handler)
     {
-        Check.NotNull(handler, nameof(handler));
+        Check.NotNull(handler);
 
         lock (_lockObject)
         {
@@ -67,7 +67,7 @@ public class AsyncEvent<TArg>
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Optimized")]
     public ValueTask InvokeAsync(TArg arg)
     {
-        Check.NotNull(arg, nameof(arg));
+        Check.NotNull(arg);
 
         if (_handlers == null)
             return ValueTask.CompletedTask;

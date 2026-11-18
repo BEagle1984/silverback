@@ -40,7 +40,7 @@ public class SqliteOutboxReader : IOutboxReader
     /// </param>
     public SqliteOutboxReader(SqliteOutboxSettings settings)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
+        _settings = Check.NotNull(settings);
         _dataAccess = new SqliteDataAccess(_settings.ConnectionString);
 
         _getQuerySql = "SELECT " +
@@ -93,7 +93,7 @@ public class SqliteOutboxReader : IOutboxReader
     /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
     public Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages) =>
         _dataAccess.ExecuteNonQueryAsync(
-            Check.NotNull(outboxMessages, nameof(outboxMessages)).Cast<DbOutboxMessage>(),
+            Check.NotNull(outboxMessages).Cast<DbOutboxMessage>(),
             _deleteSql,
             [
                 new SqliteParameter("@Id", SqliteType.Integer)

@@ -40,7 +40,7 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     /// </param>
     protected EndpointConfigurationBuilder(IServiceProvider serviceProvider, string? friendlyName)
     {
-        ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        ServiceProvider = Check.NotNull(serviceProvider);
         _friendlyName = friendlyName;
     }
 

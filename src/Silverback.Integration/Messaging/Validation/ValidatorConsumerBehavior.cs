@@ -25,7 +25,7 @@ public class ValidatorConsumerBehavior : IConsumerBehavior
     /// </param>
     public ValidatorConsumerBehavior(ISilverbackLogger<ValidatorConsumerBehavior> logger)
     {
-        _logger = Check.NotNull(logger, nameof(logger));
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="ISorted.SortIndex" />
@@ -34,8 +34,8 @@ public class ValidatorConsumerBehavior : IConsumerBehavior
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
     public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         if (context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
             context.Envelope is IInboundEnvelope { Message: not null } deserializedEnvelope &&

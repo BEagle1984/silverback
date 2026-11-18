@@ -54,7 +54,7 @@ public class PostgreSqlTableLockSettingsBuilder : IDistributedLockSettingsImplem
     /// </returns>
     public PostgreSqlTableLockSettingsBuilder UseTable(string tableName)
     {
-        _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
+        _tableName = Check.NotNullOrEmpty(tableName);
         return this;
     }
 

@@ -20,7 +20,7 @@ public static class MqttEnvelopeExtensions
     ///     The response topic.
     /// </returns>
     public static string? GetMqttResponseTopic(this IBrokerEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(MqttMessageHeaders.ResponseTopic);
+        Check.NotNull(envelope).Headers.GetValue(MqttMessageHeaders.ResponseTopic);
 
     /// <summary>
     ///     Sets the response topic.
@@ -36,7 +36,7 @@ public static class MqttEnvelopeExtensions
     /// </returns>
     public static IOutboundEnvelope SetMqttResponseTopic(this IOutboundEnvelope envelope, string responseTopic)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
         envelope.Headers.AddOrReplace(MqttMessageHeaders.ResponseTopic, responseTopic);
         return envelope;
     }
@@ -51,7 +51,7 @@ public static class MqttEnvelopeExtensions
     ///     The correlation data.
     /// </returns>
     public static byte[]? GetMqttCorrelationData(this IBrokerEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(MqttMessageHeaders.CorrelationData).FromBase64String();
+        Check.NotNull(envelope).Headers.GetValue(MqttMessageHeaders.CorrelationData).FromBase64String();
 
     /// <summary>
     ///     Gets the correlation data as UTF-8 string.
@@ -78,7 +78,7 @@ public static class MqttEnvelopeExtensions
     /// </returns>
     public static IOutboundEnvelope SetMqttCorrelationData(this IOutboundEnvelope envelope, byte[]? correlationData)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
         envelope.Headers.AddOrReplace(MqttMessageHeaders.CorrelationData, correlationData.ToBase64String());
         return envelope;
     }
@@ -107,7 +107,7 @@ public static class MqttEnvelopeExtensions
     ///     The destination topic.
     /// </returns>
     public static string? GetMqttDestinationTopic(this IOutboundEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(MqttMessageHeaders.DestinationTopic);
+        Check.NotNull(envelope).Headers.GetValue(MqttMessageHeaders.DestinationTopic);
 
     /// <summary>
     ///     Sets the destination topic.
@@ -123,7 +123,7 @@ public static class MqttEnvelopeExtensions
     /// </returns>
     public static IOutboundEnvelope SetMqttDestinationTopic(this IOutboundEnvelope envelope, string destinationTopic)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
         envelope.Headers.AddOrReplace(MqttMessageHeaders.DestinationTopic, destinationTopic);
         return envelope;
     }

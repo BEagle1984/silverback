@@ -90,7 +90,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder UseStrategy(IProduceStrategy strategy)
     {
-        _strategy = Check.NotNull(strategy, nameof(strategy));
+        _strategy = Check.NotNull(strategy);
         return This;
     }
 
@@ -119,7 +119,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder StoreToOutbox(Func<OutboxSettingsBuilder, IOutboxSettingsImplementationBuilder> settingsBuilderFunc)
     {
-        Check.NotNull(settingsBuilderFunc, nameof(settingsBuilderFunc));
+        Check.NotNull(settingsBuilderFunc);
 
         return StoreToOutbox(settingsBuilderFunc.Invoke(new OutboxSettingsBuilder()).Build());
     }
@@ -137,7 +137,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder StoreToOutbox(OutboxSettings settings)
     {
-        Check.NotNull(settings, nameof(settings));
+        Check.NotNull(settings);
         settings.Validate();
 
         _strategy = new OutboxProduceStrategy(settings);
@@ -179,7 +179,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder AddMessageEnricher(IOutboundMessageEnricher enricher)
     {
-        _messageEnrichers.Add(Check.NotNull(enricher, nameof(enricher)));
+        _messageEnrichers.Add(Check.NotNull(enricher));
         return This;
     }
 

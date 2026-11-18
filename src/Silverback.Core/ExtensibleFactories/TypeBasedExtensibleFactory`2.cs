@@ -108,7 +108,7 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     ///     discriminator type.
     /// </returns>
     protected TService? GetService(TDiscriminatorBase discriminator, IServiceProvider serviceProvider) =>
-        GetService(Check.NotNull(discriminator, nameof(discriminator)).GetType(), serviceProvider);
+        GetService(Check.NotNull(discriminator).GetType(), serviceProvider);
 
     /// <summary>
     ///     Returns an object of type <typeparamref name="TService" /> according to the specified discriminator.

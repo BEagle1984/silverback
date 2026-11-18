@@ -61,12 +61,12 @@ public abstract class Producer : IProducer, IDisposable
         IServiceProvider serviceProvider,
         ISilverbackLogger<IProducer> logger)
     {
-        Name = Check.NotNullOrEmpty(name, nameof(name));
-        EndpointConfiguration = Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
-        Client = Check.NotNull(client, nameof(client));
-        _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-        _logger = Check.NotNull(logger, nameof(logger));
+        Name = Check.NotNullOrEmpty(name);
+        EndpointConfiguration = Check.NotNull(endpointConfiguration);
+        Client = Check.NotNull(client);
+        _behaviors = Check.NotNull(behaviorsProvider).GetBehaviorsList();
+        _serviceProvider = Check.NotNull(serviceProvider);
+        _logger = Check.NotNull(logger);
         _activityEnricher = serviceProvider.GetService<IActivityEnricherFactory>()?.GetEnricher(endpointConfiguration, serviceProvider) ??
                             NullBrokerActivityEnricher.Instance;
     }
@@ -95,7 +95,7 @@ public abstract class Producer : IProducer, IDisposable
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Produce is meant to be synchronous")]
     public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         try
         {
@@ -168,7 +168,7 @@ public abstract class Producer : IProducer, IDisposable
         Action<Exception, TState> onError,
         TState state)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         ProducerPipelineContext<TState> context = new(
             envelope,
@@ -301,7 +301,7 @@ public abstract class Producer : IProducer, IDisposable
     /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,CancellationToken)" />
     public async ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         try
         {

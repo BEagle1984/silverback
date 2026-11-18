@@ -51,9 +51,9 @@ public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
         IMockedConsumerGroupsCollection consumerGroups,
         IMockedKafkaOptions options)
     {
-        _topics = Check.NotNull(topics, nameof(topics));
-        _consumerGroups = Check.NotNull(consumerGroups, nameof(consumerGroups));
-        _options = Check.NotNull(options, nameof(options));
+        _topics = Check.NotNull(topics);
+        _consumerGroups = Check.NotNull(consumerGroups);
+        _options = Check.NotNull(options);
     }
 
     /// <inheritdoc cref="IConfluentConsumerBuilder.SetConfig" />

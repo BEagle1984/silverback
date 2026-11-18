@@ -42,7 +42,7 @@ public class AvroMessageSerializerBuilder : SchemaRegistrySerializerBuilder<Avro
     /// </returns>
     public AvroMessageSerializerBuilder Configure(Action<KafkaAvroSerializerConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(configurationBuilderAction);
 
         KafkaAvroSerializerConfigurationBuilder builder = new();
         configurationBuilderAction.Invoke(builder);
@@ -63,7 +63,7 @@ public class AvroMessageSerializerBuilder : SchemaRegistrySerializerBuilder<Avro
     [Obsolete("Use the Configure overload taking a KafkaAvroSerializerConfigurationBuilder instead.")]
     public AvroMessageSerializerBuilder Configure(Action<AvroSerializerConfig> configureAction)
     {
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(configureAction);
 
         _avroSerializerConfig = new AvroSerializerConfig();
         configureAction.Invoke(_avroSerializerConfig);

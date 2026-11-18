@@ -15,7 +15,7 @@ internal class MockedConfluentSchemaRegistryClientFactory : IConfluentSchemaRegi
 
     public ISchemaRegistryClient GetClient(Action<KafkaSchemaRegistryConfigurationBuilder> builderAction)
     {
-        Check.NotNull(builderAction, nameof(builderAction));
+        Check.NotNull(builderAction);
 
         KafkaSchemaRegistryConfigurationBuilder builder = new();
         builderAction.Invoke(builder);
@@ -25,7 +25,7 @@ internal class MockedConfluentSchemaRegistryClientFactory : IConfluentSchemaRegi
 
     public ISchemaRegistryClient GetClient(KafkaSchemaRegistryConfiguration schemaRegistryConfiguration)
     {
-        Check.NotNull(schemaRegistryConfiguration, nameof(schemaRegistryConfiguration));
+        Check.NotNull(schemaRegistryConfiguration);
 
         return _clients.GetOrAdd(
             schemaRegistryConfiguration.Url ?? string.Empty,

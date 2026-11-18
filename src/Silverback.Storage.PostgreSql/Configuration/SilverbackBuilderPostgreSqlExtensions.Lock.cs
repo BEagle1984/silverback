@@ -25,7 +25,7 @@ public static partial class SilverbackBuilderPostgreSqlExtensions
     /// </returns>
     public static SilverbackBuilder AddPostgreSqlAdvisoryLock(this SilverbackBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         DistributedLockFactory lockFactory = builder.Services.GetSingletonServiceInstance<DistributedLockFactory>() ??
                                              throw new InvalidOperationException("DistributedLockFactory not found, AddSilverback has not been called.");
@@ -51,7 +51,7 @@ public static partial class SilverbackBuilderPostgreSqlExtensions
     /// </returns>
     public static SilverbackBuilder AddPostgreSqlTableLock(this SilverbackBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         DistributedLockFactory lockFactory = builder.Services.GetSingletonServiceInstance<DistributedLockFactory>() ??
                                              throw new InvalidOperationException("DistributedLockFactory not found, AddSilverback has not been called.");

@@ -24,7 +24,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder Filter(Func<TMessage?, bool> filter)
     {
-        Check.NotNull(filter, nameof(filter));
+        Check.NotNull(filter);
 
         _filter = new GenericOutboundMessageFilter<TMessage>(filter);
 
@@ -42,7 +42,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder Filter(Func<IOutboundEnvelope<TMessage>, bool> filter)
     {
-        Check.NotNull(filter, nameof(filter));
+        Check.NotNull(filter);
 
         _filter = new GenericOutboundMessageFilter<TMessage>(filter);
 
@@ -60,7 +60,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder Filter(IOutboundMessageFilter filter)
     {
-        _filter = Check.NotNull(filter, nameof(filter));
+        _filter = Check.NotNull(filter);
 
         return This;
     }

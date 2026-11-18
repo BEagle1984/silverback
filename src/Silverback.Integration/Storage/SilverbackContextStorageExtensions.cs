@@ -24,7 +24,7 @@ public static class SilverbackContextStorageExtensions
     ///     The transaction.
     /// </param>
     public static void EnlistTransaction(this ISilverbackContext context, IStorageTransaction transaction) =>
-        Check.NotNull(context, nameof(context)).AddObject(StorageTransactionObjectTypeId, transaction);
+        Check.NotNull(context).AddObject(StorageTransactionObjectTypeId, transaction);
 
     /// <summary>
     ///     Gets the current storage transaction.
@@ -36,7 +36,7 @@ public static class SilverbackContextStorageExtensions
     ///     The current <see cref="IStorageTransaction" /> or <c>null</c> if no transaction is set.
     /// </returns>
     public static IStorageTransaction? GetStorageTransaction(this ISilverbackContext context) =>
-        Check.NotNull(context, nameof(context)).TryGetStorageTransaction(out IStorageTransaction? transaction) ? transaction : null;
+        Check.NotNull(context).TryGetStorageTransaction(out IStorageTransaction? transaction) ? transaction : null;
 
     /// <summary>
     ///     Checks whether a storage transaction is set and returns it.
@@ -53,7 +53,7 @@ public static class SilverbackContextStorageExtensions
     public static bool TryGetStorageTransaction(
         this ISilverbackContext context,
         [NotNullWhen(true)] out IStorageTransaction? transaction) =>
-        Check.NotNull(context, nameof(context)).TryGetObject(StorageTransactionObjectTypeId, out transaction);
+        Check.NotNull(context).TryGetObject(StorageTransactionObjectTypeId, out transaction);
 
     /// <summary>
     ///     Clears the storage transaction.
@@ -62,5 +62,5 @@ public static class SilverbackContextStorageExtensions
     ///     The <see cref="ISilverbackContext" />.
     /// </param>
     public static void ClearStorageTransaction(this ISilverbackContext context) =>
-        Check.NotNull(context, nameof(context)).RemoveObject(StorageTransactionObjectTypeId);
+        Check.NotNull(context).RemoveObject(StorageTransactionObjectTypeId);
 }

@@ -42,7 +42,7 @@ public class PostgreSqlOutboxSettingsBuilder : IOutboxSettingsImplementationBuil
     /// </returns>
     public PostgreSqlOutboxSettingsBuilder UseTable(string tableName)
     {
-        _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
+        _tableName = Check.NotNullOrEmpty(tableName);
         return this;
     }
 

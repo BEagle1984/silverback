@@ -41,7 +41,7 @@ public sealed class RawMessageDeserializerBuilder
     /// </returns>
     public RawMessageDeserializerBuilder UseDiscriminator(Type type)
     {
-        Check.NotNull(type, nameof(type));
+        Check.NotNull(type);
         _type = typeof(RawMessage<>).MakeGenericType(type);
         return this;
     }

@@ -22,7 +22,7 @@ internal sealed class KafkaTransaction : IKafkaTransaction
 
     public KafkaTransaction(ISilverbackContext context, string? transactionalIdSuffix = null)
     {
-        _context = Check.NotNull(context, nameof(context));
+        _context = Check.NotNull(context);
         TransactionalIdSuffix = transactionalIdSuffix;
 
         _context.AddKafkaTransaction(this);

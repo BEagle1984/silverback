@@ -21,9 +21,9 @@ internal class MqttClientWrapperFactory : IMqttClientWrapperFactory
         IBrokerClientCallbacksInvoker brokerClientCallbacksInvoker,
         ISilverbackLoggerFactory silverbackLoggerFactory)
     {
-        _clientFactory = Check.NotNull(clientFactory, nameof(clientFactory));
-        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
-        _silverbackLoggerFactory = Check.NotNull(silverbackLoggerFactory, nameof(silverbackLoggerFactory));
+        _clientFactory = Check.NotNull(clientFactory);
+        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker);
+        _silverbackLoggerFactory = Check.NotNull(silverbackLoggerFactory);
     }
 
     public IMqttClientWrapper Create(string name, MqttClientConfiguration configuration) =>

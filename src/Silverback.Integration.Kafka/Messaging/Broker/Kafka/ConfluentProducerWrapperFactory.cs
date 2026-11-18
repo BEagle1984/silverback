@@ -23,9 +23,9 @@ internal class ConfluentProducerWrapperFactory : IConfluentProducerWrapperFactor
         IServiceProvider serviceProvider,
         ISilverbackLoggerFactory silverbackLoggerFactory)
     {
-        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-        _silverbackLoggerFactory = Check.NotNull(silverbackLoggerFactory, nameof(silverbackLoggerFactory));
+        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker);
+        _serviceProvider = Check.NotNull(serviceProvider);
+        _silverbackLoggerFactory = Check.NotNull(silverbackLoggerFactory);
     }
 
     public IConfluentProducerWrapper Create(string name, KafkaProducerConfiguration configuration)

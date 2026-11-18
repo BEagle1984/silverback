@@ -54,8 +54,8 @@ public partial class SilverbackBuilder
         Type subscriberType,
         TypeSubscriptionOptions options)
     {
-        Check.NotNull(subscriberType, nameof(subscriberType));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(subscriberType);
+        Check.NotNull(options);
 
         Services.AddTransient(subscriberType);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
@@ -150,9 +150,9 @@ public partial class SilverbackBuilder
         Func<IServiceProvider, object> implementationFactory,
         TypeSubscriptionOptions options)
     {
-        Check.NotNull(subscriberType, nameof(subscriberType));
-        Check.NotNull(implementationFactory, nameof(implementationFactory));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(subscriberType);
+        Check.NotNull(implementationFactory);
+        Check.NotNull(options);
 
         Services.AddTransient(subscriberType, implementationFactory);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
@@ -210,8 +210,8 @@ public partial class SilverbackBuilder
         TypeSubscriptionOptions options)
         where TSubscriber : class
     {
-        Check.NotNull(implementationFactory, nameof(implementationFactory));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(implementationFactory);
+        Check.NotNull(options);
 
         Services.AddTransient(implementationFactory);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
@@ -257,8 +257,8 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder AddScopedSubscriber(Type subscriberType, TypeSubscriptionOptions options)
     {
-        Check.NotNull(subscriberType, nameof(subscriberType));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(subscriberType);
+        Check.NotNull(options);
 
         Services.AddScoped(subscriberType);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
@@ -353,9 +353,9 @@ public partial class SilverbackBuilder
         Func<IServiceProvider, object> implementationFactory,
         TypeSubscriptionOptions options)
     {
-        Check.NotNull(subscriberType, nameof(subscriberType));
-        Check.NotNull(implementationFactory, nameof(implementationFactory));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(subscriberType);
+        Check.NotNull(implementationFactory);
+        Check.NotNull(options);
 
         Services.AddScoped(subscriberType, implementationFactory);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
@@ -415,8 +415,8 @@ public partial class SilverbackBuilder
         TypeSubscriptionOptions options)
         where TSubscriber : class
     {
-        Check.NotNull(implementationFactory, nameof(implementationFactory));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(implementationFactory);
+        Check.NotNull(options);
 
         Services.AddScoped(implementationFactory);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
@@ -462,8 +462,8 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder AddSingletonSubscriber(Type subscriberType, TypeSubscriptionOptions options)
     {
-        Check.NotNull(subscriberType, nameof(subscriberType));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(subscriberType);
+        Check.NotNull(options);
 
         Services.AddSingleton(subscriberType);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
@@ -560,9 +560,9 @@ public partial class SilverbackBuilder
         Func<IServiceProvider, object> implementationFactory,
         TypeSubscriptionOptions options)
     {
-        Check.NotNull(subscriberType, nameof(subscriberType));
-        Check.NotNull(implementationFactory, nameof(implementationFactory));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(subscriberType);
+        Check.NotNull(implementationFactory);
+        Check.NotNull(options);
 
         Services.AddSingleton(subscriberType, implementationFactory);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
@@ -622,8 +622,8 @@ public partial class SilverbackBuilder
         TypeSubscriptionOptions options)
         where TSubscriber : class
     {
-        Check.NotNull(implementationFactory, nameof(implementationFactory));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(implementationFactory);
+        Check.NotNull(options);
 
         Services.AddSingleton(implementationFactory);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
@@ -684,9 +684,9 @@ public partial class SilverbackBuilder
         object implementationInstance,
         TypeSubscriptionOptions options)
     {
-        Check.NotNull(subscriberType, nameof(subscriberType));
-        Check.NotNull(implementationInstance, nameof(implementationInstance));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(subscriberType);
+        Check.NotNull(implementationInstance);
+        Check.NotNull(options);
 
         Services.AddSingleton(subscriberType, implementationInstance);
         BusOptions.Subscriptions.Add(new TypeSubscription(subscriberType, implementationInstance, options));
@@ -745,8 +745,8 @@ public partial class SilverbackBuilder
         TypeSubscriptionOptions options)
         where TSubscriber : class
     {
-        Check.NotNull(implementationInstance, nameof(implementationInstance));
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(implementationInstance);
+        Check.NotNull(options);
 
         Services.AddSingleton(implementationInstance);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);

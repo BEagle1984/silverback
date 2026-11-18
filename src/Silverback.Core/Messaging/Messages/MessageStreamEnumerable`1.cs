@@ -58,7 +58,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "The lock is important to avoid multiple complete/abort, here is not important")]
     public async Task PushAsync(TMessage message, Action<object?>? onPullAction = null, object? onPullActionArgument = null, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(message, nameof(message));
+        Check.NotNull(message);
 
         using CancellationTokenSource linkedTokenSource = LinkWithAddCancellationTokenSource(cancellationToken);
 

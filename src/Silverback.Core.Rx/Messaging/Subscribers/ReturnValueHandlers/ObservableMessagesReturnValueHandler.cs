@@ -39,9 +39,9 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(IPublisher publisher, object returnValue) =>
-        Check.NotNull(publisher, nameof(publisher)).Publish<object>(((IObservable<object>)returnValue).ToEnumerable());
+        Check.NotNull(publisher).Publish<object>(((IObservable<object>)returnValue).ToEnumerable());
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
     public async ValueTask HandleAsync(IPublisher publisher, object returnValue) =>
-        await Check.NotNull(publisher, nameof(publisher)).PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable()).ConfigureAwait(false);
+        await Check.NotNull(publisher).PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable()).ConfigureAwait(false);
 }

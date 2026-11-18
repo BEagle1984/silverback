@@ -25,7 +25,7 @@ internal sealed class MqttMessageIdentifiersTracker : IBrokerMessageIdentifiersT
 
     public MqttMessageIdentifiersTracker(IConsumerCollection consumers)
     {
-        _consumers = Check.NotNull(consumers, nameof(consumers));
+        _consumers = Check.NotNull(consumers);
     }
 
     public void TrackIdentifier(IBrokerMessageIdentifier identifier)

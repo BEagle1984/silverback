@@ -55,7 +55,7 @@ public record MethodReturnType
     /// </returns>
     public static MethodReturnType CreateFromMethodInfo(MethodInfo methodInfo)
     {
-        Check.NotNull(methodInfo, nameof(methodInfo));
+        Check.NotNull(methodInfo);
 
         if (methodInfo.ReturnType.IsGenericType && methodInfo.ReturnType.GetGenericTypeDefinition() == typeof(Task<>))
         {

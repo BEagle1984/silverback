@@ -59,7 +59,7 @@ public static class InboundEnvelopeBuilderExtensions
     /// </returns>
     public static InboundEnvelopeBuilder<TMessage> WithKafkaOffset<TMessage>(this InboundEnvelopeBuilder<TMessage> builder, KafkaOffset offset)
         where TMessage : class =>
-        Check.NotNull(builder, nameof(builder)).WithIdentifier(offset);
+        Check.NotNull(builder).WithIdentifier(offset);
 
     /// <summary>
     ///     Sets the key of the message consumed from Kafka.
@@ -78,7 +78,7 @@ public static class InboundEnvelopeBuilderExtensions
     /// </returns>
     public static InboundEnvelopeBuilder<TMessage> WithKafkaKey<TMessage>(this InboundEnvelopeBuilder<TMessage> builder, string key)
         where TMessage : class =>
-        Check.NotNull(builder, nameof(builder)).AddHeader(KafkaMessageHeaders.MessageKey, key);
+        Check.NotNull(builder).AddHeader(KafkaMessageHeaders.MessageKey, key);
 
     /// <summary>
     ///     Sets the timestamp of the message consumed from Kafka.
@@ -99,7 +99,7 @@ public static class InboundEnvelopeBuilderExtensions
         this InboundEnvelopeBuilder<TMessage> builder,
         DateTime timestamp)
         where TMessage : class =>
-        Check.NotNull(builder, nameof(builder)).AddHeader(KafkaMessageHeaders.Timestamp, timestamp);
+        Check.NotNull(builder).AddHeader(KafkaMessageHeaders.Timestamp, timestamp);
 
     /// <summary>
     ///     Sets the topic and, optionally, the partition from which the message was consumed.
@@ -124,7 +124,7 @@ public static class InboundEnvelopeBuilderExtensions
         string topic,
         int partition = 0)
         where TMessage : class =>
-        Check.NotNull(builder, nameof(builder)).WithEndpoint(
+        Check.NotNull(builder).WithEndpoint(
             new KafkaConsumerEndpoint(
                 topic,
                 partition,

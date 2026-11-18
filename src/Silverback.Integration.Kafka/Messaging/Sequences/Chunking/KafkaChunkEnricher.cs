@@ -14,7 +14,7 @@ public class KafkaChunkEnricher : IChunkEnricher
 {
     /// <inheritdoc cref="IChunkEnricher.GetFirstChunkMessageHeader" />
     public MessageHeader? GetFirstChunkMessageHeader(IOutboundEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).BrokerMessageIdentifier is KafkaOffset offset
+        Check.NotNull(envelope).BrokerMessageIdentifier is KafkaOffset offset
             ? new MessageHeader(KafkaMessageHeaders.FirstChunkOffset, offset.Offset.Value)
             : null;
 }

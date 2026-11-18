@@ -49,8 +49,8 @@ public sealed class StringMessageDeserializer<T> : IMessageDeserializer, IEquata
         MessageHeaderCollection headers,
         ConsumerEndpoint endpoint)
     {
-        Check.NotNull(headers, nameof(headers));
-        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(headers);
+        Check.NotNull(endpoint);
 
         if (messageStream is null or { CanSeek: true, Length: 0 })
             return new DeserializedMessage(CreateStringMessage(null), _type);

@@ -21,8 +21,8 @@ public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
     public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         if (context.Producer is KafkaProducer && !context.Envelope.Headers.Contains(KafkaMessageHeaders.MessageKey))
         {

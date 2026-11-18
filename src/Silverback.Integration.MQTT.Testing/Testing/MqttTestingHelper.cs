@@ -41,7 +41,7 @@ public partial class MqttTestingHelper : TestingHelper, IMqttTestingHelper
         ILogger<MqttTestingHelper> logger)
         : base(serviceProvider, logger)
     {
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        _serviceProvider = Check.NotNull(serviceProvider);
         _inMemoryMqttBroker = serviceProvider.GetService<IInMemoryMqttBroker>();
         _serviceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
     }
@@ -67,7 +67,7 @@ public partial class MqttTestingHelper : TestingHelper, IMqttTestingHelper
     /// <inheritdoc cref="TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection{string},CancellationToken)" />
     protected override Task WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection<string> endpointNames, CancellationToken cancellationToken)
     {
-        Check.NotNull(endpointNames, nameof(endpointNames));
+        Check.NotNull(endpointNames);
 
         if (_inMemoryMqttBroker == null)
             return Task.CompletedTask;

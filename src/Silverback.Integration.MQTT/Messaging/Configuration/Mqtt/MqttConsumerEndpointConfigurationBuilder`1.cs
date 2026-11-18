@@ -49,7 +49,7 @@ public class MqttConsumerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public MqttConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(params string[] topics)
     {
-        Check.HasNoEmpties(topics, nameof(topics));
+        Check.HasNoEmpties(topics);
         _topicNames = topics;
         return this;
     }

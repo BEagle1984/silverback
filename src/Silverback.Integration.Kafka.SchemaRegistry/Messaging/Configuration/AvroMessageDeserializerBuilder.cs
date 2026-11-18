@@ -42,7 +42,7 @@ public class AvroMessageDeserializerBuilder : SchemaRegistryDeserializerBuilder<
     /// </returns>
     public AvroMessageDeserializerBuilder Configure(Action<KafkaAvroDeserializerConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(configurationBuilderAction);
 
         KafkaAvroDeserializerConfigurationBuilder builder = new();
         configurationBuilderAction.Invoke(builder);
@@ -63,7 +63,7 @@ public class AvroMessageDeserializerBuilder : SchemaRegistryDeserializerBuilder<
     [Obsolete("Use the Configure overload taking a KafkaAvroDeserializerConfigurationBuilder instead.")]
     public AvroMessageDeserializerBuilder Configure(Action<AvroDeserializerConfig> configureAction)
     {
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(configureAction);
 
         _avroDeserializerConfig = new AvroDeserializerConfig();
         configureAction.Invoke(_avroDeserializerConfig);

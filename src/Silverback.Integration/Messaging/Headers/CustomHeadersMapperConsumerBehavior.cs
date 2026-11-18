@@ -32,8 +32,8 @@ public class CustomHeadersMapperConsumerBehavior : IConsumerBehavior
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
     public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         if (_mappings is { Count: > 0 })
             _mappings.Revert(context.Envelope.Headers);

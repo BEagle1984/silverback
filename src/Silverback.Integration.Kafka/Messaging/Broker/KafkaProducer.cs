@@ -53,14 +53,14 @@ public sealed class KafkaProducer : Producer
         : base(
             name,
             client,
-            Check.NotNull(configuration, nameof(configuration)).Endpoints.Single(),
+            Check.NotNull(configuration).Endpoints.Single(),
             behaviorsProvider,
             serviceProvider,
             logger)
     {
-        Client = Check.NotNull(client, nameof(client));
-        Configuration = Check.NotNull(configuration, nameof(configuration));
-        _logger = Check.NotNull(logger, nameof(logger));
+        Client = Check.NotNull(client);
+        Configuration = Check.NotNull(configuration);
+        _logger = Check.NotNull(logger);
 
         EndpointConfiguration = Configuration.Endpoints.Single();
 
@@ -90,9 +90,9 @@ public sealed class KafkaProducer : Producer
         Action<Exception, TState> onError,
         TState state)
     {
-        Check.NotNull(envelope, nameof(envelope));
-        Check.NotNull(onSuccess, nameof(onSuccess));
-        Check.NotNull(onError, nameof(onError));
+        Check.NotNull(envelope);
+        Check.NotNull(onSuccess);
+        Check.NotNull(onError);
 
         KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)envelope.GetEndpoint();
 
@@ -132,7 +132,7 @@ public sealed class KafkaProducer : Producer
         IOutboundEnvelope envelope,
         CancellationToken cancellationToken)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         try
         {

@@ -50,10 +50,10 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
         IProducerCollection producers,
         ISilverbackLogger<OutboxWorker> logger)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
-        _outboxReader = Check.NotNull(outboxReader, nameof(outboxReader));
-        _producers = Check.NotNull(producers, nameof(producers));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _settings = Check.NotNull(settings);
+        _outboxReader = Check.NotNull(outboxReader);
+        _producers = Check.NotNull(producers);
+        _logger = Check.NotNull(logger);
     }
 
     /// <summary>

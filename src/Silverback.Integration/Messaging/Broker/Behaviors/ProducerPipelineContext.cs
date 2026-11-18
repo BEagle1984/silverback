@@ -39,11 +39,11 @@ public class ProducerPipelineContext
         ProducerBehaviorHandler finalAction,
         IServiceProvider serviceProvider)
     {
-        Envelope = Check.NotNull(envelope, nameof(envelope));
-        Producer = Check.NotNull(producer, nameof(producer));
-        Pipeline = Check.NotNull(pipeline, nameof(pipeline));
-        FinalAction = Check.NotNull(finalAction, nameof(finalAction));
-        ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        Envelope = Check.NotNull(envelope);
+        Producer = Check.NotNull(producer);
+        Pipeline = Check.NotNull(pipeline);
+        FinalAction = Check.NotNull(finalAction);
+        ServiceProvider = Check.NotNull(serviceProvider);
     }
 
     /// <summary>

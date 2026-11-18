@@ -31,7 +31,7 @@ public sealed class JsonMessageSerializerBuilder
     /// </returns>
     public JsonMessageSerializerBuilder Configure(Action<JsonSerializerOptions> configureAction)
     {
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(configureAction);
 
         JsonSerializerOptions options = _options == null ? new JsonSerializerOptions() : new JsonSerializerOptions(_options);
         configureAction.Invoke(options);
@@ -55,7 +55,7 @@ public sealed class JsonMessageSerializerBuilder
     /// </returns>
     public JsonMessageSerializerBuilder UseJsonSerializerContext(JsonSerializerContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         _options = context.Options;
         return this;

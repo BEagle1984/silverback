@@ -33,7 +33,7 @@ public abstract partial class TestingHelper : ITestingHelper
         IServiceProvider serviceProvider,
         ILogger<TestingHelper> logger)
     {
-        Check.NotNull(serviceProvider, nameof(serviceProvider));
+        Check.NotNull(serviceProvider);
         _logger = logger;
 
         Spy = serviceProvider.GetService<IIntegrationSpy>();

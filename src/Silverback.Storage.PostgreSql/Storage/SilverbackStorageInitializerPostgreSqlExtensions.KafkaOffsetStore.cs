@@ -27,7 +27,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreatePostgreSqlKafkaOffsetStoreAsync(this SilverbackStorageInitializer initializer, string connectionString) =>
-        initializer.CreatePostgreSqlKafkaOffsetStoreAsync(new PostgreSqlKafkaOffsetStoreSettings(Check.NotNull(connectionString, nameof(connectionString))));
+        initializer.CreatePostgreSqlKafkaOffsetStoreAsync(new PostgreSqlKafkaOffsetStoreSettings(Check.NotNull(connectionString)));
 
     /// <summary>
     ///     Creates the PostgreSql kafka offset store table.
@@ -45,7 +45,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
         this SilverbackStorageInitializer initializer,
         PostgreSqlKafkaOffsetStoreSettings settings)
     {
-        Check.NotNull(settings, nameof(settings));
+        Check.NotNull(settings);
         return initializer.CreatePostgreSqlKafkaOffsetStoreAsync(settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
@@ -73,9 +73,9 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
         string tableName,
         TimeSpan timeout)
     {
-        Check.NotNull(initializer, nameof(initializer));
-        Check.NotNullOrEmpty(connectionString, nameof(connectionString));
-        Check.NotNullOrEmpty(tableName, nameof(tableName));
+        Check.NotNull(initializer);
+        Check.NotNullOrEmpty(connectionString);
+        Check.NotNullOrEmpty(tableName);
 
         PostgreSqlDataAccess dataAccess = new(connectionString);
 
