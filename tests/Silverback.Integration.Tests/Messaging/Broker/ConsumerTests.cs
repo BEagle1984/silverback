@@ -283,6 +283,30 @@ public class ConsumerTests
     }
 
     [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task TriggerReconnectAsync_ShouldReconnect_WhenPreviousStopFailed()
+    {
+        using TestConsumer consumer = CreateConsumer();
+        TaskCompletionSource<bool> reconnected = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        consumer.Client.ReconnectAsync().Returns(_ =>
+        {
+            reconnected.TrySetResult(true);
+
+            return ValueTask.CompletedTask;
+        });
+        consumer.StopCoreCallback = () => throw new InvalidOperationException("Stop failed");
+        await consumer.StartAsync();
+
+        await Should.ThrowAsync<InvalidOperationException>(consumer.TriggerReconnectAsync().AsTask());
+
+        consumer.StopCoreCallback = null;
+        await consumer.TriggerReconnectAsync().AsTask().WaitAsync(Timeout);
+        await reconnected.Task.WaitAsync(Timeout);
+
+        await consumer.Client.Received(1).ReconnectAsync();
+    }
+
+    [Fact]
     public async Task ClientDisconnecting_ShouldStopConsumer_WhenStartIsPending()
     {
         using TestConsumer consumer = CreateConsumer();

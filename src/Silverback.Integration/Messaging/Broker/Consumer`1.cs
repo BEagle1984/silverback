@@ -34,8 +34,6 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
 
     private readonly SemaphoreSlim _startStopSemaphore = new(1);
 
-    private readonly System.Threading.Lock _reconnectLock = new();
-
     private CancellationTokenSource _processingCancellationTokenSource = new();
 
     private int _startGeneration;
@@ -50,7 +48,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
 
     private volatile bool _isStopping;
 
-    private bool _isReconnecting;
+    // 1 while a reconnect is in progress, set and reset via Interlocked
+    private int _isReconnecting;
 
     private bool _isDisposed;
 
@@ -154,21 +153,29 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     public async ValueTask TriggerReconnectAsync()
     {
-        lock (_reconnectLock)
-        {
-            if (_isReconnecting || _isDisposed)
-                return;
-
-            _isReconnecting = true;
-        }
+        if (_isDisposed || Interlocked.CompareExchange(ref _isReconnecting, 1, 0) != 0)
+            return;
 
         _logger.LogConsumerReconnectTriggered(this);
 
         // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks. Reconnecting restarts the consumer: a
         // consumer that is stopped or being stopped (e.g. by StopAsync) is left stopped.
-        if (!await StopCoreAsync(null, waitUntilStopped: false, ignoreOnceCanceled: true).ConfigureAwait(false))
+        bool isStopped;
+
+        try
         {
-            _isReconnecting = false;
+            isStopped = await StopCoreAsync(null, waitUntilStopped: false, ignoreOnceCanceled: true).ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // The failed stop leaves the consumer started: a later request must still be able to reconnect it
+            Interlocked.Exchange(ref _isReconnecting, 0);
+            throw;
+        }
+
+        if (!isStopped)
+        {
+            Interlocked.Exchange(ref _isReconnecting, 0);
             _logger.LogConsumerReconnectIgnored(this);
             return;
         }
@@ -182,7 +189,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
                 }
                 finally
                 {
-                    _isReconnecting = false;
+                    Interlocked.Exchange(ref _isReconnecting, 0);
                 }
             })
             .FireAndForget();
