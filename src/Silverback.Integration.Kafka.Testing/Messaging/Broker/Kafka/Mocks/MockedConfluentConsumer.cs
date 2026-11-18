@@ -56,6 +56,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private bool _revocationPending;
 
+    private IReadOnlyList<string> _subscription = [];
+
     public MockedConfluentConsumer(
         ConsumerConfig config,
         IInMemoryTopicCollection topics,
@@ -119,7 +121,9 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
-    public List<string> Subscription { get; } = [];
+    // A copy, like the one returned by Confluent.Kafka: the subscription is replaced, never modified, since the rebalance reads it
+    // concurrently
+    public List<string> Subscription => [.. _subscription];
 
     public IConsumerGroupMetadata ConsumerGroupMetadata { get; }
 
@@ -208,8 +212,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         Check.HasNoEmpties(topicsList, nameof(topics));
         topicsList.Where(KafkaTopicPattern.IsPattern).ForEach(ThrowIfInvalidPattern);
 
-        Subscription.Clear();
-        Subscription.AddRange(topicsList);
+        _subscription = [.. topicsList];
         _consumerGroup.Subscribe(this, topicsList);
 
         if (MemberId.Length == 0)
@@ -223,10 +226,10 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         Check.ThrowObjectDisposedIf(IsDisposed, GetType());
         CheckGroupIdNotEmpty();
 
-        bool subscribed = Subscription.Count > 0;
+        bool subscribed = _subscription.Count > 0;
 
         _consumerGroup.Unsubscribe(this);
-        Subscription.Clear();
+        _subscription = [];
 
         try
         {
@@ -333,12 +336,16 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         Check.NotNull(tpo);
 
-        _currentOffsets[tpo.TopicPartition] = tpo;
-
-        lock (_storedOffsets)
+        // Called by the rebalance callbacks and the rollbacks as well, concurrently with the consume
+        lock (_assignmentStateLock)
         {
-            // Reset processing progress without making the seek offset eligible for commit
-            _storedOffsets[tpo.TopicPartition] = tpo;
+            _currentOffsets[tpo.TopicPartition] = tpo;
+
+            lock (_storedOffsets)
+            {
+                // Reset processing progress without making the seek offset eligible for commit
+                _storedOffsets[tpo.TopicPartition] = tpo;
+            }
         }
     }
 
@@ -393,10 +400,10 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public void Close()
     {
-        bool subscribed = Subscription.Count > 0;
+        bool subscribed = _subscription.Count > 0;
 
         _consumerGroup.Remove(this);
-        Subscription.Clear();
+        _subscription = [];
 
         // Like librdkafka, revoke the assignment of a consumer closed while still subscribed (e.g. a static member, which doesn't
         // unsubscribe in order to keep its membership)
@@ -416,7 +423,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     public void Dispose()
     {
         _consumerGroup.Remove(this);
-        Subscription.Clear();
+        _subscription = [];
         ClearClassicMemberId();
         IsDisposed = true;
     }
@@ -544,13 +551,19 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         try
         {
-            PartitionsRevokedHandler?.Invoke(
-                this,
+            List<TopicPartitionOffset> revokedOffsets;
+
+            lock (_assignmentStateLock)
+            {
+                revokedOffsets =
                 [
                     .. topicPartitions.Select(topicPartition => _currentOffsets.GetValueOrDefault(
                         topicPartition,
                         new TopicPartitionOffset(topicPartition, Offset.Unset)))
-                ]);
+                ];
+            }
+
+            PartitionsRevokedHandler?.Invoke(this, revokedOffsets);
         }
         finally
         {
@@ -583,14 +596,6 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
-    private bool IsAssigned(TopicPartition topicPartition)
-    {
-        lock (_assignmentStateLock)
-        {
-            return _assignment.Contains(topicPartition);
-        }
-    }
-
     private bool TryConsume(CancellationToken cancellationToken, out ConsumeResult<byte[]?, byte[]?>? result)
     {
         Check.ThrowObjectDisposedIf(IsDisposed, GetType());
@@ -603,9 +608,16 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             return false;
         }
 
+        List<TopicPartitionOffset> currentOffsets;
+
+        lock (_assignmentStateLock)
+        {
+            currentOffsets = [.. _currentOffsets.Values];
+        }
+
         // Process the assigned partitions starting from the one that consumed fewer messages
         IOrderedEnumerable<TopicPartitionOffset> topicPartitionsOffsets =
-            _currentOffsets.Values
+            currentOffsets
                 .Where(topicPartitionOffset => !IsPaused(
                     topicPartitionOffset.Topic,
                     topicPartitionOffset.Partition))
@@ -621,22 +633,32 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (!IsAssigned(topicPartitionOffset.TopicPartition))
-                continue;
-
-            if (pulled)
+            lock (_assignmentStateLock)
             {
-                _currentOffsets[result!.TopicPartition] = new TopicPartitionOffset(result.TopicPartition, result.Offset + 1);
-                return true;
-            }
+                // Like librdkafka discarding the fetched messages, skip the partition revoked or sought (e.g. rolled back) meanwhile
+                if (!IsCurrentOffset(topicPartitionOffset))
+                    continue;
 
-            if (Config.EnablePartitionEof == true && GetEofMessageIfNeeded(topicPartitionOffset, out result))
-                return true;
+                if (pulled)
+                {
+                    _currentOffsets[result!.TopicPartition] = new TopicPartitionOffset(result.TopicPartition, result.Offset + 1);
+                    return true;
+                }
+
+                if (Config.EnablePartitionEof == true && GetEofMessageIfNeeded(topicPartitionOffset, out result))
+                    return true;
+            }
         }
 
         result = null;
         return true;
     }
+
+    // Must be called holding the assignment state lock
+    private bool IsCurrentOffset(TopicPartitionOffset topicPartitionOffset) =>
+        _assignment.Contains(topicPartitionOffset.TopicPartition) &&
+        _currentOffsets.TryGetValue(topicPartitionOffset.TopicPartition, out TopicPartitionOffset? currentOffset) &&
+        currentOffset.Offset == topicPartitionOffset.Offset;
 
     private bool CompleteAssignment(
         long assignmentGeneration,
@@ -846,31 +868,35 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         Check.ThrowObjectDisposedIf(IsDisposed, GetType());
         CheckGroupIdNotEmpty();
 
+        List<TopicPartitionOffset> committedOffsets;
+
         lock (_storedOffsets)
         {
             if (_pendingCommitOffsets.Count == 0)
                 return [];
 
-            List<TopicPartitionOffset> committedOffsets = [.. _pendingCommitOffsets.Values];
+            committedOffsets = [.. _pendingCommitOffsets.Values];
             _consumerGroup.Commit(committedOffsets);
             _pendingCommitOffsets.Clear();
-
-            if (isAutoCommit)
-            {
-                List<TopicPartitionOffsetError> topicPartitionOffsetErrors =
-                [
-                    .. committedOffsets
-                        .Select(topicPartitionOffset =>
-                            new TopicPartitionOffsetError(topicPartitionOffset, null))
-                ];
-
-                OffsetsCommittedHandler?.Invoke(this, new CommittedOffsets(topicPartitionOffsetErrors, null));
-            }
-
-            return committedOffsets;
         }
+
+        // Invoked outside the lock, like the other callbacks
+        if (isAutoCommit)
+        {
+            List<TopicPartitionOffsetError> topicPartitionOffsetErrors =
+            [
+                .. committedOffsets
+                    .Select(topicPartitionOffset =>
+                        new TopicPartitionOffsetError(topicPartitionOffset, null))
+            ];
+
+            OffsetsCommittedHandler?.Invoke(this, new CommittedOffsets(topicPartitionOffsetErrors, null));
+        }
+
+        return committedOffsets;
     }
 
+    // Must be called holding the assignment state lock
     private bool GetEofMessageIfNeeded(
         TopicPartitionOffset topicPartitionOffset,
         [NotNullWhen(true)] out ConsumeResult<byte[]?, byte[]?>? result)
