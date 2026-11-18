@@ -14,7 +14,7 @@ env:
   BUILD_CONFIGURATION: Release
 
 jobs:
-  build:
+  other-projects:
     runs-on: windows-latest
     steps:
       - name: Checkout
