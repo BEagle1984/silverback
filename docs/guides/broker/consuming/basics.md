@@ -146,7 +146,7 @@ With batch processing, the filtered messages don't count toward the batch size a
 An endpoint applies a single filter: each `Filter` call replaces the previous one, so combine all conditions in the same filter.
 
 > [!Note]
-> The subscriber filters, such as the <xref:Silverback.Messaging.Subscribers.ConsumerNameFilterAttribute> (see <xref:multiple-consumers>), only decide which subscribers receive a message, while the endpoint filter skips the message for all the subscribers.
+> The subscriber filters, such as the <xref:Silverback.Messaging.Subscribers.ConsumerNameFilterAttribute> (see [Filtering](xref:bus#filtering) and <xref:multiple-consumers>), only decide which subscribers receive a message, while the endpoint filter skips the message for all the subscribers.
 
 ## Parallelism
 
