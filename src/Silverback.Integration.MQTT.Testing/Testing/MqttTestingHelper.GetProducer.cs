@@ -51,12 +51,12 @@ public partial class MqttTestingHelper
 
         // The friendly name takes precedence over the topic name
         (MqttClientConfiguration? namedClientConfiguration, MqttConsumerEndpointConfiguration? namedEndpointConfiguration) =
-            endpoints.Find(tuple => tuple.EndpointConfiguration.FriendlyName == endpointName);
+            endpoints.FirstOrDefault(tuple => tuple.EndpointConfiguration.FriendlyName == endpointName);
 
         if (namedClientConfiguration == null || namedEndpointConfiguration == null)
         {
             (namedClientConfiguration, namedEndpointConfiguration) =
-                endpoints.Find(tuple => tuple.EndpointConfiguration.RawName == endpointName);
+                endpoints.FirstOrDefault(tuple => tuple.EndpointConfiguration.RawName == endpointName);
         }
 
         if (namedClientConfiguration != null && namedEndpointConfiguration != null)
@@ -69,13 +69,13 @@ public partial class MqttTestingHelper
 
             // A topic name is resolved to the endpoint subscribing it, giving precedence to the names over the wildcard filters
             (MqttClientConfiguration? clientConfiguration, MqttConsumerEndpointConfiguration? endpointConfiguration) =
-                endpoints.Find(tuple => tuple.EndpointConfiguration.Topics.Any(subscribedTopic =>
+                endpoints.FirstOrDefault(tuple => tuple.EndpointConfiguration.Topics.Any(subscribedTopic =>
                     GetTopicWithoutSharedSubscriptionGroup(subscribedTopic) == topic));
 
             if (clientConfiguration == null || endpointConfiguration == null)
             {
                 (clientConfiguration, endpointConfiguration) =
-                    endpoints.Find(tuple => tuple.EndpointConfiguration.Topics.Any(subscribedTopic =>
+                    endpoints.FirstOrDefault(tuple => tuple.EndpointConfiguration.Topics.Any(subscribedTopic =>
                         IsWildcardFilter(subscribedTopic) && new ParsedTopic(subscribedTopic).IsMatch(topic)));
             }
 

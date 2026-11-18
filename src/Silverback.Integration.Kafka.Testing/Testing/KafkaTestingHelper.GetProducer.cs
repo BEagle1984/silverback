@@ -51,12 +51,12 @@ public partial class KafkaTestingHelper
 
         // The friendly name takes precedence over the topic name
         (KafkaConsumerConfiguration? namedConsumerConfiguration, KafkaConsumerEndpointConfiguration? namedEndpointConfiguration) =
-            endpoints.Find(tuple => tuple.EndpointConfiguration.FriendlyName == endpointName);
+            endpoints.FirstOrDefault(tuple => tuple.EndpointConfiguration.FriendlyName == endpointName);
 
         if (namedConsumerConfiguration == null || namedEndpointConfiguration == null)
         {
             (namedConsumerConfiguration, namedEndpointConfiguration) =
-                endpoints.Find(tuple => tuple.EndpointConfiguration.RawName == endpointName);
+                endpoints.FirstOrDefault(tuple => tuple.EndpointConfiguration.RawName == endpointName);
         }
 
         if (namedConsumerConfiguration != null && namedEndpointConfiguration != null)
@@ -65,12 +65,14 @@ public partial class KafkaTestingHelper
         // A topic name is resolved to the endpoint subscribing it, giving precedence to the names over the patterns (a pattern can't be a
         // topic name)
         (KafkaConsumerConfiguration? consumerConfiguration, KafkaConsumerEndpointConfiguration? endpointConfiguration) =
-            endpoints.Find(tuple => IsSubscribing(tuple.ConsumerConfiguration, tuple.EndpointConfiguration, endpointName, false));
+            endpoints.FirstOrDefault(tuple =>
+                IsSubscribing(tuple.ConsumerConfiguration, tuple.EndpointConfiguration, endpointName, false));
 
         if ((consumerConfiguration == null || endpointConfiguration == null) && !KafkaTopicPattern.IsPattern(endpointName))
         {
             (consumerConfiguration, endpointConfiguration) =
-                endpoints.Find(tuple => IsSubscribing(tuple.ConsumerConfiguration, tuple.EndpointConfiguration, endpointName, true));
+                endpoints.FirstOrDefault(tuple =>
+                    IsSubscribing(tuple.ConsumerConfiguration, tuple.EndpointConfiguration, endpointName, true));
         }
 
         if (consumerConfiguration != null && endpointConfiguration != null)

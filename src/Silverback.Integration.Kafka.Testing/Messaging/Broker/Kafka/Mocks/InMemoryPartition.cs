@@ -59,7 +59,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
             }
             else
             {
-                Transaction? transaction = _transactions.Find(transaction => transaction.Id == transactionalUniqueId);
+                Transaction? transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionalUniqueId);
 
                 if (transaction == null)
                 {
@@ -127,7 +127,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
     {
         lock (_messages)
         {
-            Transaction? transaction = _transactions.Find(transaction => transaction.Id == transactionUniqueId);
+            Transaction? transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
 
             if (transaction == null)
                 return;
@@ -147,7 +147,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
     {
         lock (_messages)
         {
-            Transaction? transaction = _transactions.Find(transaction => transaction.Id == transactionUniqueId);
+            Transaction? transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
 
             if (transaction == null)
                 return;

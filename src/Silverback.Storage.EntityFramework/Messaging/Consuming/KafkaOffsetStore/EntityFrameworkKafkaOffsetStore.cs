@@ -68,8 +68,9 @@ public class EntityFrameworkKafkaOffsetStore : IKafkaOffsetStore
 
         foreach (KafkaOffset offset in Check.NotNull(offsets, nameof(offsets)))
         {
-            SilverbackStoredOffset? storedOffset = storedOffsets.Find(storedOffset => storedOffset.Topic == offset.TopicPartition.Topic &&
-                                                                                      storedOffset.Partition == offset.TopicPartition.Partition.Value);
+            SilverbackStoredOffset? storedOffset = storedOffsets.FirstOrDefault(storedOffset =>
+                storedOffset.Topic == offset.TopicPartition.Topic &&
+                storedOffset.Partition == offset.TopicPartition.Partition.Value);
 
             if (storedOffset == null)
             {
