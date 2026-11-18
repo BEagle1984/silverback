@@ -13,6 +13,28 @@ public class TestingCollectionTests
     private const int ItemsCount = 200_000;
 
     [Fact]
+    public void Add_ShouldAddNull()
+    {
+        TestingCollection<string?> collection = [];
+
+        collection.Add("one");
+        collection.Add(null);
+
+        collection.ShouldBe(["one", null]);
+    }
+
+    [Fact]
+    public void AddIfNotNull_ShouldSkipNull()
+    {
+        TestingCollection<string> collection = [];
+
+        collection.AddIfNotNull("one");
+        collection.AddIfNotNull(null);
+
+        collection.ShouldBe(["one"]);
+    }
+
+    [Fact]
     public async Task Enumeration_ShouldNotThrowOrTear_WhenItemsAreAddedConcurrently()
     {
         TestingCollection<int> collection = [];

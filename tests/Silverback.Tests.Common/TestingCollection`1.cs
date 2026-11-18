@@ -33,24 +33,23 @@ public class TestingCollection<T> : IReadOnlyList<T>
         }
     }
 
-    public void Add(T item) => AddIfNotNull(item);
-
-    public void AddIfNotNull(T? value)
+    public void Add(T item)
     {
-        if (value == null)
-            return;
-
         lock (_items)
         {
-            _items.Add(value);
+            _items.Add(item);
         }
     }
 
-    public ValueTask AddAsync(T item) => AddIfNotNullAsync(item);
-
-    public ValueTask AddIfNotNullAsync(T? item)
+    public void AddIfNotNull(T? item)
     {
-        AddIfNotNull(item);
+        if (item != null)
+            Add(item);
+    }
+
+    public ValueTask AddAsync(T item)
+    {
+        Add(item);
         return ValueTask.CompletedTask;
     }
 
