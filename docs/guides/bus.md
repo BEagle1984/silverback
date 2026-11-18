@@ -316,6 +316,62 @@ public class Startup
 }
 ```
 
+### Filtering
+
+A subscriber receives all published messages matching its parameter type. To narrow them down, add one or more filters: a filter implements <xref:Silverback.Messaging.Subscribers.IMessageFilter> and decides for each message whether the subscriber processes it.
+
+Silverback provides the filters to route the consumed messages according to the consumer that received them: <xref:Silverback.Messaging.Subscribers.ConsumerNameFilterAttribute>, <xref:Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute> and <xref:Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute> (see <xref:multiple-consumers>). To write your own, derive from <xref:Silverback.Messaging.Subscribers.MessageFilterAttribute> and decorate the subscribed methods with it:
+
+```csharp
+public sealed class TenantFilterAttribute : MessageFilterAttribute
+{
+    public TenantFilterAttribute(string tenant)
+    {
+        Tenant = tenant;
+    }
+
+    public string Tenant { get; }
+
+    public override bool MustProcess(object message) =>
+        message switch
+        {
+            IInboundEnvelope envelope => envelope.Headers.GetValue("x-tenant") == Tenant,
+            ITenantMessage tenantMessage => tenantMessage.Tenant == Tenant,
+            _ => false
+        };
+}
+
+public class OrderSubscriber
+{
+    [TenantFilter("eu")]
+    public async Task OnOrderCreatedAsync(OrderCreatedEvent message)
+    {
+        // Process the orders of the EU tenant
+    }
+}
+```
+
+The filters can also be passed when registering the subscriber, via the `Filters` property of the <xref:Silverback.Messaging.Subscribers.Subscriptions.TypeSubscriptionOptions> or <xref:Silverback.Messaging.Subscribers.Subscriptions.DelegateSubscriptionOptions>. Any <xref:Silverback.Messaging.Subscribers.IMessageFilter> implementation can be used there, not only the attributes.
+
+```csharp
+services
+    .AddSilverback()
+    .AddScopedSubscriber<OrderExporter>(
+        new TypeSubscriptionOptions
+        {
+            Filters = [new TenantFilterAttribute("eu")]
+        });
+```
+
+- The filter receives the published object: the message itself, or the <xref:Silverback.Messaging.Messages.IInboundEnvelope> wrapping it when the message is consumed from a broker, even if the subscriber takes the message alone.
+- A subscriber with multiple filters only processes the messages that pass all of them.
+- The filters of a subscriber receiving a stream or a batch (e.g. `IAsyncEnumerable<T>`, see <xref:batch-processing>) are applied to each message in it, and the subscriber is invoked only once a message passes them. These filters may also receive the messages of other types pushed into the same stream (e.g. a batch of mixed message types), so they must return `false` for the messages they don't recognize, rather than throwing.
+- `MustProcess` is synchronous and invoked for each message and subscriber, so keep it fast. The attributes are instantiated via reflection, so they can't inject any service.
+- A consumed message that no subscriber processes because of the filters counts as unhandled, which by default throws an <xref:Silverback.Messaging.Publishing.UnhandledMessageException> (see [the FAQ](xref:faq#the-consumer-stops-with-an-unhandledmessageexception)).
+
+> [!Tip]
+> To skip a consumed message for all the subscribers, prefer the endpoint filter (see [Filtering](xref:consuming#filtering)): it can be asynchronous, can inject services, and commits the skipped messages without treating them as unhandled.
+
 ## Cancellation
 
 If a subscriber method accepts a `CancellationToken`, Silverback will forward the optional cancellation token to the subscribers.

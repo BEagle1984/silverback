@@ -95,7 +95,7 @@ services.AddSilverback()
         });
 ```
 
-Alternatively, subscribe to the <xref:Silverback.Messaging.Messages.IInboundEnvelope`1> and inspect the `Consumer` or `Endpoint` properties.
+Alternatively, subscribe to the <xref:Silverback.Messaging.Messages.IInboundEnvelope`1> and inspect the `Consumer` or `Endpoint` properties, or write your own filter (see [Filtering](xref:bus#filtering)).
 
 ## Scaling Out vs. Consuming Twice
 
