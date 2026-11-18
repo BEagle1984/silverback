@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.Subscriptions;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Mqtt;
@@ -140,6 +142,39 @@ public class ClientIdFilterTests : MqttTests
         received2.ShouldBe(3);
     }
 
+    [Fact]
+    public async Task ClientIdFilterAttribute_ShouldFilterAccordingToClientId_WhenBatchSubscribedAsStream()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId("client1")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).EnableBatchProcessing(3)))
+                .AddClient(client => client
+                    .WithClientId("client2")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).EnableBatchProcessing(3))))
+            .AddSingletonSubscriber<StreamSubscriber>()
+            .AddIntegrationSpy());
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+
+        StreamSubscriber subscriber = Host.ServiceProvider.GetRequiredService<StreamSubscriber>();
+        subscriber.ReceivedConsumer1.ShouldBe(3);
+        subscriber.ReceivedConsumer2.ShouldBe(3);
+    }
+
     private sealed class Subscriber
     {
         private int _received;
@@ -173,5 +208,26 @@ public class ClientIdFilterTests : MqttTests
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public void OnConsumer2Received(IMessage message) => Interlocked.Increment(ref _receivedConsumer2);
+    }
+
+    private sealed class StreamSubscriber
+    {
+        private int _receivedConsumer1;
+
+        private int _receivedConsumer2;
+
+        public int ReceivedConsumer1 => _receivedConsumer1;
+
+        public int ReceivedConsumer2 => _receivedConsumer2;
+
+        [MqttClientIdFilter("client1")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        public Task OnConsumer1Received(IAsyncEnumerable<IMessage> messages) =>
+            messages.ForEachAsync(_ => Interlocked.Increment(ref _receivedConsumer1));
+
+        [MqttClientIdFilter("client2")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        public Task OnConsumer2Received(IAsyncEnumerable<IMessage> messages) =>
+            messages.ForEachAsync(_ => Interlocked.Increment(ref _receivedConsumer2));
     }
 }

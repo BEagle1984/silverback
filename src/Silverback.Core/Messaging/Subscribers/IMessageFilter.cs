@@ -6,6 +6,9 @@ namespace Silverback.Messaging.Subscribers;
 /// <summary>
 ///     Filters the messages to be processed.
 /// </summary>
+/// <remarks>
+///     The filters of a subscriber receiving a stream or a batch are applied to each message pushed into the stream.
+/// </remarks>
 public interface IMessageFilter
 {
     /// <summary>

@@ -31,8 +31,5 @@ public sealed class ConsumerNameFilterAttribute : MessageFilterAttribute
 
     /// <inheritdoc cref="MessageFilterAttribute.MustProcess" />
     public override bool MustProcess(object message) =>
-        MessageIsFromAllowedGroups(message) || message is IMessageStreamProvider;
-
-    private bool MessageIsFromAllowedGroups(object message) =>
         message is IInboundEnvelope { Consumer: { } consumer } && GroupId.Contains(consumer.Name);
 }

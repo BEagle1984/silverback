@@ -27,8 +27,12 @@ internal static class SubscribedMethodInvoker
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
-        if (IsFiltered(subscribedMethod.Options.Filters, message))
+        // The filters of a stream subscriber are applied to each message pushed into its stream, not to the stream provider
+        if (subscribedMethod.MessageArgumentResolver is not IStreamEnumerableMessageArgumentResolver &&
+            IsFiltered(subscribedMethod.Options.Filters, message))
+        {
             return MethodInvocationResult.NotInvoked;
+        }
 
         object?[] arguments = GetArgumentValuesArray(subscribedMethod, serviceProvider, cancellationToken);
         object? returnValue;

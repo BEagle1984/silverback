@@ -12,6 +12,8 @@ using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Subscribers.Subscriptions;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Util;
@@ -185,6 +187,80 @@ public class StreamPublisherTests
 
         await CompleteAndWaitForSubscribersAsync(streamProvider1, tasks1);
         await CompleteAndWaitForSubscribersAsync(streamProvider2, tasks2);
+    }
+
+    [Fact]
+    public async Task PublishAsync_ShouldApplyFiltersToEachMessage_WhenFilterRejectsStreamProvider()
+    {
+        int receivedUnfiltered = 0;
+        int receivedFiltered = 0;
+        int receivedRejected = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IAsyncEnumerable<IEvent>>(HandleUnfiltered)
+            .AddDelegateSubscriber<IAsyncEnumerable<IEvent>>(
+                HandleFiltered,
+                new DelegateSubscriptionOptions { Filters = [new TypeFilter(typeof(TestEventOne))] })
+            .AddDelegateSubscriber<IAsyncEnumerable<IEvent>>(
+                HandleRejected,
+                new DelegateSubscriptionOptions { Filters = [new TypeFilter(typeof(TestCommandOne))] }));
+
+        async Task HandleUnfiltered(IAsyncEnumerable<IEvent> enumerable) =>
+            await enumerable.ForEachAsync(_ => Interlocked.Increment(ref receivedUnfiltered));
+
+        async Task HandleFiltered(IAsyncEnumerable<IEvent> enumerable) =>
+            await enumerable.ForEachAsync(_ => Interlocked.Increment(ref receivedFiltered));
+
+        async Task HandleRejected(IAsyncEnumerable<IEvent> enumerable) =>
+            await enumerable.ForEachAsync(_ => Interlocked.Increment(ref receivedRejected));
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider = new();
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
+
+        await streamProvider.PushAsync(new TestEventOne());
+        await streamProvider.PushAsync(new TestEventTwo());
+        await streamProvider.PushAsync(new TestEventOne());
+
+        await AsyncTestingUtil.WaitAsync(() => receivedUnfiltered >= 3 && receivedFiltered >= 2);
+
+        receivedUnfiltered.ShouldBe(3);
+        receivedFiltered.ShouldBe(2);
+        receivedRejected.ShouldBe(0);
+
+        await CompleteAndWaitForSubscribersAsync(streamProvider, tasks);
+    }
+
+    [Fact]
+    public async Task PublishAsync_ShouldApplyFiltersToStreamProvider_WhenSubscriberIsNotStreamSubscriber()
+    {
+        int receivedAccepted = 0;
+        int receivedRejected = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamProvider>(
+                _ => Interlocked.Increment(ref receivedAccepted),
+                new DelegateSubscriptionOptions { Filters = [new TypeFilter(typeof(IMessageStreamProvider))] })
+            .AddDelegateSubscriber<IMessageStreamProvider>(
+                _ => Interlocked.Increment(ref receivedRejected),
+                new DelegateSubscriptionOptions { Filters = [new TypeFilter(typeof(TestEventOne))] }));
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider = new();
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
+
+        receivedAccepted.ShouldBe(1);
+        receivedRejected.ShouldBe(0);
+
+        await CompleteAndWaitForSubscribersAsync(streamProvider, tasks);
     }
 
     [Fact]
@@ -853,6 +929,18 @@ public class StreamPublisherTests
     private class TestEventTwo : IEvent;
 
     private class TestCommandOne : IMessage;
+
+    private sealed class TypeFilter : IMessageFilter
+    {
+        private readonly Type _type;
+
+        public TypeFilter(Type type)
+        {
+            _type = type;
+        }
+
+        public bool MustProcess(object message) => _type.IsInstanceOfType(message);
+    }
 
     private class TestEnvelope : IEnvelope
     {
