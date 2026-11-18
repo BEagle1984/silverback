@@ -52,7 +52,7 @@ internal class KafkaConsumerEndpointsCache
         {
             // The topic names take precedence over the patterns, which are matched in the order they are configured
             PatternSubscription subscription =
-                _patternSubscriptions.Find(subscription => subscription.Regex.IsMatch(topicPartition.Topic)) ??
+                _patternSubscriptions.FirstOrDefault(subscription => subscription.Regex.IsMatch(topicPartition.Topic)) ??
                 throw new InvalidOperationException(GetNotFoundMessage(topicPartition));
 
             endpoint = _endpoints.GetOrAdd(anyPartition, new KafkaConsumerEndpoint(anyPartition, subscription.EndpointConfiguration));

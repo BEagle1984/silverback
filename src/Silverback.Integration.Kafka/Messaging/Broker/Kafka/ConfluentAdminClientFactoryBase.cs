@@ -92,7 +92,7 @@ public abstract class ConfluentAdminClientFactoryBase : IConfluentAdminClientFac
         Check.NotNull(producerName, nameof(producerName));
 
         IProducer producer =
-            GetKafkaProducers().Find(kafkaProducer => IsNamed(kafkaProducer, producerName)) ??
+            GetKafkaProducers().FirstOrDefault(kafkaProducer => IsNamed(kafkaProducer, producerName)) ??
             throw new InvalidOperationException($"No Kafka producer has been configured with name '{producerName}'.");
 
         return GetClient(producer);
@@ -106,8 +106,8 @@ public abstract class ConfluentAdminClientFactoryBase : IConfluentAdminClientFac
         List<IProducer> kafkaProducers = GetKafkaProducers();
 
         IProducer producer =
-            kafkaProducers.Find(kafkaProducer => kafkaProducer.EndpointConfiguration.FriendlyName == endpointName) ??
-            kafkaProducers.Find(kafkaProducer => IsProducingTo(kafkaProducer.EndpointConfiguration, endpointName)) ??
+            kafkaProducers.FirstOrDefault(kafkaProducer => kafkaProducer.EndpointConfiguration.FriendlyName == endpointName) ??
+            kafkaProducers.FirstOrDefault(kafkaProducer => IsProducingTo(kafkaProducer.EndpointConfiguration, endpointName)) ??
             throw new InvalidOperationException($"No Kafka producer has been configured for endpoint '{endpointName}'.");
 
         return GetClient(producer);
@@ -133,9 +133,11 @@ public abstract class ConfluentAdminClientFactoryBase : IConfluentAdminClientFac
         List<IKafkaConsumer> kafkaConsumers = [.. _consumers.OfType<IKafkaConsumer>()];
 
         IKafkaConsumer consumer =
-            kafkaConsumers.Find(kafkaConsumer => kafkaConsumer.EndpointsConfiguration.Any(endpoint => endpoint.FriendlyName == endpointName)) ??
-            kafkaConsumers.Find(kafkaConsumer => kafkaConsumer.EndpointsConfiguration.Any(endpoint => IsConsumingFrom(endpoint, endpointName))) ??
-            kafkaConsumers.Find(kafkaConsumer => IsConsumingByPattern(kafkaConsumer, endpointName)) ??
+            kafkaConsumers.FirstOrDefault(kafkaConsumer =>
+                kafkaConsumer.EndpointsConfiguration.Any(endpoint => endpoint.FriendlyName == endpointName)) ??
+            kafkaConsumers.FirstOrDefault(kafkaConsumer =>
+                kafkaConsumer.EndpointsConfiguration.Any(endpoint => IsConsumingFrom(endpoint, endpointName))) ??
+            kafkaConsumers.FirstOrDefault(kafkaConsumer => IsConsumingByPattern(kafkaConsumer, endpointName)) ??
             throw new InvalidOperationException($"No Kafka consumer has been configured for endpoint '{endpointName}'.");
 
         return GetClient(consumer);
