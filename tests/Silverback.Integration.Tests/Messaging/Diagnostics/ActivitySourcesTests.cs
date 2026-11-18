@@ -296,6 +296,54 @@ public class ActivitySourcesTests
         Activity.Current.ShouldBeNull();
     }
 
+    [Fact]
+    public void StopPreservingCurrent_ShouldKeepCurrentActivity()
+    {
+        using Activity parentActivity = new Activity("Parent").Start();
+        using Activity activity = new Activity("Produce").Start();
+        using Activity otherActivity = new Activity("Other").Start();
+
+        activity.StopPreservingCurrent();
+
+        activity.IsStopped.ShouldBeTrue();
+        Activity.Current.ShouldBe(otherActivity);
+    }
+
+    [Fact]
+    public void StopPreservingCurrent_ShouldClearCurrentActivity_WhenStoppingCurrentActivity()
+    {
+        using Activity parentActivity = new Activity("Parent").Start();
+        using Activity activity = new Activity("Produce").Start();
+
+        activity.StopPreservingCurrent();
+
+        activity.IsStopped.ShouldBeTrue();
+        Activity.Current.ShouldBeNull();
+    }
+
+    [Fact]
+    public void RestoreCurrent_ShouldSetPreviousActivity()
+    {
+        using Activity previousActivity = new Activity("Previous").Start();
+        using Activity activity = new Activity("Produce").Start();
+
+        ActivitySources.RestoreCurrent(previousActivity);
+
+        Activity.Current.ShouldBe(previousActivity);
+    }
+
+    [Fact]
+    public void RestoreCurrent_ShouldClearCurrentActivity_WhenPreviousActivityIsStopped()
+    {
+        Activity previousActivity = new Activity("Previous").Start();
+        previousActivity.Stop();
+        using Activity activity = new Activity("Produce").Start();
+
+        ActivitySources.RestoreCurrent(previousActivity);
+
+        Activity.Current.ShouldBeNull();
+    }
+
     private static IOutboundEnvelope CreateOutboundEnvelope(MessageHeaderCollection headers) =>
         new OutboundEnvelope(null, headers, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 

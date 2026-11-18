@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -77,6 +78,11 @@ public class ProducerPipelineContext
 
     internal IBrokerMessageIdentifier? BrokerMessageIdentifier { get; set; }
 
+    // The produce activity started by the activity behavior for this pass of the pipeline. It's enriched and set as current when logging
+    // the produced message, since it isn't necessarily the current activity anymore (e.g. a behavior started another one, or the message
+    // is acknowledged from another thread).
+    internal Activity? Activity { get; set; }
+
     /// <summary>
     ///     Clones the current context, optionally replacing the envelope.
     /// </summary>
@@ -90,6 +96,10 @@ public class ProducerPipelineContext
         new(newEnvelope ?? Envelope, Producer, Pipeline, FinalAction, ServiceProvider)
         {
             CurrentStepIndex = CurrentStepIndex,
-            BrokerMessageIdentifier = BrokerMessageIdentifier
+            BrokerMessageIdentifier = BrokerMessageIdentifier,
+            Activity = Activity
         };
+
+    // Hands the produce activity over to be stopped when the produced messages are acknowledged, if they are acknowledged via callbacks
+    internal virtual bool TryDeferActivityStop(Activity activity) => false;
 }

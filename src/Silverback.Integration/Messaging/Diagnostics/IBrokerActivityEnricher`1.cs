@@ -7,8 +7,7 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.Diagnostics;
 
 /// <summary>
-///     Provides enrichment for activities produced by the <see cref="ActivityProducerBehavior" /> and
-///     <see cref="ActivityConsumerBehavior" /> for the specified endpoint type.
+///     Provides enrichment for the produce and consume activities for the specified endpoint type.
 /// </summary>
 /// <typeparam name="TConfiguration">
 ///     The type of the endpoint configuration that this enricher can be used with.

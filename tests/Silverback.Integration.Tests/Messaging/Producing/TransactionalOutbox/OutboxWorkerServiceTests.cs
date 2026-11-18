@@ -655,10 +655,10 @@ public class OutboxWorkerServiceTests
             .When(substitute => substitute.RawProduce(
                 Arg.Any<byte[]>(),
                 Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
-                Arg.Any<Action<Exception, OutboxMessage>>(),
-                Arg.Any<OutboxMessage>()))
-            .Do(callInfo => callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2).Invoke(null, callInfo.ArgAt<OutboxMessage>(4)));
+                Arg.Any<Action<IBrokerMessageIdentifier?, (OutboxMessage, Activity)>>(),
+                Arg.Any<Action<Exception, (OutboxMessage, Activity)>>(),
+                Arg.Any<(OutboxMessage, Activity)>()))
+            .Do(callInfo => callInfo.ArgAt<Action<IBrokerMessageIdentifier?, (OutboxMessage, Activity)>>(2).Invoke(null, callInfo.ArgAt<(OutboxMessage, Activity)>(4)));
         producers.GetProducerForEndpoint(endpointName).Returns(producer);
     }
 
@@ -670,9 +670,9 @@ public class OutboxWorkerServiceTests
             .When(substitute => substitute.RawProduce(
                 Arg.Any<byte[]>(),
                 Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
-                Arg.Any<Action<Exception, OutboxMessage>>(),
-                Arg.Any<OutboxMessage>()))
+                Arg.Any<Action<IBrokerMessageIdentifier?, (OutboxMessage, Activity)>>(),
+                Arg.Any<Action<Exception, (OutboxMessage, Activity)>>(),
+                Arg.Any<(OutboxMessage, Activity)>()))
             .Do(callInfo =>
             {
                 onProduce.Invoke();
@@ -683,8 +683,8 @@ public class OutboxWorkerServiceTests
                 Task.Run(async () =>
                 {
                     await Task.Delay(20);
-                    callInfo.ArgAt<Action<Exception, OutboxMessage>>(3)
-                        .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxMessage>(4));
+                    callInfo.ArgAt<Action<Exception, (OutboxMessage, Activity)>>(3)
+                        .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<(OutboxMessage, Activity)>(4));
                 }).FireAndForget();
             });
         IProducerCollection producers = Substitute.For<IProducerCollection>();

@@ -93,6 +93,10 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         {
             int partitionIndex = PushToTopic(topicPartition, message, out Offset offset);
 
+            // The real client invokes the delivery handler from its poll thread, to which the execution context of the caller (e.g. the
+            // current activity) doesn't flow
+            using AsyncFlowControl flowControl = ExecutionContext.SuppressFlow();
+
             Task.Run(async () =>
                 {
                     await Task.Delay(10).ConfigureAwait(false);

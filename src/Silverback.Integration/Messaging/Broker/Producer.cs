@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
@@ -25,6 +27,8 @@ public abstract class Producer : IProducer, IDisposable
     private readonly IServiceProvider _serviceProvider;
 
     private readonly ISilverbackLogger<IProducer> _logger;
+
+    private readonly IBrokerActivityEnricher _activityEnricher;
 
     private bool _isDisposed;
 
@@ -63,6 +67,8 @@ public abstract class Producer : IProducer, IDisposable
         _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
         _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _logger = Check.NotNull(logger, nameof(logger));
+        _activityEnricher = serviceProvider.GetService<IActivityEnricherFactory>()?.GetEnricher(endpointConfiguration, serviceProvider) ??
+                            NullBrokerActivityEnricher.Instance;
     }
 
     /// <inheritdoc cref="IProducer.Name" />
@@ -99,11 +105,21 @@ public abstract class Producer : IProducer, IDisposable
                 _behaviors,
                 static (finalContext, _) =>
                 {
-                    ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                        finalContext.BrokerMessageIdentifier =
-                            ((Producer)finalContext.Producer).ProduceCore(finalContext.Envelope);
+                    Producer producer = (Producer)finalContext.Producer;
 
-                    finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduced(finalContext.Envelope);
+                    try
+                    {
+                        ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                            finalContext.BrokerMessageIdentifier =
+                                producer.ProduceCore(finalContext.Envelope);
+                    }
+                    catch
+                    {
+                        producer.EnrichActivity(finalContext.Activity, finalContext.Envelope);
+                        throw;
+                    }
+
+                    producer.LogProduced(finalContext);
 
                     return ValueTask.CompletedTask;
                 },
@@ -160,17 +176,31 @@ public abstract class Producer : IProducer, IDisposable
             _behaviors,
             static (finalContext, _) =>
             {
+                // The callbacks are usually invoked from another thread, after the pipeline returned. The activity is still running, since
+                // the tracker stops it only once all the messages have been acknowledged.
                 static void OnSuccess(IBrokerMessageIdentifier? identifier, ProducerPipelineContext finalContext)
                 {
                     ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = finalContext.BrokerMessageIdentifier = identifier;
-                    finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduced(finalContext.Envelope);
-                    ((ProducerPipelineContext<TState>)finalContext).CallbackTracker!.OnProduced();
+                    ProduceCallbackTracker<TState> callbackTracker = ((ProducerPipelineContext<TState>)finalContext).CallbackTracker!;
+
+                    lock (callbackTracker.CallbacksLock)
+                    {
+                        ((Producer)finalContext.Producer).LogProduced(finalContext);
+                    }
+
+                    callbackTracker.OnProduced();
                 }
 
                 static void OnError(Exception exception, ProducerPipelineContext finalContext)
                 {
-                    finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduceError(finalContext.Envelope, exception);
-                    ((ProducerPipelineContext<TState>)finalContext).CallbackTracker!.OnProduceFailed(exception);
+                    ProduceCallbackTracker<TState> callbackTracker = ((ProducerPipelineContext<TState>)finalContext).CallbackTracker!;
+
+                    lock (callbackTracker.CallbacksLock)
+                    {
+                        ((Producer)finalContext.Producer).LogProduceError(finalContext, exception);
+                    }
+
+                    callbackTracker.OnProduceFailed(exception);
                 }
 
                 // The final action is invoked once per produced message, which might be more than one (e.g. one per chunk)
@@ -189,6 +219,12 @@ public abstract class Producer : IProducer, IDisposable
                 {
                     // Nothing was produced and no callback will be invoked, but a behavior might still handle the exception (e.g. retry)
                     callbackTracker.OnProducingFailed();
+
+                    lock (callbackTracker.CallbacksLock)
+                    {
+                        ((Producer)finalContext.Producer).EnrichActivity(finalContext.Activity, finalContext.Envelope);
+                    }
+
                     throw;
                 }
 
@@ -214,41 +250,12 @@ public abstract class Producer : IProducer, IDisposable
     }
 
     /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?)" />
-    public IBrokerMessageIdentifier? RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
-    {
-        try
-        {
-            OutboundEnvelope envelope = new(messageContent, headers, EndpointConfiguration, this);
-            IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
-            _logger.LogProduced(envelope);
-
-            return brokerMessageIdentifier;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogProduceError(EndpointConfiguration, ex);
-            throw;
-        }
-    }
+    public IBrokerMessageIdentifier? RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null) =>
+        RawProduce(new OutboundEnvelope(messageContent, headers, EndpointConfiguration, this));
 
     /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?)" />
-    public IBrokerMessageIdentifier? RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null)
-    {
-        try
-        {
-            OutboundEnvelope envelope = new(messageStream, headers, EndpointConfiguration, this);
-            IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
-
-            _logger.LogProduced(envelope);
-
-            return brokerMessageIdentifier;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogProduceError(EndpointConfiguration, ex);
-            throw;
-        }
-    }
+    public IBrokerMessageIdentifier? RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null) =>
+        RawProduce(new OutboundEnvelope(messageStream, headers, EndpointConfiguration, this));
 
     /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
     public void RawProduce(
@@ -304,11 +311,21 @@ public abstract class Producer : IProducer, IDisposable
                 _behaviors,
                 static async (finalContext, finalCancellationToken) =>
                 {
-                    ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                        finalContext.BrokerMessageIdentifier =
-                            await ((Producer)finalContext.Producer).ProduceCoreAsync(finalContext.Envelope, finalCancellationToken).ConfigureAwait(false);
+                    Producer producer = (Producer)finalContext.Producer;
 
-                    finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduced(finalContext.Envelope);
+                    try
+                    {
+                        ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                            finalContext.BrokerMessageIdentifier =
+                                await producer.ProduceCoreAsync(finalContext.Envelope, finalCancellationToken).ConfigureAwait(false);
+                    }
+                    catch
+                    {
+                        producer.EnrichActivity(finalContext.Activity, finalContext.Envelope);
+                        throw;
+                    }
+
+                    producer.LogProduced(finalContext);
                 },
                 envelope.Context?.ServiceProvider ?? _serviceProvider);
 
@@ -324,48 +341,18 @@ public abstract class Producer : IProducer, IDisposable
     }
 
     /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
-    public async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         byte[]? messageContent,
         IReadOnlyCollection<MessageHeader>? headers = null,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            OutboundEnvelope envelope = new(messageContent, headers, EndpointConfiguration, this);
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(envelope, cancellationToken).ConfigureAwait(false);
-
-            _logger.LogProduced(envelope);
-
-            return brokerMessageIdentifier;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogProduceError(EndpointConfiguration, ex);
-            throw;
-        }
-    }
+        CancellationToken cancellationToken = default) =>
+        RawProduceAsync(new OutboundEnvelope(messageContent, headers, EndpointConfiguration, this), cancellationToken);
 
     /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
-    public async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers = null,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            OutboundEnvelope envelope = new(messageStream, headers, EndpointConfiguration, this);
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(envelope, cancellationToken).ConfigureAwait(false);
-
-            _logger.LogProduced(envelope);
-
-            return brokerMessageIdentifier;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogProduceError(EndpointConfiguration, ex);
-            throw;
-        }
-    }
+        CancellationToken cancellationToken = default) =>
+        RawProduceAsync(new OutboundEnvelope(messageStream, headers, EndpointConfiguration, this), cancellationToken);
 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()
@@ -459,24 +446,54 @@ public abstract class Producer : IProducer, IDisposable
             cancellationToken);
     }
 
+    private IBrokerMessageIdentifier? RawProduce(OutboundEnvelope envelope)
+    {
+        Activity? activity = Diagnostics.ActivitySources.GetCurrentProduceActivity();
+
+        try
+        {
+            envelope.BrokerMessageIdentifier = ProduceCore(envelope);
+        }
+        catch (Exception ex)
+        {
+            LogProduceError(_logger, envelope, activity, ex);
+            throw;
+        }
+
+        LogProduced(_logger, envelope, activity);
+        return envelope.BrokerMessageIdentifier;
+    }
+
+    private async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(OutboundEnvelope envelope, CancellationToken cancellationToken)
+    {
+        Activity? activity = Diagnostics.ActivitySources.GetCurrentProduceActivity();
+
+        try
+        {
+            envelope.BrokerMessageIdentifier = await ProduceCoreAsync(envelope, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            LogProduceError(_logger, envelope, activity, ex);
+            throw;
+        }
+
+        LogProduced(_logger, envelope, activity);
+        return envelope.BrokerMessageIdentifier;
+    }
+
     private void RawProduce(
-        IOutboundEnvelope envelope,
+        OutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        ProduceCore(
+        RawProduce(
             envelope,
-            static (identifier, state) =>
-            {
-                state.Logger.LogProduced(state.Envelope);
-                state.OnSuccess.Invoke(identifier);
-            },
-            static (exception, state) =>
-            {
-                state.Logger.LogProduceError(state.Envelope.EndpointConfiguration, exception);
-                state.OnError.Invoke(exception);
-            },
-            (OnSuccess: onSuccess, OnError: onError, Envelope: envelope, Logger: _logger));
+            static (identifier, state) => state.OnSuccess.Invoke(identifier),
+            static (exception, state) => state.OnError.Invoke(exception),
+            (OnSuccess: onSuccess, OnError: onError));
 
+    // The callbacks are usually invoked from another thread, so the produce activity (e.g. started by the outbox worker) is captured here.
+    // It is stopped by its owner, in the callbacks, after the outcome was logged.
     private void RawProduce<TState>(
         OutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
@@ -486,13 +503,49 @@ public abstract class Producer : IProducer, IDisposable
             envelope,
             static (identifier, innerState) =>
             {
-                innerState.Logger.LogProduced(innerState.Envelope);
+                innerState.Envelope.BrokerMessageIdentifier = identifier;
+                innerState.Producer.LogProduced(innerState.Producer._logger, innerState.Envelope, innerState.Activity);
                 innerState.OnSuccess.Invoke(identifier, innerState.State);
             },
             static (exception, innerState) =>
             {
-                innerState.Logger.LogProduceError(innerState.Envelope.EndpointConfiguration, exception);
+                innerState.Producer.LogProduceError(innerState.Producer._logger, innerState.Envelope, innerState.Activity, exception);
                 innerState.OnError.Invoke(exception, innerState.State);
             },
-            (OnSuccess: onSuccess, OnError: onError, Envelope: envelope, State: state, Logger: _logger));
+            (OnSuccess: onSuccess,
+                OnError: onError,
+                Envelope: envelope,
+                State: state,
+                Activity: Diagnostics.ActivitySources.GetCurrentProduceActivity(),
+                Producer: this));
+
+    private void LogProduced(ProducerPipelineContext context) =>
+        LogProduced(context.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>(), context.Envelope, context.Activity);
+
+    private void LogProduceError(ProducerPipelineContext context, Exception exception) =>
+        LogProduceError(context.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>(), context.Envelope, context.Activity, exception);
+
+    // The activity is enriched right before logging and set as current while logging, so that its tags (e.g. the Kafka key and offset)
+    // are available to the logging scope even when the outcome is logged from the thread delivering the broker acknowledgment
+    private void LogProduced(ISilverbackLogger logger, IOutboundEnvelope envelope, Activity? activity)
+    {
+        EnrichActivity(activity, envelope);
+
+        using CurrentActivityScope scope = CurrentActivityScope.Enter(activity);
+        logger.LogProduced(envelope);
+    }
+
+    private void LogProduceError(ISilverbackLogger logger, IOutboundEnvelope envelope, Activity? activity, Exception exception)
+    {
+        EnrichActivity(activity, envelope);
+
+        using CurrentActivityScope scope = CurrentActivityScope.Enter(activity);
+        logger.LogProduceError(envelope, exception);
+    }
+
+    private void EnrichActivity(Activity? activity, IOutboundEnvelope envelope)
+    {
+        if (activity != null)
+            _activityEnricher.EnrichOutboundActivity(activity, envelope);
+    }
 }

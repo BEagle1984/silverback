@@ -76,9 +76,6 @@ internal static partial class IntegrationLoggerExtensions
     public static void LogProduceError(this ISilverbackLogger logger, IOutboundEnvelope envelope, Exception exception) =>
         ErrorProducingMessage(logger.InnerLogger, envelope.EndpointConfiguration.DisplayName, exception);
 
-    public static void LogProduceError(this ISilverbackLogger logger, ProducerEndpointConfiguration endpointConfiguration, Exception exception) =>
-        ErrorProducingMessage(logger.InnerLogger, endpointConfiguration.DisplayName, exception);
-
     public static void LogOutboundMessageFiltered(this ISilverbackLogger logger, IOutboundEnvelope envelope) =>
         OutboundMessageFiltered(logger.InnerLogger, envelope.EndpointConfiguration.DisplayName);
 

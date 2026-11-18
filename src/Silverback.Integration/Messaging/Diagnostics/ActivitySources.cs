@@ -18,6 +18,28 @@ internal static class ActivitySources
 
     private static readonly ActivitySource ConsumeActivitySource = new(ConsumeActivityName);
 
+    // Returns the ambient produce activity (started by the outbox worker when producing outside the pipeline), ignoring any other activity
+    // (e.g. the caller's own one). The operation name is checked, since the activity forcibly started when no one is listening doesn't
+    // belong to the source.
+    public static Activity? GetCurrentProduceActivity() =>
+        Activity.Current is { OperationName: ProduceActivityName } activity ? activity : null;
+
+    // Activity.Stop sets the current activity of the calling thread to the one that was current when the activity was started, which
+    // pollutes the thread when the activity is stopped from another thread (e.g. the one delivering the broker acknowledgment)
+    public static void StopPreservingCurrent(this Activity activity)
+    {
+        Activity? current = Activity.Current;
+
+        activity.Stop();
+
+        RestoreCurrent(current);
+    }
+
+    // Restores the activity that was current before another one was set. Activity.Current ignores a stopped activity and would keep the
+    // other one current, so no activity is set instead (e.g. on a broker thread whose execution context captured an activity that ended).
+    public static void RestoreCurrent(Activity? previousActivity) =>
+        Activity.Current = previousActivity is { IsStopped: true } ? null : previousActivity;
+
     public static Activity StartProduceActivity(IOutboundEnvelope envelope) =>
         StartProduceActivity(envelope.Headers, envelope.EndpointConfiguration.RawName);
 

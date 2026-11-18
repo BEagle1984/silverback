@@ -1,9 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Confluent.Kafka;
 using NSubstitute;
 using Shouldly;
@@ -31,7 +29,7 @@ public class KafkaActivityEnricherTests
 
         Activity activity = new("Test Activity");
 
-        enricher.EnrichInboundActivity(activity, context);
+        enricher.EnrichInboundActivity(activity, context.Envelope);
 
         activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey &&
                                                     keyValuePair.Value == "MessageKey");
@@ -50,18 +48,37 @@ public class KafkaActivityEnricherTests
             new SingleKeyMemberMessage(),
             [new MessageHeader(KafkaMessageHeaders.MessageKey, "MyKey")],
             new KafkaProducerEndpointConfiguration(),
-            Substitute.For<IProducer>());
-
-        ProducerPipelineContext context = new(
-            envelope,
-            Substitute.For<IProducer>(),
-            [],
-            (_, _) => ValueTask.CompletedTask,
-            Substitute.For<IServiceProvider>());
+            Substitute.For<IProducer>())
+        {
+            BrokerMessageIdentifier = new KafkaOffset(new TopicPartitionOffset("topic", 3, 42))
+        };
 
         Activity activity = new("Test Activity");
-        enricher.EnrichOutboundActivity(activity, context);
+        enricher.EnrichOutboundActivity(activity, envelope);
 
         activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey && keyValuePair.Value == "MyKey");
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaPartition &&
+                                                    keyValuePair.Value == "topic[3]");
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == ActivityTagNames.MessageId &&
+                                                    keyValuePair.Value == "topic[3]@42");
+    }
+
+    [Fact]
+    public void EnrichOutboundActivity_ShouldNotAddMessageIdAndPartition_WhenNotProduced()
+    {
+        KafkaActivityEnricher enricher = new();
+
+        OutboundEnvelope<SingleKeyMemberMessage> envelope = new(
+            new SingleKeyMemberMessage(),
+            [new MessageHeader(KafkaMessageHeaders.MessageKey, "MyKey")],
+            new KafkaProducerEndpointConfiguration(),
+            Substitute.For<IProducer>());
+
+        Activity activity = new("Test Activity");
+        enricher.EnrichOutboundActivity(activity, envelope);
+
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey && keyValuePair.Value == "MyKey");
+        activity.Tags.ShouldNotContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaPartition);
+        activity.Tags.ShouldNotContain(keyValuePair => keyValuePair.Key == ActivityTagNames.MessageId);
     }
 }

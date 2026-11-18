@@ -114,3 +114,17 @@ services.AddLogging(logging => logging
 
 > [!Tip]
 > Serilog (3.1 or later) captures the `TraceId` and `SpanId` automatically, so they can be added to the output template (e.g. `{TraceId}`), while the OpenTelemetry logging provider correlates the logs with the traces out of the box.
+
+#### Including the Activity Tags
+
+Add the `Tags` activity tracking option to also include the activity tags (see the table above), such as the Kafka key and offset of the produced message, in the logging scope:
+
+```csharp
+services.AddLogging(logging => logging
+    .Configure(options => options.ActivityTrackingOptions =
+        ActivityTrackingOptions.TraceId |
+        ActivityTrackingOptions.SpanId |
+        ActivityTrackingOptions.ParentId |
+        ActivityTrackingOptions.Tags)
+    .AddSimpleConsole(options => options.IncludeScopes = true));
+```

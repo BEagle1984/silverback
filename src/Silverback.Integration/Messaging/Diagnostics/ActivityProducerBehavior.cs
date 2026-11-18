@@ -12,21 +12,11 @@ namespace Silverback.Messaging.Diagnostics;
 /// <summary>
 ///     Starts an <see cref="Activity" /> and adds the tracing information to the message headers.
 /// </summary>
+/// <remarks>
+///     The activity is enriched by the producer, when the message has been produced and right before logging it.
+/// </remarks>
 public class ActivityProducerBehavior : IProducerBehavior
 {
-    private readonly IActivityEnricherFactory _activityEnricherFactory;
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ActivityProducerBehavior" /> class.
-    /// </summary>
-    /// <param name="activityEnricherFactory">
-    ///     The Factory to create the activity enrichers.
-    /// </param>
-    public ActivityProducerBehavior(IActivityEnricherFactory activityEnricherFactory)
-    {
-        _activityEnricherFactory = activityEnricherFactory;
-    }
-
     /// <inheritdoc cref="ISorted.SortIndex" />
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Activity;
 
@@ -36,17 +26,29 @@ public class ActivityProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        using Activity activity = ActivitySources.StartProduceActivity(context.Envelope);
+        Activity activity = ActivitySources.StartProduceActivity(context.Envelope);
+        context.Activity = activity;
+
+        // When producing with callbacks, the activity is stopped when the messages are acknowledged. It stays current only until this
+        // method returns anyway, since the changes an async method makes to the execution context don't flow back to its caller.
+        bool isStopDeferred = context.TryDeferActivityStop(activity);
 
         try
         {
             await next(context, cancellationToken).ConfigureAwait(false);
         }
+        catch
+        {
+            // The callbacks are never invoked when the pipeline throws, so the activity would never be stopped
+            if (isStopDeferred)
+                activity.Stop();
+
+            throw;
+        }
         finally
         {
-            // Enrich after producing, when the message key and the broker message identifier are known
-            _activityEnricherFactory.GetEnricher(context.Envelope.EndpointConfiguration, context.ServiceProvider)
-                .EnrichOutboundActivity(activity, context);
+            if (!isStopDeferred)
+                activity.Stop();
         }
     }
 }

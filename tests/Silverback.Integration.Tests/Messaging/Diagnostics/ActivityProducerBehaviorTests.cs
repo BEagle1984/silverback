@@ -31,7 +31,7 @@ public class ActivityProducerBehaviorTests
         activity.Start();
         OutboundEnvelope envelope = new(null, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
-        await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
+        await new ActivityProducerBehavior().HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -52,7 +52,7 @@ public class ActivityProducerBehaviorTests
     {
         OutboundEnvelope envelope = new(null, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
-        await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
+        await new ActivityProducerBehavior().HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -63,5 +63,88 @@ public class ActivityProducerBehaviorTests
             CancellationToken.None);
 
         envelope.Headers.ShouldContain(header => header.Name == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(header.Value));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldStopActivity_WhenPipelineReturns()
+    {
+        ProducerPipelineContext context = new(
+            CreateEnvelope(),
+            Substitute.For<IProducer>(),
+            [],
+            (_, _) => ValueTask.CompletedTask,
+            Substitute.For<IServiceProvider>());
+        Activity? activity = null;
+
+        await new ActivityProducerBehavior().HandleAsync(
+            context,
+            (nextContext, _) =>
+            {
+                activity = nextContext.Activity;
+                return default;
+            },
+            CancellationToken.None);
+
+        activity.ShouldNotBeNull().IsStopped.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldStopActivityWhenMessagesAreAcknowledged_WhenProducingWithCallbacks()
+    {
+        ProducerPipelineContext<int> context = CreateCallbackContext(out ProduceCallbackTracker<int> callbackTracker);
+        Activity? activity = null;
+
+        await new ActivityProducerBehavior().HandleAsync(
+            context,
+            (nextContext, _) =>
+            {
+                activity = nextContext.Activity;
+                callbackTracker.OnProducing();
+                return default;
+            },
+            CancellationToken.None);
+        callbackTracker.OnPipelineCompleted();
+
+        activity.ShouldNotBeNull().IsStopped.ShouldBeFalse();
+        callbackTracker.Activity.ShouldBe(activity);
+
+        callbackTracker.OnProduced();
+
+        activity.IsStopped.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldStopActivity_WhenProducingWithCallbacksAndPipelineThrows()
+    {
+        ProducerPipelineContext<int> context = CreateCallbackContext(out _);
+        Activity? activity = null;
+
+        Func<Task> act = async () => await new ActivityProducerBehavior().HandleAsync(
+            context,
+            (nextContext, _) =>
+            {
+                activity = nextContext.Activity;
+                throw new InvalidOperationException("test");
+            },
+            CancellationToken.None);
+
+        await act.ShouldThrowAsync<InvalidOperationException>();
+        activity.ShouldNotBeNull().IsStopped.ShouldBeTrue();
+    }
+
+    private static OutboundEnvelope CreateEnvelope() =>
+        new(null, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
+
+    private static ProducerPipelineContext<int> CreateCallbackContext(out ProduceCallbackTracker<int> callbackTracker)
+    {
+        ProducerPipelineContext<int> context = new(
+            CreateEnvelope(),
+            Substitute.For<IProducer>(),
+            [],
+            (_, _) => ValueTask.CompletedTask,
+            Substitute.For<IServiceProvider>());
+        callbackTracker = new ProduceCallbackTracker<int>(context, (_, _) => { }, (_, _) => { }, 0);
+        context.CallbackTracker = callbackTracker;
+        return context;
     }
 }

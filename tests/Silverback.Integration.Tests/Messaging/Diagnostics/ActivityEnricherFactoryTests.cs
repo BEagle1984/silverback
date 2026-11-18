@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using NSubstitute;
 using Shouldly;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Diagnostics;
+using Silverback.Messaging.Messages;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics;
@@ -162,22 +162,22 @@ public class ActivityEnricherFactoryTests
 
     private class ActivityEnricher1 : IBrokerActivityEnricher
     {
-        public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext) => throw new NotSupportedException();
+        public void EnrichOutboundActivity(Activity activity, IOutboundEnvelope envelope) => throw new NotSupportedException();
 
-        public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext) => throw new NotSupportedException();
+        public void EnrichInboundActivity(Activity activity, IRawInboundEnvelope envelope) => throw new NotSupportedException();
     }
 
     private class ActivityEnricher2 : IBrokerActivityEnricher
     {
-        public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext) => throw new NotSupportedException();
+        public void EnrichOutboundActivity(Activity activity, IOutboundEnvelope envelope) => throw new NotSupportedException();
 
-        public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext) => throw new NotSupportedException();
+        public void EnrichInboundActivity(Activity activity, IRawInboundEnvelope envelope) => throw new NotSupportedException();
     }
 
     private class OverrideActivityEnricher : IBrokerActivityEnricher
     {
-        public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext) => throw new NotSupportedException();
+        public void EnrichOutboundActivity(Activity activity, IOutboundEnvelope envelope) => throw new NotSupportedException();
 
-        public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext) => throw new NotSupportedException();
+        public void EnrichInboundActivity(Activity activity, IRawInboundEnvelope envelope) => throw new NotSupportedException();
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Behaviors;
@@ -47,6 +48,16 @@ public class ProducerPipelineContext<TState> : ProducerPipelineContext
         {
             CurrentStepIndex = CurrentStepIndex,
             BrokerMessageIdentifier = BrokerMessageIdentifier,
+            Activity = Activity,
             CallbackTracker = CallbackTracker
         };
+
+    internal override bool TryDeferActivityStop(Activity activity)
+    {
+        if (CallbackTracker == null)
+            return false;
+
+        CallbackTracker.Activity = activity;
+        return true;
+    }
 }

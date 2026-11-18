@@ -4,14 +4,17 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -70,6 +73,31 @@ public class ProducerTests
 
         callbacks.SuccessIdentifiers.ShouldBeEmpty();
         callbacks.Errors.ShouldHaveSingleItem().ShouldBeSameAs(exception);
+    }
+
+    [Fact]
+    public async Task Produce_ShouldLogDeliveryFailureWithinProduceActivity()
+    {
+        CurrentActivityLogger innerLogger = new(IntegrationLogEvents.ErrorProducingMessage);
+        using TestProducer producer = new(innerLogger, new ActivityProducerBehavior());
+        Activity? produceActivity = null;
+        producer.OnProduceCore = _ => produceActivity = Activity.Current;
+
+        new CallbacksRecorder().Produce(producer);
+        TestProducer.ProducedMessage producedMessage = producer.ProducedMessages.ShouldHaveSingleItem();
+
+        // The delivery report comes from a thread to which the execution context of the caller doesn't flow
+        Task deliveryTask;
+        using (ExecutionContext.SuppressFlow())
+        {
+            deliveryTask = Task.Run(() => producedMessage.Fail(new InvalidOperationException("test")));
+        }
+
+        await deliveryTask;
+
+        produceActivity.ShouldNotBeNull();
+        innerLogger.CurrentActivity.ShouldBeSameAs(produceActivity);
+        produceActivity.IsStopped.ShouldBeTrue();
     }
 
     [Fact]
@@ -340,12 +368,17 @@ public class ProducerTests
         private int _producedAsyncCount;
 
         public TestProducer(params IProducerBehavior[] behaviors)
+            : this(Substitute.For<ILogger>(), behaviors)
+        {
+        }
+
+        public TestProducer(ILogger innerLogger, params IProducerBehavior[] behaviors)
             : base(
                 "test",
                 Substitute.For<IBrokerClient>(),
                 TestProducerEndpointConfiguration.GetDefault(),
                 CreateBehaviorsProvider(behaviors),
-                CreateServiceProvider(),
+                CreateServiceProvider(innerLogger),
                 Substitute.For<ISilverbackLogger<IProducer>>())
         {
         }
@@ -410,10 +443,13 @@ public class ProducerTests
             return behaviorsProvider;
         }
 
-        private static IServiceProvider CreateServiceProvider()
+        private static IServiceProvider CreateServiceProvider(ILogger innerLogger)
         {
+            ISilverbackLogger<IProducer> logger = Substitute.For<ISilverbackLogger<IProducer>>();
+            logger.InnerLogger.Returns(innerLogger);
+
             IServiceProvider serviceProvider = Substitute.For<IServiceProvider>();
-            serviceProvider.GetService(typeof(ISilverbackLogger<IProducer>)).Returns(Substitute.For<ISilverbackLogger<IProducer>>());
+            serviceProvider.GetService(typeof(ISilverbackLogger<IProducer>)).Returns(logger);
             return serviceProvider;
         }
 
@@ -422,6 +458,31 @@ public class ProducerTests
             IOutboundEnvelope Envelope,
             Action<IBrokerMessageIdentifier?> Succeed,
             Action<Exception> Fail);
+    }
+
+    // Records the current activity when the specified event is logged
+    private sealed class CurrentActivityLogger : ILogger
+    {
+        private readonly EventId _eventId;
+
+        public CurrentActivityLogger(LogEvent logEvent)
+        {
+            _eventId = logEvent.EventId;
+        }
+
+        public Activity? CurrentActivity { get; private set; }
+
+        public IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull =>
+            null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            if (eventId == _eventId)
+                CurrentActivity = Activity.Current;
+        }
     }
 
     private sealed class SkipBehavior : IProducerBehavior

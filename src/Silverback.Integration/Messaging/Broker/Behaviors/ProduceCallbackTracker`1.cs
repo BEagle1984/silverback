@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Threading;
+using Silverback.Messaging.Diagnostics;
 
 namespace Silverback.Messaging.Broker.Behaviors;
 
@@ -44,6 +46,15 @@ internal sealed class ProduceCallbackTracker<TState>
         _state = state;
     }
 
+    // The produce activity, which is stopped when the last pending count is released (instead of when the pipeline returns), so that it
+    // can still be set as current while logging the broker acknowledgments and its duration includes the delivery. It is set by the
+    // activity behavior before the messages are handed to the broker and only read in Release, after an interlocked operation.
+    public Activity? Activity { get; set; }
+
+    // Serializes the activity enrichment and the logging of the acknowledgments of the messages produced by the same call (e.g. the
+    // chunks), which might be delivered concurrently
+    public System.Threading.Lock CallbacksLock { get; } = new();
+
     public void OnProducing() => Interlocked.Increment(ref _pendingCount);
 
     // Undoes OnProducing when the message could not be produced and no callback will be invoked for it. It cannot release the last
@@ -67,6 +78,8 @@ internal sealed class ProduceCallbackTracker<TState>
         // release
         if (Interlocked.Decrement(ref _pendingCount) != 0)
             return;
+
+        Activity?.StopPreservingCurrent();
 
         if (_firstException != null)
         {

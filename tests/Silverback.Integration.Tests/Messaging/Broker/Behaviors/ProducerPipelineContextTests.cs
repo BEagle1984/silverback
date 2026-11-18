@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
@@ -78,6 +79,30 @@ public class ProducerPipelineContextTests
         clonedContext.CurrentStepIndex.ShouldBe(context.CurrentStepIndex);
         clonedContext.CallbackTracker.ShouldNotBeNull();
         clonedContext.CallbackTracker.ShouldBeSameAs(context.CallbackTracker);
+    }
+
+    [Fact]
+    public void Clone_ShouldCopyActivity()
+    {
+        using Activity activity = new("test");
+        ProducerPipelineContext context = CreateContext();
+        context.Activity = activity;
+
+        ProducerPipelineContext clonedContext = context.Clone(Substitute.For<IOutboundEnvelope>());
+
+        clonedContext.Activity.ShouldBeSameAs(activity);
+    }
+
+    [Fact]
+    public void Clone_ShouldCopyActivityWithCallbacks()
+    {
+        using Activity activity = new("test");
+        ProducerPipelineContext<int> context = CreateContextWithCallbacks();
+        context.Activity = activity;
+
+        ProducerPipelineContext clonedContext = context.Clone(Substitute.For<IOutboundEnvelope>());
+
+        clonedContext.Activity.ShouldBeSameAs(activity);
     }
 
     private static ProducerPipelineContext CreateContext() => new(

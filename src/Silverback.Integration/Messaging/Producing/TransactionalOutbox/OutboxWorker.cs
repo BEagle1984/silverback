@@ -130,6 +130,8 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
     private void ProcessMessage(OutboxMessage outboxMessage)
     {
         bool countAdded = false;
+        Activity? previousActivity = Activity.Current;
+        Activity? activity = null;
 
         try
         {
@@ -141,19 +143,23 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
             _pendingProduceCountdown.AddCount();
             countAdded = true;
 
-            // The pipeline is bypassed, so the activity must be started here to continue the trace of the stored message
+            // The pipeline is bypassed, so the activity must be started here to continue the trace of the stored message. It is stopped
+            // in the callbacks, after the producer logged the outcome, so that it can still be set as current while logging.
             MessageHeaderCollection headers = [.. outboxMessage.Headers ?? []];
-            using Activity activity = Diagnostics.ActivitySources.StartProduceActivity(headers, producer.EndpointConfiguration.RawName);
+            activity = Diagnostics.ActivitySources.StartProduceActivity(headers, producer.EndpointConfiguration.RawName);
 
             producer.RawProduce(
                 outboxMessage.Content,
                 headers,
                 OnProduceSuccess,
                 OnProduceError,
-                outboxMessage);
+                (OutboxMessage: outboxMessage, Activity: activity));
         }
         catch (Exception ex)
         {
+            // No callback is invoked if the produce throws
+            activity?.Stop();
+
             LastPassFailed = true;
 
             if (countAdded)
@@ -165,20 +171,30 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
             if (_settings.EnforceMessageOrder)
                 throw;
         }
+        finally
+        {
+            // The activity is still running, but it must not be the parent of the next message's activity (this method is synchronous,
+            // so the change to the execution context would otherwise flow back to the caller)
+            Diagnostics.ActivitySources.RestoreCurrent(previousActivity);
+        }
     }
 
-    private void OnProduceSuccess(IBrokerMessageIdentifier? identifier, OutboxMessage outboxMessage)
+    private void OnProduceSuccess(IBrokerMessageIdentifier? identifier, (OutboxMessage OutboxMessage, Activity Activity) state)
     {
-        _producedMessages.Add(outboxMessage);
+        Diagnostics.ActivitySources.StopPreservingCurrent(state.Activity);
+
+        _producedMessages.Add(state.OutboxMessage);
         _pendingProduceCountdown.Signal();
     }
 
-    private void OnProduceError(Exception exception, OutboxMessage outboxMessage)
+    private void OnProduceError(Exception exception, (OutboxMessage OutboxMessage, Activity Activity) state)
     {
+        Diagnostics.ActivitySources.StopPreservingCurrent(state.Activity);
+
         LastPassFailed = true;
         _pendingProduceCountdown.Signal();
 
-        _logger.LogErrorProducingOutboxStoredMessage(outboxMessage, exception);
+        _logger.LogErrorProducingOutboxStoredMessage(state.OutboxMessage, exception);
     }
 
     private IProducer GetProducer(OutboxMessage outboxMessage) => _producers.GetProducerForEndpoint(outboxMessage.EndpointName);

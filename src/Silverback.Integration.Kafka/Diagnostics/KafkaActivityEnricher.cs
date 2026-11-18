@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
@@ -21,41 +20,34 @@ public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerEndpoi
     internal const string KafkaPartition = "messaging.kafka.partition";
 
     /// <inheritdoc cref="IBrokerActivityEnricher.EnrichOutboundActivity" />
-    public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext)
+    public void EnrichOutboundActivity(Activity activity, IOutboundEnvelope envelope)
     {
         Check.NotNull(activity, nameof(activity));
-        Check.NotNull(producerContext, nameof(producerContext));
+        Check.NotNull(envelope, nameof(envelope));
 
-        if (producerContext.Envelope.BrokerMessageIdentifier != null)
-            SetMessageId(activity, (KafkaOffset)producerContext.Envelope.BrokerMessageIdentifier);
-
-        SetMessageKey(activity, producerContext.Envelope.Headers);
+        Enrich(activity, (KafkaOffset?)envelope.BrokerMessageIdentifier, envelope.Headers);
     }
 
     /// <inheritdoc cref="IBrokerActivityEnricher.EnrichInboundActivity" />
-    public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext)
+    public void EnrichInboundActivity(Activity activity, IRawInboundEnvelope envelope)
     {
         Check.NotNull(activity, nameof(activity));
-        Check.NotNull(consumerContext, nameof(consumerContext));
+        Check.NotNull(envelope, nameof(envelope));
 
-        SetMessageId(activity, (KafkaOffset)consumerContext.Envelope.BrokerMessageIdentifier);
-        SetMessageKey(activity, consumerContext.Envelope.Headers);
+        Enrich(activity, (KafkaOffset)envelope.BrokerMessageIdentifier, envelope.Headers);
     }
 
-    private static void SetMessageId(Activity activity, KafkaOffset? offset)
+    private static void Enrich(Activity activity, KafkaOffset? offset, MessageHeaderCollection headers)
     {
-        if (offset == null)
-            return;
+        if (offset != null)
+        {
+            activity.SetTag(ActivityTagNames.MessageId, offset.ToVerboseLogString());
+            activity.SetTag(KafkaPartition, $"{offset.TopicPartition.Topic}[{offset.TopicPartition.Partition.Value}]");
+        }
 
-        activity.SetTag(ActivityTagNames.MessageId, offset.ToVerboseLogString());
-        activity.SetTag(KafkaPartition, $"{offset.TopicPartition.Topic}[{offset.TopicPartition.Partition.Value}]");
-    }
+        string? kafkaKey = headers.GetValue(KafkaMessageHeaders.MessageKey);
 
-    private static void SetMessageKey(Activity activity, MessageHeaderCollection messageHeaderCollection)
-    {
-        string? kafkaKeyHeaderValue = messageHeaderCollection.GetValue(KafkaMessageHeaders.MessageKey);
-
-        if (kafkaKeyHeaderValue != null)
-            activity.SetTag(KafkaMessageKey, kafkaKeyHeaderValue);
+        if (kafkaKey != null)
+            activity.SetTag(KafkaMessageKey, kafkaKey);
     }
 }

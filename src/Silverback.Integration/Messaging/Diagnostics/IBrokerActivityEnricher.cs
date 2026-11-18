@@ -2,35 +2,34 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
-using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Diagnostics;
 
 /// <summary>
-///     Provides enrichment for activities produced by the <see cref="ActivityProducerBehavior" /> and
-///     <see cref="ActivityConsumerBehavior" />.
+///     Provides enrichment for the produce and consume activities.
 /// </summary>
 public interface IBrokerActivityEnricher
 {
     /// <summary>
-    ///     Enriches Activities created by the <see cref="ActivityProducerBehavior" />.
+    ///     Enriches the produce activity right before the produced message is logged.
     /// </summary>
     /// <param name="activity">
     ///     The <see cref="Activity" /> to be enriched.
     /// </param>
-    /// <param name="producerContext">
-    ///     The <see cref="ProducerPipelineContext" />.
+    /// <param name="envelope">
+    ///     The envelope of the produced message.
     /// </param>
-    void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext);
+    void EnrichOutboundActivity(Activity activity, IOutboundEnvelope envelope);
 
     /// <summary>
-    ///     Enriches Activities created by the <see cref="ActivityConsumerBehavior" />.
+    ///     Enriches the consume activity when the message has been received, before it is processed.
     /// </summary>
     /// <param name="activity">
     ///     The <see cref="Activity" /> to be enriched.
     /// </param>
-    /// <param name="consumerContext">
-    ///     The <see cref="ConsumerPipelineContext" />.
+    /// <param name="envelope">
+    ///     The envelope of the consumed message, which hasn't been deserialized yet.
     /// </param>
-    void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext);
+    void EnrichInboundActivity(Activity activity, IRawInboundEnvelope envelope);
 }

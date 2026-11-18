@@ -152,20 +152,6 @@ public class IntegrationLoggerExtensionsTests
     }
 
     [Fact]
-    public void LogProduceError_ShouldLogEndpointConfiguration()
-    {
-        TestProducerEndpointConfiguration endpointConfiguration = new("test1");
-
-        _silverbackLogger.LogProduceError(endpointConfiguration, new InvalidDataException());
-
-        _loggerSubstitute.Received(
-            LogLevel.Warning,
-            typeof(InvalidDataException),
-            "Error occurred producing message | EndpointName: test1",
-            1006);
-    }
-
-    [Fact]
     public void LogOutboundMessageFiltered_ShouldLog()
     {
         OutboundEnvelope envelope = new(

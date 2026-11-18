@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
-using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Diagnostics;
 
@@ -14,12 +14,12 @@ internal sealed class NullBrokerActivityEnricher : IBrokerActivityEnricher
 
     public static NullBrokerActivityEnricher Instance { get; } = new();
 
-    public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext)
+    public void EnrichOutboundActivity(Activity activity, IOutboundEnvelope envelope)
     {
         // Do nothing
     }
 
-    public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext)
+    public void EnrichInboundActivity(Activity activity, IRawInboundEnvelope envelope)
     {
         // Do nothing
     }
