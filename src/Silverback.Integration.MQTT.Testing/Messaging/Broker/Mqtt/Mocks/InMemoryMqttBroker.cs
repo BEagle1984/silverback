@@ -21,14 +21,18 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 {
     private readonly Dictionary<string, ClientSession> _sessions = [];
 
+    private readonly System.Threading.Lock _sessionsLock = new();
+
     private readonly Dictionary<string, List<MqttApplicationMessage>> _messagesByTopic = [];
+
+    private readonly System.Threading.Lock _messagesByTopicLock = new();
 
     // The index of the next session receiving the messages of each shared subscription, per broker (synchronized with the sessions)
     private readonly Dictionary<(string? Broker, string Group, string Topic), int> _sharedSubscriptionIndexes = [];
 
     public IClientSession GetClientSession(string clientId)
     {
-        lock (_sessions)
+        lock (_sessionsLock)
         {
             return _sessions.Single(sessionPair => sessionPair.Key.StartsWith($"{clientId}|", StringComparison.Ordinal)).Value;
         }
@@ -36,7 +40,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic, string? server = null)
     {
-        lock (_messagesByTopic)
+        lock (_messagesByTopicLock)
         {
             List<MqttApplicationMessage>? messages = _messagesByTopic.FirstOrDefault(messagesByTopicPair => messagesByTopicPair
                 .Key.StartsWith($"{topic}|{server}", StringComparison.Ordinal)).Value;
@@ -54,7 +58,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
         MockedMqttClient? takenOverClient = null;
 
-        lock (_sessions)
+        lock (_sessionsLock)
         {
             // Like the broker, close the connection still open: the session continues with the new connection, regardless of whether
             // it would outlive the closed one. If it belongs to another client instance, that client is disconnected (session takeover).
@@ -108,7 +112,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         if (client.Options == null)
             throw new InvalidOperationException("Client options not set.");
 
-        lock (_sessions)
+        lock (_sessionsLock)
         {
             // Ignore the client that lost the session to another client instance with the same client id
             if (!TryGetClientSession(client, out ClientSession? session) || session.Client != client)
@@ -131,7 +135,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     public void Subscribe(MockedMqttClient client, IReadOnlyCollection<MqttTopicFilter> topicFilters)
     {
-        lock (_sessions)
+        lock (_sessionsLock)
         {
             if (!TryGetClientSession(client, out ClientSession? session) || session.Client != client)
                 return;
@@ -142,7 +146,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     public void Unsubscribe(MockedMqttClient client, IReadOnlyCollection<string> topics)
     {
-        lock (_sessions)
+        lock (_sessionsLock)
         {
             if (!TryGetClientSession(client, out ClientSession? session) || session.Client != client)
                 return;
@@ -155,7 +159,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     {
         List<Receiver> receivers;
 
-        lock (_sessions)
+        lock (_sessionsLock)
         {
             if (!TryGetClientSession(client, out ClientSession? publisherSession) || !publisherSession.IsConnected || publisherSession.Client != client)
                 throw new InvalidOperationException("The client is not connected.");
@@ -184,7 +188,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         {
             ClientSession[] sessions;
 
-            lock (_sessions)
+            lock (_sessionsLock)
             {
                 sessions = [.. _sessions.Values];
             }
@@ -204,7 +208,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     public void Dispose()
     {
-        lock (_sessions)
+        lock (_sessionsLock)
         {
             _sessions.Values.ForEach(session => session.Dispose());
         }
@@ -272,7 +276,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     private void StoreMessage(MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
-        lock (_messagesByTopic)
+        lock (_messagesByTopicLock)
         {
             string topicKey = $"{message.Topic}|{clientOptions.ChannelOptions}";
 

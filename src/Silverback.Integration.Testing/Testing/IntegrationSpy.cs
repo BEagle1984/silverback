@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Testing;
@@ -10,65 +10,25 @@ namespace Silverback.Testing;
 /// <inheritdoc cref="IIntegrationSpy" />
 public class IntegrationSpy : IIntegrationSpy
 {
-    private readonly List<IOutboundEnvelope> _outboundEnvelopes = [];
+    private readonly ConcurrentQueue<IOutboundEnvelope> _outboundEnvelopes = new();
 
-    private readonly List<IOutboundEnvelope> _rawOutboundEnvelopes = [];
+    private readonly ConcurrentQueue<IOutboundEnvelope> _rawOutboundEnvelopes = new();
 
-    private readonly List<IRawInboundEnvelope> _rawInboundEnvelopes = [];
+    private readonly ConcurrentQueue<IRawInboundEnvelope> _rawInboundEnvelopes = new();
 
-    private readonly List<IInboundEnvelope> _inboundEnvelopes = [];
+    private readonly ConcurrentQueue<IInboundEnvelope> _inboundEnvelopes = new();
 
     /// <inheritdoc cref="IIntegrationSpy.OutboundEnvelopes" />
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes
-    {
-        get
-        {
-            lock (_outboundEnvelopes)
-            {
-                return [.. _outboundEnvelopes]; // Intentionally cloning to avoid concurrency issues
-            }
-        }
-    }
+    public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes => [.. _outboundEnvelopes];
 
     /// <inheritdoc cref="IIntegrationSpy.RawOutboundEnvelopes" />
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<IOutboundEnvelope> RawOutboundEnvelopes
-    {
-        get
-        {
-            lock (_rawOutboundEnvelopes)
-            {
-                return [.. _rawOutboundEnvelopes]; // Intentionally cloning to avoid concurrency issues
-            }
-        }
-    }
+    public IReadOnlyList<IOutboundEnvelope> RawOutboundEnvelopes => [.. _rawOutboundEnvelopes];
 
     /// <inheritdoc cref="IIntegrationSpy.RawInboundEnvelopes" />
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<IRawInboundEnvelope> RawInboundEnvelopes
-    {
-        get
-        {
-            lock (_rawInboundEnvelopes)
-            {
-                return [.. _rawInboundEnvelopes]; // Intentionally cloning to avoid concurrency issues
-            }
-        }
-    }
+    public IReadOnlyList<IRawInboundEnvelope> RawInboundEnvelopes => [.. _rawInboundEnvelopes];
 
     /// <inheritdoc cref="IIntegrationSpy.InboundEnvelopes" />
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<IInboundEnvelope> InboundEnvelopes
-    {
-        get
-        {
-            lock (_inboundEnvelopes)
-            {
-                return [.. _inboundEnvelopes]; // Intentionally cloning to avoid concurrency issues
-            }
-        }
-    }
+    public IReadOnlyList<IInboundEnvelope> InboundEnvelopes => [.. _inboundEnvelopes];
 
     /// <summary>
     ///     Adds an item to the <see cref="OutboundEnvelopes" />.
@@ -76,13 +36,7 @@ public class IntegrationSpy : IIntegrationSpy
     /// <param name="envelope">
     ///     The <see cref="IOutboundEnvelope" /> to add.
     /// </param>
-    public void AddOutboundEnvelope(IOutboundEnvelope envelope)
-    {
-        lock (_outboundEnvelopes)
-        {
-            _outboundEnvelopes.Add(envelope);
-        }
-    }
+    public void AddOutboundEnvelope(IOutboundEnvelope envelope) => _outboundEnvelopes.Enqueue(envelope);
 
     /// <summary>
     ///     Adds an item to the <see cref="RawOutboundEnvelopes" />.
@@ -90,13 +44,7 @@ public class IntegrationSpy : IIntegrationSpy
     /// <param name="envelope">
     ///     The <see cref="IOutboundEnvelope" /> to add.
     /// </param>
-    public void AddRawOutboundEnvelope(IOutboundEnvelope envelope)
-    {
-        lock (_rawOutboundEnvelopes)
-        {
-            _rawOutboundEnvelopes.Add(envelope);
-        }
-    }
+    public void AddRawOutboundEnvelope(IOutboundEnvelope envelope) => _rawOutboundEnvelopes.Enqueue(envelope);
 
     /// <summary>
     ///     Adds an item to the <see cref="RawInboundEnvelope" />.
@@ -104,13 +52,7 @@ public class IntegrationSpy : IIntegrationSpy
     /// <param name="envelope">
     ///     The <see cref="IRawInboundEnvelope" /> to add.
     /// </param>
-    public void AddRawInboundEnvelope(IRawInboundEnvelope envelope)
-    {
-        lock (_rawInboundEnvelopes)
-        {
-            _rawInboundEnvelopes.Add(envelope);
-        }
-    }
+    public void AddRawInboundEnvelope(IRawInboundEnvelope envelope) => _rawInboundEnvelopes.Enqueue(envelope);
 
     /// <summary>
     ///     Adds an item to the <see cref="InboundEnvelopes" />.
@@ -118,11 +60,5 @@ public class IntegrationSpy : IIntegrationSpy
     /// <param name="envelope">
     ///     The <see cref="IInboundEnvelope" /> to add.
     /// </param>
-    public void AddInboundEnvelope(IInboundEnvelope envelope)
-    {
-        lock (_inboundEnvelopes)
-        {
-            _inboundEnvelopes.Add(envelope);
-        }
-    }
+    public void AddInboundEnvelope(IInboundEnvelope envelope) => _inboundEnvelopes.Enqueue(envelope);
 }

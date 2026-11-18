@@ -16,10 +16,12 @@ public class InMemoryKafkaOffsetStore : IKafkaOffsetStore
 {
     private readonly Dictionary<string, Dictionary<TopicPartition, KafkaOffset>> _offsetsByGroupId = [];
 
+    private readonly System.Threading.Lock _syncLock = new();
+
     /// <inheritdoc cref="IKafkaOffsetStore.GetStoredOffsets" />
     public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId)
     {
-        lock (_offsetsByGroupId)
+        lock (_syncLock)
         {
             if (_offsetsByGroupId.TryGetValue(groupId, out Dictionary<TopicPartition, KafkaOffset>? offsetsByTopicPartition))
                 return [.. offsetsByTopicPartition.Values];
@@ -33,7 +35,7 @@ public class InMemoryKafkaOffsetStore : IKafkaOffsetStore
     {
         Check.NotNull(offsets);
 
-        lock (_offsetsByGroupId)
+        lock (_syncLock)
         {
             Dictionary<TopicPartition, KafkaOffset> offsetsByTopicPartition =
                 _offsetsByGroupId.GetOrAdd(groupId, _ => []);

@@ -18,7 +18,11 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 {
     private readonly Dictionary<string, List<RegisteredSchema>> _schemas = [];
 
+    private readonly System.Threading.Lock _schemasLock = new();
+
     private readonly List<Association> _associations = [];
+
+    private readonly System.Threading.Lock _associationsLock = new();
 
     public IEnumerable<KeyValuePair<string, string>> Config { get; } = [];
 
@@ -71,7 +75,7 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
         int offset,
         int limit)
     {
-        lock (_associations)
+        lock (_associationsLock)
         {
             IEnumerable<Association> associations = _associations.Where(association =>
                 association.ResourceName == resourceName &&
@@ -93,7 +97,7 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 
     public Task<AssociationResponse> CreateAssociationAsync(AssociationCreateOrUpdateRequest request)
     {
-        lock (_associations)
+        lock (_associationsLock)
         {
             foreach (AssociationCreateOrUpdateInfo requestAssociationInfo in request.Associations)
             {
@@ -144,7 +148,7 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 
     public Task DeleteAssociationsAsync(string resourceId, string resourceType, List<string> associationTypes, bool cascadeLifecycle)
     {
-        lock (_associations)
+        lock (_associationsLock)
         {
             _associations.RemoveAll(association =>
                 association.ResourceId == resourceId &&
@@ -163,7 +167,7 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
     {
         RegisteredSchema registeredSchema;
 
-        lock (_schemas)
+        lock (_schemasLock)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
             registeredSchema = _schemas[subject].Single(schema => schema.Id == id);
@@ -222,7 +226,7 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
         if (normalize)
             schemaString = SchemaNormalizer.Normalize(schemaString, schemaType);
 
-        lock (_schemas)
+        lock (_schemasLock)
         {
             if (TryGetSchema(subject, schemaString, schemaType, normalize, out RegisteredSchema? existingSchema))
                 return Task.FromResult(existingSchema);
@@ -261,7 +265,7 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
         if (normalize)
             schemaString = SchemaNormalizer.Normalize(schemaString, schemaType);
 
-        lock (_schemas)
+        lock (_schemasLock)
         {
             if (!_schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas))
             {
@@ -280,7 +284,7 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 
     private RegisteredSchema? GetLatestSchema(string subject)
     {
-        lock (_schemas)
+        lock (_schemasLock)
         {
             return _schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas) ? registeredSchemas[^1] : null;
         }

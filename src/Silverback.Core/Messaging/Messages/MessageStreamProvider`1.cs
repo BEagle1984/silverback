@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Messages;
 /// </typeparam>
 internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 {
-    private readonly List<ILazyMessageStreamEnumerable> _lazyStreams = [];
+    private readonly System.Threading.Lock _syncLock = new();
 
     private readonly SemaphoreSlim _completeSemaphore = new(1, 1);
 
@@ -42,22 +42,25 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
     private bool _isAborting;
 
-    // Set holding the _lazyStreams lock when the streams are being aborted or completed: no stream is detached afterwards
+    // Set holding the lock when the streams are being aborted or completed: no stream is detached afterwards
     private bool _isClosed;
 
-    // Set holding the _lazyStreams lock when a subscriber throws: no stream is detached afterwards
+    // Set holding the lock when a subscriber throws: no stream is detached afterwards
     private bool _hasSubscriberThrown;
 
-    // Set holding the _lazyStreams lock when a subscriber throws an exception other than the cancellation (see OnSubscriberCompleted)
+    // Set holding the lock when a subscriber throws an exception other than the cancellation (see OnSubscriberCompleted)
     private bool _hasSubscriberFailed;
 
-    // The pushes delivering their message to the streams, counted holding the _lazyStreams lock, which the completion waits for (see
+    // The pushes delivering their message to the streams, counted holding the lock, which the completion waits for (see
     // PushAsync and CompleteAsync)
     private int _deliveringPushesCount;
 
-    // Created holding the _lazyStreams lock, when the streams are closed while a push is delivering its message, and completed with the
+    // Created holding the lock, when the streams are closed while a push is delivering its message, and completed with the
     // last delivery
     private TaskCompletionSource? _pushesDeliveredTaskCompletionSource;
+
+    // Replaced holding the lock and never modified, so that the pushes, the abort and the completion can enumerate it without locking
+    private ILazyMessageStreamEnumerable[] _lazyStreams = [];
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MessageStreamProvider{TMessage}" /> class.
@@ -81,7 +84,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     public override Type MessageType => typeof(TMessage);
 
     /// <inheritdoc cref="MessageStreamProvider.StreamsCount" />
-    public override int StreamsCount => _lazyStreams.Count;
+    public override int StreamsCount => _lazyStreams.Length;
 
     /// <inheritdoc cref="MessageStreamProvider.SubscribersReturnedTask" />
     public override Task SubscribersReturnedTask => _subscribersReturnedTaskCompletionSource.Task;
@@ -126,7 +129,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         if (_completed || _aborted)
             throw new InvalidOperationException("The streams are already completed or aborted.");
 
-        lock (_lazyStreams)
+        lock (_syncLock)
         {
             // The streams are being completed or aborted: refuse the message, as each stream would (see MessageStreamEnumerable)
             if (_isClosed)
@@ -272,9 +275,9 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     {
         ILazyMessageStreamEnumerable<TMessageLinked> stream = new LazyMessageStreamEnumerable<TMessageLinked>(filters, OnSubscriberCompleted);
 
-        lock (_lazyStreams)
+        lock (_syncLock)
         {
-            _lazyStreams.Add((ILazyMessageStreamEnumerable)stream);
+            _lazyStreams = [.. _lazyStreams, (ILazyMessageStreamEnumerable)stream];
         }
 
         return stream;
@@ -399,7 +402,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     // or followed by the abort.
     private void Close()
     {
-        lock (_lazyStreams)
+        lock (_syncLock)
         {
             _isClosed = true;
         }
@@ -409,7 +412,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     // streams are closed, since no further push starts delivering then.
     private Task WaitUntilPushesDeliveredAsync()
     {
-        lock (_lazyStreams)
+        lock (_syncLock)
         {
             if (_deliveringPushesCount == 0)
                 return Task.CompletedTask;
@@ -421,7 +424,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
     private void OnPushDelivered()
     {
-        lock (_lazyStreams)
+        lock (_syncLock)
         {
             if (--_deliveringPushesCount == 0)
                 _pushesDeliveredTaskCompletionSource?.TrySetResult();
@@ -432,7 +435,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     // detached, because its subscriber returned while the subscribers of the other streams are still enumerating them.
     private bool OnSubscriberCompleted(bool hasThrown, bool isCanceled)
     {
-        lock (_lazyStreams)
+        lock (_syncLock)
         {
             if (hasThrown)
             {
@@ -444,10 +447,10 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
                 // is awaited, but it also ends the streams right away, as when a subscriber returns because of the cancellation: the
                 // pending message is rolled back either way. That doesn't happen if a subscriber failed (its abort applies the error
                 // policies), while the cancellation of a single subscriber is left to the abort, as a failure.
-                if (!_detachesReturningSubscribers || !isCanceled || _isClosed || _hasSubscriberFailed || _lazyStreams.Count == 1)
+                if (!_detachesReturningSubscribers || !isCanceled || _isClosed || _hasSubscriberFailed || _lazyStreams.Length == 1)
                     return false;
             }
-            else if (_lazyStreams.Exists(lazyStream => lazyStream.Stream != null && !lazyStream.HasSubscriberReturned))
+            else if (_lazyStreams.Any(lazyStream => lazyStream.Stream != null && !lazyStream.HasSubscriberReturned))
             {
                 // Leave the pending push to the abort or completion in progress, or to the abort caused by the failed subscriber
                 if (!_detachesReturningSubscribers || _isClosed || _hasSubscriberThrown)

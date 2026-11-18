@@ -15,6 +15,8 @@ internal sealed class InMemoryPartition : IInMemoryPartition
 {
     private readonly List<StoredMessage> _messages = [];
 
+    private readonly System.Threading.Lock _syncLock = new();
+
     private readonly List<Transaction> _transactions = [];
 
     private Offset _nextOffset = new(0);
@@ -46,7 +48,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
 
     public Offset Add(Message<byte[]?, byte[]?> message, Guid transactionalUniqueId)
     {
-        lock (_messages)
+        lock (_syncLock)
         {
             Offset offset = _nextOffset++;
             SetTimestamp(message);
@@ -78,7 +80,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
 
     public bool TryPull(Offset offset, out ConsumeResult<byte[]?, byte[]?>? result)
     {
-        lock (_messages)
+        lock (_syncLock)
         {
             while (offset.Value <= LastOffset && _messages.Count != 0)
             {
@@ -112,7 +114,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
 
     public IReadOnlyCollection<Message<byte[]?, byte[]?>> GetAllMessages()
     {
-        lock (_messages)
+        lock (_syncLock)
         {
             return
             [
@@ -125,7 +127,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
 
     public void CommitTransaction(Guid transactionUniqueId)
     {
-        lock (_messages)
+        lock (_syncLock)
         {
             Transaction? transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
 
@@ -145,7 +147,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
 
     public void AbortTransaction(Guid transactionUniqueId)
     {
-        lock (_messages)
+        lock (_syncLock)
         {
             Transaction? transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
 

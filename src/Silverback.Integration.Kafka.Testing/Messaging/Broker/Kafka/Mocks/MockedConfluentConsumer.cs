@@ -22,9 +22,13 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private readonly IMockedKafkaOptions _options;
 
+    // Guards the assignment state, including the current and EOF offsets. Taken before the offsets lock when nested.
     private readonly System.Threading.Lock _assignmentStateLock = new();
 
     private readonly Dictionary<TopicPartition, TopicPartitionOffset> _currentOffsets = [];
+
+    // Guards the stored and the pending commit offsets
+    private readonly System.Threading.Lock _offsetsLock = new();
 
     private readonly Dictionary<TopicPartition, TopicPartitionOffset> _storedOffsets = [];
 
@@ -34,7 +38,9 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private readonly int _autoCommitIntervalMs;
 
-    private readonly List<TopicPartition> _pausedPartitions = [];
+    private readonly System.Threading.Lock _pausedPartitionsLock = new();
+
+    private readonly HashSet<TopicPartition> _pausedPartitions = [];
 
     private readonly HashSet<TopicPartition> _pendingRevocations = [];
 
@@ -319,7 +325,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
         Check.NotNull(offset);
 
-        lock (_storedOffsets)
+        lock (_offsetsLock)
         {
             _storedOffsets[offset.TopicPartition] = offset;
             _pendingCommitOffsets[offset.TopicPartition] = offset;
@@ -341,7 +347,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         {
             _currentOffsets[tpo.TopicPartition] = tpo;
 
-            lock (_storedOffsets)
+            lock (_offsetsLock)
             {
                 // Reset processing progress without making the seek offset eligible for commit
                 _storedOffsets[tpo.TopicPartition] = tpo;
@@ -351,22 +357,17 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public void Pause(IEnumerable<TopicPartition> partitions)
     {
-        lock (_pausedPartitions)
+        lock (_pausedPartitionsLock)
         {
-            partitions
-                .Where(partition => !_pausedPartitions.Contains(partition))
-                .ForEach(_pausedPartitions.Add);
+            _pausedPartitions.UnionWith(partitions);
         }
     }
 
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "False positive")]
     public void Resume(IEnumerable<TopicPartition> partitions)
     {
-        lock (_pausedPartitions)
+        lock (_pausedPartitionsLock)
         {
-            partitions
-                .Where(_pausedPartitions.Contains)
-                .ForEach(partition => _pausedPartitions.Remove(partition));
+            _pausedPartitions.ExceptWith(partitions);
         }
     }
 
@@ -390,7 +391,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public TopicPartitionOffset GetStoredOffset(TopicPartition topicPartition)
     {
-        lock (_storedOffsets)
+        lock (_offsetsLock)
         {
             return _storedOffsets.TryGetValue(topicPartition, out TopicPartitionOffset? topicPartitionOffset)
                 ? topicPartitionOffset
@@ -583,7 +584,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
                         _assignment.Remove(topicPartition);
                         _currentOffsets.Remove(topicPartition);
 
-                        lock (_storedOffsets)
+                        lock (_offsetsLock)
                         {
                             _storedOffsets.Remove(topicPartition);
                             _pendingCommitOffsets.Remove(topicPartition);
@@ -839,7 +840,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private bool IsPaused(string topic, Partition partition)
     {
-        lock (_pausedPartitions)
+        lock (_pausedPartitionsLock)
         {
             return _pausedPartitions.Contains(new TopicPartition(topic, partition));
         }
@@ -870,7 +871,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
         List<TopicPartitionOffset> committedOffsets;
 
-        lock (_storedOffsets)
+        lock (_offsetsLock)
         {
             if (_pendingCommitOffsets.Count == 0)
                 return [];
