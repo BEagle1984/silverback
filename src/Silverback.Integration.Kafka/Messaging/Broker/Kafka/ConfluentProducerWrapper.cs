@@ -25,7 +25,9 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IProducer<byte[]?, byte[]?>? _confluentProducer;
 
-    private bool _hasInitializedTransactions;
+    // The transactions are initialized per producer instance: the producer recreated after a fatal error or a reconnect isn't
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Same instance as _confluentProducer")]
+    private IProducer<byte[]?, byte[]?>? _transactionsInitializedProducer;
 
     public ConfluentProducerWrapper(
         string name,
@@ -92,14 +94,9 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
     {
         IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
 
-        if (_hasInitializedTransactions)
-            return;
-
         try
         {
-            confluentProducer.InitTransactions(Configuration.TransactionsInitTimeout);
-            _logger.LogTransactionsInitialized(this);
-            _hasInitializedTransactions = true;
+            InitTransactionsCore(confluentProducer);
         }
         catch (KafkaException exception) when (exception.Error.IsFatal)
         {
@@ -115,8 +112,10 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
 
         try
         {
+            // The producer recreated after a fatal error or a reconnect must be initialized again
+            InitTransactionsCore(confluentProducer);
+
             confluentProducer.BeginTransaction();
-            _hasInitializedTransactions = true;
             _logger.LogTransactionStarted(this);
         }
         catch (KafkaException exception) when (exception.Error.IsFatal)
@@ -200,7 +199,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         {
             confluentProducer = _confluentProducer;
             _confluentProducer = null;
-            _hasInitializedTransactions = false;
+            _transactionsInitializedProducer = null;
         }
 
         confluentProducer?.Flush();
@@ -240,9 +239,19 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
                 return;
 
             _confluentProducer = null;
-            _hasInitializedTransactions = false;
+            _transactionsInitializedProducer = null;
         }
 
         confluentProducer.Dispose();
+    }
+
+    private void InitTransactionsCore(IProducer<byte[]?, byte[]?> confluentProducer)
+    {
+        if (_transactionsInitializedProducer == confluentProducer)
+            return;
+
+        confluentProducer.InitTransactions(Configuration.TransactionsInitTimeout);
+        _logger.LogTransactionsInitialized(this);
+        _transactionsInitializedProducer = confluentProducer;
     }
 }

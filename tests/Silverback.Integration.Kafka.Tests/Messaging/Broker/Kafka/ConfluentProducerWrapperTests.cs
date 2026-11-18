@@ -175,12 +175,39 @@ public class ConfluentProducerWrapperTests
 
         act.ShouldThrow<KafkaException>();
 
-        producer.InitTransactions();
         producer.BeginTransaction();
 
         _confluentProducer1.Received(1).Dispose();
         _confluentProducer2.Received(1).InitTransactions(Arg.Any<TimeSpan>());
         _confluentProducer2.Received(1).BeginTransaction();
+    }
+
+    [Fact]
+    public async Task BeginTransaction_ShouldInitTransactions_WhenReconnected()
+    {
+        ConfluentProducerWrapper producer = await CreateConnectedProducerAsync();
+        producer.InitTransactions();
+        producer.BeginTransaction();
+
+        await producer.DisconnectAsync();
+        await producer.ConnectAsync();
+        producer.BeginTransaction();
+
+        _confluentProducer1.Received(1).InitTransactions(Arg.Any<TimeSpan>());
+        _confluentProducer2.Received(1).InitTransactions(Arg.Any<TimeSpan>());
+        _confluentProducer2.Received(1).BeginTransaction();
+    }
+
+    [Fact]
+    public async Task InitTransactions_ShouldInitTransactionsOnce()
+    {
+        ConfluentProducerWrapper producer = await CreateConnectedProducerAsync();
+
+        producer.InitTransactions();
+        producer.InitTransactions();
+        producer.BeginTransaction();
+
+        _confluentProducer1.Received(1).InitTransactions(Arg.Any<TimeSpan>());
     }
 
     private static KafkaException CreateFatalException() => new(new Error(ErrorCode.Local_Fatal, "Fatal error", true));
