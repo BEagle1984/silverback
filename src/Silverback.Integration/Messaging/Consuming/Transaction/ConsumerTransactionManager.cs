@@ -125,6 +125,9 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
     public Task CommitAsync()
     {
+        TaskCompletionSource<Task> commitStarted = new();
+        Task commitTask;
+
         lock (_syncLock)
         {
             if (_commitTask != null)
@@ -136,8 +139,13 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
             if (_abortTask != null)
                 throw new InvalidOperationException("The transaction already aborted.");
 
-            return _commitTask = CommitCoreAsync();
+            // The commit (as the rollback) is assigned holding the lock but started after releasing it: the handlers it invokes
+            // synchronously must not run holding it, and a reentrant call (e.g. a Committing handler rolling back) must see it as started
+            commitTask = _commitTask = commitStarted.Task.Unwrap();
         }
+
+        commitStarted.SetResult(CommitCoreAsync());
+        return commitTask;
     }
 
     /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
@@ -147,6 +155,9 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         bool throwIfAlreadyCommitted = true,
         bool stopConsuming = true)
     {
+        TaskCompletionSource<Task<bool>> rollbackStarted = new();
+        Task<bool> abortTask;
+
         lock (_syncLock)
         {
             if (_abortTask != null)
@@ -163,8 +174,12 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
                 return Task.FromResult(false);
             }
 
-            return _abortTask = RollbackCoreAsync(exception, commitConsumer, stopConsuming);
+            abortTask = _abortTask = AcceptRollbackAsync(commitConsumer, rollbackStarted);
         }
+
+        // Started after releasing the lock (see CommitAsync)
+        rollbackStarted.SetResult(RollbackCoreAsync(exception, commitConsumer, stopConsuming));
+        return abortTask;
     }
 
     /// <summary>
@@ -263,12 +278,13 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged, and the exception thrown by the failed operation is rethrown instead")]
     internal async Task RollbackAndStopConsumerAfterFailureAsync(Exception exception)
     {
+        TaskCompletionSource<Task<bool>> rollbackStarted = new();
         Task<bool>? rollbackTask = null;
 
         lock (_syncLock)
         {
             if (_abortTask == null && !IsCommittedOrCommitting())
-                rollbackTask = _abortTask = RollbackCoreAsync(exception, false, true);
+                rollbackTask = _abortTask = AcceptRollbackAsync(false, rollbackStarted);
         }
 
         if (rollbackTask == null)
@@ -276,6 +292,9 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
             await TryStopConsumerAfterFailureAsync().ConfigureAwait(false);
             return;
         }
+
+        // Started after releasing the lock (see CommitAsync)
+        rollbackStarted.SetResult(RollbackCoreAsync(exception, false, true));
 
         try
         {
@@ -292,6 +311,17 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     // A commit that failed before reaching the consumer doesn't complete the transaction: it can still be rolled back. Must be called
     // holding the lock.
     private bool IsCommittedOrCommitting() => _commitTask != null && (_isConsumerCommitted || !_commitTask.IsCompleted);
+
+    // Returns the task of the rollback, started after releasing the lock via the specified TaskCompletionSource (see CommitAsync). Must be
+    // called holding the lock.
+    private Task<bool> AcceptRollbackAsync(bool commitConsumer, TaskCompletionSource<Task<bool>> rollbackStarted)
+    {
+        // Set as soon as the rollback is accepted, before invoking the handlers, which may fail: the consumer isn't committed in any case
+        if (!commitConsumer)
+            IsConsumerRolledBack = true;
+
+        return rollbackStarted.Task.Unwrap();
+    }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged by the consumer")]
     private async Task TryStopConsumerAfterFailureAsync()
@@ -326,10 +356,6 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     private async Task<bool> RollbackCoreAsync(Exception? exception, bool commitConsumer, bool stopConsuming)
     {
         _logger.LogConsumerTransactionAborting(_context.Envelope, exception);
-
-        // Set before invoking the handlers, which may fail: the consumer isn't committed in any case
-        if (!commitConsumer)
-            IsConsumerRolledBack = true;
 
         try
         {

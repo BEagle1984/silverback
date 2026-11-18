@@ -641,6 +641,54 @@ public class ConsumerTransactionManagerTests
         rolledBack.ShouldBeFalse();
     }
 
+    [Fact]
+    public async Task RollbackAsync_ShouldReturnFalse_WhenCalledSynchronouslyByCommittingHandler()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        Task<bool>? rollbackTask = null;
+        transaction.Committing.AddHandler(_ =>
+        {
+            rollbackTask = transaction.RollbackAsync(null, throwIfAlreadyCommitted: false);
+            return ValueTask.CompletedTask;
+        });
+
+        await transaction.CommitAsync();
+
+        (await rollbackTask.ShouldNotBeNull()).ShouldBeFalse();
+        transaction.IsConsumerRolledBack.ShouldBeFalse();
+        await context.Consumer.Received(1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task CommitAsync_ShouldReturnPendingCommit_WhenCalledSynchronouslyByCommittingHandler()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter eventsCounter = new(transaction);
+        Task? reentrantCommitTask = null;
+        bool reentered = false;
+        transaction.Committing.AddHandler(_ =>
+        {
+            // Guarded, since a commit started again would invoke the handler again
+            if (!reentered)
+            {
+                reentered = true;
+                reentrantCommitTask = transaction.CommitAsync();
+            }
+
+            return ValueTask.CompletedTask;
+        });
+
+        Task commitTask = transaction.CommitAsync();
+        await commitTask;
+
+        reentrantCommitTask.ShouldBeSameAs(commitTask);
+        eventsCounter.CommittingCount.ShouldBe(1);
+        await context.Consumer.Received(1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
     private sealed class TestSequence : SequenceBase<IRawInboundEnvelope>
     {
         public TestSequence(ConsumerPipelineContext context)
