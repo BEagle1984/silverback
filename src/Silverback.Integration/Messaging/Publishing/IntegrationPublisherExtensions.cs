@@ -76,15 +76,10 @@ public static partial class IntegrationPublisherExtensions
     {
         Check.NotNull(publisher);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceAsync(
             message,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             envelopeConfigurationAction,
             cancellationToken);
     }
@@ -127,15 +122,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(publisher);
         Check.NotNull(envelopeConfigurationAction);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceAsync(
             message,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             envelopeConfigurationAction,
             argument,
             cancellationToken);
@@ -197,15 +187,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(publisher);
         Check.NotNull(messages);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             messages,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             envelopeConfigurationAction,
             cancellationToken);
     }
@@ -249,15 +234,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(messages);
         Check.NotNull(envelopeConfigurationAction);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             messages,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             envelopeConfigurationAction,
             argument,
             cancellationToken);
@@ -333,20 +313,13 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(publisher);
         Check.NotNull(sources);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count != 0)
-        {
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(
-                sources,
-                publisher,
-                producers,
-                mapperFunction,
-                envelopeConfigurationAction,
-                cancellationToken);
-        }
-
-        throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            sources,
+            publisher,
+            GetProducers<TMessage>(publisher),
+            mapperFunction,
+            envelopeConfigurationAction,
+            cancellationToken);
     }
 
     /// <summary>
@@ -395,15 +368,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(sources);
         Check.NotNull(envelopeConfigurationAction);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             sources,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             mapperFunction,
             envelopeConfigurationAction,
             argument,
@@ -466,15 +434,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(publisher);
         Check.NotNull(messages);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             messages,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             envelopeConfigurationAction,
             cancellationToken);
     }
@@ -518,15 +481,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(messages);
         Check.NotNull(envelopeConfigurationAction);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             messages,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             envelopeConfigurationAction,
             argument,
             cancellationToken);
@@ -602,15 +560,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(publisher);
         Check.NotNull(sources);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             sources,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             mapperFunction,
             envelopeConfigurationAction,
             cancellationToken);
@@ -662,15 +615,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(sources);
         Check.NotNull(envelopeConfigurationAction);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             sources,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             mapperFunction,
             envelopeConfigurationAction,
             argument,
@@ -733,15 +681,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(publisher);
         Check.NotNull(messages);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             messages,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             envelopeConfigurationAction,
             cancellationToken);
     }
@@ -785,15 +728,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(messages);
         Check.NotNull(envelopeConfigurationAction);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             messages,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             envelopeConfigurationAction,
             argument,
             cancellationToken);
@@ -869,15 +807,10 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(publisher);
         Check.NotNull(sources);
 
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
         return MessageWrapper.Instance.WrapAndProduceBatchAsync(
             sources,
             publisher,
-            producers,
+            GetProducers<TMessage>(publisher),
             mapperFunction,
             envelopeConfigurationAction,
             cancellationToken);
@@ -929,19 +862,24 @@ public static partial class IntegrationPublisherExtensions
         Check.NotNull(sources);
         Check.NotNull(envelopeConfigurationAction);
 
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            sources,
+            publisher,
+            GetProducers<TMessage>(publisher),
+            mapperFunction,
+            envelopeConfigurationAction,
+            argument,
+            cancellationToken);
+    }
+
+    private static IReadOnlyCollection<IProducer> GetProducers<TMessage>(IPublisher publisher)
+    {
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
         if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
-            sources,
-            publisher,
-            producers,
-            mapperFunction,
-            envelopeConfigurationAction,
-            argument,
-            cancellationToken);
+        return producers;
     }
 
     private static IProducerCollection GetProducerCollection(ISilverbackContext context) =>
