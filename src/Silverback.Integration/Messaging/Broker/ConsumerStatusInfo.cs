@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Silverback.Messaging.Broker;
 
@@ -15,8 +14,16 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 
     private readonly System.Threading.Lock _syncLock = new();
 
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Reads are not synchronized")]
-    public IReadOnlyCollection<IConsumerStatusChange> History => _history;
+    public IReadOnlyCollection<IConsumerStatusChange> History
+    {
+        get
+        {
+            lock (_syncLock)
+            {
+                return [.. _history];
+            }
+        }
+    }
 
     public ConsumerStatus Status { get; private set; }
 
@@ -35,11 +42,21 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
         }
     }
 
-    public void SetStarted(bool allowStepBack = false)
+    public void SetStarted()
     {
         lock (_syncLock)
         {
-            if (allowStepBack || Status < ConsumerStatus.Started)
+            if (Status < ConsumerStatus.Started)
+                ChangeStatus(ConsumerStatus.Started);
+        }
+    }
+
+    public void RevertConnected()
+    {
+        lock (_syncLock)
+        {
+            // Checked inside the lock: a concurrent stop must not be reverted to Started
+            if (Status > ConsumerStatus.Started)
                 ChangeStatus(ConsumerStatus.Started);
         }
     }

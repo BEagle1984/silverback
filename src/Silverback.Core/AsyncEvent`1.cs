@@ -20,7 +20,8 @@ public class AsyncEvent<TArg>
 {
     private readonly System.Threading.Lock _lockObject = new();
 
-    private List<Func<TArg, ValueTask>>? _handlers;
+    // Replaced under the lock and never modified, so that InvokeAsync can enumerate it without locking
+    private Func<TArg, ValueTask>[] _handlers = [];
 
     /// <summary>
     ///     Adds the specified event handler.
@@ -34,8 +35,7 @@ public class AsyncEvent<TArg>
 
         lock (_lockObject)
         {
-            _handlers ??= [];
-            _handlers.Add(handler);
+            _handlers = [.. _handlers, handler];
         }
     }
 
@@ -51,7 +51,10 @@ public class AsyncEvent<TArg>
 
         lock (_lockObject)
         {
-            _handlers?.Remove(handler);
+            List<Func<TArg, ValueTask>> handlers = [.. _handlers];
+
+            if (handlers.Remove(handler))
+                _handlers = [.. handlers];
         }
     }
 
@@ -64,17 +67,17 @@ public class AsyncEvent<TArg>
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Optimized")]
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "The array is replaced, never modified")]
     public ValueTask InvokeAsync(TArg arg)
     {
         Check.NotNull(arg);
 
-        if (_handlers == null)
+        // Invoked outside the lock: a handler may add or remove handlers, or block, without affecting the other invocations
+        Func<TArg, ValueTask>[] handlers = _handlers;
+
+        if (handlers.Length == 0)
             return ValueTask.CompletedTask;
 
-        lock (_lockObject)
-        {
-            return _handlers.Select(handler => handler(arg)).AwaitAllAsync();
-        }
+        return handlers.Select(handler => handler(arg)).AwaitAllAsync();
     }
 }

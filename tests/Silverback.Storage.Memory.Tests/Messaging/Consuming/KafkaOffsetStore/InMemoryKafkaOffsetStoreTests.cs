@@ -53,6 +53,18 @@ public class InMemoryKafkaOffsetStoreTests
     }
 
     [Fact]
+    public async Task GetStoredOffsets_ShouldReturnSnapshot()
+    {
+        InMemoryKafkaOffsetStore store = new();
+        await store.StoreOffsetsAsync("group1", [new KafkaOffset("topic1", 0, 42)]);
+
+        IReadOnlyCollection<KafkaOffset> offsets = store.GetStoredOffsets("group1");
+        await store.StoreOffsetsAsync("group1", [new KafkaOffset("topic1", 1, 42)]);
+
+        offsets.ShouldBe([new KafkaOffset("topic1", 0, 42)]);
+    }
+
+    [Fact]
     public async Task StoreOffsetsAsync_ShouldStoreOffsets()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services

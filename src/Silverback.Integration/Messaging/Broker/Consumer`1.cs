@@ -483,11 +483,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
     /// <summary>
     ///     Called when the connection is lost to transitions the consumer back to <see cref="ConsumerStatus.Started" />.
     /// </summary>
-    protected void RevertConnectedStatus()
-    {
-        if (_statusInfo.Status > ConsumerStatus.Started)
-            _statusInfo.SetStarted(true);
-    }
+    protected void RevertConnectedStatus() => _statusInfo.RevertConnected();
 
     /// <summary>
     ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

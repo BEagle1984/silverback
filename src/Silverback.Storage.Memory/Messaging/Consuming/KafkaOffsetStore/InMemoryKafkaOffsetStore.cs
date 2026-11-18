@@ -22,7 +22,7 @@ public class InMemoryKafkaOffsetStore : IKafkaOffsetStore
         lock (_offsetsByGroupId)
         {
             if (_offsetsByGroupId.TryGetValue(groupId, out Dictionary<TopicPartition, KafkaOffset>? offsetsByTopicPartition))
-                return offsetsByTopicPartition.Values;
+                return [.. offsetsByTopicPartition.Values];
 
             return [];
         }
