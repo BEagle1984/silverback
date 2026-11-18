@@ -23,6 +23,8 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     private readonly List<Subscription> _subscriptions = [];
 
+    private readonly System.Threading.Lock _subscriptionsLock = new();
+
     private readonly ConcurrentDictionary<string, int> _pendingMessagesCountByTopic = new();
 
     // Synchronizes the delivery and acknowledgment of the messages with the disconnection
@@ -108,7 +110,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     public void Subscribe(IReadOnlyCollection<MqttTopicFilter> topicFilters)
     {
-        lock (_subscriptions)
+        lock (_subscriptionsLock)
         {
             foreach (MqttTopicFilter topicFilter in topicFilters)
             {
@@ -129,7 +131,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     public void Unsubscribe(IReadOnlyCollection<string> topics)
     {
-        lock (_subscriptions)
+        lock (_subscriptionsLock)
         {
             foreach (Subscription subscription in _subscriptions.Where(subscription => topics.Contains(subscription.Filter)).ToArray())
             {
@@ -138,14 +140,12 @@ internal sealed class ClientSession : IDisposable, IClientSession
         }
     }
 
-    public IEnumerable<Subscription> GetMatchingSubscriptions(MqttApplicationMessage message, MqttClientOptions clientOptions)
+    // A copy, so that the lock isn't held while the caller enumerates it
+    public IReadOnlyList<Subscription> GetMatchingSubscriptions(MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
-        lock (_subscriptions)
+        lock (_subscriptionsLock)
         {
-            foreach (Subscription subscription in _subscriptions.Where(subscription => subscription.IsMatch(message, clientOptions)))
-            {
-                yield return subscription;
-            }
+            return [.. _subscriptions.Where(subscription => subscription.IsMatch(message, clientOptions))];
         }
     }
 

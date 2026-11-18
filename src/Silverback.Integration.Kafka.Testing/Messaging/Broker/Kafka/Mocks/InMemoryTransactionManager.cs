@@ -17,6 +17,8 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
     private readonly List<TransactionalProducerInfo> _producersInfo = [];
 
+    private readonly System.Threading.Lock _syncLock = new();
+
     public InMemoryTransactionManager(IInMemoryTopicCollection topics)
     {
         _topics = Check.NotNull(topics);
@@ -26,7 +28,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
     {
         Check.NotNull(transactionalId);
 
-        lock (_producersInfo)
+        lock (_syncLock)
         {
             TransactionalProducerInfo? producerInfo = _producersInfo.FirstOrDefault(info => info.TransactionalId == transactionalId);
 
@@ -47,7 +49,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
     public void BeginTransaction(Guid transactionalUniqueId)
     {
-        lock (_producersInfo)
+        lock (_syncLock)
         {
             TransactionalProducerInfo producerInfo = GetProducerInfo(transactionalUniqueId);
             producerInfo.IsTransactionPending = true;
@@ -56,7 +58,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
     public void CommitTransaction(Guid transactionalUniqueId)
     {
-        lock (_producersInfo)
+        lock (_syncLock)
         {
             TransactionalProducerInfo producerInfo = GetProducerInfo(transactionalUniqueId);
 
@@ -76,7 +78,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
     public void AbortTransaction(Guid transactionalUniqueId)
     {
-        lock (_producersInfo)
+        lock (_syncLock)
         {
             TransactionalProducerInfo producerInfo = GetProducerInfo(transactionalUniqueId);
 
@@ -90,7 +92,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
     public void SendOffsetsToTransaction(Guid transactionalUniqueId, IEnumerable<TopicPartitionOffset> offsets, IConsumerGroupMetadata groupMetadata)
     {
-        lock (_producersInfo)
+        lock (_syncLock)
         {
             TransactionalProducerInfo producerInfo = GetProducerInfo(transactionalUniqueId);
 
@@ -106,7 +108,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
         if (transactionalUniqueId == Guid.Empty)
             return false;
 
-        lock (_producersInfo)
+        lock (_syncLock)
         {
             TransactionalProducerInfo producerInfo = GetProducerInfo(transactionalUniqueId);
             return producerInfo.IsTransactionPending;

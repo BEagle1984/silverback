@@ -15,6 +15,8 @@ public class InMemoryOutbox
 {
     private readonly List<StoredOutboxMessage> _storedOutboxMessages = [];
 
+    private readonly System.Threading.Lock _syncLock = new();
+
     /// <summary>
     ///     Gets the number of items in the storage.
     /// </summary>
@@ -22,7 +24,7 @@ public class InMemoryOutbox
     {
         get
         {
-            lock (_storedOutboxMessages)
+            lock (_syncLock)
             {
                 return _storedOutboxMessages.Count;
             }
@@ -37,7 +39,7 @@ public class InMemoryOutbox
     /// </returns>
     public TimeSpan GetMaxAge()
     {
-        lock (_storedOutboxMessages)
+        lock (_syncLock)
         {
             if (_storedOutboxMessages.Count == 0)
                 return TimeSpan.Zero;
@@ -61,7 +63,7 @@ public class InMemoryOutbox
     /// </returns>
     public IReadOnlyCollection<OutboxMessage> Get(int count)
     {
-        lock (_storedOutboxMessages)
+        lock (_syncLock)
         {
             return [.. _storedOutboxMessages.Take(count).Select(storedOutboxMessage => storedOutboxMessage.OutboxMessage)];
         }
@@ -75,7 +77,7 @@ public class InMemoryOutbox
     /// </param>
     public void Add(OutboxMessage outboxMessage)
     {
-        lock (_storedOutboxMessages)
+        lock (_syncLock)
         {
             _storedOutboxMessages.Add(new StoredOutboxMessage(outboxMessage));
         }
@@ -91,7 +93,7 @@ public class InMemoryOutbox
     {
         Check.NotNull(outboxMessages);
 
-        lock (_storedOutboxMessages)
+        lock (_syncLock)
         {
             foreach (OutboxMessage outboxMessage in outboxMessages)
             {
