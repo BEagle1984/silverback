@@ -12,7 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
+internal sealed class ProducerCollection : IProducerCollection, IDisposable, IAsyncDisposable
 {
     private readonly ConcurrentBag<ProducerItem> _producers = [];
 
@@ -65,7 +65,9 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public ValueTask DisposeAsync() => _producers.DisposeAllAsync();
+    public void Dispose() => this.DisposeAll();
+
+    public ValueTask DisposeAsync() => this.DisposeAllAsync();
 
     private static IProducer[] GetProducersForMessage(ConcurrentBag<ProducerItem> producers, Type messageType) =>
     [

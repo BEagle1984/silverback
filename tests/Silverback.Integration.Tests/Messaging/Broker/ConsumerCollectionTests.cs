@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
@@ -133,5 +134,39 @@ public class ConsumerCollectionTests
         consumerCollection.Add(consumer2);
 
         consumerCollection.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public void Dispose_ShouldDisposeConsumers()
+    {
+        ConsumerCollection consumerCollection = [];
+        IConsumer consumer1 = Substitute.For<IConsumer, IDisposable>();
+        consumer1.Name.Returns("consumer1");
+        IConsumer consumer2 = Substitute.For<IConsumer, IDisposable>();
+        consumer2.Name.Returns("consumer2");
+        consumerCollection.Add(consumer1);
+        consumerCollection.Add(consumer2);
+
+        consumerCollection.Dispose();
+
+        ((IDisposable)consumer1).Received(1).Dispose();
+        ((IDisposable)consumer2).Received(1).Dispose();
+    }
+
+    [Fact]
+    public async Task DisposeAsync_ShouldDisposeConsumers()
+    {
+        ConsumerCollection consumerCollection = [];
+        IConsumer consumer1 = Substitute.For<IConsumer, IDisposable>();
+        consumer1.Name.Returns("consumer1");
+        IConsumer consumer2 = Substitute.For<IConsumer, IDisposable>();
+        consumer2.Name.Returns("consumer2");
+        consumerCollection.Add(consumer1);
+        consumerCollection.Add(consumer2);
+
+        await consumerCollection.DisposeAsync();
+
+        ((IDisposable)consumer1).Received(1).Dispose();
+        ((IDisposable)consumer2).Received(1).Dispose();
     }
 }

@@ -97,4 +97,46 @@ public class BrokerClientCollectionTests
         await client1.Received(1).DisconnectAsync();
         await client2.Received(1).DisconnectAsync();
     }
+
+    [Fact]
+    public async Task Dispose_ShouldDisposeAllClients()
+    {
+        BrokerClientCollection brokerClientCollection = [];
+
+        IBrokerClient client1 = Substitute.For<IBrokerClient>();
+        client1.Name.Returns("client1");
+        IBrokerClient client2 = Substitute.For<IBrokerClient>();
+        client2.Name.Returns("client2");
+
+        brokerClientCollection.Add(client1);
+        brokerClientCollection.Add(client2);
+
+        brokerClientCollection.Dispose();
+
+        client1.Received(1).Dispose();
+        client2.Received(1).Dispose();
+        await client1.DidNotReceive().DisposeAsync();
+        await client2.DidNotReceive().DisposeAsync();
+    }
+
+    [Fact]
+    public async Task DisposeAsync_ShouldDisposeAllClientsAsynchronously()
+    {
+        BrokerClientCollection brokerClientCollection = [];
+
+        IBrokerClient client1 = Substitute.For<IBrokerClient>();
+        client1.Name.Returns("client1");
+        IBrokerClient client2 = Substitute.For<IBrokerClient>();
+        client2.Name.Returns("client2");
+
+        brokerClientCollection.Add(client1);
+        brokerClientCollection.Add(client2);
+
+        await brokerClientCollection.DisposeAsync();
+
+        await client1.Received(1).DisposeAsync();
+        await client2.Received(1).DisposeAsync();
+        client1.DidNotReceive().Dispose();
+        client2.DidNotReceive().Dispose();
+    }
 }
