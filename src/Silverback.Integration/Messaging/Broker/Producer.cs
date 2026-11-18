@@ -464,24 +464,6 @@ public abstract class Producer : IProducer, IDisposable
         return envelope.BrokerMessageIdentifier;
     }
 
-    private async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(OutboundEnvelope envelope, CancellationToken cancellationToken)
-    {
-        Activity? activity = Diagnostics.ActivitySources.GetCurrentProduceActivity();
-
-        try
-        {
-            envelope.BrokerMessageIdentifier = await ProduceCoreAsync(envelope, cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            LogProduceError(_logger, envelope, activity, ex);
-            throw;
-        }
-
-        LogProduced(_logger, envelope, activity);
-        return envelope.BrokerMessageIdentifier;
-    }
-
     private void RawProduce(
         OutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?> onSuccess,
@@ -519,14 +501,30 @@ public abstract class Producer : IProducer, IDisposable
                 Activity: Diagnostics.ActivitySources.GetCurrentProduceActivity(),
                 Producer: this));
 
+    private async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(OutboundEnvelope envelope, CancellationToken cancellationToken)
+    {
+        Activity? activity = Diagnostics.ActivitySources.GetCurrentProduceActivity();
+
+        try
+        {
+            envelope.BrokerMessageIdentifier = await ProduceCoreAsync(envelope, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            LogProduceError(_logger, envelope, activity, ex);
+            throw;
+        }
+
+        LogProduced(_logger, envelope, activity);
+        return envelope.BrokerMessageIdentifier;
+    }
+
     private void LogProduced(ProducerPipelineContext context) =>
         LogProduced(context.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>(), context.Envelope, context.Activity);
 
-    private void LogProduceError(ProducerPipelineContext context, Exception exception) =>
-        LogProduceError(context.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>(), context.Envelope, context.Activity, exception);
-
     // The activity is enriched right before logging and set as current while logging, so that its tags (e.g. the Kafka key and offset)
-    // are available to the logging scope even when the outcome is logged from the thread delivering the broker acknowledgment
+    // are available to the logging scope even when the outcome is logged from the thread delivering the broker acknowledgment (the same
+    // applies to LogProduceError)
     private void LogProduced(ISilverbackLogger logger, IOutboundEnvelope envelope, Activity? activity)
     {
         EnrichActivity(activity, envelope);
@@ -534,6 +532,9 @@ public abstract class Producer : IProducer, IDisposable
         using CurrentActivityScope scope = CurrentActivityScope.Enter(activity);
         logger.LogProduced(envelope);
     }
+
+    private void LogProduceError(ProducerPipelineContext context, Exception exception) =>
+        LogProduceError(context.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>(), context.Envelope, context.Activity, exception);
 
     private void LogProduceError(ISilverbackLogger logger, IOutboundEnvelope envelope, Activity? activity, Exception exception)
     {
