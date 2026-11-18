@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration.Kafka;
@@ -479,6 +480,74 @@ public class MockedConfluentConsumerTests
         consumer.Assignment.ShouldBeEmpty();
     }
 
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by Consume, before the disposal")]
+    public void Consume_ShouldNotReturnPulledRecord_WhenPartitionIsSoughtMeanwhile()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
+        IInMemoryPartition partition = Substitute.For<IInMemoryPartition>();
+        using MockedConfluentConsumer consumer = GetConsumer(consumerGroup, topics: GetTopics(partition));
+        bool sought = false;
+        partition.TryPull(Arg.Any<Offset>(), out Arg.Any<ConsumeResult<byte[]?, byte[]?>?>()).Returns(callInfo =>
+        {
+            callInfo[1] = new ConsumeResult<byte[]?, byte[]?>
+            {
+                Topic = Partition0.Topic,
+                Partition = Partition0.Partition,
+                Offset = callInfo.ArgAt<Offset>(0),
+                Message = new Message<byte[]?, byte[]?>()
+            };
+
+            // Seek (e.g. a rollback) while the record is being pulled
+            if (!sought)
+            {
+                sought = true;
+                consumer.Seek(new TopicPartitionOffset(Partition0, 42));
+            }
+
+            return true;
+        });
+
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+        ConsumeResult<byte[]?, byte[]?>? result = consumer.Consume(TimeSpan.FromSeconds(5));
+
+        result.ShouldNotBeNull();
+        result.Offset.Value.ShouldBe(42);
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited before the disposal")]
+    public async Task AutoCommit_ShouldInvokeOffsetsCommittedHandlerWithoutBlockingStoreOffset()
+    {
+        FakeInternalMockedConsumerGroup consumerGroup = new() { Assignment = [Partition0] };
+        using MockedConfluentConsumer consumer = GetConsumer(consumerGroup, true, autoCommitIntervalMs: 10);
+        TaskCompletionSource<bool> offsetStoredFromOtherThread = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        consumer.OffsetsCommittedHandler = (_, _) =>
+        {
+            if (offsetStoredFromOtherThread.Task.IsCompleted)
+                return;
+
+            bool stored = Task.Run(() => consumer.StoreOffset(new TopicPartitionOffset(Partition0, 6))).Wait(TimeSpan.FromSeconds(5));
+            offsetStoredFromOtherThread.TrySetResult(stored);
+        };
+
+        consumer.EnsurePartitionsAssigned(CancellationToken.None).ShouldBeTrue();
+        consumer.StoreOffset(new TopicPartitionOffset(Partition0, 5));
+
+        (await offsetStoredFromOtherThread.Task.WaitAsync(TimeSpan.FromSeconds(10))).ShouldBeTrue();
+    }
+
+    private static IInMemoryTopicCollection GetTopics(IInMemoryPartition partition)
+    {
+        IInMemoryTopic topic = Substitute.For<IInMemoryTopic>();
+        topic.Partitions.Returns([partition]);
+
+        IInMemoryTopicCollection topics = Substitute.For<IInMemoryTopicCollection>();
+        topics.Get(Arg.Any<string>(), Arg.Any<ClientConfig>()).Returns(topic);
+
+        return topics;
+    }
+
     private static IEnumerable<TopicPartitionOffset> GetPausedPartitionOffsets(
         IEnumerable<TopicPartition> partitions,
         TaskCompletionSource assignmentCallbackCompleted,
@@ -496,7 +565,9 @@ public class MockedConfluentConsumerTests
     private static MockedConfluentConsumer GetConsumer(
         FakeInternalMockedConsumerGroup consumerGroup,
         bool enableAutoCommit = false,
-        GroupProtocol? groupProtocol = null)
+        GroupProtocol? groupProtocol = null,
+        IInMemoryTopicCollection? topics = null,
+        int? autoCommitIntervalMs = null)
     {
         MockedKafkaOptions options = new()
         {
@@ -508,10 +579,11 @@ public class MockedConfluentConsumerTests
             {
                 BootstrapServers = "PLAINTEXT://mock",
                 EnableAutoCommit = enableAutoCommit,
+                AutoCommitIntervalMs = autoCommitIntervalMs,
                 GroupId = "group",
                 GroupProtocol = groupProtocol
             },
-            new InMemoryTopicCollection(options),
+            topics ?? new InMemoryTopicCollection(options),
             consumerGroup,
             options);
     }

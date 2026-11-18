@@ -159,12 +159,16 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 
     public Task<string> GetSchemaAsync(string subject, int version) => throw new NotSupportedException();
 
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Only synchronized when writing")]
     public Task<Schema> GetSchemaBySubjectAndIdAsync(string subject, int id, string? format = null)
     {
+        RegisteredSchema registeredSchema;
+
+        lock (_schemas)
+        {
 #pragma warning disable CS0618 // Type or member is obsolete
-        RegisteredSchema registeredSchema = _schemas[subject].Single(schema => schema.Id == id);
+            registeredSchema = _schemas[subject].Single(schema => schema.Id == id);
 #pragma warning restore CS0618 // Type or member is obsolete
+        }
 
         return Task.FromResult(registeredSchema.Schema);
     }
@@ -247,7 +251,6 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
                 HttpStatusCode.NotFound,
                 42);
 
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Only synchronized when writing")]
     private bool TryGetSchema(
         string subject,
         string schemaString,
@@ -258,18 +261,21 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
         if (normalize)
             schemaString = SchemaNormalizer.Normalize(schemaString, schemaType);
 
-        if (!_schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas))
+        lock (_schemas)
         {
-            schema = null;
-            return false;
+            if (!_schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas))
+            {
+                schema = null;
+                return false;
+            }
+
+            // Note: for protobuf only the latest schema is considered at the moment, since the schema string matching is not straightforward
+            schema = registeredSchemas.LastOrDefault(schema =>
+                (schema.Schema.SchemaString == schemaString || schemaType == SchemaType.Protobuf) &&
+                schema.Schema.SchemaType == schemaType);
+
+            return schema != null;
         }
-
-        // Note: for protobuf only the latest schema is considered at the moment, since the schema string matching is not straightforward
-        schema = registeredSchemas.LastOrDefault(schema =>
-            (schema.Schema.SchemaString == schemaString || schemaType == SchemaType.Protobuf) &&
-            schema.Schema.SchemaType == schemaType);
-
-        return schema != null;
     }
 
     private RegisteredSchema? GetLatestSchema(string subject)
