@@ -114,10 +114,10 @@ public sealed class KafkaOffsetStoreScope
     // Like the consumer commit, the offsets lower than the committed ones aren't stored (unless the partition was sought via Seek since
     // it was assigned), so that the stored offsets don't move back (e.g., when an incomplete chunked message is aborted after the next
     // messages were committed), and the offsets of the partitions being rolled back are never stored, since the rollback may seek back
-    // to a preceding message. The offsets of the revoked partitions are
-    // stored only by the subscriber's storage transaction (and the commit), which stores the processed messages atomically with their
-    // changes; like the consumer commit, the skip doesn't store them, so that they're consumed again. The offsets are filtered right
-    // before each store, since the committed offsets and the assignment change in the meantime.
+    // to a preceding message. The offsets of the revoked partitions are stored only by the subscriber's storage transaction (and the
+    // commit), which stores the processed messages atomically with their changes; like the consumer commit, the skip doesn't store them,
+    // so that they're consumed again. The offsets are filtered right before each store, since the committed offsets and the assignment
+    // change in the meantime.
     private IReadOnlyCollection<KafkaOffset> GetOffsetsToStore(bool includeRevokedPartitions)
     {
         IEnumerable<KafkaOffset> offsets = _pipelineContext.GetCommitIdentifiers().Cast<KafkaOffset>();
