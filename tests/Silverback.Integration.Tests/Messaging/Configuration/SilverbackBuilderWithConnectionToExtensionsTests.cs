@@ -31,6 +31,24 @@ public class SilverbackBuilderWithConnectionToExtensionsTests
     }
 
     [Fact]
+    public void WithConnectionToMessageBroker_ShouldAllowSynchronousDisposeOfServiceProvider()
+    {
+        ServiceCollection serviceCollection = [];
+
+        serviceCollection
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker();
+
+        ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
+        serviceProvider.GetRequiredService<BrokerClientCollection>();
+        serviceProvider.GetRequiredService<IProducerCollection>();
+        serviceProvider.GetRequiredService<IConsumerCollection>();
+
+        Should.NotThrow(serviceProvider.Dispose);
+    }
+
+    [Fact]
     public void WithConnectionToMessageBroker_ShouldRegisterDefaultOutboxFactories()
     {
         ServiceCollection serviceCollection = [];

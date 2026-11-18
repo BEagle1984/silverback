@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
@@ -333,5 +334,39 @@ public class ProducerCollectionTests
         producerCollection.GetProducersForMessage(typeof(TestEventOne)).ShouldBe([producer1]);
 
         producerCollection.GetProducersForMessage(typeof(TestEventOne)).ShouldBe([producer1, producer2], ignoreOrder: true);
+    }
+
+    [Fact]
+    public void Dispose_ShouldDisposeProducers()
+    {
+        ProducerCollection producerCollection = [];
+        IProducer producer1 = Substitute.For<IProducer, IDisposable>();
+        producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1"));
+        IProducer producer2 = Substitute.For<IProducer, IDisposable>();
+        producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        producerCollection.Add(producer1);
+        producerCollection.Add(producer2, false);
+
+        producerCollection.Dispose();
+
+        ((IDisposable)producer1).Received(1).Dispose();
+        ((IDisposable)producer2).Received(1).Dispose();
+    }
+
+    [Fact]
+    public async Task DisposeAsync_ShouldDisposeProducers()
+    {
+        ProducerCollection producerCollection = [];
+        IProducer producer1 = Substitute.For<IProducer, IDisposable>();
+        producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1"));
+        IProducer producer2 = Substitute.For<IProducer, IDisposable>();
+        producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        producerCollection.Add(producer1);
+        producerCollection.Add(producer2, false);
+
+        await producerCollection.DisposeAsync();
+
+        ((IDisposable)producer1).Received(1).Dispose();
+        ((IDisposable)producer2).Received(1).Dispose();
     }
 }

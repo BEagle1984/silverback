@@ -11,7 +11,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-internal sealed class BrokerClientCollection : IBrokerClientCollection, IDisposable
+internal sealed class BrokerClientCollection : IBrokerClientCollection, IDisposable, IAsyncDisposable
 {
     private readonly ConcurrentDictionary<string, IBrokerClient> _clients = [];
 
@@ -29,7 +29,9 @@ internal sealed class BrokerClientCollection : IBrokerClientCollection, IDisposa
 
     public ValueTask DisconnectAllAsync() => _clients.Values.ParallelForEachAsync(client => client.DisconnectAsync());
 
-    public void Dispose() => _clients.Values.ForEach(client => client.Dispose());
+    public void Dispose() => _clients.Values.DisposeAll();
+
+    public ValueTask DisposeAsync() => _clients.Values.DisposeAllAsync();
 
     [MustDisposeResource]
     public IEnumerator<IBrokerClient> GetEnumerator() => _clients.Values.GetEnumerator();
