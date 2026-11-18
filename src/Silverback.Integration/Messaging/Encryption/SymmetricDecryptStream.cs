@@ -35,8 +35,8 @@ public class SymmetricDecryptStream : SilverbackCryptoStream
         SymmetricDecryptionSettings settings,
         string? keyIdentifier = null)
     {
-        Check.NotNull(stream, nameof(stream));
-        Check.NotNull(settings, nameof(settings));
+        Check.NotNull(stream);
+        Check.NotNull(settings);
 
         _cryptoTransform = CreateCryptoTransform(settings, stream, keyIdentifier);
         _cryptoStream = new CryptoStream(stream, _cryptoTransform, CryptoStreamMode.Read);
@@ -62,8 +62,8 @@ public class SymmetricDecryptStream : SilverbackCryptoStream
         Stream stream,
         string? keyIdentifier)
     {
-        Check.NotNull(settings, nameof(settings));
-        Check.NotNull(stream, nameof(stream));
+        Check.NotNull(settings);
+        Check.NotNull(stream);
 
         byte[] encryptionKey = (settings.KeyProvider != null ? settings.KeyProvider(keyIdentifier) : settings.Key) ??
                                throw new InvalidOperationException("The encryption key is not set.");

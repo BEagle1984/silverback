@@ -49,7 +49,7 @@ public class NewtonsoftJsonMessageDeserializerBuilder
     /// </returns>
     public NewtonsoftJsonMessageDeserializerBuilder UseModel(Type messageType)
     {
-        _messageType = Check.NotNull(messageType, nameof(messageType));
+        _messageType = Check.NotNull(messageType);
         return this;
     }
 
@@ -65,7 +65,7 @@ public class NewtonsoftJsonMessageDeserializerBuilder
     /// </returns>
     public NewtonsoftJsonMessageDeserializerBuilder Configure(Action<JsonSerializerSettings> configureAction)
     {
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(configureAction);
 
         JsonSerializerSettings settings = _settings == null ? new JsonSerializerSettings() : new JsonSerializerSettings(_settings);
         configureAction.Invoke(settings);

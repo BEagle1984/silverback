@@ -56,11 +56,11 @@ public sealed class ConsumerPipelineContext : IDisposable
         IReadOnlyList<IConsumerBehavior> pipeline,
         IServiceProvider serviceProvider)
     {
-        _envelope = Check.NotNull(envelope, nameof(envelope));
-        Consumer = Check.NotNull(consumer, nameof(consumer));
-        SequenceStore = Check.NotNull(sequenceStore, nameof(sequenceStore));
-        Pipeline = Check.NotNull(pipeline, nameof(pipeline));
-        ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        _envelope = Check.NotNull(envelope);
+        Consumer = Check.NotNull(consumer);
+        SequenceStore = Check.NotNull(sequenceStore);
+        Pipeline = Check.NotNull(pipeline);
+        ServiceProvider = Check.NotNull(serviceProvider);
     }
 
     /// <summary>
@@ -131,7 +131,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     public IRawInboundEnvelope Envelope
     {
         get => _envelope;
-        set => _envelope = Check.NotNull(value, nameof(value));
+        set => _envelope = Check.NotNull(value);
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     /// </param>
     public void ReplaceServiceScope(IServiceScope newServiceScope)
     {
-        Check.NotNull(newServiceScope, nameof(newServiceScope));
+        Check.NotNull(newServiceScope);
 
         _serviceScope?.Dispose();
 

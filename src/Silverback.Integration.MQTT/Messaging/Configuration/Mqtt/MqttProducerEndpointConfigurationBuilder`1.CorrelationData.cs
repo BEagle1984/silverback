@@ -92,7 +92,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetCorrelationData(Func<TMessage?, byte[]?> correlationDataProvider)
     {
-        Check.NotNull(correlationDataProvider, nameof(correlationDataProvider));
+        Check.NotNull(correlationDataProvider);
 
         return AddMessageEnricher(new CorrelationDataOutboundHeadersEnricher<TMessage>(correlationDataProvider));
     }
@@ -130,7 +130,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetCorrelationData<TMessageChildType>(Func<TMessageChildType?, byte[]?> correlationDataProvider)
         where TMessageChildType : TMessage
     {
-        Check.NotNull(correlationDataProvider, nameof(correlationDataProvider));
+        Check.NotNull(correlationDataProvider);
 
         return AddMessageEnricher(new CorrelationDataOutboundHeadersEnricher<TMessageChildType>(correlationDataProvider));
     }
@@ -158,7 +158,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetCorrelationData(Func<IOutboundEnvelope<TMessage>, byte[]?> correlationDataProvider)
     {
-        Check.NotNull(correlationDataProvider, nameof(correlationDataProvider));
+        Check.NotNull(correlationDataProvider);
 
         return AddMessageEnricher(new CorrelationDataOutboundHeadersEnricher<TMessage>(correlationDataProvider));
     }
@@ -196,7 +196,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetCorrelationData<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, byte[]?> correlationDataProvider)
         where TMessageChildType : TMessage
     {
-        Check.NotNull(correlationDataProvider, nameof(correlationDataProvider));
+        Check.NotNull(correlationDataProvider);
 
         return AddMessageEnricher(new CorrelationDataOutboundHeadersEnricher<TMessageChildType>(correlationDataProvider));
     }

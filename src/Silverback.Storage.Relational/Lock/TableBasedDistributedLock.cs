@@ -30,8 +30,8 @@ public abstract class TableBasedDistributedLock : DistributedLock
     /// </param>
     protected TableBasedDistributedLock(TableBasedDistributedLockSettings settings, ISilverbackLogger<TableBasedDistributedLock> logger)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _settings = Check.NotNull(settings);
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="DistributedLock.AcquireCoreAsync" />

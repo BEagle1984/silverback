@@ -38,9 +38,9 @@ public class PostgreSqlTableLock : TableBasedDistributedLock
     public PostgreSqlTableLock(PostgreSqlTableLockSettings settings, ISilverbackLogger<PostgreSqlTableLock> logger)
         : base(settings, logger)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
+        _settings = Check.NotNull(settings);
 
-        _dataAccess = new PostgreSqlDataAccess(Check.NotNull(settings, nameof(settings)).ConnectionString);
+        _dataAccess = new PostgreSqlDataAccess(Check.NotNull(settings).ConnectionString);
 
         // Atomically insert the lock or take it over if it's free or expired
         _acquireLockSql = $"INSERT INTO \"{settings.TableName}\" (LockName, Handler, AcquiredOn, LastHeartbeat) " +

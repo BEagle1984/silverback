@@ -58,7 +58,7 @@ internal class SilverbackContext : ISilverbackContext
 
     public T GetOrAddObject<T>(Guid objectTypeId, Func<T> factory)
     {
-        Check.NotNull(factory, nameof(factory));
+        Check.NotNull(factory);
 
         if (TryGetObject(objectTypeId, out T? obj))
             return obj;
@@ -70,7 +70,7 @@ internal class SilverbackContext : ISilverbackContext
 
     public TObject GetOrAddObject<TObject, TArg>(Guid objectTypeId, Func<TArg, TObject> factory, TArg argument)
     {
-        Check.NotNull(factory, nameof(factory));
+        Check.NotNull(factory);
 
         if (TryGetObject(objectTypeId, out TObject? obj))
             return obj;

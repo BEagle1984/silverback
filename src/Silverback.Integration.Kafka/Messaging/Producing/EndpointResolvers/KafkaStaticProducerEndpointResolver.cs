@@ -24,7 +24,7 @@ public sealed class KafkaStaticProducerEndpointResolver
     ///     The optional target partition index.
     /// </param>
     public KafkaStaticProducerEndpointResolver(string topic, int? partition = null)
-        : this(new TopicPartition(Check.NotNullOrEmpty(topic, nameof(topic)), partition ?? Partition.Any))
+        : this(new TopicPartition(Check.NotNullOrEmpty(topic), partition ?? Partition.Any))
     {
     }
 
@@ -35,7 +35,7 @@ public sealed class KafkaStaticProducerEndpointResolver
     ///     The target topic and partition.
     /// </param>
     public KafkaStaticProducerEndpointResolver(TopicPartition topicPartition)
-        : base(Check.NotNull(topicPartition, nameof(topicPartition)).ToDisplayString())
+        : base(Check.NotNull(topicPartition).ToDisplayString())
     {
         if (topicPartition.Partition < Partition.Any)
             throw new ArgumentException("The partition must be a value greater or equal to 0, or Partition.Any.", nameof(topicPartition));

@@ -39,11 +39,11 @@ internal sealed class BrokerClientsConnector : IBrokerClientsConnector, IDisposa
         ConsumerCollection consumers,
         ISilverbackLogger<BrokerClientsConnectorService> logger)
     {
-        _brokerClients = Check.NotNull(brokerClients, nameof(brokerClients));
-        _brokerClientsBootstrapper = Check.NotNull(brokerClientsBootstrapper, nameof(brokerClientsBootstrapper));
-        _clientConnectionOptions = Check.NotNull(clientConnectionOptions, nameof(clientConnectionOptions));
-        _consumers = Check.NotNull(consumers, nameof(consumers));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _brokerClients = Check.NotNull(brokerClients);
+        _brokerClientsBootstrapper = Check.NotNull(brokerClientsBootstrapper);
+        _clientConnectionOptions = Check.NotNull(clientConnectionOptions);
+        _consumers = Check.NotNull(consumers);
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="IBrokerClientsConnector.InitializeAsync" />

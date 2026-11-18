@@ -25,7 +25,7 @@ public class RawInboundSpyBrokerBehavior : IConsumerBehavior
     /// </param>
     public RawInboundSpyBrokerBehavior(IntegrationSpy integrationSpy)
     {
-        _integrationSpy = Check.NotNull(integrationSpy, nameof(integrationSpy));
+        _integrationSpy = Check.NotNull(integrationSpy);
     }
 
     /// <inheritdoc cref="ISorted.SortIndex" />
@@ -34,8 +34,8 @@ public class RawInboundSpyBrokerBehavior : IConsumerBehavior
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
     public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         _integrationSpy.AddRawInboundEnvelope(context.Envelope);
 

@@ -28,8 +28,8 @@ public class MockedMqttNetClientFactory : IMqttNetClientFactory
     /// </param>
     public MockedMqttNetClientFactory(IInMemoryMqttBroker broker, IMockedMqttOptions options)
     {
-        _broker = Check.NotNull(broker, nameof(broker));
-        _options = Check.NotNull(options, nameof(options));
+        _broker = Check.NotNull(broker);
+        _options = Check.NotNull(options);
     }
 
     /// <inheritdoc cref="IMqttNetClientFactory.CreateClient" />

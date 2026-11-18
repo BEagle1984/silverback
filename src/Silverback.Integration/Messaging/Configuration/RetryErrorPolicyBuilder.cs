@@ -36,7 +36,7 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     /// </returns>
     public RetryErrorPolicyBuilder WithInterval(TimeSpan interval)
     {
-        _initialDelay = Check.GreaterThan(interval, nameof(interval), TimeSpan.Zero);
+        _initialDelay = Check.GreaterThan(interval, TimeSpan.Zero);
         _delayIncrement = TimeSpan.Zero;
         _delayFactor = 1.0;
         return this;
@@ -59,10 +59,10 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     /// </returns>
     public RetryErrorPolicyBuilder WithIncrementalDelay(TimeSpan initialDelay, TimeSpan delayIncrement, TimeSpan? maxDelay = null)
     {
-        _initialDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
-        _delayIncrement = Check.GreaterThan(delayIncrement, nameof(delayIncrement), TimeSpan.Zero);
+        _initialDelay = Check.GreaterThan(initialDelay, TimeSpan.Zero);
+        _delayIncrement = Check.GreaterThan(delayIncrement, TimeSpan.Zero);
         _delayFactor = 1.0;
-        _maxDelay = maxDelay.HasValue ? Check.GreaterThan(maxDelay.Value, nameof(maxDelay), TimeSpan.Zero) : null;
+        _maxDelay = Check.GreaterThan(maxDelay, TimeSpan.Zero);
         return this;
     }
 
@@ -83,10 +83,10 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     /// </returns>
     public RetryErrorPolicyBuilder WithExponentialDelay(TimeSpan initialDelay, double delayFactor, TimeSpan? maxDelay = null)
     {
-        _initialDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
+        _initialDelay = Check.GreaterThan(initialDelay, TimeSpan.Zero);
         _delayIncrement = TimeSpan.Zero;
-        _delayFactor = Check.GreaterThan(delayFactor, nameof(delayFactor), 0);
-        _maxDelay = maxDelay.HasValue ? Check.GreaterThan(maxDelay.Value, nameof(maxDelay), TimeSpan.Zero) : null;
+        _delayFactor = Check.GreaterThan(delayFactor, 0);
+        _maxDelay = Check.GreaterThan(maxDelay, TimeSpan.Zero);
         return this;
     }
 
@@ -101,7 +101,7 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     /// </returns>
     public RetryErrorPolicyBuilder WithMaxRetries(int retries)
     {
-        _maxFailedAttempts = Check.GreaterOrEqualTo(retries, nameof(retries), 1);
+        _maxFailedAttempts = Check.GreaterOrEqualTo(retries, 1);
         return this;
     }
 

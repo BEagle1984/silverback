@@ -18,7 +18,7 @@ public class TombstoneMessageArgumentResolver : ISingleMessageArgumentResolver
     /// <inheritdoc cref="IArgumentResolver.CanResolve" />
     public bool CanResolve(Type parameterType)
     {
-        Check.NotNull(parameterType, nameof(parameterType));
+        Check.NotNull(parameterType);
 
         if (!parameterType.IsGenericType)
             return parameterType == typeof(ITombstone) || parameterType == typeof(Tombstone);
@@ -32,7 +32,7 @@ public class TombstoneMessageArgumentResolver : ISingleMessageArgumentResolver
     /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />
     public Type GetMessageType(Type parameterType)
     {
-        Check.NotNull(parameterType, nameof(parameterType));
+        Check.NotNull(parameterType);
 
         if (!parameterType.IsGenericType)
             return typeof(IInboundEnvelope);
@@ -43,8 +43,8 @@ public class TombstoneMessageArgumentResolver : ISingleMessageArgumentResolver
     /// <inheritdoc cref="ISingleMessageArgumentResolver.GetValue" />
     public object? GetValue(object? message, Type parameterType)
     {
-        IInboundEnvelope envelope = (IInboundEnvelope)Check.NotNull(message, nameof(message));
-        Check.NotNull(parameterType, nameof(parameterType));
+        IInboundEnvelope envelope = (IInboundEnvelope)Check.NotNull(message);
+        Check.NotNull(parameterType);
 
         if (!envelope.IsTombstone)
             return null;

@@ -39,7 +39,7 @@ public static class ConsumerConfigurationBuilderNewtonsoftExtensions
         where TConfiguration : ConsumerEndpointConfiguration
         where TBuilder : ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>
     {
-        Check.NotNull(endpointBuilder, nameof(endpointBuilder));
+        Check.NotNull(endpointBuilder);
 
         NewtonsoftJsonMessageDeserializerBuilder serializerBuilder = new();
 

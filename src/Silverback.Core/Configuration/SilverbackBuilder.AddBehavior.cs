@@ -25,7 +25,7 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder AddTransientBehavior(Type behaviorType)
     {
-        Check.NotNull(behaviorType, nameof(behaviorType));
+        Check.NotNull(behaviorType);
 
         Services.AddTransient(typeof(IBehavior), behaviorType);
 
@@ -58,7 +58,7 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder AddTransientBehavior(Func<IServiceProvider, IBehavior> implementationFactory)
     {
-        Check.NotNull(implementationFactory, nameof(implementationFactory));
+        Check.NotNull(implementationFactory);
 
         Services.AddTransient(implementationFactory);
 
@@ -77,7 +77,7 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder AddScopedBehavior(Type behaviorType)
     {
-        Check.NotNull(behaviorType, nameof(behaviorType));
+        Check.NotNull(behaviorType);
 
         Services.AddScoped(typeof(IBehavior), behaviorType);
 
@@ -110,7 +110,7 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder AddScopedBehavior(Func<IServiceProvider, IBehavior> implementationFactory)
     {
-        Check.NotNull(implementationFactory, nameof(implementationFactory));
+        Check.NotNull(implementationFactory);
 
         Services.AddScoped(implementationFactory);
 
@@ -129,7 +129,7 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder AddSingletonBehavior(Type behaviorType)
     {
-        Check.NotNull(behaviorType, nameof(behaviorType));
+        Check.NotNull(behaviorType);
 
         Services.AddSingleton(typeof(IBehavior), behaviorType);
 
@@ -162,7 +162,7 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder AddSingletonBehavior(Func<IServiceProvider, IBehavior> implementationFactory)
     {
-        Check.NotNull(implementationFactory, nameof(implementationFactory));
+        Check.NotNull(implementationFactory);
 
         Services.AddSingleton(implementationFactory);
 
@@ -181,7 +181,7 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder AddSingletonBehavior(IBehavior implementationInstance)
     {
-        Check.NotNull(implementationInstance, nameof(implementationInstance));
+        Check.NotNull(implementationInstance);
 
         Services.AddSingleton(implementationInstance);
 

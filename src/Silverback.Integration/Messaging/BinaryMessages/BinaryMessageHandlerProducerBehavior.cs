@@ -22,8 +22,8 @@ public class BinaryMessageHandlerProducerBehavior : IProducerBehavior
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
     public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         if (context.Envelope is { Message: IBinaryMessage, EndpointConfiguration.Serializer: not IBinaryMessageSerializer })
         {

@@ -55,7 +55,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(string topic, int? partition = null)
     {
-        Check.NotNullOrEmpty(topic, nameof(topic));
+        Check.NotNullOrEmpty(topic);
 
         _endpointResolver = new KafkaStaticProducerEndpointResolver(topic, partition);
 
@@ -73,7 +73,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(TopicPartition topicPartition)
     {
-        Check.NotNull(topicPartition, nameof(topicPartition));
+        Check.NotNull(topicPartition);
 
         _endpointResolver = new KafkaStaticProducerEndpointResolver(topicPartition);
 
@@ -94,8 +94,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(string topic, Func<TMessage?, int> partitionFunction)
     {
-        Check.NotNull(topic, nameof(topic));
-        Check.NotNull(partitionFunction, nameof(partitionFunction));
+        Check.NotNull(topic);
+        Check.NotNull(partitionFunction);
 
         _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topic, partitionFunction);
 
@@ -116,8 +116,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(string topic, Func<IOutboundEnvelope<TMessage>, int> partitionFunction)
     {
-        Check.NotNull(topic, nameof(topic));
-        Check.NotNull(partitionFunction, nameof(partitionFunction));
+        Check.NotNull(topic);
+        Check.NotNull(partitionFunction);
 
         _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topic, partitionFunction);
 
@@ -135,7 +135,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(Func<TMessage?, TopicPartition> topicPartitionFunction)
     {
-        Check.NotNull(topicPartitionFunction, nameof(topicPartitionFunction));
+        Check.NotNull(topicPartitionFunction);
 
         _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topicPartitionFunction);
 
@@ -153,7 +153,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(Func<IOutboundEnvelope<TMessage>, TopicPartition> topicPartitionFunction)
     {
-        Check.NotNull(topicPartitionFunction, nameof(topicPartitionFunction));
+        Check.NotNull(topicPartitionFunction);
 
         _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topicPartitionFunction);
 
@@ -178,7 +178,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
         Func<TMessage?, string> topicFunction,
         Func<TMessage?, int>? partitionFunction = null)
     {
-        Check.NotNull(topicFunction, nameof(topicFunction));
+        Check.NotNull(topicFunction);
 
         _endpointResolver = partitionFunction == null
             ? new KafkaDynamicProducerEndpointResolver<TMessage>(topicFunction)
@@ -205,7 +205,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
         Func<IOutboundEnvelope<TMessage>, string> topicFunction,
         Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
     {
-        Check.NotNull(topicFunction, nameof(topicFunction));
+        Check.NotNull(topicFunction);
 
         _endpointResolver = partitionFunction == null
             ? new KafkaDynamicProducerEndpointResolver<TMessage>(topicFunction)
@@ -237,8 +237,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
         Func<TMessage?, string[]> topicArgumentsFunction,
         Func<TMessage?, int>? partitionFunction = null)
     {
-        Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
-        Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
+        Check.NotNullOrEmpty(topicFormatString);
+        Check.NotNull(topicArgumentsFunction);
 
         _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topicFormatString, topicArgumentsFunction, partitionFunction);
 
@@ -268,8 +268,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
         Func<IOutboundEnvelope<TMessage>, string[]> topicArgumentsFunction,
         Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
     {
-        Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
-        Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
+        Check.NotNullOrEmpty(topicFormatString);
+        Check.NotNull(topicArgumentsFunction);
 
         _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topicFormatString, topicArgumentsFunction, partitionFunction);
 

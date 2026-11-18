@@ -49,7 +49,7 @@ public static class HealthCheckBuilderExtensions
         HealthStatus? failureStatus = null,
         IEnumerable<string>? tags = null)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddSingleton<IConsumersHealthCheckService, ConsumersHealthCheckService>();
 
@@ -95,7 +95,7 @@ public static class HealthCheckBuilderExtensions
         HealthStatus? failureStatus = null,
         IEnumerable<string>? tags = null)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddScoped<IOutboxHealthCheckService, OutboxHealthCheckService>();
 

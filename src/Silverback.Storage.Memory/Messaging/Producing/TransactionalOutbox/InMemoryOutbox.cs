@@ -89,7 +89,7 @@ public class InMemoryOutbox
     /// </param>
     public void Remove(IEnumerable<OutboxMessage> outboxMessages)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         lock (_storedOutboxMessages)
         {

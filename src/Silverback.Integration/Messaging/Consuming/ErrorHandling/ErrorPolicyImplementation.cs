@@ -67,20 +67,20 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
         ISilverbackLogger<ErrorPolicyBase> logger)
     {
         _maxFailedAttempts = maxFailedAttempts;
-        _excludedExceptions = Check.NotNull(excludedExceptions, nameof(excludedExceptions));
-        _includedExceptions = Check.NotNull(includedExceptions, nameof(includedExceptions));
+        _excludedExceptions = Check.NotNull(excludedExceptions);
+        _includedExceptions = Check.NotNull(includedExceptions);
         _applyRule = applyRule;
         _messageToPublishFactory = messageToPublishFactory;
 
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _serviceProvider = Check.NotNull(serviceProvider);
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="IErrorPolicyImplementation.CanHandle" />
     public virtual bool CanHandle(ConsumerPipelineContext context, Exception exception)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(exception, nameof(exception));
+        Check.NotNull(context);
+        Check.NotNull(exception);
 
         int failedAttempts =
             context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
@@ -119,8 +119,8 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
     /// <inheritdoc cref="IErrorPolicyImplementation.HandleErrorAsync" />
     public async Task<bool> HandleErrorAsync(ConsumerPipelineContext context, Exception exception)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(exception, nameof(exception));
+        Check.NotNull(context);
+        Check.NotNull(exception);
 
         await InvokePolicyCallbacksAsync(
                 _serviceProvider.GetRequiredService<ErrorPolicyCallbacksInvoker>(),

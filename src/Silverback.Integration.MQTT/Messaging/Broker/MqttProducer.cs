@@ -49,13 +49,13 @@ public sealed class MqttProducer : Producer
         : base(
             name,
             client,
-            Check.NotNull(configuration, nameof(configuration)).ProducerEndpoints.Single(),
+            Check.NotNull(configuration).ProducerEndpoints.Single(),
             behaviorsProvider,
             serviceProvider,
             logger)
     {
-        Client = Check.NotNull(client, nameof(client));
-        Configuration = Check.NotNull(configuration, nameof(configuration));
+        Client = Check.NotNull(client);
+        Configuration = Check.NotNull(configuration);
 
         EndpointConfiguration = Configuration.ProducerEndpoints.Single();
     }
@@ -82,7 +82,7 @@ public sealed class MqttProducer : Producer
         Action<Exception, TState> onError,
         TState state)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         Client.Produce(
             envelope.RawMessage.ReadAll(),
@@ -97,7 +97,7 @@ public sealed class MqttProducer : Producer
         IOutboundEnvelope envelope,
         CancellationToken cancellationToken)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         // The result is set on the publishing loop, which must not run the caller's continuation inline
         TaskCompletionSource<IBrokerMessageIdentifier?> taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);

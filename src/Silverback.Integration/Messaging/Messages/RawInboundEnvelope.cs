@@ -34,9 +34,9 @@ internal record RawInboundEnvelope : RawBrokerEnvelope, IRawInboundEnvelope
         IBrokerMessageIdentifier brokerMessageIdentifier)
         : base(rawMessage, headers)
     {
-        Endpoint = Check.NotNull(endpoint, nameof(endpoint));
-        BrokerMessageIdentifier = Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
-        Consumer = Check.NotNull(consumer, nameof(consumer));
+        Endpoint = Check.NotNull(endpoint);
+        BrokerMessageIdentifier = Check.NotNull(brokerMessageIdentifier);
+        Consumer = Check.NotNull(consumer);
     }
 
     public ConsumerEndpoint Endpoint { get; }

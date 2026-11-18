@@ -32,8 +32,8 @@ public sealed class InMemoryLock : DistributedLock, IDisposable
     /// </param>
     public InMemoryLock(DistributedLockSettings settings, ISilverbackLogger<InMemoryLock> logger)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
-        _silverbackLogger = Check.NotNull(logger, nameof(logger));
+        _settings = Check.NotNull(settings);
+        _silverbackLogger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="IDisposable.Dispose" />

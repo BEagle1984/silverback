@@ -41,8 +41,8 @@ public class OutboundRouterBehavior : IBehavior, ISorted
     /// </param>
     public OutboundRouterBehavior(IMessageWrapper messageWrapper, IProducerCollection producers)
     {
-        _messageWrapper = Check.NotNull(messageWrapper, nameof(messageWrapper));
-        _producers = Check.NotNull(producers, nameof(producers));
+        _messageWrapper = Check.NotNull(messageWrapper);
+        _producers = Check.NotNull(producers);
     }
 
     /// <inheritdoc cref="ISorted.SortIndex" />
@@ -55,8 +55,8 @@ public class OutboundRouterBehavior : IBehavior, ISorted
         MessageHandler next,
         CancellationToken cancellationToken)
     {
-        Check.NotNull(message, nameof(message));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(message);
+        Check.NotNull(next);
 
         return await WrapAndRepublishRoutedMessageAsync(publisher, message, cancellationToken).ConfigureAwait(false)
             ? []

@@ -29,8 +29,8 @@ public static class SilverbackBuilderMqttExtensions
         this SilverbackBuilder silverbackBuilder,
         Action<MqttClientsConfigurationBuilder> configureAction)
     {
-        Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(silverbackBuilder);
+        Check.NotNull(configureAction);
 
         return silverbackBuilder.AddBrokerClientsConfigurator(_ => new MqttBrokerClientsConfigurator(configureAction));
     }

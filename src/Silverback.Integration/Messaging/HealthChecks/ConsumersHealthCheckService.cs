@@ -29,8 +29,8 @@ public class ConsumersHealthCheckService : IConsumersHealthCheckService
     /// </param>
     public ConsumersHealthCheckService(IConsumerCollection consumerCollection, IHostApplicationLifetime applicationLifetime)
     {
-        _consumerCollection = Check.NotNull(consumerCollection, nameof(consumerCollection));
-        Check.NotNull(applicationLifetime, nameof(applicationLifetime));
+        _consumerCollection = Check.NotNull(consumerCollection);
+        Check.NotNull(applicationLifetime);
 
         applicationLifetime.ApplicationStopping.Register(() => _applicationIsStopping = true);
     }

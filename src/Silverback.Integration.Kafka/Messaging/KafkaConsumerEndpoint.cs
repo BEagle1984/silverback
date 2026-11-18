@@ -39,7 +39,7 @@ public record KafkaConsumerEndpoint : ConsumerEndpoint<KafkaConsumerEndpointConf
     ///     The consumer configuration.
     /// </param>
     public KafkaConsumerEndpoint(TopicPartition topicPartition, KafkaConsumerEndpointConfiguration configuration)
-        : base(Check.NotNull(topicPartition, nameof(topicPartition)).Topic, configuration)
+        : base(Check.NotNull(topicPartition).Topic, configuration)
     {
         TopicPartition = topicPartition;
     }

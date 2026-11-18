@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,9 +37,10 @@ public class ErrorPolicyChain : IErrorPolicy
     /// <param name="policies">
     ///     The policies to be chained.
     /// </param>
+    [SuppressMessage("Minor Code Smell", "S3236:Caller information arguments should not be provided explicitly", Justification = "The materialized copy is validated but reported as the policies parameter")]
     public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies)
     {
-        Policies = [.. Check.NotNull(policies, nameof(policies))];
+        Policies = [.. Check.NotNull(policies)];
         Check.HasNoNulls(Policies, nameof(policies));
     }
 
@@ -78,20 +80,21 @@ public class ErrorPolicyChain : IErrorPolicy
 
         private readonly IReadOnlyCollection<ErrorPolicyImplementation> _policies;
 
+        [SuppressMessage("Minor Code Smell", "S3236:Caller information arguments should not be provided explicitly", Justification = "The materialized copy is validated but reported as the policies parameter")]
         public ErrorPolicyChainImplementation(IEnumerable<ErrorPolicyImplementation> policies, ISilverbackLogger<ErrorPolicyChain> logger)
         {
-            _policies = [.. Check.NotNull(policies, nameof(policies))];
+            _policies = [.. Check.NotNull(policies)];
             Check.HasNoNulls(_policies, nameof(policies));
 
-            _logger = Check.NotNull(logger, nameof(logger));
+            _logger = Check.NotNull(logger);
         }
 
         public bool CanHandle(ConsumerPipelineContext context, Exception exception) => true;
 
         public Task<bool> HandleErrorAsync(ConsumerPipelineContext context, Exception exception)
         {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(exception, nameof(exception));
+            Check.NotNull(context);
+            Check.NotNull(exception);
 
             ErrorPolicyImplementation? nextPolicy = _policies.FirstOrDefault(policy => policy.CanHandle(context, exception));
 

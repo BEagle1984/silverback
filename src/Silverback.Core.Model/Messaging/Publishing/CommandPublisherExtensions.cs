@@ -29,7 +29,7 @@ public static class CommandPublisherExtensions
     ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.
     /// </param>
     public static void ExecuteCommand(this IPublisher publisher, ICommand commandMessage, bool throwIfUnhandled = true) =>
-        Check.NotNull(publisher, nameof(publisher)).Publish(commandMessage, throwIfUnhandled);
+        Check.NotNull(publisher).Publish(commandMessage, throwIfUnhandled);
 
     /// <summary>
     ///     Executes the specified command forwarding it to its subscribers via the message bus and the
@@ -52,7 +52,7 @@ public static class CommandPublisherExtensions
     ///     The command result.
     /// </returns>
     public static TResult ExecuteCommand<TResult>(this IPublisher publisher, ICommand<TResult> commandMessage, bool throwIfUnhandled = true) =>
-        Check.NotNull(publisher, nameof(publisher)).Publish<TResult>(commandMessage, throwIfUnhandled).Single();
+        Check.NotNull(publisher).Publish<TResult>(commandMessage, throwIfUnhandled).Single();
 
     /// <summary>
     ///     Executes the specified command forwarding it to its subscribers via the message bus and the
@@ -75,7 +75,7 @@ public static class CommandPublisherExtensions
         this IPublisher publisher,
         ICommand commandMessage,
         CancellationToken cancellationToken = default) =>
-        Check.NotNull(publisher, nameof(publisher)).PublishAsync(commandMessage, true, cancellationToken);
+        Check.NotNull(publisher).PublishAsync(commandMessage, true, cancellationToken);
 
     /// <summary>
     ///     Executes the specified command forwarding it to its subscribers via the message bus and the
@@ -102,7 +102,7 @@ public static class CommandPublisherExtensions
         ICommand commandMessage,
         bool throwIfUnhandled,
         CancellationToken cancellationToken = default) =>
-        Check.NotNull(publisher, nameof(publisher)).PublishAsync(commandMessage, throwIfUnhandled, cancellationToken);
+        Check.NotNull(publisher).PublishAsync(commandMessage, throwIfUnhandled, cancellationToken);
 
     /// <summary>
     ///     Executes the specified command forwarding it to its subscribers via the message bus and the
@@ -129,7 +129,7 @@ public static class CommandPublisherExtensions
         this IPublisher publisher,
         ICommand<TResult> commandMessage,
         CancellationToken cancellationToken = default) =>
-        (await Check.NotNull(publisher, nameof(publisher)).PublishAsync<TResult>(commandMessage, true, cancellationToken).ConfigureAwait(false))
+        (await Check.NotNull(publisher).PublishAsync<TResult>(commandMessage, true, cancellationToken).ConfigureAwait(false))
         .Single();
 
     /// <summary>
@@ -161,6 +161,6 @@ public static class CommandPublisherExtensions
         ICommand<TResult> commandMessage,
         bool throwIfUnhandled,
         CancellationToken cancellationToken = default) =>
-        (await Check.NotNull(publisher, nameof(publisher)).PublishAsync<TResult>(commandMessage, throwIfUnhandled, cancellationToken).ConfigureAwait(false))
+        (await Check.NotNull(publisher).PublishAsync<TResult>(commandMessage, throwIfUnhandled, cancellationToken).ConfigureAwait(false))
         .Single();
 }

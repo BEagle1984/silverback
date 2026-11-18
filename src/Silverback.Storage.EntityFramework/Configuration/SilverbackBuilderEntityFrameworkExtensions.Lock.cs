@@ -25,7 +25,7 @@ public static partial class SilverbackBuilderEntityFrameworkExtensions
     /// </returns>
     public static SilverbackBuilder AddEntityFrameworkLock(this SilverbackBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         DistributedLockFactory lockFactory = builder.Services.GetSingletonServiceInstance<DistributedLockFactory>() ??
                                              throw new InvalidOperationException("DistributedLockFactory not found, AddSilverback has not been called.");

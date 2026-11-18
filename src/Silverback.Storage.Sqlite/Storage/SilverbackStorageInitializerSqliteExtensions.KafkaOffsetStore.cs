@@ -27,7 +27,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreateSqliteKafkaOffsetStoreAsync(this SilverbackStorageInitializer initializer, string connectionString) =>
-        initializer.CreateSqliteKafkaOffsetStoreAsync(new SqliteKafkaOffsetStoreSettings(Check.NotNull(connectionString, nameof(connectionString))));
+        initializer.CreateSqliteKafkaOffsetStoreAsync(new SqliteKafkaOffsetStoreSettings(Check.NotNull(connectionString)));
 
     /// <summary>
     ///     Creates the SQLite kafka offset store table.
@@ -45,7 +45,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
         this SilverbackStorageInitializer initializer,
         SqliteKafkaOffsetStoreSettings settings)
     {
-        Check.NotNull(settings, nameof(settings));
+        Check.NotNull(settings);
         return initializer.CreateSqliteKafkaOffsetStoreAsync(settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
@@ -73,9 +73,9 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
         string tableName,
         TimeSpan timeout)
     {
-        Check.NotNull(initializer, nameof(initializer));
-        Check.NotNullOrEmpty(connectionString, nameof(connectionString));
-        Check.NotNullOrEmpty(tableName, nameof(tableName));
+        Check.NotNull(initializer);
+        Check.NotNullOrEmpty(connectionString);
+        Check.NotNullOrEmpty(tableName);
 
         SqliteDataAccess dataAccess = new(connectionString);
 

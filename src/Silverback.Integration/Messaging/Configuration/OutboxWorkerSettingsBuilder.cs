@@ -43,7 +43,7 @@ public class OutboxWorkerSettingsBuilder
     /// </returns>
     public OutboxWorkerSettingsBuilder ProcessOutbox(Func<OutboxSettingsBuilder, IOutboxSettingsImplementationBuilder> outboxSettingsBuilderFunc)
     {
-        Check.NotNull(outboxSettingsBuilderFunc, nameof(outboxSettingsBuilderFunc));
+        Check.NotNull(outboxSettingsBuilderFunc);
 
         _outboxSettings = outboxSettingsBuilderFunc.Invoke(new OutboxSettingsBuilder()).Build();
         return this;
@@ -60,7 +60,7 @@ public class OutboxWorkerSettingsBuilder
     /// </returns>
     public OutboxWorkerSettingsBuilder WithInterval(TimeSpan interval)
     {
-        _interval = Check.Range(interval, nameof(interval), TimeSpan.Zero, TimeSpan.MaxValue);
+        _interval = Check.Range(interval, TimeSpan.Zero, TimeSpan.MaxValue);
         return this;
     }
 
@@ -83,10 +83,10 @@ public class OutboxWorkerSettingsBuilder
     /// </returns>
     public OutboxWorkerSettingsBuilder WithIncrementalRetryDelay(TimeSpan initialDelay, TimeSpan delayIncrement, TimeSpan? maxDelay = null)
     {
-        _initialRetryDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
-        _retryDelayIncrement = Check.GreaterThan(delayIncrement, nameof(delayIncrement), TimeSpan.Zero);
+        _initialRetryDelay = Check.GreaterThan(initialDelay, TimeSpan.Zero);
+        _retryDelayIncrement = Check.GreaterThan(delayIncrement, TimeSpan.Zero);
         _retryDelayFactor = 1.0;
-        _maxRetryDelay = maxDelay.HasValue ? Check.GreaterThan(maxDelay.Value, nameof(maxDelay), TimeSpan.Zero) : null;
+        _maxRetryDelay = Check.GreaterThan(maxDelay, TimeSpan.Zero);
         return this;
     }
 
@@ -109,10 +109,10 @@ public class OutboxWorkerSettingsBuilder
     /// </returns>
     public OutboxWorkerSettingsBuilder WithExponentialRetryDelay(TimeSpan initialDelay, double delayFactor, TimeSpan? maxDelay = null)
     {
-        _initialRetryDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
+        _initialRetryDelay = Check.GreaterThan(initialDelay, TimeSpan.Zero);
         _retryDelayIncrement = TimeSpan.Zero;
-        _retryDelayFactor = Check.GreaterThan(delayFactor, nameof(delayFactor), 0);
-        _maxRetryDelay = maxDelay.HasValue ? Check.GreaterThan(maxDelay.Value, nameof(maxDelay), TimeSpan.Zero) : null;
+        _retryDelayFactor = Check.GreaterThan(delayFactor, 0);
+        _maxRetryDelay = Check.GreaterThan(maxDelay, TimeSpan.Zero);
         return this;
     }
 
@@ -154,7 +154,7 @@ public class OutboxWorkerSettingsBuilder
     /// </returns>
     public OutboxWorkerSettingsBuilder WithBatchSize(int batchSize)
     {
-        _batchSize = Check.Range(batchSize, nameof(batchSize), 1, int.MaxValue);
+        _batchSize = Check.Range(batchSize, 1, int.MaxValue);
         return this;
     }
 
@@ -170,7 +170,7 @@ public class OutboxWorkerSettingsBuilder
     /// </returns>
     public OutboxWorkerSettingsBuilder WithDistributedLock(Func<DistributedLockSettingsBuilder, IDistributedLockSettingsImplementationBuilder> lockSettingsBuilderFunc)
     {
-        Check.NotNull(lockSettingsBuilderFunc, nameof(lockSettingsBuilderFunc));
+        Check.NotNull(lockSettingsBuilderFunc);
 
         _lockSettingsProvider = () => lockSettingsBuilderFunc.Invoke(new DistributedLockSettingsBuilder()).Build();
         return this;

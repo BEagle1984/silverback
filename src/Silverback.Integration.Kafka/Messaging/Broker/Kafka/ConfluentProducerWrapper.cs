@@ -35,13 +35,13 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         ISilverbackLogger<ConfluentProducerWrapper> logger)
         : base(name, logger)
     {
-        Configuration = Check.NotNull(configuration, nameof(configuration));
-        Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
-        _logger = Check.NotNull(logger, nameof(logger));
+        Configuration = Check.NotNull(configuration);
+        Check.NotNull(brokerClientCallbacksInvoker);
+        _logger = Check.NotNull(logger);
 
-        _producerBuilder = Check.NotNull(producerBuilder, nameof(producerBuilder))
+        _producerBuilder = Check.NotNull(producerBuilder)
             .SetConfiguration(configuration.ToConfluentConfig())
-            .SetEventsHandlers(this, brokerClientCallbacksInvoker, Check.NotNull(logger, nameof(logger)));
+            .SetEventsHandlers(this, brokerClientCallbacksInvoker, Check.NotNull(logger));
     }
 
     public KafkaProducerConfiguration Configuration { get; }
@@ -50,7 +50,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
     public KafkaProducer Producer
     {
         get => field ?? throw new InvalidOperationException("The producer is not initialized yet.");
-        set => field = Check.NotNull(value, nameof(value));
+        set => field = Check.NotNull(value);
     }
 
     public void Produce(TopicPartition topicPartition, Message<byte[]?, byte[]?> message, Action<DeliveryReport<byte[]?, byte[]?>> deliveryHandler)

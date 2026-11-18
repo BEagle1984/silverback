@@ -41,8 +41,8 @@ public sealed class MockedMqttClient : IMqttClient
     /// </param>
     public MockedMqttClient(IInMemoryMqttBroker broker, IMockedMqttOptions mockOptions)
     {
-        _broker = Check.NotNull(broker, nameof(broker));
-        _mockOptions = Check.NotNull(mockOptions, nameof(mockOptions));
+        _broker = Check.NotNull(broker);
+        _mockOptions = Check.NotNull(mockOptions);
     }
 
     /// <inheritdoc cref="IMqttClient.ApplicationMessageReceivedAsync" />
@@ -69,7 +69,7 @@ public sealed class MockedMqttClient : IMqttClient
     /// <inheritdoc cref="IMqttClient.ConnectAsync" />
     public async Task<MqttClientConnectResult> ConnectAsync(MqttClientOptions options, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(options);
 
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
@@ -115,7 +115,7 @@ public sealed class MockedMqttClient : IMqttClient
     /// <inheritdoc cref="IMqttClient.SubscribeAsync" />
     public Task<MqttClientSubscribeResult> SubscribeAsync(MqttClientSubscribeOptions options, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(options);
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         // Like the real client, reject the invalid topic filters before subscribing
@@ -134,7 +134,7 @@ public sealed class MockedMqttClient : IMqttClient
     /// <inheritdoc cref="IMqttClient.UnsubscribeAsync" />
     public Task<MqttClientUnsubscribeResult> UnsubscribeAsync(MqttClientUnsubscribeOptions options, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(options, nameof(options));
+        Check.NotNull(options);
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         _broker.Unsubscribe(this, options.TopicFilters);
@@ -145,7 +145,7 @@ public sealed class MockedMqttClient : IMqttClient
     /// <inheritdoc cref="IMqttClient.PublishAsync" />
     public async Task<MqttClientPublishResult> PublishAsync(MqttApplicationMessage applicationMessage, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(applicationMessage, nameof(applicationMessage));
+        Check.NotNull(applicationMessage);
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         if (Options == null)

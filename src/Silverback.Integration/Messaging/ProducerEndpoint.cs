@@ -23,7 +23,7 @@ public abstract record ProducerEndpoint : Endpoint
     protected ProducerEndpoint(string rawName, ProducerEndpointConfiguration configuration)
         : base(rawName, configuration)
     {
-        Configuration = Check.NotNull(configuration, nameof(configuration));
+        Configuration = Check.NotNull(configuration);
     }
 
     /// <summary>

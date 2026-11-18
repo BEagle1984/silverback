@@ -54,7 +54,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     [SuppressMessage("Minor Code Smell", "S3878:Arrays should not be created for params parameters", Justification = "Passing the topic directly would resolve to this same overload and recurse, so the collection expression targets the params string[] overload")]
     [SuppressMessage("Minor Code Smell", "S3220:Method calls should not resolve ambiguously to overloads with \"params\"", Justification = "Passing the topic directly would resolve to this same overload and recurse, so the collection expression targets the params string[] overload")]
     public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(string topic) =>
-        ConsumeFrom([Check.NotNullOrEmpty(topic, nameof(topic))]);
+        ConsumeFrom([Check.NotNullOrEmpty(topic)]);
 
     /// <summary>
     ///     Specifies the topics to be subscribed.
@@ -68,7 +68,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(params string[] topics)
     {
-        Check.HasNoEmpties(topics, nameof(topics));
+        Check.HasNoEmpties(topics);
 
         _topicPartitionOffsets = [.. topics.Select(topic => new TopicPartitionOffset(topic, Partition.Any, Offset.Unset))];
         _partitionOffsetsProvider = null;
@@ -90,8 +90,8 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(string topic, params int[] partitions)
     {
-        Check.NotNullOrEmpty(topic, nameof(topic));
-        Check.NotEmpty(partitions, nameof(partitions));
+        Check.NotNullOrEmpty(topic);
+        Check.NotEmpty(partitions);
 
         _topicPartitionOffsets = [.. partitions.Select(partition => new TopicPartitionOffset(topic, partition, Offset.Unset))];
         _partitionOffsetsProvider = null;
@@ -110,7 +110,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(params TopicPartition[] topicPartitions)
     {
-        Check.HasNoNulls(topicPartitions, nameof(topicPartitions));
+        Check.HasNoNulls(topicPartitions);
 
         _topicPartitionOffsets = [.. topicPartitions.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))];
         _partitionOffsetsProvider = null;
@@ -129,7 +129,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(params TopicPartitionOffset[] topicPartitionOffsets)
     {
-        Check.HasNoNulls(topicPartitionOffsets, nameof(topicPartitionOffsets));
+        Check.HasNoNulls(topicPartitionOffsets);
 
         _topicPartitionOffsets = topicPartitionOffsets;
         _partitionOffsetsProvider = null;

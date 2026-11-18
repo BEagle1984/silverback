@@ -48,9 +48,9 @@ internal class Publisher : IPublisher
         RootServiceProvider rootServiceProvider,
         ISilverbackLogger<Publisher> logger)
     {
-        _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _behaviorsProvider = Check.NotNull(behaviorsProvider);
+        _serviceProvider = Check.NotNull(serviceProvider);
+        _logger = Check.NotNull(logger);
 
         _isInServiceScope = serviceProvider != rootServiceProvider.ServiceProvider;
 
@@ -112,7 +112,7 @@ internal class Publisher : IPublisher
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
-        Check.NotNull(message, nameof(message));
+        Check.NotNull(message);
 
         return ExecuteBehaviorsPipelineAsync(
             _behaviorsProvider.CreateStack(),

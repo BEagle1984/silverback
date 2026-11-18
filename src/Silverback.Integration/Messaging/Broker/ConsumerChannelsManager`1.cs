@@ -30,8 +30,8 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
 
     protected ConsumerChannelsManager(IConsumer consumer, ISilverbackLogger logger)
     {
-        _consumer = Check.NotNull(consumer, nameof(consumer));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _consumer = Check.NotNull(consumer);
+        _logger = Check.NotNull(logger);
     }
 
     public Task Stopping => Task.WhenAll(GetChannels().Select(channel => channel.ReadTask));

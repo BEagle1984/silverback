@@ -45,8 +45,8 @@ public class EntityFrameworkDomainEventsPublisher<TDbContext>
     public EntityFrameworkDomainEventsPublisher(TDbContext dbContext, IPublisher publisher)
         : this(
             dbContext,
-            Check.NotNull(dbContext, nameof(dbContext)).SaveChanges,
-            Check.NotNull(dbContext, nameof(dbContext)).SaveChangesAsync,
+            Check.NotNull(dbContext).SaveChanges,
+            Check.NotNull(dbContext).SaveChangesAsync,
             publisher)
     {
     }
@@ -72,10 +72,10 @@ public class EntityFrameworkDomainEventsPublisher<TDbContext>
         Func<bool, CancellationToken, Task<int>> saveChangesAsync,
         IPublisher publisher)
     {
-        _dbContext = Check.NotNull(dbContext, nameof(dbContext));
-        _saveChanges = Check.NotNull(saveChanges, nameof(saveChanges));
-        _saveChangesAsync = Check.NotNull(saveChangesAsync, nameof(saveChangesAsync));
-        _publisher = Check.NotNull(publisher, nameof(publisher));
+        _dbContext = Check.NotNull(dbContext);
+        _saveChanges = Check.NotNull(saveChanges);
+        _saveChangesAsync = Check.NotNull(saveChangesAsync);
+        _publisher = Check.NotNull(publisher);
 
         _domainEventsPublisher = new DomainEventsPublisher(
             () => _dbContext.ChangeTracker.Entries().Select(entry => entry.Entity),

@@ -34,9 +34,9 @@ public class SingleMessageReturnValueHandler : IReturnValueHandler
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(IPublisher publisher, object returnValue) =>
-        Check.NotNull(publisher, nameof(publisher)).Publish<object>(returnValue);
+        Check.NotNull(publisher).Publish<object>(returnValue);
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
     public async ValueTask HandleAsync(IPublisher publisher, object returnValue) =>
-        await Check.NotNull(publisher, nameof(publisher)).PublishAsync<object>(returnValue).ConfigureAwait(false);
+        await Check.NotNull(publisher).PublishAsync<object>(returnValue).ConfigureAwait(false);
 }

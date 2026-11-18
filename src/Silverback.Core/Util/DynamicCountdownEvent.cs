@@ -17,21 +17,21 @@ internal sealed class DynamicCountdownEvent : IDisposable
 
     public void Reset(int count = 0)
     {
-        Check.GreaterOrEqualTo(count, nameof(count), 0);
+        Check.GreaterOrEqualTo(count, 0);
 
         _currentCount = count;
     }
 
     public void AddCount(int count = 1)
     {
-        Check.GreaterOrEqualTo(count, nameof(count), 1);
+        Check.GreaterOrEqualTo(count, 1);
 
         Interlocked.Add(ref _currentCount, count);
     }
 
     public void Signal(int count = 1)
     {
-        Check.GreaterOrEqualTo(count, nameof(count), 1);
+        Check.GreaterOrEqualTo(count, 1);
 
         if (Interlocked.Add(ref _currentCount, -count) <= 0)
         {

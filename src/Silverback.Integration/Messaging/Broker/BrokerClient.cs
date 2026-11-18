@@ -35,8 +35,8 @@ public abstract class BrokerClient : IBrokerClient
     /// </param>
     protected BrokerClient(string name, ISilverbackLogger logger)
     {
-        Name = Check.NotNullOrEmpty(name, nameof(name));
-        _logger = Check.NotNull(logger, nameof(logger));
+        Name = Check.NotNullOrEmpty(name);
+        _logger = Check.NotNull(logger);
     }
 
     /// <summary>

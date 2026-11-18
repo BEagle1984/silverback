@@ -18,5 +18,5 @@ public class DefaultAdditionalArgumentResolver : IAdditionalArgumentResolver
 
     /// <inheritdoc cref="IAdditionalArgumentResolver.GetValue" />
     public object GetValue(Type parameterType, IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
-        Check.NotNull(serviceProvider, nameof(serviceProvider)).GetRequiredService(parameterType);
+        Check.NotNull(serviceProvider).GetRequiredService(parameterType);
 }

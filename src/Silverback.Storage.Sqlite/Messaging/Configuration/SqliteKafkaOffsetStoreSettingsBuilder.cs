@@ -42,7 +42,7 @@ public class SqliteKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettingsIm
     /// </returns>
     public SqliteKafkaOffsetStoreSettingsBuilder UseTable(string tableName)
     {
-        _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
+        _tableName = Check.NotNullOrEmpty(tableName);
         return this;
     }
 

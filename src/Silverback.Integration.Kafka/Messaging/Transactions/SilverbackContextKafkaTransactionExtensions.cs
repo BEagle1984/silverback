@@ -30,7 +30,7 @@ public static class SilverbackContextKafkaTransactionExtensions
     /// </returns>
     public static IKafkaTransaction InitKafkaTransaction(this ISilverbackContext context, string? transactionalIdSuffix = null)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         if (context.TryGetConsumerPipelineContext(out ConsumerPipelineContext? consumerPipelineContext) &&
             consumerPipelineContext is
@@ -46,11 +46,11 @@ public static class SilverbackContextKafkaTransactionExtensions
     }
 
     internal static void AddKafkaTransaction(this ISilverbackContext context, KafkaTransaction kafkaTransaction) =>
-        Check.NotNull(context, nameof(context)).AddObject(KafkaTransactionObjectTypeId, kafkaTransaction);
+        Check.NotNull(context).AddObject(KafkaTransactionObjectTypeId, kafkaTransaction);
 
     internal static void ClearKafkaTransaction(this ISilverbackContext context) =>
-        Check.NotNull(context, nameof(context)).RemoveObject(KafkaTransactionObjectTypeId);
+        Check.NotNull(context).RemoveObject(KafkaTransactionObjectTypeId);
 
     internal static KafkaTransaction GetKafkaTransaction(this ISilverbackContext context) =>
-        Check.NotNull(context, nameof(context)).GetObject<KafkaTransaction>(KafkaTransactionObjectTypeId);
+        Check.NotNull(context).GetObject<KafkaTransaction>(KafkaTransactionObjectTypeId);
 }

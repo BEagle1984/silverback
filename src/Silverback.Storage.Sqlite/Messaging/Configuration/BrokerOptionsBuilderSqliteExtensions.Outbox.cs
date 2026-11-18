@@ -29,7 +29,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     /// </returns>
     public static BrokerOptionsBuilder UseSqliteOutbox(this BrokerOptionsBuilder builder, string connectionString)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.AddSqliteOutbox();
 
@@ -56,7 +56,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     /// </returns>
     public static BrokerOptionsBuilder AddSqliteOutbox(this BrokerOptionsBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         OutboxReaderFactory? readerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxReaderFactory>();
         OutboxWriterFactory? writerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxWriterFactory>();

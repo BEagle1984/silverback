@@ -29,7 +29,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     /// </returns>
     public static BrokerOptionsBuilder UseSqliteKafkaOffsetStore(this BrokerOptionsBuilder builder, string connectionString)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.AddSqliteKafkaOffsetStore();
 
@@ -52,7 +52,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     /// </returns>
     public static BrokerOptionsBuilder AddSqliteKafkaOffsetStore(this BrokerOptionsBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         KafkaOffsetStoreFactory factory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<KafkaOffsetStoreFactory>() ??
                                           throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");

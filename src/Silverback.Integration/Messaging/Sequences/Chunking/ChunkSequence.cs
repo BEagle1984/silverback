@@ -38,7 +38,7 @@ public class ChunkSequence : RawSequence
     /// <inheritdoc cref="SequenceBase{TEnvelope}.AddCoreAsync" />
     protected override Task<AddToSequenceResult> AddCoreAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         int chunkIndex = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
                          throw new InvalidOperationException("Chunk index header not found.");
@@ -52,7 +52,7 @@ public class ChunkSequence : RawSequence
     /// <inheritdoc cref="SequenceBase{TEnvelope}.IsLastMessage" />
     protected override bool IsLastMessage(IRawInboundEnvelope envelope)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         return envelope.Headers.GetValue<bool>(DefaultMessageHeaders.IsLastChunk) == true;
     }

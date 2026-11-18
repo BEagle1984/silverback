@@ -24,7 +24,7 @@ public class ValidatorProducerBehavior : IProducerBehavior
     /// </param>
     public ValidatorProducerBehavior(ISilverbackLogger<ValidatorProducerBehavior> logger)
     {
-        _logger = Check.NotNull(logger, nameof(logger));
+        _logger = Check.NotNull(logger);
     }
 
     /// <inheritdoc cref="ISorted.SortIndex" />
@@ -33,8 +33,8 @@ public class ValidatorProducerBehavior : IProducerBehavior
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
     public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         if (context.Envelope.Message != null &&
             context.Envelope.EndpointConfiguration.MessageValidationMode != MessageValidationMode.None &&

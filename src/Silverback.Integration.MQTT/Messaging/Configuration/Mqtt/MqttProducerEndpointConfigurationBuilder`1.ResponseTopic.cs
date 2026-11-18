@@ -52,7 +52,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetResponseTopic(Func<TMessage?, string?> responseTopicProvider)
     {
-        Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
+        Check.NotNull(responseTopicProvider);
 
         return AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessage>(responseTopicProvider));
     }
@@ -73,7 +73,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetResponseTopic<TMessageChildType>(Func<TMessageChildType?, string?> responseTopicProvider)
         where TMessageChildType : TMessage
     {
-        Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
+        Check.NotNull(responseTopicProvider);
 
         return AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessageChildType>(responseTopicProvider));
     }
@@ -89,7 +89,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetResponseTopic(Func<IOutboundEnvelope<TMessage>, string?> responseTopicProvider)
     {
-        Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
+        Check.NotNull(responseTopicProvider);
 
         return AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessage>(responseTopicProvider));
     }
@@ -110,7 +110,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetResponseTopic<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, string?> responseTopicProvider)
         where TMessageChildType : TMessage
     {
-        Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
+        Check.NotNull(responseTopicProvider);
 
         return AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessageChildType>(responseTopicProvider));
     }

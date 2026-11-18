@@ -28,7 +28,7 @@ public class MoveMessageErrorPolicyBuilder : ErrorPolicyBaseBuilder<MoveMessageE
     /// </param>
     public MoveMessageErrorPolicyBuilder(string endpointName)
     {
-        _endpointName = Check.NotNull(endpointName, nameof(endpointName));
+        _endpointName = Check.NotNull(endpointName);
     }
 
     /// <inheritdoc cref="ErrorPolicyBaseBuilder{TBuilder}.This" />
@@ -45,7 +45,7 @@ public class MoveMessageErrorPolicyBuilder : ErrorPolicyBaseBuilder<MoveMessageE
     /// </returns>
     public MoveMessageErrorPolicyBuilder WithMaxRetries(int retries)
     {
-        _maxFailedAttempts = Check.GreaterOrEqualTo(retries, nameof(retries), 1);
+        _maxFailedAttempts = Check.GreaterOrEqualTo(retries, 1);
         return this;
     }
 
@@ -60,7 +60,7 @@ public class MoveMessageErrorPolicyBuilder : ErrorPolicyBaseBuilder<MoveMessageE
     /// </returns>
     public MoveMessageErrorPolicyBuilder Transform(Action<IOutboundEnvelope?> transformationAction)
     {
-        Check.NotNull(transformationAction, nameof(transformationAction));
+        Check.NotNull(transformationAction);
         _transformMessageAction = (envelope, _) => transformationAction.Invoke(envelope);
         return This;
     }
@@ -76,7 +76,7 @@ public class MoveMessageErrorPolicyBuilder : ErrorPolicyBaseBuilder<MoveMessageE
     /// </returns>
     public MoveMessageErrorPolicyBuilder Transform(Action<IOutboundEnvelope?, Exception> transformationAction)
     {
-        Check.NotNull(transformationAction, nameof(transformationAction));
+        Check.NotNull(transformationAction);
         _transformMessageAction = transformationAction;
         return This;
     }

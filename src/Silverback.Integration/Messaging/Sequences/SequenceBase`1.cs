@@ -120,8 +120,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         IMessageStreamProvider? streamProvider = null,
         bool trackIdentifiers = true)
     {
-        SequenceId = Check.NotNull(sequenceId, nameof(sequenceId));
-        Context = Check.NotNull(context, nameof(context));
+        SequenceId = Check.NotNull(sequenceId);
+        Context = Check.NotNull(context);
 
         _streamProvider = streamProvider as MessageStreamProvider<TEnvelope> ??
                           new MessageStreamProvider<TEnvelope>();
@@ -310,7 +310,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <inheritdoc cref="ISequence.AddAsync" />
     public async Task<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         if (envelope is not TEnvelope typedEnvelope)
             throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");

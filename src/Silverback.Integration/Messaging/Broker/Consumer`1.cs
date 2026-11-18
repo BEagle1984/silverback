@@ -83,12 +83,12 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
         IServiceProvider serviceProvider,
         ISilverbackLogger<IConsumer> logger)
     {
-        Name = Check.NotNullOrEmpty(name, nameof(name));
-        Client = Check.NotNull(client, nameof(client));
-        EndpointsConfiguration = Check.NotNull(endpointsConfiguration, nameof(endpointsConfiguration));
-        _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
-        ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-        _logger = Check.NotNull(logger, nameof(logger));
+        Name = Check.NotNullOrEmpty(name);
+        Client = Check.NotNull(client);
+        EndpointsConfiguration = Check.NotNull(endpointsConfiguration);
+        _behaviors = Check.NotNull(behaviorsProvider).GetBehaviorsList();
+        ServiceProvider = Check.NotNull(serviceProvider);
+        _logger = Check.NotNull(logger);
 
         Client.Initialized.AddHandler(OnClientConnectedAsync);
         Client.Disconnecting.AddHandler(OnClientDisconnectingAsync);
@@ -249,7 +249,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
     /// <inheritdoc cref="IConsumer.StopAsync(IBrokerMessageIdentifier, bool)" />
     public async ValueTask StopAsync(IBrokerMessageIdentifier brokerMessageIdentifier, bool waitUntilStopped = true)
     {
-        Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+        Check.NotNull(brokerMessageIdentifier);
 
         await StopCoreAsync((TIdentifier)brokerMessageIdentifier, waitUntilStopped, ignoreOnceCanceled: true).ConfigureAwait(false);
     }
@@ -259,7 +259,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
         IBrokerMessageIdentifier brokerMessageIdentifier,
         CancellationToken processingCancellationToken)
     {
-        Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+        Check.NotNull(brokerMessageIdentifier);
 
         // Read before requesting the stop. The stop is accepted only if the processing token isn't canceled (checked by StopCoreAsync under
         // the start/stop semaphore): the consumer wasn't stopped, and therefore not restarted, since the processing started, so the
@@ -290,7 +290,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
     /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />
     public ValueTask CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
     {
-        Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+        Check.NotNull(brokerMessageIdentifier);
 
         return CommitAsync([brokerMessageIdentifier]);
     }
@@ -298,7 +298,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
     /// <inheritdoc cref="IConsumer.CommitAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
     public async ValueTask CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
     {
-        Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+        Check.NotNull(brokerMessageIdentifiers);
 
         try
         {
@@ -322,7 +322,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
     /// <inheritdoc cref="IConsumer.RollbackAsync(IBrokerMessageIdentifier)" />
     public ValueTask RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
     {
-        Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+        Check.NotNull(brokerMessageIdentifier);
 
         return RollbackAsync([brokerMessageIdentifier]);
     }
@@ -332,7 +332,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
     {
         try
         {
-            Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+            Check.NotNull(brokerMessageIdentifiers);
 
             return RollbackCoreAsync([.. brokerMessageIdentifiers.Cast<TIdentifier>()]);
         }
@@ -346,7 +346,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
     /// <inheritdoc cref="IConsumer.IncrementFailedAttempts" />
     public int IncrementFailedAttempts(IRawInboundEnvelope envelope)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         return _failedAttemptsDictionary.AddOrUpdate(
             envelope.BrokerMessageIdentifier,

@@ -44,7 +44,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     public ClientSession(MockedMqttClient client)
     {
-        Client = Check.NotNull(client, nameof(client));
+        Client = Check.NotNull(client);
     }
 
     // The client owning the current (or last) connection. It changes when another client instance connects with the same client id.
@@ -60,7 +60,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
         if (IsConnected)
             return;
 
-        Client = Check.NotNull(client, nameof(client));
+        Client = Check.NotNull(client);
         IsConnected = true;
         IsPersistent = isPersistent;
 

@@ -25,7 +25,7 @@ public class InboundSpyBrokerBehavior : IConsumerBehavior
     /// </param>
     public InboundSpyBrokerBehavior(IntegrationSpy integrationSpy)
     {
-        _integrationSpy = Check.NotNull(integrationSpy, nameof(integrationSpy));
+        _integrationSpy = Check.NotNull(integrationSpy);
     }
 
     /// <inheritdoc cref="ISorted.SortIndex" />
@@ -34,8 +34,8 @@ public class InboundSpyBrokerBehavior : IConsumerBehavior
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
     public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         // Skip the messages rejected by the endpoint filter, which aren't delivered to the subscribers, like the subscriber-based spy does
         // (see InboundSpySubscriber) and like the outbound spy, which doesn't get the filtered messages either

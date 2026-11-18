@@ -20,14 +20,14 @@ internal sealed class TypeSubscription : ISubscription
 
     public TypeSubscription(Type subscriberType, TypeSubscriptionOptions options)
     {
-        SubscriberType = Check.NotNull(subscriberType, nameof(subscriberType));
-        Options = Check.NotNull(options, nameof(options));
+        SubscriberType = Check.NotNull(subscriberType);
+        Options = Check.NotNull(options);
     }
 
     public TypeSubscription(Type subscriberType, object implementationInstance, TypeSubscriptionOptions options)
         : this(subscriberType, options)
     {
-        _implementationInstance = Check.NotNull(implementationInstance, nameof(implementationInstance));
+        _implementationInstance = Check.NotNull(implementationInstance);
     }
 
     public Type SubscriberType { get; }

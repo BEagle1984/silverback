@@ -56,7 +56,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     /// </returns>
     public MqttLastWillMessageConfigurationBuilder<TMessage> ProduceTo(string topic)
     {
-        _topic = Check.NotNullOrEmpty(topic, nameof(topic));
+        _topic = Check.NotNullOrEmpty(topic);
         return this;
     }
 
@@ -71,7 +71,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     /// </returns>
     public MqttLastWillMessageConfigurationBuilder<TMessage> SendMessage(TMessage message)
     {
-        _message = Check.NotNull(message, nameof(message));
+        _message = Check.NotNull(message);
         return this;
     }
 
@@ -87,7 +87,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     /// </returns>
     public MqttLastWillMessageConfigurationBuilder<TMessage> WithDelay(TimeSpan delay)
     {
-        Check.Range(delay, nameof(delay), TimeSpan.Zero, TimeSpan.FromSeconds(uint.MaxValue));
+        Check.Range(delay, TimeSpan.Zero, TimeSpan.FromSeconds(uint.MaxValue));
 
         _delay = (uint)delay.TotalSeconds;
         return this;
@@ -105,7 +105,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     /// </returns>
     public MqttLastWillMessageConfigurationBuilder<TMessage> WithExpiration(TimeSpan expiration)
     {
-        Check.Range(expiration, nameof(expiration), TimeSpan.Zero, TimeSpan.FromSeconds(uint.MaxValue));
+        Check.Range(expiration, TimeSpan.Zero, TimeSpan.FromSeconds(uint.MaxValue));
 
         _expiration = (uint)expiration.TotalSeconds;
         return this;
@@ -270,7 +270,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     /// </returns>
     public MqttLastWillMessageConfigurationBuilder<TMessage> AddHeader(string name, string? value)
     {
-        Check.NotNull(name, nameof(name));
+        Check.NotNull(name);
 
         _userProperties.Add(new MqttUserProperty(name, value));
         return this;

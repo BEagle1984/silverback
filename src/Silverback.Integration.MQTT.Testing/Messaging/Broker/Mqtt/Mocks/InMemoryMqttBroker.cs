@@ -47,7 +47,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     public void Connect(MockedMqttClient client)
     {
-        Check.NotNull(client, nameof(client));
+        Check.NotNull(client);
 
         if (client.Options == null)
             throw new InvalidOperationException("Client options not set.");
@@ -103,7 +103,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     public void Disconnect(MockedMqttClient client)
     {
-        Check.NotNull(client, nameof(client));
+        Check.NotNull(client);
 
         if (client.Options == null)
             throw new InvalidOperationException("Client options not set.");
@@ -124,7 +124,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     public void Subscribe(MockedMqttClient client, IReadOnlyCollection<string> topics)
     {
-        Check.NotNull(topics, nameof(topics));
+        Check.NotNull(topics);
 
         Subscribe(client, [.. topics.Select(topic => new MqttTopicFilter { Topic = topic })]);
     }

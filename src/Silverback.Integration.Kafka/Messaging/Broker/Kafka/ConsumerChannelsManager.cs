@@ -35,9 +35,9 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
     public ConsumerChannelsManager(KafkaConsumer consumer, IBrokerClientCallbacksInvoker callbacksInvoker, ISilverbackLogger logger)
         : base(consumer, logger)
     {
-        _consumer = Check.NotNull(consumer, nameof(consumer));
-        _callbacksInvoker = Check.NotNull(callbacksInvoker, nameof(callbacksInvoker));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _consumer = Check.NotNull(consumer);
+        _callbacksInvoker = Check.NotNull(callbacksInvoker);
+        _logger = Check.NotNull(logger);
 
         _messagesLimiterSemaphoreSlim = new SemaphoreSlim(
             consumer.Configuration.MaxDegreeOfParallelism,

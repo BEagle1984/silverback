@@ -31,7 +31,7 @@ public static class BrokerOptionsBuilderKafkaTestingExtensions
         this BrokerOptionsBuilder brokerOptionsBuilder,
         Action<IMockedKafkaOptionsBuilder>? optionsAction = null)
     {
-        Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
+        Check.NotNull(brokerOptionsBuilder);
 
         brokerOptionsBuilder.AddKafka();
         brokerOptionsBuilder.SilverbackBuilder.UseMockedKafka(optionsAction);
@@ -51,7 +51,7 @@ public static class BrokerOptionsBuilderKafkaTestingExtensions
     /// </returns>
     public static BrokerOptionsBuilder AddMockedConfluentSchemaRegistry(this BrokerOptionsBuilder brokerOptionsBuilder)
     {
-        Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
+        Check.NotNull(brokerOptionsBuilder);
 
         brokerOptionsBuilder.AddConfluentSchemaRegistry();
         brokerOptionsBuilder.SilverbackBuilder.UseMockedConfluentSchemaRegistry();

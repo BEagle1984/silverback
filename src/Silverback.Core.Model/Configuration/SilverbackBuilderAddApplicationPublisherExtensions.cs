@@ -25,7 +25,7 @@ public static class SilverbackBuilderAddApplicationPublisherExtensions
     /// </returns>
     public static SilverbackBuilder AddApplicationPublisher(this SilverbackBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services
             .AddTransient<IApplicationPublisher, ApplicationPublisher>();

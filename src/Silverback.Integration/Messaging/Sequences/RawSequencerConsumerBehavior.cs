@@ -37,8 +37,8 @@ public class RawSequencerConsumerBehavior : SequencerConsumerBehaviorBase
     /// <inheritdoc cref="SequencerConsumerBehaviorBase.PublishSequenceAsync" />
     protected override ValueTask PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         Task processingTask = Task.Run(async () => await next(context, cancellationToken).ConfigureAwait(false), CancellationToken.None);
 

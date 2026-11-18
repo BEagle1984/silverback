@@ -61,7 +61,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// </returns>
     public TBuilder ApplyTo(Type exceptionType)
     {
-        _includedExceptions.Add(Check.NotNull(exceptionType, nameof(exceptionType)));
+        _includedExceptions.Add(Check.NotNull(exceptionType));
         return This;
     }
 
@@ -91,7 +91,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// </returns>
     public TBuilder Exclude(Type exceptionType)
     {
-        _excludedExceptions.Add(Check.NotNull(exceptionType, nameof(exceptionType)));
+        _excludedExceptions.Add(Check.NotNull(exceptionType));
         return This;
     }
 
@@ -107,7 +107,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// </returns>
     public TBuilder ApplyWhen(Func<IRawInboundEnvelope, bool> applyRule)
     {
-        Check.NotNull(applyRule, nameof(applyRule));
+        Check.NotNull(applyRule);
         _applyRule = (envelope, _) => applyRule.Invoke(envelope);
         return This;
     }
@@ -124,7 +124,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// </returns>
     public TBuilder ApplyWhen(Func<IRawInboundEnvelope, Exception, bool> applyRule)
     {
-        Check.NotNull(applyRule, nameof(applyRule));
+        Check.NotNull(applyRule);
         _applyRule = applyRule;
         return This;
     }
@@ -142,7 +142,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     [Obsolete("Use the error policy callbacks (e.g. ISkipMessageErrorPolicyCallback) instead.")]
     public TBuilder Publish(Func<IRawInboundEnvelope, object?> factory)
     {
-        Check.NotNull(factory, nameof(factory));
+        Check.NotNull(factory);
         _messageToPublishFactory = (envelope, _) => factory.Invoke(envelope);
         return This;
     }
@@ -160,7 +160,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     [Obsolete("Use the error policy callbacks (e.g. ISkipMessageErrorPolicyCallback) instead.")]
     public TBuilder Publish(Func<IRawInboundEnvelope, Exception, object?> factory)
     {
-        Check.NotNull(factory, nameof(factory));
+        Check.NotNull(factory);
         _messageToPublishFactory = factory;
         return This;
     }

@@ -28,7 +28,7 @@ public static class SilverbackBuilderIntegrationTestingExtensions
     /// </returns>
     public static SilverbackBuilder AddIntegrationSpy(this SilverbackBuilder silverbackBuilder, bool attachSubscriber = false)
     {
-        Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+        Check.NotNull(silverbackBuilder);
 
         silverbackBuilder
             .AddSingletonBrokerBehavior<OutboundSpyBrokerBehavior>()

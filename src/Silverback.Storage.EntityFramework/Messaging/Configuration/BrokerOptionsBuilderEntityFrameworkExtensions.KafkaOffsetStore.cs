@@ -24,7 +24,7 @@ public static partial class BrokerOptionsBuilderEntityFrameworkExtensions
     /// </returns>
     public static BrokerOptionsBuilder AddEntityFrameworkKafkaOffsetStore(this BrokerOptionsBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         KafkaOffsetStoreFactory factory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<KafkaOffsetStoreFactory>() ??
                                           throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");

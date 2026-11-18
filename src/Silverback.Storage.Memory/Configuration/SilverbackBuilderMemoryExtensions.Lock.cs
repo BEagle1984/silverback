@@ -25,7 +25,7 @@ public static partial class SilverbackBuilderMemoryExtensions
     /// </returns>
     public static SilverbackBuilder UseInMemoryLock(this SilverbackBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.AddInMemoryLock();
 
@@ -50,7 +50,7 @@ public static partial class SilverbackBuilderMemoryExtensions
     /// </returns>
     public static SilverbackBuilder AddInMemoryLock(this SilverbackBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         DistributedLockFactory lockFactory = builder.Services.GetSingletonServiceInstance<DistributedLockFactory>() ??
                                              throw new InvalidOperationException("DistributedLockFactory not found, AddSilverback has not been called.");

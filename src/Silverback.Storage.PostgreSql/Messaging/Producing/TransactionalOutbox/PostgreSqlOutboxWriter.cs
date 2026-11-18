@@ -32,7 +32,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
     /// </param>
     public PostgreSqlOutboxWriter(PostgreSqlOutboxSettings settings)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
+        _settings = Check.NotNull(settings);
         _dataAccess = new PostgreSqlDataAccess(settings.ConnectionString);
 
         _insertSql = $"INSERT INTO \"{settings.TableName}\" (" +
@@ -50,7 +50,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
     /// <inheritdoc cref="AddAsync(OutboxMessage,ISilverbackContext?,CancellationToken)" />
     public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessage, nameof(outboxMessage));
+        Check.NotNull(outboxMessage);
 
         return _dataAccess.ExecuteNonQueryAsync(
             _insertSql,
@@ -83,7 +83,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         return _dataAccess.ExecuteNonQueryAsync(
             outboxMessages,
@@ -114,7 +114,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         return _dataAccess.ExecuteNonQueryAsync(
             outboxMessages,

@@ -19,7 +19,7 @@ public class BrokerClientsConfigurationBuilder
     /// </param>
     public BrokerClientsConfigurationBuilder(IServiceProvider serviceProvider)
     {
-        ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        ServiceProvider = Check.NotNull(serviceProvider);
     }
 
     /// <summary>

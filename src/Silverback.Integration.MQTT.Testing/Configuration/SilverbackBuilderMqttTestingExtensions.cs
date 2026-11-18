@@ -34,7 +34,7 @@ public static class SilverbackBuilderMqttTestingExtensions
         this SilverbackBuilder builder,
         Action<IMockedMqttOptionsBuilder>? optionsAction = null)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services
             .RemoveAll<IMqttNetClientFactory>()

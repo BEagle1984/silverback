@@ -17,8 +17,8 @@ public sealed class RawMessageSerializer : IMessageSerializer, IEquatable<RawMes
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
     public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
     {
-        Check.NotNull(headers, nameof(headers));
-        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(headers);
+        Check.NotNull(endpoint);
 
         if (message == null)
             return ValueTask.FromResult<Stream?>(null);

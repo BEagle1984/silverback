@@ -22,8 +22,8 @@ public abstract record Endpoint
     /// </param>
     protected Endpoint(string rawName, EndpointConfiguration configuration)
     {
-        Configuration = Check.NotNull(configuration, nameof(configuration));
-        RawName = Check.NotNullOrEmpty(rawName, nameof(rawName));
+        Configuration = Check.NotNull(configuration);
+        RawName = Check.NotNullOrEmpty(rawName);
         DisplayName = string.IsNullOrEmpty(Configuration.FriendlyName) ? RawName : $"{Configuration.FriendlyName} ({RawName})";
     }
 

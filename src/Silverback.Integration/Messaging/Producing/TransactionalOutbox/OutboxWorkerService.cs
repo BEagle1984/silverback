@@ -52,10 +52,10 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
         IOutboxWorker outboxWorker,
         IDistributedLock distributedLock,
         ISilverbackLogger<OutboxWorkerService> logger)
-        : base(Check.NotNull(settings, nameof(settings)).Interval, distributedLock, logger)
+        : base(Check.NotNull(settings).Interval, distributedLock, logger)
     {
-        Settings = Check.NotNull(settings, nameof(settings));
-        OutboxWorker = Check.NotNull(outboxWorker, nameof(outboxWorker));
+        Settings = Check.NotNull(settings);
+        OutboxWorker = Check.NotNull(outboxWorker);
     }
 
     /// <summary>

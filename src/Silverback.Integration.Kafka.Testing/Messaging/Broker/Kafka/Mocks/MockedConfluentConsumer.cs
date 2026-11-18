@@ -75,12 +75,12 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         IInternalMockedConsumerGroup consumerGroup,
         IMockedKafkaOptions options)
     {
-        _topics = Check.NotNull(topics, nameof(topics));
-        _options = Check.NotNull(options, nameof(options));
-        _consumerGroup = Check.NotNull(consumerGroup, nameof(consumerGroup));
+        _topics = Check.NotNull(topics);
+        _options = Check.NotNull(options);
+        _consumerGroup = Check.NotNull(consumerGroup);
 
         Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
-        Config = Check.NotNull(config, nameof(config));
+        Config = Check.NotNull(config);
 
         if (config.GroupProtocol == GroupProtocol.Consumer)
             MemberId = Guid.NewGuid().ToString("N");
@@ -197,12 +197,13 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         return null;
     }
 
+    [SuppressMessage("Minor Code Smell", "S3236:Caller information arguments should not be provided explicitly", Justification = "The materialized copy is validated but reported as the topics parameter")]
     public void Subscribe(IEnumerable<string> topics)
     {
         Check.ThrowObjectDisposedIf(IsDisposed, GetType());
         CheckGroupIdNotEmpty();
 
-        IReadOnlyList<string> topicsList = Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
+        IReadOnlyList<string> topicsList = Check.NotNull(topics).AsReadOnlyList();
         Check.NotEmpty(topicsList, nameof(topics));
         Check.HasNoEmpties(topicsList, nameof(topics));
         topicsList.Where(KafkaTopicPattern.IsPattern).ForEach(ThrowIfInvalidPattern);
@@ -245,7 +246,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public void Assign(IEnumerable<TopicPartitionOffset> partitions)
     {
-        IReadOnlyList<TopicPartitionOffset> partitionsList = Check.NotNull(partitions, nameof(partitions)).AsReadOnlyList();
+        IReadOnlyList<TopicPartitionOffset> partitionsList = Check.NotNull(partitions).AsReadOnlyList();
         long assignmentGeneration;
 
         lock (_assignmentStateLock)
@@ -302,7 +303,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public void StoreOffset(ConsumeResult<byte[]?, byte[]?> result)
     {
-        Check.NotNull(result, nameof(result));
+        Check.NotNull(result);
 
         Check.ThrowObjectDisposedIf(IsDisposed, GetType());
 
@@ -313,7 +314,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         Check.ThrowObjectDisposedIf(IsDisposed, GetType());
 
-        Check.NotNull(offset, nameof(offset));
+        Check.NotNull(offset);
 
         lock (_storedOffsets)
         {
@@ -330,7 +331,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public void Seek(TopicPartitionOffset tpo)
     {
-        Check.NotNull(tpo, nameof(tpo));
+        Check.NotNull(tpo);
 
         _currentOffsets[tpo.TopicPartition] = tpo;
 
@@ -516,8 +517,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         ConsumerConfig config,
         IMockedConsumerGroupsCollection consumerGroups)
     {
-        Check.NotNull(config, nameof(config));
-        Check.NotNull(consumerGroups, nameof(consumerGroups));
+        Check.NotNull(config);
+        Check.NotNull(consumerGroups);
 
         IMockedConsumerGroup consumerGroup = !string.IsNullOrEmpty(config.GroupId)
             ? consumerGroups.Get(config)

@@ -30,8 +30,8 @@ public static class BrokerClientsConfigurationBuilderAddKafkaClientsExtensions
         this BrokerClientsConfigurationBuilder brokerClientsConfigurationBuilder,
         Action<KafkaClientsConfigurationBuilder> kafkaClientsConfigurationBuilderAction)
     {
-        Check.NotNull(brokerClientsConfigurationBuilder, nameof(brokerClientsConfigurationBuilder));
-        Check.NotNull(kafkaClientsConfigurationBuilderAction, nameof(kafkaClientsConfigurationBuilderAction));
+        Check.NotNull(brokerClientsConfigurationBuilder);
+        Check.NotNull(kafkaClientsConfigurationBuilderAction);
 
         KafkaClientsConfigurationBuilder kafkaClientsBuilder = new();
         kafkaClientsConfigurationBuilderAction.Invoke(kafkaClientsBuilder);

@@ -21,18 +21,18 @@ internal sealed class BypassOutboxWriter : IOutboxWriter
 
     public BypassOutboxWriter(IProducerCollection producers)
     {
-        _producers = Check.NotNull(producers, nameof(producers));
+        _producers = Check.NotNull(producers);
     }
 
     public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
-        ProduceAsync(Check.NotNull(outboxMessage, nameof(outboxMessage)), cancellationToken);
+        ProduceAsync(Check.NotNull(outboxMessage), cancellationToken);
 
     public async Task AddAsync(
         IEnumerable<OutboxMessage> outboxMessages,
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         foreach (OutboxMessage outboxMessage in outboxMessages)
         {
@@ -45,7 +45,7 @@ internal sealed class BypassOutboxWriter : IOutboxWriter
         ISilverbackContext? context = null,
         CancellationToken cancellationToken = default)
     {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
+        Check.NotNull(outboxMessages);
 
         await foreach (OutboxMessage outboxMessage in outboxMessages.WithCancellation(cancellationToken).ConfigureAwait(false))
         {

@@ -42,7 +42,7 @@ public class SqliteOutboxSettingsBuilder : IOutboxSettingsImplementationBuilder
     /// </returns>
     public SqliteOutboxSettingsBuilder UseTable(string tableName)
     {
-        _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
+        _tableName = Check.NotNullOrEmpty(tableName);
         return this;
     }
 

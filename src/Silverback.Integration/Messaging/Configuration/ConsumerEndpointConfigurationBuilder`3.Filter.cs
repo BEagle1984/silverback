@@ -26,7 +26,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder Filter(Func<TMessage?, bool> filter)
     {
-        Check.NotNull(filter, nameof(filter));
+        Check.NotNull(filter);
 
         _filter = new GenericInboundMessageFilter<TMessage>(filter);
 
@@ -46,7 +46,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder Filter(Func<IInboundEnvelope<TMessage>, bool> filter)
     {
-        Check.NotNull(filter, nameof(filter));
+        Check.NotNull(filter);
 
         _filter = new GenericInboundMessageFilter<TMessage>(filter);
 
@@ -66,7 +66,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder Filter(IInboundMessageFilter filter)
     {
-        _filter = Check.NotNull(filter, nameof(filter));
+        _filter = Check.NotNull(filter);
 
         return This;
     }

@@ -27,7 +27,7 @@ public sealed class BinaryMessageDeserializerBuilder
     /// </returns>
     public BinaryMessageDeserializerBuilder UseModel(Type modelType)
     {
-        Check.NotNull(modelType, nameof(modelType));
+        Check.NotNull(modelType);
 
         if (!typeof(IBinaryMessage).IsAssignableFrom(modelType))
         {

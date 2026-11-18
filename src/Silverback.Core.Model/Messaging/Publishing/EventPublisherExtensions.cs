@@ -28,7 +28,7 @@ public static class EventPublisherExtensions
     ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.
     /// </param>
     public static void PublishEvent(this IPublisher publisher, IEvent eventMessage, bool throwIfUnhandled = false) =>
-        Check.NotNull(publisher, nameof(publisher)).Publish(eventMessage, throwIfUnhandled);
+        Check.NotNull(publisher).Publish(eventMessage, throwIfUnhandled);
 
     /// <summary>
     ///     Publishes the specified event to its subscribers via the message bus and the <see cref="Task" />
@@ -48,7 +48,7 @@ public static class EventPublisherExtensions
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task PublishEventAsync(this IPublisher publisher, IEvent eventMessage, CancellationToken cancellationToken = default) =>
-        Check.NotNull(publisher, nameof(publisher)).PublishAsync(eventMessage, false, cancellationToken);
+        Check.NotNull(publisher).PublishAsync(eventMessage, false, cancellationToken);
 
     /// <summary>
     ///     Publishes the specified event to its subscribers via the message bus and the <see cref="Task" />
@@ -75,5 +75,5 @@ public static class EventPublisherExtensions
         IEvent eventMessage,
         bool throwIfUnhandled,
         CancellationToken cancellationToken = default) =>
-        Check.NotNull(publisher, nameof(publisher)).PublishAsync(eventMessage, throwIfUnhandled, cancellationToken);
+        Check.NotNull(publisher).PublishAsync(eventMessage, throwIfUnhandled, cancellationToken);
 }

@@ -55,16 +55,16 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         ISilverbackLogger logger)
         : base(name, logger)
     {
-        Configuration = Check.NotNull(configuration, nameof(configuration));
-        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
-        _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-        _logger = Check.NotNull(logger, nameof(logger));
+        Configuration = Check.NotNull(configuration);
+        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker);
+        _offsetStoreFactory = Check.NotNull(offsetStoreFactory);
+        _serviceProvider = Check.NotNull(serviceProvider);
+        _logger = Check.NotNull(logger);
 
-        _consumerBuilder = Check.NotNull(consumerBuilder, nameof(consumerBuilder))
+        _consumerBuilder = Check.NotNull(consumerBuilder)
             .SetConfig(configuration.ToConfluentConfig())
             .SetEventsHandlers(this, Configuration, _brokerClientCallbacksInvoker, _logger);
-        _adminClientFactory = Check.NotNull(adminClientFactory, nameof(adminClientFactory));
+        _adminClientFactory = Check.NotNull(adminClientFactory);
     }
 
     public KafkaConsumerConfiguration Configuration { get; }
@@ -84,7 +84,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     public KafkaConsumer Consumer
     {
         get => field ?? throw new InvalidOperationException("The consumer is not initialized yet.");
-        set => field = Check.NotNull(value, nameof(value));
+        set => field = Check.NotNull(value);
     }
 
     // Bounds the polls running the rebalance callbacks and leaving the group before closing, in case the group is never left

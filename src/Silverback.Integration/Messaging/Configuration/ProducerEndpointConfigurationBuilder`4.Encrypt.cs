@@ -23,7 +23,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder Encrypt(IEncryptionSettings encryptionSettings)
     {
-        _encryptionSettings = Check.NotNull(encryptionSettings, nameof(encryptionSettings));
+        _encryptionSettings = Check.NotNull(encryptionSettings);
         return This;
     }
 

@@ -22,7 +22,7 @@ public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
     /// <inheritdoc cref="SequenceReaderBase.CanHandleAsync" />
     public override ValueTask<bool> CanHandleAsync(ConsumerPipelineContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         bool isBatchEnabled = context.Envelope.Endpoint.Configuration.Batch != null;
 
@@ -36,7 +36,7 @@ public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
     /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />
     protected override async ValueTask<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         BatchSequence? currentSequence = await context.SequenceStore.GetAsync<BatchSequence>(sequenceId, true)
             .ConfigureAwait(false);
@@ -51,7 +51,7 @@ public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
     /// <inheritdoc cref="SequenceReaderBase.GetExistingSequenceAsync" />
     protected override async ValueTask<ISequence?> GetExistingSequenceAsync(ConsumerPipelineContext context, string sequenceId)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         // The current batch may have been removed from the store since IsNewSequenceAsync found it (e.g. aborted): start a new one,
         // instead of returning an incomplete sequence, which would skip the message

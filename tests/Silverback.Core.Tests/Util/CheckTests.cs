@@ -10,7 +10,6 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Util;
 
-[SuppressMessage("ReSharper", "NotResolvedInText", Justification = "Test code")]
 [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local", Justification = "Test code")]
 public class CheckTests
 {
@@ -19,7 +18,7 @@ public class CheckTests
     {
         object obj = new();
 
-        object result = Check.NotNull(obj, "param");
+        object result = Check.NotNull(obj);
 
         result.ShouldBeSameAs(obj);
     }
@@ -29,9 +28,29 @@ public class CheckTests
     {
         object? obj = null;
 
-        Action act = () => Check.NotNull(obj, "param");
+        Action act = () => Check.NotNull(obj);
 
         act.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void NotNull_ShouldSetParamNameFromArgumentExpression()
+    {
+        object? obj = null;
+
+        Action act = () => Check.NotNull(obj);
+
+        act.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("obj");
+    }
+
+    [Fact]
+    public void NotNull_ShouldSetExplicitParamName()
+    {
+        object? obj = null;
+
+        Action act = () => Check.NotNull(obj, "other");
+
+        act.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("other");
     }
 
     [Fact]
@@ -39,7 +58,7 @@ public class CheckTests
     {
         List<object> collection = [new(), new()];
 
-        IReadOnlyCollection<object> result = Check.NotEmpty(collection, "param");
+        IReadOnlyCollection<object> result = Check.NotEmpty(collection);
 
         result.ShouldBeSameAs(collection);
     }
@@ -49,9 +68,9 @@ public class CheckTests
     {
         List<object> collection = [];
 
-        Action act = () => Check.NotEmpty(collection, "param");
+        Action act = () => Check.NotEmpty(collection);
 
-        act.ShouldThrow<ArgumentException>();
+        act.ShouldThrow<ArgumentException>().ParamName.ShouldBe("collection");
     }
 
     [Fact]
@@ -59,9 +78,19 @@ public class CheckTests
     {
         List<object>? collection = null;
 
-        Action act = () => Check.NotEmpty(collection, "param");
+        Action act = () => Check.NotEmpty(collection);
 
-        act.ShouldThrow<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("collection");
+    }
+
+    [Fact]
+    public void NotEmpty_ShouldSetExplicitParamName_WhenCollectionIsNull()
+    {
+        List<object>? collection = null;
+
+        Action act = () => Check.NotEmpty(collection, "other");
+
+        act.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("other");
     }
 
     [Fact]
@@ -69,7 +98,7 @@ public class CheckTests
     {
         string str = "test";
 
-        string result = Check.NotNullOrEmpty(str, "param");
+        string result = Check.NotNullOrEmpty(str);
 
         result.ShouldBeSameAs(str);
     }
@@ -79,7 +108,7 @@ public class CheckTests
     {
         string str = string.Empty;
 
-        Action act = () => Check.NotNullOrEmpty(str, "param");
+        Action act = () => Check.NotNullOrEmpty(str);
 
         act.ShouldThrow<ArgumentException>();
     }
@@ -89,7 +118,7 @@ public class CheckTests
     {
         string? str = null;
 
-        Action act = () => Check.NotNullOrEmpty(str, "param");
+        Action act = () => Check.NotNullOrEmpty(str);
 
         act.ShouldThrow<ArgumentNullException>();
     }
@@ -99,7 +128,7 @@ public class CheckTests
     {
         string str = "test";
 
-        string? result = Check.NullButNotEmpty(str, "param");
+        string? result = Check.NullButNotEmpty(str);
 
         result.ShouldBeSameAs(str);
     }
@@ -109,7 +138,7 @@ public class CheckTests
     {
         string str = string.Empty;
 
-        Action act = () => Check.NullButNotEmpty(str, "param");
+        Action act = () => Check.NullButNotEmpty(str);
 
         act.ShouldThrow<ArgumentException>();
     }
@@ -119,7 +148,7 @@ public class CheckTests
     {
         string? str = null;
 
-        string? result = Check.NullButNotEmpty(str, "param");
+        string? result = Check.NullButNotEmpty(str);
 
         result.ShouldBeNull();
     }
@@ -129,7 +158,7 @@ public class CheckTests
     {
         List<object> collection = [new(), new()];
 
-        IReadOnlyCollection<object> result = Check.HasNoNulls(collection, "param");
+        IReadOnlyCollection<object> result = Check.HasNoNulls(collection);
 
         result.ShouldBeSameAs(collection);
     }
@@ -139,7 +168,7 @@ public class CheckTests
     {
         List<object?> collection = [new(), new(), null];
 
-        Action act = () => Check.HasNoNulls(collection, "param");
+        Action act = () => Check.HasNoNulls(collection);
 
         act.ShouldThrow<ArgumentException>();
     }
@@ -149,7 +178,7 @@ public class CheckTests
     {
         List<object>? collection = null;
 
-        Action act = () => Check.HasNoNulls(collection, "param");
+        Action act = () => Check.HasNoNulls(collection);
 
         act.ShouldThrow<ArgumentNullException>();
     }
@@ -159,7 +188,7 @@ public class CheckTests
     {
         List<string> collection = ["abc", "def"];
 
-        IReadOnlyCollection<string?> result = Check.HasNoEmpties(collection, "param");
+        IReadOnlyCollection<string?> result = Check.HasNoEmpties(collection);
 
         result.ShouldBeSameAs(collection);
     }
@@ -169,7 +198,7 @@ public class CheckTests
     {
         List<string> collection = ["abc", "def", string.Empty];
 
-        Action act = () => Check.HasNoEmpties(collection, "param");
+        Action act = () => Check.HasNoEmpties(collection);
 
         act.ShouldThrow<ArgumentException>();
     }
@@ -179,7 +208,7 @@ public class CheckTests
     {
         List<string?> collection = ["abc", "def", null];
 
-        Action act = () => Check.HasNoEmpties(collection, "param");
+        Action act = () => Check.HasNoEmpties(collection);
 
         act.ShouldThrow<ArgumentException>();
     }
@@ -189,7 +218,7 @@ public class CheckTests
     {
         List<string>? collection = null;
 
-        Action act = () => Check.HasNoEmpties(collection, "param");
+        Action act = () => Check.HasNoEmpties(collection);
 
         act.ShouldThrow<ArgumentNullException>();
     }
@@ -202,7 +231,7 @@ public class CheckTests
     [InlineData(100, 0, 100)]
     public void Range_ShouldReturnInt_WhenInputIsWithinRange(int value, int min, int max)
     {
-        int result = Check.Range(value, "param", min, max);
+        int result = Check.Range(value, min, max);
 
         result.ShouldBe(value);
     }
@@ -214,8 +243,86 @@ public class CheckTests
     [InlineData(101, 0, 100)]
     public void Range_ShouldThrow_WhenInputIsOutsideRange(int value, int min, int max)
     {
-        Action act = () => Check.Range(value, "param", min, max);
+        Action act = () => Check.Range(value, min, max);
 
-        act.ShouldThrow<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe("value");
+    }
+
+    [Theory]
+    [InlineData(1, 0)]
+    [InlineData(-9, -10)]
+    public void GreaterThan_ShouldReturnInt_WhenInputIsGreaterThanMin(int value, int min)
+    {
+        int result = Check.GreaterThan(value, min);
+
+        result.ShouldBe(value);
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(-11, -10)]
+    public void GreaterThan_ShouldThrow_WhenInputIsNotGreaterThanMin(int value, int min)
+    {
+        Action act = () => Check.GreaterThan(value, min);
+
+        act.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe("value");
+    }
+
+    [Fact]
+    public void GreaterThan_ShouldReturnNull_WhenNullableInputIsNull()
+    {
+        int? value = null;
+
+        int? result = Check.GreaterThan(value, 0);
+
+        result.ShouldBeNull();
+    }
+
+    [Fact]
+    public void GreaterThan_ShouldReturnValue_WhenNullableInputIsGreaterThanMin()
+    {
+        int? value = 1;
+
+        int? result = Check.GreaterThan(value, 0);
+
+        result.ShouldBe(1);
+    }
+
+    [Fact]
+    public void GreaterThan_ShouldThrow_WhenNullableInputIsNotGreaterThanMin()
+    {
+        int? value = 0;
+
+        Action act = () => Check.GreaterThan(value, 0);
+
+        act.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe("value");
+    }
+
+    [Fact]
+    public void GreaterThan_ShouldSetExplicitParamName()
+    {
+        Action act = () => Check.GreaterThan(0, 0, "other");
+
+        act.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe("other");
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1, 0)]
+    public void GreaterOrEqualTo_ShouldReturnInt_WhenInputIsGreaterOrEqualToMin(int value, int min)
+    {
+        int result = Check.GreaterOrEqualTo(value, min);
+
+        result.ShouldBe(value);
+    }
+
+    [Fact]
+    public void GreaterOrEqualTo_ShouldThrow_WhenInputIsLessThanMin()
+    {
+        int value = -1;
+
+        Action act = () => Check.GreaterOrEqualTo(value, 0);
+
+        act.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe("value");
     }
 }

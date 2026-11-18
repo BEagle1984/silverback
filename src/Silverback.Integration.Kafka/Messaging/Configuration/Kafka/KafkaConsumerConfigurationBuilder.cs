@@ -55,7 +55,7 @@ public partial class KafkaConsumerConfigurationBuilder
     /// </param>
     public KafkaConsumerConfigurationBuilder(IServiceProvider serviceProvider)
     {
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        _serviceProvider = Check.NotNull(serviceProvider);
     }
 
     /// <inheritdoc cref="KafkaClientConfigurationBuilder{TConfig,TConfluentConfig,TBuilder}.This" />
@@ -132,8 +132,8 @@ public partial class KafkaConsumerConfigurationBuilder
         string? name,
         Action<KafkaConsumerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction)
     {
-        Check.NullButNotEmpty(name, nameof(name));
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NullButNotEmpty(name);
+        Check.NotNull(configurationBuilderAction);
 
         KafkaConsumerEndpointConfigurationBuilder<TMessage> builder = new(_serviceProvider, name);
         configurationBuilderAction.Invoke(builder);
@@ -239,7 +239,7 @@ public partial class KafkaConsumerConfigurationBuilder
     /// </returns>
     public KafkaConsumerConfigurationBuilder StoreOffsetsClientSide(Func<KafkaOffsetStoreSettingsBuilder, IKafkaOffsetStoreSettingsImplementationBuilder> settingsBuilderFunc)
     {
-        Check.NotNull(settingsBuilderFunc, nameof(settingsBuilderFunc));
+        Check.NotNull(settingsBuilderFunc);
 
         return StoreOffsetsClientSide(settingsBuilderFunc.Invoke(new KafkaOffsetStoreSettingsBuilder()).Build());
     }
@@ -256,7 +256,7 @@ public partial class KafkaConsumerConfigurationBuilder
     /// </returns>
     public KafkaConsumerConfigurationBuilder StoreOffsetsClientSide(KafkaOffsetStoreSettings settings)
     {
-        Check.NotNull(settings, nameof(settings));
+        Check.NotNull(settings);
         settings.Validate();
 
         _clientSideOffsetStoreSettings = settings;
@@ -424,7 +424,7 @@ public partial class KafkaConsumerConfigurationBuilder
     /// </returns>
     public KafkaConsumerConfigurationBuilder WithPollingTimeout(TimeSpan pollingTimeout)
     {
-        _pollingTimeout = Check.GreaterThan(pollingTimeout, nameof(pollingTimeout), TimeSpan.Zero);
+        _pollingTimeout = Check.GreaterThan(pollingTimeout, TimeSpan.Zero);
         return this;
     }
 
@@ -441,10 +441,7 @@ public partial class KafkaConsumerConfigurationBuilder
     /// </returns>
     public KafkaConsumerConfigurationBuilder WithStallDetectionThreshold(TimeSpan? stallDetectionThreshold)
     {
-        if (stallDetectionThreshold.HasValue)
-            Check.GreaterThan(stallDetectionThreshold.Value, nameof(stallDetectionThreshold), TimeSpan.Zero);
-
-        _stallDetectionThreshold = stallDetectionThreshold;
+        _stallDetectionThreshold = Check.GreaterThan(stallDetectionThreshold, TimeSpan.Zero);
         return this;
     }
 

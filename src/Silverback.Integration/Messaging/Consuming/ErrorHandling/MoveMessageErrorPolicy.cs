@@ -33,7 +33,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
     /// </param>
     internal MoveMessageErrorPolicy(string endpointName)
     {
-        EndpointName = Check.NotNull(endpointName, nameof(endpointName));
+        EndpointName = Check.NotNull(endpointName);
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
 
         public override bool CanHandle(ConsumerPipelineContext context, Exception exception)
         {
-            Check.NotNull(context, nameof(context));
+            Check.NotNull(context);
 
             if (context.Sequence != null)
             {
@@ -125,8 +125,8 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
 
         protected override async Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
         {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(exception, nameof(exception));
+            Check.NotNull(context);
+            Check.NotNull(exception);
 
             await PublishToNewEndpointAsync(context.Envelope, exception).ConfigureAwait(false);
 

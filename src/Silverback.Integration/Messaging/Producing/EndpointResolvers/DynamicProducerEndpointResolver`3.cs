@@ -33,7 +33,7 @@ public abstract record DynamicProducerEndpointResolver<TMessage, TEndpoint, TCon
     /// </param>
     protected DynamicProducerEndpointResolver(string rawName)
     {
-        RawName = Check.NotNullOrEmpty(rawName, nameof(rawName));
+        RawName = Check.NotNullOrEmpty(rawName);
     }
 
     /// <inheritdoc cref="IProducerEndpointResolver.RawName" />
@@ -41,12 +41,12 @@ public abstract record DynamicProducerEndpointResolver<TMessage, TEndpoint, TCon
 
     /// <inheritdoc cref="IProducerEndpointResolver.GetEndpoint" />
     public ProducerEndpoint GetEndpoint(IOutboundEnvelope envelope) =>
-        GetEndpoint(envelope, (TConfiguration)Check.NotNull(envelope, nameof(envelope)).EndpointConfiguration);
+        GetEndpoint(envelope, (TConfiguration)Check.NotNull(envelope).EndpointConfiguration);
 
     /// <inheritdoc cref="IProducerEndpointResolver.GetEndpoint" />
     public TEndpoint GetEndpoint(IOutboundEnvelope envelope, TConfiguration configuration)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         if (envelope is IOutboundEnvelope<TMessage> castedEnvelope)
             return GetEndpointCore(castedEnvelope, configuration);

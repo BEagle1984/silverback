@@ -40,7 +40,7 @@ public abstract class SequenceReaderBase : ISequenceReader
     [SuppressMessage("", "CA2000", Justification = "Sequence is being returned")]
     public async ValueTask<ISequence> GetSequenceAsync(ConsumerPipelineContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         string sequenceId = await GetSequenceIdAsync(context).ConfigureAwait(false);
         bool isNewSequence = await IsNewSequenceAsync(sequenceId, context).ConfigureAwait(false);
@@ -97,7 +97,7 @@ public abstract class SequenceReaderBase : ISequenceReader
         string sequenceId,
         ConsumerPipelineContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         await AwaitOrAbortPreviousSequencesAsync(context.SequenceStore).ConfigureAwait(false);
 
@@ -138,7 +138,7 @@ public abstract class SequenceReaderBase : ISequenceReader
         ConsumerPipelineContext context,
         string sequenceId)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         return context.SequenceStore.GetAsync<ISequence>(sequenceId);
     }

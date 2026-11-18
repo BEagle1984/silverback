@@ -23,7 +23,7 @@ public static class SilverbackContextKafkaOffsetStoreExtensions
     ///     The scope.
     /// </param>
     public static void SetKafkaOffsetStoreScope(this ISilverbackContext context, KafkaOffsetStoreScope scope) =>
-        Check.NotNull(context, nameof(context)).AddObject(OffsetStoreObjectTypeId, scope);
+        Check.NotNull(context).AddObject(OffsetStoreObjectTypeId, scope);
 
     /// <summary>
     ///     Returns the <see cref="KafkaOffsetStoreScope" /> to be used to store the offsets.
@@ -35,5 +35,5 @@ public static class SilverbackContextKafkaOffsetStoreExtensions
     ///     A value indicating whether the transaction was found.
     /// </returns>
     public static KafkaOffsetStoreScope GetKafkaOffsetStoreScope(this ISilverbackContext context) =>
-        Check.NotNull(context, nameof(context)).GetObject<KafkaOffsetStoreScope>(OffsetStoreObjectTypeId);
+        Check.NotNull(context).GetObject<KafkaOffsetStoreScope>(OffsetStoreObjectTypeId);
 }

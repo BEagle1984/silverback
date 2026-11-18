@@ -40,7 +40,7 @@ public class PostgreSqlOutboxReader : IOutboxReader
     /// </param>
     public PostgreSqlOutboxReader(PostgreSqlOutboxSettings settings)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
+        _settings = Check.NotNull(settings);
         _dataAccess = new PostgreSqlDataAccess(_settings.ConnectionString);
 
         _getQuerySql = "SELECT " +
@@ -89,7 +89,7 @@ public class PostgreSqlOutboxReader : IOutboxReader
     /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
     public Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages) =>
         _dataAccess.ExecuteNonQueryAsync(
-            Check.NotNull(outboxMessages, nameof(outboxMessages)).Cast<DbOutboxMessage>(),
+            Check.NotNull(outboxMessages).Cast<DbOutboxMessage>(),
             _deleteSql,
             [
                 new NpgsqlParameter("@Id", NpgsqlDbType.Bigint)

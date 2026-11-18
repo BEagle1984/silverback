@@ -28,7 +28,7 @@ public sealed partial class BrokerOptionsBuilder
     /// </returns>
     public BrokerOptionsBuilder AddOutboxWorker(Action<OutboxWorkerSettingsBuilder> settingsBuilderAction)
     {
-        Check.NotNull(settingsBuilderAction, nameof(settingsBuilderAction));
+        Check.NotNull(settingsBuilderAction);
 
         OutboxWorkerSettingsBuilder builder = new();
         settingsBuilderAction.Invoke(builder);
@@ -47,7 +47,7 @@ public sealed partial class BrokerOptionsBuilder
     /// </returns>
     public BrokerOptionsBuilder AddOutboxWorker(OutboxWorkerSettings settings)
     {
-        Check.NotNull(settings, nameof(settings));
+        Check.NotNull(settings);
 
         SilverbackBuilder.Services
             .AddSingleton<IHostedService>(serviceProvider =>

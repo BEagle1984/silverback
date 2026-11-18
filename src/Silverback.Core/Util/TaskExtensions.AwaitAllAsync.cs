@@ -17,7 +17,7 @@ internal static partial class TaskExtensions
     [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "False positive because in a loop")]
     public static async ValueTask AwaitAllAsync(this IReadOnlyCollection<ValueTask> tasks)
     {
-        Check.NotNull(tasks, nameof(tasks));
+        Check.NotNull(tasks);
 
         List<Exception>? exceptions = null;
 
@@ -44,7 +44,7 @@ internal static partial class TaskExtensions
     [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "False positive because in a loop")]
     public static async ValueTask<IReadOnlyCollection<TResult>> AwaitAllAsync<TResult>(this IReadOnlyCollection<ValueTask<TResult>> tasks)
     {
-        Check.NotNull(tasks, nameof(tasks));
+        Check.NotNull(tasks);
 
         List<Exception>? exceptions = null;
         List<TResult> results = new(tasks.Count);

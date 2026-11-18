@@ -30,7 +30,7 @@ public static class BrokerOptionsBuilderAddMqttExtensions
     /// </returns>
     public static BrokerOptionsBuilder AddMqtt(this BrokerOptionsBuilder brokerOptionsBuilder)
     {
-        Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
+        Check.NotNull(brokerOptionsBuilder);
 
         if (brokerOptionsBuilder.SilverbackBuilder.Services.ContainsAny<MqttClientsConfigurationActions>())
             return brokerOptionsBuilder;

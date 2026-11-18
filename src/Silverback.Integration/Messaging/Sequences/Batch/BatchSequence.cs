@@ -33,8 +33,8 @@ public class BatchSequence : Sequence
         : base(
             sequenceId,
             context,
-            Check.NotNull(context, nameof(context)).Envelope.Endpoint.Configuration.Batch?.MaxWaitTime != null,
-            Check.NotNull(context, nameof(context)).Envelope.Endpoint.Configuration.Batch?.MaxWaitTime)
+            Check.NotNull(context).Envelope.Endpoint.Configuration.Batch?.MaxWaitTime != null,
+            Check.NotNull(context).Envelope.Endpoint.Configuration.Batch?.MaxWaitTime)
     {
         if (context.Envelope.Endpoint.Configuration.Batch == null)
             throw new InvalidOperationException("Endpoint.Batch is null.");

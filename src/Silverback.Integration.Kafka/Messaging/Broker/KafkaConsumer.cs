@@ -113,16 +113,16 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         : base(
             name,
             client,
-            Check.NotNull(configuration, nameof(configuration)).Endpoints,
+            Check.NotNull(configuration).Endpoints,
             behaviorsProvider,
             serviceProvider,
             logger)
     {
-        Client = Check.NotNull(client, nameof(client));
-        Configuration = Check.NotNull(configuration, nameof(configuration));
+        Client = Check.NotNull(client);
+        Configuration = Check.NotNull(configuration);
 
-        _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _offsetStoreFactory = Check.NotNull(offsetStoreFactory);
+        _logger = Check.NotNull(logger);
 
         _channelsManager = new ConsumerChannelsManager(this, callbacksInvoker, logger);
         _consumeLoopHandler = new ConsumeLoopHandler(this, _channelsManager, _offsets, _logger);
@@ -145,7 +145,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     /// <inheritdoc cref="IKafkaConsumer.Pause" />
     public void Pause(IEnumerable<TopicPartition> partitions)
     {
-        Check.NotNull(partitions, nameof(partitions));
+        Check.NotNull(partitions);
 
         lock (_assignmentLock)
         {
@@ -160,7 +160,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     /// <inheritdoc cref="IKafkaConsumer.Resume" />
     public void Resume(IEnumerable<TopicPartition> partitions)
     {
-        Check.NotNull(partitions, nameof(partitions));
+        Check.NotNull(partitions);
 
         lock (_assignmentLock)
         {
@@ -175,7 +175,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     /// <inheritdoc cref="IKafkaConsumer.Seek" />
     public void Seek(TopicPartitionOffset topicPartitionOffset)
     {
-        Check.NotNull(topicPartitionOffset, nameof(topicPartitionOffset));
+        Check.NotNull(topicPartitionOffset);
 
         lock (_assignmentLock)
         {
@@ -520,7 +520,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     /// <inheritdoc cref="Consumer{TIdentifier}.CommitCoreAsync(IReadOnlyCollection{TIdentifier})" />
     protected override ValueTask CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
     {
-        Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+        Check.NotNull(brokerMessageIdentifiers);
 
         lock (_assignmentLock)
         {
@@ -564,7 +564,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     /// <inheritdoc cref="Consumer{TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{TIdentifier})" />
     protected override ValueTask RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
     {
-        Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+        Check.NotNull(brokerMessageIdentifiers);
 
         Dictionary<TopicPartition, long> versions;
 

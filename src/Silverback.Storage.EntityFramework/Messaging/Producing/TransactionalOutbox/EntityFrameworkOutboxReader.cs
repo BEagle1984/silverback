@@ -35,8 +35,8 @@ public class EntityFrameworkOutboxReader : IOutboxReader
     /// </param>
     public EntityFrameworkOutboxReader(EntityFrameworkOutboxSettings settings, IServiceScopeFactory serviceScopeFactory)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
-        _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
+        _settings = Check.NotNull(settings);
+        _serviceScopeFactory = Check.NotNull(serviceScopeFactory);
     }
 
     /// <inheritdoc cref="IOutboxReader.GetAsync" />

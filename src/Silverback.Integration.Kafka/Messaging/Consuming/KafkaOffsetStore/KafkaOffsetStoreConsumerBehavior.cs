@@ -30,8 +30,8 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
     public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
-        Check.NotNull(context, nameof(context));
-        Check.NotNull(next, nameof(next));
+        Check.NotNull(context);
+        Check.NotNull(next);
 
         if (context.Consumer is KafkaConsumer { Configuration.ClientSideOffsetStore: not null } kafkaConsumer)
         {

@@ -33,7 +33,7 @@ internal sealed class CustomHeadersMappings : ICustomHeadersMappings
 
     private static void Map(MessageHeaderCollection headers, Dictionary<string, string>? mappings)
     {
-        Check.NotNull(headers, nameof(headers));
+        Check.NotNull(headers);
 
         if (mappings == null)
             return;

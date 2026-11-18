@@ -36,8 +36,8 @@ public class SymmetricEncryptStream : SilverbackCryptoStream
     /// </param>
     public SymmetricEncryptStream(Stream stream, SymmetricEncryptionSettings settings)
     {
-        Check.NotNull(stream, nameof(stream));
-        Check.NotNull(settings, nameof(settings));
+        Check.NotNull(stream);
+        Check.NotNull(settings);
 
         _cryptoTransform = CreateCryptoTransform(settings);
         _cryptoStream = new CryptoStream(stream, _cryptoTransform, CryptoStreamMode.Read);

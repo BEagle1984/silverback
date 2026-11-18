@@ -38,10 +38,10 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
         RootServiceProvider rootServiceProvider)
     {
-        _factory = Check.NotNull(factory, nameof(factory));
-        _clients = Check.NotNull(clients, nameof(clients));
-        _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
-        _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
+        _factory = Check.NotNull(factory);
+        _clients = Check.NotNull(clients);
+        _producerLogger = Check.NotNull(producerLogger);
+        _behaviorsProvider = Check.NotNull(behaviorsProvider);
 
         // Ensure that the root service provider is used to resolve the necessary service, to avoid premature disposal
         _serviceProvider = rootServiceProvider.ServiceProvider;

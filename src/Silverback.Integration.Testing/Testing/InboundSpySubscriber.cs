@@ -27,7 +27,7 @@ public class InboundSpySubscriber
     /// </param>
     public InboundSpySubscriber(IntegrationSpy integrationSpy)
     {
-        _integrationSpy = Check.NotNull(integrationSpy, nameof(integrationSpy));
+        _integrationSpy = Check.NotNull(integrationSpy);
     }
 
     [Subscribe]

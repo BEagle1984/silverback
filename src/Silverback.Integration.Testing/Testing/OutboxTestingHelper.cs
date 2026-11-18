@@ -30,8 +30,8 @@ internal sealed class OutboxTestingHelper : IOutboxTestingHelper
 
     public OutboxTestingHelper(IServiceProvider serviceProvider, ILogger logger)
     {
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-        _logger = Check.NotNull(logger, nameof(logger));
+        _serviceProvider = Check.NotNull(serviceProvider);
+        _logger = Check.NotNull(logger);
     }
 
     public ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(CancellationToken cancellationToken = default) =>
@@ -40,12 +40,12 @@ internal sealed class OutboxTestingHelper : IOutboxTestingHelper
     public async ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(
         OutboxSettings outboxSettings,
         CancellationToken cancellationToken = default) =>
-        await GetMessagesCoreAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), cancellationToken).ConfigureAwait(false);
+        await GetMessagesCoreAsync(Check.NotNull(outboxSettings), cancellationToken).ConfigureAwait(false);
 
     public ValueTask<int> GetLengthAsync(CancellationToken cancellationToken = default) => GetLengthCoreAsync(null, cancellationToken);
 
     public async ValueTask<int> GetLengthAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default) =>
-        await GetLengthCoreAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), cancellationToken).ConfigureAwait(false);
+        await GetLengthCoreAsync(Check.NotNull(outboxSettings), cancellationToken).ConfigureAwait(false);
 
     public async ValueTask<bool> IsEmptyAsync(CancellationToken cancellationToken = default) =>
         await GetLengthCoreAsync(null, cancellationToken).ConfigureAwait(false) == 0;
@@ -58,15 +58,15 @@ internal sealed class OutboxTestingHelper : IOutboxTestingHelper
     public ValueTask WaitUntilEmptyAsync(CancellationToken cancellationToken) => WaitUntilEmptyCoreAsync(null, cancellationToken);
 
     public async ValueTask WaitUntilEmptyAsync(OutboxSettings outboxSettings, TimeSpan? timeout = null) =>
-        await WaitUntilEmptyWithTimeoutAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), timeout).ConfigureAwait(false);
+        await WaitUntilEmptyWithTimeoutAsync(Check.NotNull(outboxSettings), timeout).ConfigureAwait(false);
 
     public async ValueTask WaitUntilEmptyAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken) =>
-        await WaitUntilEmptyCoreAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), cancellationToken).ConfigureAwait(false);
+        await WaitUntilEmptyCoreAsync(Check.NotNull(outboxSettings), cancellationToken).ConfigureAwait(false);
 
     public ValueTask ClearAsync(CancellationToken cancellationToken = default) => ClearCoreAsync(null, cancellationToken);
 
     public async ValueTask ClearAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default) =>
-        await ClearCoreAsync(Check.NotNull(outboxSettings, nameof(outboxSettings)), cancellationToken).ConfigureAwait(false);
+        await ClearCoreAsync(Check.NotNull(outboxSettings), cancellationToken).ConfigureAwait(false);
 
     public async ValueTask ProcessAsync(CancellationToken cancellationToken = default)
     {
@@ -78,7 +78,7 @@ internal sealed class OutboxTestingHelper : IOutboxTestingHelper
 
     public async ValueTask ProcessAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default)
     {
-        foreach (OutboxWorkerService service in GetWorkerServices(Check.NotNull(outboxSettings, nameof(outboxSettings))))
+        foreach (OutboxWorkerService service in GetWorkerServices(Check.NotNull(outboxSettings)))
         {
             await service.ProcessUntilEmptyAsync(cancellationToken).ConfigureAwait(false);
         }
@@ -88,12 +88,12 @@ internal sealed class OutboxTestingHelper : IOutboxTestingHelper
         await PauseAsync(GetWorkerServices(null), cancellationToken).ConfigureAwait(false);
 
     public async ValueTask PauseWorkerAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default) =>
-        await PauseAsync(GetWorkerServices(Check.NotNull(outboxSettings, nameof(outboxSettings))), cancellationToken).ConfigureAwait(false);
+        await PauseAsync(GetWorkerServices(Check.NotNull(outboxSettings)), cancellationToken).ConfigureAwait(false);
 
     public void ResumeWorker() => GetWorkerServices(null).ForEach(service => service.ResumeAutomaticProcessing());
 
     public void ResumeWorker(OutboxSettings outboxSettings) =>
-        GetWorkerServices(Check.NotNull(outboxSettings, nameof(outboxSettings))).ForEach(service => service.ResumeAutomaticProcessing());
+        GetWorkerServices(Check.NotNull(outboxSettings)).ForEach(service => service.ResumeAutomaticProcessing());
 
     /// <summary>
     ///     Checks whether the outbox is empty, logging and ignoring the errors (returning <c>false</c>). When no readers are specified,

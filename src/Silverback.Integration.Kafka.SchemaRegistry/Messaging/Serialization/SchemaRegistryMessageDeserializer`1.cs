@@ -53,7 +53,7 @@ public abstract class SchemaRegistryMessageDeserializer<TMessage> : IMessageDese
         MessageHeaderCollection headers,
         ConsumerEndpoint endpoint)
     {
-        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(endpoint);
 
         byte[]? buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
 

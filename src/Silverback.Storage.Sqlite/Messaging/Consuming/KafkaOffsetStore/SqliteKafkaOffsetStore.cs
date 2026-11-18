@@ -31,7 +31,7 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
     /// </param>
     public SqliteKafkaOffsetStore(SqliteKafkaOffsetStoreSettings settings)
     {
-        _settings = Check.NotNull(settings, nameof(settings));
+        _settings = Check.NotNull(settings);
         _dataAccess = new SqliteDataAccess(_settings.ConnectionString);
 
         _getQuerySql = $"SELECT Topic, Partition, Offset FROM {settings.TableName} WHERE GroupId = @GroupId";
@@ -56,7 +56,7 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
     public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null) =>
         _dataAccess.ExecuteNonQueryAsync(
-            Check.NotNull(offsets, nameof(offsets)),
+            Check.NotNull(offsets),
             _insertOrReplaceQuerySql,
             [
                 new SqliteParameter("@GroupId", SqliteType.Text)

@@ -48,7 +48,7 @@ public sealed class JsonMessageDeserializerBuilder
     /// </returns>
     public JsonMessageDeserializerBuilder UseModel(Type messageType)
     {
-        _messageType = Check.NotNull(messageType, nameof(messageType));
+        _messageType = Check.NotNull(messageType);
         return this;
     }
 
@@ -64,7 +64,7 @@ public sealed class JsonMessageDeserializerBuilder
     /// </returns>
     public JsonMessageDeserializerBuilder Configure(Action<JsonSerializerOptions> configureAction)
     {
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(configureAction);
 
         JsonSerializerOptions options = _options == null ? new JsonSerializerOptions() : new JsonSerializerOptions(_options);
         configureAction.Invoke(options);
@@ -88,7 +88,7 @@ public sealed class JsonMessageDeserializerBuilder
     /// </returns>
     public JsonMessageDeserializerBuilder UseJsonSerializerContext(JsonSerializerContext context)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         _options = context.Options;
         return this;

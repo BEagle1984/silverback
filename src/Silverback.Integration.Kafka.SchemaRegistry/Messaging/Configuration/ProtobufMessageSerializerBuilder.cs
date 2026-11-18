@@ -42,7 +42,7 @@ public class ProtobufMessageSerializerBuilder : SchemaRegistrySerializerBuilder<
     /// </returns>
     public ProtobufMessageSerializerBuilder Configure(Action<KafkaProtobufSerializerConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(configurationBuilderAction);
 
         KafkaProtobufSerializerConfigurationBuilder builder = new();
         configurationBuilderAction.Invoke(builder);
@@ -63,7 +63,7 @@ public class ProtobufMessageSerializerBuilder : SchemaRegistrySerializerBuilder<
     [Obsolete("Use the Configure overload taking a KafkaProtobufSerializerConfigurationBuilder instead.")]
     public ProtobufMessageSerializerBuilder Configure(Action<ProtobufSerializerConfig> configureAction)
     {
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(configureAction);
 
         _protobufSerializerConfig = new ProtobufSerializerConfig();
         configureAction.Invoke(_protobufSerializerConfig);
@@ -74,7 +74,7 @@ public class ProtobufMessageSerializerBuilder : SchemaRegistrySerializerBuilder<
     /// <inheritdoc cref="SchemaRegistrySerializerBuilder{TBuilder}.BuildCore" />
     protected override IMessageSerializer BuildCore(Type messageType, ISchemaRegistryClient schemaRegistryClient)
     {
-        Check.NotNull(messageType, nameof(messageType));
+        Check.NotNull(messageType);
 
         ProtobufMessageTypeValidator.Validate(messageType);
 

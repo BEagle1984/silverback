@@ -32,7 +32,7 @@ public class NewtonsoftJsonMessageSerializerBuilder
     /// </returns>
     public NewtonsoftJsonMessageSerializerBuilder Configure(Action<JsonSerializerSettings> configureAction)
     {
-        Check.NotNull(configureAction, nameof(configureAction));
+        Check.NotNull(configureAction);
 
         JsonSerializerSettings settings = _settings == null ? new JsonSerializerSettings() : new JsonSerializerSettings(_settings);
         configureAction.Invoke(settings);

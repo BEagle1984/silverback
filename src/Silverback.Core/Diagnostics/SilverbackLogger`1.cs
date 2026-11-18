@@ -13,7 +13,7 @@ internal class SilverbackLogger<TCategoryName> : ISilverbackLogger<TCategoryName
 
     public SilverbackLogger(IMappedLevelsLogger<TCategoryName> mappedLevelsLogger)
     {
-        _logger = Check.NotNull(mappedLevelsLogger, nameof(mappedLevelsLogger));
+        _logger = Check.NotNull(mappedLevelsLogger);
     }
 
     [SuppressMessage("Minor Code Smell", "S6669:Logger field or property name should comply with a naming convention", Justification = "InnerLogger implements the public ISilverbackLogger member and its name cannot change")]

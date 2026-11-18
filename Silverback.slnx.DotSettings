@@ -456,7 +456,7 @@
         x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D50698A97BB7304A83518E5D1CAB41D8/Shortcut/@EntryValue">notnull</s:String>
     <s:Boolean
         x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D50698A97BB7304A83518E5D1CAB41D8/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-    <s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D50698A97BB7304A83518E5D1CAB41D8/Text/@EntryValue">Check.NotNull($VAR$, nameof($VAR$))$END$</s:String>
+    <s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D50698A97BB7304A83518E5D1CAB41D8/Text/@EntryValue">Check.NotNull($VAR$)$END$</s:String>
     <s:Boolean x:Key="/Default/UserDictionary/Words/=Aquilini/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean x:Key="/Default/UserDictionary/Words/=Avro/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean x:Key="/Default/UserDictionary/Words/=Comparers/@EntryIndexedValue">True</s:Boolean>

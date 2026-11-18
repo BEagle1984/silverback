@@ -49,8 +49,8 @@ public partial class KafkaClientsConfigurationBuilder
     /// </returns>
     public KafkaClientsConfigurationBuilder AddProducer(string name, Action<KafkaProducerConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNullOrEmpty(name, nameof(name));
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNullOrEmpty(name);
+        Check.NotNull(configurationBuilderAction);
 
         _configurationActions.ProducerConfigurationActions.AddOrAppend(name, configurationBuilderAction);
 
@@ -83,8 +83,8 @@ public partial class KafkaClientsConfigurationBuilder
     /// </returns>
     public KafkaClientsConfigurationBuilder AddConsumer(string name, Action<KafkaConsumerConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNullOrEmpty(name, nameof(name));
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNullOrEmpty(name);
+        Check.NotNull(configurationBuilderAction);
 
         _configurationActions.ConsumerConfigurationActions.AddOrAppend(name, configurationBuilderAction);
 
@@ -103,7 +103,7 @@ public partial class KafkaClientsConfigurationBuilder
     /// </returns>
     public KafkaClientsConfigurationBuilder AddDefaultProducerConfiguration(Action<KafkaProducerConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(configurationBuilderAction);
 
         _defaultProducerConfigurationActions.Add(configurationBuilderAction);
 
@@ -122,7 +122,7 @@ public partial class KafkaClientsConfigurationBuilder
     /// </returns>
     public KafkaClientsConfigurationBuilder AddDefaultConsumerConfiguration(Action<KafkaConsumerConfigurationBuilder> configurationBuilderAction)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(configurationBuilderAction);
 
         _defaultConsumerConfigurationActions.Add(configurationBuilderAction);
 

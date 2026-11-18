@@ -44,8 +44,8 @@ public class GenericOutboundHeadersEnricher<TMessage> : IOutboundMessageEnricher
     /// </param>
     public GenericOutboundHeadersEnricher(string name, Func<TMessage?, object?> valueProvider)
     {
-        _name = Check.NotNull(name, nameof(name));
-        Check.NotNull(valueProvider, nameof(valueProvider));
+        _name = Check.NotNull(name);
+        Check.NotNull(valueProvider);
         _valueProvider = envelope => valueProvider.Invoke(envelope.Message);
     }
 
@@ -60,14 +60,14 @@ public class GenericOutboundHeadersEnricher<TMessage> : IOutboundMessageEnricher
     /// </param>
     public GenericOutboundHeadersEnricher(string name, Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
     {
-        _name = Check.NotNull(name, nameof(name));
-        _valueProvider = Check.NotNull(valueProvider, nameof(valueProvider));
+        _name = Check.NotNull(name);
+        _valueProvider = Check.NotNull(valueProvider);
     }
 
     /// <inheritdoc cref="IOutboundMessageEnricher.Enrich" />
     public void Enrich(IOutboundEnvelope envelope)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         if (envelope is not IOutboundEnvelope<TMessage> typedEnvelope)
             return;

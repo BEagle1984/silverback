@@ -23,8 +23,8 @@ internal record OutboundEnvelope : RawBrokerEnvelope, IOutboundEnvelope
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
         : base(null, headers)
     {
-        EndpointConfiguration = Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
-        Producer = Check.NotNull(producer, nameof(producer));
+        EndpointConfiguration = Check.NotNull(endpointConfiguration);
+        Producer = Check.NotNull(producer);
         Context = context;
         BrokerMessageIdentifier = brokerMessageIdentifier;
         Message = message;

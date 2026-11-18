@@ -21,7 +21,7 @@ internal sealed class ManualOutboxWorkerLifecycleService : IHostedLifecycleServi
 
     public ManualOutboxWorkerLifecycleService(IServiceProvider serviceProvider)
     {
-        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        _serviceProvider = Check.NotNull(serviceProvider);
     }
 
     public Task StartingAsync(CancellationToken cancellationToken)

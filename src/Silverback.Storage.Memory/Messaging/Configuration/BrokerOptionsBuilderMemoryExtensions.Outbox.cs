@@ -26,7 +26,7 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
     /// </returns>
     public static BrokerOptionsBuilder UseInMemoryOutbox(this BrokerOptionsBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.AddInMemoryOutbox();
 
@@ -57,7 +57,7 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
     /// </returns>
     public static BrokerOptionsBuilder AddInMemoryOutbox(this BrokerOptionsBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         OutboxReaderFactory? readerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxReaderFactory>();
         OutboxWriterFactory? writerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxWriterFactory>();

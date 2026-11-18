@@ -37,9 +37,9 @@ public sealed class KafkaOffsetStoreScope
     /// </param>
     public KafkaOffsetStoreScope(IKafkaOffsetStore offsetStore, ConsumerPipelineContext context)
     {
-        _pipelineContext = Check.NotNull(context, nameof(context));
+        _pipelineContext = Check.NotNull(context);
         SilverbackContext = _pipelineContext.ServiceProvider.GetRequiredService<SilverbackContext>();
-        _offsetStore = Check.NotNull(offsetStore, nameof(offsetStore));
+        _offsetStore = Check.NotNull(offsetStore);
         _groupId = (_pipelineContext.Consumer as KafkaConsumer)?.Configuration.GroupId ?? string.Empty;
     }
 

@@ -64,10 +64,10 @@ public class DomainEventsPublisher
         Action<object> clearEventsAction,
         IPublisher publisher)
     {
-        _entitiesProvider = Check.NotNull(entitiesProvider, nameof(entitiesProvider));
-        _eventsSelector = Check.NotNull(eventsSelector, nameof(eventsSelector));
-        _clearEventsAction = Check.NotNull(clearEventsAction, nameof(clearEventsAction));
-        _publisher = Check.NotNull(publisher, nameof(publisher));
+        _entitiesProvider = Check.NotNull(entitiesProvider);
+        _eventsSelector = Check.NotNull(eventsSelector);
+        _clearEventsAction = Check.NotNull(clearEventsAction);
+        _publisher = Check.NotNull(publisher);
     }
 
     /// <summary>

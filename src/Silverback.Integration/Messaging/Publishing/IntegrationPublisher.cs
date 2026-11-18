@@ -16,7 +16,7 @@ internal partial class IntegrationPublisher : IIntegrationPublisher
 
     public IntegrationPublisher(IPublisher publisher)
     {
-        _publisher = Check.NotNull(publisher, nameof(publisher));
+        _publisher = Check.NotNull(publisher);
     }
 
     public Task WrapAndPublishBatchAsync<TMessage>(IReadOnlyCollection<TMessage?> messages, CancellationToken cancellationToken = default)

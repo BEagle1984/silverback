@@ -46,9 +46,9 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
     public MockedConsumerGroup(string groupId, string bootstrapServers, IInMemoryTopicCollection topicCollection)
     {
-        GroupId = Check.NotNull(groupId, nameof(groupId));
-        BootstrapServers = Check.NotNull(bootstrapServers, nameof(bootstrapServers));
-        _topicCollection = Check.NotNull(topicCollection, nameof(topicCollection));
+        GroupId = Check.NotNull(groupId);
+        BootstrapServers = Check.NotNull(bootstrapServers);
+        _topicCollection = Check.NotNull(topicCollection);
     }
 
     public string GroupId { get; }

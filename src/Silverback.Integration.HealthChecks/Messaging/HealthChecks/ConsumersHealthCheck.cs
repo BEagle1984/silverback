@@ -45,7 +45,7 @@ public class ConsumersHealthCheck : IHealthCheck
     /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(context, nameof(context));
+        Check.NotNull(context);
 
         IReadOnlyCollection<IConsumer> disconnectedConsumers =
             await _service.GetDisconnectedConsumersAsync(_minHealthyStatus, _gracePeriod).ConfigureAwait(false);

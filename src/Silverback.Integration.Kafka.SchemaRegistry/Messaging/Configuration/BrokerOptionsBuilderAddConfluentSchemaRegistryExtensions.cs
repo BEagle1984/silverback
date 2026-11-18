@@ -23,7 +23,7 @@ public static class BrokerOptionsBuilderAddConfluentSchemaRegistryExtensions
     /// </returns>
     public static BrokerOptionsBuilder AddConfluentSchemaRegistry(this BrokerOptionsBuilder brokerOptionsBuilder)
     {
-        Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
+        Check.NotNull(brokerOptionsBuilder);
 
         if (brokerOptionsBuilder.SilverbackBuilder.Services.ContainsAny<IConfluentSchemaRegistryClientFactory>())
             return brokerOptionsBuilder;

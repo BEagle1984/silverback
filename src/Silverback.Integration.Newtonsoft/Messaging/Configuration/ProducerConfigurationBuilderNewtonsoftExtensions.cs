@@ -35,7 +35,7 @@ public static class ProducerConfigurationBuilderNewtonsoftExtensions
         this IMessageSerializationBuilder<TMessage, TBuilder> builder,
         Action<NewtonsoftJsonMessageSerializerBuilder>? serializerBuilderAction = null)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         NewtonsoftJsonMessageSerializerBuilder serializerBuilder = new();
         serializerBuilderAction?.Invoke(serializerBuilder);

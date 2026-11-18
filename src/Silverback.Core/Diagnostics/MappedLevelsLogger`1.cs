@@ -18,8 +18,8 @@ internal sealed class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TC
     [SuppressMessage("Minor Code Smell", "S6672:Generic logger injection should match enclosing type", Justification = "The logger is intentionally categorized by TCategoryName rather than by this wrapper type")]
     public MappedLevelsLogger(LogLevelDictionary logLevelDictionary, ILogger<TCategoryName> logger)
     {
-        Check.NotNull(logger, nameof(logger));
-        Check.NotNull(logLevelDictionary, nameof(logLevelDictionary));
+        Check.NotNull(logger);
+        Check.NotNull(logLevelDictionary);
 
         _logger = logger;
         _logLevelDictionary = logLevelDictionary;

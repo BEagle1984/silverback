@@ -25,7 +25,7 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder WithLogLevels(Action<LogLevelConfigurator> logLevelsConfigurationAction)
     {
-        Check.NotNull(logLevelsConfigurationAction, nameof(logLevelsConfigurationAction));
+        Check.NotNull(logLevelsConfigurationAction);
 
         LogLevelConfigurator configurator = new();
         logLevelsConfigurationAction.Invoke(configurator);

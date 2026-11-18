@@ -14,8 +14,8 @@ internal static class ActivityExtensions
 {
     public static void AddBaggageRange(this Activity activity, IEnumerable<KeyValuePair<string, string>> baggageItems)
     {
-        Check.NotNull(activity, nameof(activity));
-        Check.NotNull(baggageItems, nameof(baggageItems));
+        Check.NotNull(activity);
+        Check.NotNull(baggageItems);
 
         foreach ((string key, string value) in baggageItems)
         {
@@ -25,7 +25,7 @@ internal static class ActivityExtensions
 
     public static void ClearBaggage(this Activity activity)
     {
-        Check.NotNull(activity, nameof(activity));
+        Check.NotNull(activity);
 
         foreach (KeyValuePair<string, string?> pair in activity.Baggage)
         {

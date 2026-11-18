@@ -32,7 +32,7 @@ public class GenericInboundMessageFilter<TMessage> : IInboundMessageFilter
     /// </param>
     public GenericInboundMessageFilter(Func<TMessage?, bool> filter)
     {
-        Check.NotNull(filter, nameof(filter));
+        Check.NotNull(filter);
 
         _filter = envelope => filter.Invoke(envelope.Message);
     }
@@ -45,13 +45,13 @@ public class GenericInboundMessageFilter<TMessage> : IInboundMessageFilter
     /// </param>
     public GenericInboundMessageFilter(Func<IInboundEnvelope<TMessage>, bool> filter)
     {
-        _filter = Check.NotNull(filter, nameof(filter));
+        _filter = Check.NotNull(filter);
     }
 
     /// <inheritdoc cref="IInboundMessageFilter.ShouldProcessAsync" />
     public ValueTask<bool> ShouldProcessAsync(IInboundEnvelope envelope, CancellationToken cancellationToken)
     {
-        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(envelope);
 
         // The filter isn't meant for the messages of the other types, which are therefore processed instead of being silently dropped
         if (envelope is not IInboundEnvelope<TMessage> typedEnvelope)

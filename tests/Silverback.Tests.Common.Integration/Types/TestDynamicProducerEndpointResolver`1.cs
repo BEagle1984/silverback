@@ -16,7 +16,7 @@ public sealed record TestDynamicProducerEndpointResolver<TMessage> : DynamicProd
     public TestDynamicProducerEndpointResolver(string topic)
         : base($"dynamic-{Guid.NewGuid():N}")
     {
-        _topicName = Check.NotNullOrEmpty(topic, nameof(topic));
+        _topicName = Check.NotNullOrEmpty(topic);
     }
 
     protected override TestProducerEndpoint GetEndpointCore(IOutboundEnvelope<TMessage> envelope, TestProducerEndpointConfiguration configuration) =>

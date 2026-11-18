@@ -27,7 +27,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddTransientBrokerBehavior(this SilverbackBuilder builder, Type behaviorType)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddTransient(typeof(IBrokerBehavior), behaviorType);
 
@@ -67,7 +67,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         this SilverbackBuilder builder,
         Func<IServiceProvider, IBrokerBehavior> implementationFactory)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddTransient(implementationFactory);
 
@@ -88,7 +88,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddSingletonBrokerBehavior(this SilverbackBuilder builder, Type behaviorType)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddSingleton(typeof(IBrokerBehavior), behaviorType);
 
@@ -128,7 +128,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         this SilverbackBuilder builder,
         Func<IServiceProvider, IBrokerBehavior> implementationFactory)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddSingleton(implementationFactory);
 
@@ -150,7 +150,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddSingletonBrokerBehavior(this SilverbackBuilder builder, IBrokerBehavior implementationInstance)
     {
-        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(builder);
 
         builder.Services.AddSingleton(implementationInstance);
 
