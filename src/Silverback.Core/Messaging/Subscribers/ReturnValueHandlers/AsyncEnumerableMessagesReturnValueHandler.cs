@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 /// <summary>
 ///     Handles the returned <see cref="IAsyncEnumerable{T}" /> republishing all the messages.
 /// </summary>
-public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler, IMessagesReturnValueHandler
+public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler, IMessagesReturnValueHandler, IResultsForwardingReturnValueHandler
 {
     private readonly BusOptions _busOptions;
 
@@ -52,6 +52,32 @@ public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler, IM
 
     /// <inheritdoc cref="IMessagesReturnValueHandler.CanHandleReturnType" />
     bool IMessagesReturnValueHandler.CanHandleReturnType(Type returnType) => CanHandleType(Check.NotNull(returnType));
+
+    /// <inheritdoc cref="IResultsForwardingReturnValueHandler.HandleAndGetResults" />
+    IReadOnlyCollection<object?> IResultsForwardingReturnValueHandler.HandleAndGetResults(
+        Publisher publisher,
+        object returnValue,
+        Type resultType) =>
+        ((IResultsForwardingReturnValueHandler)this).HandleAndGetResultsAsync(publisher, returnValue, resultType).SafeWait();
+
+    /// <inheritdoc cref="IResultsForwardingReturnValueHandler.HandleAndGetResultsAsync" />
+    async ValueTask<IReadOnlyCollection<object?>> IResultsForwardingReturnValueHandler.HandleAndGetResultsAsync(
+        Publisher publisher,
+        object returnValue,
+        Type resultType)
+    {
+        Check.NotNull(publisher);
+        Check.NotNull(returnValue);
+
+        List<object?> results = [];
+
+        await foreach (object message in ((IAsyncEnumerable<object>)returnValue).ConfigureAwait(false))
+        {
+            results.AddRange(await publisher.RepublishAsync(message, resultType).ConfigureAwait(false));
+        }
+
+        return results;
+    }
 
     private bool CanHandleType(Type type) =>
         MessagesReturnTypeHelper.IsMessagesCollection(type, typeof(IAsyncEnumerable<>), _busOptions.MessageTypes);

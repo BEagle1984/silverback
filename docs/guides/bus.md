@@ -262,7 +262,7 @@ public class SubscribingService
 }
 ```
 
-A `null` returned by a subscriber is collected as a result as well, as long as the expected `TResult` accepts it (a reference type or a nullable value type) and the return type declared by the subscriber is compatible with `TResult`, meaning that a value of that type may be a `TResult` (e.g. the same type, a derived type or a base type such as `object`). The `null` returned by a subscriber declaring an unrelated return type (e.g. `int?` when expecting a `string`) is discarded, like any value it may return. The subscribers without a return value (`void`, `Task` or `ValueTask`) and the ones returning messages to be republished (see [Return New Messages](#return-new-messages-republishing)) don't contribute any result, not even when they return `null`.
+A `null` returned by a subscriber is collected as a result as well, as long as the expected `TResult` accepts it (a reference type or a nullable value type) and the return type declared by the subscriber is compatible with `TResult`, meaning that a value of that type may be a `TResult` (e.g. the same type, a derived type or a base type such as `object`). The `null` returned by a subscriber declaring an unrelated return type (e.g. `int?` when expecting a `string`) is discarded, like any value it may return. The subscribers without a return value (`void`, `Task` or `ValueTask`) don't contribute any result. The ones returning messages to be republished (see [Return New Messages](#return-new-messages-republishing)) don't contribute the returned messages, not even when they return `null`, but the results of the republished messages.
 
 Ideally, you should use the specialized interfaces <xref:Silverback.Messaging.Messages.ICommand`1> and <xref:Silverback.Messaging.Messages.IQuery`1> to define the return type and make it easier to handle the result.
 
@@ -317,6 +317,22 @@ public class Startup
     }
 }
 ```
+
+The results of the republished messages become the results of the subscriber that returned them. A subscriber can therefore forward a query or a command to another subscriber, and `ExecuteQuery`/`ExecuteCommand` return the result of the subscriber handling the forwarded message. The forwarded message can be forwarded again, and when several messages are returned, the results of all of them are collected, in order.
+
+```csharp
+public class DocumentQueriesRouter
+{
+    public IQuery<DocumentModel?> Route(GetDocumentQuery query) =>
+        query.IsArchived
+            ? new GetArchivedDocumentQuery(query.Id)
+            : new GetActiveDocumentQuery(query.Id);
+}
+```
+
+The `null` returned by the subscriber of the forwarded message is matched against the expected result type as described in [Subscriber Return Values](#subscriber-return-values), according to the return type declared by that subscriber.
+
+A forwarded message that no subscriber handles, or that is routed to a message broker, contributes no result. It doesn't cause an <xref:Silverback.Messaging.Publishing.UnhandledMessageException>, even when `throwIfUnhandled` is set. `ExecuteQuery` and the `ExecuteCommand` overloads returning a result (for an <xref:Silverback.Messaging.Messages.ICommand`1>) throw an `InvalidOperationException` because there's no result to return, while a forwarded command without a result (an <xref:Silverback.Messaging.Messages.ICommand>) is silently ignored. The results are forwarded only by the built-in republishing: a subscriber whose return value is handled by a custom <xref:Silverback.Messaging.Subscribers.ReturnValueHandlers.IReturnValueHandler> contributes no result, not even the results of the messages that the handler republishes.
 
 ### Filtering
 

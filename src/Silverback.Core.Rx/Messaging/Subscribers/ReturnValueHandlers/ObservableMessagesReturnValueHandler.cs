@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
@@ -13,7 +14,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 /// <summary>
 ///     Handles the returned <see cref="IObservable{T}" /> republishing all the messages.
 /// </summary>
-public class ObservableMessagesReturnValueHandler : IReturnValueHandler, IMessagesReturnValueHandler
+public class ObservableMessagesReturnValueHandler : IReturnValueHandler, IMessagesReturnValueHandler, IResultsForwardingReturnValueHandler
 {
     private readonly BusOptions _busOptions;
 
@@ -52,6 +53,44 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler, IMessag
 
     /// <inheritdoc cref="IMessagesReturnValueHandler.CanHandleReturnType" />
     bool IMessagesReturnValueHandler.CanHandleReturnType(Type returnType) => CanHandleType(Check.NotNull(returnType));
+
+    /// <inheritdoc cref="IResultsForwardingReturnValueHandler.HandleAndGetResults" />
+    IReadOnlyCollection<object?> IResultsForwardingReturnValueHandler.HandleAndGetResults(
+        Publisher publisher,
+        object returnValue,
+        Type resultType)
+    {
+        Check.NotNull(publisher);
+        Check.NotNull(returnValue);
+
+        List<object?> results = [];
+
+        foreach (object message in ((IObservable<object>)returnValue).ToEnumerable())
+        {
+            results.AddRange(publisher.Republish(message, resultType));
+        }
+
+        return results;
+    }
+
+    /// <inheritdoc cref="IResultsForwardingReturnValueHandler.HandleAndGetResultsAsync" />
+    async ValueTask<IReadOnlyCollection<object?>> IResultsForwardingReturnValueHandler.HandleAndGetResultsAsync(
+        Publisher publisher,
+        object returnValue,
+        Type resultType)
+    {
+        Check.NotNull(publisher);
+        Check.NotNull(returnValue);
+
+        List<object?> results = [];
+
+        foreach (object message in ((IObservable<object>)returnValue).ToEnumerable())
+        {
+            results.AddRange(await publisher.RepublishAsync(message, resultType).ConfigureAwait(false));
+        }
+
+        return results;
+    }
 
     private bool CanHandleType(Type type) =>
         MessagesReturnTypeHelper.IsMessagesCollection(type, typeof(IObservable<>), _busOptions.MessageTypes);

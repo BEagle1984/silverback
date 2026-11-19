@@ -20,9 +20,10 @@ namespace Silverback.Messaging.Subscribers;
 internal static class SubscribedMethodInvoker
 {
     public static async ValueTask<MethodInvocationResult> InvokeAsync(
-        IPublisher publisher,
+        Publisher publisher,
         SubscribedMethod subscribedMethod,
         object message,
+        Type? resultType,
         IServiceProvider serviceProvider,
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
@@ -80,16 +81,16 @@ internal static class SubscribedMethodInvoker
                 throw new SubscribedMethodInvocationException($"The message argument resolver ({subscribedMethod.MessageArgumentResolver}) " + "must implement either ISingleMessageArgumentResolver, IEnumerableMessageArgumentResolver " + "or IStreamEnumerableMessageArgumentResolver.");
         }
 
-        bool returnValueWasHandled =
+        // The results of the messages republished by the return value handlers become the results of the subscriber
+        IReadOnlyCollection<object?>? forwardedResults =
             await serviceProvider
                 .GetRequiredService<ReturnValueHandlerService>()
-                .HandleReturnValuesAsync(publisher, returnValue, executionFlow)
+                .HandleReturnValuesAsync(publisher, returnValue, resultType, executionFlow)
                 .ConfigureAwait(false);
 
-        if (returnValueWasHandled)
-            return MethodInvocationResult.Invoked;
-
-        return MethodInvocationResult.WithReturnValue(returnValue);
+        return forwardedResults != null
+            ? MethodInvocationResult.WithForwardedResults(forwardedResults)
+            : MethodInvocationResult.WithReturnValue(returnValue);
     }
 
     private static bool IsFiltered(IReadOnlyCollection<IMessageFilter> filters, object message) =>

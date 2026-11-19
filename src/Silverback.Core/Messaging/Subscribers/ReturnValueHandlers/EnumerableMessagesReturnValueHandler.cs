@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 /// <summary>
 ///     Handles the returned <see cref="IEnumerable{T}" /> republishing all the messages.
 /// </summary>
-public class EnumerableMessagesReturnValueHandler : IReturnValueHandler, IMessagesReturnValueHandler
+public class EnumerableMessagesReturnValueHandler : IReturnValueHandler, IMessagesReturnValueHandler, IResultsForwardingReturnValueHandler
 {
     private readonly BusOptions _busOptions;
 
@@ -52,6 +52,44 @@ public class EnumerableMessagesReturnValueHandler : IReturnValueHandler, IMessag
 
     /// <inheritdoc cref="IMessagesReturnValueHandler.CanHandleReturnType" />
     bool IMessagesReturnValueHandler.CanHandleReturnType(Type returnType) => CanHandleType(Check.NotNull(returnType));
+
+    /// <inheritdoc cref="IResultsForwardingReturnValueHandler.HandleAndGetResults" />
+    IReadOnlyCollection<object?> IResultsForwardingReturnValueHandler.HandleAndGetResults(
+        Publisher publisher,
+        object returnValue,
+        Type resultType)
+    {
+        Check.NotNull(publisher);
+        Check.NotNull(returnValue);
+
+        List<object?> results = [];
+
+        foreach (object message in (IEnumerable<object>)returnValue)
+        {
+            results.AddRange(publisher.Republish(message, resultType));
+        }
+
+        return results;
+    }
+
+    /// <inheritdoc cref="IResultsForwardingReturnValueHandler.HandleAndGetResultsAsync" />
+    async ValueTask<IReadOnlyCollection<object?>> IResultsForwardingReturnValueHandler.HandleAndGetResultsAsync(
+        Publisher publisher,
+        object returnValue,
+        Type resultType)
+    {
+        Check.NotNull(publisher);
+        Check.NotNull(returnValue);
+
+        List<object?> results = [];
+
+        foreach (object message in (IEnumerable<object>)returnValue)
+        {
+            results.AddRange(await publisher.RepublishAsync(message, resultType).ConfigureAwait(false));
+        }
+
+        return results;
+    }
 
     private bool CanHandleType(Type type) =>
         MessagesReturnTypeHelper.IsMessagesCollection(type, typeof(IEnumerable<>), _busOptions.MessageTypes);

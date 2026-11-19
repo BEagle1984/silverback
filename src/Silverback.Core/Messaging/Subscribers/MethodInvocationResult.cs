@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 
 namespace Silverback.Messaging.Subscribers;
 
@@ -10,6 +11,7 @@ internal sealed class MethodInvocationResult
     private MethodInvocationResult(bool wasInvoked)
     {
         WasInvoked = wasInvoked;
+        ForwardedResults = [];
     }
 
     private MethodInvocationResult(object? returnValue, Type? declaredResultType)
@@ -18,6 +20,13 @@ internal sealed class MethodInvocationResult
         HasReturnValue = true;
         ReturnValue = returnValue;
         DeclaredResultType = declaredResultType;
+        ForwardedResults = [];
+    }
+
+    private MethodInvocationResult(IReadOnlyCollection<object?> forwardedResults)
+    {
+        WasInvoked = true;
+        ForwardedResults = forwardedResults;
     }
 
     public static MethodInvocationResult NotInvoked { get; } =
@@ -26,7 +35,7 @@ internal sealed class MethodInvocationResult
     /// <summary>
     ///     Gets the result of a method that was invoked but has no return value to be forwarded to the publisher, either because it
     ///     doesn't return a value (void, <see cref="System.Threading.Tasks.Task" />, or <see cref="System.Threading.Tasks.ValueTask" />)
-    ///     or because it returns the messages to be republished, which are consumed by a return value handler.
+    ///     or because it returns a value consumed by a return value handler, without any forwarded result.
     /// </summary>
     public static MethodInvocationResult Invoked { get; } =
         new(true);
@@ -48,7 +57,17 @@ internal sealed class MethodInvocationResult
     /// </summary>
     public Type? DeclaredResultType { get; }
 
+    /// <summary>
+    ///     Gets the results of the subscribers of the messages returned by the method and republished by a built-in return value handler.
+    ///     They are forwarded to the publisher as-is, since they were already matched against the expected result type when they were
+    ///     republished, discarding the incompatible ones.
+    /// </summary>
+    public IReadOnlyCollection<object?> ForwardedResults { get; }
+
     public static MethodInvocationResult WithReturnValue(object returnValue) => new(returnValue, null);
 
     public static MethodInvocationResult WithNullReturnValue(Type declaredResultType) => new(null, declaredResultType);
+
+    public static MethodInvocationResult WithForwardedResults(IReadOnlyCollection<object?> forwardedResults) =>
+        forwardedResults.Count == 0 ? Invoked : new MethodInvocationResult(forwardedResults);
 }
