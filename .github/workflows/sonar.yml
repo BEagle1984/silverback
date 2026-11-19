@@ -76,7 +76,8 @@ jobs:
       - name: Build (${{ env.BUILD_CONFIGURATION }})
         run: |
           dotnet build Silverback.slnx --configuration "$BUILD_CONFIGURATION"
-      - name: Run unit tests
+      # The unit and E2E tests run in a single pass, so that a failure doesn't hide the failures of the other tests
+      - name: Run tests
         run: |
           dotnet test --solution Silverback.slnx \
             --configuration "$BUILD_CONFIGURATION" \
@@ -86,27 +87,9 @@ jobs:
             --hangdump \
             --hangdump-timeout 5m \
             --hangdump-type Mini \
-            --results-directory TestResults/unit \
+            --results-directory TestResults \
             --results-directory-layout per-module \
-            --filter "Type!=E2E&Dependency!=Docker&CI!=Skip" \
-            --coverlet \
-            --coverlet-output-format opencover \
-            --coverlet-exclude "[xunit.*]*" \
-            --coverlet-exclude "[Silverback.Tests.*]*" \
-            --coverlet-exclude-assemblies-without-sources MissingAll
-      - name: Run E2E tests
-        run: |
-          dotnet test --solution Silverback.slnx \
-            --configuration "$BUILD_CONFIGURATION" \
-            --no-build \
-            --ignore-exit-code 8 \
-            --report-trx \
-            --hangdump \
-            --hangdump-timeout 5m \
-            --hangdump-type Mini \
-            --results-directory TestResults/e2e \
-            --results-directory-layout per-module \
-            --filter "Type=E2E&Dependency!=Docker&CI!=Skip" \
+            --filter "Dependency!=Docker&CI!=Skip" \
             --coverlet \
             --coverlet-output-format opencover \
             --coverlet-exclude "[xunit.*]*" \
