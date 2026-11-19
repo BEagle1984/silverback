@@ -131,6 +131,29 @@ public partial class ProducerEndpointConfigurationBuilderTests
     }
 
     [Fact]
+    public void EnableChunking_ShouldAcceptChunkSizeOfOne()
+    {
+        TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
+
+        TestProducerEndpointConfiguration configuration = builder.EnableChunking(1).Build();
+
+        configuration.Chunk.ShouldNotBeNull();
+        configuration.Chunk!.Size.ShouldBe(1);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void EnableChunking_ShouldThrow_WhenChunkSizeIsOutOfRange(int size)
+    {
+        TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
+
+        Action act = () => builder.EnableChunking(size).Build();
+
+        act.ShouldThrow<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
     public void Build_ShouldSetMessageValidationModeToLogWarningByDefault()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
