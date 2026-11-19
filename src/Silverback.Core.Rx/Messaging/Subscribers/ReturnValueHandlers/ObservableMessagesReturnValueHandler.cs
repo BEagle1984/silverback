@@ -33,12 +33,22 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler, IMessag
         returnValue != null && CanHandleType(returnValue.GetType());
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
-    public void Handle(IPublisher publisher, object returnValue) =>
-        Check.NotNull(publisher).Publish<object>(((IObservable<object>)returnValue).ToEnumerable());
+    public void Handle(IPublisher publisher, object returnValue)
+    {
+        Check.NotNull(publisher);
+        Check.NotNull(returnValue);
+
+        ((IObservable<object>)returnValue).ToEnumerable().ForEach(message => publisher.Publish(message));
+    }
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-    public async ValueTask HandleAsync(IPublisher publisher, object returnValue) =>
-        await Check.NotNull(publisher).PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable()).ConfigureAwait(false);
+    public async ValueTask HandleAsync(IPublisher publisher, object returnValue)
+    {
+        Check.NotNull(publisher);
+        Check.NotNull(returnValue);
+
+        await ((IObservable<object>)returnValue).ToEnumerable().ForEachAsync(message => publisher.PublishAsync(message)).ConfigureAwait(false);
+    }
 
     /// <inheritdoc cref="IMessagesReturnValueHandler.CanHandleReturnType" />
     bool IMessagesReturnValueHandler.CanHandleReturnType(Type returnType) => CanHandleType(Check.NotNull(returnType));
