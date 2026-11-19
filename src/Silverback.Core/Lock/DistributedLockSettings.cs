@@ -30,6 +30,6 @@ public abstract record DistributedLockSettings : IValidatableSettings
     public virtual void Validate()
     {
         if (string.IsNullOrWhiteSpace(LockName))
-            throw new SilverbackConfigurationException("The lock name is required.");
+            throw new SilverbackConfigurationException($"{nameof(LockName)} is required.");
     }
 }

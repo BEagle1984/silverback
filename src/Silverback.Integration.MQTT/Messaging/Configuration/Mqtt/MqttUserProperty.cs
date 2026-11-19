@@ -33,7 +33,7 @@ public record MqttUserProperty(string Name, string? Value) : IValidatableSetting
     public void Validate()
     {
         if (string.IsNullOrEmpty(Name))
-            throw new BrokerConfigurationException("The name of a user property cannot be empty.");
+            throw new BrokerConfigurationException($"The user property {nameof(Name)} is required.");
     }
 
     internal MQTTnet.Packets.MqttUserProperty ToMqttNetType() =>

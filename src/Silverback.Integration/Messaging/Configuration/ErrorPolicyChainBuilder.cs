@@ -55,7 +55,7 @@ internal class ErrorPolicyChainBuilder : IErrorPolicyChainBuilder
     public IErrorPolicy Build()
     {
         if (_errorPolicies.Count == 0)
-            throw new SilverbackConfigurationException("At least 1 error policy is required.");
+            throw new SilverbackConfigurationException("At least one error policy is required.");
 
         if (_errorPolicies.Count == 1)
             return _errorPolicies[0];

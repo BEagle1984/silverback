@@ -15,7 +15,7 @@ public partial record MqttClientWebSocketProxyConfiguration : IValidatableSettin
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Address))
-            throw new BrokerConfigurationException("The proxy address is required.");
+            throw new BrokerConfigurationException($"Channel.Proxy.{nameof(Address)} is required.");
     }
 
     internal MqttClientWebSocketProxyOptions ToMqttNetType() => MapCore();

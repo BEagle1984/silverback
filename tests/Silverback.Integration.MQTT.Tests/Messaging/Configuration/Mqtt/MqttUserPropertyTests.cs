@@ -31,6 +31,6 @@ public class MqttUserPropertyTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The name of a user property cannot be empty.");
+        exception.Message.ShouldBe("The user property Name is required.");
     }
 }

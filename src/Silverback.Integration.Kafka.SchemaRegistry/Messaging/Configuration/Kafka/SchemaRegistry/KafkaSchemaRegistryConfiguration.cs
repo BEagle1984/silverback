@@ -15,7 +15,7 @@ public sealed partial record KafkaSchemaRegistryConfiguration : IValidatableSett
     public void Validate()
     {
         if (string.IsNullOrEmpty(Url))
-            throw new BrokerConfigurationException($"At least 1 {nameof(Url)} is required to connect with the schema registry.");
+            throw new BrokerConfigurationException($"{nameof(Url)} is required.");
     }
 
     internal SchemaRegistryConfig ToConfluentConfig() => MapCore();

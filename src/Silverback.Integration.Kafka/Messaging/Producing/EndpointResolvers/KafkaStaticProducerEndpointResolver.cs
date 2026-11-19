@@ -38,7 +38,7 @@ public sealed class KafkaStaticProducerEndpointResolver
         : base(Check.NotNull(topicPartition).ToDisplayString())
     {
         if (topicPartition.Partition < Partition.Any)
-            throw new ArgumentException("The partition must be a value greater or equal to 0, or Partition.Any.", nameof(topicPartition));
+            throw new ArgumentException("The partition must be greater than or equal to 0, or Partition.Any.", nameof(topicPartition));
 
         TopicPartition = topicPartition;
     }

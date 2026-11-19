@@ -197,7 +197,7 @@ public class OutboxWorkerSettingsBuilder
     public OutboxWorkerSettings Build()
     {
         if (_outboxSettings == null)
-            throw new SilverbackConfigurationException("The outbox settings are required. Use the ProcessOutbox method to set them.");
+            throw new SilverbackConfigurationException($"{nameof(OutboxWorkerSettings.Outbox)} is required. Call {nameof(ProcessOutbox)} to set it.");
 
         OutboxWorkerSettings workerSettings = _lockSettingsProvider == null
             ? new OutboxWorkerSettings(_outboxSettings)

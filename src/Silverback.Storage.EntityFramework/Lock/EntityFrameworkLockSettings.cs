@@ -46,7 +46,7 @@ public record EntityFrameworkLockSettings : TableBasedDistributedLockSettings, I
         base.Validate();
 
         if (DbContextType == null)
-            throw new SilverbackConfigurationException("The DbContext type is required.");
+            throw new SilverbackConfigurationException($"{nameof(DbContextType)} is required.");
 
         if (_dbContextFactory == null)
             throw new SilverbackConfigurationException("The DbContext factory is required.");

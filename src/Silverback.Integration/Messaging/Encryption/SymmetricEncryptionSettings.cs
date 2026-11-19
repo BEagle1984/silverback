@@ -23,6 +23,6 @@ public record SymmetricEncryptionSettings : SymmetricEncryptionSettingsBase, IEn
         base.Validate();
 
         if (Key == null)
-            throw new BrokerConfigurationException($"A {nameof(Key)} is required.");
+            throw new BrokerConfigurationException($"Encryption.{nameof(Key)} is required.");
     }
 }

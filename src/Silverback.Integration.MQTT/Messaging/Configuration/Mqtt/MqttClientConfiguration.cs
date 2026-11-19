@@ -111,13 +111,13 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public void Validate()
     {
         if (ProducerEndpoints == null)
-            throw new BrokerConfigurationException($"{nameof(ProducerEndpoints)} cannot be null.");
+            throw new BrokerConfigurationException($"{nameof(ProducerEndpoints)} is required.");
 
         if (ConsumerEndpoints == null)
-            throw new BrokerConfigurationException($"{nameof(ConsumerEndpoints)} cannot be null.");
+            throw new BrokerConfigurationException($"{nameof(ConsumerEndpoints)} is required.");
 
         if (ProducerEndpoints.Count == 0 && ConsumerEndpoints.Count == 0)
-            throw new BrokerConfigurationException("At least one endpoint must be configured.");
+            throw new BrokerConfigurationException("At least one endpoint is required.");
 
         ProducerEndpoints.ForEach(endpoint => endpoint.Validate());
         ConsumerEndpoints.ForEach(endpoint => endpoint.Validate());
@@ -126,10 +126,10 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         CheckDuplicateConsumerTopics();
 
         if (string.IsNullOrEmpty(ClientId))
-            throw new BrokerConfigurationException($"{nameof(ClientId)} is required to connect with the message broker.");
+            throw new BrokerConfigurationException($"{nameof(ClientId)} is required.");
 
         if (Channel == null)
-            throw new BrokerConfigurationException($"{nameof(Channel)} configuration is required to connect with the message broker.");
+            throw new BrokerConfigurationException($"{nameof(Channel)} is required.");
 
         Channel.Validate();
         UserProperties.ForEach(property => property.Validate());
@@ -140,19 +140,18 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
             if (ConsumerEndpoints.Any(endpoint => endpoint.Deserializer.RequireHeaders))
             {
                 throw new BrokerConfigurationException(
-                    "Wrong deserializer configuration. Since headers (user properties) are not " +
-                    "supported by MQTT prior to version 5, the deserializer must be configured with an " +
-                    "hardcoded message type.");
+                    "The deserializer must be configured with a hardcoded message type, " +
+                    "since headers (user properties) are not supported before MQTT 5.");
             }
 
             ConsumerEndpoints.ForEach(endpoint => CheckErrorPolicyHeadersRequirement(endpoint.ErrorPolicy));
         }
 
         if (MaxDegreeOfParallelism < 1)
-            throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} must be greater or equal to 1.");
+            throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} must be greater than or equal to 1.");
 
         if (BackpressureLimit < 1)
-            throw new BrokerConfigurationException($"{nameof(BackpressureLimit)} must be greater or equal to 1.");
+            throw new BrokerConfigurationException($"{nameof(BackpressureLimit)} must be greater than or equal to 1.");
 
         if (Timeout <= TimeSpan.Zero)
             throw new BrokerConfigurationException($"{nameof(Timeout)} must be greater than zero.");
@@ -194,8 +193,8 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         if (errorPolicyBase is not RetryErrorPolicy && errorPolicyBase.MaxFailedAttempts > 1)
         {
             throw new BrokerConfigurationException(
-                "Cannot set MaxFailedAttempts on the error policies (except for the RetryPolicy) " +
-                "because headers (user properties) are not supported by MQTT prior to version 5.");
+                "MaxFailedAttempts cannot be set on the error policies (except for the RetryErrorPolicy), " +
+                "since headers (user properties) are not supported before MQTT 5.");
         }
     }
 
@@ -225,16 +224,16 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         if (ConsumerEndpoints.First().Batch?.MaxWaitTime == null)
         {
             throw new BrokerConfigurationException(
-                "The batch MaxWaitTime must be set when consuming with QoS 1 or 2, since the broker stops delivering when too many " +
+                "Batch.MaxWaitTime is required when consuming with QoS 1 or 2, since the broker stops delivering when too many " +
                 "messages are waiting for acknowledgment, which could prevent the batch from being completed.");
         }
 
         if (MaxBatchedMessagesCount > EffectiveReceiveMaximum)
         {
             throw new BrokerConfigurationException(
-                $"The batch size ({batchSize}) multiplied by the {nameof(MaxDegreeOfParallelism)} ({MaxDegreeOfParallelism}) exceeds " +
-                $"the {nameof(ReceiveMaximum)} ({EffectiveReceiveMaximum}), which limits the number of messages that can be waiting " +
-                $"for acknowledgment. Lower the batch size or the {nameof(MaxDegreeOfParallelism)}, or raise the {nameof(ReceiveMaximum)} " +
+                $"Batch.Size ({batchSize}) multiplied by {nameof(MaxDegreeOfParallelism)} ({MaxDegreeOfParallelism}) exceeds " +
+                $"{nameof(ReceiveMaximum)} ({EffectiveReceiveMaximum}), which limits the number of messages that can be waiting " +
+                $"for acknowledgment. Lower Batch.Size or {nameof(MaxDegreeOfParallelism)}, or raise {nameof(ReceiveMaximum)} " +
                 "(see LimitUnacknowledgedPublications).");
         }
     }
@@ -253,7 +252,7 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
 
         // The broker retains only the last message of each topic, which is a single chunk
         if (chunkingEndpoints.Any(endpoint => endpoint.Retain))
-            throw new BrokerConfigurationException("Chunking can't be enabled for retained messages, since only the last chunk is retained.");
+            throw new BrokerConfigurationException("Chunking cannot be enabled for retained messages, since only the last chunk is retained.");
     }
 
     // The messages are routed by topic and the broker delivers a copy per subscription, so a filter can't be subscribed more than once,

@@ -30,6 +30,6 @@ public sealed record ChunkSettings : IValidatableSettings
     public void Validate()
     {
         if (Size < 1)
-            throw new BrokerConfigurationException("The chunk size must be greater or equal to 1.");
+            throw new BrokerConfigurationException($"Chunk.{nameof(Size)} must be greater than or equal to 1.");
     }
 }

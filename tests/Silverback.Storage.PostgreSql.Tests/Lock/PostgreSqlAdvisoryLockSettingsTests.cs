@@ -40,7 +40,7 @@ public class PostgreSqlAdvisoryLockSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The lock name is required.");
+        exception.Message.ShouldBe("LockName is required.");
     }
 
     [Theory]
@@ -54,6 +54,6 @@ public class PostgreSqlAdvisoryLockSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The connection string is required.");
+        exception.Message.ShouldBe("ConnectionString is required.");
     }
 }

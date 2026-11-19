@@ -81,19 +81,19 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
         base.ValidateCore();
 
         if (TopicPartitions == null || TopicPartitions.Count == 0)
-            throw new BrokerConfigurationException("At least 1 topic must be specified.");
+            throw new BrokerConfigurationException("At least one topic is required.");
 
         if (TopicPartitions.Any(topicPartition => string.IsNullOrEmpty(topicPartition.Topic)))
-            throw new BrokerConfigurationException("The topic name cannot be null or empty.");
+            throw new BrokerConfigurationException($"{nameof(TopicPartitions)} cannot contain a null or empty topic name.");
 
         if (TopicPartitions.Any(topicPartition => topicPartition.Partition.Value < Partition.Any))
-            throw new BrokerConfigurationException("The partition must be a value greater or equal to 0, or Partition.Any.");
+            throw new BrokerConfigurationException($"Each partition in {nameof(TopicPartitions)} must be greater than or equal to 0, or Partition.Any.");
 
         if (PartitionOffsetsProvider != null && TopicPartitions.Any(topicPartition => topicPartition.Partition != Partition.Any))
         {
             throw new BrokerConfigurationException(
-                $"Cannot specify a {nameof(PartitionOffsetsProvider)} if the partitions are already specified. " +
-                "Use Partition.Any when specifying the topic partition or remove the resolver.");
+                $"{nameof(PartitionOffsetsProvider)} cannot be set when the partitions are specified explicitly. " +
+                $"Use Partition.Any for all topic partitions, or remove {nameof(PartitionOffsetsProvider)}.");
         }
 
         ValidateTopicPatterns();
@@ -109,7 +109,7 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
             {
                 throw new BrokerConfigurationException(
                     $"Cannot assign the partitions of the topic pattern '{topicPartition.Topic}'. " +
-                    "The topics matching a pattern can only be subscribed, using Partition.Any and no partitions provider.");
+                    $"The topics matching a pattern can only be subscribed, using Partition.Any and no {nameof(PartitionOffsetsProvider)}.");
             }
 
             try
@@ -149,8 +149,7 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
             PartitionOffsetsProvider == null)
         {
             throw new BrokerConfigurationException(
-                "Cannot mix static partition assignments and subscriptions in the same consumer." +
-                "A PartitionOffsetsProvider is required when mixing Partition.Any with static partition assignments.");
+                $"{nameof(PartitionOffsetsProvider)} is required when mixing Partition.Any with static partition assignments.");
         }
     }
 

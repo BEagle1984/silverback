@@ -30,7 +30,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         Action act = () => builder.DeserializeAvro(deserializer => deserializer.ConnectToSchemaRegistry("test-url"));
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
+        exception.Message.ShouldBe("The message type is required. Call UseModel to set it.");
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         Action act = () => builder.DeserializeJsonUsingSchemaRegistry(deserializer => deserializer.ConnectToSchemaRegistry("test-url"));
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
+        exception.Message.ShouldBe("The message type is required. Call UseModel to set it.");
     }
 
     [Fact]

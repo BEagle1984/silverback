@@ -52,15 +52,15 @@ public record PostgreSqlTableLockSettings : TableBasedDistributedLockSettings, I
         base.Validate();
 
         if (string.IsNullOrWhiteSpace(ConnectionString))
-            throw new SilverbackConfigurationException("The connection string is required.");
+            throw new SilverbackConfigurationException($"{nameof(ConnectionString)} is required.");
 
         if (string.IsNullOrWhiteSpace(TableName))
-            throw new SilverbackConfigurationException("The lock table name is required.");
+            throw new SilverbackConfigurationException($"{nameof(TableName)} is required.");
 
         if (DbCommandTimeout <= TimeSpan.Zero)
-            throw new SilverbackConfigurationException("The command timeout must be greater than zero.");
+            throw new SilverbackConfigurationException($"{nameof(DbCommandTimeout)} must be greater than zero.");
 
         if (CreateTableTimeout <= TimeSpan.Zero)
-            throw new SilverbackConfigurationException("The create table timeout must be greater than zero.");
+            throw new SilverbackConfigurationException($"{nameof(CreateTableTimeout)} must be greater than zero.");
     }
 }

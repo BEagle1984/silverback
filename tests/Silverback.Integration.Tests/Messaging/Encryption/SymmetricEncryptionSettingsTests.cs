@@ -22,7 +22,7 @@ public class SymmetricEncryptionSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The algorithm name is required.");
+        exception.Message.ShouldBe("Encryption.AlgorithmName is required.");
     }
 
     [Fact]
@@ -36,6 +36,6 @@ public class SymmetricEncryptionSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("A Key is required.");
+        exception.Message.ShouldBe("Encryption.Key is required.");
     }
 }

@@ -41,10 +41,10 @@ public sealed record MqttConsumerEndpointConfiguration : ConsumerEndpointConfigu
         base.ValidateCore();
 
         if (Topics == null || Topics.Count == 0)
-            throw new BrokerConfigurationException("At least 1 topic must be specified.");
+            throw new BrokerConfigurationException("At least one topic is required.");
 
         if (Topics.Any(string.IsNullOrEmpty))
-            throw new BrokerConfigurationException("A topic name cannot be null or empty.");
+            throw new BrokerConfigurationException($"{nameof(Topics)} cannot contain a null or empty topic name.");
 
         Topics.ForEach(ValidateTopicFilter);
     }

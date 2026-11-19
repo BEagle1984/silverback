@@ -22,7 +22,7 @@ public class SymmetricDecryptionSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The algorithm name is required.");
+        exception.Message.ShouldBe("Encryption.AlgorithmName is required.");
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class SymmetricDecryptionSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("A Key or a KeyProvider is required.");
+        exception.Message.ShouldBe("Encryption.Key or Encryption.KeyProvider is required.");
     }
 
     [Fact]
@@ -52,6 +52,6 @@ public class SymmetricDecryptionSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("Cannot set both the Key and the KeyProvider.");
+        exception.Message.ShouldBe("Encryption.Key and Encryption.KeyProvider cannot be set at the same time.");
     }
 }

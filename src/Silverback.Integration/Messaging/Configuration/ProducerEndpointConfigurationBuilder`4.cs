@@ -160,7 +160,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder EnableChunking(int chunkSize, bool alwaysAddHeaders = true)
     {
         if (chunkSize <= 1)
-            throw new ArgumentOutOfRangeException(nameof(chunkSize), chunkSize, "chunkSize must be greater or equal to 1.");
+            throw new ArgumentOutOfRangeException(nameof(chunkSize), chunkSize, "chunkSize must be greater than 1.");
 
         _chunkSize = chunkSize;
         _alwaysAddChunkHeaders = alwaysAddHeaders;

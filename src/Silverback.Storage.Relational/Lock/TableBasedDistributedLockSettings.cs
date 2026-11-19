@@ -42,15 +42,15 @@ public abstract record TableBasedDistributedLockSettings : DistributedLockSettin
         base.Validate();
 
         if (AcquireInterval <= TimeSpan.Zero)
-            throw new SilverbackConfigurationException("The acquire interval must be greater than zero.");
+            throw new SilverbackConfigurationException($"{nameof(AcquireInterval)} must be greater than zero.");
 
         if (HeartbeatInterval <= TimeSpan.Zero)
-            throw new SilverbackConfigurationException("The heartbeat interval must be greater than zero.");
+            throw new SilverbackConfigurationException($"{nameof(HeartbeatInterval)} must be greater than zero.");
 
         if (LockTimeout <= TimeSpan.Zero)
-            throw new SilverbackConfigurationException("The lock timeout must be greater than zero.");
+            throw new SilverbackConfigurationException($"{nameof(LockTimeout)} must be greater than zero.");
 
         if (LockTimeout <= HeartbeatInterval)
-            throw new SilverbackConfigurationException("The lock timeout must be greater than the heartbeat interval.");
+            throw new SilverbackConfigurationException($"{nameof(LockTimeout)} must be greater than {nameof(HeartbeatInterval)}.");
     }
 }

@@ -96,21 +96,21 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
         base.ValidateCore();
 
         if (Deserializer == null)
-            throw new BrokerConfigurationException("A deserializer is required.");
+            throw new BrokerConfigurationException($"{nameof(Deserializer)} is required.");
 
         if (Sequence == null)
-            throw new BrokerConfigurationException("The sequence configuration is required.");
+            throw new BrokerConfigurationException($"{nameof(Sequence)} is required.");
 
         if (ErrorPolicy == null)
-            throw new BrokerConfigurationException("An error policy is required.");
+            throw new BrokerConfigurationException($"{nameof(ErrorPolicy)} is required.");
 
         Batch?.Validate();
         Encryption?.Validate();
 
         if (AllowStreaming && Batch != null)
-            throw new BrokerConfigurationException("Cannot enable batch processing and streaming at the same time.");
+            throw new BrokerConfigurationException($"{nameof(Batch)} cannot be set when {nameof(AllowStreaming)} is true.");
 
         if (AllowStreaming && ErrorPolicy is not StopConsumerErrorPolicy)
-            throw new BrokerConfigurationException("Cannot use error policies when streaming is enabled.");
+            throw new BrokerConfigurationException($"{nameof(ErrorPolicy)} must be a {nameof(StopConsumerErrorPolicy)} when {nameof(AllowStreaming)} is true.");
     }
 }
