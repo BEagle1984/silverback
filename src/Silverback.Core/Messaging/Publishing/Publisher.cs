@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,11 +66,11 @@ internal class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
     public void Publish(object message, bool throwIfUnhandled = false) =>
-        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync, CancellationToken.None).SafeWait();
+        PublishAsync(message, throwIfUnhandled, null, ExecutionFlow.Sync, CancellationToken.None).SafeWait();
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
     public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled = false) =>
-        [.. CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync, CancellationToken.None).SafeWait())];
+        [.. CastResults<TResult>(PublishAsync(message, throwIfUnhandled, typeof(TResult), ExecutionFlow.Sync, CancellationToken.None).SafeWait())];
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object, CancellationToken)" />
     public Task PublishAsync(object message, CancellationToken cancellationToken = default) =>
@@ -76,7 +78,7 @@ internal class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object, bool, CancellationToken)" />
     public async Task PublishAsync(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default) =>
-        await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async, cancellationToken).ConfigureAwait(false);
+        await PublishAsync(message, throwIfUnhandled, null, ExecutionFlow.Async, cancellationToken).ConfigureAwait(false);
 
     /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, CancellationToken)" />
     public Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, CancellationToken cancellationToken = default) =>
@@ -87,28 +89,124 @@ internal class Publisher : IPublisher
         object message,
         bool throwIfUnhandled,
         CancellationToken cancellationToken = default) =>
-        [.. CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async, cancellationToken).ConfigureAwait(false))];
+        [.. CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, typeof(TResult), ExecutionFlow.Async, cancellationToken).ConfigureAwait(false))];
+
+    // A null result carries no runtime type, so it is matched against the expected result type in PublishCoreAsync, using the result type
+    // declared by the subscriber, which isn't available anymore in CastResults. The null is treated like a non-null value returned by the
+    // same subscriber: it is kept when a value of the declared type may be of the expected type, i.e. the same type, a derived type or a
+    // base type (e.g. object), an interface that a derived type may implement, or an array that a covariant array (e.g. a string[] held
+    // by an object[]) may be or implement, or a construction of the same generic delegate that a variant delegate (e.g. a Func<string>
+    // held by a Func<object>) may be. The null returned by a subscriber declaring an unrelated type (e.g. an int? subscriber when
+    // publishing for a string?) is discarded, as any value it may return would be.
+    private static bool IsIncompatibleNullResult(
+        MethodInvocationResult invocationResult,
+        [NotNullWhen(true)] Type? resultType) =>
+        invocationResult is { ReturnValue: null, DeclaredResultType: not null } &&
+        resultType != null &&
+        !MayBeOfType(invocationResult.DeclaredResultType, resultType);
+
+    private static bool MayBeOfType(Type declaredType, Type expectedType)
+    {
+        // A boxed Nullable<T> is a boxed T (or null)
+        declaredType = Nullable.GetUnderlyingType(declaredType) ?? declaredType;
+        expectedType = Nullable.GetUnderlyingType(expectedType) ?? expectedType;
+
+        return expectedType.IsAssignableFrom(declaredType) ||
+               declaredType.IsAssignableFrom(expectedType) ||
+               MayBeCovariantArrayOfType(declaredType, expectedType) ||
+               MayBeCovariantArrayOfType(expectedType, declaredType) ||
+               MayBeVariantDelegateOfType(declaredType, expectedType) ||
+               declaredType.IsInterface && !expectedType.IsSealed ||
+               expectedType.IsInterface && !declaredType.IsSealed;
+    }
+
+    // An array type is sealed, but an array of a reference type may hold an array of a derived element type (array covariance), e.g. an
+    // object[] may be a string[], which is an IEnumerable<string>. A value of such an array type may therefore also be of the other type
+    // if the other type is an array, or a generic collection interface implemented by the arrays (e.g. IEnumerable<T> or
+    // IReadOnlyList<T>), whose element type may be of the array element type.
+    private static bool MayBeCovariantArrayOfType(Type arrayType, Type otherType)
+    {
+        if (!arrayType.IsArray || arrayType.GetElementType() is not { IsValueType: false } elementType)
+            return false;
+
+        if (otherType.IsArray)
+        {
+            return otherType.IsSZArray == arrayType.IsSZArray &&
+                   otherType.GetArrayRank() == arrayType.GetArrayRank() &&
+                   otherType.GetElementType() is { IsValueType: false } otherElementType &&
+                   MayBeOfType(elementType, otherElementType);
+        }
+
+        if (!otherType.IsInterface || !otherType.IsGenericType || otherType.GenericTypeArguments[0].IsValueType)
+            return false;
+
+        Type otherTypeDefinition = otherType.GetGenericTypeDefinition();
+
+        return arrayType.GetInterfaces().Any(interfaceType => interfaceType.IsGenericType &&
+                                                              interfaceType.GetGenericTypeDefinition() == otherTypeDefinition) &&
+               MayBeOfType(elementType, otherType.GenericTypeArguments[0]);
+    }
+
+    // A delegate type is sealed, but a generic delegate with variant type parameters may hold a delegate with different type arguments
+    // (delegate variance), e.g. a Func<IComparable> may be a Func<string>, which is a Func<IConvertible>. A value of such a delegate type
+    // may therefore also be of another construction of the same generic delegate if each pair of type arguments is either identical or,
+    // for a variant type parameter, made of reference types that a common type argument may be converted from (covariant) or to
+    // (contravariant, always possible via object).
+    private static bool MayBeVariantDelegateOfType(Type declaredType, Type expectedType)
+    {
+        if (!declaredType.IsGenericType ||
+            !expectedType.IsGenericType ||
+            !typeof(Delegate).IsAssignableFrom(declaredType) ||
+            declaredType.GetGenericTypeDefinition() != expectedType.GetGenericTypeDefinition())
+        {
+            return false;
+        }
+
+        Type[] typeParameters = declaredType.GetGenericTypeDefinition().GetGenericArguments();
+        Type[] declaredTypeArguments = declaredType.GenericTypeArguments;
+        Type[] expectedTypeArguments = expectedType.GenericTypeArguments;
+
+        return typeParameters.Select((typeParameter, index) => MayBeVariantTypeArgument(
+                typeParameter.GenericParameterAttributes & GenericParameterAttributes.VarianceMask,
+                declaredTypeArguments[index],
+                expectedTypeArguments[index]))
+            .All(mayBeVariant => mayBeVariant);
+    }
+
+    // Variance applies to reference type arguments only
+    private static bool MayBeVariantTypeArgument(GenericParameterAttributes variance, Type declaredTypeArgument, Type expectedTypeArgument) =>
+        declaredTypeArgument == expectedTypeArgument ||
+        !declaredTypeArgument.IsValueType &&
+        !expectedTypeArgument.IsValueType &&
+        variance switch
+        {
+            GenericParameterAttributes.Covariant => MayBeOfType(declaredTypeArgument, expectedTypeArgument),
+            GenericParameterAttributes.Contravariant => true,
+            _ => false
+        };
 
     private ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
         Stack<IBehavior> behaviors,
         object message,
         bool throwIfUnhandled,
-        Func<object, bool, ExecutionFlow, CancellationToken, ValueTask<IReadOnlyCollection<object?>>> finalAction,
+        Type? resultType,
+        Func<object, bool, Type?, ExecutionFlow, CancellationToken, ValueTask<IReadOnlyCollection<object?>>> finalAction,
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
         if (!behaviors.TryPop(out IBehavior? nextBehavior))
-            return finalAction(message, throwIfUnhandled, executionFlow, cancellationToken);
+            return finalAction(message, throwIfUnhandled, resultType, executionFlow, cancellationToken);
 
         return nextBehavior.HandleAsync(this, message, NextAsync, cancellationToken);
 
         ValueTask<IReadOnlyCollection<object?>> NextAsync(object nextMessage) =>
-            ExecuteBehaviorsPipelineAsync(behaviors, nextMessage, throwIfUnhandled, finalAction, executionFlow, cancellationToken);
+            ExecuteBehaviorsPipelineAsync(behaviors, nextMessage, throwIfUnhandled, resultType, finalAction, executionFlow, cancellationToken);
     }
 
     private ValueTask<IReadOnlyCollection<object?>> PublishAsync(
         object message,
         bool throwIfUnhandled,
+        Type? resultType,
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
@@ -118,6 +216,7 @@ internal class Publisher : IPublisher
             _behaviorsProvider.CreateStack(),
             message,
             throwIfUnhandled,
+            resultType,
             PublishCoreAsync,
             executionFlow,
             cancellationToken);
@@ -126,6 +225,7 @@ internal class Publisher : IPublisher
     private async ValueTask<IReadOnlyCollection<object?>> PublishCoreAsync(
         object message,
         bool throwIfUnhandled,
+        Type? resultType,
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
@@ -137,7 +237,23 @@ internal class Publisher : IPublisher
         if (!handled && throwIfUnhandled)
             throw new UnhandledMessageException(message);
 
-        return [.. resultsCollection.Select(invocationResult => invocationResult.ReturnValue)];
+        List<object?> results = [];
+
+        foreach (MethodInvocationResult invocationResult in resultsCollection)
+        {
+            if (!invocationResult.HasReturnValue)
+                continue;
+
+            if (IsIncompatibleNullResult(invocationResult, resultType))
+            {
+                _logger.LogSubscriberResultDiscarded(invocationResult.DeclaredResultType?.FullName, resultType.FullName!);
+                continue;
+            }
+
+            results.Add(invocationResult.ReturnValue);
+        }
+
+        return results;
     }
 
     private IEnumerable<TResult> CastResults<TResult>(IReadOnlyCollection<object?> results)
@@ -146,6 +262,8 @@ internal class Publisher : IPublisher
         {
             if (result is TResult castResult)
                 yield return castResult;
+            else if (result == null && default(TResult) is null) // TResult is a reference type or a Nullable<T>
+                yield return default!;
             else
                 _logger.LogSubscriberResultDiscarded(result?.GetType().FullName, typeof(TResult).FullName!);
         }

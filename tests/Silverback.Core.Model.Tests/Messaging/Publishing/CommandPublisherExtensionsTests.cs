@@ -1,13 +1,17 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Shouldly;
+using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Model.Messaging.Publishing;
@@ -47,6 +51,18 @@ public class CommandPublisherExtensionsTests
 
         publisher.Received(1).Publish<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), true);
         result.ShouldBe([1, 2, 3]);
+    }
+
+    [Fact]
+    public void ExecuteCommand_ShouldPublishAndReturnNullResult()
+    {
+        IPublisher publisher = Substitute.For<IPublisher>();
+        publisher.Publish<object?>(Arg.Any<TestCommandWithNullableResult>(), true).Returns([null]);
+
+        object? result = publisher.ExecuteCommand(new TestCommandWithNullableResult());
+
+        publisher.Received(1).Publish<object?>(Arg.Any<TestCommandWithNullableResult>(), true);
+        result.ShouldBeNull();
     }
 
     [Theory]
@@ -102,6 +118,19 @@ public class CommandPublisherExtensionsTests
         result.ShouldBe([1, 2, 3]);
     }
 
+    [Fact]
+    public async Task ExecuteCommandAsync_ShouldPublishAndReturnNullResult()
+    {
+        IPublisher publisher = Substitute.For<IPublisher>();
+        publisher.PublishAsync<object?>(Arg.Any<TestCommandWithNullableResult>(), true).Returns([null]);
+        CancellationToken cancellationToken = new(false);
+
+        object? result = await publisher.ExecuteCommandAsync(new TestCommandWithNullableResult(), cancellationToken);
+
+        await publisher.Received(1).PublishAsync<object?>(Arg.Any<TestCommandWithNullableResult>(), true, cancellationToken);
+        result.ShouldBeNull();
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -117,7 +146,63 @@ public class CommandPublisherExtensionsTests
         result.ShouldBe([1, 2, 3]);
     }
 
+    [Fact]
+    public async Task ExecuteCommandAndExecuteCommandAsync_ShouldReturnNullResultReturnedBySubscriber()
+    {
+        int voidSubscriberCalls = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestCommandWithNullableResult, object?>(Handle)
+            .AddDelegateSubscriber<TestCommandWithNullableResult>(HandleVoid)
+            .AddDelegateSubscriber<TestCommandWithNullableResult>(HandleTaskAsync));
+
+        static object? Handle(TestCommandWithNullableResult message) => null;
+        void HandleVoid(TestCommandWithNullableResult message) => Interlocked.Increment(ref voidSubscriberCalls);
+        Task HandleTaskAsync(TestCommandWithNullableResult message)
+        {
+            Interlocked.Increment(ref voidSubscriberCalls);
+            return Task.CompletedTask;
+        }
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        object? syncResult = publisher.ExecuteCommand(new TestCommandWithNullableResult());
+        object? asyncResult = await publisher.ExecuteCommandAsync(new TestCommandWithNullableResult());
+
+        syncResult.ShouldBeNull();
+        asyncResult.ShouldBeNull();
+        voidSubscriberCalls.ShouldBe(4);
+    }
+
+    [Fact]
+    public async Task ExecuteCommandAndExecuteCommandAsync_ShouldReturnResult_WhenRepublishingSubscribersReturnNull()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestCommandWithNullableResult, object>(Handle)
+            .AddDelegateSubscriber<TestCommandWithNullableResult, IEvent?>(HandleEvent)
+            .AddDelegateSubscriber<TestCommandWithNullableResult, IEnumerable<IMessage>?>(HandleEventsAsync));
+
+        static object Handle(TestCommandWithNullableResult message) => "result";
+        static IEvent? HandleEvent(TestCommandWithNullableResult message) => null;
+        static Task<IEnumerable<IMessage>?> HandleEventsAsync(TestCommandWithNullableResult message) =>
+            Task.FromResult<IEnumerable<IMessage>?>(null);
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        object? syncResult = publisher.ExecuteCommand(new TestCommandWithNullableResult());
+        object? asyncResult = await publisher.ExecuteCommandAsync(new TestCommandWithNullableResult());
+
+        syncResult.ShouldBe("result");
+        asyncResult.ShouldBe("result");
+    }
+
     private class TestCommand : ICommand;
 
     private class TestCommandWithResult : ICommand<IEnumerable<int>>;
+
+    private class TestCommandWithNullableResult : ICommand<object?>;
 }

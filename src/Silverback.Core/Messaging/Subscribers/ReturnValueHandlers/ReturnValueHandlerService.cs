@@ -24,6 +24,13 @@ internal sealed class ReturnValueHandlerService
         _returnValueHandlers = [.. returnValueHandlers.Reverse()];
     }
 
+    // A subscriber declared to return a type handled by one of the registered built-in handlers republishing the messages returns the
+    // messages to be republished: the null it returns means that there is nothing to republish, not a result. The custom handlers
+    // aren't taken into account.
+    public bool IsMessagesReturnType(Type returnType) =>
+        _returnValueHandlers.Any(handler => handler is IMessagesReturnValueHandler messagesHandler &&
+                                            messagesHandler.CanHandleReturnType(returnType));
+
     [SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Method executes sync or async")]
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes sync or async")]
     [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Method executes sync or async")]

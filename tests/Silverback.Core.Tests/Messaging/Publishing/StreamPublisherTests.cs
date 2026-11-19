@@ -82,6 +82,55 @@ public class StreamPublisherTests
     }
 
     [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnStreamSubscribersTasksOnly_WhenNonStreamSubscriberReturnsNull()
+    {
+        int receivedEvents = 0;
+        int nonStreamSubscriberCalls = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+            .AddDelegateSubscriber<object, object?>(Handle2));
+
+        void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            foreach (IEvent dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedEvents);
+            }
+        }
+
+        object? Handle2(object message)
+        {
+            Interlocked.Increment(ref nonStreamSubscriberCalls);
+            return null;
+        }
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider1 = new();
+        MessageStreamProvider<IEvent> streamProvider2 = new();
+
+        IReadOnlyCollection<Task> tasks1 = streamPublisher.Publish(streamProvider1);
+        IReadOnlyCollection<Task> tasks2 = await streamPublisher.PublishAsync(streamProvider2);
+
+        nonStreamSubscriberCalls.ShouldBe(2);
+        tasks1.Count.ShouldBe(1);
+        tasks2.Count.ShouldBe(1);
+
+        await streamProvider1.PushAsync(new TestEventOne());
+        await streamProvider2.PushAsync(new TestEventOne());
+
+        await AsyncTestingUtil.WaitAsync(() => receivedEvents >= 2);
+
+        receivedEvents.ShouldBe(2);
+
+        await CompleteAndWaitForSubscribersAsync(streamProvider1, tasks1);
+        await CompleteAndWaitForSubscribersAsync(streamProvider2, tasks2);
+    }
+
+    [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeSubscribersExpectingEnumerable_WhenMessageStreamProviderIsPushedWithMessages()
     {
         int receivedStreams = 0;

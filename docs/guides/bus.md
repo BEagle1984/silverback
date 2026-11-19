@@ -262,11 +262,13 @@ public class SubscribingService
 }
 ```
 
+A `null` returned by a subscriber is collected as a result as well, as long as the expected `TResult` accepts it (a reference type or a nullable value type) and the return type declared by the subscriber is compatible with `TResult`, meaning that a value of that type may be a `TResult` (e.g. the same type, a derived type or a base type such as `object`). The `null` returned by a subscriber declaring an unrelated return type (e.g. `int?` when expecting a `string`) is discarded, like any value it may return. The subscribers without a return value (`void`, `Task` or `ValueTask`) and the ones returning messages to be republished (see [Return New Messages](#return-new-messages-republishing)) don't contribute any result, not even when they return `null`.
+
 Ideally, you should use the specialized interfaces <xref:Silverback.Messaging.Messages.ICommand`1> and <xref:Silverback.Messaging.Messages.IQuery`1> to define the return type and make it easier to handle the result.
 
 ### Return New Messages (Republishing)
 
-The subscriber method can also return a message or a collection of messages (either [IEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1), [IReadOnlyCollection<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1) or [IObservable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1), if using [Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx)) that will be automatically republished to the internal bus.
+The subscriber method can also return a message or a collection of messages (either [IEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1), [IReadOnlyCollection<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1) or [IObservable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1), after calling `AsObservable()` from the [Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx) package) that will be automatically republished to the internal bus. Without `AsObservable()`, a returned `IObservable<T>` is a plain result, like any other value.
 
 ```csharp
 public class SubscribingService

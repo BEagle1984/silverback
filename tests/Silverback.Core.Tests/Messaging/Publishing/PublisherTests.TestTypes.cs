@@ -10,6 +10,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing;
 
 public partial class PublisherTests
 {
+    private delegate T InvariantFactory<T>();
+
     private interface IEvent : IMessage;
 
     private interface ICommand : IMessage;
@@ -36,6 +38,8 @@ public partial class PublisherTests
     private class TestQueryTwo : IQuery;
 
     private class TestQueryThree : IQuery;
+
+    private record TestQueryFour(int? Value) : IQuery;
 
     private class TestEnvelope : IEnvelope, ITestRawEnvelope
     {
