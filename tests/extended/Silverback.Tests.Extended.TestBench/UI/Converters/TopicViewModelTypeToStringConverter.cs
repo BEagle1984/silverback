@@ -15,7 +15,7 @@ public class TopicViewModelTypeToStringConverter : IValueConverter
         {
             KafkaTopicViewModel => "Kafka",
             MqttTopicViewModel => "MQTT",
-            _ => string.Empty
+            _ => ""
         };
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();

@@ -121,7 +121,7 @@ public sealed class SqliteDataAccessTests : IDisposable
             items,
             "INSERT INTO Persons (Name, Age) VALUES (@name, @age)",
             [
-                new SqliteParameter("@name", string.Empty),
+                new SqliteParameter("@name", ""),
                 new SqliteParameter("@age", 0)
             ],
             (item, parameters) =>

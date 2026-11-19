@@ -18,13 +18,13 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class KafkaStatistics
 {
     [JsonPropertyName("name")]
-    public string Name { get; init; } = string.Empty;
+    public string Name { get; init; } = "";
 
     [JsonPropertyName("client_id")]
-    public string ClientId { get; init; } = string.Empty;
+    public string ClientId { get; init; } = "";
 
     [JsonPropertyName("type")]
-    public string Type { get; init; } = string.Empty;
+    public string Type { get; init; } = "";
 
     [JsonPropertyName("ts")]
     public long Ts { get; init; }

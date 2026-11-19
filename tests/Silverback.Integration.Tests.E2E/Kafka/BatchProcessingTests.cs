@@ -823,7 +823,7 @@ public partial class BatchProcessingTests : KafkaTests
                 if (Activity.Current != null)
                 {
                     actualTraceIds.Add(Activity.Current.TraceId.ToString());
-                    sequenceIds.Add(Activity.Current.Tags.SingleOrDefault(pair => pair.Key == ActivityTagNames.SequenceId).Value ?? string.Empty);
+                    sequenceIds.Add(Activity.Current.Tags.SingleOrDefault(pair => pair.Key == ActivityTagNames.SequenceId).Value ?? "");
                 }
             }
 

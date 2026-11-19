@@ -541,7 +541,7 @@ public class BatchProcessingTests : BrokerHarnessTests<MqttTestHarness>
             "Deliveries: " +
             string.Join(", ", _recorder.GetDeliveries().Select(delivery =>
                 $"{GetNumber(delivery.Payload)} (connection {delivery.Connection}, id {delivery.PacketIdentifier}" +
-                $"{(delivery.IsDuplicate ? ", dup" : string.Empty)})")));
+                $"{(delivery.IsDuplicate ? ", dup" : "")})")));
         Harness.Output.WriteLine(
             "Acknowledgments: " +
             string.Join(", ", _recorder.GetAcknowledgments().Select(item => $"{item.PacketIdentifier} (connection {item.Connection})")));

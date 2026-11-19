@@ -110,7 +110,7 @@ public sealed partial class MqttFixture : DockerTestsFixture
     {
         foreach (string container in NodeContainers)
         {
-            string status = string.Empty;
+            string status = "";
 
             try
             {

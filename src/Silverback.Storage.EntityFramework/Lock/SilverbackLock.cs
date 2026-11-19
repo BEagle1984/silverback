@@ -18,7 +18,7 @@ public class SilverbackLock
     [Key]
     [Required]
     [MaxLength(200)]
-    public string LockName { get; init; } = string.Empty;
+    public string LockName { get; init; } = "";
 
     /// <summary>
     ///     Gets or sets the identifier of the handler that acquired the lock.

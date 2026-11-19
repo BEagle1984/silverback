@@ -99,9 +99,9 @@ public partial class ProducerEndpointTests
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = null, Content = "1" });
-        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "2" });
-        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "3" });
-        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "4" });
+        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = "", Content = "2" });
+        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = "", Content = "3" });
+        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = "", Content = "4" });
         await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = null, Content = "5" });
 
         DefaultTopic.Partitions.Count(partition => partition.TotalMessagesCount >= 1).ShouldBeGreaterThan(1);

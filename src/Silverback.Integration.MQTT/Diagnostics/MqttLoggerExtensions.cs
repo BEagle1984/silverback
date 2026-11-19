@@ -55,7 +55,7 @@ internal static partial class MqttLoggerExtensions
             logger.InnerLogger,
             client.DisplayName,
             client.Configuration.ClientId,
-            client.Configuration.Channel?.ToString() ?? string.Empty,
+            client.Configuration.Channel?.ToString() ?? "",
             exception);
 
     public static void LogConnectRetryError(
@@ -66,7 +66,7 @@ internal static partial class MqttLoggerExtensions
             logger.InnerLogger,
             client.DisplayName,
             client.Configuration.ClientId,
-            client.Configuration.Channel?.ToString() ?? string.Empty,
+            client.Configuration.Channel?.ToString() ?? "",
             exception);
 
     public static void LogConnectionLost(this ISilverbackLogger logger, MqttClientWrapper client) =>
@@ -74,14 +74,14 @@ internal static partial class MqttLoggerExtensions
             logger.InnerLogger,
             client.DisplayName,
             client.Configuration.ClientId,
-            client.Configuration.Channel?.ToString() ?? string.Empty);
+            client.Configuration.Channel?.ToString() ?? "");
 
     public static void LogReconnected(this ISilverbackLogger logger, MqttClientWrapper client) =>
         Reconnected(
             logger.InnerLogger,
             client.DisplayName,
             client.Configuration.ClientId,
-            client.Configuration.Channel?.ToString() ?? string.Empty);
+            client.Configuration.Channel?.ToString() ?? "");
 
     public static void LogProducerQueueProcessingCanceled(this ISilverbackLogger logger, MqttClientWrapper client) =>
         ProducerQueueProcessingCanceled(logger.InnerLogger, client.DisplayName, client.Configuration.ClientId);
@@ -123,7 +123,7 @@ internal static partial class MqttLoggerExtensions
             logger.InnerLogger,
             client.DisplayName,
             client.Configuration.ClientId,
-            client.Configuration.Channel?.ToString() ?? string.Empty,
+            client.Configuration.Channel?.ToString() ?? "",
             exception);
 
     public static void LogMqttClientError(

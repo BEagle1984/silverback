@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public abstract record EndpointConfiguration
 {
-    private readonly string _rawName = string.Empty;
+    private readonly string _rawName = "";
 
     private readonly string? _friendlyName;
 
@@ -55,7 +55,7 @@ public abstract record EndpointConfiguration
     ///     The <see cref="DisplayName" /> is built joining the optional <see cref="FriendlyName" /> with the
     ///     <see cref="RawName" />.
     /// </remarks>
-    public virtual string DisplayName { get; private init; } = string.Empty;
+    public virtual string DisplayName { get; private init; } = "";
 
     /// <summary>
     ///     Gets the message validation mode. This option can be used to specify if the messages have to be validated and whether an

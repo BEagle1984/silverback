@@ -220,7 +220,7 @@ public partial class MqttConsumerTests
                                 filter,
                                 rejectAll || index > 0 ? MqttClientSubscribeResultCode.NotAuthorized : MqttClientSubscribeResultCode.GrantedQoS0))
                     ],
-                    string.Empty,
+                    "",
                     [])));
 
         IBrokerClientCallbacksInvoker callbacksInvoker = Substitute.For<IBrokerClientCallbacksInvoker>();
@@ -847,7 +847,7 @@ public partial class MqttConsumerTests
             });
 
             _nativeClient.SubscribeAsync(Arg.Any<MqttClientSubscribeOptions>(), Arg.Any<CancellationToken>())
-                .Returns(new MqttClientSubscribeResult(0, [], string.Empty, []));
+                .Returns(new MqttClientSubscribeResult(0, [], "", []));
 
             MqttClientConfigurationBuilder builder = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
                 .ConnectViaTcp("backpressure-test-broker")
@@ -1054,7 +1054,7 @@ public partial class MqttConsumerTests
                 if (BeforeSubscribe != null)
                     await BeforeSubscribe();
 
-                return new MqttClientSubscribeResult(0, [], string.Empty, []);
+                return new MqttClientSubscribeResult(0, [], "", []);
             });
 
             MqttClientConfiguration configuration = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())

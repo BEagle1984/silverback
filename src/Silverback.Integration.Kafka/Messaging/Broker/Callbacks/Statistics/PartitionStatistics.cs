@@ -45,7 +45,7 @@ public class PartitionStatistics
     public long FetchqSize { get; init; }
 
     [JsonPropertyName("fetch_state")]
-    public string FetchState { get; init; } = string.Empty;
+    public string FetchState { get; init; } = "";
 
     [JsonPropertyName("query_offset")]
     public long QueryOffset { get; init; }

@@ -9,19 +9,19 @@ namespace Silverback.Tools.Generators.LogEvents;
 // for an invalid definition, since it changes with every edit
 internal sealed record LogEventModel(string Name, Location? Location = null)
 {
-    public string Namespace { get; init; } = string.Empty;
+    public string Namespace { get; init; } = "";
 
-    public string ClassName { get; init; } = string.Empty;
+    public string ClassName { get; init; } = "";
 
     public int EventId { get; init; }
 
-    public string EventName { get; init; } = string.Empty;
+    public string EventName { get; init; } = "";
 
     public int Level { get; init; }
 
-    public string Message { get; init; } = string.Empty;
+    public string Message { get; init; } = "";
 
-    public string Documentation { get; init; } = string.Empty;
+    public string Documentation { get; init; } = "";
 
-    public string Usings { get; init; } = string.Empty;
+    public string Usings { get; init; } = "";
 }

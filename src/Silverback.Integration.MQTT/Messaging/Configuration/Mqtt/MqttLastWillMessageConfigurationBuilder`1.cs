@@ -295,7 +295,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
 
         MqttLastWillMessageConfiguration configuration = new()
         {
-            Topic = _topic ?? string.Empty,
+            Topic = _topic ?? "",
             Payload = payloadStream.ReadAll(),
             QualityOfServiceLevel = _qosLevel,
             Retain = _retain,

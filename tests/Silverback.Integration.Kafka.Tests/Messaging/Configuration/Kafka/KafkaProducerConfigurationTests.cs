@@ -119,7 +119,7 @@ public class KafkaProducerConfigurationTests
     {
         KafkaProducerConfiguration configuration = GetValidConfiguration() with
         {
-            BootstrapServers = string.Empty
+            BootstrapServers = ""
         };
 
         Action act = configuration.Validate;

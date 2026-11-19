@@ -106,7 +106,7 @@ public class CheckTests
     [Fact]
     public void NotEmpty_ShouldThrow_WhenStringIsEmpty()
     {
-        string str = string.Empty;
+        string str = "";
 
         Action act = () => Check.NotNullOrEmpty(str);
 
@@ -136,7 +136,7 @@ public class CheckTests
     [Fact]
     public void NotButNotEmpty_ShouldThrow_WhenStringIsEmpty()
     {
-        string str = string.Empty;
+        string str = "";
 
         Action act = () => Check.NullButNotEmpty(str);
 
@@ -196,7 +196,7 @@ public class CheckTests
     [Fact]
     public void HasNoEmpties_ShouldThrow_WhenStringCollectionContainsSomeEmptyStrings()
     {
-        List<string> collection = ["abc", "def", string.Empty];
+        List<string> collection = ["abc", "def", ""];
 
         Action act = () => Check.HasNoEmpties(collection);
 

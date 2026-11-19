@@ -37,7 +37,7 @@ public class SilverbackOutboxMessage
     /// </summary>
     [Required]
     [MaxLength(500)]
-    public string EndpointName { get; set; } = string.Empty;
+    public string EndpointName { get; set; } = "";
 
     /// <summary>
     ///     Gets or sets the serialized dynamic endpoint.

@@ -394,7 +394,7 @@ public sealed partial class ContainerLogParser : IDisposable
         string topicName = match.Groups["topicName"].Value;
         Application.Current.Dispatcher.Invoke(() => _container.SubscribedMqttTopics.Add(topicName));
 
-        topicName = SharedSubscriptionPrefixRegex().Replace(topicName, string.Empty);
+        topicName = SharedSubscriptionPrefixRegex().Replace(topicName, "");
 
         if (_mainViewModel.TryGetTopic(topicName, out TopicViewModel? topicViewModel) &&
             topicViewModel is MqttTopicViewModel mqttTopicViewModel)
@@ -418,7 +418,7 @@ public sealed partial class ContainerLogParser : IDisposable
 
         foreach (string topicFilter in _container.SubscribedMqttTopics)
         {
-            string topicName = SharedSubscriptionPrefixRegex().Replace(topicFilter, string.Empty);
+            string topicName = SharedSubscriptionPrefixRegex().Replace(topicFilter, "");
 
             if (_mainViewModel.TryGetTopic(topicName, out TopicViewModel? topicViewModel) &&
                 topicViewModel is MqttTopicViewModel mqttTopicViewModel)

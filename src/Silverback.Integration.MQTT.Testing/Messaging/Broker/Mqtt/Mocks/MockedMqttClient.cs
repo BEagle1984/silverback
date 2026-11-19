@@ -127,7 +127,7 @@ public sealed class MockedMqttClient : IMqttClient
             new MqttClientSubscribeResult(
                 0,
                 [.. options.TopicFilters.Select(filter => new MqttClientSubscribeResultItem(filter, GetGrantedResultCode(filter)))],
-                string.Empty,
+                "",
                 []));
     }
 
@@ -139,7 +139,7 @@ public sealed class MockedMqttClient : IMqttClient
 
         _broker.Unsubscribe(this, options.TopicFilters);
 
-        return Task.FromResult(new MqttClientUnsubscribeResult(0, [], string.Empty, []));
+        return Task.FromResult(new MqttClientUnsubscribeResult(0, [], "", []));
     }
 
     /// <inheritdoc cref="IMqttClient.PublishAsync" />
@@ -153,7 +153,7 @@ public sealed class MockedMqttClient : IMqttClient
 
         await _broker.PublishAsync(this, applicationMessage, Options).ConfigureAwait(false);
 
-        return new MqttClientPublishResult(0, MqttClientPublishReasonCode.Success, string.Empty, []);
+        return new MqttClientPublishResult(0, MqttClientPublishReasonCode.Success, "", []);
     }
 
     /// <inheritdoc cref="IMqttClient.PingAsync" />
@@ -171,7 +171,7 @@ public sealed class MockedMqttClient : IMqttClient
             ? MqttClientDisconnectReason.SessionTakenOver
             : MqttClientDisconnectReason.NormalDisconnection;
 
-        MqttClientDisconnectedEventArgs eventArgs = new(true, null, reason, string.Empty, [], null);
+        MqttClientDisconnectedEventArgs eventArgs = new(true, null, reason, "", [], null);
 
         Task.Run(() => DisconnectedAsync?.Invoke(eventArgs) ?? Task.CompletedTask).FireAndForget();
     }

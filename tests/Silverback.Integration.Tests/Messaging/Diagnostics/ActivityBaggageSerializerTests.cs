@@ -34,8 +34,8 @@ public class ActivityBaggageSerializerTests
 
         result.ShouldContain(new KeyValuePair<string, string>("key1", "value1"));
         result.ShouldContain(new KeyValuePair<string, string>("key2", "value2"));
-        result.ShouldContain(new KeyValuePair<string, string>("keyonly", string.Empty));
-        result.ShouldContain(new KeyValuePair<string, string>(string.Empty, "valueonly"));
+        result.ShouldContain(new KeyValuePair<string, string>("keyonly", ""));
+        result.ShouldContain(new KeyValuePair<string, string>("", "valueonly"));
     }
 
     [Theory]

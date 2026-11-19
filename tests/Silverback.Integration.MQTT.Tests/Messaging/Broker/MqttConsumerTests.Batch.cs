@@ -344,7 +344,7 @@ public partial class MqttConsumerTests
             });
 
             _nativeClient.SubscribeAsync(Arg.Any<MqttClientSubscribeOptions>(), Arg.Any<CancellationToken>())
-                .Returns(new MqttClientSubscribeResult(0, [], string.Empty, []));
+                .Returns(new MqttClientSubscribeResult(0, [], "", []));
 
             MqttClientConfiguration configuration = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
                 .ConnectViaTcp("batch-test-broker")

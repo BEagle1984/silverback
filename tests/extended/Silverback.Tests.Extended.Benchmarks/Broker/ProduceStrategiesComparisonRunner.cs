@@ -100,12 +100,12 @@ public static class ProduceStrategiesComparisonRunner
         }
 
         Console.WriteLine("======================================================");
-        Console.WriteLine(string.Empty);
+        Console.WriteLine("");
 
         foreach (ProduceStrategiesImplementation.Stats stats in statsCollection)
         {
             Console.WriteLine(stats.Label);
-            Console.WriteLine(string.Empty.PadLeft(stats.Label.Length, '-'));
+            Console.WriteLine(new string('-', stats.Label.Length));
             Console.WriteLine(
                 "Elapsed: {0}",
                 stats.Elapsed.ToString(@"hh\:mm\:ss\.ff", CultureInfo.CurrentCulture));
@@ -118,7 +118,7 @@ public static class ProduceStrategiesComparisonRunner
             Console.WriteLine(
                 "Produced per second: {0}",
                 stats.ProducedMessages / stats.Elapsed.TotalSeconds);
-            Console.WriteLine(string.Empty);
+            Console.WriteLine("");
         }
     }
 

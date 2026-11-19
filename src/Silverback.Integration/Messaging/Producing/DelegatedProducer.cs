@@ -32,9 +32,9 @@ internal abstract class DelegatedProducer : Producer
     {
         public AsyncEvent<BrokerClient> Initialized { get; } = new();
 
-        public string Name => string.Empty;
+        public string Name => "";
 
-        public string DisplayName => string.Empty;
+        public string DisplayName => "";
 
         public AsyncEvent<BrokerClient> Initializing { get; } = new();
 

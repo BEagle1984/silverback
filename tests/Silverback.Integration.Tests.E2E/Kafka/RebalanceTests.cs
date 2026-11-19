@@ -222,7 +222,7 @@ public class RebalanceTests : KafkaTests
 
         consumers[0].Client.Assignment.Count.ShouldBe(5);
         stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(5));
-        logEventsCollector.Contains(KafkaLogEvents.ConsumerLeaveGroupTimeout.EventId, string.Empty).ShouldBeFalse();
+        logEventsCollector.Contains(KafkaLogEvents.ConsumerLeaveGroupTimeout.EventId, "").ShouldBeFalse();
     }
 
     [Fact]

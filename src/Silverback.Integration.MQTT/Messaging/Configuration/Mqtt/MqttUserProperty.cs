@@ -37,5 +37,5 @@ public record MqttUserProperty(string Name, string? Value) : IValidatableSetting
     }
 
     internal MQTTnet.Packets.MqttUserProperty ToMqttNetType() =>
-        new(Name, new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(Value ?? string.Empty)));
+        new(Name, new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(Value ?? "")));
 }

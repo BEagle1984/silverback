@@ -157,7 +157,7 @@ public class MqttTopicFilterTests : BrokerHarnessTests<MqttTestHarness>
 
     private sealed record FilterMessage
     {
-        public string Topic { get; init; } = string.Empty;
+        public string Topic { get; init; } = "";
 
         public int Number { get; init; }
     }

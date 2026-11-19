@@ -17,14 +17,14 @@ public class SilverbackStoredOffset
     /// </summary>
     [Required]
     [MaxLength(300)]
-    public string GroupId { get; init; } = string.Empty;
+    public string GroupId { get; init; } = "";
 
     /// <summary>
     ///     Gets the name of the topic.
     /// </summary>
     [Required]
     [MaxLength(300)]
-    public string Topic { get; init; } = string.Empty;
+    public string Topic { get; init; } = "";
 
     /// <summary>
     ///     Gets or sets the partition.

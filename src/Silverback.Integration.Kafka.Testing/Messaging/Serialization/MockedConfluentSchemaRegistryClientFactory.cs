@@ -28,7 +28,7 @@ internal class MockedConfluentSchemaRegistryClientFactory : IConfluentSchemaRegi
         Check.NotNull(schemaRegistryConfiguration);
 
         return _clients.GetOrAdd(
-            schemaRegistryConfiguration.Url ?? string.Empty,
+            schemaRegistryConfiguration.Url ?? "",
             static _ => new MockedConfluentSchemaRegistryClient());
     }
 }
