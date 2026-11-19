@@ -29,6 +29,13 @@ jobs:
         uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           dotnet-version: '10.0.x'
+      # The scanner injects the Sonar analyzers into the build, and setup-dotnet's csc problem matcher would turn their
+      # warnings into pull request annotations, including the rules ignored below (the ignore settings apply only on
+      # the server). SonarCloud decorates the pull request with the actual issues, and the continuous workflow reports
+      # the compiler warnings.
+      - name: Disable the compiler warning annotations
+        run: |
+          echo "::remove-matcher owner=csc::"
       - name: Install SonarScanner
         run: |
           dotnet tool install --global dotnet-sonarscanner
