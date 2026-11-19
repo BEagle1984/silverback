@@ -71,7 +71,7 @@ public class KafkaSchemaRegistryConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("At least 1 Url is required to connect with the schema registry.");
+        exception.Message.ShouldBe("Url is required.");
     }
 
     private static KafkaSchemaRegistryConfiguration GetValidConfiguration() =>

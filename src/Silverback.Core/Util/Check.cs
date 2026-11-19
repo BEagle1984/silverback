@@ -120,7 +120,7 @@ internal static class Check
         where T : struct, IComparable
     {
         if (value.CompareTo(min) < 0)
-            throw new ArgumentOutOfRangeException(parameterName, $"The value must be greater or equal to {min}.");
+            throw new ArgumentOutOfRangeException(parameterName, $"The value must be greater than or equal to {min}.");
 
         return value;
     }

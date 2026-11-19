@@ -22,9 +22,9 @@ public record SymmetricDecryptionSettings : SymmetricEncryptionSettingsBase, IDe
         base.Validate();
 
         if (KeyProvider == null && Key == null)
-            throw new BrokerConfigurationException($"A {nameof(Key)} or a {nameof(KeyProvider)} is required.");
+            throw new BrokerConfigurationException($"Encryption.{nameof(Key)} or Encryption.{nameof(KeyProvider)} is required.");
 
         if (KeyProvider != null && Key != null)
-            throw new BrokerConfigurationException($"Cannot set both the {nameof(Key)} and the {nameof(KeyProvider)}.");
+            throw new BrokerConfigurationException($"Encryption.{nameof(Key)} and Encryption.{nameof(KeyProvider)} cannot be set at the same time.");
     }
 }

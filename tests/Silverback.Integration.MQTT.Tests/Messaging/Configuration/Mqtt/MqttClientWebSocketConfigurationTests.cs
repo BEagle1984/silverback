@@ -31,7 +31,7 @@ public class MqttClientWebSocketConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The URI is required to connect with the message broker.");
+        exception.Message.ShouldBe("Channel.Uri is required.");
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class MqttClientWebSocketConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The TLS configuration is required.");
+        exception.Message.ShouldBe("Channel.Tls is required.");
     }
 
     private static MqttClientWebSocketConfiguration GetValidConfiguration() => new()

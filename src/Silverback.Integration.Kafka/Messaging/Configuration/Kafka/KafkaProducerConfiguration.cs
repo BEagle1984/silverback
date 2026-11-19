@@ -80,12 +80,12 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
         base.Validate();
 
         if (Endpoints == null || Endpoints.Count == 0)
-            throw new BrokerConfigurationException("At least one endpoint must be configured.");
+            throw new BrokerConfigurationException("At least one endpoint is required.");
 
         Endpoints.ForEach(endpoint => endpoint.Validate());
 
         if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
-            throw new BrokerConfigurationException($"{nameof(ThrowIfNotAcknowledged)} cannot be set to true if delivery reports are not enabled.");
+            throw new BrokerConfigurationException($"{nameof(ThrowIfNotAcknowledged)} cannot be true when {nameof(EnableDeliveryReports)} is false.");
 
         if (FlushTimeout <= TimeSpan.Zero)
             throw new BrokerConfigurationException($"{nameof(FlushTimeout)} must be greater than zero.");

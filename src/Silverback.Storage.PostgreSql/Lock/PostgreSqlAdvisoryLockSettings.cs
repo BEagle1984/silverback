@@ -34,6 +34,6 @@ public record PostgreSqlAdvisoryLockSettings : DistributedLockSettings
         base.Validate();
 
         if (string.IsNullOrWhiteSpace(ConnectionString))
-            throw new SilverbackConfigurationException("The connection string is required.");
+            throw new SilverbackConfigurationException($"{nameof(ConnectionString)} is required.");
     }
 }

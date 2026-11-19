@@ -20,7 +20,7 @@ public abstract partial record KafkaClientConfiguration<TConfluentConfig> : IVal
     public virtual void Validate()
     {
         if (string.IsNullOrEmpty(BootstrapServers))
-            throw new BrokerConfigurationException($"The {nameof(BootstrapServers)} are required to connect with the message broker.");
+            throw new BrokerConfigurationException($"{nameof(BootstrapServers)} is required.");
     }
 
     internal abstract TConfluentConfig ToConfluentConfig();

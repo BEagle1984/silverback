@@ -30,7 +30,7 @@ public class MqttClientTcpConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The remote endpoint is required to connect with the message broker.");
+        exception.Message.ShouldBe("Channel.RemoteEndpoint is required.");
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class MqttClientTcpConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The TLS configuration is required.");
+        exception.Message.ShouldBe("Channel.Tls is required.");
     }
 
     private static MqttClientTcpConfiguration GetValidConfiguration() => new()

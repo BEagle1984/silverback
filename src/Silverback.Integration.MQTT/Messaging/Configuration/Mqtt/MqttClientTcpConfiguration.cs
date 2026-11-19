@@ -15,10 +15,10 @@ public partial record MqttClientTcpConfiguration : MqttClientChannelConfiguratio
     public override void Validate()
     {
         if (RemoteEndpoint == null)
-            throw new BrokerConfigurationException("The remote endpoint is required to connect with the message broker.");
+            throw new BrokerConfigurationException($"Channel.{nameof(RemoteEndpoint)} is required.");
 
         if (Tls == null)
-            throw new BrokerConfigurationException("The TLS configuration is required.");
+            throw new BrokerConfigurationException($"Channel.{nameof(Tls)} is required.");
 
         Tls.Validate();
     }

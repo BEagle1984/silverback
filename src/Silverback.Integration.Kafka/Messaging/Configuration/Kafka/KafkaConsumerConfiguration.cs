@@ -178,16 +178,16 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         ValidateCommitStrategy();
 
         if (MaxDegreeOfParallelism < 1)
-            throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} must be greater or equal to 1.");
+            throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} must be greater than or equal to 1.");
 
         if (MaxDegreeOfParallelism > 1 && !ProcessPartitionsIndependently)
-            throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} cannot be greater than 1 when the partitions aren't processed independently.");
+            throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} cannot be greater than 1 when {nameof(ProcessPartitionsIndependently)} is false.");
 
         if (BackpressureLimit < 1)
-            throw new BrokerConfigurationException("The backpressure limit must be greater or equal to 1.");
+            throw new BrokerConfigurationException($"{nameof(BackpressureLimit)} must be greater than or equal to 1.");
 
         if (GetMetadataTimeout <= TimeSpan.Zero)
-            throw new BrokerConfigurationException("The get metadata timeout must be greater than zero.");
+            throw new BrokerConfigurationException($"{nameof(GetMetadataTimeout)} must be greater than zero.");
 
         if (!ProcessPartitionsIndependently)
             ValidateSharedSequences();
@@ -209,7 +209,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     private void ValidateEndpoints()
     {
         if (Endpoints == null || Endpoints.Count == 0)
-            throw new BrokerConfigurationException("At least one endpoint must be configured.");
+            throw new BrokerConfigurationException("At least one endpoint is required.");
 
         Endpoints.ForEach(endpoint => endpoint.Validate());
 
@@ -234,7 +234,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         if (Endpoints.Select(endpoint => endpoint.Batch).Distinct().Skip(1).Any())
         {
             throw new BrokerConfigurationException(
-                "All endpoints must use the same batch settings when the partitions aren't processed independently. " +
+                $"All endpoints must use the same batch settings when {nameof(ProcessPartitionsIndependently)} is false. " +
                 "Use separate consumers for the endpoints with different batch settings.");
         }
 
@@ -242,7 +242,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         if (Endpoints.Count > 1 && Endpoints.Any(endpoint => endpoint.AllowStreaming))
         {
             throw new BrokerConfigurationException(
-                "A streaming endpoint must be the only endpoint of the consumer when the partitions aren't processed independently. " +
+                $"A streaming endpoint must be the only endpoint of the consumer when {nameof(ProcessPartitionsIndependently)} is false. " +
                 "Use separate consumers for the other endpoints.");
         }
     }
@@ -252,19 +252,19 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         if (!IsStaticAssignment)
         {
             throw new BrokerConfigurationException(
-                $"The {nameof(GroupId)} must be specified when the partitions are assigned dynamically. " +
-                $"Explicitly specify the partitions to be consumed or set the {nameof(GroupId)}.");
+                $"{nameof(GroupId)} is required when the partitions are assigned dynamically. " +
+                $"Specify the partitions to consume explicitly, or set {nameof(GroupId)}.");
         }
 
         if (CommitOffsets)
         {
             throw new BrokerConfigurationException(
-                $"The {nameof(GroupId)} should be specified when committing the offsets to the broker. " +
-                $"Set {nameof(CommitOffsets)} to false or set the {nameof(GroupId)}.");
+                $"{nameof(GroupId)} is required when {nameof(CommitOffsets)} is true. " +
+                $"Set {nameof(CommitOffsets)} to false, or set {nameof(GroupId)}.");
         }
 
         if (ClientSideOffsetStore != null)
-            throw new BrokerConfigurationException($"The {nameof(GroupId)} should be specified when using a client side offset store.");
+            throw new BrokerConfigurationException($"{nameof(GroupId)} is required when {nameof(ClientSideOffsetStore)} is set.");
     }
 
     private void ValidateCommitStrategy()
@@ -272,18 +272,22 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         if (CommitOffsets)
         {
             if (EnableAutoCommit && CommitOffsetEach != null)
-                throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} cannot be used when auto-commit is enabled. Explicitly disable it setting {nameof(EnableAutoCommit)} to false.");
+                throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} cannot be used when {nameof(EnableAutoCommit)} is true. Set {nameof(EnableAutoCommit)} to false.");
 
             if (!EnableAutoCommit && CommitOffsetEach is null or < 1)
-                throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} must be greater or equal to 1 when auto-commit is disabled.");
+                throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} must be greater than or equal to 1 when {nameof(EnableAutoCommit)} is false.");
 
             if (SendOffsetsToTransaction)
-                throw new BrokerConfigurationException($"{nameof(SendOffsetsToTransaction)} and {nameof(CommitOffsets)} cannot be enabled at the same time.");
+                throw new BrokerConfigurationException($"{nameof(SendOffsetsToTransaction)} and {nameof(CommitOffsets)} cannot both be true.");
         }
         else
         {
             if (EnableAutoCommit || CommitOffsetEach != null)
-                throw new BrokerConfigurationException($"Auto commit and {nameof(CommitOffsetEach)} shouldn't be enabled when not committing. Set {nameof(EnableAutoCommit)} to false and {nameof(CommitOffsets)} to null, or {nameof(CommitOffsets)} to true.");
+            {
+                throw new BrokerConfigurationException(
+                    $"{nameof(EnableAutoCommit)} and {nameof(CommitOffsetEach)} cannot be used when {nameof(CommitOffsets)} is false. " +
+                    $"Set {nameof(EnableAutoCommit)} to false and {nameof(CommitOffsetEach)} to null, or set {nameof(CommitOffsets)} to true.");
+            }
         }
     }
 }

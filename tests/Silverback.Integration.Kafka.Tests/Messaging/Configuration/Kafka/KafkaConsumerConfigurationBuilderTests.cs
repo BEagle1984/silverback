@@ -341,7 +341,7 @@ public class KafkaConsumerConfigurationBuilderTests
         Action act = () => builder.Build();
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("CommitOffsetEach must be greater or equal to 1 when auto-commit is disabled.");
+        exception.Message.ShouldBe("CommitOffsetEach must be greater than or equal to 1 when EnableAutoCommit is false.");
     }
 
     [Fact]

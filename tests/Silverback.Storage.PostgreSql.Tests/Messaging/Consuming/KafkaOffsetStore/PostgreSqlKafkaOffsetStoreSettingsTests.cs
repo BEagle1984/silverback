@@ -43,7 +43,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The kafkaOffsetStore table name is required.");
+        exception.Message.ShouldBe("TableName is required.");
     }
 
     [Theory]
@@ -57,7 +57,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The connection string is required.");
+        exception.Message.ShouldBe("ConnectionString is required.");
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsTests
         Action act = outboxSettings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The command timeout must be greater than zero.");
+        exception.Message.ShouldBe("DbCommandTimeout must be greater than zero.");
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsTests
         Action act = outboxSettings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The command timeout must be greater than zero.");
+        exception.Message.ShouldBe("DbCommandTimeout must be greater than zero.");
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsTests
         Action act = outboxSettings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
+        exception.Message.ShouldBe("CreateTableTimeout must be greater than zero.");
     }
 
     [Fact]
@@ -113,6 +113,6 @@ public class PostgreSqlKafkaOffsetStoreSettingsTests
         Action act = outboxSettings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
+        exception.Message.ShouldBe("CreateTableTimeout must be greater than zero.");
     }
 }

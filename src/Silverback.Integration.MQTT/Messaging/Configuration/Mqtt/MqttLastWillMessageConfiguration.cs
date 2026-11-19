@@ -79,7 +79,7 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     public void Validate()
     {
         if (string.IsNullOrEmpty(Topic))
-            throw new BrokerConfigurationException("The topic is required.");
+            throw new BrokerConfigurationException($"WillMessage.{nameof(Topic)} is required.");
     }
 
     internal void MapToMqttNetType(MqttClientOptions options)

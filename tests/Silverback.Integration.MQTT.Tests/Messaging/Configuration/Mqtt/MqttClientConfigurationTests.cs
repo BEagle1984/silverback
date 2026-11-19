@@ -53,7 +53,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("ProducerEndpoints cannot be null.");
+        exception.Message.ShouldBe("ProducerEndpoints is required.");
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("ConsumerEndpoints cannot be null.");
+        exception.Message.ShouldBe("ConsumerEndpoints is required.");
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("At least one endpoint must be configured.");
+        exception.Message.ShouldBe("At least one endpoint is required.");
     }
 
     [Fact]
@@ -224,7 +224,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("ClientId is required to connect with the message broker.*");
+        exception.Message.ShouldMatch("ClientId is required.*");
     }
 
     [Fact]
@@ -238,7 +238,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("Channel configuration is required.*");
+        exception.Message.ShouldMatch("Channel is required.*");
     }
 
     [Fact]
@@ -252,7 +252,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("The remote endpoint is required.*");
+        exception.Message.ShouldMatch("Channel.RemoteEndpoint is required.*");
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The name of a user property cannot be empty.");
+        exception.Message.ShouldBe("The user property Name is required.");
     }
 
     [Fact]
@@ -287,7 +287,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("The topic is required.*");
+        exception.Message.ShouldMatch("WillMessage.Topic is required.*");
     }
 
     [Fact]
@@ -330,7 +330,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("Wrong deserializer configuration. Since headers.*");
+        exception.Message.ShouldMatch("The deserializer must be configured with a hardcoded message type.*");
     }
 
     [Fact]
@@ -378,7 +378,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("Cannot set MaxFailedAttempts on the error policies.*");
+        exception.Message.ShouldMatch("MaxFailedAttempts cannot be set on the error policies.*");
     }
 
     [Fact]
@@ -416,7 +416,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("MaxDegreeOfParallelism must be greater or equal to 1.");
+        exception.Message.ShouldBe("MaxDegreeOfParallelism must be greater than or equal to 1.");
     }
 
     [Theory]
@@ -432,7 +432,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("BackpressureLimit must be greater or equal to 1.");
+        exception.Message.ShouldBe("BackpressureLimit must be greater than or equal to 1.");
     }
 
     [Theory]
@@ -562,7 +562,7 @@ public class MqttClientConfigurationTests
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
         exception.Message.ShouldBe(
-            "The batch MaxWaitTime must be set when consuming with QoS 1 or 2, since the broker stops delivering when too many " +
+            "Batch.MaxWaitTime is required when consuming with QoS 1 or 2, since the broker stops delivering when too many " +
             "messages are waiting for acknowledgment, which could prevent the batch from being completed.");
     }
 
@@ -586,9 +586,9 @@ public class MqttClientConfigurationTests
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
         exception.Message.ShouldBe(
-            $"The batch size ({batchSize}) multiplied by the MaxDegreeOfParallelism ({maxDegreeOfParallelism}) exceeds the " +
+            $"Batch.Size ({batchSize}) multiplied by MaxDegreeOfParallelism ({maxDegreeOfParallelism}) exceeds " +
             $"ReceiveMaximum ({effectiveReceiveMaximum}), which limits the number of messages that can be waiting for acknowledgment. " +
-            "Lower the batch size or the MaxDegreeOfParallelism, or raise the ReceiveMaximum (see LimitUnacknowledgedPublications).");
+            "Lower Batch.Size or MaxDegreeOfParallelism, or raise ReceiveMaximum (see LimitUnacknowledgedPublications).");
     }
 
     [Fact]
@@ -667,7 +667,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldStartWith("The batch MaxWaitTime must be set when consuming with QoS 1 or 2");
+        exception.Message.ShouldStartWith("Batch.MaxWaitTime is required when consuming with QoS 1 or 2");
     }
 
     [Fact]
@@ -684,7 +684,7 @@ public class MqttClientConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("Chunking can't be enabled for retained messages, since only the last chunk is retained.");
+        exception.Message.ShouldBe("Chunking cannot be enabled for retained messages, since only the last chunk is retained.");
     }
 
     [Fact]

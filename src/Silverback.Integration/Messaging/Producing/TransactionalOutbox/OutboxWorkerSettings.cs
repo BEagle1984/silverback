@@ -23,8 +23,8 @@ public record OutboxWorkerSettings : IValidatableSettings
     {
         Outbox = Check.NotNull(outboxSettings);
         DistributedLock = outboxSettings.GetCompatibleLockSettings() ?? throw new SilverbackConfigurationException(
-            $"The distributed lock settings cannot be inferred from the {outboxSettings.GetType().Name} since no matching " +
-            "distributed lock implementation exists. Please specify the distributed lock implementation or explicitly set it to null.");
+            $"{nameof(DistributedLock)} cannot be inferred from the {outboxSettings.GetType().Name}, since no matching " +
+            "distributed lock implementation exists. Call WithDistributedLock to specify it or WithoutDistributedLock to disable it, or pass the lock settings (or null) to the constructor.");
     }
 
     /// <summary>
@@ -96,9 +96,9 @@ public record OutboxWorkerSettings : IValidatableSettings
     public void Validate()
     {
         if (Interval < TimeSpan.Zero)
-            throw new SilverbackConfigurationException("The interval must be greater or equal to 0.");
+            throw new SilverbackConfigurationException($"{nameof(Interval)} must be greater than or equal to zero.");
 
         if (BatchSize < 1)
-            throw new SilverbackConfigurationException("The batch size must be greater or equal to 1.");
+            throw new SilverbackConfigurationException($"{nameof(BatchSize)} must be greater than or equal to 1.");
     }
 }

@@ -40,6 +40,6 @@ public record InMemoryOutboxSettings : OutboxSettings
         base.Validate();
 
         if (string.IsNullOrWhiteSpace(OutboxName))
-            throw new SilverbackConfigurationException("The outbox name is required.");
+            throw new SilverbackConfigurationException($"{nameof(OutboxName)} is required.");
     }
 }

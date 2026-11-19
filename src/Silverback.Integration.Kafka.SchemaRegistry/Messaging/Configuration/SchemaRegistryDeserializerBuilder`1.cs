@@ -121,10 +121,10 @@ public abstract class SchemaRegistryDeserializerBuilder<TBuilder>
     public IMessageDeserializer Build()
     {
         if (_messageType == null)
-            throw new SilverbackConfigurationException("The message type was not specified. Please call UseModel.");
+            throw new SilverbackConfigurationException("The message type is required. Call UseModel to set it.");
 
         if (_schemaRegistryConfiguration == null)
-            throw new SilverbackConfigurationException("The schema registry configuration was not specified. Please call ConnectToSchemaRegistry.");
+            throw new SilverbackConfigurationException("The schema registry configuration is required. Call ConnectToSchemaRegistry to set it.");
 
         _schemaRegistryConfiguration.Validate();
 

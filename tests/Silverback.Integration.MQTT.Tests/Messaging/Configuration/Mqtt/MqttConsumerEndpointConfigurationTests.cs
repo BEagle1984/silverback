@@ -82,7 +82,7 @@ public class MqttConsumerEndpointConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("At least 1 topic must be specified.");
+        exception.Message.ShouldBe("At least one topic is required.");
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class MqttConsumerEndpointConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("At least 1 topic must be specified.");
+        exception.Message.ShouldBe("At least one topic is required.");
     }
 
     [Theory]
@@ -112,7 +112,7 @@ public class MqttConsumerEndpointConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("A topic name cannot be null or empty.");
+        exception.Message.ShouldBe("Topics cannot contain a null or empty topic name.");
     }
 
     [Theory]

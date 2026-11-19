@@ -53,7 +53,7 @@ public class EntityFrameworkOutboxSettingsTests
         Action act = settings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The DbContext type is required.");
+        exception.Message.ShouldBe("DbContextType is required.");
     }
 
     [Fact]

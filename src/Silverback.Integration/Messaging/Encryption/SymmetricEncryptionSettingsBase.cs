@@ -83,6 +83,6 @@ public abstract record SymmetricEncryptionSettingsBase : IValidatableSettings
     public virtual void Validate()
     {
         if (string.IsNullOrEmpty(AlgorithmName))
-            throw new BrokerConfigurationException("The algorithm name is required.");
+            throw new BrokerConfigurationException($"Encryption.{nameof(AlgorithmName)} is required.");
     }
 }

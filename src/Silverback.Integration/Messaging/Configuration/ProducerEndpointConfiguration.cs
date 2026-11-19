@@ -95,21 +95,20 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
         if (EndpointResolver == null || Equals(EndpointResolver, NullProducerEndpointResolver.Instance))
         {
             throw new BrokerConfigurationException(
-                "An endpoint resolver is required. " +
-                $"Set the {nameof(EndpointResolver)} property or use ProduceTo or UseEndpointResolver to set it.");
+                $"{nameof(EndpointResolver)} is required. Call ProduceTo or UseEndpointResolver to set it.");
         }
 
         if (Serializer == null)
-            throw new BrokerConfigurationException("A serializer is required.");
+            throw new BrokerConfigurationException($"{nameof(Serializer)} is required.");
 
         if (MessageType == null)
-            throw new BrokerConfigurationException("The message type is required.");
+            throw new BrokerConfigurationException($"{nameof(MessageType)} is required.");
 
         if (Strategy == null)
-            throw new BrokerConfigurationException("A produce strategy is required.");
+            throw new BrokerConfigurationException($"{nameof(Strategy)} is required.");
 
         if (Strategy is OutboxProduceStrategy && string.IsNullOrEmpty(FriendlyName))
-            throw new BrokerConfigurationException("A unique friendly name for the endpoint is required when using the outbox produce strategy.");
+            throw new BrokerConfigurationException($"{nameof(FriendlyName)} is required when {nameof(Strategy)} is {nameof(OutboxProduceStrategy)}.");
 
         Chunk?.Validate();
         Encryption?.Validate();

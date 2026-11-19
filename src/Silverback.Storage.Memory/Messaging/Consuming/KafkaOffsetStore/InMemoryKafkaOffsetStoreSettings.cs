@@ -30,6 +30,6 @@ public record InMemoryKafkaOffsetStoreSettings : KafkaOffsetStoreSettings
         base.Validate();
 
         if (string.IsNullOrWhiteSpace(OffsetStoreName))
-            throw new SilverbackConfigurationException("The offset store name is required.");
+            throw new SilverbackConfigurationException($"{nameof(OffsetStoreName)} is required.");
     }
 }

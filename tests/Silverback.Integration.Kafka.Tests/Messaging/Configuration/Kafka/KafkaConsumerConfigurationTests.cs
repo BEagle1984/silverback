@@ -126,7 +126,7 @@ public class KafkaConsumerConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("At least one endpoint must be configured.");
+        exception.Message.ShouldBe("At least one endpoint is required.");
     }
 
     [Fact]
@@ -322,7 +322,7 @@ public class KafkaConsumerConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("The GroupId must be specified when the partitions are assigned dynamically. .*");
+        exception.Message.ShouldMatch("GroupId is required when the partitions are assigned dynamically. .*");
     }
 
     [Theory]
@@ -349,7 +349,7 @@ public class KafkaConsumerConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("The GroupId should be specified when committing the offsets to the broker. .*");
+        exception.Message.ShouldMatch("GroupId is required when CommitOffsets is true. .*");
     }
 
     [Theory]
@@ -377,7 +377,7 @@ public class KafkaConsumerConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The GroupId should be specified when using a client side offset store.");
+        exception.Message.ShouldBe("GroupId is required when ClientSideOffsetStore is set.");
     }
 
     [Fact]
@@ -461,7 +461,7 @@ public class KafkaConsumerConfigurationTests
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("SendOffsetsToTransaction and CommitOffsets cannot be enabled at the same time.");
+        exception.Message.ShouldBe("SendOffsetsToTransaction and CommitOffsets cannot both be true.");
     }
 
     [Theory]
@@ -492,8 +492,8 @@ public class KafkaConsumerConfigurationTests
             Exception exception = act.ShouldThrow<BrokerConfigurationException>();
             exception.Message.ShouldBe(
                 value < 1
-                    ? "MaxDegreeOfParallelism must be greater or equal to 1."
-                    : "MaxDegreeOfParallelism cannot be greater than 1 when the partitions aren't processed independently.");
+                    ? "MaxDegreeOfParallelism must be greater than or equal to 1."
+                    : "MaxDegreeOfParallelism cannot be greater than 1 when ProcessPartitionsIndependently is false.");
         }
     }
 
@@ -518,7 +518,7 @@ public class KafkaConsumerConfigurationTests
         else
         {
             Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-            exception.Message.ShouldBe("The backpressure limit must be greater or equal to 1.");
+            exception.Message.ShouldBe("BackpressureLimit must be greater than or equal to 1.");
         }
     }
 
@@ -543,7 +543,7 @@ public class KafkaConsumerConfigurationTests
         else
         {
             Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-            exception.Message.ShouldBe("The get metadata timeout must be greater than zero.");
+            exception.Message.ShouldBe("GetMetadataTimeout must be greater than zero.");
         }
     }
 
@@ -580,7 +580,7 @@ public class KafkaConsumerConfigurationTests
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
         exception.Message.ShouldBe(
-            "All endpoints must use the same batch settings when the partitions aren't processed independently. " +
+            "All endpoints must use the same batch settings when ProcessPartitionsIndependently is false. " +
             "Use separate consumers for the endpoints with different batch settings.");
     }
 
@@ -621,7 +621,7 @@ public class KafkaConsumerConfigurationTests
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
         exception.Message.ShouldBe(
-            "All endpoints must use the same batch settings when the partitions aren't processed independently. " +
+            "All endpoints must use the same batch settings when ProcessPartitionsIndependently is false. " +
             "Use separate consumers for the endpoints with different batch settings.");
     }
 
@@ -664,7 +664,7 @@ public class KafkaConsumerConfigurationTests
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
         exception.Message.ShouldBe(
-            "All endpoints must use the same batch settings when the partitions aren't processed independently. " +
+            "All endpoints must use the same batch settings when ProcessPartitionsIndependently is false. " +
             "Use separate consumers for the endpoints with different batch settings.");
     }
 
@@ -741,7 +741,7 @@ public class KafkaConsumerConfigurationTests
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
         exception.Message.ShouldBe(
-            "A streaming endpoint must be the only endpoint of the consumer when the partitions aren't processed independently. " +
+            "A streaming endpoint must be the only endpoint of the consumer when ProcessPartitionsIndependently is false. " +
             "Use separate consumers for the other endpoints.");
     }
 

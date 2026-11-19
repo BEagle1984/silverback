@@ -79,7 +79,7 @@ public class ProtobufMessageDeserializerBuilderTests
         Action act = () => builder.Build();
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
+        exception.Message.ShouldBe("The message type is required. Call UseModel to set it.");
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class ProtobufMessageDeserializerBuilderTests
         Action act = () => builder.Build();
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("At least 1 Url is required to connect with the schema registry.");
+        exception.Message.ShouldBe("Url is required.");
     }
 
     private ProtobufMessageDeserializerBuilder GetValidBuilder() =>

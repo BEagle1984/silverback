@@ -39,9 +39,9 @@ public sealed record TestConsumerEndpointConfiguration : ConsumerEndpointConfigu
         base.ValidateCore();
 
         if (TopicNames == null || TopicNames.Count == 0)
-            throw new BrokerConfigurationException("At least 1 topic name is required.");
+            throw new BrokerConfigurationException("At least one topic is required.");
 
         if (TopicNames.Any(string.IsNullOrWhiteSpace))
-            throw new BrokerConfigurationException("The topic name cannot be null or empty.");
+            throw new BrokerConfigurationException($"{nameof(TopicNames)} cannot contain a null or empty topic name.");
     }
 }

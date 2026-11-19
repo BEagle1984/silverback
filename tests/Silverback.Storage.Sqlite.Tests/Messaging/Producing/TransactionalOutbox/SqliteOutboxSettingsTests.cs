@@ -84,7 +84,7 @@ public class SqliteOutboxSettingsTests
         Action act = outboxSettings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The command timeout must be greater than zero.");
+        exception.Message.ShouldBe("DbCommandTimeout must be greater than zero.");
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class SqliteOutboxSettingsTests
         Action act = outboxSettings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The command timeout must be greater than zero.");
+        exception.Message.ShouldBe("DbCommandTimeout must be greater than zero.");
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class SqliteOutboxSettingsTests
         Action act = outboxSettings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
+        exception.Message.ShouldBe("CreateTableTimeout must be greater than zero.");
     }
 
     [Fact]
@@ -126,6 +126,6 @@ public class SqliteOutboxSettingsTests
         Action act = outboxSettings.Validate;
 
         Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
-        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
+        exception.Message.ShouldBe("CreateTableTimeout must be greater than zero.");
     }
 }
