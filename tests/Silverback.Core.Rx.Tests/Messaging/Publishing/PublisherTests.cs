@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -10,6 +12,7 @@ using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.Rx.TestTypes.Messages;
+using Silverback.Tests.Core.Rx.TestTypes.Messages.Base;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -44,5 +47,31 @@ public class PublisherTests
         asyncResults.ShouldBeEmpty();
         syncObjectResults.ShouldBe(["result"]);
         asyncObjectResults.ShouldBe(["result"]);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldRepublishEachMessage_WhenSubscriberReturnsObservable()
+    {
+        TestingCollection<object> republishedMessages = [];
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AsObservable()
+            .AddDelegateSubscriber<TestEventOne, IObservable<ICommand>>(Route)
+            .AddDelegateSubscriber<TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestCommandTwo>(Handle2));
+
+        static IObservable<ICommand> Route(TestEventOne message) => new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToObservable();
+        void Handle1(TestCommandOne message) => republishedMessages.Add(message);
+        void Handle2(TestCommandTwo message) => republishedMessages.Add(message);
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.Publish(new TestEventOne());
+        await publisher.PublishAsync(new TestEventOne());
+
+        republishedMessages.Select(message => message.GetType()).ShouldBe(
+            [typeof(TestCommandOne), typeof(TestCommandTwo), typeof(TestCommandOne), typeof(TestCommandTwo)]);
     }
 }
