@@ -203,8 +203,18 @@ public partial class ChunkingTests
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
         receivedMessages.ShouldBe(isConsumedInBatch ? ["Long message 1", "Long message 2"] : ["Long message 1"]);
-        transactionEventsTracker.Events.ShouldBe(["Committing", "Committed"]);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(isConsumedInBatch ? 6 : 3);
+
+        // The last chunk of the batch might not await it (the batch can be aborted before the chunk is marked as the end of the sequence),
+        // so the first chunk of the next chunked message might be consumed before the consumer is stopped, which aborts its transaction,
+        // rolling it back. Nothing else is committed.
+        IReadOnlyList<string> transactionEvents = transactionEventsTracker.Events;
+        transactionEvents.Take(2).ShouldBe(["Committing", "Committed"]);
+
+        if (isConsumedInBatch)
+            transactionEvents.Skip(2).ShouldAllBe(transactionEvent => transactionEvent == "Aborting" || transactionEvent == "Aborted");
+        else
+            transactionEvents.Count.ShouldBe(2);
 
         // Only the stop callbacks are invoked
         await callback.Received(1).OnStoppingConsumerAsync(Arg.Any<IRawInboundEnvelope>(), Arg.Any<Exception>());
