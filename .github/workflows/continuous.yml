@@ -19,6 +19,11 @@ jobs:
   # The job name is the status check required by the branch ruleset
   continuous:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # To publish the test results as a check run with annotations and comment them on the pull request
+      checks: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -31,7 +36,9 @@ jobs:
       - name: Build (${{ env.BUILD_CONFIGURATION }})
         run: |
           dotnet build Silverback.slnx --configuration "$BUILD_CONFIGURATION" -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
-      - name: Run unit tests
+      # The unit and E2E tests run in a single pass, so that a failure doesn't hide the failures of the other tests
+      - name: Run tests
+        id: tests
         run: |
           dotnet test --solution Silverback.slnx \
             --configuration "$BUILD_CONFIGURATION" \
@@ -41,24 +48,15 @@ jobs:
             --hangdump \
             --hangdump-timeout 5m \
             --hangdump-type Mini \
-            --results-directory TestResults/unit \
+            --results-directory TestResults \
             --results-directory-layout per-module \
-            --filter "Type!=E2E&Dependency!=Docker&CI!=Skip"
-      - name: Run E2E tests
-        run: |
-          dotnet test --solution Silverback.slnx \
-            --configuration "$BUILD_CONFIGURATION" \
-            --no-build \
-            --ignore-exit-code 8 \
-            --report-trx \
-            --hangdump \
-            --hangdump-timeout 5m \
-            --hangdump-type Mini \
-            --results-directory TestResults/e2e \
-            --results-directory-layout per-module \
-            --filter "Type=E2E&Dependency!=Docker&CI!=Skip"
+            --filter "Dependency!=Docker&CI!=Skip"
       # Publish results
+      # The report is a check run, which annotates the failed tests at their source lines, except for fork and Dependabot pull
+      # requests: their token is read-only, so the report falls back to the job summary. fail-on-error makes the check run
+      # fail along with the tests (the job fails anyway, because of the test steps).
       - name: Publish test results
+        id: test-results
         if: ${{ !cancelled() }}
         uses: dorny/test-reporter@d1b5dff021aa968b288b02285a8bf47471c5928a # v3.2.0
         with:
@@ -67,8 +65,61 @@ jobs:
           reporter: dotnet-trx
           list-suites: failed
           list-tests: failed
-          fail-on-error: false
+          list-files: failed
+          max-annotations: 50
+          use-actions-summary: ${{ github.event.pull_request.head.repo.fork == true || github.actor == 'dependabot[bot]' }}
+          fail-on-error: true
           fail-on-empty: false
+      # Keeps a single comment on the pull request up to date: it's created when the tests fail and is updated on each push.
+      # A pull request whose tests always passed gets no comment.
+      - name: Comment the test results on the pull request
+        if: >-
+          !cancelled() &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.fork != true &&
+          github.actor != 'dependabot[bot]' &&
+          steps.tests.outcome != 'skipped'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          # The head of the pull request, not the merge commit that the workflow tests (GITHUB_SHA)
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TESTS_OUTCOME: ${{ steps.tests.outcome }}
+          FAILED: ${{ steps.test-results.outputs.failed }}
+          SUMMARY_FILE: ${{ steps.test-results.outputs.summary_file }}
+          CHECK_URL: ${{ steps.test-results.outputs.url_html }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -o pipefail
+          marker='<!-- continuous-test-results -->'
+          comment_id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" --paginate \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$marker\"))) | .id" | head -n 1)
+          report_url="${CHECK_URL:-$RUN_URL}"
+          body="$RUNNER_TEMP/test-results-comment.md"
+
+          if [ "$TESTS_OUTCOME" = success ]; then
+            if [ -z "$comment_id" ]; then
+              echo "The tests passed and there is no comment to update."
+              exit 0
+            fi
+            printf '%s\n### ✅ All tests passed\n\n[Test results](%s) of %s\n' "$marker" "$report_url" "$HEAD_SHA" > "$body"
+          elif [ "${FAILED:-0}" -gt 0 ]; then
+            printf '%s\n### ❌ %s tests failed\n\n[Test results](%s) of %s\n\n' "$marker" "$FAILED" "$report_url" "$HEAD_SHA" > "$body"
+            # A comment is limited to 65536 characters
+            if [ -n "$SUMMARY_FILE" ] && [ -f "$SUMMARY_FILE" ]; then
+              head -c 60000 "$SUMMARY_FILE" >> "$body"
+            fi
+          else
+            # E.g. a crashed or hanging test host, which doesn't report the failed test
+            printf '%s\n### ❌ The tests failed without reporting a failed test\n\nThe test host may have crashed or hung: see the [workflow run](%s) of %s.\n' \
+              "$marker" "$RUN_URL" "$HEAD_SHA" > "$body"
+          fi
+
+          if [ -n "$comment_id" ]; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$comment_id" -F "body=@$body" > /dev/null
+          else
+            gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" -F "body=@$body" > /dev/null
+          fi
       - name: Collect hang dumps
         if: failure()
         run: |

@@ -53,8 +53,11 @@ jobs:
   continuous:
     needs: check
     if: needs.check.outputs.continuous_state == 'missing'
+    # The called workflow publishes the test results as a check run (and comments pull requests, which a tag push isn't)
     permissions:
       contents: read
+      checks: write
+      pull-requests: write
     uses: ./.github/workflows/continuous.yml
 
   continuous-wait:
