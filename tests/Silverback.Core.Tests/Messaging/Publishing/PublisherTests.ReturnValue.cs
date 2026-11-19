@@ -5,12 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Tests.Logging;
 using Silverback.Util;
 using Xunit;
@@ -307,7 +310,7 @@ public partial class PublisherTests
     }
 
     [Fact]
-    public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSubscriberReturnsNull()
+    public async Task PublishAndPublishAsync_ShouldReturnNullResults_WhenSubscriberReturnsNull()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
             .AddFakeLogger()
@@ -316,11 +319,379 @@ public partial class PublisherTests
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
-        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+        IReadOnlyCollection<string?> syncResults = publisher.Publish<string?>(new TestQueryOne());
+        IReadOnlyCollection<string?> asyncResults = await publisher.PublishAsync<string?>(new TestQueryOne());
+
+        syncResults.ShouldBe([null, null]);
+        asyncResults.ShouldBe(syncResults);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnNullableValueReturnedBySubscriber()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<NullableValueQueryHandler>());
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<WrappedReturnValue?> syncNullResults = publisher.Publish<WrappedReturnValue?>(new TestQueryFour(null));
+        IReadOnlyCollection<WrappedReturnValue?> asyncNullResults = await publisher.PublishAsync<WrappedReturnValue?>(new TestQueryFour(null));
+        IReadOnlyCollection<WrappedReturnValue?> syncValueResults = publisher.Publish<WrappedReturnValue?>(new TestQueryFour(42));
+        IReadOnlyCollection<WrappedReturnValue?> asyncValueResults = await publisher.PublishAsync<WrappedReturnValue?>(new TestQueryFour(42));
+
+        syncNullResults.ShouldBe([null, null]);
+        asyncNullResults.ShouldBe(syncNullResults);
+        syncValueResults.ShouldBe([new WrappedReturnValue(42), new WrappedReturnValue(42)]);
+        asyncValueResults.ShouldBe(syncValueResults);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldDiscardNullResults_WhenResultTypeIsNonNullableValueType()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<NullableValueQueryHandler>());
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<WrappedReturnValue> syncNullResults = publisher.Publish<WrappedReturnValue>(new TestQueryFour(null));
+        IReadOnlyCollection<WrappedReturnValue> asyncNullResults = await publisher.PublishAsync<WrappedReturnValue>(new TestQueryFour(null));
+        IReadOnlyCollection<WrappedReturnValue> syncValueResults = publisher.Publish<WrappedReturnValue>(new TestQueryFour(42));
+        IReadOnlyCollection<WrappedReturnValue> asyncValueResults = await publisher.PublishAsync<WrappedReturnValue>(new TestQueryFour(42));
+
+        syncNullResults.ShouldBeEmpty();
+        asyncNullResults.ShouldBeEmpty();
+        syncValueResults.Select(result => result.Value).ShouldBe([42, 42]);
+        asyncValueResults.ShouldBe(syncValueResults);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSubscribersReturnNoValue()
+    {
+        int callsCount = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne>(Handle2)
+            .AddDelegateSubscriber<TestQueryOne>(Handle3)
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle4));
+
+        void Handle1(TestQueryOne message) => Interlocked.Increment(ref callsCount);
+
+        Task Handle2(TestQueryOne message)
+        {
+            Interlocked.Increment(ref callsCount);
+            return Task.CompletedTask;
+        }
+
+        ValueTask Handle3(TestQueryOne message)
+        {
+            Interlocked.Increment(ref callsCount);
+            return ValueTask.CompletedTask;
+        }
+
+        TestCommandOne Handle4(TestQueryOne message)
+        {
+            Interlocked.Increment(ref callsCount);
+            return new TestCommandOne(); // Republished, not returned
+        }
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<object?> syncResults = publisher.Publish<object?>(new TestQueryOne(), true);
+        IReadOnlyCollection<object?> asyncResults = await publisher.PublishAsync<object?>(new TestQueryOne(), true);
 
         syncResults.ShouldBeEmpty();
+        asyncResults.ShouldBeEmpty();
+        callsCount.ShouldBe(8);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldNotReturnNullResults_WhenRepublishingSubscribersReturnNull()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<NullMessagesSubscriber>()
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle));
+
+        static string Handle(TestQueryOne message) => "result";
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string?> syncResults = publisher.Publish<string?>(new TestQueryOne());
+        IReadOnlyCollection<string?> asyncResults = await publisher.PublishAsync<string?>(new TestQueryOne());
+        IReadOnlyCollection<object?> syncObjectResults = publisher.Publish<object?>(new TestQueryOne());
+        IReadOnlyCollection<object?> asyncObjectResults = await publisher.PublishAsync<object?>(new TestQueryOne());
+
+        syncResults.ShouldBe(["result"]);
         asyncResults.ShouldBe(syncResults);
+        syncObjectResults.ShouldBe(["result"]);
+        asyncObjectResults.ShouldBe(syncObjectResults);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldDiscardNullResults_WhenDeclaredResultTypeIsUnrelated()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, int?>(Handle2)
+            .AddDelegateSubscriber<TestQueryOne, Uri?>(Handle3));
+
+        static string Handle1(TestQueryOne message) => "result";
+        static int? Handle2(TestQueryOne message) => null;
+        static Task<Uri?> Handle3(TestQueryOne message) => Task.FromResult<Uri?>(null);
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string?> syncResults = publisher.Publish<string?>(new TestQueryOne());
+        IReadOnlyCollection<string?> asyncResults = await publisher.PublishAsync<string?>(new TestQueryOne());
+        IReadOnlyCollection<int?> syncNullableIntResults = publisher.Publish<int?>(new TestQueryOne());
+        IReadOnlyCollection<int?> asyncNullableIntResults = await publisher.PublishAsync<int?>(new TestQueryOne());
+        IReadOnlyCollection<Uri?> syncUriResults = publisher.Publish<Uri?>(new TestQueryOne());
+        IReadOnlyCollection<Uri?> asyncUriResults = await publisher.PublishAsync<Uri?>(new TestQueryOne());
+        IReadOnlyCollection<object?> syncObjectResults = publisher.Publish<object?>(new TestQueryOne());
+        IReadOnlyCollection<object?> asyncObjectResults = await publisher.PublishAsync<object?>(new TestQueryOne());
+
+        syncResults.ShouldBe(["result"]);
+        asyncResults.ShouldBe(["result"]);
+        syncNullableIntResults.ShouldBe([null]);
+        asyncNullableIntResults.ShouldBe([null]);
+        syncUriResults.ShouldBe([null]);
+        asyncUriResults.ShouldBe([null]);
+        syncObjectResults.ShouldBe(["result", null, null], ignoreOrder: true);
+        asyncObjectResults.ShouldBe(["result", null, null], ignoreOrder: true);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnNullResults_WhenDeclaredResultTypeIsBaseTypeOrInterface()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, object?>(Handle2)
+            .AddDelegateSubscriber<TestQueryOne, IComparable?>(Handle3)
+            .AddDelegateSubscriber<TestQueryOne, IDisposable?>(Handle4)
+            .AddDelegateSubscriber<object, object?>(Handle5));
+
+        static string Handle1(TestQueryOne message) => "result";
+        static object? Handle2(TestQueryOne message) => null;
+        static Task<IComparable?> Handle3(TestQueryOne message) => Task.FromResult<IComparable?>(null);
+        static IDisposable? Handle4(TestQueryOne message) => null; // Discarded when the expected type is sealed and not IDisposable
+        static object? Handle5(object message) => null;
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string?> syncResults = publisher.Publish<string?>(new TestQueryOne());
+        IReadOnlyCollection<string?> asyncResults = await publisher.PublishAsync<string?>(new TestQueryOne());
+        IReadOnlyCollection<int?> syncNullableIntResults = publisher.Publish<int?>(new TestQueryOne());
+        IReadOnlyCollection<int?> asyncNullableIntResults = await publisher.PublishAsync<int?>(new TestQueryOne());
+        IReadOnlyCollection<Uri?> syncUriResults = publisher.Publish<Uri?>(new TestQueryOne());
+        IReadOnlyCollection<Uri?> asyncUriResults = await publisher.PublishAsync<Uri?>(new TestQueryOne());
+
+        syncResults.ShouldBe(["result", null, null, null], ignoreOrder: true);
+        asyncResults.ShouldBe(["result", null, null, null], ignoreOrder: true);
+        syncNullableIntResults.ShouldBe([null, null, null]);
+        asyncNullableIntResults.ShouldBe([null, null, null]);
+        syncUriResults.ShouldBe([null, null, null, null]);
+        asyncUriResults.ShouldBe([null, null, null, null]);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnNullResults_WhenDeclaredArrayTypeMayHoldCovariantArray()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, object[]?>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, IComparable[]?>(Handle2));
+
+        // An object[] may be a string[] (array covariance), which is an IEnumerable<string>
+        static object[]? Handle1(TestQueryOne message) => null;
+        static Task<IComparable[]?> Handle2(TestQueryOne message) => Task.FromResult<IComparable[]?>(null);
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<IEnumerable<string>?> syncEnumerableResults = publisher.Publish<IEnumerable<string>?>(new TestQueryOne());
+        IReadOnlyCollection<IEnumerable<string>?> asyncEnumerableResults =
+            await publisher.PublishAsync<IEnumerable<string>?>(new TestQueryOne());
+        IReadOnlyCollection<IReadOnlyList<string>?> syncReadOnlyListResults = publisher.Publish<IReadOnlyList<string>?>(new TestQueryOne());
+        IReadOnlyCollection<IReadOnlyList<string>?> asyncReadOnlyListResults =
+            await publisher.PublishAsync<IReadOnlyList<string>?>(new TestQueryOne());
+        IReadOnlyCollection<Uri[]?> syncArrayResults = publisher.Publish<Uri[]?>(new TestQueryOne());
+        IReadOnlyCollection<Uri[]?> asyncArrayResults = await publisher.PublishAsync<Uri[]?>(new TestQueryOne());
+
+        syncEnumerableResults.ShouldBe([null, null]);
+        asyncEnumerableResults.ShouldBe([null, null]);
+        syncReadOnlyListResults.ShouldBe([null, null]);
+        asyncReadOnlyListResults.ShouldBe([null, null]);
+        syncArrayResults.ShouldBe([null, null]); // An IComparable[] may hold an array of a type derived from Uri implementing IComparable
+        asyncArrayResults.ShouldBe([null, null]);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldDiscardNullResults_WhenDeclaredArrayTypeCannotHoldExpectedType()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, int[]?>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, Uri[]?>(Handle2));
+
+        // An int[] is never covariant (value type elements) and a Uri[] may only hold arrays of types derived from Uri
+        static int[]? Handle1(TestQueryOne message) => null;
+        static Task<Uri[]?> Handle2(TestQueryOne message) => Task.FromResult<Uri[]?>(null);
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<IEnumerable<string>?> syncEnumerableResults = publisher.Publish<IEnumerable<string>?>(new TestQueryOne());
+        IReadOnlyCollection<IEnumerable<string>?> asyncEnumerableResults =
+            await publisher.PublishAsync<IEnumerable<string>?>(new TestQueryOne());
+        IReadOnlyCollection<string[]?> syncArrayResults = publisher.Publish<string[]?>(new TestQueryOne());
+        IReadOnlyCollection<string[]?> asyncArrayResults = await publisher.PublishAsync<string[]?>(new TestQueryOne());
+        IReadOnlyCollection<object?> syncObjectResults = publisher.Publish<object?>(new TestQueryOne());
+        IReadOnlyCollection<object?> asyncObjectResults = await publisher.PublishAsync<object?>(new TestQueryOne());
+
+        syncEnumerableResults.ShouldBeEmpty();
+        asyncEnumerableResults.ShouldBeEmpty();
+        syncArrayResults.ShouldBeEmpty();
+        asyncArrayResults.ShouldBeEmpty();
+        syncObjectResults.ShouldBe([null, null]);
+        asyncObjectResults.ShouldBe([null, null]);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnNullResults_WhenDeclaredDelegateTypeMayHoldVariantDelegate()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, Func<IComparable>?>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, Action<Uri>?>(Handle2));
+
+        // A Func<IComparable> may be a Func<string> (covariance), which is a Func<IConvertible>, and an Action<Uri> may be an
+        // Action<object> (contravariance), which is an Action<string>
+        static Func<IComparable>? Handle1(TestQueryOne message) => null;
+        static Task<Action<Uri>?> Handle2(TestQueryOne message) => Task.FromResult<Action<Uri>?>(null);
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<Func<IConvertible>?> syncFuncResults = publisher.Publish<Func<IConvertible>?>(new TestQueryOne());
+        IReadOnlyCollection<Func<IConvertible>?> asyncFuncResults = await publisher.PublishAsync<Func<IConvertible>?>(new TestQueryOne());
+        IReadOnlyCollection<Action<string>?> syncActionResults = publisher.Publish<Action<string>?>(new TestQueryOne());
+        IReadOnlyCollection<Action<string>?> asyncActionResults = await publisher.PublishAsync<Action<string>?>(new TestQueryOne());
+
+        syncFuncResults.ShouldBe([null]);
+        asyncFuncResults.ShouldBe([null]);
+        syncActionResults.ShouldBe([null]);
+        asyncActionResults.ShouldBe([null]);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldDiscardNullResults_WhenDeclaredDelegateTypeCannotHoldExpectedType()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, Func<int>?>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, Func<Uri>?>(Handle2)
+            .AddDelegateSubscriber<TestQueryOne, InvariantFactory<object>?>(Handle3));
+
+        // Variance doesn't apply to value type arguments, a Func<Uri> may only hold a Func<T> of a type derived from Uri, and an invariant
+        // type argument must be identical
+        static Func<int>? Handle1(TestQueryOne message) => null;
+        static Task<Func<Uri>?> Handle2(TestQueryOne message) => Task.FromResult<Func<Uri>?>(null);
+        static InvariantFactory<object>? Handle3(TestQueryOne message) => null;
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<Func<long>?> syncLongFuncResults = publisher.Publish<Func<long>?>(new TestQueryOne());
+        IReadOnlyCollection<Func<long>?> asyncLongFuncResults = await publisher.PublishAsync<Func<long>?>(new TestQueryOne());
+        IReadOnlyCollection<Func<string>?> syncStringFuncResults = publisher.Publish<Func<string>?>(new TestQueryOne());
+        IReadOnlyCollection<Func<string>?> asyncStringFuncResults = await publisher.PublishAsync<Func<string>?>(new TestQueryOne());
+        IReadOnlyCollection<Func<object>?> syncObjectFuncResults = publisher.Publish<Func<object>?>(new TestQueryOne());
+        IReadOnlyCollection<Func<object>?> asyncObjectFuncResults = await publisher.PublishAsync<Func<object>?>(new TestQueryOne());
+        IReadOnlyCollection<InvariantFactory<string>?> syncFactoryResults =
+            publisher.Publish<InvariantFactory<string>?>(new TestQueryOne());
+        IReadOnlyCollection<InvariantFactory<string>?> asyncFactoryResults =
+            await publisher.PublishAsync<InvariantFactory<string>?>(new TestQueryOne());
+
+        syncLongFuncResults.ShouldBeEmpty();
+        asyncLongFuncResults.ShouldBeEmpty();
+        syncStringFuncResults.ShouldBeEmpty();
+        asyncStringFuncResults.ShouldBeEmpty();
+        syncObjectFuncResults.ShouldBe([null]); // Only the Func<Uri>: a Func<int> is never a Func<object>
+        asyncObjectFuncResults.ShouldBe([null]);
+        syncFactoryResults.ShouldBeEmpty();
+        asyncFactoryResults.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnNullResult_WhenSubscriberReturnsNullObservableWithoutRx()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, IObservable<IMessage>?>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, IObservable<TestEventOne>?>(Handle2));
+
+        // Without AsObservable (Silverback.Core.Rx), the returned IObservable<T> isn't republished: it's a plain result
+        static IObservable<IMessage>? Handle1(TestQueryOne message) => null;
+        static Task<IObservable<TestEventOne>?> Handle2(TestQueryOne message) => Task.FromResult<IObservable<TestEventOne>?>(null);
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<IObservable<IMessage>?> syncResults = publisher.Publish<IObservable<IMessage>?>(new TestQueryOne());
+        IReadOnlyCollection<IObservable<IMessage>?> asyncResults = await publisher.PublishAsync<IObservable<IMessage>?>(new TestQueryOne());
+        IReadOnlyCollection<object?> syncObjectResults = publisher.Publish<object?>(new TestQueryOne());
+        IReadOnlyCollection<object?> asyncObjectResults = await publisher.PublishAsync<object?>(new TestQueryOne());
+
+        syncResults.ShouldBe([null, null]);
+        asyncResults.ShouldBe([null, null]);
+        syncObjectResults.ShouldBe([null, null]);
+        asyncObjectResults.ShouldBe([null, null]);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldNotReturnNullResults_WhenSubscribersAreNotInvoked()
+    {
+        int skippedSubscriberCalls = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<RejectedQueryHandler>()
+            .AddDelegateSubscriber<SkippedQuery, string?>(HandleSkipped)
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle)
+            .Services
+            .AddSingleton<IArgumentResolver, SkippedQueryArgumentResolver>());
+
+        string? HandleSkipped(SkippedQuery message)
+        {
+            Interlocked.Increment(ref skippedSubscriberCalls);
+            return null;
+        }
+
+        static string Handle(TestQueryOne message) => "result";
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+        RejectedQueryHandler rejectedQueryHandler = serviceProvider.GetRequiredService<RejectedQueryHandler>();
+
+        IReadOnlyCollection<string?> syncResults = publisher.Publish<string?>(new TestQueryOne(), true);
+        IReadOnlyCollection<string?> asyncResults = await publisher.PublishAsync<string?>(new TestQueryOne(), true);
+
+        syncResults.ShouldBe(["result"]);
+        asyncResults.ShouldBe(["result"]);
+        rejectedQueryHandler.CallsCount.ShouldBe(0);
+        skippedSubscriberCalls.ShouldBe(0);
     }
 
     [Fact]
@@ -392,25 +763,25 @@ public partial class PublisherTests
     }
 
     [Fact]
-    public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenDelegateSubscriberReturnsNull()
+    public async Task PublishAndPublishAsync_ShouldReturnNullResults_WhenDelegateSubscriberReturnsNull()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
             .AddFakeLogger()
             .AddSilverback()
-            .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, string?>(Handle1)
             .AddDelegateSubscriber<TestQueryOne, string?>(Handle2)
             .AddDelegateSubscriber<TestQueryOne, string?>(Handle3));
 
-        static string Handle1(TestQueryOne message) => null!;
+        static string? Handle1(TestQueryOne message) => null;
         static Task<string?> Handle2(TestQueryOne message) => Task.FromResult<string?>(null);
         static ValueTask<string?> Handle3(TestQueryOne message) => ValueTask.FromResult<string?>(null);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
-        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+        IReadOnlyCollection<string?> syncResults = publisher.Publish<string?>(new TestQueryOne());
+        IReadOnlyCollection<string?> asyncResults = await publisher.PublishAsync<string?>(new TestQueryOne());
 
-        syncResults.ShouldBeEmpty();
+        syncResults.ShouldBe([null, null, null]);
         asyncResults.ShouldBe(syncResults);
     }
 
@@ -544,6 +915,8 @@ public partial class PublisherTests
         ]);
         asyncResults.ShouldBe(syncResults);
     }
+
+    private readonly record struct WrappedReturnValue(int Value);
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
     private class PublishSingleMessageSubscriber
@@ -718,6 +1091,91 @@ public partial class PublisherTests
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public Task<string[]?> HandleAsync(TestQueryTwo message) => Task.FromResult<string[]?>(null);
+    }
+
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
+    private class NullMessagesSubscriber
+    {
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public TestCommandOne? HandleMessage(TestQueryOne message) => null;
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public Task<IMessage?> HandleMessageAsync(TestQueryOne message) => Task.FromResult<IMessage?>(null);
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public IEnumerable<ICommand>? HandleEnumerable(TestQueryOne message) => null;
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public ValueTask<TestEvent[]?> HandleArrayAsync(TestQueryOne message) => ValueTask.FromResult<TestEvent[]?>(null);
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public IReadOnlyCollection<IMessage>? HandleReadOnlyCollection(TestQueryOne message) => null;
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public IAsyncEnumerable<IEvent>? HandleAsyncEnumerable(TestQueryOne message) => null;
+    }
+
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
+    private class NullableValueQueryHandler
+    {
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        public WrappedReturnValue? Handle(TestQueryFour message) => Wrap(message);
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        public Task<WrappedReturnValue?> HandleAsync(TestQueryFour message) => Task.FromResult(Wrap(message));
+
+        private static WrappedReturnValue? Wrap(TestQueryFour message) =>
+            message.Value.HasValue ? new WrappedReturnValue(message.Value.Value) : null;
+    }
+
+    private sealed class RejectAllFilterAttribute : MessageFilterAttribute
+    {
+        public override bool MustProcess(object message) => false;
+    }
+
+    private class RejectedQueryHandler
+    {
+        private int _callsCount;
+
+        public int CallsCount => _callsCount;
+
+        [RejectAllFilter]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public string? Handle(TestQueryOne message)
+        {
+            Interlocked.Increment(ref _callsCount);
+            return null;
+        }
+
+        [RejectAllFilter]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public Task<string?> HandleAsync(TestQueryOne message)
+        {
+            Interlocked.Increment(ref _callsCount);
+            return Task.FromResult<string?>(null);
+        }
+    }
+
+    // Subscribes the TestQueryOne, but resolves the argument to null, so that the subscriber is never invoked
+    private class SkippedQuery;
+
+    private class SkippedQueryArgumentResolver : ISingleMessageArgumentResolver
+    {
+        public bool SkipInvocationIfNull => true;
+
+        public bool CanResolve(Type parameterType) => parameterType == typeof(SkippedQuery);
+
+        public Type GetMessageType(Type parameterType) => typeof(TestQueryOne);
+
+        public object? GetValue(object? message, Type parameterType) => null;
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]

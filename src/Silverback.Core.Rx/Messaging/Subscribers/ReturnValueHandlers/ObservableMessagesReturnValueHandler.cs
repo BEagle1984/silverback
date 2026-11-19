@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
@@ -14,7 +13,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 /// <summary>
 ///     Handles the returned <see cref="IObservable{T}" /> republishing all the messages.
 /// </summary>
-public class ObservableMessagesReturnValueHandler : IReturnValueHandler
+public class ObservableMessagesReturnValueHandler : IReturnValueHandler, IMessagesReturnValueHandler
 {
     private readonly BusOptions _busOptions;
 
@@ -31,11 +30,7 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler
 
     /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
     public bool CanHandle(object returnValue) =>
-        returnValue != null &&
-        returnValue.GetType().GetInterfaces().Any(type => type.IsGenericType &&
-                                                          type.GetGenericTypeDefinition() == typeof(IObservable<>) &&
-                                                          _busOptions.MessageTypes.Any(messageType =>
-                                                              messageType.IsAssignableFrom(type.GenericTypeArguments[0])));
+        returnValue != null && CanHandleType(returnValue.GetType());
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(IPublisher publisher, object returnValue) =>
@@ -44,4 +39,10 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
     public async ValueTask HandleAsync(IPublisher publisher, object returnValue) =>
         await Check.NotNull(publisher).PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable()).ConfigureAwait(false);
+
+    /// <inheritdoc cref="IMessagesReturnValueHandler.CanHandleReturnType" />
+    bool IMessagesReturnValueHandler.CanHandleReturnType(Type returnType) => CanHandleType(Check.NotNull(returnType));
+
+    private bool CanHandleType(Type type) =>
+        MessagesReturnTypeHelper.IsMessagesCollection(type, typeof(IObservable<>), _busOptions.MessageTypes);
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
+using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 using Silverback.Messaging.Subscribers.Subscriptions;
 using Silverback.Util;
 
@@ -105,6 +106,15 @@ public class SubscribedMethod
     internal bool MayBlockOnStream { get; private set; }
 
     /// <summary>
+    ///     Gets a value indicating whether the method is declared to return the messages to be republished by one of the registered
+    ///     built-in return value handlers, i.e. a message type or an <see cref="IEnumerable{T}" /> or an
+    ///     <see cref="IAsyncEnumerable{T}" /> of a message type, or an <see cref="IObservable{T}" /> of a message type when the
+    ///     Silverback.Core.Rx handler is registered. A <c>null</c> returned by such a method means that there is nothing to republish,
+    ///     not a result.
+    /// </summary>
+    internal bool ReturnsMessages { get; private set; }
+
+    /// <summary>
     ///     Resolves an instance of the type declaring the subscribed method.
     /// </summary>
     /// <param name="serviceProvider">
@@ -125,6 +135,9 @@ public class SubscribedMethod
 
         MayBlockOnStream = MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver &&
                            !IsAsyncEnumerable(MessageParameter.ParameterType);
+
+        ReturnsMessages = ReturnType.ResultType != null &&
+                          serviceProvider.GetRequiredService<ReturnValueHandlerService>().IsMessagesReturnType(ReturnType.ResultType);
 
         return this;
     }

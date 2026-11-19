@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -37,6 +38,21 @@ public record MethodReturnType
     public bool IsValueTask { get; init; }
 
     /// <summary>
+    ///     Gets a value indicating whether the method returns a value, either directly or wrapped in a <see cref="Task{TResult}" /> or a
+    ///     <see cref="ValueTask{TResult}" />. It is <c>false</c> for <c>void</c>, <see cref="System.Threading.Tasks.Task" /> and
+    ///     <see cref="System.Threading.Tasks.ValueTask" />.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(ResultType))]
+    internal bool ReturnsValue => ResultType != null;
+
+    /// <summary>
+    ///     Gets the type of the value returned by the method, unwrapped from the <see cref="Task{TResult}" /> or the
+    ///     <see cref="ValueTask{TResult}" />. It is <c>null</c> for <c>void</c>, <see cref="System.Threading.Tasks.Task" /> and
+    ///     <see cref="System.Threading.Tasks.ValueTask" />.
+    /// </summary>
+    internal Type? ResultType { get; private init; }
+
+    /// <summary>
     ///     Gets the <see cref="PropertyInfo" /> of the <c>Result</c> property of the <see cref="Task{TResult}" /> or
     ///     <see cref="ValueTask{TResult}" />.
     /// </summary>
@@ -62,7 +78,8 @@ public record MethodReturnType
             return new MethodReturnType
             {
                 IsTask = true,
-                ResultPropertyInfo = methodInfo.ReturnType.GetProperty("Result")
+                ResultPropertyInfo = methodInfo.ReturnType.GetProperty("Result"),
+                ResultType = methodInfo.ReturnType.GetGenericArguments()[0]
             };
         }
 
@@ -75,14 +92,15 @@ public record MethodReturnType
             {
                 IsValueTask = true,
                 AsTaskMethodInfo = methodInfo.ReturnType.GetMethod("AsTask"),
-                ResultPropertyInfo = typeof(Task<>).MakeGenericType(methodInfo.ReturnType.GetGenericArguments()[0]).GetProperty("Result")
+                ResultPropertyInfo = typeof(Task<>).MakeGenericType(methodInfo.ReturnType.GetGenericArguments()[0]).GetProperty("Result"),
+                ResultType = methodInfo.ReturnType.GetGenericArguments()[0]
             };
         }
 
         if (typeof(ValueTask).IsAssignableFrom(methodInfo.ReturnType))
             return new MethodReturnType { IsValueTask = true };
 
-        return new MethodReturnType();
+        return new MethodReturnType { ResultType = methodInfo.ReturnType != typeof(void) ? methodInfo.ReturnType : null };
     }
 
     /// <summary>

@@ -51,8 +51,19 @@ internal static class SubscribedMethodInvoker
                 if (!invoked)
                     return MethodInvocationResult.NotInvoked;
 
-                if (returnValue == null)
+                // Void, Task and ValueTask subscribers don't contribute any result
+                if (!subscribedMethod.ReturnType.ReturnsValue)
                     return MethodInvocationResult.Invoked;
+
+                // A null returned by a subscriber declaring a return value is a valid result (e.g. a query for a nullable type),
+                // unless the subscriber is declared to return the messages to be republished: then null means nothing to republish.
+                // The declared type is forwarded to let the publisher match the null against the expected result type.
+                if (returnValue == null)
+                {
+                    return subscribedMethod.ReturnsMessages
+                        ? MethodInvocationResult.Invoked
+                        : MethodInvocationResult.WithNullReturnValue(subscribedMethod.ReturnType.ResultType);
+                }
 
                 break;
             case IStreamEnumerableMessageArgumentResolver streamEnumerableResolver:
