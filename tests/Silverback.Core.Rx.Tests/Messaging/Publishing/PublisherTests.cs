@@ -21,6 +21,30 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing;
 public class PublisherTests
 {
     [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultsOfRepublishedMessages_WhenSubscriberReturnsObservable()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AsObservable()
+            .AddDelegateSubscriber<TestEventOne, IObservable<ICommand>>(Route)
+            .AddDelegateSubscriber<TestCommandOne, int>(Handle1)
+            .AddDelegateSubscriber<TestCommandTwo, int>(Handle2));
+
+        static IObservable<ICommand> Route(TestEventOne message) => new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToObservable();
+        static int Handle1(TestCommandOne message) => 1;
+        static int Handle2(TestCommandTwo message) => 2;
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<int> syncResults = publisher.Publish<int>(new TestEventOne());
+        IReadOnlyCollection<int> asyncResults = await publisher.PublishAsync<int>(new TestEventOne());
+
+        syncResults.ShouldBe([1, 2]);
+        asyncResults.ShouldBe([1, 2]);
+    }
+
+    [Fact]
     public async Task PublishAndPublishAsync_ShouldNotReturnNullResults_WhenSubscriberReturnsNullObservable()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services

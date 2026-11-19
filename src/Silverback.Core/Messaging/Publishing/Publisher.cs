@@ -91,6 +91,22 @@ internal class Publisher : IPublisher
         CancellationToken cancellationToken = default) =>
         [.. CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, typeof(TResult), ExecutionFlow.Async, cancellationToken).ConfigureAwait(false))];
 
+    // Republish and RepublishAsync republish a message returned by a subscriber and return the (uncast) results of its subscribers. The
+    // expected result type is forwarded to discard the incompatible null results according to the result type declared by the
+    // subscribers of the republished message. The non-null results that aren't of the expected type are discarded right away as well,
+    // instead of being collected until the original publish completes, only to be discarded by CastResults. As for the public
+    // Publish/PublishAsync, an unhandled message doesn't throw and no cancellation token is passed. Like the public Publish, Republish
+    // blocks the calling thread until the message is republished.
+    internal IReadOnlyCollection<object?> Republish(object message, Type resultType) =>
+        DiscardIncompatibleResults(
+            PublishAsync(message, false, resultType, ExecutionFlow.Sync, CancellationToken.None).SafeWait(),
+            resultType);
+
+    internal async ValueTask<IReadOnlyCollection<object?>> RepublishAsync(object message, Type resultType) =>
+        DiscardIncompatibleResults(
+            await PublishAsync(message, false, resultType, ExecutionFlow.Async, CancellationToken.None).ConfigureAwait(false),
+            resultType);
+
     // A null result carries no runtime type, so it is matched against the expected result type in PublishCoreAsync, using the result type
     // declared by the subscriber, which isn't available anymore in CastResults. The null is treated like a non-null value returned by the
     // same subscriber: it is kept when a value of the declared type may be of the expected type, i.e. the same type, a derived type or a
@@ -230,7 +246,7 @@ internal class Publisher : IPublisher
         CancellationToken cancellationToken)
     {
         IReadOnlyCollection<MethodInvocationResult> resultsCollection =
-            await InvokeSubscribedMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false);
+            await InvokeSubscribedMethodsAsync(message, resultType, executionFlow, cancellationToken).ConfigureAwait(false);
 
         bool handled = resultsCollection.Any(invocationResult => invocationResult.WasInvoked);
 
@@ -241,8 +257,13 @@ internal class Publisher : IPublisher
 
         foreach (MethodInvocationResult invocationResult in resultsCollection)
         {
+            // The results of the republished messages were already matched against the expected result type by Republish or
+            // RepublishAsync, using the result types declared by their own subscribers for the null results
             if (!invocationResult.HasReturnValue)
+            {
+                results.AddRange(invocationResult.ForwardedResults);
                 continue;
+            }
 
             if (IsIncompatibleNullResult(invocationResult, resultType))
             {
@@ -254,6 +275,28 @@ internal class Publisher : IPublisher
         }
 
         return results;
+    }
+
+    // The null results were already matched against the expected result type in PublishCoreAsync. The non-null results are matched
+    // like in CastResults: a boxed Nullable<T> is a boxed T.
+    private IReadOnlyCollection<object?> DiscardIncompatibleResults(IReadOnlyCollection<object?> results, Type resultType)
+    {
+        Type expectedType = Nullable.GetUnderlyingType(resultType) ?? resultType;
+
+        if (results.All(result => result == null || expectedType.IsInstanceOfType(result)))
+            return results;
+
+        List<object?> compatibleResults = [];
+
+        foreach (object? result in results)
+        {
+            if (result == null || expectedType.IsInstanceOfType(result))
+                compatibleResults.Add(result);
+            else
+                _logger.LogSubscriberResultDiscarded(result.GetType().FullName, resultType.FullName!);
+        }
+
+        return compatibleResults;
     }
 
     private IEnumerable<TResult> CastResults<TResult>(IReadOnlyCollection<object?> results)
@@ -271,12 +314,14 @@ internal class Publisher : IPublisher
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeSubscribedMethodsAsync(
         object message,
+        Type? resultType,
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken) =>
-        [.. (await InvokeExclusiveMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false)).Union(await InvokeNonExclusiveMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false))];
+        [.. (await InvokeExclusiveMethodsAsync(message, resultType, executionFlow, cancellationToken).ConfigureAwait(false)).Union(await InvokeNonExclusiveMethodsAsync(message, resultType, executionFlow, cancellationToken).ConfigureAwait(false))];
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethodsAsync(
         object message,
+        Type? resultType,
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
@@ -296,11 +341,12 @@ internal class Publisher : IPublisher
         ];
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
-            SubscribedMethodInvoker.InvokeAsync(this, method, message, _serviceProvider, executionFlow, cancellationToken);
+            SubscribedMethodInvoker.InvokeAsync(this, method, message, resultType, _serviceProvider, executionFlow, cancellationToken);
     }
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethodsAsync(
         object message,
+        Type? resultType,
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
@@ -320,6 +366,6 @@ internal class Publisher : IPublisher
         ];
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
-            SubscribedMethodInvoker.InvokeAsync(this, method, message, _serviceProvider, executionFlow, cancellationToken);
+            SubscribedMethodInvoker.InvokeAsync(this, method, message, resultType, _serviceProvider, executionFlow, cancellationToken);
     }
 }

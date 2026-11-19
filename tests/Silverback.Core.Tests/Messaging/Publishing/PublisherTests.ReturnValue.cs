@@ -7,13 +7,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
+using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 using Silverback.Tests.Logging;
 using Silverback.Util;
 using Xunit;
@@ -398,7 +401,7 @@ public partial class PublisherTests
         TestCommandOne Handle4(TestQueryOne message)
         {
             Interlocked.Increment(ref callsCount);
-            return new TestCommandOne(); // Republished, not returned
+            return new TestCommandOne(); // Republished: no subscriber, thus no result
         }
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
@@ -409,6 +412,591 @@ public partial class PublisherTests
         syncResults.ShouldBeEmpty();
         asyncResults.ShouldBeEmpty();
         callsCount.ShouldBe(8);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultsOfRepublishedMessage_WhenSyncOrAsyncOrDelegateSubscriberReturnsSingleMessage()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle2)
+            .AddDelegateSubscriber<TestQueryOne, ICommand>(Handle3)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle4));
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+        static Task<TestCommandOne> Handle2(TestQueryOne message) => Task.FromResult(new TestCommandOne());
+        static ValueTask<ICommand> Handle3(TestQueryOne message) => ValueTask.FromResult<ICommand>(new TestCommandOne());
+        static string Handle4(TestCommandOne message) => "forwarded";
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBe(["forwarded", "forwarded", "forwarded"]);
+        asyncResults.ShouldBe(syncResults);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultsOfAllRepublishedMessages_WhenSubscriberReturnsEnumerable()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, IEnumerable<ICommand>>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle2)
+            .AddDelegateSubscriber<TestCommandTwo, string>(Handle3));
+
+        static IEnumerable<ICommand> Handle1(TestQueryOne message) => [new TestCommandOne(), new TestCommandTwo(), new TestCommandOne()];
+        static string Handle2(TestCommandOne message) => "one";
+        static Task<string> Handle3(TestCommandTwo message) => Task.FromResult("two");
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBe(["one", "two", "one"]);
+        asyncResults.ShouldBe(syncResults);
+    }
+
+    [Fact]
+    public void Publish_ShouldRepublishOnCallingThread_WhenSubscriberReturnsEnumerableAndRepublishingCompletesAsynchronously()
+    {
+        TestingCollection<bool> hasAmbientTransaction = [];
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonBehavior(new YieldAfterNextBehavior<ICommand>())
+            .AddDelegateSubscriber<TestQueryOne, IEnumerable<ICommand>>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne>(Handle2)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle3)
+            .AddDelegateSubscriber<TestCommandTwo, string>(Handle4));
+
+        static IEnumerable<ICommand> Handle1(TestQueryOne message) => [new TestCommandOne(), new TestCommandTwo()];
+        void Handle2(TestQueryOne message) => hasAmbientTransaction.Add(Transaction.Current != null);
+
+        string Handle3(TestCommandOne message)
+        {
+            hasAmbientTransaction.Add(Transaction.Current != null);
+            return "one";
+        }
+
+        string Handle4(TestCommandTwo message)
+        {
+            hasAmbientTransaction.Add(Transaction.Current != null);
+            return "two";
+        }
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> results;
+
+        // The default TransactionScope doesn't flow across threads, thus revealing any continuation on another thread
+        using (new TransactionScope())
+        {
+            results = publisher.Publish<string>(new TestQueryOne());
+        }
+
+        results.ShouldBe(["one", "two"]);
+        hasAmbientTransaction.ShouldBe([true, true, true]);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultsOfAllRepublishedMessages_WhenSubscriberReturnsAsyncEnumerable()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, IAsyncEnumerable<ICommand>>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle2)
+            .AddDelegateSubscriber<TestCommandTwo, string>(Handle3));
+
+        static async IAsyncEnumerable<ICommand> Handle1(TestQueryOne message)
+        {
+            await Task.Delay(1);
+            yield return new TestCommandOne();
+            await Task.Delay(1);
+            yield return new TestCommandTwo();
+        }
+
+        static string Handle2(TestCommandOne message) => "one";
+        static Task<string> Handle3(TestCommandTwo message) => Task.FromResult("two");
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBe(["one", "two"]);
+        asyncResults.ShouldBe(syncResults);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultsOfAllSubscribers_WhenRepublishedMessageHasMultipleSubscribers()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle2)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle3));
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+        static string Handle2(TestCommandOne message) => "one";
+        static Task<string> Handle3(TestCommandOne message) => Task.FromResult("two");
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBe(["one", "two"], ignoreOrder: true);
+        asyncResults.ShouldBe(["one", "two"], ignoreOrder: true);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultOfNestedRepublishedMessages()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, TestCommandTwo>(Handle2)
+            .AddDelegateSubscriber<TestCommandTwo, string>(Handle3));
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+        static Task<TestCommandTwo> Handle2(TestCommandOne message) => Task.FromResult(new TestCommandTwo());
+        static string Handle3(TestCommandTwo message) => "nested";
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBe(["nested"]);
+        asyncResults.ShouldBe(syncResults);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldNotCollectResultsOfRepublishedMessages_WhenNoResultIsExpected()
+    {
+        ResultsCapturingBehavior behavior = new();
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonBehavior(behavior)
+            .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, IEnumerable<ICommand>>(Handle2)
+            .AddDelegateSubscriber<TestCommandTwo, string>(Handle3));
+
+        static TestCommandOne Handle1(TestEventOne message) => new();
+        static IEnumerable<ICommand> Handle2(TestCommandOne message) => [new TestCommandTwo(), new TestCommandTwo()];
+        static string Handle3(TestCommandTwo message) => "result";
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.Publish(new TestEventOne());
+        await publisher.PublishAsync(new TestEventOne());
+
+        // With a non-generic publish, the results of the republished messages are discarded after each republishing, at every level,
+        // instead of being collected and forwarded to the publish of the message that returned them
+        behavior.CapturedResults.Count.ShouldBe(8);
+        behavior.CapturedResults.Where(captured => captured.Message is not TestCommandTwo).SelectMany(captured => captured.Results)
+            .ShouldBeEmpty();
+        behavior.CapturedResults.Where(captured => captured.Message is TestCommandTwo).SelectMany(captured => captured.Results)
+            .ShouldBe(["result", "result", "result", "result"]);
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestEventOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestEventOne());
+
+        // With Publish<TResult>, the same results are forwarded instead
+        syncResults.ShouldBe(["result", "result"]);
+        asyncResults.ShouldBe(["result", "result"]);
+        behavior.CapturedResults.Skip(8).Where(captured => captured.Message is TestEventOne).SelectMany(captured => captured.Results)
+            .ShouldBe(["result", "result", "result", "result"]);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldRethrow_WhenSubscriberOfRepublishedMessageThrows()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestQueryTwo, IEnumerable<ICommand>>(Handle2)
+            .AddDelegateSubscriber<TestQueryThree, IAsyncEnumerable<ICommand>>(Handle3)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle4));
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+        static IEnumerable<ICommand> Handle2(TestQueryTwo message) => [new TestCommandOne()];
+
+        static async IAsyncEnumerable<ICommand> Handle3(TestQueryThree message)
+        {
+            await Task.Delay(1);
+            yield return new TestCommandOne();
+        }
+
+        static string Handle4(TestCommandOne message) => throw new InvalidOperationException("test");
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        Should.Throw<InvalidOperationException>(() => publisher.Publish<string>(new TestQueryOne()));
+        Should.Throw<InvalidOperationException>(() => publisher.Publish<string>(new TestQueryTwo()));
+        Should.Throw<InvalidOperationException>(() => publisher.Publish<string>(new TestQueryThree()));
+        await Should.ThrowAsync<InvalidOperationException>(() => publisher.PublishAsync<string>(new TestQueryOne()));
+        await Should.ThrowAsync<InvalidOperationException>(() => publisher.PublishAsync<string>(new TestQueryTwo()));
+        await Should.ThrowAsync<InvalidOperationException>(() => publisher.PublishAsync<string>(new TestQueryThree()));
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldRethrow_WhenAsyncSubscriberOfRepublishedMessageThrowsAfterYielding()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestQueryTwo, IEnumerable<ICommand>>(Handle2)
+            .AddDelegateSubscriber<TestQueryThree, IAsyncEnumerable<ICommand>>(Handle3)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle4));
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+        static IEnumerable<ICommand> Handle2(TestQueryTwo message) => [new TestCommandOne()];
+
+        static async IAsyncEnumerable<ICommand> Handle3(TestQueryThree message)
+        {
+            await Task.Delay(1);
+            yield return new TestCommandOne();
+        }
+
+        // Faults the republishing asynchronously, after it returned a pending task
+        static async Task<string> Handle4(TestCommandOne message)
+        {
+            await Task.Delay(1);
+            throw new InvalidOperationException("test");
+        }
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        Should.Throw<InvalidOperationException>(() => publisher.Publish<string>(new TestQueryOne()));
+        Should.Throw<InvalidOperationException>(() => publisher.Publish<string>(new TestQueryTwo()));
+        Should.Throw<InvalidOperationException>(() => publisher.Publish<string>(new TestQueryThree()));
+        await Should.ThrowAsync<InvalidOperationException>(() => publisher.PublishAsync<string>(new TestQueryOne()));
+        await Should.ThrowAsync<InvalidOperationException>(() => publisher.PublishAsync<string>(new TestQueryTwo()));
+        await Should.ThrowAsync<InvalidOperationException>(() => publisher.PublishAsync<string>(new TestQueryThree()));
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnNullResult_WhenSubscriberOfRepublishedMessageReturnsNull()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, ICommand>(Handle1) // The declared ICommand is unrelated to the expected string
+            .AddDelegateSubscriber<TestCommandOne, string?>(Handle2));
+
+        static ICommand Handle1(TestQueryOne message) => new TestCommandOne();
+        static string? Handle2(TestCommandOne message) => null;
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string?> syncResults = publisher.Publish<string?>(new TestQueryOne());
+        IReadOnlyCollection<string?> asyncResults = await publisher.PublishAsync<string?>(new TestQueryOne());
+
+        syncResults.ShouldBe([null]);
+        asyncResults.ShouldBe(syncResults);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldDiscardNullResultsOfRepublishedMessage_WhenDeclaredResultTypeIsUnrelated()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, object>(Handle1) // The declared object is compatible with any expected type
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle2)
+            .AddDelegateSubscriber<TestCommandOne, int?>(Handle3));
+
+        static object Handle1(TestQueryOne message) => new TestCommandOne();
+        static string Handle2(TestCommandOne message) => "result";
+        static int? Handle3(TestCommandOne message) => null;
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string?> syncResults = publisher.Publish<string?>(new TestQueryOne());
+        IReadOnlyCollection<string?> asyncResults = await publisher.PublishAsync<string?>(new TestQueryOne());
+        IReadOnlyCollection<int?> syncNullableIntResults = publisher.Publish<int?>(new TestQueryOne());
+        IReadOnlyCollection<int?> asyncNullableIntResults = await publisher.PublishAsync<int?>(new TestQueryOne());
+
+        syncResults.ShouldBe(["result"]);
+        asyncResults.ShouldBe(["result"]);
+        syncNullableIntResults.ShouldBe([null]);
+        asyncNullableIntResults.ShouldBe([null]);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultsOfRepublishedMessageOfExpectedTypeOnly_WhenResultsHaveMixedTypes()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, IEnumerable<ICommand>>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, object>(Handle2)
+            .AddDelegateSubscriber<TestCommandTwo, int?>(Handle3));
+
+        static IEnumerable<ICommand> Handle1(TestQueryOne message) => [new TestCommandOne(), new TestCommandTwo()];
+        static object Handle2(TestCommandOne message) => "one";
+        static int? Handle3(TestCommandTwo message) => 2;
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<int?> syncResults = publisher.Publish<int?>(new TestQueryOne());
+        IReadOnlyCollection<int?> asyncResults = await publisher.PublishAsync<int?>(new TestQueryOne());
+
+        syncResults.ShouldBe([2]);
+        asyncResults.ShouldBe([2]);
+    }
+
+    [Fact]
+    public async Task RepublishAndRepublishAsync_ShouldDiscardResultsOfWrongType()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestCommandOne, object>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, int?>(Handle2)
+            .AddDelegateSubscriber<TestCommandOne, int?>(Handle3));
+
+        static object Handle1(TestCommandOne message) => "one";
+        static int? Handle2(TestCommandOne message) => 2;
+        static int? Handle3(TestCommandOne message) => null;
+
+        // The results that can't be cast to the expected type are discarded right away, without being forwarded to the original publish
+        Publisher publisher = (Publisher)serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<object?> syncResults = publisher.Republish(new TestCommandOne(), typeof(int?));
+        IReadOnlyCollection<object?> asyncResults = await publisher.RepublishAsync(new TestCommandOne(), typeof(int?));
+
+        syncResults.ShouldBe([2, null], ignoreOrder: true);
+        asyncResults.ShouldBe([2, null], ignoreOrder: true);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnEmptyResultWithoutThrowing_WhenRepublishedMessageIsUnhandled()
+    {
+        int callsCount = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle));
+
+        TestCommandOne Handle(TestQueryOne message)
+        {
+            Interlocked.Increment(ref callsCount);
+            return new TestCommandOne();
+        }
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne(), true);
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne(), true);
+
+        syncResults.ShouldBeEmpty();
+        asyncResults.ShouldBeEmpty();
+        callsCount.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSubscribersOfRepublishedMessageReturnNoValue()
+    {
+        int callsCount = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne>(Handle2)
+            .AddDelegateSubscriber<TestCommandOne>(Handle3));
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+
+        void Handle2(TestCommandOne message) => Interlocked.Increment(ref callsCount);
+
+        Task Handle3(TestCommandOne message)
+        {
+            Interlocked.Increment(ref callsCount);
+            return Task.CompletedTask;
+        }
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<object?> syncResults = publisher.Publish<object?>(new TestQueryOne());
+        IReadOnlyCollection<object?> asyncResults = await publisher.PublishAsync<object?>(new TestQueryOne());
+
+        syncResults.ShouldBeEmpty();
+        asyncResults.ShouldBeEmpty();
+        callsCount.ShouldBe(4);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultsOfRepublishedMessageAlongWithDirectResults()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle2)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle3));
+
+        static string Handle1(TestQueryOne message) => "direct";
+        static TestCommandOne Handle2(TestQueryOne message) => new();
+        static string Handle3(TestCommandOne message) => "forwarded";
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBe(["direct", "forwarded"], ignoreOrder: true);
+        asyncResults.ShouldBe(["direct", "forwarded"], ignoreOrder: true);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldNotReturnResults_WhenCustomReturnValueHandlerHandlesReturnValue()
+    {
+        int callsCount = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle2)
+            .Services
+            .AddSingleton<IReturnValueHandler, RepublishingReturnValueHandler>());
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+
+        string Handle2(TestCommandOne message)
+        {
+            Interlocked.Increment(ref callsCount);
+            return "forwarded";
+        }
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+        RepublishingReturnValueHandler returnValueHandler = serviceProvider.GetServices<IReturnValueHandler>()
+            .OfType<RepublishingReturnValueHandler>()
+            .Single();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBeEmpty();
+        asyncResults.ShouldBeEmpty();
+        returnValueHandler.CallsCount.ShouldBe(2);
+        callsCount.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldNotReturnResults_WhenSubclassReimplementsBuiltInReturnValueHandler()
+    {
+        int callsCount = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle2)
+            .Services
+            .AddSingleton<IReturnValueHandler, ReimplementingReturnValueHandler>());
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+
+        string Handle2(TestCommandOne message)
+        {
+            Interlocked.Increment(ref callsCount);
+            return "forwarded";
+        }
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+        ReimplementingReturnValueHandler returnValueHandler = serviceProvider.GetServices<IReturnValueHandler>()
+            .OfType<ReimplementingReturnValueHandler>()
+            .Single();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBeEmpty();
+        asyncResults.ShouldBeEmpty();
+        returnValueHandler.CallsCount.ShouldBe(2);
+        callsCount.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultsOfRepublishedMessage_WhenSubclassInheritsBuiltInReturnValueHandler()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle2)
+            .Services
+            .AddSingleton<IReturnValueHandler, InheritingReturnValueHandler>());
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+        static string Handle2(TestCommandOne message) => "forwarded";
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBe(["forwarded"]);
+        asyncResults.ShouldBe(syncResults);
+    }
+
+    [Fact]
+    public void Publish_ShouldInvokeNextSubscriberOnCallerThread_WhenRepublishingCompletesAsynchronously()
+    {
+        int callerThreadId = Environment.CurrentManagedThreadId;
+        List<int> nextSubscriberThreadIds = [];
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddTransientBehavior<AsyncCommandBehavior>()
+            .AddDelegateSubscriber<TestQueryOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne>(Handle2)
+            .AddDelegateSubscriber<TestQueryTwo, IAsyncEnumerable<ICommand>>(Handle3)
+            .AddDelegateSubscriber<TestQueryTwo>(Handle4)
+            .AddDelegateSubscriber<TestCommandOne, string>(Handle5)
+            .AddDelegateSubscriber<TestCommandTwo, string>(Handle6));
+
+        static TestCommandOne Handle1(TestQueryOne message) => new();
+        void Handle2(TestQueryOne message) => nextSubscriberThreadIds.Add(Environment.CurrentManagedThreadId);
+
+        static async IAsyncEnumerable<ICommand> Handle3(TestQueryTwo message)
+        {
+            await Task.Delay(10);
+            yield return new TestCommandTwo();
+        }
+
+        void Handle4(TestQueryTwo message) => nextSubscriberThreadIds.Add(Environment.CurrentManagedThreadId);
+        static string Handle5(TestCommandOne message) => "one";
+        static string Handle6(TestCommandTwo message) => "two";
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> singleMessageResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncEnumerableResults = publisher.Publish<string>(new TestQueryTwo());
+
+        singleMessageResults.ShouldBe(["one"]);
+        asyncEnumerableResults.ShouldBe(["two"]);
+        nextSubscriberThreadIds.ShouldBe([callerThreadId, callerThreadId]);
     }
 
     [Fact]
@@ -1207,4 +1795,110 @@ public partial class PublisherTests
     }
 
     private class UnhandledMessage;
+
+    // Republishes the TestCommandOne, discarding the results of its subscribers
+    private sealed class RepublishingReturnValueHandler : IReturnValueHandler
+    {
+        private int _callsCount;
+
+        public int CallsCount => _callsCount;
+
+        public bool CanHandle(object returnValue) => returnValue is TestCommandOne;
+
+        public void Handle(IPublisher publisher, object returnValue)
+        {
+            Interlocked.Increment(ref _callsCount);
+            publisher.Publish<string>(returnValue);
+        }
+
+        public async ValueTask HandleAsync(IPublisher publisher, object returnValue)
+        {
+            Interlocked.Increment(ref _callsCount);
+            await publisher.PublishAsync<string>(returnValue);
+        }
+    }
+
+    // Re-implements the IReturnValueHandler on top of the built-in handler, which makes it a custom handler
+    private sealed class ReimplementingReturnValueHandler : SingleMessageReturnValueHandler, IReturnValueHandler
+    {
+        private int _callsCount;
+
+        public ReimplementingReturnValueHandler(BusOptions busOptions)
+            : base(busOptions)
+        {
+        }
+
+        public int CallsCount => _callsCount;
+
+        public new void Handle(IPublisher publisher, object returnValue)
+        {
+            Interlocked.Increment(ref _callsCount);
+            base.Handle(publisher, returnValue);
+        }
+
+        public new ValueTask HandleAsync(IPublisher publisher, object returnValue)
+        {
+            Interlocked.Increment(ref _callsCount);
+            return base.HandleAsync(publisher, returnValue);
+        }
+    }
+
+    private sealed class InheritingReturnValueHandler : SingleMessageReturnValueHandler
+    {
+        public InheritingReturnValueHandler(BusOptions busOptions)
+            : base(busOptions)
+        {
+        }
+    }
+
+    // Captures the results returned by the subscribers of each published or republished message
+    private sealed class ResultsCapturingBehavior : IBehavior
+    {
+        public TestingCollection<(object Message, IReadOnlyCollection<object?> Results)> CapturedResults { get; } = [];
+
+        public async ValueTask<IReadOnlyCollection<object?>> HandleAsync(
+            IPublisher publisher,
+            object message,
+            MessageHandler next,
+            CancellationToken cancellationToken)
+        {
+            IReadOnlyCollection<object?> results = await next(message);
+            CapturedResults.Add((message, results));
+            return results;
+        }
+    }
+
+    // Completes the publishing of the TestCommandOne asynchronously, like the OutboundRouterBehavior producing it
+    private sealed class AsyncCommandBehavior : IBehavior
+    {
+        public async ValueTask<IReadOnlyCollection<object?>> HandleAsync(
+            IPublisher publisher,
+            object message,
+            MessageHandler next,
+            CancellationToken cancellationToken)
+        {
+            if (message is TestCommandOne)
+                await Task.Delay(10, cancellationToken);
+
+            return await next(message);
+        }
+    }
+
+    // Completes the publishing of the TMessage asynchronously, after its subscribers were invoked on the calling thread
+    private sealed class YieldAfterNextBehavior<TMessage> : IBehavior
+    {
+        public async ValueTask<IReadOnlyCollection<object?>> HandleAsync(
+            IPublisher publisher,
+            object message,
+            MessageHandler next,
+            CancellationToken cancellationToken)
+        {
+            IReadOnlyCollection<object?> results = await next(message);
+
+            if (message is TMessage)
+                await Task.Delay(10, cancellationToken);
+
+            return results;
+        }
+    }
 }

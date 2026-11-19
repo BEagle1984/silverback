@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
@@ -12,7 +13,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 /// <summary>
 ///     Handles the returned message republishing it.
 /// </summary>
-public class SingleMessageReturnValueHandler : IReturnValueHandler, IMessagesReturnValueHandler
+public class SingleMessageReturnValueHandler : IReturnValueHandler, IMessagesReturnValueHandler, IResultsForwardingReturnValueHandler
 {
     private readonly BusOptions _busOptions;
 
@@ -33,14 +34,28 @@ public class SingleMessageReturnValueHandler : IReturnValueHandler, IMessagesRet
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(IPublisher publisher, object returnValue) =>
-        Check.NotNull(publisher).Publish<object>(returnValue);
+        Check.NotNull(publisher).Publish(returnValue);
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
     public async ValueTask HandleAsync(IPublisher publisher, object returnValue) =>
-        await Check.NotNull(publisher).PublishAsync<object>(returnValue).ConfigureAwait(false);
+        await Check.NotNull(publisher).PublishAsync(returnValue).ConfigureAwait(false);
 
     /// <inheritdoc cref="IMessagesReturnValueHandler.CanHandleReturnType" />
     bool IMessagesReturnValueHandler.CanHandleReturnType(Type returnType) => CanHandleType(Check.NotNull(returnType));
+
+    /// <inheritdoc cref="IResultsForwardingReturnValueHandler.HandleAndGetResults" />
+    IReadOnlyCollection<object?> IResultsForwardingReturnValueHandler.HandleAndGetResults(
+        Publisher publisher,
+        object returnValue,
+        Type resultType) =>
+        Check.NotNull(publisher).Republish(Check.NotNull(returnValue), resultType);
+
+    /// <inheritdoc cref="IResultsForwardingReturnValueHandler.HandleAndGetResultsAsync" />
+    ValueTask<IReadOnlyCollection<object?>> IResultsForwardingReturnValueHandler.HandleAndGetResultsAsync(
+        Publisher publisher,
+        object returnValue,
+        Type resultType) =>
+        Check.NotNull(publisher).RepublishAsync(Check.NotNull(returnValue), resultType);
 
     private bool CanHandleType(Type type) => MessagesReturnTypeHelper.IsMessage(type, _busOptions.MessageTypes);
 }

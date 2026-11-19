@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -304,4 +305,32 @@ public partial class ProducerEndpointTests : KafkaTests
         DefaultTopic.MessagesCount.ShouldBe(1);
         DefaultTopic.GetAllMessages()[0].Value.ShouldBe(rawMessage);
     }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceForwardedQueryWithoutReturningResult()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<ProducedQuery>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddDelegateSubscriber<RoutingQuery, IQuery<string>>(Route));
+
+        static IQuery<string> Route(RoutingQuery query) => new ProducedQuery();
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        Action executeQuery = () => publisher.ExecuteQuery(new RoutingQuery());
+        Func<Task> executeQueryAsync = () => publisher.ExecuteQueryAsync(new RoutingQuery()).AsTask();
+
+        executeQuery.ShouldThrow<InvalidOperationException>();
+        await executeQueryAsync.ShouldThrowAsync<InvalidOperationException>();
+        DefaultTopic.MessagesCount.ShouldBe(2);
+    }
+
+    private sealed class RoutingQuery : IQuery<string>;
+
+    private sealed class ProducedQuery : IQuery<string>;
 }

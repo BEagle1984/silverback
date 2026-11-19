@@ -200,9 +200,89 @@ public class CommandPublisherExtensionsTests
         asyncResult.ShouldBe("result");
     }
 
+    [Fact]
+    public async Task ExecuteCommandAndExecuteCommandAsync_ShouldReturnResultOfForwardedCommand()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<RoutingCommand, ICommand<string>>(Route)
+            .AddDelegateSubscriber<AsyncRoutingCommand, ICommand<string>>(RouteAsync)
+            .AddDelegateSubscriber<FirstCommand, string>(HandleFirst)
+            .AddDelegateSubscriber<SecondCommand, string>(HandleSecondAsync));
+
+        static ICommand<string> Route(RoutingCommand command) => command.First ? new FirstCommand() : new SecondCommand();
+        static ValueTask<ICommand<string>> RouteAsync(AsyncRoutingCommand command) =>
+            ValueTask.FromResult<ICommand<string>>(command.First ? new FirstCommand() : new SecondCommand());
+        static string HandleFirst(FirstCommand command) => "first";
+        static Task<string> HandleSecondAsync(SecondCommand command) => Task.FromResult("second");
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.ExecuteCommand(new RoutingCommand(true)).ShouldBe("first");
+        publisher.ExecuteCommand(new RoutingCommand(false)).ShouldBe("second");
+        publisher.ExecuteCommand(new AsyncRoutingCommand(true)).ShouldBe("first");
+        publisher.ExecuteCommand(new AsyncRoutingCommand(false)).ShouldBe("second");
+        (await publisher.ExecuteCommandAsync(new RoutingCommand(true))).ShouldBe("first");
+        (await publisher.ExecuteCommandAsync(new RoutingCommand(false))).ShouldBe("second");
+        (await publisher.ExecuteCommandAsync(new AsyncRoutingCommand(true))).ShouldBe("first");
+        (await publisher.ExecuteCommandAsync(new AsyncRoutingCommand(false))).ShouldBe("second");
+    }
+
+    [Fact]
+    public async Task ExecuteCommandAndExecuteCommandAsync_ShouldInvokeSubscriberOfForwardedCommand()
+    {
+        int forwardedCommandCalls = 0;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestCommand, ICommand>(Route)
+            .AddDelegateSubscriber<ForwardedCommand>(Handle));
+
+        static ICommand Route(TestCommand command) => new ForwardedCommand();
+        void Handle(ForwardedCommand command) => Interlocked.Increment(ref forwardedCommandCalls);
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.ExecuteCommand(new TestCommand());
+        await publisher.ExecuteCommandAsync(new TestCommand());
+
+        forwardedCommandCalls.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task ExecuteCommandAndExecuteCommandAsync_ShouldThrowInvalidOperationException_WhenForwardedCommandIsUnhandled()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<RoutingCommand, ICommand<string>>(Route));
+
+        static ICommand<string> Route(RoutingCommand command) => new FirstCommand();
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        Action executeCommand = () => publisher.ExecuteCommand(new RoutingCommand(true));
+        Func<Task> executeCommandAsync = () => publisher.ExecuteCommandAsync(new RoutingCommand(true));
+
+        executeCommand.ShouldThrow<InvalidOperationException>();
+        await executeCommandAsync.ShouldThrowAsync<InvalidOperationException>();
+    }
+
     private class TestCommand : ICommand;
 
     private class TestCommandWithResult : ICommand<IEnumerable<int>>;
 
     private class TestCommandWithNullableResult : ICommand<object?>;
+
+    private record RoutingCommand(bool First) : ICommand<string>;
+
+    private record AsyncRoutingCommand(bool First) : ICommand<string>;
+
+    private class FirstCommand : ICommand<string>;
+
+    private class SecondCommand : ICommand<string>;
+
+    private class ForwardedCommand : ICommand;
 }

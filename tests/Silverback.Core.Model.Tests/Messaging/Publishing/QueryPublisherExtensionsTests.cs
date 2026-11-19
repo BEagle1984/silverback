@@ -199,6 +199,105 @@ public class QueryPublisherExtensionsTests
         asyncResult.ShouldBeNull();
     }
 
+    [Fact]
+    public async Task ExecuteQueryAndExecuteQueryAsync_ShouldReturnResultOfForwardedQuery()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<RoutingQuery, IQuery<string>>(Route)
+            .AddDelegateSubscriber<AsyncRoutingQuery, IQuery<string>>(RouteAsync)
+            .AddDelegateSubscriber<FirstQuery, string>(HandleFirst)
+            .AddDelegateSubscriber<SecondQuery, string>(HandleSecondAsync));
+
+        static IQuery<string> Route(RoutingQuery query) => query.First ? new FirstQuery() : new SecondQuery();
+        static Task<IQuery<string>> RouteAsync(AsyncRoutingQuery query) =>
+            Task.FromResult<IQuery<string>>(query.First ? new FirstQuery() : new SecondQuery());
+        static string HandleFirst(FirstQuery query) => "first";
+        static Task<string> HandleSecondAsync(SecondQuery query) => Task.FromResult("second");
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.ExecuteQuery(new RoutingQuery(true)).ShouldBe("first");
+        publisher.ExecuteQuery(new RoutingQuery(false)).ShouldBe("second");
+        publisher.ExecuteQuery(new AsyncRoutingQuery(true)).ShouldBe("first");
+        publisher.ExecuteQuery(new AsyncRoutingQuery(false)).ShouldBe("second");
+        (await publisher.ExecuteQueryAsync(new RoutingQuery(true))).ShouldBe("first");
+        (await publisher.ExecuteQueryAsync(new RoutingQuery(false))).ShouldBe("second");
+        (await publisher.ExecuteQueryAsync(new AsyncRoutingQuery(true))).ShouldBe("first");
+        (await publisher.ExecuteQueryAsync(new AsyncRoutingQuery(false))).ShouldBe("second");
+    }
+
+    [Fact]
+    public async Task ExecuteQueryAndExecuteQueryAsync_ShouldReturnResultOfQueryForwardedMultipleTimes()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<AsyncRoutingQuery, IQuery<string>>(RouteAsync)
+            .AddDelegateSubscriber<RoutingQuery, IQuery<string>>(Route)
+            .AddDelegateSubscriber<SecondQuery, string>(HandleSecond));
+
+        static Task<IQuery<string>> RouteAsync(AsyncRoutingQuery query) => Task.FromResult<IQuery<string>>(new RoutingQuery(query.First));
+        static IQuery<string> Route(RoutingQuery query) => new SecondQuery();
+        static string HandleSecond(SecondQuery query) => "second";
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        string syncResult = publisher.ExecuteQuery(new AsyncRoutingQuery(true));
+        string asyncResult = await publisher.ExecuteQueryAsync(new AsyncRoutingQuery(true));
+
+        syncResult.ShouldBe("second");
+        asyncResult.ShouldBe("second");
+    }
+
+    [Fact]
+    public async Task ExecuteQueryAndExecuteQueryAsync_ShouldReturnNullResultOfForwardedQuery()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<GetModelQuery, IQuery<TestModel?>>(Route)
+            .AddDelegateSubscriber<GetStoredModelQuery, TestModel?>(HandleAsync));
+
+        // The declared IQuery<TestModel?> is unrelated to the TestModel result: the null result is matched against the result type
+        // declared by the subscriber that returned it
+        static IQuery<TestModel?> Route(GetModelQuery query) => new GetStoredModelQuery(query.Id);
+        static Task<TestModel?> HandleAsync(GetStoredModelQuery query) =>
+            Task.FromResult(query.Id == 42 ? new TestModel(query.Id) : null);
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        TestModel? syncNullResult = publisher.ExecuteQuery(new GetModelQuery(13));
+        TestModel? asyncNullResult = await publisher.ExecuteQueryAsync(new GetModelQuery(13));
+        TestModel? syncResult = publisher.ExecuteQuery(new GetModelQuery(42));
+        TestModel? asyncResult = await publisher.ExecuteQueryAsync(new GetModelQuery(42));
+
+        syncNullResult.ShouldBeNull();
+        asyncNullResult.ShouldBeNull();
+        syncResult.ShouldNotBeNull().Id.ShouldBe(42);
+        asyncResult.ShouldBe(syncResult);
+    }
+
+    [Fact]
+    public async Task ExecuteQueryAndExecuteQueryAsync_ShouldThrowInvalidOperationException_WhenForwardedQueryIsUnhandled()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<RoutingQuery, IQuery<string>>(Route));
+
+        static IQuery<string> Route(RoutingQuery query) => new FirstQuery();
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        Action executeQuery = () => publisher.ExecuteQuery(new RoutingQuery(true));
+        Func<Task> executeQueryAsync = () => publisher.ExecuteQueryAsync(new RoutingQuery(true)).AsTask();
+
+        executeQuery.ShouldThrow<InvalidOperationException>();
+        await executeQueryAsync.ShouldThrowAsync<InvalidOperationException>();
+    }
+
     private class TestQuery : IQuery<IEnumerable<int>>;
 
     private class TestWithNullableObservableResult : IQuery<IObservable<IMessage>?>;
@@ -206,4 +305,18 @@ public class QueryPublisherExtensionsTests
     private class TestWithNullableResult : IQuery<object?>;
 
     private class TestWithNullableStringResult : IQuery<string?>;
+
+    private record RoutingQuery(bool First) : IQuery<string>;
+
+    private record AsyncRoutingQuery(bool First) : IQuery<string>;
+
+    private class FirstQuery : IQuery<string>;
+
+    private class SecondQuery : IQuery<string>;
+
+    private record GetModelQuery(int Id) : IQuery<TestModel?>;
+
+    private record GetStoredModelQuery(int Id) : IQuery<TestModel?>;
+
+    private sealed record TestModel(int Id);
 }
