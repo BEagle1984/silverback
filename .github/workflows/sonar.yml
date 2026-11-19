@@ -62,8 +62,6 @@ jobs:
             /n:silverback \
             /v:"$version" \
             /d:sonar.token="$SONAR_TOKEN" \
-            /d:sonar.qualitygate.wait=true \
-            /d:sonar.qualitygate.timeout=300 \
             /d:sonar.exclusions="**/obj/**,**/*.dll,docs/**,.claude/**" \
             /d:sonar.issue.ignore.multicriteria="generics,cancellation,obsolete,markers,writehost,password" \
             /d:sonar.issue.ignore.multicriteria.generics.ruleKey=csharpsquid:S2436 \
