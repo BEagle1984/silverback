@@ -29,7 +29,7 @@ internal static class MessageValidator
         }
 
         validationErrors = string.Join(
-            string.Empty,
+            "",
             results.Select(validationResult => $"{Environment.NewLine}- {validationResult.ErrorMessage}"));
 
         if (validationMode == MessageValidationMode.ThrowException)

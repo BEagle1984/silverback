@@ -51,7 +51,7 @@ public class MqttClientWrapperTests
                         new MqttClientSubscribeResultItem(options.TopicFilters[1], reject ? resultCode : MqttClientSubscribeResultCode.GrantedQoS0),
                         new MqttClientSubscribeResultItem(options.TopicFilters[2], MqttClientSubscribeResultCode.GrantedQoS0)
                     ],
-                    string.Empty,
+                    "",
                     []));
         });
 
@@ -110,7 +110,7 @@ public class MqttClientWrapperTests
                                 filter,
                                 rejectAll || index > 0 ? MqttClientSubscribeResultCode.NotAuthorized : MqttClientSubscribeResultCode.GrantedQoS0))
                     ],
-                    string.Empty,
+                    "",
                     [])));
 
         IBrokerClientCallbacksInvoker callbacksInvoker = Substitute.For<IBrokerClientCallbacksInvoker>();
@@ -672,7 +672,7 @@ public class MqttClientWrapperTests
                                     filter,
                                     SubscribeResultCodes.GetValueOrDefault(filter.Topic, MqttClientSubscribeResultCode.GrantedQoS1)))
                         ],
-                        string.Empty,
+                        "",
                         []));
             });
 
@@ -700,7 +700,7 @@ public class MqttClientWrapperTests
                                 filter,
                                 UnsubscribeResultCodes.GetValueOrDefault(filter, MqttClientUnsubscribeResultCode.Success)))
                     ],
-                    string.Empty,
+                    "",
                     []);
             });
 

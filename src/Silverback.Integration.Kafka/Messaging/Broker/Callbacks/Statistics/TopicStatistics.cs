@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class TopicStatistics
 {
     [JsonPropertyName("topic")]
-    public string Topic { get; init; } = string.Empty;
+    public string Topic { get; init; } = "";
 
     [JsonPropertyName("metadata_age")]
     public long MetadataAge { get; init; }

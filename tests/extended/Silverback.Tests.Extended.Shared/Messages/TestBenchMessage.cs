@@ -9,7 +9,7 @@ public class TestBenchMessage
 {
     public DateTime CreatedAt { get; set; }
 
-    public string MessageId { get; set; } = string.Empty;
+    public string MessageId { get; set; } = "";
 
     public TimeSpan SimulatedProcessingTime { get; set; }
 

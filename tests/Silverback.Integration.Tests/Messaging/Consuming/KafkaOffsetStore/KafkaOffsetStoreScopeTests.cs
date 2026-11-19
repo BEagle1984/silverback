@@ -30,7 +30,7 @@ public class KafkaOffsetStoreScopeTests
 
         await scope.StoreOffsetsAsync();
 
-        IReadOnlyCollection<KafkaOffset> storedOffsets = store.GetStoredOffsets(string.Empty);
+        IReadOnlyCollection<KafkaOffset> storedOffsets = store.GetStoredOffsets("");
         storedOffsets.Count.ShouldBe(1);
         storedOffsets.First().ShouldBe(new KafkaOffset("topic1", 3, 42));
     }
@@ -52,7 +52,7 @@ public class KafkaOffsetStoreScopeTests
 
         await scope.StoreOffsetsAsync();
 
-        IReadOnlyCollection<KafkaOffset> storedOffsets = store.GetStoredOffsets(string.Empty);
+        IReadOnlyCollection<KafkaOffset> storedOffsets = store.GetStoredOffsets("");
         storedOffsets.Count.ShouldBe(2);
         storedOffsets.ShouldBe(
             [

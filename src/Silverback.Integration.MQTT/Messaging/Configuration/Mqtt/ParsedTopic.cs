@@ -48,7 +48,7 @@ internal class ParsedTopic
         if (separatorIndex < 0)
         {
             group = topic[SharedSubscriptionPrefix.Length..];
-            actualTopic = string.Empty;
+            actualTopic = "";
             return true;
         }
 

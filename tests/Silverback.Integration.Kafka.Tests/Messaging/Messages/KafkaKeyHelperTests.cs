@@ -69,7 +69,7 @@ public class KafkaKeyHelperTests
         SingleKeyMemberMessage message = new()
         {
             Id = Guid.NewGuid(),
-            One = string.Empty,
+            One = "",
             Two = "2",
             Three = "3"
         };
@@ -85,8 +85,8 @@ public class KafkaKeyHelperTests
         MultipleKeyMembersMessage message = new()
         {
             Id = Guid.NewGuid(),
-            One = string.Empty,
-            Two = string.Empty,
+            One = "",
+            Two = "",
             Three = "3"
         };
 
@@ -133,7 +133,7 @@ public class KafkaKeyHelperTests
         MultipleKeyMembersMessage message = new()
         {
             Id = Guid.NewGuid(),
-            One = string.Empty,
+            One = "",
             Two = "2",
             Three = "3"
         };
@@ -166,7 +166,7 @@ public class KafkaKeyHelperTests
         {
             Id = Guid.NewGuid(),
             One = "1",
-            Two = string.Empty
+            Two = ""
         };
 
         MultipleKeyMembersMessage message4 = new()

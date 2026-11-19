@@ -11,7 +11,7 @@ public static class StringExtensions
     public static string ToCamelCase(this string value)
     {
         if (string.IsNullOrEmpty(value))
-            return string.Empty;
+            return "";
 
         if (value.Length == 1)
             return value.ToLowerInvariant();

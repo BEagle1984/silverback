@@ -10,7 +10,7 @@ internal class NullProducerEndpointResolver : IProducerEndpointResolver
 {
     public static NullProducerEndpointResolver Instance { get; } = new();
 
-    public string RawName => string.Empty;
+    public string RawName => "";
 
     public ProducerEndpoint GetEndpoint(IOutboundEnvelope envelope) => throw new NotSupportedException();
 }

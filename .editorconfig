@@ -33,6 +33,8 @@ dotnet_diagnostic.IDE0290.severity = silent
 # StyleCop.Analyzers
 # SA1101: A call to an instance member of the local class or a base class is not prefixed with ‘this.’, within a C# code file
 dotnet_diagnostic.SA1101.severity = none
+# SA1122: Use string.Empty for empty strings - the "" literal is preferred (string.Empty is banned via BannedSymbols.txt)
+dotnet_diagnostic.SA1122.severity = none
 # SA1309: A field name in C# begins with an underscore
 dotnet_diagnostic.SA1309.severity = none
 # SA1408: A C# statement contains a complex conditional expression which omits parenthesis around operators

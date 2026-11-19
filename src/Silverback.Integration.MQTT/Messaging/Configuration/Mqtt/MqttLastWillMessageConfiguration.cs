@@ -68,7 +68,7 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     /// <summary>
     ///     Gets the target topic.
     /// </summary>
-    public string Topic { get; init; } = string.Empty;
+    public string Topic { get; init; } = "";
 
     /// <summary>
     ///     Gets the user properties of the will message.

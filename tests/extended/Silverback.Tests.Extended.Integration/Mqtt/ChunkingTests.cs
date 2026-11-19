@@ -187,7 +187,7 @@ public class ChunkingTests : BrokerHarnessTests<MqttTestHarness>
                 GetUserProperty(message, DefaultMessageHeaders.ChunkIndex),
                 GetUserProperty(message, DefaultMessageHeaders.IsLastChunk) == bool.TrueString);
 
-        public override string ToString() => $"{ChunkMessageId}#{ChunkIndex}{(IsLastChunk ? " (last)" : string.Empty)}: {PayloadLength} bytes";
+        public override string ToString() => $"{ChunkMessageId}#{ChunkIndex}{(IsLastChunk ? " (last)" : "")}: {PayloadLength} bytes";
 
         private static string? GetUserProperty(MqttApplicationMessage message, string name) =>
             message.UserProperties?.FirstOrDefault(property => property.Name == name)?.ReadValueAsString();
@@ -198,6 +198,6 @@ public class ChunkingTests : BrokerHarnessTests<MqttTestHarness>
         public int Number { get; init; }
 
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local", Justification = "Serialized")]
-        public string Content { get; init; } = string.Empty;
+        public string Content { get; init; } = "";
     }
 }

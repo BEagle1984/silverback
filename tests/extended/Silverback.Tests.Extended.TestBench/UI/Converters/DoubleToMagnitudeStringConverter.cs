@@ -12,7 +12,7 @@ public class DoubleToMagnitudeStringConverter : IValueConverter
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not double doubleValue)
-            return string.Empty;
+            return "";
 
         return $"{doubleValue:F1}x";
     }

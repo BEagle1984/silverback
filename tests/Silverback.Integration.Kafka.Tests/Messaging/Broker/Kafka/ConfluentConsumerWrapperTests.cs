@@ -529,7 +529,7 @@ public class ConfluentConsumerWrapperTests
                 case 2:
                     return null;
                 default:
-                    memberId = string.Empty;
+                    memberId = "";
                     return null;
             }
         });

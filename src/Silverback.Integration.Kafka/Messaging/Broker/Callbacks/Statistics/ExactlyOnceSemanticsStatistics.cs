@@ -12,13 +12,13 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class ExactlyOnceSemanticsStatistics
 {
     [JsonPropertyName("idemp_state")]
-    public string IdempState { get; init; } = string.Empty;
+    public string IdempState { get; init; } = "";
 
     [JsonPropertyName("idemp_stateage")]
     public long IdempStateAge { get; init; }
 
     [JsonPropertyName("txn_state")]
-    public string TxnState { get; init; } = string.Empty;
+    public string TxnState { get; init; } = "";
 
     [JsonPropertyName("txn_stateage")]
     public long TxnStateAge { get; init; }

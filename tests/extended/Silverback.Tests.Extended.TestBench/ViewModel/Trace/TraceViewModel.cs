@@ -18,7 +18,7 @@ public class TraceViewModel : ViewModelBase
 
     public static IEnumerable<MessageTraceStatusFilter> StatusFilterValues { get; } = Enum.GetValues<MessageTraceStatusFilter>();
 
-    public static IEnumerable<string> TopicFilterValues { get; } = [.. new[] { string.Empty }.Union(TopicNames.All)];
+    public static IEnumerable<string> TopicFilterValues { get; } = [.. new[] { "" }.Union(TopicNames.All)];
 
     public IEnumerable<MessageTraceViewModel> AllTraces => _traces.Values;
 

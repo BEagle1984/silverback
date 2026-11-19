@@ -140,7 +140,7 @@ public class KafkaConsumerConfigurationTests
                 {
                     TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
                     [
-                        new TopicPartitionOffset(string.Empty, -42, Offset.Unset)
+                        new TopicPartitionOffset("", -42, Offset.Unset)
                     ])
                 }
             ])

@@ -13,19 +13,19 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class BrokerStatistics
 {
     [JsonPropertyName("name")]
-    public string Name { get; init; } = string.Empty;
+    public string Name { get; init; } = "";
 
     [JsonPropertyName("nodeid")]
     public long NodeId { get; init; }
 
     [JsonPropertyName("nodename")]
-    public string NodeName { get; init; } = string.Empty;
+    public string NodeName { get; init; } = "";
 
     [JsonPropertyName("source")]
-    public string Source { get; init; } = string.Empty;
+    public string Source { get; init; } = "";
 
     [JsonPropertyName("state")]
-    public string State { get; init; } = string.Empty;
+    public string State { get; init; } = "";
 
     [JsonPropertyName("stateage")]
     public long StateAge { get; init; }

@@ -58,7 +58,7 @@ internal static partial class TypesCache
         if (string.IsNullOrWhiteSpace(typeAssemblyQualifiedName))
             return typeAssemblyQualifiedName;
 
-        return CleanAssemblyQualifiedNameRegex().Replace(typeAssemblyQualifiedName, string.Empty);
+        return CleanAssemblyQualifiedNameRegex().Replace(typeAssemblyQualifiedName, "");
     }
 
     [GeneratedRegex(@", (Version=\d+\.\d+\.\d+\.\d+|Culture=\w+|PublicKeyToken=\w+)")]

@@ -24,7 +24,7 @@ public class AvroTestMessage : ISpecificRecord
 
     public virtual Schema Schema => _SCHEMA;
 
-    public string Number { get; set; } = string.Empty;
+    public string Number { get; set; } = "";
 
     public virtual object Get(int fieldPos) => fieldPos switch
     {

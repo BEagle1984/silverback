@@ -739,7 +739,7 @@ public partial class MqttClientConfigurationBuilder
         {
             string[] userInfo = serverUri.UserInfo.Split(':');
             string username = userInfo[0];
-            string password = userInfo.Length > 1 ? userInfo[1] : string.Empty;
+            string password = userInfo.Length > 1 ? userInfo[1] : "";
             WithCredentials(username, password);
         }
 

@@ -39,5 +39,5 @@ internal static class MqttHeadersMappingExtensions
     }
 
     private static MqttUserProperty CreateUserProperty(string name, string? value) =>
-        new(name, new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(value ?? string.Empty)));
+        new(name, new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(value ?? "")));
 }

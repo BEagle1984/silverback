@@ -8,5 +8,5 @@ namespace Silverback.Tests.Types.Domain;
 public class ValidationMessageNestedModel
 {
     [StringLength(5)]
-    public string String5 { get; set; } = string.Empty;
+    public string String5 { get; set; } = "";
 }
