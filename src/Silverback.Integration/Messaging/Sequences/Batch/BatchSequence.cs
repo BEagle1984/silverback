@@ -55,13 +55,24 @@ public class BatchSequence : Sequence
     private protected override SequenceTimeoutMode TimeoutMode => SequenceTimeoutMode.Absolute;
 
     /// <summary>
+    ///     Completes the batch before it's full or its max wait time elapses (e.g. when the consumer catches up with the end of the
+    ///     partition).
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    internal Task CompleteEarlyAsync() => CompleteOrAbortAsync();
+
+    /// <summary>
     ///     Called when the timeout is elapsed. In this special case the sequence is completed instead of aborted.
     /// </summary>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    protected override Task OnTimeoutElapsedAsync() => CompleteOrAbortAsync();
+
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    protected override async Task OnTimeoutElapsedAsync()
+    private async Task CompleteOrAbortAsync()
     {
         try
         {

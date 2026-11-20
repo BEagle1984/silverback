@@ -11,7 +11,8 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// </summary>
 /// <remarks>
 ///     The <see cref="KafkaConsumerConfiguration.EnablePartitionEof" /> must be set to <c>true</c> in the
-///     <see cref="KafkaConsumerConfiguration" />, otherwise the underlying library will not emit this event.
+///     <see cref="KafkaConsumerConfiguration" /> (or the <see cref="KafkaConsumerConfiguration.CatchUpMode" /> must be set), otherwise
+///     the underlying library will not emit this event.
 /// </remarks>
 public interface IKafkaPartitionEofCallback : IBrokerClientCallback
 {
@@ -27,7 +28,8 @@ public interface IKafkaPartitionEofCallback : IBrokerClientCallback
     /// </param>
     /// <remarks>
     ///     The <see cref="KafkaConsumerConfiguration.EnablePartitionEof" /> must be set to <c>true</c> in the
-    ///     <see cref="KafkaConsumerConfiguration" />, otherwise the underlying library will not emit this event.
+    ///     <see cref="KafkaConsumerConfiguration" /> (or the <see cref="KafkaConsumerConfiguration.CatchUpMode" /> must be set),
+    ///     otherwise the underlying library will not emit this event.
     /// </remarks>
     void OnEndOfTopicPartitionReached(TopicPartition topicPartition, IKafkaConsumer consumer);
 }

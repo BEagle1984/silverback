@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
@@ -75,4 +77,23 @@ public interface IKafkaConsumer : IConsumer
     ///     A mapping from partition to the timestamp and offset of the first message with timestamp greater than or equal to the target timestamp.
     /// </returns>
     IReadOnlyList<TopicPartitionOffset> GetOffsetsForTimestamps(IEnumerable<TopicPartitionTimestamp> topicPartitionTimestamps, TimeSpan timeout);
+
+    /// <summary>
+    ///     Waits until the consumer is caught up, meaning that every partition assigned to it reached its end and all its messages are
+    ///     processed (see <see cref="KafkaConsumerConfiguration.CatchUpMode" />).
+    /// </summary>
+    /// <remarks>
+    ///     The task completes before the <see cref="Callbacks.IKafkaConsumerCaughtUpCallback" /> is invoked. Once the consumer is caught
+    ///     up, the returned task completes right away until a reconnect starts a new catch-up.
+    /// </remarks>
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> used to cancel the wait.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown if the catch-up isn't enabled (see <see cref="KafkaConsumerConfiguration.CatchUpMode" />).
+    /// </exception>
+    Task WaitUntilCaughtUpAsync(CancellationToken cancellationToken = default);
 }

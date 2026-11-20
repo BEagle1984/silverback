@@ -116,6 +116,24 @@ services.AddSilverback()
                         .Select(p => new TopicPartitionOffset(p, Offset.Beginning))))));
 ```
 
+## Static Assignment from the Beginning
+
+`ConsumeFromBeginning` statically assigns all the partitions of the specified topics, retrieved from the topic metadata, and consumes them from the beginning, regardless of the offsets committed to Kafka. The overloads accepting specific partitions or a function selecting them are available as well.
+
+```csharp
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(clients => clients
+        .WithBootstrapServers("PLAINTEXT://localhost:9092")
+        .AddConsumer("consumer1", consumer => consumer
+            .DisableOffsetsCommit()
+            .Consume<MyMessage>("endpoint1", endpoint => endpoint
+                .ConsumeFromBeginning("my-topic"))));
+```
+
+> [!Note]
+> Unlike `ConsumeFrom`, `ConsumeFromBeginning` always assigns the partitions statically, therefore the topic patterns aren't supported. With `DisableOffsetsCommit` no group id is needed. A client side offset store (see <xref:kafka-offset>) still applies, and the partitions are then consumed from the stored offsets. Combine it with the catch-up to be notified once the topics are fully consumed (see <xref:kafka-catch-up>).
+
 ## Partition Processing and Concurrency
 
 By default, partitions are processed in parallel (one queue per partition). Messages in the same partition are always processed sequentially.

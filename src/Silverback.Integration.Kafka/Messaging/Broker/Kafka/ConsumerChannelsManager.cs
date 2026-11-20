@@ -151,6 +151,8 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
                 consumeResult.TopicPartition,
                 _consumer));
 
+            await OnRecordReadAsync(channel, consumeResult.TopicPartition, null).ConfigureAwait(false);
+
             return;
         }
 
@@ -176,7 +178,15 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             if (semaphoreWaited)
                 _messagesLimiterSemaphoreSlim.Release();
         }
+
+        await OnRecordReadAsync(channel, consumeResult.TopicPartition, consumeResult.Offset).ConfigureAwait(false);
     }
+
+    // A stopping reader leaves its pending sequences to be aborted: the records are consumed again by the next reader
+    private ValueTask OnRecordReadAsync(PartitionChannel channel, TopicPartition topicPartition, Offset? offset) =>
+        channel.ReadCancellationToken.IsCancellationRequested
+            ? ValueTask.CompletedTask
+            : _consumer.OnRecordReadAsync(channel, topicPartition, offset);
 
     private PartitionChannel GetOrCreateChannel(TopicPartition topicPartition) =>
         GetChannel(topicPartition) ?? _channels.GetOrAdd(

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Confluent.Kafka;
 using Silverback.Collections;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Sequences.Batch;
@@ -46,6 +47,8 @@ public partial class KafkaConsumerConfigurationBuilder
     private TimeSpan? _pollingTimeout;
 
     private TimeSpan? _stallDetectionThreshold;
+
+    private CatchUpMode? _catchUpMode;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaConsumerConfigurationBuilder" /> class.
@@ -331,6 +334,42 @@ public partial class KafkaConsumerConfigurationBuilder
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder DisablePartitionEof() => WithEnablePartitionEof(false);
+
+    /// <summary>
+    ///     Specifies that the consumer has to catch up with its assigned partitions and invoke the
+    ///     <see cref="IKafkaConsumerCaughtUpCallback" /> once every partition reached its end and all its messages are processed. The
+    ///     consumer keeps consuming afterward.
+    /// </summary>
+    /// <remarks>
+    ///     The partitions assigned once the consumer is caught up are ignored. With a consumer group, the consumer is caught up only once
+    ///     at least one partition is assigned to it. A reconnect starts a new catch-up.
+    /// </remarks>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder NotifyWhenCaughtUp()
+    {
+        _catchUpMode = CatchUpMode.KeepConsuming;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the consumer has to catch up with its assigned partitions, invoke the
+    ///     <see cref="IKafkaConsumerCaughtUpCallback" /> once every partition reached its end and all its messages are processed, and then
+    ///     disconnect. Each partition is paused as soon as it reaches its end.
+    /// </summary>
+    /// <remarks>
+    ///     A reconnect (e.g. via <see cref="IBrokerClient.ConnectAsync" />) starts a new catch-up from the committed offsets or, with a
+    ///     static assignment, from the configured offsets (unless a client side offset store is used).
+    /// </remarks>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder DisconnectWhenCaughtUp()
+    {
+        _catchUpMode = CatchUpMode.Disconnect;
+        return this;
+    }
 
     /// <summary>
     ///     Specifies that the partitions must be processed independently. This means that a stream will published per each partition and
@@ -853,6 +892,7 @@ public partial class KafkaConsumerConfigurationBuilder
             PollingTimeout = _pollingTimeout ?? configuration.PollingTimeout,
             StallDetectionThreshold = _stallDetectionThreshold ?? configuration.StallDetectionThreshold,
             ProcessPartitionsIndependently = _processPartitionsIndependently ?? configuration.ProcessPartitionsIndependently,
+            CatchUpMode = _catchUpMode ?? configuration.CatchUpMode,
             Endpoints = _endpoints.Values.AsValueReadOnlyCollection()
         };
 

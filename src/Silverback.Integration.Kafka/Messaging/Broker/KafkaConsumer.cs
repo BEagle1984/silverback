@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -16,6 +17,8 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Unbounded;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
@@ -24,6 +27,8 @@ namespace Silverback.Messaging.Broker;
 public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeCommitConsumer
 {
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
+
+    private readonly IBrokerClientCallbacksInvoker _callbacksInvoker;
 
     private readonly ISilverbackLogger<KafkaConsumer> _logger;
 
@@ -37,9 +42,14 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     // When processing the partitions together, it also drives the rollback and the cooperative revocation replay.
     private readonly OffsetsTracker _offsets = new();
 
+    private readonly CatchUpTracker _catchUp;
+
     private readonly System.Threading.Lock _assignmentLock = new(); // serializes partition state transitions and updates to the commit counter
 
     private readonly HashSet<TopicPartition> _revokedPartitions = [];
+
+    // The partitions whose revocation callback is running, still listed in the assignment until it returns
+    private readonly HashSet<TopicPartition> _revokingPartitions = [];
 
     private readonly Dictionary<TopicPartition, long> _assignmentVersions = [];
 
@@ -52,6 +62,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     // The partitions paused to roll back their records (or to replay the ones retained by a revocation) and not resumed yet: when
     // a stop or a rebalance defeats the rollback restart, they are resumed by the next start or when they are assigned again
     private readonly HashSet<TopicPartition> _rollbackPausedPartitions = [];
+
+    // The partitions paused at their end while catching up to disconnect (see CatchUpMode.Disconnect) and not resumed yet: like the
+    // ones paused by a rollback, they are resumed by the next start, unless they are caught up, or when they are assigned again
+    private readonly HashSet<TopicPartition> _catchUpPausedPartitions = [];
 
     // The last offset whose commit failed in each partition, when a client side offset store is used: the offsets are stored before
     // committing, so the rollback must not consume those records again
@@ -122,8 +136,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         Configuration = Check.NotNull(configuration);
 
         _offsetStoreFactory = Check.NotNull(offsetStoreFactory);
+        _callbacksInvoker = Check.NotNull(callbacksInvoker);
         _logger = Check.NotNull(logger);
 
+        _catchUp = new CatchUpTracker(configuration.CatchUpMode, configuration.IsStaticAssignment, _offsets);
         _channelsManager = new ConsumerChannelsManager(this, callbacksInvoker, logger);
         _consumeLoopHandler = new ConsumeLoopHandler(this, _channelsManager, _offsets, _logger);
 
@@ -154,6 +170,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
 
             // The partitions paused by the user must stay paused when a restart resumes the ones paused by a defeated rollback
             _rollbackPausedPartitions.ExceptWith(pausedPartitions);
+            _catchUpPausedPartitions.ExceptWith(pausedPartitions);
         }
     }
 
@@ -169,6 +186,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
 
             // Not paused anymore: neither a restart nor a new assignment has to resume them
             _rollbackPausedPartitions.ExceptWith(resumedPartitions);
+            _catchUpPausedPartitions.ExceptWith(resumedPartitions);
         }
     }
 
@@ -191,12 +209,27 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
             // The records consumed again after seeking back must be committed again
             _highestCommittedOffsets.Remove(topicPartitionOffset.TopicPartition);
             _soughtPartitions.Add(topicPartitionOffset.TopicPartition);
+
+            NotifyIfCaughtUp(_catchUp.CheckPartition(topicPartitionOffset.TopicPartition));
         }
     }
 
     /// <inheritdoc cref="IKafkaConsumer.GetOffsetsForTimestamps" />
     public IReadOnlyList<TopicPartitionOffset> GetOffsetsForTimestamps(IEnumerable<TopicPartitionTimestamp> topicPartitionTimestamps, TimeSpan timeout) =>
         Client.OffsetsForTimes(topicPartitionTimestamps, timeout);
+
+    /// <inheritdoc cref="IKafkaConsumer.WaitUntilCaughtUpAsync" />
+    public Task WaitUntilCaughtUpAsync(CancellationToken cancellationToken = default)
+    {
+        if (!_catchUp.IsEnabled)
+        {
+            throw new InvalidOperationException(
+                $"The catch-up isn't enabled for this consumer. Set the {nameof(KafkaConsumerConfiguration.CatchUpMode)} " +
+                "(e.g. via NotifyWhenCaughtUp or DisconnectWhenCaughtUp).");
+        }
+
+        return _catchUp.WaitUntilCaughtUpAsync(cancellationToken);
+    }
 
     internal IReadOnlyCollection<TopicPartitionOffset> OnPartitionsAssigned(IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets)
     {
@@ -221,18 +254,24 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
                 _soughtPartitions.Remove(topicPartitionOffset.TopicPartition);
                 IncrementAssignmentVersion(topicPartitionOffset.TopicPartition);
                 _revokedPartitions.Remove(topicPartitionOffset.TopicPartition);
+                _revokingPartitions.Remove(topicPartitionOffset.TopicPartition);
                 _offsets.TrackOffset(topicPartitionOffset);
                 _channelsManager.StartReading(topicPartitionOffset.TopicPartition);
             }
 
+            NotifyIfCaughtUp(_catchUp.AddPartitions(topicPartitionOffsets.Select(offset => offset.TopicPartition)));
+
             // The native pause survives the revocation and the new assignment of a partition (with both the eager and the
-            // cooperative assignors): resume the partitions paused by a rollback that the rebalance defeated, or they would never be
-            // fetched again. Resumed before the assignment is applied, they are fetched from the assigned offsets only. A native
-            // consumer that is still initializing has no paused partitions.
-            if (_rollbackPausedPartitions.Count > 0 && Client.Status == ClientStatus.Initialized)
+            // cooperative assignors): resume the partitions paused by a rollback that the rebalance defeated (or at their end while
+            // catching up), or they would never be fetched again. Resumed before the assignment is applied, they are fetched from the
+            // assigned offsets only. A native consumer that is still initializing has no paused partitions. Once the consumer is caught
+            // up, the partitions paused at their end stay paused until it's disconnected.
+            if ((_rollbackPausedPartitions.Count > 0 || _catchUpPausedPartitions.Count > 0) && Client.Status == ClientStatus.Initialized)
             {
                 HashSet<TopicPartition> assignedPartitions = [.. topicPartitionOffsets.Select(offset => offset.TopicPartition)];
                 ResumeRollbackPausedPartitionsCore(assignedPartitions.Contains);
+                ResumeCatchUpPausedPartitionsCore(partition =>
+                    assignedPartitions.Contains(partition) && !_catchUp.IsPartitionCaughtUp(partition));
             }
         }
 
@@ -258,12 +297,17 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
             foreach (TopicPartition partition in revoked)
             {
                 _revokedPartitions.Add(partition);
+                _revokingPartitions.Add(partition);
                 _rollingBackPartitions.Remove(partition);
                 _commitFailedOffsets.Remove(partition);
                 _highestCommittedOffsets.Remove(partition);
                 _soughtPartitions.Remove(partition);
                 IncrementAssignmentVersion(partition);
             }
+
+            // The revocation of a stopping consumer (e.g. disconnecting) doesn't make it caught up
+            bool canCatchUp = IsStartedAndNotStopping() && Client.Status != ClientStatus.Disconnecting;
+            NotifyIfCaughtUp(_catchUp.RemovePartitions(revoked, canCatchUp));
 
             // A shared channel also contains records from retained partitions. Rebuild it once and replay those records.
             if (!Configuration.ProcessPartitionsIndependently && topicPartitionOffsets.Count > 0)
@@ -296,9 +340,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
             if (!Configuration.EnableAutoCommit)
                 Client.Commit();
 
-            foreach (TopicPartitionOffset offset in topicPartitionOffsets)
+            foreach (TopicPartition topicPartition in topicPartitionOffsets.Select(offset => offset.TopicPartition))
             {
-                _offsets.UntrackPartition(offset.TopicPartition);
+                _offsets.UntrackPartition(topicPartition);
+                _revokingPartitions.Remove(topicPartition);
             }
 
             foreach (TopicPartitionOffset rollbackOffset in retained.Where(IsCurrentRollback).Select(partition => partition.Offset))
@@ -307,8 +352,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
                     Client.Seek(rollbackOffset);
 
                 _channelsManager.StartReading(rollbackOffset.TopicPartition);
-                Client.Resume([rollbackOffset.TopicPartition]);
-                _rollbackPausedPartitions.Remove(rollbackOffset.TopicPartition);
+                ResumeReplayedPartitionCore(rollbackOffset.TopicPartition);
                 _rollingBackPartitions.Remove(rollbackOffset.TopicPartition);
             }
         }
@@ -373,8 +417,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     }
 
     /// <summary>
-    ///     Resumes the assigned partitions that were paused by a rollback whose restart was defeated by a stop: they would
-    ///     otherwise never be fetched again.
+    ///     Resumes the assigned partitions that were paused by a rollback whose restart was defeated by a stop, or at their end while
+    ///     catching up and not caught up yet: they would otherwise never be fetched again.
     /// </summary>
     /// <remarks>
     ///     Called by the consume loop before its first poll, after <see cref="SeekToUncommittedOffsets" />, so that nothing is
@@ -385,14 +429,23 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     {
         lock (_assignmentLock)
         {
-            if (_rollbackPausedPartitions.Count == 0 || !IsStartedAndNotStopping() || Client.Status != ClientStatus.Initialized)
+            if (_rollbackPausedPartitions.Count == 0 && _catchUpPausedPartitions.Count == 0 ||
+                !IsStartedAndNotStopping() ||
+                Client.Status != ClientStatus.Initialized)
+            {
                 return;
+            }
 
             HashSet<TopicPartition> assignment = [.. Client.Assignment];
 
             // A partition being rolled back again is resumed by the rollback itself
-            ResumeRollbackPausedPartitionsCore(partition =>
-                assignment.Contains(partition) && IsNotRevoked(partition) && !_rollingBackPartitions.Contains(partition));
+            bool IsResumable(TopicPartition partition) =>
+                assignment.Contains(partition) && IsNotRevoked(partition) && !_rollingBackPartitions.Contains(partition);
+
+            ResumeRollbackPausedPartitionsCore(IsResumable);
+
+            // A caught up partition doesn't need to be consumed any further
+            ResumeCatchUpPausedPartitionsCore(partition => IsResumable(partition) && !_catchUp.IsPartitionCaughtUp(partition));
         }
     }
 
@@ -444,6 +497,87 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         }
 
         return true;
+    }
+
+    // Called by the consume loop for each polled record, while catching up
+    internal void OnRecordPolled(TopicPartitionOffset topicPartitionOffset) => _catchUp.OnRecordPolled(topicPartitionOffset);
+
+    // Called by the consume loop when the end of a partition is polled, while catching up
+    internal void OnEndOfPartitionPolled(TopicPartition topicPartition)
+    {
+        if (!_catchUp.IsEnabled)
+            return;
+
+        lock (_assignmentLock)
+        {
+            (bool isEndReached, CatchUpTracker.CaughtUpNotification? notification) = _catchUp.OnEndOfPartitionPolled(topicPartition);
+
+            if (isEndReached)
+                PauseAtEndCore(topicPartition);
+
+            NotifyIfCaughtUp(notification);
+        }
+    }
+
+    // Called by the channel reader after a record (or the end of the partition, with a null offset) is read, while catching up. The
+    // last record before the end completes the pending batches, which otherwise wouldn't complete until full or until their max wait
+    // time elapses. The end of the partition isn't reported again when the records are consumed again (e.g. after a rollback or a
+    // restart), so the last record is checked as well, also to pause the partition again.
+    // All records before the end are dispatched by then: the ones that aren't committed yet are either held by the sequences in the
+    // store (being processed, or pending because they don't complete at the end) or never committed at all (e.g. filtered out or
+    // unhandled in a batch, which commits them only with the next batch). The end is therefore moved to the last record that will be
+    // committed, but before any sequence that doesn't complete: the partition is caught up once a stream is read, or once the records
+    // before an incomplete chunked message (and before the batch containing it, which waits for its missing chunks) are committed.
+    // The reader of a channel replaced by a restart (or reset by a rollback) may still be running: it's ignored, since the records are
+    // consumed again by the current channel.
+    internal async ValueTask OnRecordReadAsync(PartitionChannel channel, TopicPartition topicPartition, Offset? offset)
+    {
+        Guid channelInstanceId = channel.InstanceId;
+        ISequenceStore sequenceStore = channel.SequenceStore;
+
+        if (!_catchUp.IsLastRecordBeforeEnd(topicPartition, channelInstanceId, offset))
+            return;
+
+        if (offset != null)
+        {
+            lock (_assignmentLock)
+            {
+                if (IsCurrentChannelCore(channel, channelInstanceId, topicPartition))
+                    PauseAtEndCore(topicPartition);
+            }
+        }
+
+        foreach (BatchSequence batchSequence in sequenceStore.GetPendingSequences().OfType<BatchSequence>())
+        {
+            await batchSequence.CompleteEarlyAsync().ConfigureAwait(false);
+        }
+
+        // A shared channel streams the records of all its endpoints, since they must all use the same batch settings
+        IReadOnlyCollection<ISequence> pendingSequences = sequenceStore.GetPendingSequences(includeUnbounded: true, includeChildren: true);
+        bool isStreaming = pendingSequences.Any(sequence => sequence is UnboundedSequence);
+
+        // A batch still pending is being aborted (e.g. a subscriber failed before it could be completed): the outcome is tracked via
+        // its commit or rollback
+        if (!isStreaming && pendingSequences.Any(sequence => sequence is BatchSequence && sequence.ParentSequence == null))
+            return;
+
+        long? lastOffset = GetLastCommittableOffset(topicPartition, sequenceStore, pendingSequences);
+
+        lock (_assignmentLock)
+        {
+            // A rollback (registered before its sequence leaves the store) or a revocation replays the records: the uncommitted ones
+            // aren't the ones that will never be committed
+            if (!IsStartedAndNotStopping() || !IsNotRevoked(topicPartition) || _rollingBackPartitions.Contains(topicPartition) ||
+                !IsCurrentChannelCore(channel, channelInstanceId, topicPartition))
+            {
+                return;
+            }
+
+            if (isStreaming)
+                NotifyIfCaughtUp(_catchUp.MarkCaughtUp(topicPartition));
+            else if (lastOffset != null)
+                NotifyIfCaughtUp(_catchUp.MoveEndBefore(topicPartition, lastOffset.Value + 1));
+        }
     }
 
     internal async Task HandleMessageAsync(
@@ -542,6 +676,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
                         _highestCommittedOffsets[offset.TopicPartition] = offset.Offset;
 
                     stored = true;
+
+                    NotifyIfCaughtUp(_catchUp.CheckPartition(offset.TopicPartition));
                 }
 
                 if (stored)
@@ -661,12 +797,52 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         _isDisposed = true;
     }
 
+    private static IEnumerable<long?> GetPartitionOffsets(
+        IEnumerable<ISequence> sequences,
+        TopicPartition topicPartition,
+        Func<ISequence, IEnumerable<IBrokerMessageIdentifier>> getIdentifiers) =>
+        sequences
+            .SelectMany(getIdentifiers)
+            .OfType<KafkaOffset>()
+            .Where(offset => offset.TopicPartition == topicPartition && !offset.IsSpecial)
+            .Select(offset => (long?)offset.Offset.Value);
+
     // The special offsets (e.g. unset) compare lower than any actual offset: prefer the actual ones
     private static IEnumerable<KafkaOffset> GetLowestOffsetPerPartition(IEnumerable<KafkaOffset> offsets) =>
         offsets
             .GroupBy(offset => offset.TopicPartition)
             .Select(partitionOffsets => partitionOffsets.Aggregate((lowest, offset) =>
                 !offset.IsSpecial && (lowest.IsSpecial || offset < lowest) ? offset : lowest));
+
+    // Returns the last offset of the partition that will be committed: the highest one held by the sequences in the store (being
+    // processed) or already committed, but before the first sequence that doesn't complete (an incomplete chunked message, or the
+    // batch containing it, which waits for its missing chunks). The offsets held from there on don't count, or a record before the
+    // incomplete sequence that is never committed (e.g. filtered out in a batch) would be waited for.
+    private long? GetLastCommittableOffset(
+        TopicPartition topicPartition,
+        ISequenceStore sequenceStore,
+        IReadOnlyCollection<ISequence> pendingSequences)
+    {
+        long? firstIncompleteOffset = GetPartitionOffsets(
+                pendingSequences,
+                topicPartition,
+                sequence => (sequence.ParentSequence ?? sequence).GetRollbackIdentifiers())
+            .Min();
+        long? lastInFlightOffset = GetPartitionOffsets(sequenceStore, topicPartition, sequence => sequence.GetCommitIdentifiers())
+            .Where(offset => firstIncompleteOffset == null || offset < firstIncompleteOffset)
+            .Max();
+
+        // Read after the sequences in the store: a sequence committed and removed from the store meanwhile is reflected here
+        KafkaOffset? rollbackOffset = _offsets.GetRollbackOffset(topicPartition);
+        long? lastCommittedOffset = rollbackOffset is { IsSpecial: false } ? rollbackOffset.Offset.Value - 1 : null;
+
+        long? lastOffset = new[] { lastInFlightOffset, lastCommittedOffset }.Max();
+
+        if (firstIncompleteOffset == null)
+            return lastOffset;
+
+        return lastOffset == null ? firstIncompleteOffset - 1 : Math.Min(lastOffset.Value, firstIncompleteOffset.Value - 1);
+    }
 
     private ValueTask OnClientConnectedAsync(BrokerClient client)
     {
@@ -676,9 +852,12 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         {
             _offsets.Clear();
             _rollbackPausedPartitions.Clear();
+            _catchUpPausedPartitions.Clear();
+            _revokingPartitions.Clear();
             _commitFailedOffsets.Clear();
             _highestCommittedOffsets.Clear();
             _soughtPartitions.Clear();
+            _catchUp.Reset();
         }
 
         return StartAsync();
@@ -746,10 +925,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
 
                     // The old channel was removed by StopChannelAsync; no sequence disposal is performed under this lock
                     _channelsManager.StartReading(rollbackOffset.TopicPartition);
-                    Client.Resume([rollbackOffset.TopicPartition]);
-                    _rollbackPausedPartitions.Remove(rollbackOffset.TopicPartition);
+                    ResumeReplayedPartitionCore(rollbackOffset.TopicPartition);
                     _rollingBackPartitions.Remove(rollbackOffset.TopicPartition);
-                    _logger.LogPartitionResumed(rollbackOffset.TopicPartition, this);
                 }
             }
         }
@@ -781,6 +958,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         {
             _offsets.UntrackPartition(offset.TopicPartition);
             _offsets.TrackOffset(nextOffset);
+            NotifyIfCaughtUp(_catchUp.CheckPartition(offset.TopicPartition));
         }
 
         return nextOffset;
@@ -794,12 +972,113 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         if (partitions.Length == 0)
             return;
 
-        Client.Resume(partitions);
         _rollbackPausedPartitions.ExceptWith(partitions);
+
+        // A partition paused at its end while catching up that is caught up stays paused
+        partitions = [.. partitions.Where(partition => !IsKeptPausedAtEndCore(partition))];
+
+        if (partitions.Length == 0)
+            return;
+
+        Client.Resume(partitions);
+        _catchUpPausedPartitions.ExceptWith(partitions);
 
         foreach (TopicPartition partition in partitions)
         {
             _logger.LogPartitionResumed(partition, this);
+        }
+    }
+
+    // Must be called while holding the assignment lock
+    private void ResumeCatchUpPausedPartitionsCore(Func<TopicPartition, bool> predicate)
+    {
+        TopicPartition[] partitions = [.. _catchUpPausedPartitions.Where(predicate)];
+
+        if (partitions.Length == 0)
+            return;
+
+        Client.Resume(partitions);
+        _catchUpPausedPartitions.ExceptWith(partitions);
+
+        foreach (TopicPartition partition in partitions)
+        {
+            _logger.LogPartitionResumed(partition, this);
+        }
+    }
+
+    // Must be called while holding the assignment lock. Resumes the partition paused to replay its records (by a rollback or by the
+    // revocation of the other partitions sharing its channel), unless it's paused at its end while catching up and it's caught up:
+    // its end isn't reported again, so it would never be paused again.
+    private void ResumeReplayedPartitionCore(TopicPartition topicPartition)
+    {
+        _rollbackPausedPartitions.Remove(topicPartition);
+
+        if (IsKeptPausedAtEndCore(topicPartition))
+            return;
+
+        Client.Resume([topicPartition]);
+        _catchUpPausedPartitions.Remove(topicPartition);
+        _logger.LogPartitionResumed(topicPartition, this);
+    }
+
+    // Must be called while holding the assignment lock
+    private bool IsKeptPausedAtEndCore(TopicPartition topicPartition) =>
+        _catchUpPausedPartitions.Contains(topicPartition) && _catchUp.IsPartitionCaughtUp(topicPartition);
+
+    // Must be called while holding the assignment lock. The partition doesn't need to be consumed any further before disconnecting.
+    // Must be called while holding the assignment lock
+    private bool IsCurrentChannelCore(PartitionChannel channel, Guid channelInstanceId, TopicPartition topicPartition) =>
+        !channel.ReadCancellationToken.IsCancellationRequested && channel.InstanceId == channelInstanceId &&
+        _channelsManager.GetChannel(topicPartition) == channel;
+
+    private void PauseAtEndCore(TopicPartition topicPartition)
+    {
+        if (_catchUp.Mode != CatchUpMode.Disconnect || _catchUpPausedPartitions.Contains(topicPartition) ||
+            !IsNotRevoked(topicPartition) || Client.Status != ClientStatus.Initialized)
+        {
+            return;
+        }
+
+        Client.Pause([topicPartition]);
+        _catchUpPausedPartitions.Add(topicPartition);
+    }
+
+    // The notification runs in its own task: it's triggered by the polling, the reading or the commit, which the disconnect waits for
+    private void NotifyIfCaughtUp(CatchUpTracker.CaughtUpNotification? notification)
+    {
+        if (notification != null)
+            Task.Run(() => OnCaughtUpAsync(notification)).FireAndForget();
+    }
+
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    private async Task OnCaughtUpAsync(CatchUpTracker.CaughtUpNotification notification)
+    {
+        _logger.LogConsumerCaughtUp(this);
+
+        // Completed before invoking the callbacks, which may await it
+        notification.TaskCompletionSource.TrySetResult();
+
+        try
+        {
+            await _callbacksInvoker.InvokeAsync<IKafkaConsumerCaughtUpCallback>(callback => callback.OnConsumerCaughtUpAsync(this))
+                .ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // Already logged by the invoker: the consumer is caught up anyway
+        }
+
+        // A reconnect started a new catch-up meanwhile
+        if (_catchUp.Mode != CatchUpMode.Disconnect || !_catchUp.IsCurrent(notification.Generation))
+            return;
+
+        try
+        {
+            await Client.DisconnectAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCaughtUpConsumerDisconnectError(this, ex);
         }
     }
 
@@ -913,6 +1192,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     {
         IReadOnlyList<TopicPartition> assignment = Client.Assignment;
 
+        // A partition whose revocation is still being handled by the stopping loop (unassigned only once its callback returns) isn't
+        // caught up with: it's added again if it's assigned again
+        TopicPartition[] catchUpPartitions = [.. assignment.Where(partition => !_revokingPartitions.Contains(partition))];
+
         foreach (TopicPartition partition in assignment)
         {
             IncrementAssignmentVersion(partition);
@@ -924,6 +1207,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
             _offsets.TrackPartition(partition);
             _channelsManager.StartReading(partition);
         }
+
+        // The dynamic assignment is received by the poll, after the start
+        if (assignment.Count > 0 || Configuration.IsStaticAssignment)
+            NotifyIfCaughtUp(_catchUp.AddPartitions(catchUpPartitions));
 
         if (assignment.Count > 0)
             SetConnectedStatus();

@@ -238,6 +238,135 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
         return this;
     }
 
+    /// <summary>
+    ///     Specifies the topic whose partitions are all to be consumed from the beginning. The partitions are retrieved from the topic
+    ///     metadata and statically assigned, regardless of the offsets committed to Kafka (a client side offset store still applies).
+    ///     The topic patterns aren't supported.
+    /// </summary>
+    /// <param name="topic">
+    ///     The topic.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFromBeginning(string topic) =>
+        ConsumeFromBeginning([Check.NotNullOrEmpty(topic)], topicPartitions => topicPartitions);
+
+    /// <summary>
+    ///     Specifies the topics whose partitions are all to be consumed from the beginning. The partitions are retrieved from the topic
+    ///     metadata and statically assigned, regardless of the offsets committed to Kafka (a client side offset store still applies).
+    ///     The topic patterns aren't supported.
+    /// </summary>
+    /// <param name="topics">
+    ///     The topics.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFromBeginning(params string[] topics) =>
+        ConsumeFromBeginning(topics, topicPartitions => topicPartitions);
+
+    /// <summary>
+    ///     Specifies the topic partitions to be consumed from the beginning.
+    /// </summary>
+    /// <param name="topic">
+    ///     The topic.
+    /// </param>
+    /// <param name="partitions">
+    ///     The indexes of the partitions to be consumed.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFromBeginning(string topic, params int[] partitions)
+    {
+        Check.NotNullOrEmpty(topic);
+        Check.NotEmpty(partitions);
+
+        if (partitions.Any(partition => partition < 0))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(partitions),
+                "The partitions to be assigned statically must be specified explicitly.");
+        }
+
+        TopicPartitionOffset[] topicPartitionOffsets =
+            [.. partitions.Select(partition => new TopicPartitionOffset(topic, partition, Offset.Beginning))];
+
+        return ConsumeFrom(topicPartitionOffsets);
+    }
+
+    /// <summary>
+    ///     Specifies the topics and partitions to be consumed from the beginning.
+    /// </summary>
+    /// <param name="topicPartitions">
+    ///     The topic partitions to be consumed.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFromBeginning(params TopicPartition[] topicPartitions)
+    {
+        Check.HasNoNulls(topicPartitions);
+
+        if (topicPartitions.Any(topicPartition => topicPartition.Partition == Partition.Any))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(topicPartitions),
+                "The partitions to be assigned statically must be specified explicitly.");
+        }
+
+        TopicPartitionOffset[] topicPartitionOffsets =
+            [.. topicPartitions.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Beginning))];
+
+        return ConsumeFrom(topicPartitionOffsets);
+    }
+
+    /// <summary>
+    ///     Specifies the topic and a function that returns the partitions to be consumed from the beginning.
+    /// </summary>
+    /// <param name="topic">
+    ///     The topic.
+    /// </param>
+    /// <param name="partitionsProvider">
+    ///     A function that receives all available <see cref="TopicPartition" /> for the topic and returns the collection of
+    ///     <see cref="TopicPartition" /> to be consumed.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFromBeginning(
+        string topic,
+        Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>> partitionsProvider) =>
+        ConsumeFromBeginning([Check.NotNullOrEmpty(topic)], partitionsProvider);
+
+    /// <summary>
+    ///     Specifies the topics and a function that returns the partitions to be consumed from the beginning.
+    /// </summary>
+    /// <param name="topics">
+    ///     The topics.
+    /// </param>
+    /// <param name="partitionsProvider">
+    ///     A function that receives all available <see cref="TopicPartition" /> for the topics and returns the collection of
+    ///     <see cref="TopicPartition" /> to be consumed.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFromBeginning(
+        string[] topics,
+        Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>> partitionsProvider)
+    {
+        Check.HasNoEmpties(topics);
+        Check.NotNull(partitionsProvider);
+
+        return ConsumeFrom(
+            topics,
+            topicPartitions =>
+                partitionsProvider.Invoke(topicPartitions)
+                    .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Beginning)));
+    }
+
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.CreateConfiguration" />
     protected override KafkaConsumerEndpointConfiguration CreateConfiguration()
     {

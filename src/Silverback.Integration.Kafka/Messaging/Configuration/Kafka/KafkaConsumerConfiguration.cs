@@ -146,6 +146,16 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     public TimeSpan? StallDetectionThreshold { get; init; }
 
     /// <summary>
+    ///     Gets a value specifying whether the consumer has to catch up with its assigned partitions, notifying once each of them reached
+    ///     its end and all its messages are processed, and what to do afterward. The default is <see cref="Kafka.CatchUpMode.None" />.
+    /// </summary>
+    /// <remarks>
+    ///     The catch-up relies on the end of partition events, which are enabled regardless of <c>EnablePartitionEof</c>. With a
+    ///     consumer group, the consumer is caught up only once at least one partition is assigned to it.
+    /// </remarks>
+    public CatchUpMode CatchUpMode { get; init; }
+
+    /// <summary>
     ///     Gets the configured endpoints.
     /// </summary>
     public IValueReadOnlyCollection<KafkaConsumerEndpointConfiguration> Endpoints
@@ -199,6 +209,9 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
         confluentConfig.GroupId = string.IsNullOrEmpty(GroupId) ? UnsetGroupId : GroupId;
         confluentConfig.EnableAutoCommit = EnableAutoCommit;
+
+        if (CatchUpMode != CatchUpMode.None)
+            confluentConfig.EnablePartitionEof = true;
 
         // This property is not exposed and hardcoded: the offsets will be explicitly stored only after successful processing
         confluentConfig.EnableAutoOffsetStore = false;
