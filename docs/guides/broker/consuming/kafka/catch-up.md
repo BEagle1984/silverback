@@ -86,3 +86,4 @@ public class StartupService : IHostedService
 - [API Reference](xref:Silverback)
 - <xref:kafka-subscription>
 - <xref:broker-callbacks>
+- <xref:sample-kafka-catch-up> sample

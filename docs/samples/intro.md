@@ -62,6 +62,11 @@ Then observe the console output while the messages are produced and consumed. Ea
     <span class="sb-card-title">Kafka – File Streaming</span>
     <p>Stream large binary files through Kafka, split into chunks.</p>
   </a>
+  <a class="sb-card" href="kafka/catch-up.md">
+    <span class="sb-card-icon"><i class="bi bi-database-down"></i></span>
+    <span class="sb-card-title">Kafka – Catch-Up</span>
+    <p>Load an in-memory state from a topic at startup and get notified once it's loaded.</p>
+  </a>
   <a class="sb-card" href="kafka/avro.md">
     <span class="sb-card-icon"><i class="bi bi-file-earmark-code"></i></span>
     <span class="sb-card-title">Kafka – Avro</span>

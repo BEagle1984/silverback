@@ -10,6 +10,8 @@
       href: kafka/batch-tombstone.md
     - name: File Streaming
       href: kafka/binaryfile-streaming.md
+    - name: Catch-Up
+      href: kafka/catch-up.md
     - name: Avro
       href: kafka/avro.md
     - name: JSON with Schema Registry

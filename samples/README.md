@@ -51,6 +51,18 @@ Binary file streaming through Kafka.
     1. http://localhost:10001/swagger
 1. The consumed files will be saved in `samples/temp`
 
+### Catch-Up
+
+Load an in-memory state from a topic at startup and get notified once it's loaded.
+
+1. Run the producer, which produces a bunch of messages and exits
+    1. `dotnet run --project ./samples/Kafka/CatchUp.Producer/.`
+1. Run the consumer
+    1. `dotnet run --project ./samples/Kafka/CatchUp.Consumer/.`
+1. Observe the console output: the consumer logs once the catalog is loaded
+1. Run the producer again (in another terminal) to see the catalog kept up to date, or restart the consumer to load it again from
+   the beginning of the topic
+
 ### Avro
 
 Produce and consume messages serialized as Avro using the schema registry.

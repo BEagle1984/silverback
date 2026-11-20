@@ -14,6 +14,9 @@
     <Project Path="Kafka/BatchWithTombstone.Producer/BatchWithTombstone.Producer.csproj" />
     <Project Path="Kafka/BinaryFileStreaming.Consumer/BinaryFileStreaming.Consumer.csproj" />
     <Project Path="Kafka/BinaryFileStreaming.Producer/BinaryFileStreaming.Producer.csproj" />
+    <Project Path="Kafka/CatchUp.Common/CatchUp.Common.csproj" />
+    <Project Path="Kafka/CatchUp.Consumer/CatchUp.Consumer.csproj" />
+    <Project Path="Kafka/CatchUp.Producer/CatchUp.Producer.csproj" />
     <Project Path="Kafka/JsonSchemaRegistry.Common/JsonSchemaRegistry.Common.csproj" />
     <Project Path="Kafka/JsonSchemaRegistry.Consumer/JsonSchemaRegistry.Consumer.csproj" />
     <Project Path="Kafka/JsonSchemaRegistry.Producer/JsonSchemaRegistry.Producer.csproj" />
