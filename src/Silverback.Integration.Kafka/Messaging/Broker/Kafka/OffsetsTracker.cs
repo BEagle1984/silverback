@@ -121,6 +121,17 @@ public sealed class OffsetsTracker : IBrokerMessageIdentifiersTracker
     }
 
     /// <summary>
+    ///     Gets the offset to roll the specified partition back to in case of error, i.e. its first uncommitted offset.
+    /// </summary>
+    /// <param name="topicPartition">
+    ///     The partition.
+    /// </param>
+    /// <returns>
+    ///     The offset, or <c>null</c> if the partition isn't tracked.
+    /// </returns>
+    internal KafkaOffset? GetRollbackOffset(TopicPartition topicPartition) => _rollbackOffsets.GetValueOrDefault(topicPartition);
+
+    /// <summary>
     ///     Gets the first uncommitted offset of each partition whose position is ahead of it, i.e. the offsets to seek to
     ///     in order to consume the discarded records again.
     /// </summary>

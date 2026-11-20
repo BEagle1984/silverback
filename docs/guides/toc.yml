@@ -76,6 +76,8 @@
               href: broker/consuming/kafka/tombstone.md
             - name: Offset Storage
               href: broker/consuming/kafka/offset.md
+            - name: Catch-Up
+              href: broker/consuming/kafka/catch-up.md
             - name: Schema Registry
               href: broker/consuming/kafka/schema-registry.md
         - name: MQTT

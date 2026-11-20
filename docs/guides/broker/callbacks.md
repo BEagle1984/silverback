@@ -72,7 +72,9 @@ Available callbacks for Kafka consumers:
 - <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback>\
   Triggered when the consumer logs a message.
 - <xref:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback>\
-  Triggered when the consumer reaches the end of a partition (requires `EnablePartitionEof = true`).
+  Triggered when the consumer reaches the end of a partition (requires `EnablePartitionEof = true` or the catch-up to be enabled).
+- <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerCaughtUpCallback>\
+  Triggered when the consumer is caught up with its assigned partitions (requires the catch-up to be enabled, see <xref:kafka-catch-up>).
 
 #### Example: Reset Offsets on Partition Assignment
 

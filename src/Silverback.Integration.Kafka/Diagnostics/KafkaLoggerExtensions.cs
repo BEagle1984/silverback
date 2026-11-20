@@ -19,6 +19,12 @@ internal static partial class KafkaLoggerExtensions
     public static void LogEndOfPartition(this ISilverbackLogger logger, ConsumeResult<byte[]?, byte[]?> consumeResult, KafkaConsumer consumer) =>
         EndOfPartition(logger.InnerLogger, consumeResult.Topic, consumeResult.Partition, consumeResult.Offset, consumer.DisplayName);
 
+    public static void LogConsumerCaughtUp(this ISilverbackLogger logger, KafkaConsumer consumer) =>
+        ConsumerCaughtUp(logger.InnerLogger, consumer.DisplayName);
+
+    public static void LogCaughtUpConsumerDisconnectError(this ISilverbackLogger logger, KafkaConsumer consumer, Exception exception) =>
+        CaughtUpConsumerDisconnectError(logger.InnerLogger, consumer.DisplayName, exception);
+
     public static void LogKafkaExceptionAutoRecovery(this ISilverbackLogger logger, KafkaConsumer consumer, Exception exception) =>
         KafkaExceptionAutoRecovery(logger.InnerLogger, consumer.DisplayName, exception);
 
@@ -715,6 +721,27 @@ internal static partial class KafkaLoggerExtensions
         long offset,
         string producerName,
         string? transactionalId);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer is caught up, meaning that every
+    ///     partition assigned to it reached its end and all its messages are processed.
+    /// </summary>
+    [LoggerMessage(
+        2075,
+        LogLevel.Information,
+        "Consumer caught up | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.Kafka_ConsumerCaughtUp")]
+    private static partial void ConsumerCaughtUp(ILogger logger, string consumerName);
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer fails to disconnect once caught up.
+    /// </summary>
+    [LoggerMessage(
+        2076,
+        LogLevel.Error,
+        "Failed to disconnect the caught-up consumer | ConsumerName: {ConsumerName}",
+        EventName = "Silverback.Integration.Kafka_CaughtUpConsumerDisconnectError")]
+    private static partial void CaughtUpConsumerDisconnectError(ILogger logger, string consumerName, Exception exception);
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a non-fatal error is reported

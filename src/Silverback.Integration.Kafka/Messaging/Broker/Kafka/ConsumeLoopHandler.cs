@@ -207,8 +207,15 @@ internal sealed class ConsumeLoopHandler : IDisposable
             _logger.LogConsuming(consumeResult, _consumer);
 
             // The end of partition is a position, not a record to be consumed again after a restart
-            if (!consumeResult.IsPartitionEOF)
+            if (consumeResult.IsPartitionEOF)
+            {
+                _consumer.OnEndOfPartitionPolled(consumeResult.TopicPartition);
+            }
+            else
+            {
                 _offsetsTracker.TrackOffset(consumeResult.TopicPartitionOffset);
+                _consumer.OnRecordPolled(consumeResult.TopicPartitionOffset);
+            }
 
             _channelsManager.Write(consumeResult, cancellationToken);
         }
