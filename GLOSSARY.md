@@ -4,6 +4,23 @@ A .NET message bus that bridges an in-process publisher/subscriber with Kafka an
 
 ## Language
 
+### Broker callbacks
+
+**Broker callback**:
+A handler invoked when a broker client, or the set of all broker clients, raises a lifecycle event such as a partitions assignment, a
+connection or new statistics.
+_Avoid_: Hook, event handler
+
+**Global callback**:
+A broker callback for an event that concerns all broker clients together, such as their configuration or connection.
+
+**Broker-wide callback**:
+A broker callback bound to every client of one broker, Kafka or MQTT.
+
+**Client callback**:
+A broker callback bound to a single client: one Kafka consumer, one Kafka producer or one MQTT client.
+_Avoid_: Bound callback, per-consumer callback
+
 ### Kafka consuming
 
 **End of partition**:
