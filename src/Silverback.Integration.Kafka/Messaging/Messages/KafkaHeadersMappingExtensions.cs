@@ -3,9 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Silverback.Util;
+using Confluent.Kafka;
 
 namespace Silverback.Messaging.Messages;
 
@@ -13,19 +12,34 @@ internal static class KafkaHeadersMappingExtensions
 {
     private static readonly Encoding Encoding = Encoding.UTF8;
 
-    public static Confluent.Kafka.Headers ToConfluentHeaders(this IEnumerable<MessageHeader> headers)
+    public static Confluent.Kafka.Headers ToConfluentHeaders(this IReadOnlyList<MessageHeader> headers)
     {
         Confluent.Kafka.Headers kafkaHeaders = [];
-        headers
-            .Where(header => !header.Name.StartsWith(DefaultMessageHeaders.InternalHeadersPrefix, StringComparison.Ordinal))
-            .ForEach(header => kafkaHeaders.Add(header.Name, Encode(header.Value)));
+
+        for (int i = 0; i < headers.Count; i++)
+        {
+            MessageHeader header = headers[i];
+
+            if (!header.Name.StartsWith(DefaultMessageHeaders.InternalHeadersPrefix, StringComparison.Ordinal))
+                kafkaHeaders.Add(header.Name, Encode(header.Value));
+        }
+
         return kafkaHeaders;
     }
 
-    public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(this Confluent.Kafka.Headers? kafkaHeaders)
+    // The additional capacity reserves room for the headers that the caller is about to add
+    public static MessageHeaderCollection ToSilverbackHeaders(this Confluent.Kafka.Headers? kafkaHeaders, int additionalCapacity = 0)
     {
-        List<MessageHeader> headers = new(kafkaHeaders?.Count ?? 0);
-        kafkaHeaders?.ForEach(kafkaHeader => headers.Add(new MessageHeader(kafkaHeader.Key, Decode(kafkaHeader.GetValueBytes()))));
+        if (kafkaHeaders == null)
+            return new MessageHeaderCollection(additionalCapacity);
+
+        MessageHeaderCollection headers = new(kafkaHeaders.Count + additionalCapacity);
+
+        for (int i = 0; i < kafkaHeaders.Count; i++)
+        {
+            IHeader kafkaHeader = kafkaHeaders[i];
+            headers.Add(new MessageHeader(kafkaHeader.Key, Decode(kafkaHeader.GetValueBytes())));
+        }
 
         return headers;
     }

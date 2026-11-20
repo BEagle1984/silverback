@@ -108,9 +108,10 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
         try
         {
+            // Reserve room for the message key, response topic and correlation data headers
             MessageHeaderCollection headers = Configuration.AreHeadersSupported && message.ApplicationMessage.UserProperties != null
-                ? [.. message.ApplicationMessage.UserProperties.ToSilverbackHeaders()]
-                : [];
+                ? message.ApplicationMessage.UserProperties.ToSilverbackHeaders(3)
+                : new MessageHeaderCollection(3);
 
             MqttConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(message.ApplicationMessage.Topic);
 
