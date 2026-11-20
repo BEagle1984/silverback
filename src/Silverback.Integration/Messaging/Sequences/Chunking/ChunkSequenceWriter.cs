@@ -4,7 +4,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -114,13 +114,15 @@ public class ChunkSequenceWriter : ISequenceWriter
         }
     }
 
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Stream ownership is transferred to the envelope")]
     private static IOutboundEnvelope CreateChunkEnvelope(
         in int chunkIndex,
         in int? chunksCount,
         byte[] rawContent,
         IOutboundEnvelope originalEnvelope)
     {
-        IOutboundEnvelope envelope = originalEnvelope.CloneReplacingRawMessage(new MemoryStream(rawContent));
+        // The chunk content is a fresh copy that nobody else references, so the producer can use it without copying it again
+        IOutboundEnvelope envelope = originalEnvelope.CloneReplacingRawMessage(new OwnedReadOnlyMemoryStream(rawContent));
 
         envelope.Headers.AddOrReplace(DefaultMessageHeaders.ChunkIndex, chunkIndex);
 

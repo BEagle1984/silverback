@@ -70,7 +70,7 @@ public class RawMessage
     /// <returns>
     ///     The message content.
     /// </returns>
-    public static implicit operator byte[]?(RawMessage? message) => message?.Content.ReadAll();
+    public static implicit operator byte[]?(RawMessage? message) => message?.ToByteArray();
 
     /// <summary>
     ///     Creates a new <see cref="RawMessage" /> instance from the specified content.
@@ -108,7 +108,7 @@ public class RawMessage
     /// <returns>
     ///     The message content.
     /// </returns>
-    public byte[]? ToByteArray() => Content.ReadAll();
+    public byte[]? ToByteArray() => CopyIfShared(Content.ReadAll());
 
     /// <summary>
     ///     Returns the message content.
@@ -116,5 +116,8 @@ public class RawMessage
     /// <returns>
     ///     The message content.
     /// </returns>
-    public ValueTask<byte[]?> ToByteArrayAsync() => Content.ReadAllAsync();
+    public async ValueTask<byte[]?> ToByteArrayAsync() => CopyIfShared(await Content.ReadAllAsync().ConfigureAwait(false));
+
+    // ReadAll returns the stream's own buffer when the content is an OwnedReadOnlyMemoryStream: the user must get a copy
+    private byte[]? CopyIfShared(byte[]? bytes) => bytes != null && Content is OwnedReadOnlyMemoryStream ? (byte[])bytes.Clone() : bytes;
 }

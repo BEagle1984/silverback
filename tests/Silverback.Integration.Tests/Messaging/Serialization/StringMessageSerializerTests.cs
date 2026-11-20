@@ -31,6 +31,20 @@ public class StringMessageSerializerTests
     }
 
     [Fact]
+    public async Task SerializeAsync_ShouldReturnStreamWhoseBufferCanBeProducedWithoutCopying()
+    {
+        StringMessage message = new StringMessage<TestEventOne>("the message");
+
+        StringMessageSerializer serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(message, [], TestProducerEndpoint.GetDefault());
+
+        byte[]? producedBytes = serialized.ReadAll();
+        producedBytes.ShouldBe("the message"u8.ToArray());
+        serialized.ReadAll().ShouldBeSameAs(producedBytes);
+    }
+
+    [Fact]
     public async Task SerializeAsync_ShouldReturnNull_WhenMessageIsNull()
     {
         StringMessageSerializer serializer = new();

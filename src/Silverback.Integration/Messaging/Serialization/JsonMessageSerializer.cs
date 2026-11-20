@@ -65,7 +65,7 @@ public sealed class JsonMessageSerializer : IMessageSerializer, IEquatable<JsonM
             headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
         byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(message, type, Options);
-        return ValueTask.FromResult<Stream?>(new MemoryStream(bytes));
+        return ValueTask.FromResult<Stream?>(new OwnedReadOnlyMemoryStream(bytes));
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
