@@ -3,13 +3,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
@@ -187,6 +190,34 @@ public class ChunkSequenceWriterTests
         envelopes[3].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));
     }
 
+    [Theory]
+    [InlineData(10, 3, 4)]
+    [InlineData(9, 3, 3)]
+    [InlineData(3, 3, 1)]
+    [InlineData(1, 3, 1)]
+    public async Task ProcessMessage_ShouldSplitMessageAndReturnBufferOnce(int messageLength, int chunkSize, int expectedChunksCount)
+    {
+        TrackingArrayPool arrayPool = new();
+        byte[] rawMessage = BytesUtil.GetRandomBytes(messageLength);
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(rawMessage, chunkSize);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        arrayPool.RentedCount.ShouldBe(1);
+        arrayPool.ReturnedCount.ShouldBe(1);
+        arrayPool.OutstandingCount.ShouldBe(0);
+
+        envelopes.Count.ShouldBe(expectedChunksCount);
+
+        for (int i = 0; i < expectedChunksCount; i++)
+        {
+            byte[] expectedChunk = rawMessage[(i * chunkSize)..Math.Min((i + 1) * chunkSize, messageLength)];
+            envelopes[i].RawMessage.ReadAll().ShouldBe(expectedChunk);
+            envelopes[i].Headers.GetValue(DefaultMessageHeaders.IsLastChunk).ShouldBe(i == expectedChunksCount - 1 ? "True" : null);
+        }
+    }
+
     [Fact]
     public async Task ProcessMessage_ShouldStateChunksCountFromCurrentPosition_WhenStreamIsPartiallyRead()
     {
@@ -245,18 +276,7 @@ public class ChunkSequenceWriterTests
     public async Task ProcessMessage_ShouldReturnChunksReadableWithoutCopy()
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes(10);
-        OutboundEnvelope sourceEnvelope = new(
-            rawMessage,
-            null,
-            new TestProducerEndpointConfiguration("test")
-            {
-                Chunk = new ChunkSettings
-                {
-                    Size = 3
-                }
-            },
-            Substitute.For<IProducer>(),
-            new SilverbackContext(Substitute.For<IServiceProvider>()));
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(rawMessage, 3);
 
         ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>());
         List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
@@ -271,5 +291,210 @@ public class ChunkSequenceWriterTests
             envelopes[i].RawMessage.ReadAll().ShouldBeSameAs(chunk);
             envelopes[i].RawMessage!.CanWrite.ShouldBeFalse();
         }
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldYieldNoChunksAndReturnBufferOnce_WhenMessageIsEmpty()
+    {
+        TrackingArrayPool arrayPool = new();
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(Array.Empty<byte>(), 3, alwaysAddHeaders: true);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        envelopes.ShouldBeEmpty();
+        arrayPool.RentedCount.ShouldBe(1);
+        arrayPool.ReturnedCount.ShouldBe(1);
+        arrayPool.OutstandingCount.ShouldBe(0);
+    }
+
+    [Theory]
+    [InlineData(10, 1000, 10)]
+    [InlineData(0, 1000, 1)]
+    [InlineData(3, 3, 3)]
+    [InlineData(10, 3, 3)]
+    public async Task ProcessMessage_ShouldRentBufferNotLongerThanMessage_WhenMessageIsSeekable(
+        int messageLength,
+        int chunkSize,
+        int expectedBufferLength)
+    {
+        TrackingArrayPool arrayPool = new();
+        byte[] rawMessage = BytesUtil.GetRandomBytes(messageLength);
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(rawMessage, chunkSize, alwaysAddHeaders: true);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        arrayPool.RequestedLengths.ShouldBe([expectedBufferLength]);
+        arrayPool.OutstandingCount.ShouldBe(0);
+        envelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()!).ToArray().ShouldBe(rawMessage);
+    }
+
+    [Theory]
+    [InlineData(4, 1000, 6, 6)]
+    [InlineData(4, 3, 3, 6)]
+    [InlineData(10, 1000, 1, 0)]
+    [InlineData(20, 1000, 1, 0)]
+    public async Task ProcessMessage_ShouldRentBufferNotLongerThanRemainingMessage_WhenSeekableMessageIsPartiallyRead(
+        int position,
+        int chunkSize,
+        int expectedBufferLength,
+        int expectedRemainingLength)
+    {
+        TrackingArrayPool arrayPool = new();
+        byte[] rawMessage = BytesUtil.GetRandomBytes(10);
+        MemoryStream rawMessageStream = new(rawMessage) { Position = position };
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(rawMessageStream, chunkSize, alwaysAddHeaders: true);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        arrayPool.RequestedLengths.ShouldBe([expectedBufferLength]);
+        arrayPool.OutstandingCount.ShouldBe(0);
+        envelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()!).ToArray().ShouldBe(rawMessage[^expectedRemainingLength..]);
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldRentChunkSizeBuffer_WhenMessageIsNotSeekable()
+    {
+        TrackingArrayPool arrayPool = new();
+        byte[] rawMessage = BytesUtil.GetRandomBytes(10);
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(new NonSeekableStream(rawMessage), 1000);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        arrayPool.RequestedLengths.ShouldBe([1000]);
+        arrayPool.OutstandingCount.ShouldBe(0);
+        envelopes.Count.ShouldBe(1);
+        envelopes[0].RawMessage.ReadAll().ShouldBe(rawMessage);
+        envelopes[0].Headers.GetValue(DefaultMessageHeaders.IsLastChunk).ShouldBe("True");
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldReturnBufferOnlyAfterLastChunkIsCreated()
+    {
+        TrackingArrayPool arrayPool = new();
+        byte[] rawMessage = BytesUtil.GetRandomBytes(10);
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(rawMessage, 3);
+        List<byte[]> chunks = [];
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+
+        await foreach (IOutboundEnvelope envelope in writer.ProcessMessageAsync(sourceEnvelope))
+        {
+            arrayPool.OutstandingCount.ShouldBe(1);
+            chunks.Add(envelope.RawMessage.ReadAll()!);
+        }
+
+        arrayPool.OutstandingCount.ShouldBe(0);
+        chunks.SelectMany(chunk => chunk).ToArray().ShouldBe(rawMessage);
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldReturnBufferOnce_WhenEnumerationIsAbandoned()
+    {
+        TrackingArrayPool arrayPool = new();
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(BytesUtil.GetRandomBytes(10), 3);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+
+        await foreach (IOutboundEnvelope _ in writer.ProcessMessageAsync(sourceEnvelope))
+        {
+            break;
+        }
+
+        arrayPool.RentedCount.ShouldBe(1);
+        arrayPool.ReturnedCount.ShouldBe(1);
+        arrayPool.OutstandingCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldReturnBufferOnce_WhenChunkProcessingThrows()
+    {
+        TrackingArrayPool arrayPool = new();
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(BytesUtil.GetRandomBytes(10), 3);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+
+        Func<Task> act = async () =>
+        {
+            await foreach (IOutboundEnvelope _ in writer.ProcessMessageAsync(sourceEnvelope))
+            {
+                throw new InvalidOperationException("test");
+            }
+        };
+
+        await act.ShouldThrowAsync<InvalidOperationException>();
+        arrayPool.RentedCount.ShouldBe(1);
+        arrayPool.ReturnedCount.ShouldBe(1);
+        arrayPool.OutstandingCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldReturnBufferOnce_WhenReadingMessageThrows()
+    {
+        TrackingArrayPool arrayPool = new();
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(new FailingStream(BytesUtil.GetRandomBytes(10), 2), 3);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+
+        Func<Task> act = () => writer.ProcessMessageAsync(sourceEnvelope).ToListAsync().AsTask();
+
+        await act.ShouldThrowAsync<OperationCanceledException>();
+        arrayPool.RentedCount.ShouldBe(1);
+        arrayPool.ReturnedCount.ShouldBe(1);
+        arrayPool.OutstandingCount.ShouldBe(0);
+    }
+
+    private static OutboundEnvelope CreateEnvelope(object rawMessage, int chunkSize, bool alwaysAddHeaders = false) =>
+        new(
+            rawMessage,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageKey, "123" }
+            },
+            new TestProducerEndpointConfiguration("test")
+            {
+                Chunk = new ChunkSettings
+                {
+                    Size = chunkSize,
+                    AlwaysAddHeaders = alwaysAddHeaders
+                }
+            },
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+    private sealed class FailingStream : MemoryStream
+    {
+        private readonly int _failingReadIndex;
+
+        private int _readIndex;
+
+        public FailingStream(byte[] buffer, int failingReadIndex)
+            : base(buffer)
+        {
+            _failingReadIndex = failingReadIndex;
+        }
+
+        public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            if (_readIndex++ == _failingReadIndex)
+                throw new OperationCanceledException();
+
+            return base.ReadAsync(buffer, cancellationToken);
+        }
+    }
+
+    private sealed class NonSeekableStream : MemoryStream
+    {
+        public NonSeekableStream(byte[] buffer)
+            : base(buffer)
+        {
+        }
+
+        public override bool CanSeek => false;
+
+        public override long Length => throw new NotSupportedException();
     }
 }
