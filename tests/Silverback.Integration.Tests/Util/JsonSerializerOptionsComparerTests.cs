@@ -332,6 +332,36 @@ public class JsonSerializerOptionsComparerTests
         result.ShouldBeFalse();
     }
 
+    // The options of the System.Text.Json versions before 11 expose no collection other than the converters, but the comparer reads the
+    // settings via reflection, so these tests stand for the TypeClassifiers of the .NET 11 runtime.
+    [Fact]
+    public void PropertyValuesEqual_ShouldReturnTrue_WhenDistinctCollectionsWithSameItems()
+    {
+        object item = new();
+
+        bool result = JsonSerializerOptionsComparer.PropertyValuesEqual(new List<object> { item }, new List<object> { item });
+
+        result.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void PropertyValuesEqual_ShouldReturnFalse_WhenCollectionsWithDifferentItems()
+    {
+        bool result = JsonSerializerOptionsComparer.PropertyValuesEqual(new List<object> { new() }, new List<object> { new() });
+
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void PropertyValuesEqual_ShouldReturnFalse_WhenCollectionsWithDifferentLength()
+    {
+        object item = new();
+
+        bool result = JsonSerializerOptionsComparer.PropertyValuesEqual(new List<object> { item }, new List<object> { item, item });
+
+        result.ShouldBeFalse();
+    }
+
     private sealed class TestEnumerableResolver : IJsonTypeInfoResolver, IEnumerable<IJsonTypeInfoResolver>
     {
         private readonly IJsonTypeInfoResolver[] _resolvers;
