@@ -19,6 +19,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
+using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Logging;
@@ -64,6 +65,58 @@ public class OutboxProduceStrategyTests
         OutboxProduceStrategy strategy2 = new(new TestSettings("outbox2"));
 
         strategy1.Equals(strategy2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task ProduceAsync_ShouldStoreHeaders()
+    {
+        TestOutboxWriter writer = new();
+        IProduceStrategyImplementation strategy = BuildStrategy(writer);
+
+        await strategy.ProduceAsync(
+            new OutboundEnvelope<TestEventOne>(
+                new TestEventOne { Content = "one" },
+                [new MessageHeader("x-one", "1"), new MessageHeader("x-two", "2")],
+                EndpointConfiguration,
+                Substitute.For<IProducer>()),
+            CancellationToken.None);
+
+        writer.Messages.ShouldHaveSingleItem().Headers.ShouldNotBeNull()
+            .Where(header => header.Name != DefaultMessageHeaders.TraceId)
+            .ShouldBe(
+            [
+                new MessageHeader("x-one", "1"),
+                new MessageHeader("x-two", "2")
+            ]);
+    }
+
+    [Fact]
+    public async Task ProduceAsync_ShouldStoreHeadersAndSerializedEndpoint_WhenEndpointIsDynamic()
+    {
+        IDynamicProducerEndpointResolver<TestProducerEndpoint> endpointResolver =
+            Substitute.For<IDynamicProducerEndpointResolver<TestProducerEndpoint>>();
+        TestProducerEndpointConfiguration endpointConfiguration = EndpointConfiguration with { EndpointResolver = endpointResolver };
+        endpointResolver.GetEndpoint(Arg.Any<IOutboundEnvelope>()).Returns(new TestProducerEndpoint("topic", endpointConfiguration));
+        endpointResolver.GetSerializedEndpoint(Arg.Any<IOutboundEnvelope>()).Returns("serialized-endpoint");
+        TestOutboxWriter writer = new();
+        IProduceStrategyImplementation strategy = BuildStrategy(writer, endpointConfiguration);
+
+        await strategy.ProduceAsync(
+            new OutboundEnvelope<TestEventOne>(
+                new TestEventOne { Content = "one" },
+                [new MessageHeader("x-one", "1"), new MessageHeader("x-two", "2")],
+                endpointConfiguration,
+                Substitute.For<IProducer>()),
+            CancellationToken.None);
+
+        writer.Messages.ShouldHaveSingleItem().Headers.ShouldNotBeNull()
+            .Where(header => header.Name != DefaultMessageHeaders.TraceId)
+            .ShouldBe(
+            [
+                new MessageHeader("x-one", "1"),
+                new MessageHeader("x-two", "2"),
+                new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, "serialized-endpoint")
+            ]);
     }
 
     [Theory]
@@ -342,7 +395,9 @@ public class OutboxProduceStrategyTests
         exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe("Write failed.");
     }
 
-    private static IProduceStrategyImplementation BuildStrategy(TestOutboxWriter writer)
+    private static IProduceStrategyImplementation BuildStrategy(
+        TestOutboxWriter writer,
+        TestProducerEndpointConfiguration? endpointConfiguration = null)
     {
         ServiceCollection services = [];
         services
@@ -354,7 +409,9 @@ public class OutboxProduceStrategyTests
         TestSettings settings = new("outbox");
         serviceProvider.GetRequiredService<OutboxWriterFactory>().AddFactory<TestSettings>((_, _) => writer);
 
-        return new OutboxProduceStrategy(settings).Build(new SilverbackContext(serviceProvider), EndpointConfiguration);
+        return new OutboxProduceStrategy(settings).Build(
+            new SilverbackContext(serviceProvider),
+            endpointConfiguration ?? EndpointConfiguration);
     }
 
     private static OutboundEnvelope<TestEventOne> CreateEnvelope(string content) =>

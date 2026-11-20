@@ -3,10 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using MQTTnet.Packets;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
@@ -15,26 +13,39 @@ internal static class MqttHeadersMappingExtensions
     public static List<MqttUserProperty> ToUserProperties(this IReadOnlyCollection<MessageHeader> headers, bool isChunkingEnabled = false)
     {
         List<MqttUserProperty> userProperties = new(headers.Count + 1);
-        headers.Where(header => header.Value != null &&
-                                !header.Name.StartsWith(DefaultMessageHeaders.InternalHeadersPrefix, StringComparison.Ordinal))
-            .ForEach(header => userProperties.Add(CreateUserProperty(header.Name, header.Value)));
+        bool hasChunkMessageId = false;
+        MessageHeader? messageKeyHeader = null;
+
+        foreach (MessageHeader header in headers)
+        {
+            if (header.Name == MqttMessageHeaders.ChunkMessageId)
+                hasChunkMessageId = true;
+
+            if (messageKeyHeader == null && header.Name == DefaultMessageHeaders.MessageKey)
+                messageKeyHeader = header;
+
+            if (header.Value != null && !header.Name.StartsWith(DefaultMessageHeaders.InternalHeadersPrefix, StringComparison.Ordinal))
+                userProperties.Add(CreateUserProperty(header.Name, header.Value));
+        }
 
         // The message key correlating the chunks (set when chunking) is an internal header: send it as the chunked message identifier.
         // The chunk headers can't be used to recognize the chunks, since they can be renamed (see WithCustomHeaderName).
-        if (isChunkingEnabled &&
-            headers.All(header => header.Name != MqttMessageHeaders.ChunkMessageId) &&
-            headers.FirstOrDefault(header => header.Name == DefaultMessageHeaders.MessageKey)?.Value is { } messageKey)
-        {
+        if (isChunkingEnabled && !hasChunkMessageId && messageKeyHeader?.Value is { } messageKey)
             userProperties.Add(CreateUserProperty(MqttMessageHeaders.ChunkMessageId, messageKey));
-        }
 
         return userProperties;
     }
 
-    public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(this List<MqttUserProperty> userProperties)
+    // The additional capacity reserves room for the headers that the caller is about to add
+    public static MessageHeaderCollection ToSilverbackHeaders(this List<MqttUserProperty> userProperties, int additionalCapacity = 0)
     {
-        List<MessageHeader> headers = new(userProperties.Count);
-        userProperties.ForEach(userProperty => headers.Add(new MessageHeader(userProperty.Name, userProperty.ReadValueAsString())));
+        MessageHeaderCollection headers = new(userProperties.Count + additionalCapacity);
+
+        foreach (MqttUserProperty userProperty in userProperties)
+        {
+            headers.Add(new MessageHeader(userProperty.Name, userProperty.ReadValueAsString()));
+        }
+
         return headers;
     }
 
