@@ -44,6 +44,10 @@
 - Entries are grouped by area (e.g. Kafka, mocked Kafka and testing, MQTT, locks), not in chronological order. Insert a new entry next to the existing entries for the same area.
 - Do not add entries for changes that only touch tests, such as flaky test fixes.
 
+## Design decisions
+
+- Record design decisions and their rationale in the GitHub issue that tracks the work, and summarize the ones that matter to readers of the code in the PR description. Do not create ADRs unless explicitly asked.
+
 ## Git
 
 - Write short Conventional Commits subjects, without articles or filler words: `chore: migrate solutions to slnx`, not `chore: migrate the solutions to the slnx format`.
