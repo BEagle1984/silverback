@@ -379,8 +379,11 @@ public class OutboxProduceStrategyTests
         public Task AddAsync(
             OutboxMessage outboxMessage,
             ISilverbackContext? context = null,
-            CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
+            CancellationToken cancellationToken = default)
+        {
+            Messages.Add(outboxMessage);
+            return Task.CompletedTask;
+        }
 
         public Task AddAsync(
             IEnumerable<OutboxMessage> outboxMessages,
