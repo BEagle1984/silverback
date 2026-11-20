@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Util;
 
@@ -14,7 +13,7 @@ public class BehaviorsProvider : IBehaviorsProvider
 {
     private readonly IServiceProvider _serviceProvider;
 
-    private IReadOnlyCollection<IBehavior>? _behaviors;
+    private IBehavior[]? _behaviors;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BehaviorsProvider" /> class.
@@ -28,9 +27,20 @@ public class BehaviorsProvider : IBehaviorsProvider
     }
 
     /// <inheritdoc cref="IBehaviorsProvider.CreateStack" />
-    public Stack<IBehavior> CreateStack() => new(GetBehaviors());
+    public Stack<IBehavior> CreateStack()
+    {
+        IBehavior[] behaviors = GetBehaviors();
+        Stack<IBehavior> stack = new(behaviors.Length);
 
-    // Reverse the behaviors order since they will be put in a Stack<T>
-    private IReadOnlyCollection<IBehavior> GetBehaviors() =>
-        _behaviors ??= [.. _serviceProvider.GetServices<IBehavior>().SortBySortIndex().Reverse()];
+        // Push the behaviors in reverse order, so that they are popped in the sort order
+        for (int i = behaviors.Length - 1; i >= 0; i--)
+        {
+            stack.Push(behaviors[i]);
+        }
+
+        return stack;
+    }
+
+    // Returns the behaviors in the sort order. The array is reused for each call and must not be modified.
+    internal IBehavior[] GetBehaviors() => _behaviors ??= [.. _serviceProvider.GetServices<IBehavior>().SortBySortIndex()];
 }
