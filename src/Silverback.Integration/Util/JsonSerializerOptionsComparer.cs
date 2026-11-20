@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -17,11 +18,11 @@ namespace Silverback.Util;
 ///     Compares the <see cref="JsonSerializerOptions" /> by value.
 /// </summary>
 /// <remarks>
-///     The value-type and string settings are compared by value and the converters item by item. All other objects, such as the type
-///     info resolvers, naming policies, encoder and reference handler, are compared by reference, since their configuration isn't
-///     observable. The only exception is the default reflection-based resolver, which is implicitly assigned when the options are first
-///     used. This way a setting added by a future version of System.Text.Json is compared as well, and can at worst cause equivalent
-///     options to be considered different.
+///     The value-type and string settings are compared by value and the collections, such as the converters, item by item. All other
+///     objects, such as the type info resolvers, naming policies, encoder and reference handler, are compared by reference, since their
+///     configuration isn't observable. The only exception is the default reflection-based resolver, which is implicitly assigned when the
+///     options are first used. This way a setting added by a future version of System.Text.Json is compared as well, and can at worst
+///     cause equivalent options to be considered different.
 /// </remarks>
 internal static class JsonSerializerOptionsComparer
 {
@@ -38,6 +39,8 @@ internal static class JsonSerializerOptionsComparer
                                 nameof(JsonSerializerOptions.TypeInfoResolver) or
                                 nameof(JsonSerializerOptions.TypeInfoResolverChain)))
     ];
+
+    private static readonly EqualityComparer<object?> ValueComparer = EqualityComparer<object?>.Create(ValuesEqual);
 
     /// <summary>
     ///     Determines whether the specified <see cref="JsonSerializerOptions" /> are equivalent. A <c>null</c> value is considered
@@ -64,22 +67,24 @@ internal static class JsonSerializerOptionsComparer
                GetEffectiveResolvers(x).SequenceEqual(GetEffectiveResolvers(y), ResolverEqualityComparer.Instance);
     }
 
+    // The collections, such as the converters, are compared item by item, since each options instance has its own list instance, which
+    // would never be reference-equal
+    internal static bool PropertyValuesEqual(object? x, object? y)
+    {
+        if (x is IEnumerable itemsX and not string && y is IEnumerable itemsY and not string)
+            return itemsX.Cast<object?>().SequenceEqual(itemsY.Cast<object?>(), ValueComparer);
+
+        return ValuesEqual(x, y);
+    }
+
     // With the .NET 6 compatibility switch enabled, a context set directly as TypeInfoResolver (not in a chain) falls back to reflection
     private static IEnumerable<IJsonTypeInfoResolver?> GetEffectiveResolvers(JsonSerializerOptions options) =>
         IsSourceGenReflectionFallbackEnabled && options.TypeInfoResolver is JsonSerializerContext context
             ? [context, JsonSerializerOptions.Default.TypeInfoResolver]
             : GetResolvers(options.TypeInfoResolver);
 
-    private static bool PropertyValuesEqual(object? x, object? y)
-    {
-        if (x is IEnumerable<JsonConverter> convertersX && y is IEnumerable<JsonConverter> convertersY)
-            return convertersX.SequenceEqual(convertersY, ReferenceEqualityComparer.Instance);
-
-        if (x is null || x is string || x.GetType().IsValueType)
-            return Equals(x, y);
-
-        return ReferenceEquals(x, y);
-    }
+    private static bool ValuesEqual(object? x, object? y) =>
+        x is null || x is string || x.GetType().IsValueType ? Equals(x, y) : ReferenceEquals(x, y);
 
     // The TypeInfoResolver is the effective resolver: it returns the chain itself when the chain is used or when combining resolvers.
     // The chains are flattened recursively, since a combined resolver added to the chain is stored as a single nested item. Only the
