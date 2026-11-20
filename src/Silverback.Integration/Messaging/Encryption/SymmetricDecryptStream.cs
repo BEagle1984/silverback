@@ -74,21 +74,12 @@ public class SymmetricDecryptStream : SilverbackCryptoStream
         if (settings.InitializationVector != null)
             return algorithm.CreateDecryptor();
 
-        // Read the IV prepended to the message
-        byte[] buffer = new byte[algorithm.IV.Length];
+        // Read the IV prepended to the message. Its length always matches the block size, while the IV getter would generate and copy
+        // a throwaway random IV on each call.
+        byte[] initializationVector = new byte[algorithm.BlockSize / 8];
+        stream.ReadAtLeast(initializationVector, initializationVector.Length, throwOnEndOfStream: false);
 
-        int totalReadCount = 0;
-        while (totalReadCount < algorithm.IV.Length)
-        {
-            int readCount = stream.Read(buffer, totalReadCount, algorithm.IV.Length - totalReadCount);
-
-            if (readCount == 0)
-                break;
-
-            totalReadCount += readCount;
-        }
-
-        algorithm.IV = buffer;
+        algorithm.IV = initializationVector;
 
         return algorithm.CreateDecryptor();
     }
