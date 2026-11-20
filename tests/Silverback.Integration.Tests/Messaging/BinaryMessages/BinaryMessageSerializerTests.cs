@@ -63,6 +63,36 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
+    public async Task SerializeAsync_ShouldNotShareByteArray()
+    {
+        byte[] messageBytes = Encoding.UTF8.GetBytes("test");
+
+        BinaryMessageSerializer serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(
+            messageBytes,
+            [],
+            TestProducerEndpoint.GetDefault());
+
+        byte[]? producedBytes = serialized.ReadAll();
+        producedBytes.ShouldBe(messageBytes);
+        producedBytes.ShouldNotBeSameAs(messageBytes);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ShouldNotShareBinaryMessageByteArray()
+    {
+        byte[] messageBytes = Encoding.UTF8.GetBytes("test");
+        BinaryMessage message = new(messageBytes);
+
+        Stream? serialized = await new BinaryMessageSerializer().SerializeAsync(message, [], TestProducerEndpoint.GetDefault());
+
+        byte[]? producedBytes = serialized.ReadAll();
+        producedBytes.ShouldBe(messageBytes);
+        producedBytes.ShouldNotBeSameAs(messageBytes);
+    }
+
+    [Fact]
     public async Task SerializeAsync_ShouldReturnBinaryMessageContent()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };

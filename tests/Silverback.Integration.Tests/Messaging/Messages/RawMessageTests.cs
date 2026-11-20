@@ -92,6 +92,25 @@ public class RawMessageTests
     }
 
     [Fact]
+    public void FromByteArray_ShouldNotShareByteArray()
+    {
+        byte[] content1 = [0x01, 0x02, 0x03];
+        byte[] content2 = [0x01, 0x02, 0x03];
+        byte[] content3 = [0x01, 0x02, 0x03];
+        byte[] content4 = [0x01, 0x02, 0x03];
+
+        RawMessage message1 = RawMessage.FromByteArray(content1);
+        RawMessage<TestEventOne> message2 = RawMessage<TestEventOne>.FromByteArray(content2);
+        RawMessage message3 = content3;
+        RawMessage<TestEventOne> message4 = content4;
+
+        message1.Content.ReadAll().ShouldNotBeSameAs(content1);
+        message2.Content.ReadAll().ShouldNotBeSameAs(content2);
+        message3.Content.ReadAll().ShouldNotBeSameAs(content3);
+        message4.Content.ReadAll().ShouldNotBeSameAs(content4);
+    }
+
+    [Fact]
     public void ToStream_ShouldReturnContent()
     {
         RawMessage message1 = new(new MemoryStream([0x01, 0x02, 0x03]));
@@ -115,6 +134,34 @@ public class RawMessageTests
 
         content1.ShouldBe([0x01, 0x02, 0x03]);
         content2.ShouldBe([0x01, 0x02, 0x03]);
+    }
+
+    [Fact]
+    public async Task ToByteArray_ShouldReturnCopy_WhenContentIsOwnedBuffer()
+    {
+        byte[] buffer = [0x01, 0x02, 0x03];
+        RawMessage message = new(new OwnedReadOnlyMemoryStream(buffer));
+
+        message.ToByteArray().ShouldNotBeSameAs(buffer);
+        (await message.ToByteArrayAsync()).ShouldNotBeSameAs(buffer);
+        ((byte[]?)message).ShouldNotBeSameAs(buffer);
+    }
+
+    [Fact]
+    public async Task ToByteArray_ShouldNotExposeOwnedBuffer_WhenReturnedArrayIsModified()
+    {
+        byte[] buffer = [0x01, 0x02, 0x03];
+        RawMessage message = new(new OwnedReadOnlyMemoryStream(buffer));
+
+        byte[]? syncResult = message.ToByteArray();
+        syncResult![0] = 0xFF;
+        byte[]? asyncResult = await message.ToByteArrayAsync();
+        asyncResult![1] = 0xFF;
+        byte[]? implicitResult = message;
+        implicitResult![2] = 0xFF;
+
+        buffer.ShouldBe([0x01, 0x02, 0x03]);
+        message.Content.ReadAll().ShouldBe([0x01, 0x02, 0x03]);
     }
 
     [Fact]

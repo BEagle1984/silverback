@@ -240,4 +240,36 @@ public class ChunkSequenceWriterTests
 
         envelopes.ShouldBeEmpty();
     }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldReturnChunksReadableWithoutCopy()
+    {
+        byte[] rawMessage = BytesUtil.GetRandomBytes(10);
+        OutboundEnvelope sourceEnvelope = new(
+            rawMessage,
+            null,
+            new TestProducerEndpointConfiguration("test")
+            {
+                Chunk = new ChunkSettings
+                {
+                    Size = 3
+                }
+            },
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>());
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        envelopes.Count.ShouldBe(4);
+
+        for (int i = 0; i < envelopes.Count; i++)
+        {
+            byte[]? chunk = envelopes[i].RawMessage.ReadAll();
+
+            chunk.ShouldBe(rawMessage[(i * 3)..Math.Min((i + 1) * 3, rawMessage.Length)]);
+            envelopes[i].RawMessage.ReadAll().ShouldBeSameAs(chunk);
+            envelopes[i].RawMessage!.CanWrite.ShouldBeFalse();
+        }
+    }
 }

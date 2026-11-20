@@ -9,23 +9,28 @@ namespace Silverback.Util;
 
 internal static class StreamExtensions
 {
-    public static async ValueTask<byte[]?> ReadAllAsync(this Stream? stream)
+    // Returns the whole content of the stream. When the stream is an OwnedReadOnlyMemoryStream its buffer is returned without copying it,
+    // so the returned array may be shared and must not be modified (nor handed to user code)
+    public static ValueTask<byte[]?> ReadAllAsync(this Stream? stream)
     {
         if (stream == null)
-            return null;
+            return ValueTask.FromResult<byte[]?>(null);
 
-        if (stream is MemoryStream memoryStream)
-            return memoryStream.ToArray();
+        if (stream is OwnedReadOnlyMemoryStream ownedStream)
+            return ValueTask.FromResult<byte[]?>(ownedStream.Buffer);
 
-        using MemoryStream tempMemoryStream = new();
-        await stream.CopyToAsync(tempMemoryStream).ConfigureAwait(false);
-        return tempMemoryStream.ToArray();
+        return ReadAllCoreAsync(stream);
     }
 
+    // Returns the whole content of the stream. When the stream is an OwnedReadOnlyMemoryStream its buffer is returned without copying it,
+    // so the returned array may be shared and must not be modified (nor handed to user code)
     public static byte[]? ReadAll(this Stream? stream)
     {
         if (stream == null)
             return null;
+
+        if (stream is OwnedReadOnlyMemoryStream ownedStream)
+            return ownedStream.Buffer;
 
         if (stream is MemoryStream memoryStream)
             return memoryStream.ToArray();
@@ -55,5 +60,15 @@ internal static class StreamExtensions
 
         int readCount = stream.Read(buffer.AsSpan());
         return buffer[..readCount];
+    }
+
+    private static async ValueTask<byte[]?> ReadAllCoreAsync(Stream stream)
+    {
+        if (stream is MemoryStream memoryStream)
+            return memoryStream.ToArray();
+
+        using MemoryStream tempMemoryStream = new();
+        await stream.CopyToAsync(tempMemoryStream).ConfigureAwait(false);
+        return tempMemoryStream.ToArray();
     }
 }

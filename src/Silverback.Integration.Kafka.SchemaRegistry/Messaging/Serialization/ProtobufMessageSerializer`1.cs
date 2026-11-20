@@ -30,7 +30,8 @@ public class ProtobufMessageSerializer<TMessage> : SchemaRegistryMessageSerializ
         ProtobufSerializerConfig? protobufSerializerConfig = null)
         : base(
             schemaRegistryClient,
-            new ProtobufSerializer<TMessage>(schemaRegistryClient, protobufSerializerConfig))
+            new ProtobufSerializer<TMessage>(schemaRegistryClient, protobufSerializerConfig),
+            true)
     {
         ProtobufSerializerConfig = protobufSerializerConfig;
     }

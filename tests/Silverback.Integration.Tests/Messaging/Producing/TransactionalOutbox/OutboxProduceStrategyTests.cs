@@ -24,6 +24,7 @@ using Silverback.Messaging.Serialization;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Producing.TransactionalOutbox;
@@ -77,6 +78,36 @@ public class OutboxProduceStrategyTests
 
         writer.Messages.Select(message => Encoding.UTF8.GetString(message.Content!)).ShouldBe(["one", "two", "three"]);
         writer.Messages.ShouldAllBe(message => message.EndpointName == "test-endpoint");
+    }
+
+    [Fact]
+    public async Task ProduceAsync_ShouldNotShareRawByteArray()
+    {
+        TestOutboxWriter writer = new();
+        IProduceStrategyImplementation strategy = BuildStrategy(writer);
+        byte[] rawMessage = "raw"u8.ToArray();
+
+        await strategy.ProduceAsync(
+            new OutboundEnvelope(rawMessage, null, EndpointConfiguration, Substitute.For<IProducer>()),
+            CancellationToken.None);
+
+        OutboxMessage outboxMessage = writer.Messages.ShouldHaveSingleItem();
+        outboxMessage.Content.ShouldBe(rawMessage);
+        outboxMessage.Content.ShouldNotBeSameAs(rawMessage);
+    }
+
+    [Fact]
+    public async Task ProduceAsync_ShouldNotCopyOwnedBuffer()
+    {
+        TestOutboxWriter writer = new();
+        IProduceStrategyImplementation strategy = BuildStrategy(writer);
+        byte[] buffer = "serialized"u8.ToArray();
+
+        await strategy.ProduceAsync(
+            new OutboundEnvelope(new OwnedReadOnlyMemoryStream(buffer), null, EndpointConfiguration, Substitute.For<IProducer>()),
+            CancellationToken.None);
+
+        writer.Messages.ShouldHaveSingleItem().Content.ShouldBeSameAs(buffer);
     }
 
     [Theory]
