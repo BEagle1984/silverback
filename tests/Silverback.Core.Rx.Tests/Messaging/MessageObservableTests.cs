@@ -170,6 +170,36 @@ public sealed class MessageObservableTests : IDisposable
     }
 
     [Fact]
+    public async Task Subscribe_ShouldRethrowOnNextException_WhenObserverThrowsAlsoFromOnCompleted()
+    {
+        Task subscribeTask = Task.Run(() => _observable.Subscribe(
+            _ => throw new TestException(),
+            () => throw new InvalidOperationException("Test")));
+
+        _streamProvider.PushAsync(1).FireAndForget();
+
+        Exception? exception = await Record.ExceptionAsync(() => subscribeTask.WaitAsync(Timeout));
+
+        // Abort the pending push before asserting, otherwise disposing the provider would wait for it
+        _streamProvider.Abort();
+
+        exception.ShouldBeOfType<TestException>();
+    }
+
+    [Fact]
+    public async Task Subscribe_ShouldRethrow_WhenObserverThrowsFromOnCompleted()
+    {
+        Task subscribeTask = Task.Run(() => _observable.Subscribe(_ => { }, () => throw new TestException()));
+
+        await _streamProvider.PushAsync(1);
+        await _streamProvider.CompleteAsync().AsTask().WaitAsync(Timeout);
+
+        Exception? exception = await Record.ExceptionAsync(() => subscribeTask.WaitAsync(Timeout));
+
+        exception.ShouldBeOfType<TestException>();
+    }
+
+    [Fact]
     public async Task Subscribe_ShouldThrow_WhenCalledAgainAfterCompletion()
     {
         int count = 0;

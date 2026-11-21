@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -70,8 +71,10 @@ public partial class StreamingTests
         consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
-    [Fact]
-    public async Task Streaming_ShouldDisconnect_WhenObservableProcessingFails()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Streaming_ShouldDisconnect_WhenObservableProcessingFails(bool isBehindOperator)
     {
         TestingCollection<TestEventOne> receivedMessages = [];
 
@@ -90,7 +93,7 @@ public partial class StreamingTests
             .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(HandleUnboundedStream));
 
         void HandleUnboundedStream(IMessageStreamObservable<TestEventOne> observable) =>
-            observable.Subscribe(message =>
+            (isBehindOperator ? observable.Select(message => message) : observable).Subscribe(message =>
             {
                 receivedMessages.Add(message);
 
