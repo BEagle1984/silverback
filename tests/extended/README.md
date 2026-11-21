@@ -15,6 +15,7 @@ Open **Silverback.Tests.Extended.slnx** on Windows to build the interactive test
 | Silverback.Tests.Extended.Benchmarks | General implementation and pipeline benchmarks |
 | Silverback.Tests.Extended.Benchmarks.VersionComparison.Current | Benchmarks against the current repository sources |
 | Silverback.Tests.Extended.Benchmarks.VersionComparison.V4_6_2 | Benchmarks against Silverback 4.6.2 |
+| Silverback.Tests.Extended.Benchmarks.VersionComparison.V5_9_0 | Benchmarks against Silverback 5.9.0 |
 
 Current-version projects reference the repository sources; no C# sources are linked. The historical version comparison intentionally uses pinned NuGet packages. The general benchmark project is a friend assembly of `Silverback.Core`, `Silverback.Integration` and `Silverback.Integration.Kafka`. Run it with `dotnet run -c Release --project tests/extended/Silverback.Tests.Extended.Benchmarks -- --filter "*PublisherBenchmark*"`; the additional `--smoke` argument runs each selected benchmark once, just to prove that it runs.
 
@@ -119,7 +120,9 @@ Ad hoc investigation summaries are kept in the repository's ignored `temp/` dire
 Run the selected benchmark project in Release configuration, for example:
 
 ```shell
-dotnet run --project tests/extended/Silverback.Tests.Extended.Benchmarks.VersionComparison.Current -c Release
+dotnet run --project tests/extended/Silverback.Tests.Extended.Benchmarks.VersionComparison.Current -c Release -- --filter "*MediatorBenchmark*" "*MockedKafka*"
 ```
+
+The benchmarks of the current and 5.9.0 version comparison projects are selected with `--filter` (the 4.6.2 project always runs its Kafka producer benchmark). The `MockedKafka*` ones run against the mocked Kafka broker, while the `KafkaProducerBenchmark` and `KafkaConsumerPipelineBenchmark` need the root Kafka services.
 
 `UpdateOlderVersions.ps1` scaffolds an additional historical comparison from the current-version project. It accepts stable package versions and refuses to overwrite an existing comparison, preserving its API adaptations. Adapt the generated workloads to that version and add the project to the extended solution.
