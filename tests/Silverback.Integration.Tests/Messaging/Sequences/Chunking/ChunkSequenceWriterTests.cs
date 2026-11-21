@@ -249,27 +249,45 @@ public class ChunkSequenceWriterTests
     }
 
     [Fact]
-    public async Task ProcessMessage_ShouldProduceNoChunks_WhenNothingIsLeftToRead()
+    public async Task ProcessMessage_ShouldProduceSingleChunkWithRemainder_WhenRemainderOfPartiallyReadStreamFitsInOneChunk()
     {
-        ChunkEnricherFactory enricherFactory = new();
-        OutboundEnvelope sourceEnvelope = new(
-            BytesUtil.GetRandomBytes(10),
-            null,
-            new TestProducerEndpointConfiguration("test")
-            {
-                Chunk = new ChunkSettings
-                {
-                    Size = 3
-                }
-            },
-            Substitute.For<IProducer>(),
-            new SilverbackContext(Substitute.For<IServiceProvider>()));
+        byte[] rawMessage = BytesUtil.GetRandomBytes(10);
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(rawMessage, 3);
+        sourceEnvelope.RawMessage!.Position = 8;
+
+        List<IOutboundEnvelope> envelopes = await ProcessMessageAsync(sourceEnvelope);
+
+        IOutboundEnvelope envelope = envelopes.ShouldHaveSingleItem();
+        envelope.RawMessage.ReadAll().ShouldBe(rawMessage[8..10]);
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "1"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.IsLastChunk, "True"));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ProcessMessage_ShouldProduceSingleEmptyChunk_WhenStreamIsReadToEnd(bool alwaysAddHeaders)
+    {
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(BytesUtil.GetRandomBytes(10), 3, alwaysAddHeaders);
         sourceEnvelope.RawMessage!.Position = sourceEnvelope.RawMessage.Length;
 
-        ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
-        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+        List<IOutboundEnvelope> envelopes = await ProcessMessageAsync(sourceEnvelope);
 
-        envelopes.ShouldBeEmpty();
+        AssertSingleEmptyChunk(envelopes);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ProcessMessage_ShouldProduceSingleEmptyChunk_WhenNonSeekableStreamIsEmpty(bool alwaysAddHeaders)
+    {
+        using NonSeekableStream stream = new([]);
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(stream, 3, alwaysAddHeaders);
+
+        List<IOutboundEnvelope> envelopes = await ProcessMessageAsync(sourceEnvelope);
+
+        AssertSingleEmptyChunk(envelopes);
     }
 
     [Fact]
@@ -294,15 +312,16 @@ public class ChunkSequenceWriterTests
     }
 
     [Fact]
-    public async Task ProcessMessage_ShouldYieldNoChunksAndReturnBufferOnce_WhenMessageIsEmpty()
+    public async Task ProcessMessage_ShouldProduceSingleEmptyChunkAndReturnBufferOnce_WhenMessageIsEmpty()
     {
         TrackingArrayPool arrayPool = new();
         OutboundEnvelope sourceEnvelope = CreateEnvelope(Array.Empty<byte>(), 3, alwaysAddHeaders: true);
 
         ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>(), arrayPool);
+        writer.CanHandle(sourceEnvelope).ShouldBeTrue();
         List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
 
-        envelopes.ShouldBeEmpty();
+        AssertSingleEmptyChunk(envelopes);
         arrayPool.RentedCount.ShouldBe(1);
         arrayPool.ReturnedCount.ShouldBe(1);
         arrayPool.OutstandingCount.ShouldBe(0);
@@ -464,6 +483,23 @@ public class ChunkSequenceWriterTests
             },
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+    private static async Task<List<IOutboundEnvelope>> ProcessMessageAsync(OutboundEnvelope sourceEnvelope)
+    {
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>());
+        writer.CanHandle(sourceEnvelope).ShouldBeTrue();
+        return await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+    }
+
+    private static void AssertSingleEmptyChunk(List<IOutboundEnvelope> envelopes)
+    {
+        IOutboundEnvelope envelope = envelopes.ShouldHaveSingleItem();
+        envelope.RawMessage.ReadAll().ShouldBeEmpty();
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "1"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.IsLastChunk, "True"));
+        envelope.Headers.GetValue(DefaultMessageHeaders.MessageKey).ShouldNotBeNullOrEmpty();
+    }
 
     private sealed class FailingStream : MemoryStream
     {
