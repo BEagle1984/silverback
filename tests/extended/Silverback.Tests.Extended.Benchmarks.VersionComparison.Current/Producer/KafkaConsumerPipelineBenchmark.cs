@@ -122,6 +122,7 @@ public class KafkaConsumerPipelineBenchmark : Benchmark, IDisposable
 
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Called by Silverback")]
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Called by Silverback")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Called by Silverback")]
         public async Task HandleAsync(StandardEvent message)
         {
             await Task.Delay(50);
@@ -130,11 +131,12 @@ public class KafkaConsumerPipelineBenchmark : Benchmark, IDisposable
 
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Called by Silverback")]
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Called by Silverback")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Called by Silverback")]
         public async Task HandleAsync(IAsyncEnumerable<BatchEvent> messages)
         {
             int count = 0;
 
-            await foreach (BatchEvent message in messages)
+            await foreach (BatchEvent _ in messages)
             {
                 await Task.Delay(10);
                 count++;
