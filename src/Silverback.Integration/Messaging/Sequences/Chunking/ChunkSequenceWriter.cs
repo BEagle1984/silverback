@@ -74,7 +74,7 @@ public class ChunkSequenceWriter : ISequenceWriter
         Memory<byte> bufferMemory = bufferArray.AsMemory(0, chunkSize);
 
         int? chunksCount = envelope.RawMessage.CanSeek
-            ? (int?)Math.Ceiling(envelope.RawMessage.Length / (double)chunkSize)
+            ? (int?)Math.Ceiling(Math.Max(0, envelope.RawMessage.Length - envelope.RawMessage.Position) / (double)chunkSize)
             : null;
 
         MessageHeader? firstChunkMessageHeader = null;

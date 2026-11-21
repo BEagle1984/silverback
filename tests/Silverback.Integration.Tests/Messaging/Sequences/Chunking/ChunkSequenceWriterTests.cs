@@ -186,4 +186,58 @@ public class ChunkSequenceWriterTests
         envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
         envelopes[3].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));
     }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldStateChunksCountFromCurrentPosition_WhenStreamIsPartiallyRead()
+    {
+        ChunkEnricherFactory enricherFactory = new();
+        byte[] rawMessage = BytesUtil.GetRandomBytes(10);
+        OutboundEnvelope sourceEnvelope = new(
+            rawMessage,
+            null,
+            new TestProducerEndpointConfiguration("test")
+            {
+                Chunk = new ChunkSettings
+                {
+                    Size = 3
+                }
+            },
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+        sourceEnvelope.RawMessage!.Position = 4;
+
+        ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        envelopes.Count.ShouldBe(2);
+        envelopes[0].RawMessage.ReadAll().ShouldBe(rawMessage[4..7]);
+        envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "2"));
+        envelopes[1].RawMessage.ReadAll().ShouldBe(rawMessage[7..10]);
+        envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "2"));
+        envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.IsLastChunk, "True"));
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldProduceNoChunks_WhenNothingIsLeftToRead()
+    {
+        ChunkEnricherFactory enricherFactory = new();
+        OutboundEnvelope sourceEnvelope = new(
+            BytesUtil.GetRandomBytes(10),
+            null,
+            new TestProducerEndpointConfiguration("test")
+            {
+                Chunk = new ChunkSettings
+                {
+                    Size = 3
+                }
+            },
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+        sourceEnvelope.RawMessage!.Position = sourceEnvelope.RawMessage.Length;
+
+        ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        envelopes.ShouldBeEmpty();
+    }
 }
