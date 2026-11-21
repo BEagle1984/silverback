@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,6 +66,75 @@ public partial class BatchProcessingTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         receivedMessages.ShouldBe(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+        Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+    }
+
+    [Theory]
+    [InlineData(nameof(IObserver<>.OnNext), false)]
+    [InlineData(nameof(IObserver<>.OnNext), true)]
+    [InlineData(nameof(IObserver<>.OnCompleted), false)]
+    [InlineData(nameof(IObserver<>.OnCompleted), true)]
+    public async Task Batch_ShouldStopConsumer_WhenObserverThrows(string throwingCallback, bool isBehindOperator)
+    {
+        int receivedMessages = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .AsObservable()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(3))))
+            .AddDelegateSubscriber<IObservable<TestEventOne>>(HandleBatch));
+
+        void HandleBatch(IObservable<TestEventOne> batch)
+        {
+            switch (throwingCallback, isBehindOperator)
+            {
+                case (nameof(IObserver<>.OnNext), false):
+                    batch.Subscribe(HandleMessage);
+                    break;
+                case (nameof(IObserver<>.OnNext), true):
+                    batch.Select(message => message).Subscribe(HandleMessage);
+                    break;
+                case (nameof(IObserver<>.OnCompleted), false):
+                    batch.Subscribe(_ => Interlocked.Increment(ref receivedMessages), () => throw new InvalidOperationException("Test"));
+                    break;
+                case (nameof(IObserver<>.OnCompleted), true):
+                    // The handler receives the list when the batch completes
+                    batch.ToList().Subscribe(messages =>
+                    {
+                        Interlocked.Add(ref receivedMessages, messages.Count);
+                        throw new InvalidOperationException("Test");
+                    });
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(throwingCallback), throwingCallback, "Unexpected callback.");
+            }
+        }
+
+        void HandleMessage(TestEventOne message)
+        {
+            if (Interlocked.Increment(ref receivedMessages) == 2)
+                throw new InvalidOperationException("Test");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 1" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 2" });
+        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 3" });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedMessages.ShouldBe(throwingCallback == nameof(IObserver<>.OnNext) ? 2 : 3);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
         Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
     }

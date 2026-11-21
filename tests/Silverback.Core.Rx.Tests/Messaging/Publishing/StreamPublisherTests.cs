@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -391,6 +392,71 @@ public class StreamPublisherTests
         (await pushTask.WaitAsync(Timeout)).ShouldBe(1);
         Exception? processingException = await Record.ExceptionAsync(() => tasks.Single().WaitAsync(Timeout));
         processingException.ShouldBeOfType<TestException>();
+    }
+
+    // Behind an Rx operator, Subscribe returns normally, since the operator swallows the exception thrown by the handler, but the processing
+    // task must fail with it anyway
+    [Theory]
+    [InlineData(nameof(IObserver<>.OnNext), false)]
+    [InlineData(nameof(IObserver<>.OnNext), true)]
+    [InlineData(nameof(IObserver<>.OnCompleted), false)]
+    [InlineData(nameof(IObserver<>.OnCompleted), true)]
+    public async Task PublishAsync_ShouldRethrow_WhenObserverThrows(string throwingCallback, bool isBehindOperator)
+    {
+        bool hasSubscribeReturned = false;
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AsObservable()
+            .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(Handle));
+
+        void Handle(IMessageStreamObservable<TestEventOne> observable)
+        {
+            switch (throwingCallback, isBehindOperator)
+            {
+                case (nameof(IObserver<>.OnNext), false):
+                    observable.Subscribe(_ => throw new TestException());
+                    break;
+                case (nameof(IObserver<>.OnNext), true):
+                    observable.Select(message => message).Subscribe(_ => throw new TestException());
+                    break;
+                case (nameof(IObserver<>.OnCompleted), false):
+                    observable.Subscribe(_ => { }, () => throw new TestException());
+                    break;
+                case (nameof(IObserver<>.OnCompleted), true):
+                    // The handler receives the list when the observable completes
+                    observable.ToList().Subscribe(_ => throw new TestException());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(throwingCallback), throwingCallback, "Unexpected callback.");
+            }
+
+            hasSubscribeReturned = true;
+        }
+
+        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
+
+        MessageStreamProvider<IEvent> streamProvider = new();
+
+        IReadOnlyCollection<Task> tasks = await streamPublisher.PublishAsync(streamProvider);
+
+        Task<int> pushTask = streamProvider.PushAsync(new TestEventOne());
+
+        if (throwingCallback == nameof(IObserver<>.OnCompleted))
+        {
+            await pushTask.WaitAsync(Timeout);
+            await streamProvider.CompleteAsync().AsTask().WaitAsync(Timeout);
+        }
+
+        Exception? processingException = await Record.ExceptionAsync(() => tasks.Single().WaitAsync(Timeout));
+
+        // Abort the pending push before asserting
+        if (throwingCallback == nameof(IObserver<>.OnNext))
+            streamProvider.Abort();
+
+        processingException.ShouldBeOfType<TestException>();
+        hasSubscribeReturned.ShouldBe(isBehindOperator);
     }
 
     [Fact]
