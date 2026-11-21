@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -67,6 +68,69 @@ public partial class ChunkingTests
 
         receivedFiles.Count.ShouldBe(2);
         receivedFiles.ShouldBe(new[] { message1.Content.ReReadAll(), message2.Content.ReReadAll() });
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Chunking_ShouldProduceAndConsumeUnreadBytesOnly_WhenStreamIsEmptyOrAlreadyRead(bool alwaysAddHeaders)
+    {
+        BinaryMessage emptyMessage = new()
+        {
+            Content = new MemoryStream()
+        };
+
+        BinaryMessage readToEndMessage = new()
+        {
+            Content = BytesUtil.GetRandomStream(25)
+        };
+        readToEndMessage.Content.Position = readToEndMessage.Content.Length;
+
+        byte[] partiallyReadContent = BytesUtil.GetRandomBytes(25);
+        BinaryMessage partiallyReadMessage = new()
+        {
+            Content = new MemoryStream(partiallyReadContent)
+        };
+        partiallyReadMessage.Content.Position = 20;
+
+        TestingCollection<byte[]?> receivedFiles = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName).EnableChunking(10, alwaysAddHeaders)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(emptyMessage);
+        await publisher.PublishAsync(readToEndMessage);
+        await publisher.PublishAsync(partiallyReadMessage);
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.RawOutboundEnvelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "1"));
+        Helper.Spy.RawOutboundEnvelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.IsLastChunk, "True"));
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeOfType<BinaryMessage>());
+
+        receivedFiles.Count.ShouldBe(3);
+        receivedFiles[0].ShouldBeEmpty();
+        receivedFiles[1].ShouldBeEmpty();
+        receivedFiles[2].ShouldBe(partiallyReadContent[20..]);
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
     }
 
     [Fact]

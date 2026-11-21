@@ -104,6 +104,17 @@ public class ChunkSequenceWriter : ISequenceWriter
 
             int readBytesCount = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);
 
+            // Produce a single empty chunk when there is nothing to read, to avoid silently dropping the message (its chunks count is 1,
+            // whereas the computed chunksCount is 0 or unknown)
+            if (readBytesCount == 0)
+            {
+                IOutboundEnvelope emptyChunkEnvelope = CreateChunkEnvelope(0, 1, [], envelope);
+                emptyChunkEnvelope.Headers.AddOrReplace(DefaultMessageHeaders.IsLastChunk, true.ToString());
+
+                yield return emptyChunkEnvelope;
+                yield break;
+            }
+
             while (readBytesCount > 0)
             {
                 IOutboundEnvelope chunkEnvelope = CreateChunkEnvelope(
