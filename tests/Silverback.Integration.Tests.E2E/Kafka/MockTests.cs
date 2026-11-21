@@ -46,7 +46,7 @@ public class MockTests : KafkaTests
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes[0].Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp)!.Value
-            .ShouldBeGreaterThan(DateTime.Now.AddSeconds(-2));
+            .ShouldBeGreaterThan(DateTime.UtcNow.AddSeconds(-2));
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class MockTests : KafkaTests
                 .AddProducer(producer => producer
                     .Produce<IIntegrationEvent>(endpoint => endpoint
                         .ProduceTo(DefaultTopicName)
-                        .AddHeader(KafkaMessageHeaders.Timestamp, date.ToString(CultureInfo.InvariantCulture))))
+                        .AddHeader(KafkaMessageHeaders.Timestamp, date.ToString("O", CultureInfo.InvariantCulture))))
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))

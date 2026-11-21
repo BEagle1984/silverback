@@ -172,7 +172,7 @@ public static class MessageHeaderEnumerableExtensions
 
         try
         {
-            return Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+            return ConvertValue(value, targetType);
         }
         catch (Exception ex)
         {
@@ -235,4 +235,34 @@ public static class MessageHeaderEnumerableExtensions
         string name,
         Type targetType) =>
         headers.GetValue(name, targetType) ?? targetType.GetDefaultValue();
+
+    private static object? ConvertValue(string? value, Type targetType)
+    {
+        Type? underlyingType = Nullable.GetUnderlyingType(targetType);
+
+        if (underlyingType != null)
+        {
+            if (value == null)
+                return null;
+
+            targetType = underlyingType;
+        }
+
+        if (targetType == typeof(Guid))
+            return Guid.Parse(value!);
+
+        if (targetType == typeof(TimeSpan))
+            return TimeSpan.Parse(value!, CultureInfo.InvariantCulture);
+
+        if (targetType == typeof(DateTime))
+            return DateTime.Parse(value!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+
+        if (targetType == typeof(DateTimeOffset))
+            return DateTimeOffset.Parse(value!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+
+        if (targetType.IsEnum)
+            return Enum.Parse(targetType, value!);
+
+        return Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+    }
 }

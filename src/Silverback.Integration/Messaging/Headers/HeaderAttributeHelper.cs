@@ -34,7 +34,7 @@ internal static class HeaderAttributeHelper
             if (value != null && !value.Equals(property.PropertyInfo.PropertyType.GetDefaultValue()) ||
                 property.Attribute.PublishDefaultValue)
             {
-                yield return new MessageHeader(property.Attribute.HeaderName, value?.ToString());
+                yield return new MessageHeader(property.Attribute.HeaderName, value.ToHeaderValueString());
             }
         }
     }
