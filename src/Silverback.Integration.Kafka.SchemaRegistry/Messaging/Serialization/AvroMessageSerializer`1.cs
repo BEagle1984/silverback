@@ -29,7 +29,8 @@ public class AvroMessageSerializer<TMessage> : SchemaRegistryMessageSerializer<T
         AvroSerializerConfig? avroSerializerConfig = null)
         : base(
             schemaRegistryClient,
-            new AvroSerializer<TMessage>(schemaRegistryClient, avroSerializerConfig))
+            new AvroSerializer<TMessage>(schemaRegistryClient, avroSerializerConfig),
+            true)
     {
         AvroSerializerConfig = avroSerializerConfig;
     }

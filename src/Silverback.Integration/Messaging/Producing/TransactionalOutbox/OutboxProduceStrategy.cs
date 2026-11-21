@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -147,15 +146,24 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
                 GetHeaders(envelope),
                 envelope.EndpointConfiguration.FriendlyName ?? throw new InvalidOperationException("FriendlyName not set."));
 
-        private static IEnumerable<MessageHeader> GetHeaders(IOutboundEnvelope envelope)
+        private static IReadOnlyCollection<MessageHeader> GetHeaders(IOutboundEnvelope envelope)
         {
-            if (envelope.EndpointConfiguration.EndpointResolver is IDynamicProducerEndpointResolver dynamicEndpointProvider)
+            if (envelope.EndpointConfiguration.EndpointResolver is not IDynamicProducerEndpointResolver dynamicEndpointProvider)
+                return envelope.Headers;
+
+            MessageHeader serializedEndpointHeader = new(
+                DefaultMessageHeaders.SerializedEndpoint,
+                dynamicEndpointProvider.GetSerializedEndpoint(envelope));
+            List<MessageHeader> headers = new(envelope.Headers.Count + 1);
+
+            for (int i = 0; i < envelope.Headers.Count; i++)
             {
-                return envelope.Headers
-                    .Append(new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, dynamicEndpointProvider.GetSerializedEndpoint(envelope)));
+                headers.Add(envelope.Headers[i]);
             }
 
-            return envelope.Headers;
+            headers.Add(serializedEndpointHeader);
+
+            return headers;
         }
 
         // Unlike the async LINQ operators, never resume on the captured synchronization context: a synchronous caller blocking the

@@ -33,7 +33,7 @@
       <_Parameter1>Silverback.Integration.Kafka.Testing</_Parameter1>
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Silverback.Tests.Performance</_Parameter1>
+      <_Parameter1>Silverback.Tests.Extended.Benchmarks</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
 </Project>

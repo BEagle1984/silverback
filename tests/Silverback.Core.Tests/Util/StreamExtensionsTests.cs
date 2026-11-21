@@ -74,6 +74,110 @@ public class StreamExtensionsTests
     }
 
     [Fact]
+    public void ReadAll_ShouldReturnBuffer_WhenStreamIsOwnedReadOnlyMemoryStream()
+    {
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
+        OwnedReadOnlyMemoryStream stream = new(buffer);
+
+        byte[]? result = stream.ReadAll();
+
+        result.ShouldBeSameAs(buffer);
+    }
+
+    [Fact]
+    public async Task ReadAllAsync_ShouldReturnBuffer_WhenStreamIsOwnedReadOnlyMemoryStream()
+    {
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
+        OwnedReadOnlyMemoryStream stream = new(buffer);
+
+        byte[]? result = await stream.ReadAllAsync();
+
+        result.ShouldBeSameAs(buffer);
+    }
+
+    [Fact]
+    public void ReadAll_ShouldReturnWholeContentAndKeepPosition_WhenStreamIsOwnedReadOnlyMemoryStream()
+    {
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
+        OwnedReadOnlyMemoryStream stream = new(buffer) { Position = 5 };
+
+        byte[]? result = stream.ReadAll();
+
+        result.ShouldBe("Silverback rocks!"u8.ToArray());
+        stream.Position.ShouldBe(5);
+    }
+
+    [Fact]
+    public void ReadAll_ShouldReturnBuffer_WhenStreamIsDisposed()
+    {
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
+        OwnedReadOnlyMemoryStream stream = new(buffer);
+        stream.Dispose();
+
+        byte[]? result = stream.ReadAll();
+
+        result.ShouldBeSameAs(buffer);
+    }
+
+    [Fact]
+    public void ReadAll_ShouldReturnCopy_WhenStreamIsMemoryStream()
+    {
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
+        MemoryStream stream = new(buffer);
+
+        byte[]? result = stream.ReadAll();
+
+        result.ShouldBe(buffer);
+        result.ShouldNotBeSameAs(buffer);
+    }
+
+    [Fact]
+    public void ReadAll_ShouldReturnCopy_WhenStreamIsPubliclyVisibleMemoryStream()
+    {
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
+        MemoryStream stream = new(buffer, 0, buffer.Length, false, true);
+
+        byte[]? result = stream.ReadAll();
+
+        result.ShouldBe(buffer);
+        result.ShouldNotBeSameAs(buffer);
+    }
+
+    [Fact]
+    public async Task ReadAllAsync_ShouldReturnCopy_WhenStreamIsMemoryStream()
+    {
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
+        MemoryStream stream = new(buffer);
+
+        byte[]? result = await stream.ReadAllAsync();
+
+        result.ShouldBe(buffer);
+        result.ShouldNotBeSameAs(buffer);
+    }
+
+    [Fact]
+    public void ReadAll_ShouldReturnRemainingContent_WhenStreamIsNotMemoryStream()
+    {
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
+        BufferedStream stream = new(new MemoryStream(buffer)) { Position = 11 };
+
+        byte[]? result = stream.ReadAll();
+
+        result.ShouldBe("rocks!"u8.ToArray());
+    }
+
+    [Fact]
+    public async Task ReadAllAsync_ShouldReturnRemainingContent_WhenStreamIsNotMemoryStream()
+    {
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
+        BufferedStream stream = new(new MemoryStream(buffer)) { Position = 11 };
+
+        byte[]? result = await stream.ReadAllAsync();
+
+        result.ShouldBe("rocks!"u8.ToArray());
+    }
+
+    [Fact]
     public async Task ReadAsync_ShouldReturnSlice()
     {
         MemoryStream stream = new([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]);

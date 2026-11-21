@@ -35,7 +35,8 @@ public class JsonSchemaRegistryMessageSerializer<TMessage> : SchemaRegistryMessa
         NewtonsoftJsonSchemaGeneratorSettings? jsonSchemaGeneratorSettings = null)
         : base(
             schemaRegistryClient,
-            new JsonSerializer<TMessage>(schemaRegistryClient, jsonSerializerConfig, jsonSchemaGeneratorSettings))
+            new JsonSerializer<TMessage>(schemaRegistryClient, jsonSerializerConfig, jsonSchemaGeneratorSettings),
+            true)
     {
         JsonSerializerConfig = jsonSerializerConfig;
         JsonSchemaGeneratorSettings = jsonSchemaGeneratorSettings;

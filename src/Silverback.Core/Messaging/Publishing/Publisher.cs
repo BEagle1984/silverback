@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -23,6 +24,8 @@ internal class Publisher : IPublisher
     private readonly IServiceProvider _serviceProvider;
 
     private readonly IBehaviorsProvider _behaviorsProvider;
+
+    private readonly BehaviorsProvider? _builtInBehaviorsProvider;
 
     private readonly SubscribedMethodsCache _subscribedMethodsCache;
 
@@ -54,6 +57,10 @@ internal class Publisher : IPublisher
         _serviceProvider = Check.NotNull(serviceProvider);
         _logger = Check.NotNull(logger);
 
+        // The behaviors of the built-in provider are walked by index, while the stack of a custom provider (or of a type deriving from
+        // the built-in provider, which may reimplement the interface) is still created for each message
+        _builtInBehaviorsProvider = behaviorsProvider.GetType() == typeof(BehaviorsProvider) ? (BehaviorsProvider)behaviorsProvider : null;
+
         _isInServiceScope = serviceProvider != rootServiceProvider.ServiceProvider;
 
         _subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
@@ -70,7 +77,8 @@ internal class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
     public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled = false) =>
-        [.. CastResults<TResult>(PublishAsync(message, throwIfUnhandled, typeof(TResult), ExecutionFlow.Sync, CancellationToken.None).SafeWait())];
+        CastResults<TResult>(
+            PublishAsync(message, throwIfUnhandled, typeof(TResult), ExecutionFlow.Sync, CancellationToken.None).SafeWait());
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object, CancellationToken)" />
     public Task PublishAsync(object message, CancellationToken cancellationToken = default) =>
@@ -89,7 +97,8 @@ internal class Publisher : IPublisher
         object message,
         bool throwIfUnhandled,
         CancellationToken cancellationToken = default) =>
-        [.. CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, typeof(TResult), ExecutionFlow.Async, cancellationToken).ConfigureAwait(false))];
+        CastResults<TResult>(
+            await PublishAsync(message, throwIfUnhandled, typeof(TResult), ExecutionFlow.Async, cancellationToken).ConfigureAwait(false));
 
     // Republish and RepublishAsync republish a message returned by a subscriber and return the (uncast) results of its subscribers. The
     // expected result type is forwarded to discard the incompatible null results according to the result type declared by the
@@ -201,24 +210,6 @@ internal class Publisher : IPublisher
             _ => false
         };
 
-    private ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
-        Stack<IBehavior> behaviors,
-        object message,
-        bool throwIfUnhandled,
-        Type? resultType,
-        Func<object, bool, Type?, ExecutionFlow, CancellationToken, ValueTask<IReadOnlyCollection<object?>>> finalAction,
-        ExecutionFlow executionFlow,
-        CancellationToken cancellationToken)
-    {
-        if (!behaviors.TryPop(out IBehavior? nextBehavior))
-            return finalAction(message, throwIfUnhandled, resultType, executionFlow, cancellationToken);
-
-        return nextBehavior.HandleAsync(this, message, NextAsync, cancellationToken);
-
-        ValueTask<IReadOnlyCollection<object?>> NextAsync(object nextMessage) =>
-            ExecuteBehaviorsPipelineAsync(behaviors, nextMessage, throwIfUnhandled, resultType, finalAction, executionFlow, cancellationToken);
-    }
-
     private ValueTask<IReadOnlyCollection<object?>> PublishAsync(
         object message,
         bool throwIfUnhandled,
@@ -228,14 +219,25 @@ internal class Publisher : IPublisher
     {
         Check.NotNull(message);
 
-        return ExecuteBehaviorsPipelineAsync(
-            _behaviorsProvider.CreateStack(),
-            message,
-            throwIfUnhandled,
-            resultType,
-            PublishCoreAsync,
-            executionFlow,
-            cancellationToken);
+        if (_builtInBehaviorsProvider == null)
+        {
+            return new BehaviorsPipeline(
+                    this,
+                    _behaviorsProvider.CreateStack(),
+                    throwIfUnhandled,
+                    resultType,
+                    executionFlow,
+                    cancellationToken)
+                .ExecuteNextAsync(message);
+        }
+
+        IBehavior[] behaviors = _builtInBehaviorsProvider.GetBehaviors();
+
+        if (behaviors.Length == 0)
+            return PublishCoreAsync(message, throwIfUnhandled, resultType, executionFlow, cancellationToken);
+
+        return new BehaviorsPipeline(this, behaviors, throwIfUnhandled, resultType, executionFlow, cancellationToken)
+            .ExecuteNextAsync(message);
     }
 
     private async ValueTask<IReadOnlyCollection<object?>> PublishCoreAsync(
@@ -245,35 +247,71 @@ internal class Publisher : IPublisher
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
-        IReadOnlyCollection<MethodInvocationResult> resultsCollection =
-            await InvokeSubscribedMethodsAsync(message, resultType, executionFlow, cancellationToken).ConfigureAwait(false);
+        InvocationResults exclusiveResults = await InvokeSubscribedMethodsAsync(
+                _subscribedMethodsCache.GetExclusiveMethods(message, _serviceProvider),
+                parallel: false,
+                message,
+                resultType,
+                executionFlow,
+                cancellationToken)
+            .ConfigureAwait(false);
+        InvocationResults nonExclusiveResults = await InvokeSubscribedMethodsAsync(
+                _subscribedMethodsCache.GetNonExclusiveMethods(message, _serviceProvider),
+                parallel: true,
+                message,
+                resultType,
+                executionFlow,
+                cancellationToken)
+            .ConfigureAwait(false);
 
-        bool handled = resultsCollection.Any(invocationResult => invocationResult.WasInvoked);
-
-        if (!handled && throwIfUnhandled)
+        if (throwIfUnhandled && !exclusiveResults.AnyInvoked() && !nonExclusiveResults.AnyInvoked())
             throw new UnhandledMessageException(message);
 
-        List<object?> results = [];
+        // The list is created only when there are results to return
+        List<object?>? results = AddResults(exclusiveResults, resultType, null);
+        results = AddResults(nonExclusiveResults, resultType, results);
 
-        foreach (MethodInvocationResult invocationResult in resultsCollection)
+        return results ?? (IReadOnlyCollection<object?>)[];
+    }
+
+    private List<object?>? AddResults(InvocationResults invocationResults, Type? resultType, List<object?>? results)
+    {
+        if (invocationResults.Single != null)
+            return AddResult(invocationResults.Single, resultType, results);
+
+        if (invocationResults.Multiple == null)
+            return results;
+
+        foreach (MethodInvocationResult invocationResult in invocationResults.Multiple)
         {
-            // The results of the republished messages were already matched against the expected result type by Republish or
-            // RepublishAsync, using the result types declared by their own subscribers for the null results
-            if (!invocationResult.HasReturnValue)
-            {
-                results.AddRange(invocationResult.ForwardedResults);
-                continue;
-            }
-
-            if (IsIncompatibleNullResult(invocationResult, resultType))
-            {
-                _logger.LogSubscriberResultDiscarded(invocationResult.DeclaredResultType?.FullName, resultType.FullName!);
-                continue;
-            }
-
-            results.Add(invocationResult.ReturnValue);
+            results = AddResult(invocationResult, resultType, results);
         }
 
+        return results;
+    }
+
+    private List<object?>? AddResult(MethodInvocationResult invocationResult, Type? resultType, List<object?>? results)
+    {
+        // The results of the republished messages were already matched against the expected result type by Republish or
+        // RepublishAsync, using the result types declared by their own subscribers for the null results
+        if (!invocationResult.HasReturnValue)
+        {
+            if (invocationResult.ForwardedResults.Count == 0)
+                return results;
+
+            results ??= [];
+            results.AddRange(invocationResult.ForwardedResults);
+            return results;
+        }
+
+        if (IsIncompatibleNullResult(invocationResult, resultType))
+        {
+            _logger.LogSubscriberResultDiscarded(invocationResult.DeclaredResultType?.FullName, resultType.FullName!);
+            return results;
+        }
+
+        results ??= [];
+        results.Add(invocationResult.ReturnValue);
         return results;
     }
 
@@ -283,7 +321,7 @@ internal class Publisher : IPublisher
     {
         Type expectedType = Nullable.GetUnderlyingType(resultType) ?? resultType;
 
-        if (results.All(result => result == null || expectedType.IsInstanceOfType(result)))
+        if (AreCompatibleResults(results, expectedType))
             return results;
 
         List<object?> compatibleResults = [];
@@ -297,75 +335,169 @@ internal class Publisher : IPublisher
         }
 
         return compatibleResults;
-    }
 
-    private IEnumerable<TResult> CastResults<TResult>(IReadOnlyCollection<object?> results)
-    {
-        foreach (object? result in results)
+        static bool AreCompatibleResults(IReadOnlyCollection<object?> results, Type expectedType)
         {
-            if (result is TResult castResult)
-                yield return castResult;
-            else if (result == null && default(TResult) is null) // TResult is a reference type or a Nullable<T>
-                yield return default!;
-            else
-                _logger.LogSubscriberResultDiscarded(result?.GetType().FullName, typeof(TResult).FullName!);
+            foreach (object? result in results)
+            {
+                if (result != null && !expectedType.IsInstanceOfType(result))
+                    return false;
+            }
+
+            return true;
         }
     }
 
-    private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeSubscribedMethodsAsync(
-        object message,
-        Type? resultType,
-        ExecutionFlow executionFlow,
-        CancellationToken cancellationToken) =>
-        [.. (await InvokeExclusiveMethodsAsync(message, resultType, executionFlow, cancellationToken).ConfigureAwait(false)).Union(await InvokeNonExclusiveMethodsAsync(message, resultType, executionFlow, cancellationToken).ConfigureAwait(false))];
+    private ReadOnlyCollection<TResult> CastResults<TResult>(IReadOnlyCollection<object?> results)
+    {
+        if (results.Count == 0)
+            return [];
 
-    private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethodsAsync(
+        List<TResult> castResults = new(results.Count);
+
+        foreach (object? result in results)
+        {
+            if (result is TResult castResult)
+                castResults.Add(castResult);
+            else if (result == null && default(TResult) is null) // TResult is a reference type or a Nullable<T>
+                castResults.Add(default!);
+            else
+                _logger.LogSubscriberResultDiscarded(result?.GetType().FullName, typeof(TResult).FullName!);
+        }
+
+        return castResults.AsReadOnly();
+    }
+
+    // The exclusive subscribers are invoked sequentially, the non-exclusive ones in parallel
+    private async ValueTask<InvocationResults> InvokeSubscribedMethodsAsync(
+        IReadOnlyList<SubscribedMethod> methods,
+        bool parallel,
         object message,
         Type? resultType,
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
-        IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetExclusiveMethods(message, _serviceProvider);
-
         if (methods.Count == 0)
-            return [];
+            return default;
 
         if (methods.Count == 1)
-            return [await InvokeAsync(methods[0]).ConfigureAwait(false)];
+            return new InvocationResults(await InvokeAsync(methods[0]).ConfigureAwait(false), null);
 
-        return
-        [
-            .. await methods
-                .SelectAsync(InvokeAsync)
-                .ConfigureAwait(false)
-        ];
+        if (parallel)
+            return new InvocationResults(null, await methods.ParallelSelectAsync(InvokeAsync).ConfigureAwait(false));
+
+        return new InvocationResults(null, [.. await methods.SelectAsync(InvokeAsync).ConfigureAwait(false)]);
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
             SubscribedMethodInvoker.InvokeAsync(this, method, message, resultType, _serviceProvider, executionFlow, cancellationToken);
     }
 
-    private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethodsAsync(
-        object message,
-        Type? resultType,
-        ExecutionFlow executionFlow,
-        CancellationToken cancellationToken)
+    // Either the result of the single invoked subscriber, to avoid allocating a collection in the most common case, or the results of
+    // all the invoked subscribers
+    private readonly record struct InvocationResults(MethodInvocationResult? Single, IReadOnlyCollection<MethodInvocationResult>? Multiple)
     {
-        IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetNonExclusiveMethods(message, _serviceProvider);
+        public bool AnyInvoked()
+        {
+            if (Single != null)
+                return Single.WasInvoked;
 
-        if (methods.Count == 0)
-            return [];
+            if (Multiple == null)
+                return false;
 
-        if (methods.Count == 1)
-            return [await InvokeAsync(methods[0]).ConfigureAwait(false)];
+            foreach (MethodInvocationResult invocationResult in Multiple)
+            {
+                if (invocationResult.WasInvoked)
+                    return true;
+            }
 
-        return
-        [
-            .. await methods
-                .ParallelSelectAsync(InvokeAsync)
-                .ConfigureAwait(false)
-        ];
+            return false;
+        }
+    }
 
-        ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
-            SubscribedMethodInvoker.InvokeAsync(this, method, message, resultType, _serviceProvider, executionFlow, cancellationToken);
+    // Holds the state of a single publish call, since the behaviors may publish other messages through the same publisher, also
+    // concurrently. The position is shared by all the levels of the pipeline, as when popping the behaviors from a stack: a behavior
+    // calling next more than once continues from where the previous call got to, i.e. it skips the remaining behaviors and invokes the
+    // subscribers directly once the previous call reached them.
+    private sealed class BehaviorsPipeline
+    {
+        private readonly Publisher _publisher;
+
+        private readonly IBehavior[]? _behaviors;
+
+        private readonly Stack<IBehavior>? _behaviorsStack;
+
+        private readonly bool _throwIfUnhandled;
+
+        private readonly Type? _resultType;
+
+        private readonly ExecutionFlow _executionFlow;
+
+        private readonly CancellationToken _cancellationToken;
+
+        private readonly MessageHandler _next;
+
+        private int _currentIndex;
+
+        public BehaviorsPipeline(
+            Publisher publisher,
+            IBehavior[] behaviors,
+            bool throwIfUnhandled,
+            Type? resultType,
+            ExecutionFlow executionFlow,
+            CancellationToken cancellationToken)
+            : this(publisher, throwIfUnhandled, resultType, executionFlow, cancellationToken)
+        {
+            _behaviors = behaviors;
+        }
+
+        public BehaviorsPipeline(
+            Publisher publisher,
+            Stack<IBehavior> behaviorsStack,
+            bool throwIfUnhandled,
+            Type? resultType,
+            ExecutionFlow executionFlow,
+            CancellationToken cancellationToken)
+            : this(publisher, throwIfUnhandled, resultType, executionFlow, cancellationToken)
+        {
+            _behaviorsStack = behaviorsStack;
+        }
+
+        private BehaviorsPipeline(
+            Publisher publisher,
+            bool throwIfUnhandled,
+            Type? resultType,
+            ExecutionFlow executionFlow,
+            CancellationToken cancellationToken)
+        {
+            _publisher = publisher;
+            _throwIfUnhandled = throwIfUnhandled;
+            _resultType = resultType;
+            _executionFlow = executionFlow;
+            _cancellationToken = cancellationToken;
+            _next = ExecuteNextAsync;
+        }
+
+        public ValueTask<IReadOnlyCollection<object?>> ExecuteNextAsync(object message)
+        {
+            if (!TryGetNextBehavior(out IBehavior? behavior))
+                return _publisher.PublishCoreAsync(message, _throwIfUnhandled, _resultType, _executionFlow, _cancellationToken);
+
+            return behavior.HandleAsync(_publisher, message, _next, _cancellationToken);
+        }
+
+        private bool TryGetNextBehavior([NotNullWhen(true)] out IBehavior? behavior)
+        {
+            if (_behaviorsStack != null)
+                return _behaviorsStack.TryPop(out behavior);
+
+            if (_currentIndex < _behaviors!.Length)
+            {
+                behavior = _behaviors[_currentIndex++];
+                return true;
+            }
+
+            behavior = null;
+            return false;
+        }
     }
 }

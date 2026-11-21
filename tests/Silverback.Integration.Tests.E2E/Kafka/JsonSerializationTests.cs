@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Text;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
@@ -14,6 +16,7 @@ using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Tests.Integration.E2E.Util;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
@@ -346,5 +349,37 @@ public class JsonSerializationTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E!\"}");
         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
+    }
+
+    [Fact]
+    public async Task JsonSerialization_ShouldKeepSerializedPayloadReadableAndUnsharedAfterProducing()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpy());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+
+        IOutboundEnvelope envelope = Helper.Spy.RawOutboundEnvelopes.ShouldHaveSingleItem();
+        envelope.RawMessage.ShouldBeOfType<OwnedReadOnlyMemoryStream>();
+
+        // Like librdkafka, the mocked topic stores a copy, so that the consumers never share the producer's buffer
+        Message<byte[]?, byte[]?> producedMessage = DefaultTopic.GetAllMessages().ShouldHaveSingleItem();
+        producedMessage.Value.ShouldNotBeNull();
+        Encoding.UTF8.GetString(producedMessage.Value).ShouldBe("{\"ContentEventOne\":\"Hello E2E!\"}");
+        producedMessage.Value.ShouldNotBeSameAs(envelope.RawMessage.ReadAll());
+
+        // The raw message must still be readable after it was produced (e.g. by the error policies or the logging)
+        byte[] rawMessage = envelope.RawMessage.ReReadAll().ShouldNotBeNull();
+        Encoding.UTF8.GetString(rawMessage).ShouldBe("{\"ContentEventOne\":\"Hello E2E!\"}");
+        envelope.RawMessage.ReReadAll().ShouldBe(rawMessage);
     }
 }

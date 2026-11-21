@@ -19,11 +19,13 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
+using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Producing.TransactionalOutbox;
@@ -65,6 +67,58 @@ public class OutboxProduceStrategyTests
         strategy1.Equals(strategy2).ShouldBeFalse();
     }
 
+    [Fact]
+    public async Task ProduceAsync_ShouldStoreHeaders()
+    {
+        TestOutboxWriter writer = new();
+        IProduceStrategyImplementation strategy = BuildStrategy(writer);
+
+        await strategy.ProduceAsync(
+            new OutboundEnvelope<TestEventOne>(
+                new TestEventOne { Content = "one" },
+                [new MessageHeader("x-one", "1"), new MessageHeader("x-two", "2")],
+                EndpointConfiguration,
+                Substitute.For<IProducer>()),
+            CancellationToken.None);
+
+        writer.Messages.ShouldHaveSingleItem().Headers.ShouldNotBeNull()
+            .Where(header => header.Name != DefaultMessageHeaders.TraceId)
+            .ShouldBe(
+            [
+                new MessageHeader("x-one", "1"),
+                new MessageHeader("x-two", "2")
+            ]);
+    }
+
+    [Fact]
+    public async Task ProduceAsync_ShouldStoreHeadersAndSerializedEndpoint_WhenEndpointIsDynamic()
+    {
+        IDynamicProducerEndpointResolver<TestProducerEndpoint> endpointResolver =
+            Substitute.For<IDynamicProducerEndpointResolver<TestProducerEndpoint>>();
+        TestProducerEndpointConfiguration endpointConfiguration = EndpointConfiguration with { EndpointResolver = endpointResolver };
+        endpointResolver.GetEndpoint(Arg.Any<IOutboundEnvelope>()).Returns(new TestProducerEndpoint("topic", endpointConfiguration));
+        endpointResolver.GetSerializedEndpoint(Arg.Any<IOutboundEnvelope>()).Returns("serialized-endpoint");
+        TestOutboxWriter writer = new();
+        IProduceStrategyImplementation strategy = BuildStrategy(writer, endpointConfiguration);
+
+        await strategy.ProduceAsync(
+            new OutboundEnvelope<TestEventOne>(
+                new TestEventOne { Content = "one" },
+                [new MessageHeader("x-one", "1"), new MessageHeader("x-two", "2")],
+                endpointConfiguration,
+                Substitute.For<IProducer>()),
+            CancellationToken.None);
+
+        writer.Messages.ShouldHaveSingleItem().Headers.ShouldNotBeNull()
+            .Where(header => header.Name != DefaultMessageHeaders.TraceId)
+            .ShouldBe(
+            [
+                new MessageHeader("x-one", "1"),
+                new MessageHeader("x-two", "2"),
+                new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, "serialized-endpoint")
+            ]);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -77,6 +131,36 @@ public class OutboxProduceStrategyTests
 
         writer.Messages.Select(message => Encoding.UTF8.GetString(message.Content!)).ShouldBe(["one", "two", "three"]);
         writer.Messages.ShouldAllBe(message => message.EndpointName == "test-endpoint");
+    }
+
+    [Fact]
+    public async Task ProduceAsync_ShouldNotShareRawByteArray()
+    {
+        TestOutboxWriter writer = new();
+        IProduceStrategyImplementation strategy = BuildStrategy(writer);
+        byte[] rawMessage = "raw"u8.ToArray();
+
+        await strategy.ProduceAsync(
+            new OutboundEnvelope(rawMessage, null, EndpointConfiguration, Substitute.For<IProducer>()),
+            CancellationToken.None);
+
+        OutboxMessage outboxMessage = writer.Messages.ShouldHaveSingleItem();
+        outboxMessage.Content.ShouldBe(rawMessage);
+        outboxMessage.Content.ShouldNotBeSameAs(rawMessage);
+    }
+
+    [Fact]
+    public async Task ProduceAsync_ShouldNotCopyOwnedBuffer()
+    {
+        TestOutboxWriter writer = new();
+        IProduceStrategyImplementation strategy = BuildStrategy(writer);
+        byte[] buffer = "serialized"u8.ToArray();
+
+        await strategy.ProduceAsync(
+            new OutboundEnvelope(new OwnedReadOnlyMemoryStream(buffer), null, EndpointConfiguration, Substitute.For<IProducer>()),
+            CancellationToken.None);
+
+        writer.Messages.ShouldHaveSingleItem().Content.ShouldBeSameAs(buffer);
     }
 
     [Theory]
@@ -311,7 +395,9 @@ public class OutboxProduceStrategyTests
         exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe("Write failed.");
     }
 
-    private static IProduceStrategyImplementation BuildStrategy(TestOutboxWriter writer)
+    private static IProduceStrategyImplementation BuildStrategy(
+        TestOutboxWriter writer,
+        TestProducerEndpointConfiguration? endpointConfiguration = null)
     {
         ServiceCollection services = [];
         services
@@ -323,7 +409,9 @@ public class OutboxProduceStrategyTests
         TestSettings settings = new("outbox");
         serviceProvider.GetRequiredService<OutboxWriterFactory>().AddFactory<TestSettings>((_, _) => writer);
 
-        return new OutboxProduceStrategy(settings).Build(new SilverbackContext(serviceProvider), EndpointConfiguration);
+        return new OutboxProduceStrategy(settings).Build(
+            new SilverbackContext(serviceProvider),
+            endpointConfiguration ?? EndpointConfiguration);
     }
 
     private static OutboundEnvelope<TestEventOne> CreateEnvelope(string content) =>
@@ -379,8 +467,11 @@ public class OutboxProduceStrategyTests
         public Task AddAsync(
             OutboxMessage outboxMessage,
             ISilverbackContext? context = null,
-            CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
+            CancellationToken cancellationToken = default)
+        {
+            Messages.Add(outboxMessage);
+            return Task.CompletedTask;
+        }
 
         public Task AddAsync(
             IEnumerable<OutboxMessage> outboxMessages,

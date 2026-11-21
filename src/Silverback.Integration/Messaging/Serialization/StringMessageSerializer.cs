@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ public sealed class StringMessageSerializer : IMessageSerializer, IEquatable<Str
     public MessageEncoding Encoding { get; }
 
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
+    [SuppressMessage("", "CA2000", Justification = "MemoryStream is returned")]
     public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
     {
         Check.NotNull(headers);
@@ -49,7 +51,7 @@ public sealed class StringMessageSerializer : IMessageSerializer, IEquatable<Str
         if (stringMessage.Content == null)
             return ValueTask.FromResult<Stream?>(null);
 
-        return ValueTask.FromResult<Stream?>(new MemoryStream(_encoding.GetBytes(stringMessage.Content)));
+        return ValueTask.FromResult<Stream?>(new OwnedReadOnlyMemoryStream(_encoding.GetBytes(stringMessage.Content)));
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

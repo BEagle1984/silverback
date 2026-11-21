@@ -134,4 +134,95 @@ public class MqttHeadersMappingExtensionsTests
 
         userProperties.ShouldBe([new MqttUserProperty(DefaultMessageHeaders.ChunkIndex, "0")]);
     }
+
+    [Fact]
+    public void ToUserProperties_ShouldNotAddChunkMessageId_WhenMessageKeyIsNull()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.MessageKey, null },
+            { DefaultMessageHeaders.ChunkIndex, "0" }
+        };
+
+        List<MqttUserProperty> userProperties = headers.ToUserProperties(true);
+
+        userProperties.ShouldBe([new MqttUserProperty(DefaultMessageHeaders.ChunkIndex, "0")]);
+    }
+
+    [Fact]
+    public void ToUserProperties_ShouldNotAddChunkMessageId_WhenAlreadySet()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { MqttMessageHeaders.ChunkMessageId, "custom" },
+            { DefaultMessageHeaders.MessageKey, "message1" },
+            { DefaultMessageHeaders.ChunkIndex, "0" }
+        };
+
+        List<MqttUserProperty> userProperties = headers.ToUserProperties(true);
+
+        userProperties.ShouldBe(
+        [
+            new MqttUserProperty(MqttMessageHeaders.ChunkMessageId, "custom"),
+            new MqttUserProperty(DefaultMessageHeaders.ChunkIndex, "0")
+        ]);
+    }
+
+    [Fact]
+    public void ToUserProperties_ShouldUseFirstMessageKeyAsChunkMessageId()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.MessageKey, "message1" },
+            { DefaultMessageHeaders.MessageKey, "message2" },
+            { DefaultMessageHeaders.ChunkIndex, "0" }
+        };
+
+        List<MqttUserProperty> userProperties = headers.ToUserProperties(true);
+
+        userProperties.ShouldBe(
+        [
+            new MqttUserProperty(DefaultMessageHeaders.ChunkIndex, "0"),
+            new MqttUserProperty(MqttMessageHeaders.ChunkMessageId, "message1")
+        ]);
+    }
+
+    [Fact]
+    public void ToUserProperties_ShouldIgnoreNullValues()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { "one", "1" },
+            { "two", null },
+            { "three", "" }
+        };
+
+        List<MqttUserProperty> userProperties = headers.ToUserProperties();
+
+        userProperties.ShouldBe(
+        [
+            new MqttUserProperty("one", "1"),
+            new MqttUserProperty("three", "")
+        ]);
+    }
+
+    [Fact]
+    public void ToSilverbackHeaders_ShouldMapUserProperties()
+    {
+        List<MqttUserProperty> userProperties =
+        [
+            new("one", "1"),
+            new("two", ""),
+            new("one", "3")
+        ];
+
+        IReadOnlyCollection<MessageHeader> headers = userProperties.ToSilverbackHeaders();
+
+        headers.ShouldBe(
+        [
+            new MessageHeader("one", "1"),
+            new MessageHeader("two", ""),
+            new MessageHeader("one", "3")
+        ]);
+    }
 }

@@ -586,7 +586,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
         ISequenceStore sequenceStore,
         Guid sourceChannelInstanceId)
     {
-        MessageHeaderCollection headers = [.. message.Headers.ToSilverbackHeaders()];
+        // Reserve room for the key and timestamp headers
+        MessageHeaderCollection headers = message.Headers.ToSilverbackHeaders(2);
 
         KafkaConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition);
 

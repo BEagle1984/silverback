@@ -1,9 +1,11 @@
 // Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 using Shouldly;
 using Silverback.Messaging.Encryption;
@@ -203,6 +205,50 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
+    public async Task ReadAsync_ShouldDecrypt_WhenInnerStreamReturnsOneByteAtATime()
+    {
+        OneByteAtATimeStream cypherMessage = new(
+        [
+            0x6d, 0xda, 0xdb, 0x0c, 0xf2, 0xd9, 0xb3, 0x60, 0x77, 0xcf, 0x69, 0x09, 0x52, 0x24, 0x79, 0x0a, 0x82,
+            0x18, 0x01, 0x2f, 0xcb, 0x97, 0x2f, 0xeb, 0x4e, 0x4a, 0x6d, 0x8b, 0xad, 0x69, 0xf6, 0x84
+        ]);
+
+        SymmetricDecryptStream cryptoStream = new(
+            cypherMessage,
+            new SymmetricDecryptionSettings
+            {
+                Key = GenerateKey(256)
+            });
+
+        byte[]? result = await cryptoStream.ReadAllAsync();
+
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
+    }
+
+    [Fact]
+    public void Read_ShouldDecrypt_WhenInnerStreamReturnsOneByteAtATime()
+    {
+        OneByteAtATimeStream cypherMessage = new(
+        [
+            0x6d, 0xda, 0xdb, 0x0c, 0xf2, 0xd9, 0xb3, 0x60, 0x77, 0xcf, 0x69, 0x09, 0x52, 0x24, 0x79, 0x0a, 0x82,
+            0x18, 0x01, 0x2f, 0xcb, 0x97, 0x2f, 0xeb, 0x4e, 0x4a, 0x6d, 0x8b, 0xad, 0x69, 0xf6, 0x84
+        ]);
+
+        SymmetricDecryptStream cryptoStream = new(
+            cypherMessage,
+            new SymmetricDecryptionSettings
+            {
+                Key = GenerateKey(256)
+            });
+
+        byte[]? result = cryptoStream.ReadAll();
+
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
+    }
+
+    [Fact]
     public async Task ReadAsync_ShouldReturnEmptyStream_WhenEmptyStream()
     {
         SymmetricDecryptStream cryptoStream = new(
@@ -232,4 +278,22 @@ public class SymmetricDecryptStreamTests
 
     private static byte[] GenerateKey(int size, int seed = 1) =>
         [.. Enumerable.Range(seed, seed + (size / 8) - 1).Select(n => (byte)n)];
+
+    private sealed class OneByteAtATimeStream : MemoryStream
+    {
+        public OneByteAtATimeStream(byte[] buffer)
+            : base(buffer)
+        {
+        }
+
+        public override int Read(byte[] buffer, int offset, int count) => base.Read(buffer, offset, Math.Min(count, 1));
+
+        public override int Read(Span<byte> buffer) => base.Read(buffer[..Math.Min(buffer.Length, 1)]);
+
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) =>
+            base.ReadAsync(buffer, offset, Math.Min(count, 1), cancellationToken);
+
+        public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) =>
+            base.ReadAsync(buffer[..Math.Min(buffer.Length, 1)], cancellationToken);
+    }
 }
