@@ -1,6 +1,7 @@
 # Contributing
 
-These guidelines explain how to report issues and contribute changes to Silverback.
+These guidelines explain how to report issues and contribute changes to Silverback. Everyone taking part is expected to follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
 
 - [Found an Issue?](#found-an-issue)
 - [Feature Requests](#feature-requests)
