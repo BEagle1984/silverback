@@ -206,6 +206,7 @@ on `main` to republish the documentation between releases.
 - [Issues](https://github.com/BEagle1984/silverback/issues) – report bugs or suggest improvements.
 - [Discussions](https://github.com/BEagle1984/silverback/discussions) – ask questions and share ideas.
 - [CONTRIBUTING.md](CONTRIBUTING.md) – how to contribute.
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) – the code of conduct for everyone taking part.
 
 ## License
 
