@@ -49,17 +49,31 @@ public class SymmetricEncryptStream : SilverbackCryptoStream
     /// <inheritdoc cref="SilverbackCryptoStream.Read(byte[],int,int)" />
     public override int Read(byte[] buffer, int offset, int count)
     {
-        int prefixLength = ReadMessagePrefix(buffer.AsMemory());
+        Check.NotNull(buffer);
+
+        int prefixLength = ReadMessagePrefix(buffer.AsSpan(offset, count));
         if (prefixLength > 0)
             return prefixLength;
 
         return base.Read(buffer, offset, count);
     }
 
+    /// <inheritdoc cref="SilverbackCryptoStream.Read(Span{byte})" />
+    public override int Read(Span<byte> buffer)
+    {
+        int prefixLength = ReadMessagePrefix(buffer);
+        if (prefixLength > 0)
+            return prefixLength;
+
+        return base.Read(buffer);
+    }
+
     /// <inheritdoc cref="SilverbackCryptoStream.ReadAsync(byte[],int,int,CancellationToken)" />
     public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
-        int prefixLength = ReadMessagePrefix(buffer.AsMemory());
+        Check.NotNull(buffer);
+
+        int prefixLength = ReadMessagePrefix(buffer.AsSpan(offset, count));
         if (prefixLength > 0)
             return Task.FromResult(prefixLength);
 
@@ -69,7 +83,7 @@ public class SymmetricEncryptStream : SilverbackCryptoStream
     /// <inheritdoc cref="SilverbackCryptoStream.ReadAsync(Memory{byte},CancellationToken)" />
     public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        int prefixLength = ReadMessagePrefix(buffer);
+        int prefixLength = ReadMessagePrefix(buffer.Span);
         if (prefixLength > 0)
             return ValueTask.FromResult(prefixLength);
 
@@ -91,13 +105,13 @@ public class SymmetricEncryptStream : SilverbackCryptoStream
         base.Dispose(disposing);
     }
 
-    private int ReadMessagePrefix(Memory<byte> buffer)
+    private int ReadMessagePrefix(Span<byte> buffer)
     {
         if (_prefixBuffer == null)
             return 0;
 
         int length = Math.Min(buffer.Length, _prefixBuffer.Length - _prefixBufferPosition);
-        _prefixBuffer.AsSpan(_prefixBufferPosition, length).CopyTo(buffer.Span);
+        _prefixBuffer.AsSpan(_prefixBufferPosition, length).CopyTo(buffer);
         _prefixBufferPosition += length;
 
         if (_prefixBufferPosition == _prefixBuffer.Length)
