@@ -132,15 +132,20 @@ function Invoke-Pack {
 
         [IO.File]::WriteAllText($Project.Path, $content, [Text.UTF8Encoding]::new($true))
 
+        # Restore into a separate folder (see Directory.Build.props): an IDE with the solution open reacts to the modified
+        # project file by restoring it from its own, unmodified project model, and would otherwise overwrite
+        # obj\project.assets.json in the middle of the build
+        $restorePathArgument = "/p:SilverbackPackRestore=true"
+
         $buildArguments = @(
             "build", $Project.Path, "-c", $Configuration, "--no-incremental", "--nologo", "-v", "q",
-            "/p:ContinuousIntegrationBuild=true", "/p:EmbedUntrackedSources=true")
+            "/p:ContinuousIntegrationBuild=true", "/p:EmbedUntrackedSources=true", $restorePathArgument)
         if (-not $NoWarnAsError) {
             $buildArguments += "-warnaserror"
         }
 
         Invoke-Dotnet @buildArguments
-        Invoke-Dotnet pack $Project.Path -c $Configuration -o $outputPath --no-build --nologo -v q
+        Invoke-Dotnet pack $Project.Path -c $Configuration -o $outputPath --no-build --nologo -v q $restorePathArgument
     }
     finally {
         Move-Item -LiteralPath $backupPath -Destination $Project.Path -Force
