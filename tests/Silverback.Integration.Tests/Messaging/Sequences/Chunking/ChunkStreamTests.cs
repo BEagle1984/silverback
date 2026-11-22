@@ -224,6 +224,65 @@ public class ChunkStreamTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "GenericEnumeratorNotDisposed", Justification = "NSubstitute setup")]
+    public async Task DisposeAsync_ShouldDisposeSyncEnumerator()
+    {
+        IMessageStreamEnumerable<IRawInboundEnvelope> source = Substitute.For<IMessageStreamEnumerable<IRawInboundEnvelope>>();
+        IEnumerator<IRawInboundEnvelope> enumerator = Substitute.For<IEnumerator<IRawInboundEnvelope>>();
+        source.GetEnumerator().Returns(enumerator);
+        ChunkStream chunkStream = new(source);
+
+        chunkStream.Read(new byte[10], 0, 10).ShouldBe(0);
+        await chunkStream.DisposeAsync();
+        await chunkStream.DisposeAsync();
+
+        enumerator.Received(1).Dispose();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "GenericEnumeratorNotDisposed", Justification = "NSubstitute setup")]
+    public void Dispose_ShouldDisposeSyncEnumerator()
+    {
+        IMessageStreamEnumerable<IRawInboundEnvelope> source = Substitute.For<IMessageStreamEnumerable<IRawInboundEnvelope>>();
+        IEnumerator<IRawInboundEnvelope> enumerator = Substitute.For<IEnumerator<IRawInboundEnvelope>>();
+        source.GetEnumerator().Returns(enumerator);
+        ChunkStream chunkStream = new(source);
+
+        chunkStream.Read(new byte[10], 0, 10).ShouldBe(0);
+        chunkStream.Dispose();
+        chunkStream.Dispose();
+
+        enumerator.Received(1).Dispose();
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task Dispose_ShouldDisposeAsyncEnumerator()
+    {
+        IMessageStreamEnumerable<IRawInboundEnvelope> source = Substitute.For<IMessageStreamEnumerable<IRawInboundEnvelope>>();
+        IAsyncEnumerator<IRawInboundEnvelope> enumerator = Substitute.For<IAsyncEnumerator<IRawInboundEnvelope>>();
+        source.GetAsyncEnumerator(Arg.Any<CancellationToken>()).Returns(enumerator);
+        ChunkStream chunkStream = new(source);
+
+        (await chunkStream.ReadAsync(new byte[10].AsMemory())).ShouldBe(0);
+        chunkStream.Dispose();
+        chunkStream.Dispose();
+
+        await enumerator.Received(1).DisposeAsync();
+    }
+
+    [Fact]
+    public void Dispose_ShouldNotEnumerateSource_WhenNotRead()
+    {
+        IMessageStreamEnumerable<IRawInboundEnvelope> source = Substitute.For<IMessageStreamEnumerable<IRawInboundEnvelope>>();
+        ChunkStream chunkStream = new(source);
+
+        chunkStream.Dispose();
+
+        source.ReceivedCalls().ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task DisposeAsync_ShouldNotEnumerateSource_WhenNotRead()
     {
         IMessageStreamEnumerable<IRawInboundEnvelope> source = Substitute.For<IMessageStreamEnumerable<IRawInboundEnvelope>>();
