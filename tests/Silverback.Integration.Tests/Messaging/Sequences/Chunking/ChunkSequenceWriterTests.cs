@@ -70,6 +70,19 @@ public class ChunkSequenceWriterTests
         result.ShouldBe(alwaysAddHeaders);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void MustCreateSequence_ShouldReturnFalse_WhenRawMessageIsNull(bool alwaysAddHeaders)
+    {
+        OutboundEnvelope envelope = CreateEnvelope(null, 10, alwaysAddHeaders);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>());
+        bool result = writer.CanHandle(envelope);
+
+        result.ShouldBeFalse();
+    }
+
     [Fact]
     public void MustCreateSequence_ShouldReturnFalse_WhenChunkingNotEnabled()
     {
@@ -466,7 +479,7 @@ public class ChunkSequenceWriterTests
         arrayPool.OutstandingCount.ShouldBe(0);
     }
 
-    private static OutboundEnvelope CreateEnvelope(object rawMessage, int chunkSize, bool alwaysAddHeaders = false) =>
+    private static OutboundEnvelope CreateEnvelope(object? rawMessage, int chunkSize, bool alwaysAddHeaders = false) =>
         new(
             rawMessage,
             new MessageHeaderCollection

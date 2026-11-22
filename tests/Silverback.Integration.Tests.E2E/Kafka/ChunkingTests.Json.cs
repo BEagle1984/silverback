@@ -23,6 +23,43 @@ namespace Silverback.Tests.Integration.E2E.Kafka;
 
 public partial class ChunkingTests
 {
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Chunking_ShouldProduceAndConsumeTombstoneWithoutChunking(bool alwaysAddHeaders)
+    {
+        TestingCollection<Tombstone> tombstones = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName).EnableChunking(10, alwaysAddHeaders)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<Tombstone>(HandleTombstone)
+            .AddIntegrationSpy());
+
+        void HandleTombstone(Tombstone tombstone) => tombstones.Add(tombstone);
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        IOutboundEnvelope outboundEnvelope = Helper.Spy.RawOutboundEnvelopes.ShouldHaveSingleItem();
+        outboundEnvelope.RawMessage.ShouldBeNull();
+        outboundEnvelope.Headers.GetValue(DefaultMessageHeaders.ChunkIndex).ShouldBeNull();
+        DefaultTopic.GetAllMessages().ShouldHaveSingleItem().Value.ShouldBeNull();
+
+        tombstones.ShouldHaveSingleItem().MessageKey.ShouldBe("42");
+    }
+
     [Fact]
     public async Task Chunking_ShouldProduceAndConsumeChunkedJson()
     {
