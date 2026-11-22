@@ -175,6 +175,28 @@ public class ConsumerPipelineContextTests
         act.ShouldThrow<ObjectDisposedException>();
     }
 
+    [Fact]
+    public void GetRequiredSequence_ShouldReturnSequence()
+    {
+        ConsumerPipelineContext context = CreateContext();
+        ISequence sequence = Substitute.For<ISequence>();
+        context.SetSequence(sequence, true);
+
+        ISequence requiredSequence = context.GetRequiredSequence();
+
+        requiredSequence.ShouldBeSameAs(sequence);
+    }
+
+    [Fact]
+    public void GetRequiredSequence_ShouldThrow_WhenMessageDoesNotBelongToSequence()
+    {
+        ConsumerPipelineContext context = CreateContext();
+
+        Action act = () => context.GetRequiredSequence();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The message doesn't belong to a sequence.");
+    }
+
     private static ConsumerPipelineContext CreateContext() => new(
         Substitute.For<IRawInboundEnvelope>(),
         Substitute.For<IConsumer>(),

@@ -1588,6 +1588,27 @@ public class SequenceBaseTests
     }
 
     [Fact]
+    public async Task AbortingTaskCompletionSource_ShouldReturnCompletedSource_WhenAborted()
+    {
+        using TestSequence sequence = new(ConsumerPipelineContextHelper.CreateSubstitute());
+
+        await sequence.AbortAsync(SequenceAbortReason.IncompleteSequence).WaitAsync(Timeout);
+
+        sequence.AbortingTaskCompletionSource.Task.IsCompletedSuccessfully.ShouldBeTrue();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked synchronously, before the disposal")]
+    public void AbortingTaskCompletionSource_ShouldThrow_WhenNotAborted()
+    {
+        using TestSequence sequence = new(ConsumerPipelineContextHelper.CreateSubstitute());
+
+        Action act = () => _ = sequence.AbortingTaskCompletionSource;
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The sequence isn't aborted.");
+    }
+
+    [Fact]
     public async Task AbortAsync_ShouldRollBackAndNotifyFailure_WhenCommitFailsAfterEnumerationAbortedWithCustomTransactionManager()
     {
         IConsumerTransactionManager transactionManager = Substitute.For<IConsumerTransactionManager>();

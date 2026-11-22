@@ -30,7 +30,7 @@ public sealed record BatchSettings : IValidatableSettings
         if (Size < 1)
             throw new BrokerConfigurationException($"Batch.{nameof(Size)} must be greater than or equal to 1.");
 
-        if (MaxWaitTime != null && MaxWaitTime <= TimeSpan.Zero)
+        if (MaxWaitTime is { } maxWaitTime && maxWaitTime <= TimeSpan.Zero)
             throw new BrokerConfigurationException($"Batch.{nameof(MaxWaitTime)} must be greater than zero.");
 
         if (MaxWaitTime is { TotalMilliseconds: > int.MaxValue })

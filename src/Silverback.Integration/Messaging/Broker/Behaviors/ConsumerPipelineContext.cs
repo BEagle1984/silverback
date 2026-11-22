@@ -258,6 +258,16 @@ public sealed class ConsumerPipelineContext : IDisposable
     }
 
     /// <summary>
+    ///     Gets the <see cref="ISequence" /> that the current message belongs to, when it's known to belong to one (e.g., because it
+    ///     started it). The sequence is never reset once set.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="ISequence" />.
+    /// </returns>
+    internal ISequence GetRequiredSequence() =>
+        Sequence ?? throw new InvalidOperationException("The message doesn't belong to a sequence.");
+
+    /// <summary>
     ///     Keeps the current service scope alive until the returned lease is disposed, even if the context is disposed in the
     ///     meantime. The scope is disposed when both the context and all the leases are disposed.
     /// </summary>

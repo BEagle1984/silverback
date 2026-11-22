@@ -69,11 +69,11 @@ public class ChunkSequence : RawSequence
         if (_lastIndex != null && index == _lastIndex)
             return false;
 
-        if (_lastIndex != null && index != _lastIndex + 1)
+        if (_lastIndex is { } lastIndex && index != lastIndex + 1)
         {
             throw new SequenceException(
                 $"Sequence error. Received chunk with index {index} after index " +
-                $"{_lastIndex}.");
+                $"{lastIndex}.");
         }
 
         _lastIndex = index;

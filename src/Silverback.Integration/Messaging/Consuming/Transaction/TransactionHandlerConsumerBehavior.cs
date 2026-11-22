@@ -168,11 +168,12 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         ConsumerPipelineContext context,
         ISequence sequence,
         Exception exception,
-        [NotNullWhen(true)] out ISequence? outerSequence)
+        out ISequence outerSequence)
     {
-        outerSequence = context.Sequence;
+        // The context of a sequence is the one that started it
+        outerSequence = context.GetRequiredSequence();
 
-        if (outerSequence == null || outerSequence == sequence || outerSequence.IsAborted && !IsAbortedByErrorOrStop(outerSequence))
+        if (outerSequence == sequence || outerSequence.IsAborted && !HasErrorOrStopAbortReason(outerSequence))
             return false;
 
         if (sequence.ParentSequence == outerSequence || context.IsSequenceStart && outerSequence.IsAborted)
@@ -182,15 +183,19 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     }
 
     // The abort handles the failures of the sequence, applying the error policies or rolling it back because the consumer is stopped,
-    // unlike when aborted because incomplete or because the subscribers stopped enumerating it
-    private static bool IsAbortedByErrorOrStop(ISequence sequence) =>
-        sequence.IsAborted &&
+    // unlike when aborted because incomplete or because the subscribers stopped enumerating it. The caller must check IsAborted first,
+    // since the abort reason is set before the sequence is flagged as aborted.
+    private static bool HasErrorOrStopAbortReason(ISequence sequence) =>
         sequence.AbortReason is SequenceAbortReason.Error or SequenceAbortReason.ConsumerAborted or SequenceAbortReason.Disposing;
 
-    private static Exception? GetProcessingException(ISequence sequence) =>
-        sequence is ISequenceImplementation { ProcessingCompletedTask: { IsFaulted: true } processingCompletedTask }
-            ? processingCompletedTask.Exception?.InnerException
-            : null;
+    private static Exception? GetProcessingException(ISequence sequence)
+    {
+        if (sequence is not ISequenceImplementation sequenceImplementation)
+            return null;
+
+        Task processingCompletedTask = sequenceImplementation.ProcessingCompletedTask;
+        return processingCompletedTask.IsFaulted ? processingCompletedTask.Exception.InnerException : null;
+    }
 
     // The abort of the outer sequence handles the failure, applying the error policies (unless aborted by the stop): await it (or abort it,
     // when the message failed to be pushed to it), since aborting the inner sequence as failed would apply them a second time. The inner
@@ -279,12 +284,9 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
     private async Task AwaitProcessedIfNecessaryAsync(ConsumerPipelineContext context)
     {
-        if (context.Sequence == null)
-            throw new InvalidOperationException("Sequence is null");
-
         // At the end of the sequence (or when the processing task exits prematurely), ensure that the
         // commit was performed or the error policies were applied before continuing
-        if (context.IsSequenceEnd || context.Sequence.IsAborted)
+        if (context.IsSequenceEnd || context.GetRequiredSequence().IsAborted)
         {
             _logger.LogSequenceEndedAwaitingProcessingTask(context.Envelope);
 
@@ -302,7 +304,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
                 }
                 else
                 {
-                    await context.Sequence.AwaitProcessingAsync(true).ConfigureAwait(false);
+                    await context.GetRequiredSequence().AwaitProcessingAsync(true).ConfigureAwait(false);
                 }
             }
             finally
@@ -323,7 +325,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     private void StartSequenceProcessingAwaiter(ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
         Task? processingTask = context.ProcessingTask;
-        ISequence sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
+        ISequence sequence = context.GetRequiredSequence();
         Task.Run(() => AwaitSequenceProcessingAsync(sequence, processingTask, cancellationToken), CancellationToken.None).FireAndForget();
     }
 
@@ -383,7 +385,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         {
             SequenceAbortReason abortReason = StopCancellationHelper.GetSequenceAbortReason(exception, cancellationToken);
 
-            if (IsOuterSequenceFailure(context, sequence, exception, out ISequence? outerSequence))
+            if (IsOuterSequenceFailure(context, sequence, exception, out ISequence outerSequence))
             {
                 if (context.IsSequenceStart)
                     ownedOuterSequence = outerSequence;
@@ -447,7 +449,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             if (!context.IsSequenceStart)
                 return (context, sequence);
 
-            sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
+            sequence = context.GetRequiredSequence();
             context = sequence.Context;
 
             processingTask = context.ProcessingTask != processingTask
@@ -526,6 +528,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         }
     }
 
+    // Called only for the messages that don't belong to a sequence: the sequence failures are handled by HandleSequenceExceptionAsync
     private async Task<bool> HandleExceptionAsync(ConsumerPipelineContext context, Exception exception)
     {
         _logger.LogProcessingError(context.Envelope, exception);
@@ -540,12 +543,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
                                .ConfigureAwait(false);
 
             if (!handled)
-            {
-                if (context.Sequence != null && (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))
-                    await context.Sequence.Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
-                else
-                    await ErrorPoliciesHelper.RollbackOrStopConsumerAsync(context, exception).ConfigureAwait(false);
-            }
+                await ErrorPoliciesHelper.RollbackOrStopConsumerAsync(context, exception).ConfigureAwait(false);
 
             return handled;
         }
