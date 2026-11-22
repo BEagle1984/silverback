@@ -105,7 +105,7 @@ public class ConsumerStatusInfoTests : MqttTests
                         .WithClientId(DefaultClientId)
                         .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber())
-            .RunAsync(waitUntilBrokerClientsConnected: false);
+            .RunAsync();
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
