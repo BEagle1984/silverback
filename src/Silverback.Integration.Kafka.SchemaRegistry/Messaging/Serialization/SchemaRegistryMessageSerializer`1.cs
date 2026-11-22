@@ -21,6 +21,8 @@ public abstract class SchemaRegistryMessageSerializer<TMessage> : IMessageSerial
 {
     private readonly IAsyncSerializer<TMessage> _confluentSerializer;
 
+    private readonly bool _ownsSerializerOutput;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="SchemaRegistryMessageSerializer{TMessage}" /> class.
     /// </summary>
@@ -31,9 +33,20 @@ public abstract class SchemaRegistryMessageSerializer<TMessage> : IMessageSerial
     ///     The Confluent serializer to be used to serialize the message.
     /// </param>
     protected SchemaRegistryMessageSerializer(ISchemaRegistryClient schemaRegistryClient, IAsyncSerializer<TMessage> confluentSerializer)
+        : this(schemaRegistryClient, confluentSerializer, false)
+    {
+    }
+
+    // The built-in serializers pass true, because the Confluent serializers return a new array for each message, while a custom
+    // serializer might reuse its output array
+    private protected SchemaRegistryMessageSerializer(
+        ISchemaRegistryClient schemaRegistryClient,
+        IAsyncSerializer<TMessage> confluentSerializer,
+        bool ownsSerializerOutput)
     {
         SchemaRegistryClient = schemaRegistryClient;
         _confluentSerializer = confluentSerializer;
+        _ownsSerializerOutput = ownsSerializerOutput;
     }
 
     /// <summary>
@@ -60,6 +73,6 @@ public abstract class SchemaRegistryMessageSerializer<TMessage> : IMessageSerial
                 new SerializationContext(MessageComponentType.Value, endpoint.RawName))
             .ConfigureAwait(false);
 
-        return new MemoryStream(buffer);
+        return _ownsSerializerOutput ? new OwnedReadOnlyMemoryStream(buffer) : new MemoryStream(buffer);
     }
 }

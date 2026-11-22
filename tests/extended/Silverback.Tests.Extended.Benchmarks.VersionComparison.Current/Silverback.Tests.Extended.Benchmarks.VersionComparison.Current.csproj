@@ -15,5 +15,6 @@
     <ProjectReference Include="../../../src/Silverback.Core/Silverback.Core.csproj" />
     <ProjectReference Include="../../../src/Silverback.Core.Model/Silverback.Core.Model.csproj" />
     <ProjectReference Include="../../../src/Silverback.Integration.Kafka/Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="../../../src/Silverback.Integration.Kafka.Testing/Silverback.Integration.Kafka.Testing.csproj" />
   </ItemGroup>
 </Project>

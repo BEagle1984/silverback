@@ -53,6 +53,15 @@ internal sealed class InMemoryPartition : IInMemoryPartition
             Offset offset = _nextOffset++;
             SetTimestamp(message);
 
+            // Like librdkafka, store a copy of the value, since the producer may hand over a buffer that it still references
+            message = new Message<byte[]?, byte[]?>
+            {
+                Key = message.Key,
+                Value = message.Value?.ToArray(),
+                Headers = message.Headers,
+                Timestamp = message.Timestamp
+            };
+
             if (transactionalUniqueId == Guid.Empty)
             {
                 _messages.Add(new StoredMessage(message, offset, StoredMessageStatus.Committed));

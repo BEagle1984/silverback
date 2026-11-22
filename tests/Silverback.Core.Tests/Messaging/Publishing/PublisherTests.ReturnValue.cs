@@ -17,6 +17,7 @@ using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
+using Silverback.Messaging.Subscribers.Subscriptions;
 using Silverback.Tests.Logging;
 using Silverback.Util;
 using Xunit;
@@ -412,6 +413,28 @@ public partial class PublisherTests
         syncResults.ShouldBeEmpty();
         asyncResults.ShouldBeEmpty();
         callsCount.ShouldBe(8);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldReturnResultsOfExclusiveSubscribersFirst_WhenExclusiveAndNonExclusiveSubscribersReturnValues()
+    {
+        DelegateSubscriptionOptions nonExclusive = new() { IsExclusive = false };
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, string>(_ => "non-exclusive-1", nonExclusive)
+            .AddDelegateSubscriber<TestQueryOne>(_ => { }, nonExclusive)
+            .AddDelegateSubscriber<TestQueryOne, string>(_ => "exclusive")
+            .AddDelegateSubscriber<TestQueryOne, string>(_ => "non-exclusive-2", nonExclusive));
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
+        IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
+
+        syncResults.ShouldBe(["exclusive", "non-exclusive-1", "non-exclusive-2"]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]

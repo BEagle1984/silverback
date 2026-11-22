@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Shouldly;
@@ -86,6 +87,38 @@ public class JsonMessageSerializerTests
             TestProducerEndpoint.GetDefault());
 
         serialized.ReadAll().ShouldBe(messageBytes);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ShouldNotShareByteArray()
+    {
+        byte[] messageBytes = "test"u8.ToArray();
+
+        JsonMessageSerializer serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(
+            messageBytes,
+            [],
+            TestProducerEndpoint.GetDefault());
+
+        byte[]? producedBytes = serialized.ReadAll();
+        producedBytes.ShouldBe(messageBytes);
+        producedBytes.ShouldNotBeSameAs(messageBytes);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ShouldReturnStreamWhoseBufferCanBeProducedWithoutCopying()
+    {
+        TestEventOne message = new() { Content = "the message" };
+
+        JsonMessageSerializer serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(message, [], TestProducerEndpoint.GetDefault());
+
+        byte[]? producedBytes = serialized.ReadAll();
+        producedBytes.ShouldNotBeNull();
+        Encoding.UTF8.GetString(producedBytes).ShouldBe("{\"Content\":\"the message\"}");
+        serialized.ReadAll().ShouldBeSameAs(producedBytes);
     }
 
     [Fact]

@@ -1,15 +1,49 @@
 ---
 uid: performance
-description: "BenchmarkDotNet results comparing Silverback 5.0.0 with 4.6.2: execution time and memory allocations of the in-memory message bus and the Kafka producer."
+description: "BenchmarkDotNet results comparing Silverback 5.10.0 with 5.9.0 and 5.0.0 with 4.6.2: execution time and memory allocations of the in-memory message bus and the Kafka producer and consumer."
 ---
 
 # Performance
 
 Silverback tries to improve the performance with every release and a huge effort is put into optimizing the code and the integration with the underlying libraries. The development of v5.0.0 especially focused on performance improvements in several areas and the results speak for themselves. There surely is still room for further optimizations, but the current state is already quite satisfying.
 
-## Benchmark Results
-
 The benchmarks were built with .NET 10 and run on a Windows 11 workstation (AMD Ryzen 9 9950X3D, 64 GB DDR5). They use [BenchmarkDotNet](https://benchmarkdotnet.org/), and the source code is available on [GitHub](https://github.com/BEagle1984/silverback/tree/main/tests/extended).
+
+## v5.10.0 vs. v5.9.0
+
+v5.10.0 cuts the allocations made by the message bus for each published message by up to 80 % and trims the Kafka producer and consumer pipelines, for example in the header mapping, in the propagation of the trace baggage and by handing the serialized message to the producer without copying it.
+
+Each version was run twice, alternating them, and the tables show the average of the two runs. The allocations vary by a few bytes at most, while the times vary by up to about 9 % between the runs: the time savings of the message bus are well above that, while for Kafka the allocations are the reliable signal and the time differences are within the noise. These benchmarks run in process, in a different session than the v5.0.0 vs. v4.6.2 comparison below, so only the numbers within the same section are comparable.
+
+### Message Bus
+
+| Method                                                | Mean 5.9.0 | Mean 5.10.0 | Mean Diff | Allocated 5.9.0 | Allocated 5.10.0 | Allocated Diff |
+|-------------------------------------------------------|-----------:|------------:|----------:|----------------:|-----------------:|---------------:|
+| Publish with single sync subscriber                   |   241.8 ns |    110.9 ns |     -54 % |         1.08 KB |          0.22 KB |          -80 % |
+| Publish with single async subscriber                  |   669.3 ns |    533.8 ns |     -20 % |         1.30 KB |          0.45 KB |          -66 % |
+| Publish with multiple sync subscribers                |   245.9 ns |    112.9 ns |     -54 % |         1.08 KB |          0.22 KB |          -80 % |
+| Publish with multiple async subscribers               |   672.7 ns |    542.8 ns |     -19 % |         1.30 KB |          0.45 KB |          -66 % |
+| Publish with multiple sync and async subscribers      |   881.1 ns |    748.8 ns |     -15 % |         1.77 KB |          0.96 KB |          -46 % |
+| PublishAsync with single sync subscriber              |   251.2 ns |    124.8 ns |     -50 % |         1.08 KB |          0.22 KB |          -80 % |
+| PublishAsync with single async subscriber             | 1,017.9 ns |    751.6 ns |     -26 % |         2.24 KB |          1.33 KB |          -41 % |
+| PublishAsync with multiple sync subscribers           |   258.2 ns |    128.3 ns |     -50 % |         1.08 KB |          0.22 KB |          -80 % |
+| PublishAsync with multiple async subscribers          | 1,021.9 ns |    753.9 ns |     -26 % |         2.24 KB |          1.32 KB |          -41 % |
+| PublishAsync with multiple sync and async subscribers | 1,382.3 ns |  1,160.4 ns |     -16 % |         3.09 KB |          2.23 KB |          -28 % |
+
+### Kafka Producer and Consumer
+
+Producing and consuming a JSON message of about 200 bytes with the mocked Kafka broker of `Silverback.Integration.Kafka.Testing`, which replaces the Confluent client and the network. In the variants with the trace baggage, the messages are produced under an `Activity` carrying three baggage items, which travel in the message headers.
+
+| Method                     | Mean 5.9.0 | Mean 5.10.0 | Mean Diff | Allocated 5.9.0 | Allocated 5.10.0 | Allocated Diff |
+|----------------------------|-----------:|------------:|----------:|----------------:|-----------------:|---------------:|
+| Produce                    |    2.71 us |     2.59 us |      -5 % |         4.83 KB |          4.68 KB |           -3 % |
+| Produce with trace baggage |    3.32 us |     3.01 us |     -10 % |         5.62 KB |          5.16 KB |           -8 % |
+| Consume                    |    4.58 us |     4.43 us |      -3 % |         9.67 KB |          8.96 KB |           -7 % |
+| Consume with trace baggage |    4.92 us |     4.64 us |      -6 % |        10.96 KB |          9.77 KB |          -11 % |
+
+The mocked broker itself does a little more work since v5.10.0: it copies each produced message, as the Confluent client does, and allocates a bit more for each consumed message. The Kafka results therefore slightly understate the savings. In particular, they don't show the copy of the serialized message that v5.10.0 saves when producing to a real broker: one allocation the size of the message for each produced message.
+
+## v5.0.0 vs. v4.6.2
 
 ### Message Bus
 

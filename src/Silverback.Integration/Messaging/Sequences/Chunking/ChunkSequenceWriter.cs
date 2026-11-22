@@ -4,7 +4,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -19,6 +19,8 @@ public class ChunkSequenceWriter : ISequenceWriter
 
     private readonly IChunkEnricherFactory _chunkEnricherFactory;
 
+    private readonly ArrayPool<byte> _arrayPool;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="ChunkSequenceWriter" /> class.
     /// </summary>
@@ -29,9 +31,15 @@ public class ChunkSequenceWriter : ISequenceWriter
     ///     The <see cref="IServiceProvider" />.
     /// </param>
     public ChunkSequenceWriter(IChunkEnricherFactory chunkEnricherFactory, IServiceProvider serviceProvider)
+        : this(chunkEnricherFactory, serviceProvider, ArrayPool<byte>.Shared)
+    {
+    }
+
+    internal ChunkSequenceWriter(IChunkEnricherFactory chunkEnricherFactory, IServiceProvider serviceProvider, ArrayPool<byte> arrayPool)
     {
         _chunkEnricherFactory = Check.NotNull(chunkEnricherFactory);
         _serviceProvider = Check.NotNull(serviceProvider);
+        _arrayPool = Check.NotNull(arrayPool);
     }
 
     /// <inheritdoc cref="ISequenceWriter.CanHandle" />
@@ -70,57 +78,88 @@ public class ChunkSequenceWriter : ISequenceWriter
 
         ChunkSettings? settings = envelope.EndpointConfiguration.Chunk;
         int chunkSize = settings?.Size ?? int.MaxValue;
-        byte[] bufferArray = ArrayPool<byte>.Shared.Rent(chunkSize);
-        Memory<byte> bufferMemory = bufferArray.AsMemory(0, chunkSize);
 
         int? chunksCount = envelope.RawMessage.CanSeek
             ? (int?)Math.Ceiling(Math.Max(0, envelope.RawMessage.Length - envelope.RawMessage.Position) / (double)chunkSize)
             : null;
 
-        MessageHeader? firstChunkMessageHeader = null;
+        // Don't rent more than the message length, to avoid keeping chunk-sized arrays in the pool for small messages (at least 1 byte,
+        // since reading into an empty buffer would be taken as the end of the stream)
+        int bufferSize = envelope.RawMessage.CanSeek
+            ? (int)Math.Max(1, Math.Min(chunkSize, envelope.RawMessage.Length - envelope.RawMessage.Position))
+            : chunkSize;
 
-        int chunkIndex = 0;
+        // The buffer never escapes: each chunk envelope gets a copy of the read bytes. Non-seekable streams (e.g. encrypted messages)
+        // always rent the full chunk size, so with large chunk sizes the shared pool retains up to one such array per concurrent producer
+        // until it trims its idle arrays on a Gen2 GC. This is accepted, since it avoids a large object heap allocation per message.
+        byte[] bufferArray = _arrayPool.Rent(bufferSize);
 
-        int readBytesCount = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);
-
-        while (readBytesCount > 0)
+        try
         {
-            IOutboundEnvelope chunkEnvelope = CreateChunkEnvelope(
-                chunkIndex,
-                chunksCount,
-                bufferMemory[..readBytesCount].ToArray(),
-                envelope);
+            Memory<byte> bufferMemory = bufferArray.AsMemory(0, bufferSize);
 
-            if (chunkIndex > 0 && firstChunkMessageHeader != null)
-                chunkEnvelope.Headers.Add(firstChunkMessageHeader);
+            MessageHeader? firstChunkMessageHeader = null;
 
-            // Read the next chunk and check if we were at the end of the stream (to not rely on Length property)
-            readBytesCount = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);
+            int chunkIndex = 0;
 
+            int readBytesCount = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);
+
+            // Produce a single empty chunk when there is nothing to read, to avoid silently dropping the message (its chunks count is 1,
+            // whereas the computed chunksCount is 0 or unknown)
             if (readBytesCount == 0)
-                chunkEnvelope.Headers.AddOrReplace(DefaultMessageHeaders.IsLastChunk, true.ToString());
-
-            yield return chunkEnvelope;
-
-            // Read and store the offset of the first chunk, after it has been produced (after yield return)
-            if (chunkIndex == 0)
             {
-                firstChunkMessageHeader = _chunkEnricherFactory
-                    .GetEnricher(chunkEnvelope.EndpointConfiguration, _serviceProvider)
-                    .GetFirstChunkMessageHeader(chunkEnvelope);
+                IOutboundEnvelope emptyChunkEnvelope = CreateChunkEnvelope(0, 1, [], envelope);
+                emptyChunkEnvelope.Headers.AddOrReplace(DefaultMessageHeaders.IsLastChunk, true.ToString());
+
+                yield return emptyChunkEnvelope;
+                yield break;
             }
 
-            chunkIndex++;
+            while (readBytesCount > 0)
+            {
+                IOutboundEnvelope chunkEnvelope = CreateChunkEnvelope(
+                    chunkIndex,
+                    chunksCount,
+                    bufferMemory[..readBytesCount].ToArray(),
+                    envelope);
+
+                if (chunkIndex > 0 && firstChunkMessageHeader != null)
+                    chunkEnvelope.Headers.Add(firstChunkMessageHeader);
+
+                // Read the next chunk and check if we were at the end of the stream (to not rely on Length property)
+                readBytesCount = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);
+
+                if (readBytesCount == 0)
+                    chunkEnvelope.Headers.AddOrReplace(DefaultMessageHeaders.IsLastChunk, true.ToString());
+
+                yield return chunkEnvelope;
+
+                // Read and store the offset of the first chunk, after it has been produced (after yield return)
+                if (chunkIndex == 0)
+                {
+                    firstChunkMessageHeader = _chunkEnricherFactory
+                        .GetEnricher(chunkEnvelope.EndpointConfiguration, _serviceProvider)
+                        .GetFirstChunkMessageHeader(chunkEnvelope);
+                }
+
+                chunkIndex++;
+            }
+        }
+        finally
+        {
+            _arrayPool.Return(bufferArray);
         }
     }
 
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Stream ownership is transferred to the envelope")]
     private static IOutboundEnvelope CreateChunkEnvelope(
         in int chunkIndex,
         in int? chunksCount,
         byte[] rawContent,
         IOutboundEnvelope originalEnvelope)
     {
-        IOutboundEnvelope envelope = originalEnvelope.CloneReplacingRawMessage(new MemoryStream(rawContent));
+        // The chunk content is a fresh copy that nobody else references, so the producer can use it without copying it again
+        IOutboundEnvelope envelope = originalEnvelope.CloneReplacingRawMessage(new OwnedReadOnlyMemoryStream(rawContent));
 
         envelope.Headers.AddOrReplace(DefaultMessageHeaders.ChunkIndex, chunkIndex);
 

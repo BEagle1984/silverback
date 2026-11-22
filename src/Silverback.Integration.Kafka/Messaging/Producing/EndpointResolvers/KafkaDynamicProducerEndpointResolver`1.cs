@@ -226,10 +226,20 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     {
         Check.NotNull(serializedEndpoint);
 
-        string[] parts = serializedEndpoint.Split('|');
+        int separatorIndex = serializedEndpoint.IndexOf('|', StringComparison.Ordinal);
+
+        if (separatorIndex < 0)
+            throw new FormatException($"The serialized endpoint '{serializedEndpoint}' is not in the expected 'topic|partition' format.");
+
+        // Anything after a further separator is ignored
+        ReadOnlySpan<char> partition = serializedEndpoint.AsSpan(separatorIndex + 1);
+        int nextSeparatorIndex = partition.IndexOf('|');
+
+        if (nextSeparatorIndex >= 0)
+            partition = partition[..nextSeparatorIndex];
 
         return new KafkaProducerEndpoint(
-            new TopicPartition(parts[0], int.Parse(parts[1], CultureInfo.InvariantCulture)),
+            new TopicPartition(serializedEndpoint[..separatorIndex], int.Parse(partition, CultureInfo.InvariantCulture)),
             configuration);
     }
 

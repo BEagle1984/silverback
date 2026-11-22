@@ -48,6 +48,7 @@
   <Project Path="../../tests/Silverback.Tests.Common/Silverback.Tests.Common.csproj" />
   <Project Path="Silverback.Tests.Extended.Benchmarks.VersionComparison.Current/Silverback.Tests.Extended.Benchmarks.VersionComparison.Current.csproj" />
   <Project Path="Silverback.Tests.Extended.Benchmarks.VersionComparison.V4_6_2/Silverback.Tests.Extended.Benchmarks.VersionComparison.V4_6_2.csproj" />
+  <Project Path="Silverback.Tests.Extended.Benchmarks.VersionComparison.V5_9_0/Silverback.Tests.Extended.Benchmarks.VersionComparison.V5_9_0.csproj" />
   <Project Path="Silverback.Tests.Extended.Benchmarks/Silverback.Tests.Extended.Benchmarks.csproj" />
   <Project Path="Silverback.Tests.Extended.Integration.Worker/Silverback.Tests.Extended.Integration.Worker.csproj" />
   <Project Path="Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj" />

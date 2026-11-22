@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Confluent.Kafka;
 using NSubstitute;
 using Shouldly;
@@ -285,6 +286,62 @@ public class KafkaDynamicProducerEndpointResolverTests
 
         KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
         kafkaEndpoint.TopicPartition.ShouldBe(new TopicPartition(topic, partition));
+    }
+
+    [Theory]
+    [InlineData("topic", 0)]
+    [InlineData("topic", 42)]
+    [InlineData("topic", -1)]
+    [InlineData("my.topic_name-1", 2147483647)]
+    [InlineData("t", 1)]
+    public void GetEndpoint_ShouldDeserializeSerializedEndpoint(string topic, int partition)
+    {
+        KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) =>
+            new TopicPartition(topic, partition));
+        string serializedEndpoint = endpointResolver.GetSerializedEndpoint(_envelope);
+        IOutboundEnvelope envelope = new OutboundEnvelope(
+            null,
+            [new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, serializedEndpoint)],
+            new KafkaProducerEndpointConfiguration(),
+            Substitute.For<IProducer>());
+
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);
+
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.ShouldBe(new TopicPartition(topic, partition));
+    }
+
+    [Fact]
+    public void GetEndpoint_ShouldIgnoreTrailingSegmentsOfSerializedEndpoint()
+    {
+        KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
+        IOutboundEnvelope envelope = new OutboundEnvelope(
+            null,
+            [new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, "serialized|3|whatever")],
+            new KafkaProducerEndpointConfiguration(),
+            Substitute.For<IProducer>());
+
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);
+
+        endpoint.ShouldBeOfType<KafkaProducerEndpoint>().TopicPartition.ShouldBe(new TopicPartition("serialized", 3));
+    }
+
+    [Theory]
+    [InlineData("serialized")]
+    [InlineData("serialized|")]
+    [InlineData("serialized|abc")]
+    public void GetEndpoint_ShouldThrow_WhenSerializedEndpointIsInvalid(string serializedEndpoint)
+    {
+        KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
+        IOutboundEnvelope envelope = new OutboundEnvelope(
+            null,
+            [new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, serializedEndpoint)],
+            new KafkaProducerEndpointConfiguration(),
+            Substitute.For<IProducer>());
+
+        Action act = () => endpointResolver.GetEndpoint(envelope);
+
+        act.ShouldThrow<FormatException>();
     }
 
     private sealed class TestEndpointResolver : IKafkaProducerEndpointResolver<TestEventOne>

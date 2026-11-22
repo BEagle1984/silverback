@@ -69,5 +69,32 @@ public class InMemoryPartitionTests
         partition.GetAllMessages().Count.ShouldBe(partition.TotalMessagesCount);
     }
 
+    [Fact]
+    public void Add_ShouldStoreCopyOfValue()
+    {
+        InMemoryPartition partition = new(0, new InMemoryTopic("topic", "server", 1));
+        byte[] value = [1, 2, 3];
+
+        partition.Add(new Message<byte[]?, byte[]?> { Value = value }, Guid.Empty);
+        value[0] = 42;
+
+        partition.TryPull(new Offset(0), out ConsumeResult<byte[]?, byte[]?>? result).ShouldBeTrue();
+        result.ShouldNotBeNull();
+        result.Message.Value.ShouldBe([1, 2, 3]);
+        result.Message.Value.ShouldNotBeSameAs(value);
+    }
+
+    [Fact]
+    public void Add_ShouldSetTimestampOfProducedMessage()
+    {
+        InMemoryPartition partition = new(0, new InMemoryTopic("topic", "server", 1));
+        Message<byte[]?, byte[]?> message = CreateMessage(1);
+
+        partition.Add(message, Guid.Empty);
+
+        message.Timestamp.ShouldNotBe(Timestamp.Default);
+        partition.GetAllMessages().Single().Timestamp.ShouldBe(message.Timestamp);
+    }
+
     private static Message<byte[]?, byte[]?> CreateMessage(byte value) => new() { Value = [value] };
 }
