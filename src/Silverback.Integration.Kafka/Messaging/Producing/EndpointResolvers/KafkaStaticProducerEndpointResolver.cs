@@ -18,10 +18,10 @@ public sealed class KafkaStaticProducerEndpointResolver
     ///     Initializes a new instance of the <see cref="KafkaStaticProducerEndpointResolver" /> class.
     /// </summary>
     /// <param name="topic">
-    ///     The target topic.
+    ///     The target topic. Must not be empty.
     /// </param>
     /// <param name="partition">
-    ///     The optional target partition index.
+    ///     The optional target partition index. If specified, it must be greater than or equal to 0, or <see cref="Partition.Any" />.
     /// </param>
     public KafkaStaticProducerEndpointResolver(string topic, int? partition = null)
         : this(new TopicPartition(Check.NotNullOrEmpty(topic), partition ?? Partition.Any))
@@ -32,7 +32,8 @@ public sealed class KafkaStaticProducerEndpointResolver
     ///     Initializes a new instance of the <see cref="KafkaStaticProducerEndpointResolver" /> class.
     /// </summary>
     /// <param name="topicPartition">
-    ///     The target topic and partition.
+    ///     The target topic and partition. The <see cref="Confluent.Kafka.TopicPartition.Partition" /> must be greater than or equal to 0,
+    ///     or <see cref="Partition.Any" />.
     /// </param>
     public KafkaStaticProducerEndpointResolver(TopicPartition topicPartition)
         : base(Check.NotNull(topicPartition).ToDisplayString())

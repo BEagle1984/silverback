@@ -28,7 +28,7 @@ public abstract class BrokerClient : IBrokerClient
     ///     Initializes a new instance of the <see cref="BrokerClient" /> class.
     /// </summary>
     /// <param name="name">
-    ///     The client name.
+    ///     The client name. Must not be empty.
     /// </param>
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.

@@ -111,7 +111,7 @@ public static class InboundEnvelopeBuilderExtensions
     ///     The <see cref="InboundEnvelopeBuilder{TMessage}" />.
     /// </param>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic. Must not be empty.
     /// </param>
     /// <param name="partition">
     ///     The partition index. Set to 0 if not specified.

@@ -64,6 +64,9 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     /// <param name="factory">
     ///     The factory building the <typeparamref name="TService" /> according to the specified discriminator.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     A factory for the specified discriminator type is already registered.
+    /// </exception>
     public virtual void AddFactory<TDiscriminator>(Func<IServiceProvider, TService> factory)
         where TDiscriminator : TDiscriminatorBase
     {

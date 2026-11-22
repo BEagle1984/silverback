@@ -22,5 +22,8 @@ public interface IKafkaOffsetStoreFactory
     /// <returns>
     ///     The <see cref="IKafkaOffsetStore" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No factory is registered for the type of the specified <paramref name="settings" />.
+    /// </exception>
     IKafkaOffsetStore GetStore(KafkaOffsetStoreSettings settings, IServiceProvider serviceProvider);
 }

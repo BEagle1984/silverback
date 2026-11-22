@@ -22,5 +22,8 @@ public interface IOutboxWriterFactory
     /// <returns>
     ///     The <see cref="IOutboxWriter" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox writer implementation is registered for the type of the specified <paramref name="settings" />.
+    /// </exception>
     IOutboxWriter GetWriter(OutboxSettings settings, IServiceProvider serviceProvider);
 }

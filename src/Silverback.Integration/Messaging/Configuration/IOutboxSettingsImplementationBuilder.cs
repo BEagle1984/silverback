@@ -16,5 +16,8 @@ public interface IOutboxSettingsImplementationBuilder
     /// <returns>
     ///     The <see cref="OutboxSettings" />.
     /// </returns>
+    /// <exception cref="SilverbackConfigurationException">
+    ///     The built settings are not valid.
+    /// </exception>
     OutboxSettings Build();
 }

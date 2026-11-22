@@ -59,6 +59,9 @@ public interface IConsumerTransactionManager
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The transaction was already aborted (or is being aborted).
+    /// </exception>
     Task CommitAsync();
 
     /// <summary>
@@ -81,6 +84,9 @@ public interface IConsumerTransactionManager
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
     ///     value indicating whether the rollback was performed.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The transaction was already committed (or is being committed) and <paramref name="throwIfAlreadyCommitted" /> is <c>true</c>.
+    /// </exception>
     Task<bool> RollbackAsync(
         Exception? exception,
         bool commitConsumer = false,

@@ -40,7 +40,7 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     ///     Adds a new header.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The header value.
@@ -54,7 +54,7 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     ///     Adds a new header or replaces the header with the same name.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="newValue">
     ///     The new header value.
@@ -68,7 +68,7 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     ///     Adds a new header if no header with the same name is already set.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="newValue">
     ///     The new header value.

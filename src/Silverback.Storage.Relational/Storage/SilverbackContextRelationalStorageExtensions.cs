@@ -27,6 +27,9 @@ public static class SilverbackContextRelationalStorageExtensions
     /// <returns>
     ///     The <see cref="IStorageTransaction" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     A transaction is already enlisted.
+    /// </exception>
     public static IStorageTransaction EnlistDbTransaction(this ISilverbackContext context, DbTransaction transaction, bool ownTransaction = true) =>
         new DbTransactionWrapper(transaction, context, ownTransaction);
 
@@ -43,6 +46,9 @@ public static class SilverbackContextRelationalStorageExtensions
     /// <returns>
     ///     The transaction or <c>null</c>.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The type of the stored transaction object is not compatible with <typeparamref name="T" />.
+    /// </exception>
     public static T? GetActiveDbTransaction<T>(this ISilverbackContext? context)
         where T : DbTransaction => context != null && context.TryGetActiveDbTransaction(out T? transaction) ? transaction : null;
 
@@ -62,6 +68,9 @@ public static class SilverbackContextRelationalStorageExtensions
     /// <returns>
     ///     A value indicating whether the transaction was found.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The type of the stored transaction object is not compatible with <typeparamref name="T" />.
+    /// </exception>
     public static bool TryGetActiveDbTransaction<T>(this ISilverbackContext context, [NotNullWhen(true)] out T? transaction)
         where T : DbTransaction
     {

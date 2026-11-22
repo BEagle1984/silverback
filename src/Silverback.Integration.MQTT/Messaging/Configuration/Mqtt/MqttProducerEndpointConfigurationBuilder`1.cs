@@ -51,7 +51,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the target topic and optionally the target partition.
     /// </summary>
     /// <param name="topic">
-    ///     The target topic.
+    ///     The target topic. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -88,7 +88,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     /// </summary>
     /// <param name="topicFormatString">
     ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
-    ///     using a <see cref="string.Format(string,object[])" />.
+    ///     using a <see cref="string.Format(string,object[])" />. Must not be empty.
     /// </param>
     /// <param name="topicArgumentsFunction">
     ///     The function returning the arguments to be used to format the string.
@@ -170,7 +170,8 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     ///     message expiry interval is set, the broker must store the message for matching subscribers indefinitely.
     /// </summary>
     /// <param name="messageExpiryInterval">
-    ///     The <see cref="TimeSpan" /> representing the message expiry interval.
+    ///     The <see cref="TimeSpan" /> representing the message expiry interval. Must be between <see cref="TimeSpan.Zero" /> and
+    ///     4,294,967,295 seconds.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.

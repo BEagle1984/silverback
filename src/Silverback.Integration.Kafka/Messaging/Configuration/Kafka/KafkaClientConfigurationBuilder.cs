@@ -20,6 +20,9 @@ public class KafkaClientConfigurationBuilder
     /// <returns>
     ///     The <see cref="KafkaClientConfiguration" />.
     /// </returns>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The configuration is not valid.
+    /// </exception>
     public KafkaClientConfiguration Build()
     {
         KafkaClientConfiguration configuration = BuildCore();

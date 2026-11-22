@@ -44,11 +44,12 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the target topic and optionally the target partition.
     /// </summary>
     /// <param name="topic">
-    ///     The target topic.
+    ///     The target topic. Must not be empty.
     /// </param>
     /// <param name="partition">
     ///     The optional target partition index. If <c>null</c> the partition is automatically derived from the message key (use
-    ///     <see cref="KafkaKeyMemberAttribute" /> to specify a message key, otherwise a random one will be generated).
+    ///     <see cref="KafkaKeyMemberAttribute" /> to specify a message key, otherwise a random one will be generated). If specified, it
+    ///     must be greater than or equal to 0, or <see cref="Partition.Any" />.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -66,7 +67,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the target topic and partition.
     /// </summary>
     /// <param name="topicPartition">
-    ///     The target topic and partition.
+    ///     The target topic and partition. The <see cref="TopicPartition.Partition" /> must be greater than or equal to 0, or
+    ///     <see cref="Partition.Any" />.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -84,7 +86,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the target topic and the function returning the target partition for each message being produced.
     /// </summary>
     /// <param name="topic">
-    ///     The target topic.
+    ///     The target topic. Must not be empty.
     /// </param>
     /// <param name="partitionFunction">
     ///     The function returning the target partition index for the message being produced.
@@ -106,7 +108,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the target topic and the function returning the target partition for each message being produced.
     /// </summary>
     /// <param name="topic">
-    ///     The target topic.
+    ///     The target topic. Must not be empty.
     /// </param>
     /// <param name="partitionFunction">
     ///     The function returning the target partition index for the message being produced.
@@ -219,7 +221,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// </summary>
     /// <param name="topicFormatString">
     ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
-    ///     using a <see cref="string.Format(string,object[])" />.
+    ///     using a <see cref="string.Format(string,object[])" />. Must not be empty.
     /// </param>
     /// <param name="topicArgumentsFunction">
     ///     The function returning the arguments to be used to format the string.
@@ -250,7 +252,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// </summary>
     /// <param name="topicFormatString">
     ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
-    ///     using a <see cref="string.Format(string,object[])" />.
+    ///     using a <see cref="string.Format(string,object[])" />. Must not be empty.
     /// </param>
     /// <param name="topicArgumentsFunction">
     ///     The function returning the arguments to be used to format the string.

@@ -75,12 +75,12 @@ internal class ConsumerChannel : ConsumerChannel<ConsumedApplicationMessage>
     /// <summary>
     ///     Reads the next message to be processed: the oldest message to be replayed, if any, otherwise the next buffered message.
     /// </summary>
+    /// <remarks>
+    ///     The operation is canceled while a restart of the reader is pending.
+    /// </remarks>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the message.
     /// </returns>
-    /// <exception cref="OperationCanceledException">
-    ///     A restart of the reader is pending.
-    /// </exception>
     public async ValueTask<ConsumedApplicationMessage> ReadNextAsync()
     {
         lock (_messagesLock)

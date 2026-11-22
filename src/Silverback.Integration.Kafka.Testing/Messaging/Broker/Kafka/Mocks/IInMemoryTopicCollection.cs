@@ -15,10 +15,10 @@ public interface IInMemoryTopicCollection : IReadOnlyCollection<IInMemoryTopic>
     ///     Gets the topic with the specified name or creates it on the fly.
     /// </summary>
     /// <param name="name">
-    ///     The name of the topic.
+    ///     The name of the topic. Must not be empty.
     /// </param>
     /// <param name="clientConfig">
-    ///     The client configuration.
+    ///     The client configuration. Its bootstrap servers must be set and must not be empty.
     /// </param>
     /// <returns>
     ///     The in-memory topic.
@@ -29,10 +29,10 @@ public interface IInMemoryTopicCollection : IReadOnlyCollection<IInMemoryTopic>
     ///     Gets the topic with the specified name or creates it on the fly.
     /// </summary>
     /// <param name="name">
-    ///     The name of the topic.
+    ///     The name of the topic. Must not be empty.
     /// </param>
     /// <param name="bootstrapServers">
-    ///     The bootstrap servers string used to identify the target broker.
+    ///     The bootstrap servers string used to identify the target broker. Must not be empty.
     /// </param>
     /// <returns>
     ///     The in-memory topic.
@@ -43,13 +43,14 @@ public interface IInMemoryTopicCollection : IReadOnlyCollection<IInMemoryTopic>
     ///     Creates the topic with the specified name, unless it already exists.
     /// </summary>
     /// <param name="name">
-    ///     The name of the topic.
+    ///     The name of the topic. Must not be empty.
     /// </param>
     /// <param name="bootstrapServers">
-    ///     The bootstrap servers string used to identify the target broker.
+    ///     The bootstrap servers string used to identify the target broker. Must not be empty.
     /// </param>
     /// <param name="partitions">
-    ///     The number of partitions, or <c>null</c> to use the number configured in the mock options.
+    ///     The number of partitions, or <c>null</c> to use the number configured in the mock options. If specified, it must be greater
+    ///     than or equal to 1.
     /// </param>
     /// <returns>
     ///     <c>true</c> if the topic has been created, <c>false</c> if it already exists.

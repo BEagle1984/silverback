@@ -36,7 +36,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Adds an MQTT client or updates its configuration if a client with the same name already exists.
     /// </summary>
     /// <param name="name">
-    ///     The producer name, used to merge the configuration with the existing one.
+    ///     The producer name, used to merge the configuration with the existing one. Must not be empty.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
@@ -74,7 +74,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     The default value is the same as for sockets in .NET in general.
     /// </summary>
     /// <param name="value">
-    ///     The <see cref="TimeSpan" /> representing the timeout.
+    ///     The <see cref="TimeSpan" /> representing the timeout. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -179,7 +179,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     When this period is elapsed a ping packet will be sent to keep the connection alive. The default is 15 seconds.
     /// </summary>
     /// <param name="interval">
-    ///     The maximum period that can elapse without a packet being sent.
+    ///     The maximum period that can elapse without a packet being sent. Must be greater than or equal to <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -235,7 +235,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     default is 0, meaning that no alias can be sent.
     /// </summary>
     /// <param name="topicAliasMaximum">
-    ///     The maximum number of topic aliases.
+    ///     The maximum number of topic aliases. Must be between 0 and 65535.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -252,7 +252,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Sets the maximum packet size in byte the client will process. The default is no limit.
     /// </summary>
     /// <param name="maximumPacketSize">
-    ///     The maximum packet size.
+    ///     The maximum packet size. Must be between 1 and 4294967295.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -270,7 +270,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     concurrently. The default value is <c>null</c>, that means <c>65'535</c>.
     /// </summary>
     /// <param name="receiveMaximum">
-    ///     The maximum number of concurrent publications.
+    ///     The maximum number of concurrent publications. Must be between 1 and 65535.
     /// </param>
     /// <remarks>
     ///     There is no mechanism to limit the QoS 0 publications that the Server might try to send.
@@ -486,7 +486,8 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Specifies the URI of the MQTT server.
     /// </summary>
     /// <param name="serverUri">
-    ///     The URI of the MQTT server.
+    ///     The URI of the MQTT server. Must not be empty and must use one of the <c>tcp</c>, <c>mqtt</c>, <c>mqtts</c>, <c>ws</c> or
+    ///     <c>wss</c> schemes.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -501,7 +502,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Specifies the URI of the MQTT server.
     /// </summary>
     /// <param name="serverUri">
-    ///     The URI of the MQTT server.
+    ///     The URI of the MQTT server. Must use one of the <c>tcp</c>, <c>mqtt</c>, <c>mqtts</c>, <c>ws</c> or <c>wss</c> schemes.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -518,7 +519,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Specifies the TCP connection settings using the host name and an optional builder to configure additional TCP options.
     /// </summary>
     /// <param name="host">
-    ///     The server host name or IP address.
+    ///     The server host name or IP address. Must not be empty.
     /// </param>
     /// <param name="tcpConfigurationBuilderAction">
     ///     An optional action that configures the <see cref="MqttClientTcpConfigurationBuilder" />.
@@ -540,7 +541,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Specifies the TCP connection settings using the host name, port and an optional builder to configure additional TCP options.
     /// </summary>
     /// <param name="host">
-    ///     The server host name or IP address.
+    ///     The server host name or IP address. Must not be empty.
     /// </param>
     /// <param name="port">
     ///     The server port.
@@ -603,7 +604,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Specifies the WebSocket connection settings.
     /// </summary>
     /// <param name="uri">
-    ///     The server URI.
+    ///     The server URI. Must not be empty.
     /// </param>
     /// <param name="webSocketConfigurationBuilderAction">
     ///     The action that configures the <see cref="MqttClientWebSocketConfigurationBuilder" />.
@@ -742,7 +743,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Sets the maximum time to wait for the acknowledgment operation to complete. The default is 30 seconds.
     /// </summary>
     /// <param name="timeout">
-    ///     The maximum time to wait for the acknowledgment operation to complete.
+    ///     The maximum time to wait for the acknowledgment operation to complete. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.

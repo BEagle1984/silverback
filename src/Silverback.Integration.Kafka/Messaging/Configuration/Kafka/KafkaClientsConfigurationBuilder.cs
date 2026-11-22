@@ -39,7 +39,7 @@ public partial class KafkaClientsConfigurationBuilder
     ///     Adds a Kafka producer or updates its configuration if a producer with the same name already exists.
     /// </summary>
     /// <param name="name">
-    ///     The producer name.
+    ///     The producer name. Must not be empty.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaProducerConfigurationBuilder" /> and configures it.
@@ -73,7 +73,7 @@ public partial class KafkaClientsConfigurationBuilder
     ///     Adds a Kafka consumer or updates its configuration if a consumer with the same name already exists.
     /// </summary>
     /// <param name="name">
-    ///     The consumer name.
+    ///     The consumer name. Must not be empty.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaConsumerConfigurationBuilder" /> and configures it.

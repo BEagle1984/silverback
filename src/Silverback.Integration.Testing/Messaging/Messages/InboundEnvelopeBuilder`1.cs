@@ -80,7 +80,7 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     Adds a header to the envelope.
     /// </summary>
     /// <param name="name">
-    ///     The name of the header.
+    ///     The name of the header. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The value of the header.
@@ -99,7 +99,7 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     Adds a header to the envelope.
     /// </summary>
     /// <param name="name">
-    ///     The name of the header.
+    ///     The name of the header. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The value of the header.
@@ -134,7 +134,7 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     Adds a header to the envelope.
     /// </summary>
     /// <param name="name">
-    ///     The name of the header.
+    ///     The name of the header. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The value of the header.
@@ -153,7 +153,7 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     Adds a header to the envelope.
     /// </summary>
     /// <param name="name">
-    ///     The name of the header.
+    ///     The name of the header. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The value of the header.

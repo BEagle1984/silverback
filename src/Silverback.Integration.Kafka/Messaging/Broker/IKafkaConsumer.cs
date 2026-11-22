@@ -36,6 +36,9 @@ public interface IKafkaConsumer : IConsumer
     /// <param name="partitions">
     ///     The list of <see cref="TopicPartition" /> to be paused.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     The consumer isn't connected.
+    /// </exception>
     void Pause(IEnumerable<TopicPartition> partitions);
 
     /// <summary>
@@ -44,6 +47,9 @@ public interface IKafkaConsumer : IConsumer
     /// <param name="partitions">
     ///     The list of <see cref="TopicPartition" /> to be paused.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     The consumer isn't connected.
+    /// </exception>
     void Resume(IEnumerable<TopicPartition> partitions);
 
     /// <summary>
@@ -57,6 +63,9 @@ public interface IKafkaConsumer : IConsumer
     /// <param name="topicPartitionOffset">
     ///     The offset.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     The consumer isn't connected.
+    /// </exception>
     void Seek(TopicPartitionOffset topicPartitionOffset);
 
     /// <summary>
@@ -76,6 +85,9 @@ public interface IKafkaConsumer : IConsumer
     /// <returns>
     ///     A mapping from partition to the timestamp and offset of the first message with timestamp greater than or equal to the target timestamp.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The consumer isn't connected.
+    /// </exception>
     IReadOnlyList<TopicPartitionOffset> GetOffsetsForTimestamps(IEnumerable<TopicPartitionTimestamp> topicPartitionTimestamps, TimeSpan timeout);
 
     /// <summary>
@@ -93,7 +105,7 @@ public interface IKafkaConsumer : IConsumer
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     /// <exception cref="InvalidOperationException">
-    ///     Thrown if the catch-up isn't enabled (see <see cref="KafkaConsumerConfiguration.CatchUpMode" />).
+    ///     The catch-up isn't enabled (see <see cref="KafkaConsumerConfiguration.CatchUpMode" />).
     /// </exception>
     Task WaitUntilCaughtUpAsync(CancellationToken cancellationToken = default);
 }

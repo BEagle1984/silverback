@@ -23,6 +23,9 @@ public static class PublisherKafkaTransactionExtensions
     /// <returns>
     ///     The created <see cref="IKafkaTransaction" />.
     /// </returns>
+    /// <exception cref="System.InvalidOperationException">
+    ///     A Kafka transaction has already been initialized in the context and not disposed yet.
+    /// </exception>
     public static IKafkaTransaction InitKafkaTransaction(this IPublisher publisher, string? transactionalIdSuffix = null) =>
         Check.NotNull(publisher).Context.InitKafkaTransaction(transactionalIdSuffix);
 }

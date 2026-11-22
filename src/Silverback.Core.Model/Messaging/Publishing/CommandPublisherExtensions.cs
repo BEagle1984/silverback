@@ -1,10 +1,12 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Publishing;
@@ -28,6 +30,12 @@ public static class CommandPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.
     /// </param>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     public static void ExecuteCommand(this IPublisher publisher, ICommand commandMessage, bool throwIfUnhandled = true) =>
         Check.NotNull(publisher).Publish(commandMessage, throwIfUnhandled);
 
@@ -51,6 +59,15 @@ public static class CommandPublisherExtensions
     /// <returns>
     ///     The command result.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The command wasn't handled by exactly one subscriber returning a result.
+    /// </exception>
     public static TResult ExecuteCommand<TResult>(this IPublisher publisher, ICommand<TResult> commandMessage, bool throwIfUnhandled = true) =>
         Check.NotNull(publisher).Publish<TResult>(commandMessage, throwIfUnhandled).Single();
 
@@ -71,6 +88,12 @@ public static class CommandPublisherExtensions
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     No subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     public static Task ExecuteCommandAsync(
         this IPublisher publisher,
         ICommand commandMessage,
@@ -97,6 +120,12 @@ public static class CommandPublisherExtensions
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     public static Task ExecuteCommandAsync(
         this IPublisher publisher,
         ICommand commandMessage,
@@ -125,6 +154,15 @@ public static class CommandPublisherExtensions
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The Task result contains the
     ///     command result.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     No subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The command wasn't handled by exactly one subscriber returning a result.
+    /// </exception>
     public static async Task<TResult> ExecuteCommandAsync<TResult>(
         this IPublisher publisher,
         ICommand<TResult> commandMessage,
@@ -156,6 +194,15 @@ public static class CommandPublisherExtensions
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The Task result contains the
     ///     command result.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The command wasn't handled by exactly one subscriber returning a result.
+    /// </exception>
     public static async Task<TResult> ExecuteCommandAsync<TResult>(
         this IPublisher publisher,
         ICommand<TResult> commandMessage,

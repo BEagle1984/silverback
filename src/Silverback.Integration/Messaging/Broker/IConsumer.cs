@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
@@ -58,6 +59,9 @@ public interface IConsumer
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The underlying client isn't connected.
+    /// </exception>
     ValueTask StartAsync();
 
     /// <summary>

@@ -4,6 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Publishing;
@@ -27,6 +28,12 @@ public static class EventPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.
     /// </param>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the event.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     public static void PublishEvent(this IPublisher publisher, IEvent eventMessage, bool throwIfUnhandled = false) =>
         Check.NotNull(publisher).Publish(eventMessage, throwIfUnhandled);
 
@@ -47,6 +54,9 @@ public static class EventPublisherExtensions
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     public static Task PublishEventAsync(this IPublisher publisher, IEvent eventMessage, CancellationToken cancellationToken = default) =>
         Check.NotNull(publisher).PublishAsync(eventMessage, false, cancellationToken);
 
@@ -70,6 +80,12 @@ public static class EventPublisherExtensions
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the event.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     public static Task PublishEventAsync(
         this IPublisher publisher,
         IEvent eventMessage,

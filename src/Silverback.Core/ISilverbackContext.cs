@@ -25,6 +25,9 @@ public interface ISilverbackContext
     /// <param name="obj">
     ///     The object.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     A different object with the same type id is already stored.
+    /// </exception>
     void AddObject(Guid objectTypeId, object obj);
 
     /// <summary>
@@ -61,6 +64,9 @@ public interface ISilverbackContext
     /// <returns>
     ///     A value indicating whether the transaction was found.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No object with the specified type id is stored, or the stored object isn't a <typeparamref name="T" />.
+    /// </exception>
     T GetObject<T>(Guid objectTypeId);
 
     /// <summary>
@@ -72,6 +78,9 @@ public interface ISilverbackContext
     /// <returns>
     ///     A value indicating whether the transaction was found.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No object with the specified type id is stored.
+    /// </exception>
     object GetObject(Guid objectTypeId);
 
     /// <summary>
@@ -89,6 +98,9 @@ public interface ISilverbackContext
     /// <returns>
     ///     A value indicating whether the transaction was found.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     An object with the specified type id is stored but it isn't a <typeparamref name="T" />.
+    /// </exception>
     bool TryGetObject<T>(Guid objectTypeId, [NotNullWhen(true)] out T? obj);
 
     /// <summary>
@@ -120,6 +132,9 @@ public interface ISilverbackContext
     /// <returns>
     ///     The object.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The stored object isn't a <typeparamref name="T" />, or the <paramref name="factory" /> returned <c>null</c>.
+    /// </exception>
     T GetOrAddObject<T>(Guid objectTypeId, Func<T> factory);
 
     /// <summary>
@@ -143,5 +158,8 @@ public interface ISilverbackContext
     /// <returns>
     ///     The object.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The stored object isn't a <typeparamref name="TObject" />, or the <paramref name="factory" /> returned <c>null</c>.
+    /// </exception>
     TObject GetOrAddObject<TObject, TArg>(Guid objectTypeId, Func<TArg, TObject> factory, TArg argument);
 }

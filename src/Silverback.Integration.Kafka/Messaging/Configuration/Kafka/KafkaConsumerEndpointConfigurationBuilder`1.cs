@@ -46,7 +46,8 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the topic to be subscribed.
     /// </summary>
     /// <param name="topic">
-    ///     The topic, or a regular expression starting with <c>^</c> to subscribe all matching topics (e.g. <c>^orders-.*</c>).
+    ///     The topic, or a regular expression starting with <c>^</c> to subscribe all matching topics (e.g. <c>^orders-.*</c>). Must not be
+    ///     empty.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -61,7 +62,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     /// </summary>
     /// <param name="topics">
     ///     The topics to be subscribed. A topic starting with <c>^</c> is a regular expression subscribing all matching topics (e.g.
-    ///     <c>^orders-.*</c>).
+    ///     <c>^orders-.*</c>). Must not contain null or empty values.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -80,10 +81,10 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the topic partitions to be consumed.
     /// </summary>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic. Must not be empty.
     /// </param>
     /// <param name="partitions">
-    ///     The indexes of the partitions to be consumed.
+    ///     The indexes of the partitions to be consumed. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -244,7 +245,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     The topic patterns aren't supported.
     /// </summary>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -258,7 +259,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     The topic patterns aren't supported.
     /// </summary>
     /// <param name="topics">
-    ///     The topics.
+    ///     The topics. Must not contain null or empty values.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -270,10 +271,10 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the topic partitions to be consumed from the beginning.
     /// </summary>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic. Must not be empty.
     /// </param>
     /// <param name="partitions">
-    ///     The indexes of the partitions to be consumed.
+    ///     The indexes of the partitions to be consumed. Must not be empty, and each index must be greater than or equal to zero.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -300,7 +301,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the topics and partitions to be consumed from the beginning.
     /// </summary>
     /// <param name="topicPartitions">
-    ///     The topic partitions to be consumed.
+    ///     The topic partitions to be consumed. The partitions must be specified explicitly, so <see cref="Partition.Any" /> isn't allowed.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -326,7 +327,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the topic and a function that returns the partitions to be consumed from the beginning.
     /// </summary>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic. Must not be empty.
     /// </param>
     /// <param name="partitionsProvider">
     ///     A function that receives all available <see cref="TopicPartition" /> for the topic and returns the collection of
@@ -344,7 +345,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the topics and a function that returns the partitions to be consumed from the beginning.
     /// </summary>
     /// <param name="topics">
-    ///     The topics.
+    ///     The topics. Must not contain null or empty values.
     /// </param>
     /// <param name="partitionsProvider">
     ///     A function that receives all available <see cref="TopicPartition" /> for the topics and returns the collection of

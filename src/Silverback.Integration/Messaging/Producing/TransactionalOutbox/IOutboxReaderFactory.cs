@@ -22,5 +22,8 @@ public interface IOutboxReaderFactory
     /// <returns>
     ///     The <see cref="IOutboxReader" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of the specified <paramref name="settings" />.
+    /// </exception>
     IOutboxReader GetReader(OutboxSettings settings, IServiceProvider serviceProvider);
 }

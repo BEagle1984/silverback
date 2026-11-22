@@ -15,7 +15,7 @@ public static class MessageEncodingExtensions
     ///     Converts the specified <see cref="MessageEncoding" /> enum value to the corresponding <see cref="Encoding" />.
     /// </summary>
     /// <param name="encoding">
-    ///     The <see cref="MessageEncoding" /> value to be converted.
+    ///     The <see cref="MessageEncoding" /> value to be converted. Must be a defined <see cref="MessageEncoding" /> value.
     /// </param>
     /// <returns>
     ///     The corresponding <see cref="Encoding" /> instance configured not to emit a byte order mark.

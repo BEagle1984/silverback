@@ -17,7 +17,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     ///     Adds the specified header to all produced messages.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The header value.
@@ -38,7 +38,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     ///     The type of the messages to be enriched with this header.
     /// </typeparam>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The header value.
@@ -58,7 +58,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     ///     Adds the specified header to all produced messages, using a value provider function to determine the header value for each message.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="valueProvider">
     ///     The value provider function.
@@ -82,7 +82,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     ///     The type of the messages to be enriched with this header.
     /// </typeparam>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="valueProvider">
     ///     The value provider function.
@@ -103,7 +103,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     ///     Adds the specified header to all produced messages, using a value provider function to determine the header value for each message.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="valueProvider">
     ///     The value provider function.
@@ -127,7 +127,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     ///     The type of the messages to be enriched with this header.
     /// </typeparam>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="valueProvider">
     ///     The value provider function.

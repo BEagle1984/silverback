@@ -29,6 +29,9 @@ public interface IInMemoryTransactionManager
     /// <param name="transactionalUniqueId">
     ///     The transactional unique identifier.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     The transactions haven't been initialized, or the producer has been fenced.
+    /// </exception>
     void BeginTransaction(Guid transactionalUniqueId);
 
     /// <summary>
@@ -37,6 +40,9 @@ public interface IInMemoryTransactionManager
     /// <param name="transactionalUniqueId">
     ///     The transactional unique identifier.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     The transactions haven't been initialized, the producer has been fenced, or no transaction is pending.
+    /// </exception>
     void CommitTransaction(Guid transactionalUniqueId);
 
     /// <summary>
@@ -45,6 +51,9 @@ public interface IInMemoryTransactionManager
     /// <param name="transactionalUniqueId">
     ///     The transactional unique identifier.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     The transactions haven't been initialized, the producer has been fenced, or no transaction is pending.
+    /// </exception>
     void AbortTransaction(Guid transactionalUniqueId);
 
     /// <summary>
@@ -59,6 +68,9 @@ public interface IInMemoryTransactionManager
     /// <param name="groupMetadata">
     ///     The consumer group metadata.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     The transactions haven't been initialized, the producer has been fenced, or no transaction is pending.
+    /// </exception>
     void SendOffsetsToTransaction(
         Guid transactionalUniqueId,
         IEnumerable<TopicPartitionOffset> offsets,
@@ -73,5 +85,8 @@ public interface IInMemoryTransactionManager
     /// <returns>
     ///     <c>true</c> if a transaction is pending, otherwise <c>false</c>.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The producer has been fenced.
+    /// </exception>
     bool IsTransactionPending(Guid transactionalUniqueId);
 }

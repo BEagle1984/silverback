@@ -23,6 +23,9 @@ public static class SilverbackContextStorageExtensions
     /// <param name="transaction">
     ///     The transaction.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     A different transaction is already enlisted.
+    /// </exception>
     public static void EnlistTransaction(this ISilverbackContext context, IStorageTransaction transaction) =>
         Check.NotNull(context).AddObject(StorageTransactionObjectTypeId, transaction);
 

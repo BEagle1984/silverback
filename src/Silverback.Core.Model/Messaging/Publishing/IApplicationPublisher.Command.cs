@@ -1,9 +1,11 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Publishing;
 
@@ -23,6 +25,12 @@ public partial interface IApplicationPublisher
     /// <param name="throwIfUnhandled">
     ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.
     /// </param>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     void ExecuteCommand(ICommand commandMessage, bool throwIfUnhandled = true);
 
     /// <summary>
@@ -42,6 +50,15 @@ public partial interface IApplicationPublisher
     /// <returns>
     ///     The command result.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The command wasn't handled by exactly one subscriber returning a result.
+    /// </exception>
     TResult ExecuteCommand<TResult>(ICommand<TResult> commandMessage, bool throwIfUnhandled = true);
 
     /// <summary>
@@ -58,6 +75,12 @@ public partial interface IApplicationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     No subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     Task ExecuteCommandAsync(ICommand commandMessage, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -77,6 +100,12 @@ public partial interface IApplicationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     Task ExecuteCommandAsync(ICommand commandMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -97,6 +126,15 @@ public partial interface IApplicationPublisher
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The Task result contains the
     ///     command result.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     No subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The command wasn't handled by exactly one subscriber returning a result.
+    /// </exception>
     Task<TResult> ExecuteCommandAsync<TResult>(ICommand<TResult> commandMessage, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -120,6 +158,15 @@ public partial interface IApplicationPublisher
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The Task result contains the
     ///     command result.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the command.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The command wasn't handled by exactly one subscriber returning a result.
+    /// </exception>
     Task<TResult> ExecuteCommandAsync<TResult>(
         ICommand<TResult> commandMessage,
         bool throwIfUnhandled,

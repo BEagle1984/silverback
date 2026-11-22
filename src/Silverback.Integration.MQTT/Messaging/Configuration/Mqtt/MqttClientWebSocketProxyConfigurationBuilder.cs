@@ -17,7 +17,7 @@ public class MqttClientWebSocketProxyConfigurationBuilder
     ///     Sets the proxy address.
     /// </summary>
     /// <param name="address">
-    ///     The proxy address (e.g. "http://proxy:8080").
+    ///     The proxy address (e.g. "http://proxy:8080"). Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientWebSocketProxyConfigurationBuilder" /> so that additional calls can be chained.

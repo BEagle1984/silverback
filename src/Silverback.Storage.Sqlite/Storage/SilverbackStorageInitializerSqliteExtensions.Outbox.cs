@@ -21,7 +21,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     ///     The <see cref="SilverbackStorageInitializer" />.
     /// </param>
     /// <param name="connectionString">
-    ///     The connection string to the SQLite database.
+    ///     The connection string to the SQLite database. Must not be empty.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -56,10 +56,10 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     ///     The <see cref="SilverbackStorageInitializer" />.
     /// </param>
     /// <param name="connectionString">
-    ///     The connection string to the SQLite database.
+    ///     The connection string to the SQLite database. Must not be empty.
     /// </param>
     /// <param name="tableName">
-    ///     The name of the outbox table.
+    ///     The name of the outbox table. Must not be empty.
     /// </param>
     /// <param name="timeout">
     ///     The table creation timeout.

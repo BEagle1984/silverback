@@ -26,7 +26,7 @@ public sealed class KafkaTransactionalProducer : IProducer
     ///     Initializes a new instance of the <see cref="KafkaTransactionalProducer" /> class.
     /// </summary>
     /// <param name="name">
-    ///     The producer identifier.
+    ///     The producer identifier. Must not be empty.
     /// </param>
     /// <param name="configuration">
     ///     The configuration containing only the actual endpoint.
@@ -60,55 +60,106 @@ public sealed class KafkaTransactionalProducer : IProducer
     /// <inheritdoc cref="IProducer.EndpointConfiguration" />
     public ProducerEndpointConfiguration EndpointConfiguration { get; }
 
-    /// <inheritdoc cref="IProducer.Produce(object?, IReadOnlyCollection{MessageHeader}?)" />
+    /// <inheritdoc cref="IProducer.Produce(object?, IReadOnlyCollection{MessageHeader}?)" path="/*[not(self::exception)]" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public IBrokerMessageIdentifier Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
+    /// <exception cref="MissingKafkaTransactionException">
+    ///     The <paramref name="envelope" /> has no context.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     No Kafka transaction was initialized in the context of the <paramref name="envelope" />, or the transaction is already bound to
+    ///     another producer.
+    /// </exception>
     public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope) =>
         GetProducerForTransaction(Check.NotNull(envelope)).Produce(envelope);
 
-    /// <inheritdoc cref="IProducer.Produce(object?, IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?}, Action{Exception})" />
+    /// <inheritdoc cref="IProducer.Produce(object?, IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?}, Action{Exception})" path="/*[not(self::exception)]" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
-    /// <inheritdoc cref="IProducer.Produce{TState}(object?, IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?, TState}, Action{Exception, TState}, TState)" />
+    /// <inheritdoc cref="IProducer.Produce{TState}(object?, IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?, TState}, Action{Exception, TState}, TState)" path="/*[not(self::exception)]" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public void Produce<TState>(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope, Action{IBrokerMessageIdentifier?}, Action{Exception})" />
+    /// <exception cref="MissingKafkaTransactionException">
+    ///     The <paramref name="envelope" /> has no context.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     No Kafka transaction was initialized in the context of the <paramref name="envelope" />, or the transaction is already bound to
+    ///     another producer.
+    /// </exception>
     public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>
         GetProducerForTransaction(Check.NotNull(envelope)).Produce(envelope, onSuccess, onError);
 
     /// <inheritdoc cref="IProducer.Produce{TState}(IOutboundEnvelope, Action{IBrokerMessageIdentifier?, TState}, Action{Exception, TState}, TState)" />
+    /// <exception cref="MissingKafkaTransactionException">
+    ///     The <paramref name="envelope" /> has no context.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     No Kafka transaction was initialized in the context of the <paramref name="envelope" />, or the transaction is already bound to
+    ///     another producer.
+    /// </exception>
     public void Produce<TState>(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) =>
         GetProducerForTransaction(Check.NotNull(envelope)).Produce(envelope, onSuccess, onError, state);
 
-    /// <inheritdoc cref="IProducer.RawProduce(byte[], IReadOnlyCollection{MessageHeader}?)" />
+    /// <inheritdoc cref="IProducer.RawProduce(byte[], IReadOnlyCollection{MessageHeader}?)" path="/*[not(self::exception)]" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public IBrokerMessageIdentifier RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
-    /// <inheritdoc cref="IProducer.RawProduce(Stream?, IReadOnlyCollection{MessageHeader}?)" />
+    /// <inheritdoc cref="IProducer.RawProduce(Stream?, IReadOnlyCollection{MessageHeader}?)" path="/*[not(self::exception)]" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public IBrokerMessageIdentifier RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
     /// <inheritdoc cref="IProducer.RawProduce(byte[], IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?}, Action{Exception})" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
     /// <inheritdoc cref="IProducer.RawProduce{TState}(byte[], IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?, TState}, Action{Exception, TState}, TState)" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public void RawProduce<TState>(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
     /// <inheritdoc cref="IProducer.RawProduce(Stream?, IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?}, Action{Exception})" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
     /// <inheritdoc cref="IProducer.RawProduce{TState}(Stream?, IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?, TState}, Action{Exception, TState}, TState)" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public void RawProduce<TState>(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
-    /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
+    /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" path="/*[not(self::exception)]" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers = null,
@@ -116,20 +167,33 @@ public sealed class KafkaTransactionalProducer : IProducer
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
     /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,CancellationToken)" />
+    /// <exception cref="MissingKafkaTransactionException">
+    ///     The <paramref name="envelope" /> has no context.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     No Kafka transaction was initialized in the context of the <paramref name="envelope" />, or the transaction is already bound to
+    ///     another producer.
+    /// </exception>
     public async ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default)
     {
         KafkaProducer producer = await GetProducerForTransactionAsync(Check.NotNull(envelope)).ConfigureAwait(false);
         return await producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
+    /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" path="/*[not(self::exception)]" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         byte[]? messageContent,
         IReadOnlyCollection<MessageHeader>? headers = null,
         CancellationToken cancellationToken = default) =>
         throw new NotSupportedException(UseEnvelopeOverloadMessage);
 
-    /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
+    /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" path="/*[not(self::exception)]" />
+    /// <exception cref="NotSupportedException">
+    ///     Always thrown, because only the overloads accepting an <see cref="IOutboundEnvelope" /> are supported.
+    /// </exception>
     public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers = null,

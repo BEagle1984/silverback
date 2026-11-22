@@ -60,6 +60,9 @@ public abstract partial class TestingHelper : ITestingHelper
     /// <returns>
     ///     The raw name (topic/queue).
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No producer or consumer endpoint matches the specified <paramref name="endpointName" />.
+    /// </exception>
     protected string GetEndpointRawName(string endpointName) =>
         GetProducerEndpointConfiguration(endpointName)?.RawName ??
         GetConsumerEndpointConfiguration(endpointName)?.RawName ??

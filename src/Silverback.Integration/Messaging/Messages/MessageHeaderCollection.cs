@@ -56,8 +56,11 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     Gets or sets the value of the header with the specified name.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     The value is read and no header with the specified name was found.
+    /// </exception>
     public string? this[string name]
     {
         get => GetValue(Check.NotNull(name), true);
@@ -68,7 +71,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     Adds a new header.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The header value.
@@ -79,7 +82,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     Adds a new header.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The header value.
@@ -122,7 +125,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     Adds a new header or replaces the header with the same name.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="newValue">
     ///     The new header value.
@@ -133,7 +136,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     Adds a new header or replaces the header with the same name.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="newValue">
     ///     The new header value.
@@ -195,7 +198,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     Adds a new header if no header with the same name is already set.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="newValue">
     ///     The new header value.
@@ -206,7 +209,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     Adds a new header if no header with the same name is already set.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="newValue">
     ///     The new header value.
@@ -234,7 +237,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     Checks whether a header with the specified name exists and returns its value.
     /// </summary>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The header value.
@@ -253,7 +256,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     </para>
     /// </summary>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="throwIfNotFound">
     ///     A boolean value specifying whether an exception must be thrown if the header with the specified name
@@ -262,6 +265,9 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <returns>
     ///     The header value converted to the target type, or <c>null</c> if not found.
     /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and no header with the specified name was found.
+    /// </exception>
     public string? GetValue(string name, bool throwIfNotFound = false) => _list.GetValue(name, throwIfNotFound);
 
     /// <summary>
@@ -276,7 +282,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     The type to convert the header value to.
     /// </typeparam>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="throwIfNotFound">
     ///     A boolean value specifying whether an exception must be thrown if the header with the specified name
@@ -285,6 +291,12 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <returns>
     ///     The header value converted to the target type, or <c>null</c> if not found.
     /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and no header with the specified name was found.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and the header value cannot be converted to <typeparamref name="T" />.
+    /// </exception>
     public T? GetValue<T>(string name, bool throwIfNotFound = false)
         where T : struct =>
         _list.GetValue<T>(name, throwIfNotFound);
@@ -299,7 +311,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     </para>
     /// </summary>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="targetType">
     ///     The type to convert the header value to.
@@ -311,6 +323,13 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <returns>
     ///     The header value converted to the target type, or <c>null</c> if not found.
     /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and no header with the specified name was found.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and the header value cannot be converted to the
+    ///     <paramref name="targetType" />.
+    /// </exception>
     public object? GetValue(string name, Type targetType, bool throwIfNotFound = false) =>
         _list.GetValue(name, targetType, throwIfNotFound);
 
@@ -328,7 +347,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     The type to convert the header value to.
     /// </typeparam>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <returns>
     ///     The header value converted to the target type, or <c>null</c> if not found.
@@ -347,7 +366,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     ///     </para>
     /// </summary>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="targetType">
     ///     The type to convert the header value to.

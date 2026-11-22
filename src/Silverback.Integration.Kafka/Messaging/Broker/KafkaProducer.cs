@@ -26,7 +26,7 @@ public sealed class KafkaProducer : Producer
     ///     Initializes a new instance of the <see cref="KafkaProducer" /> class.
     /// </summary>
     /// <param name="name">
-    ///     The producer identifier.
+    ///     The producer identifier. Must not be empty.
     /// </param>
     /// <param name="client">
     ///     The <see cref="IConfluentProducerWrapper" />.

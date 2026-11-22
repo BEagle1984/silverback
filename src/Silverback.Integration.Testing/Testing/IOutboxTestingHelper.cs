@@ -23,6 +23,9 @@ public interface IOutboxTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the pending messages.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of one of the outboxes.
+    /// </exception>
     ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -37,6 +40,9 @@ public interface IOutboxTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the pending messages.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of the specified <paramref name="outboxSettings" />.
+    /// </exception>
     ValueTask<IReadOnlyList<OutboxMessage>> GetMessagesAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -49,6 +55,9 @@ public interface IOutboxTestingHelper
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the number of pending
     ///     messages.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of one of the outboxes.
+    /// </exception>
     ValueTask<int> GetLengthAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -64,6 +73,9 @@ public interface IOutboxTestingHelper
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the number of pending
     ///     messages.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of the specified <paramref name="outboxSettings" />.
+    /// </exception>
     ValueTask<int> GetLengthAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -76,6 +88,9 @@ public interface IOutboxTestingHelper
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains <c>true</c> if the
     ///     outboxes are empty, otherwise <c>false</c>.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of one of the outboxes.
+    /// </exception>
     ValueTask<bool> IsEmptyAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -91,6 +106,9 @@ public interface IOutboxTestingHelper
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains <c>true</c> if the outbox
     ///     is empty, otherwise <c>false</c>.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of the specified <paramref name="outboxSettings" />.
+    /// </exception>
     ValueTask<bool> IsEmptyAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -136,6 +154,9 @@ public interface IOutboxTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when the outbox is empty.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of the specified <paramref name="outboxSettings" />.
+    /// </exception>
     /// <exception cref="TimeoutException">
     ///     The timeout elapsed before the outbox was emptied.
     /// </exception>
@@ -154,6 +175,9 @@ public interface IOutboxTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when the outbox is empty.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of the specified <paramref name="outboxSettings" />.
+    /// </exception>
     /// <exception cref="OperationCanceledException">
     ///     The <paramref name="cancellationToken" /> was canceled before the outbox was emptied.
     /// </exception>
@@ -168,6 +192,9 @@ public interface IOutboxTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of one of the outboxes.
+    /// </exception>
     ValueTask ClearAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -182,6 +209,9 @@ public interface IOutboxTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No outbox reader implementation is registered for the type of the specified <paramref name="outboxSettings" />.
+    /// </exception>
     ValueTask ClearAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -199,6 +229,9 @@ public interface IOutboxTestingHelper
     /// </returns>
     /// <exception cref="InvalidOperationException">
     ///     No outbox worker is registered.
+    /// </exception>
+    /// <exception cref="OutboxProcessingException">
+    ///     Some messages couldn't be produced, or the iteration over the stored messages failed.
     /// </exception>
     ValueTask ProcessAsync(CancellationToken cancellationToken = default);
 
@@ -219,6 +252,9 @@ public interface IOutboxTestingHelper
     /// </returns>
     /// <exception cref="InvalidOperationException">
     ///     No outbox worker is registered for the specified outbox.
+    /// </exception>
+    /// <exception cref="OutboxProcessingException">
+    ///     Some messages couldn't be produced, or the iteration over the stored messages failed.
     /// </exception>
     ValueTask ProcessAsync(OutboxSettings outboxSettings, CancellationToken cancellationToken = default);
 

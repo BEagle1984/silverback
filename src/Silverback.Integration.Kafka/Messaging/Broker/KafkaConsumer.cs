@@ -91,7 +91,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     ///     Initializes a new instance of the <see cref="KafkaConsumer" /> class.
     /// </summary>
     /// <param name="name">
-    ///     The consumer identifier.
+    ///     The consumer identifier. Must not be empty.
     /// </param>
     /// <param name="client">
     ///     The <see cref="IConfluentConsumerWrapper" /> to be used.

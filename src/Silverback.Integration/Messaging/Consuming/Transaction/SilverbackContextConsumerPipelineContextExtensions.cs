@@ -23,6 +23,9 @@ public static class SilverbackContextConsumerPipelineContextExtensions
     /// <returns>
     ///     The <see cref="ConsumerPipelineContext" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No <see cref="ConsumerPipelineContext" /> is set, because the method isn't called while processing a consumed message.
+    /// </exception>
     public static ConsumerPipelineContext GetConsumerPipelineContext(this ISilverbackContext context) =>
         Check.NotNull(context).GetObject<ConsumerPipelineContext>(ConsumerPipelineContextObjectTypeId);
 

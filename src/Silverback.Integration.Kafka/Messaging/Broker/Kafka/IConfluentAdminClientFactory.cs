@@ -3,6 +3,7 @@
 
 using System;
 using Confluent.Kafka;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka;
@@ -33,6 +34,9 @@ public interface IConfluentAdminClientFactory
     /// <returns>
     ///     The <see cref="IAdminClient" />.
     /// </returns>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The configuration is not valid.
+    /// </exception>
     IAdminClient GetClient(Action<KafkaClientConfigurationBuilder> builderAction);
 
     /// <summary>
@@ -72,7 +76,7 @@ public interface IConfluentAdminClientFactory
     ///     Returns an <see cref="IAdminClient" /> instance using the configuration of the specified producer.
     /// </summary>
     /// <param name="producer">
-    ///     The Kafka producer.
+    ///     The Kafka producer. Must be a Kafka producer.
     /// </param>
     /// <returns>
     ///     The <see cref="IAdminClient" />.
@@ -83,7 +87,7 @@ public interface IConfluentAdminClientFactory
     ///     Returns an <see cref="IAdminClient" /> instance using the configuration of the specified consumer.
     /// </summary>
     /// <param name="consumer">
-    ///     The Kafka consumer.
+    ///     The Kafka consumer. Must be a Kafka consumer.
     /// </param>
     /// <returns>
     ///     The <see cref="IAdminClient" />.
@@ -99,6 +103,9 @@ public interface IConfluentAdminClientFactory
     /// <returns>
     ///     The <see cref="IAdminClient" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No Kafka producer has been configured with the specified <paramref name="producerName" />.
+    /// </exception>
     IAdminClient GetClientForProducer(string producerName);
 
     /// <summary>
@@ -110,6 +117,9 @@ public interface IConfluentAdminClientFactory
     /// <returns>
     ///     The <see cref="IAdminClient" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No Kafka producer has been configured for the specified <paramref name="endpointName" />.
+    /// </exception>
     IAdminClient GetClientForProducerEndpoint(string endpointName);
 
     /// <summary>
@@ -121,6 +131,9 @@ public interface IConfluentAdminClientFactory
     /// <returns>
     ///     The <see cref="IAdminClient" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No Kafka consumer has been configured with the specified <paramref name="consumerName" />.
+    /// </exception>
     IAdminClient GetClientForConsumer(string consumerName);
 
     /// <summary>
@@ -132,5 +145,8 @@ public interface IConfluentAdminClientFactory
     /// <returns>
     ///     The <see cref="IAdminClient" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No Kafka consumer has been configured for the specified <paramref name="endpointName" />.
+    /// </exception>
     IAdminClient GetClientForConsumerEndpoint(string endpointName);
 }

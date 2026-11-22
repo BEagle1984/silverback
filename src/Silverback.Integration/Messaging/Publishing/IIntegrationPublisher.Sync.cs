@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.Routing;
 
 namespace Silverback.Messaging.Publishing;
 
@@ -24,6 +25,9 @@ public partial interface IIntegrationPublisher
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelope.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     void WrapAndPublish<TMessage>(
         TMessage? message,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
@@ -47,6 +51,9 @@ public partial interface IIntegrationPublisher
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     void WrapAndPublish<TMessage, TArgument>(
         TMessage? message,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
@@ -65,6 +72,9 @@ public partial interface IIntegrationPublisher
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     void WrapAndPublishBatch<TMessage>(
         IReadOnlyCollection<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
@@ -88,6 +98,9 @@ public partial interface IIntegrationPublisher
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     void WrapAndPublishBatch<TMessage, TArgument>(
         IReadOnlyCollection<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
@@ -112,6 +125,9 @@ public partial interface IIntegrationPublisher
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     void WrapAndPublishBatch<TSource, TMessage>(
         IReadOnlyCollection<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
@@ -142,6 +158,9 @@ public partial interface IIntegrationPublisher
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     void WrapAndPublishBatch<TSource, TMessage, TArgument>(
         IReadOnlyCollection<TSource> sources,
         Func<TSource, TArgument, TMessage?> mapperFunction,
@@ -161,6 +180,10 @@ public partial interface IIntegrationPublisher
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     void WrapAndPublishBatch<TMessage>(
         IEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
@@ -184,6 +207,10 @@ public partial interface IIntegrationPublisher
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     void WrapAndPublishBatch<TMessage, TArgument>(
         IEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
@@ -208,6 +235,10 @@ public partial interface IIntegrationPublisher
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     void WrapAndPublishBatch<TSource, TMessage>(
         IEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
@@ -238,6 +269,10 @@ public partial interface IIntegrationPublisher
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     void WrapAndPublishBatch<TSource, TMessage, TArgument>(
         IEnumerable<TSource> sources,
         Func<TSource, TArgument, TMessage?> mapperFunction,
@@ -257,6 +292,10 @@ public partial interface IIntegrationPublisher
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     void WrapAndPublishBatch<TMessage>(
         IAsyncEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
@@ -280,6 +319,10 @@ public partial interface IIntegrationPublisher
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     void WrapAndPublishBatch<TMessage, TArgument>(
         IAsyncEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
@@ -304,6 +347,10 @@ public partial interface IIntegrationPublisher
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     void WrapAndPublishBatch<TSource, TMessage>(
         IAsyncEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
@@ -334,6 +381,10 @@ public partial interface IIntegrationPublisher
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     void WrapAndPublishBatch<TSource, TMessage, TArgument>(
         IAsyncEnumerable<TSource> sources,
         Func<TSource, TArgument, TMessage?> mapperFunction,

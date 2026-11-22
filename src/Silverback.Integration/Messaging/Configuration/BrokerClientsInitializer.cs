@@ -57,6 +57,9 @@ public abstract class BrokerClientsInitializer : IBrokerClientsInitializer
     /// <param name="client">
     ///     The <see cref="IBrokerClient" /> to be added.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     A client with the same name has already been added.
+    /// </exception>
     protected void AddClient(IBrokerClient client)
     {
         Check.NotNull(client);
@@ -75,6 +78,9 @@ public abstract class BrokerClientsInitializer : IBrokerClientsInitializer
     ///     A value indicating whether the producer endpoints must implicitly be added to the mapped outbound routes (according to the
     ///     message type).
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     A producer endpoint with the same friendly name has already been added.
+    /// </exception>
     protected void AddProducer(IProducer producer, bool routing = true)
     {
         Check.NotNull(producer);
@@ -92,6 +98,9 @@ public abstract class BrokerClientsInitializer : IBrokerClientsInitializer
     /// <param name="consumer">
     ///     The <see cref="IConsumer" /> to be added.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     A consumer with the same name, or a consumer endpoint with the same friendly name, has already been added.
+    /// </exception>
     protected void AddConsumer(IConsumer consumer)
     {
         Check.NotNull(consumer);

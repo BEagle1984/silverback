@@ -14,7 +14,7 @@ public record MqttProducerEndpoint : ProducerEndpoint<MqttProducerEndpointConfig
     ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
     /// </summary>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic. Must not be empty.
     /// </param>
     /// <param name="configuration">
     ///     The producer configuration.

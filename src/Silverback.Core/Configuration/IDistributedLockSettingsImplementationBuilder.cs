@@ -16,5 +16,8 @@ public interface IDistributedLockSettingsImplementationBuilder
     /// <returns>
     ///     The <see cref="DistributedLockSettings" />.
     /// </returns>
+    /// <exception cref="SilverbackConfigurationException">
+    ///     The built settings are not valid.
+    /// </exception>
     DistributedLockSettings Build();
 }

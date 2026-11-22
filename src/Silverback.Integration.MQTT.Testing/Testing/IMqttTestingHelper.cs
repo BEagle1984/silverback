@@ -29,6 +29,9 @@ public interface IMqttTestingHelper : ITestingHelper
     /// <returns>
     ///     The <see cref="IClientSession" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No session (or more than one) exists for the specified client.
+    /// </exception>
     IClientSession GetClientSession(string clientId);
 
     /// <summary>
@@ -56,5 +59,12 @@ public interface IMqttTestingHelper : ITestingHelper
     /// <returns>
     ///     The <see cref="IProducer" />.
     /// </returns>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The client configuration is not valid.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The MQTT integration hasn't been added (<c>AddMqtt</c> hasn't been called), the configuration doesn't define exactly one
+    ///     producer endpoint, or a producer endpoint with the same name has already been added.
+    /// </exception>
     IProducer GetProducer(Action<MqttClientConfigurationBuilder> configurationBuilderAction);
 }

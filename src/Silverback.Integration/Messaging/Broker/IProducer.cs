@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Validation;
 
 namespace Silverback.Messaging.Broker;
 
@@ -43,6 +44,13 @@ public interface IProducer
     /// <returns>
     ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
+    /// <exception cref="ProduceException">
+    ///     The message couldn't be produced.
+    /// </exception>
+    /// <exception cref="MessageValidationException">
+    ///     The message is not valid and the <see cref="EndpointConfiguration.MessageValidationMode" /> is
+    ///     <see cref="MessageValidationMode.ThrowException" />.
+    /// </exception>
     IBrokerMessageIdentifier? Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
@@ -54,6 +62,13 @@ public interface IProducer
     /// <returns>
     ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
+    /// <exception cref="ProduceException">
+    ///     The message couldn't be produced.
+    /// </exception>
+    /// <exception cref="MessageValidationException">
+    ///     The message is not valid and the <see cref="EndpointConfiguration.MessageValidationMode" /> is
+    ///     <see cref="MessageValidationMode.ThrowException" />.
+    /// </exception>
     IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope);
 
     /// <summary>
@@ -75,6 +90,10 @@ public interface IProducer
     /// <param name="onError">
     ///     The callback to be invoked when the produce fails.
     /// </param>
+    /// <exception cref="MessageValidationException">
+    ///     The message is not valid and the <see cref="EndpointConfiguration.MessageValidationMode" /> is
+    ///     <see cref="MessageValidationMode.ThrowException" />.
+    /// </exception>
     void Produce(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
@@ -106,6 +125,10 @@ public interface IProducer
     /// <param name="state">
     ///     The state object to be passed to the callbacks.
     /// </param>
+    /// <exception cref="MessageValidationException">
+    ///     The message is not valid and the <see cref="EndpointConfiguration.MessageValidationMode" /> is
+    ///     <see cref="MessageValidationMode.ThrowException" />.
+    /// </exception>
     void Produce<TState>(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
@@ -129,6 +152,10 @@ public interface IProducer
     /// <param name="onError">
     ///     The callback to be invoked when the produce fails.
     /// </param>
+    /// <exception cref="MessageValidationException">
+    ///     The message is not valid and the <see cref="EndpointConfiguration.MessageValidationMode" /> is
+    ///     <see cref="MessageValidationMode.ThrowException" />.
+    /// </exception>
     void Produce(
         IOutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?> onSuccess,
@@ -156,6 +183,10 @@ public interface IProducer
     /// <param name="state">
     ///     The state object to be passed to the callbacks.
     /// </param>
+    /// <exception cref="MessageValidationException">
+    ///     The message is not valid and the <see cref="EndpointConfiguration.MessageValidationMode" /> is
+    ///     <see cref="MessageValidationMode.ThrowException" />.
+    /// </exception>
     void Produce<TState>(
         IOutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
@@ -174,6 +205,9 @@ public interface IProducer
     /// <returns>
     ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
+    /// <exception cref="ProduceException">
+    ///     The message couldn't be produced.
+    /// </exception>
     IBrokerMessageIdentifier? RawProduce(
         byte[]? messageContent,
         IReadOnlyCollection<MessageHeader>? headers = null);
@@ -190,6 +224,9 @@ public interface IProducer
     /// <returns>
     ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
+    /// <exception cref="ProduceException">
+    ///     The message couldn't be produced.
+    /// </exception>
     IBrokerMessageIdentifier? RawProduce(
         Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers = null);
@@ -324,6 +361,13 @@ public interface IProducer
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
+    /// <exception cref="ProduceException">
+    ///     The message couldn't be produced.
+    /// </exception>
+    /// <exception cref="MessageValidationException">
+    ///     The message is not valid and the <see cref="EndpointConfiguration.MessageValidationMode" /> is
+    ///     <see cref="MessageValidationMode.ThrowException" />.
+    /// </exception>
     ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers = null,
@@ -342,6 +386,13 @@ public interface IProducer
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
+    /// <exception cref="ProduceException">
+    ///     The message couldn't be produced.
+    /// </exception>
+    /// <exception cref="MessageValidationException">
+    ///     The message is not valid and the <see cref="EndpointConfiguration.MessageValidationMode" /> is
+    ///     <see cref="MessageValidationMode.ThrowException" />.
+    /// </exception>
     ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -360,6 +411,9 @@ public interface IProducer
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
+    /// <exception cref="ProduceException">
+    ///     The message couldn't be produced.
+    /// </exception>
     ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         byte[]? messageContent,
         IReadOnlyCollection<MessageHeader>? headers = null,
@@ -381,6 +435,9 @@ public interface IProducer
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
+    /// <exception cref="ProduceException">
+    ///     The message couldn't be produced.
+    /// </exception>
     ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers = null,

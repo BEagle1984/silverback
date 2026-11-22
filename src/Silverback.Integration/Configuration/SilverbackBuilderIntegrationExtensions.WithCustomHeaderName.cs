@@ -19,14 +19,17 @@ public static partial class SilverbackBuilderIntegrationExtensions
     ///     The <see cref="SilverbackBuilder" />.
     /// </param>
     /// <param name="defaultHeaderName">
-    ///     The default header name.
+    ///     The default header name. Must not be empty.
     /// </param>
     /// <param name="customHeaderName">
-    ///     The custom header name to be used instead of the default.
+    ///     The custom header name to be used instead of the default. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The broker integration hasn't been added, because <c>WithConnectionToMessageBroker</c> hasn't been called.
+    /// </exception>
     public static SilverbackBuilder WithCustomHeaderName(this SilverbackBuilder builder, string defaultHeaderName, string customHeaderName)
     {
         Check.NotNull(builder);

@@ -42,7 +42,7 @@ public class MqttConsumerEndpointConfigurationBuilder<TMessage>
     ///     Specifies the name of the topics or the topic filter strings.
     /// </summary>
     /// <param name="topics">
-    ///     The name of the topics or the topic filter string.
+    ///     The name of the topics or the topic filter string. Must not contain null or empty values.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.

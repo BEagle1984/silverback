@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Data.Common;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -21,6 +22,9 @@ public static class PublisherStorageExtensions
     /// <param name="transaction">
     ///     The transaction to be used.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     A different transaction is already enlisted.
+    /// </exception>
     public static void EnlistTransaction(this IPublisher publisher, IStorageTransaction transaction) =>
         Check.NotNull(publisher).Context.EnlistTransaction(transaction);
 
@@ -39,6 +43,9 @@ public static class PublisherStorageExtensions
     /// <returns>
     ///     The <see cref="IStorageTransaction" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     A transaction is already enlisted.
+    /// </exception>
     public static IStorageTransaction EnlistDbTransaction(this IPublisher publisher, DbTransaction dbTransaction, bool ownTransaction = true) =>
         Check.NotNull(publisher).Context.EnlistDbTransaction(dbTransaction, ownTransaction);
 }

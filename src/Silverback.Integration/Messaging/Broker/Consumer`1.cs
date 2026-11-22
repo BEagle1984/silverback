@@ -57,7 +57,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IStopOnFailureConsumer,
     ///     Initializes a new instance of the <see cref="Consumer{TIdentifier}" /> class.
     /// </summary>
     /// <param name="name">
-    ///     The consumer name.
+    ///     The consumer name. Must not be empty.
     /// </param>
     /// <param name="client">
     ///     The <see cref="IBrokerClient" />.

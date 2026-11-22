@@ -49,7 +49,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     ///     Specifies the name of the topic to produce the LWT message to.
     /// </summary>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -80,7 +80,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     /// </summary>
     /// t
     /// <param name="delay">
-    ///     The <see cref="TimeSpan" /> representing the delay.
+    ///     The <see cref="TimeSpan" /> representing the delay. Must be between <see cref="TimeSpan.Zero" /> and 4,294,967,295 seconds.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
@@ -98,7 +98,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     /// </summary>
     /// t
     /// <param name="expiration">
-    ///     The <see cref="TimeSpan" /> representing the expiration.
+    ///     The <see cref="TimeSpan" /> representing the expiration. Must be between <see cref="TimeSpan.Zero" /> and 4,294,967,295 seconds.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.

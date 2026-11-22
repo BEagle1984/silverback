@@ -42,7 +42,7 @@ public static class InboundEnvelopeBuilderExtensions
     ///     The <see cref="InboundEnvelopeBuilder{TMessage}" />.
     /// </param>
     /// <param name="topic">
-    ///     The topic name.
+    ///     The topic name. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.

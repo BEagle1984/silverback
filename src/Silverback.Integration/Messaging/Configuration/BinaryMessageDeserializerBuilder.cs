@@ -20,7 +20,8 @@ public sealed class BinaryMessageDeserializerBuilder
     ///     Specifies a custom model to wrap the binary message.
     /// </summary>
     /// <param name="modelType">
-    ///     The type of the <see cref="IBinaryMessage" /> implementation.
+    ///     The type of the <see cref="IBinaryMessage" /> implementation. Must be a type implementing
+    ///     <see cref="IBinaryMessage" /> with a parameterless constructor.
     /// </param>
     /// <returns>
     ///     The <see cref="BinaryMessageSerializerBuilder" /> so that additional calls can be chained.

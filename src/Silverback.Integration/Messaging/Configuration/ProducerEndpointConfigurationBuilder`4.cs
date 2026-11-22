@@ -148,7 +148,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     ///     Enables chunking, splitting the larger messages into smaller chunks.
     /// </summary>
     /// <param name="chunkSize">
-    ///     The maximum chunk size in bytes.
+    ///     The maximum chunk size in bytes. Must be greater than or equal to 1.
     /// </param>
     /// <param name="alwaysAddHeaders">
     ///     A value indicating whether the <c>x-chunk-index</c> and related headers have to be added to the produced message in any case,

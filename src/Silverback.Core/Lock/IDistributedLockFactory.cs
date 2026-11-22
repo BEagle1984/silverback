@@ -22,5 +22,8 @@ public interface IDistributedLockFactory
     /// <returns>
     ///     The <see cref="IDistributedLock" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No <see cref="IDistributedLock" /> implementation is registered for the type of the specified <paramref name="settings" />.
+    /// </exception>
     IDistributedLock GetDistributedLock(DistributedLockSettings? settings, IServiceProvider serviceProvider);
 }

@@ -29,7 +29,7 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     ///     Specifies the interval between retries.
     /// </summary>
     /// <param name="interval">
-    ///     The interval between retries.
+    ///     The interval between retries. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
@@ -46,13 +46,13 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     ///     Specifies an initial delay before the first retry and an increment to be added at each subsequent retry.
     /// </summary>
     /// <param name="initialDelay">
-    ///     The initial delay before the first retry.
+    ///     The initial delay before the first retry. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <param name="delayIncrement">
-    ///     The increment to be added at each subsequent retry.
+    ///     The increment to be added at each subsequent retry. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <param name="maxDelay">
-    ///     The maximum delay to be applied.
+    ///     The maximum delay to be applied. If specified, must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
@@ -70,13 +70,13 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     ///     Specifies an initial delay before the first retry and a factor to be applied to the delay at each retry.
     /// </summary>
     /// <param name="initialDelay">
-    ///     The initial delay before the first retry.
+    ///     The initial delay before the first retry. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <param name="delayFactor">
-    ///     The factor to be applied at each retry.
+    ///     The factor to be applied at each retry. Must be greater than zero.
     /// </param>
     /// <param name="maxDelay">
-    ///     The maximum delay to be applied.
+    ///     The maximum delay to be applied. If specified, must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
@@ -94,7 +94,7 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     ///     Sets the number of times this policy should be applied to the same message in case of multiple failed attempts.
     /// </summary>
     /// <param name="retries">
-    ///     The number of times this policy should be applied.
+    ///     The number of times this policy should be applied. Must be greater than or equal to 1.
     /// </param>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.

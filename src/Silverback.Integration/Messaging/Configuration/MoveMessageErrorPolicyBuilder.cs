@@ -38,7 +38,7 @@ public class MoveMessageErrorPolicyBuilder : ErrorPolicyBaseBuilder<MoveMessageE
     ///     Sets the number of times this policy should be applied to the same message in case of multiple failed attempts.
     /// </summary>
     /// <param name="retries">
-    ///     The number of times this policy should be applied.
+    ///     The number of times this policy should be applied. Must be greater than or equal to 1.
     /// </param>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.

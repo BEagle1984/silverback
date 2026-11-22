@@ -24,5 +24,13 @@ public partial interface ITestingHelper
     /// <returns>
     ///     The <see cref="IProducer" />.
     /// </returns>
+    /// <exception cref="System.InvalidOperationException">
+    ///     No producer or consumer is configured for the specified endpoint, the endpoint is a topic pattern or wildcard filter, the
+    ///     consumer endpoint subscribes only topic patterns or wildcard filters, or the key provider of the consumer's decryption
+    ///     settings doesn't return a key.
+    /// </exception>
+    /// <exception cref="System.NotSupportedException">
+    ///     The decryption settings of the consumer endpoint to mirror aren't supported.
+    /// </exception>
     IProducer GetProducerForEndpoint(string endpointName);
 }

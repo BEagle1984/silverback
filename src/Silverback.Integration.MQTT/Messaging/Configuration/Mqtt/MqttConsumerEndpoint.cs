@@ -14,7 +14,7 @@ public record MqttConsumerEndpoint : ConsumerEndpoint<MqttConsumerEndpointConfig
     ///     Initializes a new instance of the <see cref="MqttConsumerEndpoint" /> class.
     /// </summary>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic. Must not be empty.
     /// </param>
     /// <param name="configuration">
     ///     The consumer configuration.

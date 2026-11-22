@@ -21,6 +21,9 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all consumers are successfully connected and ready.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The timeout elapsed before all consumers were connected.
+    /// </exception>
     ValueTask WaitUntilConnectedAsync(TimeSpan? timeout = null);
 
     /// <summary>
@@ -36,6 +39,9 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all consumers are successfully connected and ready.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the timeout elapsed before all consumers were connected.
+    /// </exception>
     ValueTask WaitUntilConnectedAsync(bool throwTimeoutException, TimeSpan? timeout = null);
 
     /// <summary>
@@ -47,6 +53,9 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all consumers are successfully connected and ready.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="cancellationToken" /> was canceled before all consumers were connected.
+    /// </exception>
     ValueTask WaitUntilConnectedAsync(CancellationToken cancellationToken);
 
     /// <summary>
@@ -62,6 +71,10 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="Task" /> that completes when all consumers are successfully connected and ready.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the <paramref name="cancellationToken" /> was canceled before
+    ///     all consumers were connected.
+    /// </exception>
     ValueTask WaitUntilConnectedAsync(bool throwTimeoutException, CancellationToken cancellationToken);
 
     /// <summary>
@@ -76,6 +89,12 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The default timeout elapsed before all messages were consumed and processed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreConsumedAsync(params string[] endpointNames);
 
     /// <summary>
@@ -93,6 +112,12 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The timeout elapsed before all messages were consumed and processed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout, params string[] endpointNames);
 
     /// <summary>
@@ -111,6 +136,13 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the default timeout elapsed before all messages were consumed
+    ///     and processed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, params string[] endpointNames);
 
     /// <summary>
@@ -129,6 +161,10 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the timeout elapsed before all messages were consumed and
+    ///     processed.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, TimeSpan? timeout = null);
 
     /// <summary>
@@ -150,6 +186,13 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the timeout elapsed before all messages were consumed and
+    ///     processed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, TimeSpan? timeout, params string[] endpointNames);
 
     /// <summary>
@@ -167,6 +210,12 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="cancellationToken" /> was canceled before all messages were consumed and processed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken, params string[] endpointNames);
 
     /// <summary>
@@ -188,6 +237,13 @@ public partial interface ITestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the <paramref name="cancellationToken" /> was canceled before
+    ///     all messages were consumed and processed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreConsumedAsync(
         bool throwTimeoutException,
         CancellationToken cancellationToken,
