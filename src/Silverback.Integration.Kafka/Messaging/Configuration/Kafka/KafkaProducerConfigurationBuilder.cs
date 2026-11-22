@@ -64,7 +64,7 @@ public partial class KafkaProducerConfigurationBuilder
     /// </summary>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default, the name will be generated concatenating the topic name and the message type.
+    ///     By default, the name will be generated concatenating the topic name and the message type. If specified, it must not be empty.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaProducerConfigurationBuilder" /> and configures it.
@@ -101,7 +101,7 @@ public partial class KafkaProducerConfigurationBuilder
     /// </typeparam>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default, the name will be generated concatenating the topic name and the message type.
+    ///     By default, the name will be generated concatenating the topic name and the message type. If specified, it must not be empty.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaProducerConfigurationBuilder" /> and configures it.
@@ -183,7 +183,7 @@ public partial class KafkaProducerConfigurationBuilder
     ///     Specifies the flush operation timeout. The default is 30 seconds.
     /// </summary>
     /// <param name="timeout">
-    ///     The flush operation timeout.
+    ///     The flush operation timeout. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
@@ -198,7 +198,7 @@ public partial class KafkaProducerConfigurationBuilder
     ///     Specifies the transactions init operation timeout. The default is 30 seconds.
     /// </summary>
     /// <param name="timeout">
-    ///     The transactions init operation timeout.
+    ///     The transactions init operation timeout. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
@@ -213,7 +213,7 @@ public partial class KafkaProducerConfigurationBuilder
     ///     Specifies the transaction commit operation timeout. The default is 30 seconds.
     /// </summary>
     /// <param name="timeout">
-    ///     The transaction commit operation timeout.
+    ///     The transaction commit operation timeout. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
@@ -228,7 +228,7 @@ public partial class KafkaProducerConfigurationBuilder
     ///     Specifies the transaction abort operation timeout. The default is 30 seconds.
     /// </summary>
     /// <param name="timeout">
-    ///     The transaction abort operation timeout.
+    ///     The transaction abort operation timeout. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
@@ -323,7 +323,7 @@ public partial class KafkaProducerConfigurationBuilder
     ///     Requires broker version &gt;= 0.11.0.
     /// </summary>
     /// <param name="transactionalId">
-    ///     The identifier to be used to identify the same transactional producer instance across process restarts.
+    ///     The identifier to be used to identify the same transactional producer instance across process restarts. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
@@ -343,7 +343,7 @@ public partial class KafkaProducerConfigurationBuilder
     ///     Specifies the timeout for sending the offset to the transaction. The default is 10 seconds.
     /// </summary>
     /// <param name="timeout">
-    ///     The timeout for sending the offset to the transaction.
+    ///     The timeout for sending the offset to the transaction. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// ///
     /// <returns>
@@ -361,6 +361,9 @@ public partial class KafkaProducerConfigurationBuilder
     /// <returns>
     ///     The <see cref="KafkaProducerConfiguration" />.
     /// </returns>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The configuration is not valid.
+    /// </exception>
     public KafkaProducerConfiguration Build()
     {
         KafkaProducerConfiguration configuration = BuildCore();

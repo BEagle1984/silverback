@@ -19,5 +19,8 @@ public interface IConsumerCollection : IReadOnlyCollection<IConsumer>
     /// <returns>
     ///     The <see cref="IConsumer" /> with the specified name.
     /// </returns>
+    /// <exception cref="KeyNotFoundException">
+    ///     No consumer with the specified <paramref name="name" /> exists.
+    /// </exception>
     IConsumer this[string name] { get; }
 }

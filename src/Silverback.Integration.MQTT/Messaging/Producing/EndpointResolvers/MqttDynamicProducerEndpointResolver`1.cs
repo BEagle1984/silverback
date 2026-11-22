@@ -52,7 +52,7 @@ public sealed record MqttDynamicProducerEndpointResolver<TMessage>
     /// </summary>
     /// <param name="topicFormatString">
     ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
-    ///     using a <see cref="string.Format(string,object[])" />.
+    ///     using a <see cref="string.Format(string,object[])" />. Must not be empty.
     /// </param>
     /// <param name="topicArgumentsFunction">
     ///     The function returning the arguments to be used to format the string.
@@ -70,7 +70,7 @@ public sealed record MqttDynamicProducerEndpointResolver<TMessage>
     /// </summary>
     /// <param name="topicFormatString">
     ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
-    ///     using a <see cref="string.Format(string,object[])" />.
+    ///     using a <see cref="string.Format(string,object[])" />. Must not be empty.
     /// </param>
     /// <param name="topicArgumentsFunction">
     ///     The function returning the arguments to be used to format the string.

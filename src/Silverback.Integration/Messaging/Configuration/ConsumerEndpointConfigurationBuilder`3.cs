@@ -112,7 +112,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     ///     Enables batch processing.
     /// </summary>
     /// <param name="batchSize">
-    ///     The number of messages to be processed in batch.
+    ///     The number of messages to be processed in batch. Must be greater than or equal to 1.
     /// </param>
     /// <param name="maxWaitTime">
     ///     The maximum amount of time to wait for the batch to be filled, measured from its first message. After this time the batch

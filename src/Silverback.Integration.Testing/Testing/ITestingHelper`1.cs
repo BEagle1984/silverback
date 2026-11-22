@@ -14,6 +14,9 @@ public partial interface ITestingHelper
     /// <remarks>
     ///     The <see cref="IIntegrationSpy" /> must be enabled calling <c>AddIntegrationSpy</c> or <c>AddIntegrationSpyAndSubscriber</c>.
     /// </remarks>
+    /// <exception cref="System.InvalidOperationException">
+    ///     The <see cref="IIntegrationSpy" /> isn't registered.
+    /// </exception>
     IIntegrationSpy Spy { get; }
 
     /// <summary>

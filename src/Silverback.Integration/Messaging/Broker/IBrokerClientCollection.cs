@@ -20,6 +20,9 @@ public interface IBrokerClientCollection : IReadOnlyCollection<IBrokerClient>
     /// <returns>
     ///     The <see cref="IBrokerClient" /> with the specified name.
     /// </returns>
+    /// <exception cref="KeyNotFoundException">
+    ///     No client with the specified <paramref name="name" /> exists.
+    /// </exception>
     IBrokerClient this[string name] { get; }
 
     /// <summary>

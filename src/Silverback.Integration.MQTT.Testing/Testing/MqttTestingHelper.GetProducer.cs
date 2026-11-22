@@ -37,7 +37,7 @@ public partial class MqttTestingHelper
         return newProducer;
     }
 
-    /// <inheritdoc cref="ITestingHelper.GetProducerForEndpoint" />
+    /// <inheritdoc cref="TestingHelper.GetProducerForConsumer" />
     protected override IProducer? GetProducerForConsumer(IConsumerCollection consumers, string endpointName)
     {
         Check.NotNull(endpointName);

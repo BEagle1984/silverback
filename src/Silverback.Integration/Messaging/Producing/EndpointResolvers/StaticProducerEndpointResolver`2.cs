@@ -28,7 +28,7 @@ public abstract class StaticProducerEndpointResolver<TEndpoint, TConfiguration>
     ///     Initializes a new instance of the <see cref="StaticProducerEndpointResolver{TEndpoint, TConfiguration}" /> class.
     /// </summary>
     /// <param name="rawName">
-    ///     The raw endpoint name that can be used as <see cref="EndpointConfiguration.RawName" />.
+    ///     The raw endpoint name that can be used as <see cref="EndpointConfiguration.RawName" />. Must not be empty.
     /// </param>
     protected StaticProducerEndpointResolver(string rawName)
     {

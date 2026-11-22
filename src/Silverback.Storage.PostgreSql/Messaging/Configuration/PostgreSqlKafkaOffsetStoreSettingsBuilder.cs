@@ -35,7 +35,8 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettin
     ///     Sets the table name.
     /// </summary>
     /// <param name="tableName">
-    ///     The name of the Kafka offset store table. If not specified, the default <c>"SilverbackKafkaOffsets"</c> will be used.
+    ///     The name of the Kafka offset store table. If not specified, the default <c>"SilverbackKafkaOffsets"</c> will be used. Must not
+    ///     be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlKafkaOffsetStoreSettingsBuilder" /> so that additional calls can be chained.
@@ -50,7 +51,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettin
     ///     Sets the database command timeout.
     /// </summary>
     /// <param name="dbCommandTimeout">
-    ///     The timeout for the database commands. The default is 10 seconds.
+    ///     The timeout for the database commands. The default is 10 seconds. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlOutboxSettingsBuilder" /> so that additional calls can be chained.
@@ -68,7 +69,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettin
     ///     Sets the timeout for the table creation.
     /// </summary>
     /// <param name="createTableTimeout">
-    ///     The timeout for the table creation. The default is 30 seconds.
+    ///     The timeout for the table creation. The default is 30 seconds. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlOutboxSettingsBuilder" /> so that additional calls can be chained.

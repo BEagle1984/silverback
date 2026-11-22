@@ -38,7 +38,7 @@ public static class MessageHeaderEnumerableExtensions
     ///     The enumerable containing the headers to be searched.
     /// </param>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The header value.
@@ -76,7 +76,7 @@ public static class MessageHeaderEnumerableExtensions
     ///     The enumerable containing the headers to be searched.
     /// </param>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="throwIfNotFound">
     ///     A boolean value specifying whether an exception must be thrown if the header with the specified name
@@ -85,6 +85,9 @@ public static class MessageHeaderEnumerableExtensions
     /// <returns>
     ///     The header value converted to the target type, or <c>null</c> if not found.
     /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and no header with the specified name was found.
+    /// </exception>
     public static string? GetValue(
         this IEnumerable<MessageHeader> headers,
         string name,
@@ -108,7 +111,7 @@ public static class MessageHeaderEnumerableExtensions
     ///     The enumerable containing the headers to be searched.
     /// </param>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="throwIfNotFound">
     ///     A boolean value specifying whether an exception must be thrown if the header with the specified name
@@ -117,6 +120,12 @@ public static class MessageHeaderEnumerableExtensions
     /// <returns>
     ///     The header value converted to the target type, or <c>null</c> if not found.
     /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and no header with the specified name was found.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and the header value cannot be converted to <typeparamref name="T" />.
+    /// </exception>
     public static T? GetValue<T>(this IEnumerable<MessageHeader> headers, string name, bool throwIfNotFound = false)
         where T : struct =>
         (T?)headers.GetValue(name, typeof(T), throwIfNotFound);
@@ -134,7 +143,7 @@ public static class MessageHeaderEnumerableExtensions
     ///     The enumerable containing the headers to be searched.
     /// </param>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="targetType">
     ///     The type to convert the header value to.
@@ -146,6 +155,13 @@ public static class MessageHeaderEnumerableExtensions
     /// <returns>
     ///     The header value converted to the target type, or <c>null</c> if not found.
     /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and no header with the specified name was found.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     <paramref name="throwIfNotFound" /> is <c>true</c> and the header value cannot be converted to the
+    ///     <paramref name="targetType" />.
+    /// </exception>
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Rethrown if desired")]
     public static object? GetValue(
         this IEnumerable<MessageHeader> headers,
@@ -200,7 +216,7 @@ public static class MessageHeaderEnumerableExtensions
     ///     The enumerable containing the headers to be searched.
     /// </param>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <returns>
     ///     The header value converted to the target type, or <c>null</c> if not found.
@@ -222,7 +238,7 @@ public static class MessageHeaderEnumerableExtensions
     ///     The enumerable containing the headers to be searched.
     /// </param>
     /// <param name="name">
-    ///     The name of the header to be retrieved.
+    ///     The name of the header to be retrieved. Must not be empty.
     /// </param>
     /// <param name="targetType">
     ///     The type to convert the header value to.

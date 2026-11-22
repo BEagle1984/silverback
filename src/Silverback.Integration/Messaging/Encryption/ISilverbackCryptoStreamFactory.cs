@@ -18,7 +18,8 @@ public interface ISilverbackCryptoStreamFactory
     ///     The inner <see cref="Stream" /> to read the clear-text message from.
     /// </param>
     /// <param name="settings">
-    ///     The <see cref="IEncryptionSettings" /> specifying the cryptographic algorithm settings.
+    ///     The <see cref="IEncryptionSettings" /> specifying the cryptographic algorithm settings. Must be of a type supported by the
+    ///     factory implementation.
     /// </param>
     /// <returns>
     ///     A <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
@@ -32,7 +33,8 @@ public interface ISilverbackCryptoStreamFactory
     ///     The inner <see cref="Stream" /> to read the encrypted message from.
     /// </param>
     /// <param name="settings">
-    ///     The <see cref="IDecryptionSettings" /> specifying the cryptographic algorithm settings.
+    ///     The <see cref="IDecryptionSettings" /> specifying the cryptographic algorithm settings. Must be of a type supported by the
+    ///     factory implementation.
     /// </param>
     /// <param name="keyIdentifier">
     ///     The encryption key identifier that was submitted as header.

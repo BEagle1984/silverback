@@ -49,7 +49,7 @@ public interface IErrorPolicyChainBuilder
     ///     Adds a <see cref="RetryErrorPolicy" /> that retries to process the messages that previously failed to be to processed.
     /// </summary>
     /// <param name="retriesCount">
-    ///     The maximum number of retries to be performed.
+    ///     The maximum number of retries to be performed. Must be greater than or equal to 1.
     /// </param>
     /// <param name="policyBuilderAction">
     ///     An <see cref="Action{T}" /> that takes the <see cref="RetryErrorPolicyBuilder" /> and configures it.

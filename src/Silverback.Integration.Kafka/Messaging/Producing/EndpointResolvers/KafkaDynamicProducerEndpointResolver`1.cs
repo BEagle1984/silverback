@@ -27,7 +27,7 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver{TMessage}" /> class.
     /// </summary>
     /// <param name="topic">
-    ///     The target topic.
+    ///     The target topic. Must not be empty.
     /// </param>
     /// <param name="partitionFunction">
     ///     The function returning the target partition index for the message being produced.
@@ -41,7 +41,7 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver{TMessage}" /> class.
     /// </summary>
     /// <param name="topic">
-    ///     The target topic.
+    ///     The target topic. Must not be empty.
     /// </param>
     /// <param name="partitionFunction">
     ///     The function returning the target partition index for the message being produced.
@@ -145,7 +145,7 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     /// </summary>
     /// <param name="topicFormatString">
     ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
-    ///     using a <see cref="string.Format(string,object[])" />.
+    ///     using a <see cref="string.Format(string,object[])" />. Must not be empty.
     /// </param>
     /// <param name="topicArgumentsFunction">
     ///     The function returning the arguments to be used to format the string.
@@ -172,7 +172,7 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     /// </summary>
     /// <param name="topicFormatString">
     ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
-    ///     using a <see cref="string.Format(string,object[])" />.
+    ///     using a <see cref="string.Format(string,object[])" />. Must not be empty.
     /// </param>
     /// <param name="topicArgumentsFunction">
     ///     The function returning the arguments to be used to format the string.

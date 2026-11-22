@@ -25,6 +25,12 @@ public partial interface IKafkaTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all message offsets have been committed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The default timeout elapsed before all message offsets were committed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreCommittedAsync(params string[] endpointNames);
 
     /// <summary>
@@ -43,6 +49,12 @@ public partial interface IKafkaTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all message offsets have been committed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The timeout elapsed before all message offsets were committed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreCommittedAsync(TimeSpan? timeout, params string[] endpointNames);
 
     /// <summary>
@@ -62,6 +74,13 @@ public partial interface IKafkaTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all message offsets have been committed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the default timeout elapsed before all message offsets were
+    ///     committed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreCommittedAsync(bool throwTimeoutException, params string[] endpointNames);
 
     /// <summary>
@@ -81,6 +100,9 @@ public partial interface IKafkaTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all message offsets have been committed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the timeout elapsed before all message offsets were committed.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreCommittedAsync(bool throwTimeoutException, TimeSpan? timeout = null);
 
     /// <summary>
@@ -103,6 +125,12 @@ public partial interface IKafkaTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all message offsets have been committed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the timeout elapsed before all message offsets were committed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreCommittedAsync(bool throwTimeoutException, TimeSpan? timeout, params string[] endpointNames);
 
     /// <summary>
@@ -121,6 +149,12 @@ public partial interface IKafkaTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all message offsets have been committed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="cancellationToken" /> was canceled before all message offsets were committed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreCommittedAsync(CancellationToken cancellationToken, params string[] endpointNames);
 
     /// <summary>
@@ -143,6 +177,13 @@ public partial interface IKafkaTestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all message offsets have been committed.
     /// </returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the <paramref name="cancellationToken" /> was canceled before
+    ///     all message offsets were committed.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreCommittedAsync(
         bool throwTimeoutException,
         CancellationToken cancellationToken,

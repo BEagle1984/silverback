@@ -118,6 +118,12 @@ public abstract class SchemaRegistryDeserializerBuilder<TBuilder>
     /// <returns>
     ///     The <see cref="IMessageDeserializer" />.
     /// </returns>
+    /// <exception cref="SilverbackConfigurationException">
+    ///     The message type hasn't been set, or it isn't valid for the deserializer.
+    /// </exception>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The schema registry configuration hasn't been set.
+    /// </exception>
     public IMessageDeserializer Build()
     {
         if (_messageType == null)

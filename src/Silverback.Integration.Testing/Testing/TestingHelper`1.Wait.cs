@@ -70,7 +70,7 @@ public abstract partial class TestingHelper
     public ValueTask WaitUntilAllMessagesAreConsumedAsync(params string[] endpointNames) =>
         WaitUntilAllMessagesAreConsumedAsync(true, null, endpointNames);
 
-    /// <inheritdoc cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(bool,string[])" />
+    /// <inheritdoc cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?,string[])" />
     public ValueTask WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout, params string[] endpointNames) =>
         WaitUntilAllMessagesAreConsumedAsync(true, timeout, endpointNames);
 
@@ -132,6 +132,9 @@ public abstract partial class TestingHelper
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     One of the <paramref name="endpointNames" /> doesn't match any endpoint.
+    /// </exception>
     protected abstract Task WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection<string> endpointNames, CancellationToken cancellationToken);
 
     /// <summary>
@@ -143,6 +146,10 @@ public abstract partial class TestingHelper
     /// <param name="endpointNames">The endpoint names to wait for, or an empty array to consider all endpoints.</param>
     /// <param name="cancellationToken">The cancellation token to observe.</param>
     /// <returns>A task that completes when the broker operation and the outbox have completed.</returns>
+    /// <exception cref="TimeoutException">
+    ///     The <paramref name="throwTimeoutException" /> is <c>true</c> and the <paramref name="cancellationToken" /> was canceled before
+    ///     the broker operation and the outbox completed.
+    /// </exception>
     protected async ValueTask WaitUntilAllMessagesCoreAsync(
         Func<IReadOnlyCollection<string>, CancellationToken, Task> waitAction,
         string timeoutMessage,

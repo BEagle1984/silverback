@@ -67,6 +67,9 @@ public sealed class MockedMqttClient : IMqttClient
     public MqttClientOptions? Options { get; private set; }
 
     /// <inheritdoc cref="IMqttClient.ConnectAsync" />
+    /// <exception cref="InvalidOperationException">
+    ///     A connection attempt is already in progress.
+    /// </exception>
     public async Task<MqttClientConnectResult> ConnectAsync(MqttClientOptions options, CancellationToken cancellationToken = default)
     {
         Check.NotNull(options);
@@ -97,6 +100,9 @@ public sealed class MockedMqttClient : IMqttClient
     }
 
     /// <inheritdoc cref="IMqttClient.DisconnectAsync" />
+    /// <exception cref="InvalidOperationException">
+    ///     <see cref="ConnectAsync" /> has never been called.
+    /// </exception>
     public Task DisconnectAsync(MqttClientDisconnectOptions options, CancellationToken cancellationToken = default)
     {
         Check.ThrowObjectDisposedIf(_isDisposed, this);
@@ -143,6 +149,9 @@ public sealed class MockedMqttClient : IMqttClient
     }
 
     /// <inheritdoc cref="IMqttClient.PublishAsync" />
+    /// <exception cref="InvalidOperationException">
+    ///     The client isn't connected.
+    /// </exception>
     public async Task<MqttClientPublishResult> PublishAsync(MqttApplicationMessage applicationMessage, CancellationToken cancellationToken = default)
     {
         Check.NotNull(applicationMessage);

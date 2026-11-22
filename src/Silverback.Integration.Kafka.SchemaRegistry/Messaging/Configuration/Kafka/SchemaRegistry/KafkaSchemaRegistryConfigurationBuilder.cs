@@ -289,6 +289,9 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     /// <returns>
     ///     The <see cref="KafkaSchemaRegistryConfiguration" />.
     /// </returns>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The configuration is not valid.
+    /// </exception>
     public KafkaSchemaRegistryConfiguration Build()
     {
         KafkaSchemaRegistryConfiguration configuration = BuildCore();

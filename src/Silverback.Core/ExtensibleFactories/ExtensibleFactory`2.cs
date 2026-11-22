@@ -50,6 +50,9 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
     /// <param name="factory">
     ///     The factory building the <typeparamref name="TService" /> according to the specified settings.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     A factory for the specified settings type is already registered.
+    /// </exception>
     public virtual void AddFactory<TSettings>(Func<TSettings, IServiceProvider, TService> factory)
         where TSettings : TSettingsBase
     {
@@ -91,8 +94,11 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
     ///     The <see cref="IServiceProvider" /> that can be used to resolve additional services.
     /// </param>
     /// <returns>
-    ///     The service of type <typeparamref name="TService" />, or <c>null</c> if no factory is registered for the specified settings type.
+    ///     The service of type <typeparamref name="TService" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No factory is registered for the type of the specified <paramref name="settings" /> and the factories aren't overridden.
+    /// </exception>
     protected TService GetService<TSettings>(TSettings settings, IServiceProvider serviceProvider)
         where TSettings : TSettingsBase =>
         _cache.GetOrAdd(

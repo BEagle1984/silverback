@@ -19,6 +19,9 @@ public partial interface ITestingHelper
     /// <returns>
     ///     The <see cref="IConsumer" /> with the specified name.
     /// </returns>
+    /// <exception cref="System.Collections.Generic.KeyNotFoundException">
+    ///     No consumer with the specified <paramref name="name" /> exists.
+    /// </exception>
     IConsumer GetConsumer(string name);
 
     /// <summary>
@@ -30,5 +33,8 @@ public partial interface ITestingHelper
     /// <returns>
     ///     The <see cref="IProducer" />.
     /// </returns>
+    /// <exception cref="System.InvalidOperationException">
+    ///     No consumer is configured for the specified endpoint.
+    /// </exception>
     IConsumer GetConsumerForEndpoint(string endpointName);
 }

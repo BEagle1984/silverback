@@ -4,12 +4,17 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Publishing;
 
 /// <summary>
 ///     Publishes messages via the message bus, forwarding them to the subscribers.
 /// </summary>
+/// <remarks>
+///     When a message is routed to a message broker endpoint, the exceptions thrown while producing it (see <c>IProducer</c> in
+///     Silverback.Integration) propagate to the caller as well.
+/// </remarks>
 public interface IPublisher
 {
     /// <summary>
@@ -28,6 +33,12 @@ public interface IPublisher
     ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
     ///     message.
     /// </param>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the message.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     void Publish(object message, bool throwIfUnhandled = false);
 
     /// <summary>
@@ -48,6 +59,12 @@ public interface IPublisher
     ///     A collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message
     ///     and return a value.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the message.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled = false);
 
     /// <summary>
@@ -63,6 +80,9 @@ public interface IPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     Task PublishAsync(object message, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -82,6 +102,12 @@ public interface IPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the message.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     Task PublishAsync(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -102,6 +128,9 @@ public interface IPublisher
     ///     collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message
     ///     and return a value.
     /// </returns>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -126,5 +155,11 @@ public interface IPublisher
     ///     collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message
     ///     and return a value.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the message.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default);
 }

@@ -47,7 +47,7 @@ public class PostgreSqlTableLockSettingsBuilder : IDistributedLockSettingsImplem
     ///     Sets the table name.
     /// </summary>
     /// <param name="tableName">
-    ///     The name of the locks table. If not specified, the default <c>"SilverbackLocks"</c> will be used.
+    ///     The name of the locks table. If not specified, the default <c>"SilverbackLocks"</c> will be used. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlTableLockSettingsBuilder" /> so that additional calls can be chained.
@@ -62,7 +62,7 @@ public class PostgreSqlTableLockSettingsBuilder : IDistributedLockSettingsImplem
     ///     Sets the database command timeout.
     /// </summary>
     /// <param name="dbCommandTimeout">
-    ///     The timeout for the database commands. The default is 10 seconds.
+    ///     The timeout for the database commands. The default is 10 seconds. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlTableLockSettingsBuilder" /> so that additional calls can be chained.
@@ -80,7 +80,7 @@ public class PostgreSqlTableLockSettingsBuilder : IDistributedLockSettingsImplem
     ///     Sets the timeout for the table creation.
     /// </summary>
     /// <param name="createTableTimeout">
-    ///     The timeout for the table creation. The default is 30 seconds.
+    ///     The timeout for the table creation. The default is 30 seconds. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlTableLockSettingsBuilder" /> so that additional calls can be chained.
@@ -98,7 +98,8 @@ public class PostgreSqlTableLockSettingsBuilder : IDistributedLockSettingsImplem
     ///     Sets the interval between two attempts to acquire the lock.
     /// </summary>
     /// <param name="acquireInterval">
-    ///     The interval between two attempts to acquire the lock. The default is 1 second.
+    ///     The interval between two attempts to acquire the lock. The default is 1 second. Must be greater than
+    ///     <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlTableLockSettingsBuilder" /> so that additional calls can be chained.
@@ -116,7 +117,7 @@ public class PostgreSqlTableLockSettingsBuilder : IDistributedLockSettingsImplem
     ///     Sets the interval between two heartbeat updates.
     /// </summary>
     /// <param name="heartbeatInterval">
-    ///     The interval between two heartbeat updates. The default is 500 milliseconds.
+    ///     The interval between two heartbeat updates. The default is 500 milliseconds. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlTableLockSettingsBuilder" /> so that additional calls can be chained.
@@ -134,7 +135,8 @@ public class PostgreSqlTableLockSettingsBuilder : IDistributedLockSettingsImplem
     ///     Sets the maximum duration between two heartbeat updates, after which the lock is considered lost.
     /// </summary>
     /// <param name="lockTimeout">
-    ///     The maximum duration between two heartbeat updates, after which the lock is considered lost. The default is 5 seconds.
+    ///     The maximum duration between two heartbeat updates, after which the lock is considered lost. The default is 5 seconds. Must be
+    ///     greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlTableLockSettingsBuilder" /> so that additional calls can be chained.

@@ -16,7 +16,7 @@ public record KafkaConsumerEndpoint : ConsumerEndpoint<KafkaConsumerEndpointConf
     ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
     /// </summary>
     /// <param name="topic">
-    ///     The topic.
+    ///     The topic. Must not be empty.
     /// </param>
     /// <param name="partition">
     ///     The partition index.
@@ -33,7 +33,7 @@ public record KafkaConsumerEndpoint : ConsumerEndpoint<KafkaConsumerEndpointConf
     ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
     /// </summary>
     /// <param name="topicPartition">
-    ///     The topic and partition.
+    ///     The topic and partition. The <see cref="TopicPartition.Topic" /> must not be empty.
     /// </param>
     /// <param name="configuration">
     ///     The consumer configuration.

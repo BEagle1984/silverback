@@ -36,7 +36,7 @@ public abstract class Producer : IProducer, IDisposable
     ///     Initializes a new instance of the <see cref="Producer" /> class.
     /// </summary>
     /// <param name="name">
-    ///     The producer name.
+    ///     The producer name. Must not be empty.
     /// </param>
     /// <param name="client">
     ///     The <see cref="IBrokerClient" />.

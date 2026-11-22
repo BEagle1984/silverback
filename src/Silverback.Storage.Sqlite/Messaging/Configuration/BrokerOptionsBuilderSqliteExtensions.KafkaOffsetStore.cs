@@ -27,6 +27,9 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The Kafka integration hasn't been added, because <c>AddKafka</c> hasn't been called.
+    /// </exception>
     public static BrokerOptionsBuilder UseSqliteKafkaOffsetStore(this BrokerOptionsBuilder builder, string connectionString)
     {
         Check.NotNull(builder);
@@ -50,6 +53,9 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The Kafka integration hasn't been added, because <c>AddKafka</c> hasn't been called.
+    /// </exception>
     public static BrokerOptionsBuilder AddSqliteKafkaOffsetStore(this BrokerOptionsBuilder builder)
     {
         Check.NotNull(builder);

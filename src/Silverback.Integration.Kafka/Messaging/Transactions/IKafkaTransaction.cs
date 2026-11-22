@@ -21,10 +21,16 @@ public interface IKafkaTransaction : IDisposable
     /// <summary>
     ///     Commits the transaction.
     /// </summary>
+    /// <exception cref="InvalidOperationException">
+    ///     The transaction isn't pending, because no message has been produced in it or it has already been committed or aborted.
+    /// </exception>
     void Commit();
 
     /// <summary>
     ///     Aborts the transaction.
     /// </summary>
+    /// <exception cref="InvalidOperationException">
+    ///     The transaction isn't pending, because no message has been produced in it or it has already been committed or aborted.
+    /// </exception>
     void Abort();
 }

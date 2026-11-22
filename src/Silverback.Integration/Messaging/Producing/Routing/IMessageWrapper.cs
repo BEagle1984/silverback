@@ -267,6 +267,9 @@ public interface IMessageWrapper
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     More than one producer is passed (not supported for enumerable batches).
+    /// </exception>
     Task WrapAndProduceBatchAsync<TMessage>(
         IEnumerable<TMessage?> messages,
         IPublisher publisher,
@@ -305,6 +308,9 @@ public interface IMessageWrapper
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     More than one producer is passed (not supported for enumerable batches).
+    /// </exception>
     Task WrapAndProduceBatchAsync<TMessage, TArgument>(
         IEnumerable<TMessage?> messages,
         IPublisher publisher,
@@ -344,6 +350,9 @@ public interface IMessageWrapper
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     More than one producer is passed (not supported for enumerable batches).
+    /// </exception>
     Task WrapAndProduceBatchAsync<TSource, TMessage>(
         IEnumerable<TSource> sources,
         IPublisher publisher,
@@ -389,6 +398,9 @@ public interface IMessageWrapper
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     More than one producer is passed (not supported for enumerable batches).
+    /// </exception>
     Task WrapAndProduceBatchAsync<TSource, TMessage, TArgument>(
         IEnumerable<TSource> sources,
         IPublisher publisher,
@@ -423,6 +435,9 @@ public interface IMessageWrapper
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     More than one producer is passed (not supported for enumerable batches).
+    /// </exception>
     Task WrapAndProduceBatchAsync<TMessage>(
         IAsyncEnumerable<TMessage?> messages,
         IPublisher publisher,
@@ -461,6 +476,9 @@ public interface IMessageWrapper
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     More than one producer is passed (not supported for enumerable batches).
+    /// </exception>
     Task WrapAndProduceBatchAsync<TMessage, TArgument>(
         IAsyncEnumerable<TMessage?> messages,
         IPublisher publisher,
@@ -500,6 +518,9 @@ public interface IMessageWrapper
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     More than one producer is passed (not supported for enumerable batches).
+    /// </exception>
     Task WrapAndProduceBatchAsync<TSource, TMessage>(
         IAsyncEnumerable<TSource> sources,
         IPublisher publisher,
@@ -545,6 +566,9 @@ public interface IMessageWrapper
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     More than one producer is passed (not supported for enumerable batches).
+    /// </exception>
     Task WrapAndProduceBatchAsync<TSource, TMessage, TArgument>(
         IAsyncEnumerable<TSource> sources,
         IPublisher publisher,

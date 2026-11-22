@@ -5,13 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.Routing;
+using Silverback.Messaging.Validation;
 
 namespace Silverback.Messaging.Publishing;
 
 /// <summary>
 ///     Exposes the methods to enrich and publish the messages to the configured message broker endpoints.
 /// </summary>
+/// <remarks>
+///     The exceptions documented on <see cref="IProducer" /> (e.g. <see cref="ProduceException" /> and
+///     <see cref="MessageValidationException" />) propagate as well.
+/// </remarks>
 public partial interface IIntegrationPublisher
 {
     /// <summary>
@@ -29,6 +36,9 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     Task WrapAndPublishAsync<TMessage>(
         TMessage? message,
         CancellationToken cancellationToken = default)
@@ -52,6 +62,9 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     Task WrapAndPublishAsync<TMessage>(
         TMessage? message,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction,
@@ -82,6 +95,9 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     Task WrapAndPublishAsync<TMessage, TArgument>(
         TMessage? message,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
@@ -104,6 +120,9 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     Task WrapAndPublishBatchAsync<TMessage>(
         IReadOnlyCollection<TMessage?> messages,
         CancellationToken cancellationToken = default)
@@ -127,6 +146,9 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     Task WrapAndPublishBatchAsync<TMessage>(
         IReadOnlyCollection<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction,
@@ -157,6 +179,9 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     Task WrapAndPublishBatchAsync<TMessage, TArgument>(
         IReadOnlyCollection<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
@@ -185,6 +210,9 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     Task WrapAndPublishBatchAsync<TSource, TMessage>(
         IReadOnlyCollection<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
@@ -215,6 +243,9 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     Task WrapAndPublishBatchAsync<TSource, TMessage>(
         IReadOnlyCollection<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
@@ -252,6 +283,9 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type.
+    /// </exception>
     Task WrapAndPublishBatchAsync<TSource, TMessage, TArgument>(
         IReadOnlyCollection<TSource> sources,
         Func<TSource, TArgument, TMessage?> mapperFunction,
@@ -275,6 +309,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TMessage>(
         IEnumerable<TMessage?> messages,
         CancellationToken cancellationToken = default)
@@ -298,6 +336,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TMessage>(
         IEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction,
@@ -328,6 +370,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TMessage, TArgument>(
         IEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
@@ -356,6 +402,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TSource, TMessage>(
         IEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
@@ -386,6 +436,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TSource, TMessage>(
         IEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
@@ -423,6 +477,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TSource, TMessage, TArgument>(
         IEnumerable<TSource> sources,
         Func<TSource, TArgument, TMessage?> mapperFunction,
@@ -446,6 +504,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TMessage>(
         IAsyncEnumerable<TMessage?> messages,
         CancellationToken cancellationToken = default)
@@ -469,6 +531,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TMessage>(
         IAsyncEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction,
@@ -499,6 +565,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TMessage, TArgument>(
         IAsyncEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
@@ -527,6 +597,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TSource, TMessage>(
         IAsyncEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
@@ -557,6 +631,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TSource, TMessage>(
         IAsyncEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
@@ -594,6 +672,10 @@ public partial interface IIntegrationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="RoutingException">
+    ///     No producer is configured for the message type, or more than one producer is configured for it (not supported for enumerable
+    ///     batches).
+    /// </exception>
     Task WrapAndPublishBatchAsync<TSource, TMessage, TArgument>(
         IAsyncEnumerable<TSource> sources,
         Func<TSource, TArgument, TMessage?> mapperFunction,

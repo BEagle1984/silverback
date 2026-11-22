@@ -66,6 +66,9 @@ public abstract record EndpointConfiguration
     /// <summary>
     ///     Validates the endpoint configuration and throws an <see cref="BrokerConfigurationException" /> if not valid.
     /// </summary>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The endpoint configuration is not valid.
+    /// </exception>
     public void Validate()
     {
         ValidateCore();

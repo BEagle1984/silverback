@@ -16,5 +16,8 @@ public interface IKafkaOffsetStoreSettingsImplementationBuilder
     /// <returns>
     ///     The <see cref="KafkaOffsetStoreSettings" />.
     /// </returns>
+    /// <exception cref="SilverbackConfigurationException">
+    ///     The settings are not valid.
+    /// </exception>
     KafkaOffsetStoreSettings Build();
 }

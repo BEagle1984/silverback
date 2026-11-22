@@ -22,6 +22,9 @@ public static partial class BrokerOptionsBuilderPostgreSqlExtensions
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The Kafka integration hasn't been added, because <c>AddKafka</c> hasn't been called.
+    /// </exception>
     public static BrokerOptionsBuilder AddPostgreSqlKafkaOffsetStore(this BrokerOptionsBuilder builder)
     {
         Check.NotNull(builder);

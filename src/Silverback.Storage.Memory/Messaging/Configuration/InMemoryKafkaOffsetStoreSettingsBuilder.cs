@@ -17,7 +17,7 @@ public class InMemoryKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettings
     ///     Sets the offset store name.
     /// </summary>
     /// <param name="offsetStoreName">
-    ///     The name of the offset store.
+    ///     The name of the offset store. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="InMemoryKafkaOffsetStoreSettingsBuilder" /> so that additional calls can be chained.

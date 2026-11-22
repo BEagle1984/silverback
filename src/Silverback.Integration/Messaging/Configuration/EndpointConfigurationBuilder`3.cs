@@ -106,6 +106,9 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     /// <returns>
     ///     The endpoint configuration.
     /// </returns>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The built endpoint configuration is not valid.
+    /// </exception>
     public virtual TConfiguration Build()
     {
         TConfiguration configuration = CreateConfiguration() with

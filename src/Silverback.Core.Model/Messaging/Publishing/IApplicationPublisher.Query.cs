@@ -1,9 +1,11 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Publishing;
 
@@ -29,6 +31,15 @@ public partial interface IApplicationPublisher
     /// <returns>
     ///     The query result.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the query.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The query wasn't handled by exactly one subscriber returning a result.
+    /// </exception>
     TResult ExecuteQuery<TResult>(IQuery<TResult> queryMessage, bool throwIfUnhandled = true);
 
     /// <summary>
@@ -49,6 +60,15 @@ public partial interface IApplicationPublisher
     ///     A <see cref="ValueTask" /> representing the asynchronous operation. The ValueTask result contains the
     ///     query result.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     No subscriber handled the query.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The query wasn't handled by exactly one subscriber returning a result.
+    /// </exception>
     ValueTask<TResult> ExecuteQueryAsync<TResult>(IQuery<TResult> queryMessage, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -72,6 +92,15 @@ public partial interface IApplicationPublisher
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     query result.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the query.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The query wasn't handled by exactly one subscriber returning a result.
+    /// </exception>
     ValueTask<TResult> ExecuteQueryAsync<TResult>(
         IQuery<TResult> queryMessage,
         bool throwIfUnhandled,

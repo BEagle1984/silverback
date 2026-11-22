@@ -3,6 +3,7 @@
 
 using System;
 using Confluent.SchemaRegistry;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 
 namespace Silverback.Messaging.Serialization;
@@ -21,6 +22,9 @@ public interface IConfluentSchemaRegistryClientFactory
     /// <returns>
     ///     The <see cref="ISchemaRegistryClient" />.
     /// </returns>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The configuration is not valid.
+    /// </exception>
     ISchemaRegistryClient GetClient(Action<KafkaSchemaRegistryConfigurationBuilder> builderAction);
 
     /// <summary>

@@ -18,7 +18,7 @@ public class MqttClientWebSocketConfigurationBuilder
     ///     Sets the URI of the WebSocket endpoint.
     /// </summary>
     /// <param name="uri">
-    ///     The URI.
+    ///     The URI. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientTcpConfigurationBuilder" /> so that additional calls can be chained.
@@ -35,7 +35,7 @@ public class MqttClientWebSocketConfigurationBuilder
     ///     Specifies the WebSocket proxy to be used using a configuration builder.
     /// </summary>
     /// <param name="address">
-    ///     The proxy address.
+    ///     The proxy address. Must not be empty.
     /// </param>
     /// <param name="proxyConfigurationBuilderAction">
     ///     An optional action that configures the <see cref="MqttClientWebSocketProxyConfigurationBuilder" />.

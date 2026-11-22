@@ -15,7 +15,7 @@ public record MessageHeader
     ///     Initializes a new instance of the <see cref="MessageHeader" /> class.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The header value.
@@ -29,7 +29,7 @@ public record MessageHeader
     ///     Initializes a new instance of the <see cref="MessageHeader" /> class.
     /// </summary>
     /// <param name="name">
-    ///     The header name.
+    ///     The header name. Must not be empty.
     /// </param>
     /// <param name="value">
     ///     The header value.

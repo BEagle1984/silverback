@@ -20,6 +20,9 @@ public interface IProducerCollection : IReadOnlyCollection<IProducer>
     /// <returns>
     ///     The <see cref="IProducer" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     No producer has been configured for the specified endpoint.
+    /// </exception>
     IProducer GetProducerForEndpoint(string endpointName);
 
     /// <summary>

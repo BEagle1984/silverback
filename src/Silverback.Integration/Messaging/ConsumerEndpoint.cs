@@ -15,7 +15,7 @@ public abstract record ConsumerEndpoint : Endpoint
     ///     Initializes a new instance of the <see cref="ConsumerEndpoint" /> class.
     /// </summary>
     /// <param name="rawName">
-    ///     The endpoint name.
+    ///     The endpoint name. Must not be empty.
     /// </param>
     /// <param name="configuration">
     ///     The endpoint configuration.

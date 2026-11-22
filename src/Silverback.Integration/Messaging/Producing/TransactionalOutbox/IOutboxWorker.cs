@@ -22,6 +22,9 @@ public interface IOutboxWorker
     ///     the outbox contained at least 1 message, and it was successfully processed. The caller should ideally keep invoking this method
     ///     in a loop, until <c>false</c> is returned.
     /// </returns>
+    /// <exception cref="OutboxProcessingException">
+    ///     The iteration over the stored messages failed, or a message couldn't be produced and the message order is enforced.
+    /// </exception>
     Task<bool> ProcessOutboxAsync(CancellationToken stoppingToken);
 
     /// <summary>

@@ -53,7 +53,7 @@ public class OutboxWorkerSettingsBuilder
     ///     Sets the interval between the outbox worker executions. The default is 500 milliseconds.
     /// </summary>
     /// <param name="interval">
-    ///     The interval between the outbox worker executions.
+    ///     The interval between the outbox worker executions. Must be greater than or equal to <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="OutboxWorkerSettingsBuilder" /> so that additional calls can be chained.
@@ -70,13 +70,13 @@ public class OutboxWorkerSettingsBuilder
     ///     interval.
     /// </summary>
     /// <param name="initialDelay">
-    ///     The initial delay before the first retry.
+    ///     The initial delay before the first retry. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <param name="delayIncrement">
-    ///     The increment to be added at each subsequent retry.
+    ///     The increment to be added at each subsequent retry. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <param name="maxDelay">
-    ///     The maximum delay to be applied.
+    ///     The maximum delay to be applied. If specified, must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="OutboxWorkerSettingsBuilder" /> so that additional calls can be chained.
@@ -96,13 +96,13 @@ public class OutboxWorkerSettingsBuilder
     ///     interval.
     /// </summary>
     /// <param name="initialDelay">
-    ///     The initial delay before the first retry.
+    ///     The initial delay before the first retry. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <param name="delayFactor">
-    ///     The factor to be applied at each retry.
+    ///     The factor to be applied at each retry. Must be greater than zero.
     /// </param>
     /// <param name="maxDelay">
-    ///     The maximum delay to be applied.
+    ///     The maximum delay to be applied. If specified, must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="OutboxWorkerSettingsBuilder" /> so that additional calls can be chained.
@@ -147,7 +147,7 @@ public class OutboxWorkerSettingsBuilder
     ///     Sets the number of messages to be retrieved from the outbox and processed at once. The default is 1000.
     /// </summary>
     /// <param name="batchSize">
-    ///     The number of messages to be processed at once.
+    ///     The number of messages to be processed at once. Must be greater than or equal to 1.
     /// </param>
     /// <returns>
     ///     The <see cref="OutboxWorkerSettingsBuilder" /> so that additional calls can be chained.
@@ -194,6 +194,10 @@ public class OutboxWorkerSettingsBuilder
     /// <returns>
     ///     The <see cref="OutboxWorkerSettings" />.
     /// </returns>
+    /// <exception cref="SilverbackConfigurationException">
+    ///     <see cref="ProcessOutbox" /> hasn't been called, the distributed lock can't be inferred from the outbox settings, or the
+    ///     settings are not valid.
+    /// </exception>
     public OutboxWorkerSettings Build()
     {
         if (_outboxSettings == null)

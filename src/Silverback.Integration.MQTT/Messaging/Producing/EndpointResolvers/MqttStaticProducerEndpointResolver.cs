@@ -16,7 +16,7 @@ public sealed class MqttStaticProducerEndpointResolver
     ///     Initializes a new instance of the <see cref="MqttStaticProducerEndpointResolver" /> class.
     /// </summary>
     /// <param name="topic">
-    ///     The target topic.
+    ///     The target topic. Must not be empty.
     /// </param>
     public MqttStaticProducerEndpointResolver(string topic)
         : base(Check.NotNullOrEmpty(topic))

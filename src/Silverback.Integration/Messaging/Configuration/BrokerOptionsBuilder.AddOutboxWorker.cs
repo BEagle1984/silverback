@@ -26,6 +26,9 @@ public sealed partial class BrokerOptionsBuilder
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
     /// </returns>
+    /// <exception cref="SilverbackConfigurationException">
+    ///     The outbox worker settings are not valid.
+    /// </exception>
     public BrokerOptionsBuilder AddOutboxWorker(Action<OutboxWorkerSettingsBuilder> settingsBuilderAction)
     {
         Check.NotNull(settingsBuilderAction);

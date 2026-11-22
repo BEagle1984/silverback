@@ -19,6 +19,9 @@ public record OutboxWorkerSettings : IValidatableSettings
     /// <param name="outboxSettings">
     ///     The outbox settings.
     /// </param>
+    /// <exception cref="SilverbackConfigurationException">
+    ///     No compatible distributed lock can be inferred from the <paramref name="outboxSettings" />.
+    /// </exception>
     public OutboxWorkerSettings(OutboxSettings outboxSettings)
     {
         Outbox = Check.NotNull(outboxSettings);

@@ -100,7 +100,7 @@ public partial class KafkaConsumerConfigurationBuilder
     /// </summary>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default, the name will be generated concatenating the topic name(s).
+    ///     By default, the name will be generated concatenating the topic name(s). If specified, it must not be empty.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaConsumerConfigurationBuilder" /> and configures it.
@@ -123,7 +123,7 @@ public partial class KafkaConsumerConfigurationBuilder
     /// </typeparam>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default, the name will be generated concatenating the topic name(s).
+    ///     By default, the name will be generated concatenating the topic name(s). If specified, it must not be empty.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaConsumerConfigurationBuilder" /> and configures it.
@@ -456,7 +456,7 @@ public partial class KafkaConsumerConfigurationBuilder
     ///     Sets the timeout to wait for the consumer to poll for new messages before initiating a new poll. The default is 100 milliseconds.
     /// </summary>
     /// <param name="pollingTimeout">
-    ///     The timeout to wait for the consumer to poll for new messages.
+    ///     The timeout to wait for the consumer to poll for new messages. Must be greater than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
@@ -473,7 +473,8 @@ public partial class KafkaConsumerConfigurationBuilder
     ///     The default is <c>null</c>, which means that the consumer is never considered stale and is never restarted.
     /// </summary>
     /// <param name="stallDetectionThreshold">
-    ///     The maximum time to wait for a message to be consumed before the consumer is considered stale.
+    ///     The maximum time to wait for a message to be consumed before the consumer is considered stale. If specified, it must be greater
+    ///     than <see cref="TimeSpan.Zero" />.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
@@ -874,6 +875,9 @@ public partial class KafkaConsumerConfigurationBuilder
     /// <returns>
     ///     The <see cref="KafkaConsumerConfiguration" />.
     /// </returns>
+    /// <exception cref="BrokerConfigurationException">
+    ///     The configuration is not valid.
+    /// </exception>
     public KafkaConsumerConfiguration Build()
     {
         KafkaConsumerConfiguration configuration = BuildCore();

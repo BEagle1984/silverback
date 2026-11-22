@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Data.Common;
 using Silverback.Storage;
 using Silverback.Util;
@@ -21,6 +22,9 @@ public static class KafkaOffsetStoreScopeRelationalExtensions
     /// <param name="transaction">
     ///     The transaction to be used.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     A different transaction is already enlisted.
+    /// </exception>
     public static void EnlistTransaction(this KafkaOffsetStoreScope scope, IStorageTransaction transaction) =>
         Check.NotNull(scope).SilverbackContext.EnlistTransaction(transaction);
 
@@ -36,6 +40,9 @@ public static class KafkaOffsetStoreScopeRelationalExtensions
     /// <returns>
     ///     The <see cref="IStorageTransaction" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     A transaction is already enlisted.
+    /// </exception>
     public static IStorageTransaction EnlistTransaction(this KafkaOffsetStoreScope scope, DbTransaction dbTransaction) =>
         Check.NotNull(scope).SilverbackContext.EnlistDbTransaction(dbTransaction);
 }

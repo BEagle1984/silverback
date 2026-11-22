@@ -73,6 +73,9 @@ public interface IMockedConsumerGroup
     /// <returns>
     ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="System.OperationCanceledException">
+    ///     The <paramref name="cancellationToken" /> was canceled before all messages were processed.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -84,5 +87,8 @@ public interface IMockedConsumerGroup
     /// </param>
     /// <param name="cancellationToken">The cancellation token to observe while waiting.</param>
     /// <returns>A task that completes when all offsets have been committed.</returns>
+    /// <exception cref="System.OperationCanceledException">
+    ///     The <paramref name="cancellationToken" /> was canceled before all offsets were committed.
+    /// </exception>
     ValueTask WaitUntilAllMessagesAreCommittedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default);
 }

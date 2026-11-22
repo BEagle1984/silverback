@@ -4,6 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Publishing;
 
@@ -23,6 +24,12 @@ public partial interface IApplicationPublisher
     /// <param name="throwIfUnhandled">
     ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.
     /// </param>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the event.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     void PublishEvent(IEvent eventMessage, bool throwIfUnhandled = false);
 
     /// <summary>
@@ -39,6 +46,9 @@ public partial interface IApplicationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     Task PublishEventAsync(IEvent eventMessage, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -58,5 +68,11 @@ public partial interface IApplicationPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="UnhandledMessageException">
+    ///     <paramref name="throwIfUnhandled" /> is <c>true</c> and no subscriber handled the event.
+    /// </exception>
+    /// <exception cref="SubscribedMethodInvocationException">
+    ///     A subscribed method has an invalid signature, for example no argument resolver can be found for one of its parameters.
+    /// </exception>
     Task PublishEventAsync(IEvent eventMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default);
 }

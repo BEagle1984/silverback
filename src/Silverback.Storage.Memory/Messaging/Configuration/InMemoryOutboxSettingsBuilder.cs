@@ -17,7 +17,7 @@ public class InMemoryOutboxSettingsBuilder : IOutboxSettingsImplementationBuilde
     ///     Sets the outbox name.
     /// </summary>
     /// <param name="outboxName">
-    ///     The name of the outbox.
+    ///     The name of the outbox. Must not be empty.
     /// </param>
     /// <returns>
     ///     The <see cref="InMemoryOutboxSettingsBuilder" /> so that additional calls can be chained.

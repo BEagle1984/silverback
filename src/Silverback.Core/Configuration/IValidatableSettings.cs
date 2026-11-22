@@ -11,5 +11,8 @@ public interface IValidatableSettings
     /// <summary>
     ///     Throws a <see cref="SilverbackConfigurationException" /> if the configuration is not valid.
     /// </summary>
+    /// <exception cref="SilverbackConfigurationException">
+    ///     The configuration is not valid.
+    /// </exception>
     void Validate();
 }

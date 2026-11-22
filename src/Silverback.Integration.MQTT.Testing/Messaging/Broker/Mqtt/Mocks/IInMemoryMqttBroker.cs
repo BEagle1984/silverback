@@ -25,6 +25,9 @@ public interface IInMemoryMqttBroker
     /// <returns>
     ///     The <see cref="IClientSession" />.
     /// </returns>
+    /// <exception cref="System.InvalidOperationException">
+    ///     No session (or more than one) exists for the specified client.
+    /// </exception>
     IClientSession GetClientSession(string clientId);
 
     /// <summary>
@@ -47,6 +50,9 @@ public interface IInMemoryMqttBroker
     /// <param name="client">
     ///     The client.
     /// </param>
+    /// <exception cref="System.InvalidOperationException">
+    ///     The options of the <paramref name="client" /> aren't set.
+    /// </exception>
     void Connect(MockedMqttClient client);
 
     /// <summary>
@@ -55,6 +61,9 @@ public interface IInMemoryMqttBroker
     /// <param name="client">
     ///     The client.
     /// </param>
+    /// <exception cref="System.InvalidOperationException">
+    ///     The options of the <paramref name="client" /> aren't set.
+    /// </exception>
     void Disconnect(MockedMqttClient client);
 
     /// <summary>
@@ -105,6 +114,9 @@ public interface IInMemoryMqttBroker
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
+    /// <exception cref="System.InvalidOperationException">
+    ///     The <paramref name="client" /> isn't connected.
+    /// </exception>
     ValueTask PublishAsync(MockedMqttClient client, MqttApplicationMessage message, MqttClientOptions clientOptions);
 
     /// <summary>
@@ -121,5 +133,9 @@ public interface IInMemoryMqttBroker
     /// <returns>
     ///     A <see cref="Task" /> that completes when all messages have been processed.
     /// </returns>
+    /// <exception cref="System.OperationCanceledException">
+    ///     The <paramref name="cancellationToken" /> was canceled while waiting for the messages to be processed. If the token is already
+    ///     canceled when the method is called, the method returns without throwing.
+    /// </exception>
     Task WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default);
 }

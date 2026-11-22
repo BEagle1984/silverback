@@ -60,6 +60,13 @@ public abstract partial class TestingHelper
     /// <returns>
     ///     The <see cref="IProducer" />.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The endpoint is a topic pattern or wildcard filter, the matching consumer endpoint subscribes only topic patterns or
+    ///     wildcard filters, or the key provider of the consumer's decryption settings doesn't return a key.
+    /// </exception>
+    /// <exception cref="NotSupportedException">
+    ///     The decryption settings of the consumer endpoint to mirror aren't supported.
+    /// </exception>
     protected abstract IProducer? GetProducerForConsumer(IConsumerCollection consumers, string endpointName);
 
     // The friendly name takes precedence over the topic name

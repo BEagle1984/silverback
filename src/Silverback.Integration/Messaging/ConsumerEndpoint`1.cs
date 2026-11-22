@@ -14,7 +14,7 @@ public abstract record ConsumerEndpoint<TConfiguration> : ConsumerEndpoint
     ///     Initializes a new instance of the <see cref="ConsumerEndpoint{TConfiguration}" /> class.
     /// </summary>
     /// <param name="rawName">
-    ///     The endpoint name.
+    ///     The endpoint name. Must not be empty.
     /// </param>
     /// <param name="configuration">
     ///     The endpoint configuration.
