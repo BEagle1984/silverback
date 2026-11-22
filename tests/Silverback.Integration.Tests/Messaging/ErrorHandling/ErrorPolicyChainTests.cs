@@ -4,6 +4,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -176,5 +177,36 @@ public class ErrorPolicyChainTests
 
         TestErrorPolicy testErrorPolicy = policies[1].ShouldBeOfType<TestErrorPolicy>();
         testErrorPolicy.Applied.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Build_ShouldStackMaxFailedAttemptsOnlyOnce_WhenCalledMultipleTimes()
+    {
+        ErrorPolicyBase[] policies =
+        [
+            new RetryErrorPolicy { MaxFailedAttempts = 2 },
+            new SkipMessageErrorPolicy { MaxFailedAttempts = 2 }
+        ];
+        ErrorPolicyChain errorPolicyChain = new(policies);
+
+        // The chain is built for each failed message
+        errorPolicyChain.Build(_serviceProvider);
+        IErrorPolicyImplementation chain = errorPolicyChain.Build(_serviceProvider);
+
+        policies.Select(policy => policy.MaxFailedAttempts).ShouldBe([2, 4]);
+
+        bool result = await chain.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(
+                new InboundEnvelope(
+                    new MemoryStream(),
+                    [new MessageHeader(DefaultMessageHeaders.FailedAttempts, 5)],
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset()),
+                _serviceProvider),
+            new InvalidOperationException("test"));
+
+        // No policy handles the 5th failed attempt: the retry policy handles up to 2 and the skip policy up to 4
+        result.ShouldBeFalse();
     }
 }

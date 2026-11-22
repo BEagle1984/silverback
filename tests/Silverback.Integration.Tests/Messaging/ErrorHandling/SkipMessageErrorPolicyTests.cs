@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
@@ -97,6 +98,61 @@ public class SkipMessageErrorPolicyTests
             new InvalidOperationException("test"));
 
         await transactionManager.Received(1).RollbackAsync(Arg.Any<InvalidOperationException>(), true);
+    }
+
+    [Fact]
+    public async Task HandleErrorAsync_ShouldLogAndTriggerReconnect_WhenRollbackFails()
+    {
+        ServiceCollection services = [];
+        services
+            .AddLoggerSubstitute(LogLevel.Trace)
+            .AddSilverback()
+            .WithConnectionToMessageBroker();
+        ServiceProvider serviceProvider = services.BuildServiceProvider();
+        LoggerSubstitute<SkipMessageErrorPolicy> logger =
+            (LoggerSubstitute<SkipMessageErrorPolicy>)serviceProvider.GetRequiredService<ILogger<SkipMessageErrorPolicy>>();
+        IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(serviceProvider);
+        IConsumer consumer = Substitute.For<IConsumer>();
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            consumer,
+            new TestOffset("a", "42"));
+        IConsumerTransactionManager transactionManager = Substitute.For<IConsumerTransactionManager>();
+        transactionManager.RollbackAsync(Arg.Any<Exception?>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<bool>())
+            .Returns(Task.FromException<bool>(new InvalidOperationException("Rollback failed.")));
+
+        bool result = await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider, transactionManager, consumer),
+            new InvalidOperationException("test"));
+
+        // The message can't be skipped without rolling back and committing: the consumer is reconnected instead
+        result.ShouldBeTrue();
+        await consumer.Received(1).TriggerReconnectAsync();
+        logger.Received(LogLevel.Warning, typeof(InvalidOperationException), eventId: 1062, exceptionMessage: "Rollback failed.");
+    }
+
+    [Fact]
+    public async Task HandleErrorAsync_ShouldNotTriggerReconnect_WhenRollbackSucceeds()
+    {
+        IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
+        IConsumer consumer = Substitute.For<IConsumer>();
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            consumer,
+            new TestOffset());
+
+        bool result = await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, consumer: consumer),
+            new InvalidOperationException("test"));
+
+        result.ShouldBeTrue();
+        await consumer.DidNotReceive().TriggerReconnectAsync();
     }
 
     [Fact]

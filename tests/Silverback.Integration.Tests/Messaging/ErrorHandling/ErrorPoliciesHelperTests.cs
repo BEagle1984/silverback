@@ -238,6 +238,116 @@ public class ErrorPoliciesHelperTests
         await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ApplyErrorPoliciesAsync_ShouldApplyPolicies_WhenStopIfRollbackPreventedIsSetButRollbackIsNotPrevented(
+        bool isTransactionManagerInitialized)
+    {
+        ConsumerPipelineContext context = CreateContext(
+            new SkipMessageErrorPolicy(),
+            isTransactionManagerInitialized: isTransactionManagerInitialized);
+
+        bool result = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, _exception, isStopIfRollbackPrevented: true);
+
+        result.ShouldBeTrue();
+        _callback.Invocations.ShouldBe([nameof(ISkipMessageErrorPolicyCallback.OnSkippingMessageAsync)]);
+    }
+
+    [Fact]
+    public async Task ApplyErrorPoliciesAsync_ShouldNotApplyPoliciesAndInvokeStopCallbacks_WhenStopIfRollbackPreventedIsSetAndRollbackIsPrevented()
+    {
+        ConsumerPipelineContext context = CreateContext(new SkipMessageErrorPolicy(), isTransactionManagerInitialized: true);
+        await CommitWithFailingCommittedHandlerAsync(context);
+
+        bool result = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, _exception, isStopIfRollbackPrevented: true);
+
+        // The message was already committed: it can't be skipped, the error is handled as when no policy handles it
+        result.ShouldBeFalse();
+        _callback.Invocations.ShouldBe([nameof(IStopConsumerErrorPolicyCallback.OnStoppingConsumerAsync)]);
+        _callback.Envelopes.ShouldBe([context.Envelope]);
+        _callback.Exceptions.ShouldBe([_exception]);
+    }
+
+    [Fact]
+    public async Task ApplyErrorPoliciesAsync_ShouldApplyPolicies_WhenRollbackIsPreventedButStopIfRollbackPreventedIsNotSet()
+    {
+        ConsumerPipelineContext context = CreateContext(new SkipMessageErrorPolicy(), isTransactionManagerInitialized: true);
+        await CommitWithFailingCommittedHandlerAsync(context);
+
+        bool result = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, _exception);
+
+        // The skip policy is applied, but it can't roll back the committed transaction and reconnects the consumer
+        result.ShouldBeTrue();
+        _callback.Invocations.ShouldBe([nameof(ISkipMessageErrorPolicyCallback.OnSkippingMessageAsync)]);
+        await context.Consumer.Received(1).TriggerReconnectAsync();
+    }
+
+    [Fact]
+    public async Task RollbackOrStopConsumerAsync_ShouldRollBack_WhenTransactionManagerIsNotConsumerTransactionManager()
+    {
+        ConsumerPipelineContext context = CreateContext(new StopConsumerErrorPolicy());
+
+        await ErrorPoliciesHelper.RollbackOrStopConsumerAsync(context, _exception);
+
+        await context.TransactionManager.Received(1).RollbackAsync(_exception);
+        await context.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+    }
+
+    [Fact]
+    public async Task RollbackOrStopConsumerAsync_ShouldRollBackAndStopConsumer_WhenTransactionIsNotCompleted()
+    {
+        ConsumerPipelineContext context = CreateContext(new StopConsumerErrorPolicy(), isTransactionManagerInitialized: true);
+        ConsumerTransactionManager transactionManager = (ConsumerTransactionManager)context.TransactionManager;
+        int abortedCount = 0;
+        transactionManager.Aborted.AddHandler(_ =>
+        {
+            abortedCount++;
+            return ValueTask.CompletedTask;
+        });
+
+        await ErrorPoliciesHelper.RollbackOrStopConsumerAsync(context, _exception);
+
+        abortedCount.ShouldBe(1);
+        transactionManager.IsConsumerRolledBack.ShouldBeTrue();
+        await context.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+    }
+
+    [Fact]
+    public async Task RollbackOrStopConsumerAsync_ShouldStopConsumerWithoutRollingBack_WhenTransactionWasCommitted()
+    {
+        ConsumerPipelineContext context = CreateContext(new StopConsumerErrorPolicy(), isTransactionManagerInitialized: true);
+        ConsumerTransactionManager transactionManager = (ConsumerTransactionManager)context.TransactionManager;
+        await CommitWithFailingCommittedHandlerAsync(context);
+        int abortedCount = 0;
+        transactionManager.Aborted.AddHandler(_ =>
+        {
+            abortedCount++;
+            return ValueTask.CompletedTask;
+        });
+
+        await ErrorPoliciesHelper.RollbackOrStopConsumerAsync(context, _exception);
+
+        // The transaction can't be rolled back anymore after the consumer was committed: the consumer is just stopped
+        abortedCount.ShouldBe(0);
+        transactionManager.IsConsumerRolledBack.ShouldBeFalse();
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+    }
+
+    // The consumer is committed, but the commit fails afterwards (e.g., a Committed handler throws)
+    private static async Task CommitWithFailingCommittedHandlerAsync(ConsumerPipelineContext context)
+    {
+        ConsumerTransactionManager transactionManager = (ConsumerTransactionManager)context.TransactionManager;
+        transactionManager.Committed.AddHandler(_ => throw new InvalidOperationException("Committed handler failed."));
+
+        await Should.ThrowAsync<InvalidOperationException>(transactionManager.CommitAsync);
+
+        transactionManager.IsRollbackPrevented.ShouldBeTrue();
+        await context.Consumer.Received(1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
     private static ServiceProvider BuildServiceProvider(Action<SilverbackBuilder> configureBuilder)
     {
         ServiceCollection services = [];
