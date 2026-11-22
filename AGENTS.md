@@ -31,7 +31,7 @@
 
 ## Running tests
 
-- "Run the tests" means the main solution: `dotnet test --solution Silverback.slnx`. The Docker-dependent tests need the root `docker-compose.yaml` stack running.
+- "Run the tests" means the main solution: `dotnet test --solution Silverback.slnx`. The tests tagged `Dependency=Docker` (PostgreSQL) start their own containers, so they need only a running Docker (CI runs them too).
 - Do not run the extended integration tests (`tests/extended`) unless the user asks for them. Offer them when a change affects broker client behavior, such as consumer or producer logic, rebalancing, or a Confluent.Kafka or MQTTnet upgrade. A run takes over 12 minutes and builds Docker images from the working tree, so do not edit files while it runs.
 - The extended tests build with the locally cached `mcr.microsoft.com/dotnet/sdk:10.0` image. If the build fails with "A compatible .NET SDK was not found", run `docker pull mcr.microsoft.com/dotnet/sdk:10.0` to satisfy the `global.json` minimum.
 

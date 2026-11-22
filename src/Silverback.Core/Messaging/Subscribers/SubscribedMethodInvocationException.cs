@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Subscribers;
 ///     The exception that is thrown when a subscribed method cannot be invoked. This usually happens
 ///     because no value can be resolved for one or more arguments.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class SubscribedMethodInvocationException : SilverbackException
 {
     /// <summary>

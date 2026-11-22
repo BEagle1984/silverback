@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     The exception that is thrown when the broker client configuration is not valid.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class BrokerConfigurationException : SilverbackConfigurationException
 {
     /// <summary>

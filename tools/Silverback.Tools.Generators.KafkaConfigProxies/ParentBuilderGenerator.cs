@@ -67,6 +67,7 @@ public class ParentBuilderGenerator : BuilderGenerator
 
             fieldsStringBuilder.AppendLine();
 
+            propertiesStringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
             propertiesStringBuilder.AppendLine($"    {visibility} TBuilder With{property.Name}({propertyType} {argument})");
             propertiesStringBuilder.AppendLine("    {");
             propertiesStringBuilder.AppendLine($"        {field} = {argument};");
@@ -77,6 +78,7 @@ public class ParentBuilderGenerator : BuilderGenerator
             if (IsObsolete(property.Name))
                 interfaceStringBuilder.AppendLine("#pragma warning disable CS0618 // Type or member is obsolete");
 
+            interfaceStringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
             interfaceStringBuilder.Append($"    void IKafkaClientConfigurationBuilder.With{property.Name}({propertyType} {argument})");
             interfaceStringBuilder.AppendLine($" => With{property.Name}({argument});");
 
@@ -110,6 +112,7 @@ public class ParentBuilderGenerator : BuilderGenerator
         StringBuilder.AppendLine("    /// <returns>");
         StringBuilder.AppendLine("    ///     The configuration.");
         StringBuilder.AppendLine("    /// </returns>");
+        StringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
         StringBuilder.AppendLine("    protected virtual TConfig BuildCore()");
         StringBuilder.AppendLine("    {");
         StringBuilder.AppendLine("        TConfig config = new()");
@@ -188,6 +191,7 @@ public class ParentBuilderGenerator : BuilderGenerator
             string valueVariableName = property.Name.ToCamelCase();
             string visibility = MustBeInternal(property.Name) ? "internal" : "public partial";
 
+            StringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
             StringBuilder.AppendLine($"    {visibility} KafkaClientsConfigurationBuilder With{property.Name}({propertyType} {valueVariableName})");
             StringBuilder.AppendLine("    {");
             StringBuilder.AppendLine($"        _sharedConfigurationActions.Add(builder => builder.With{property.Name}({valueVariableName}));");

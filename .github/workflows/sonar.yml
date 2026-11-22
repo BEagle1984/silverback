@@ -50,6 +50,7 @@ jobs:
       # - S8677 (Write-Host in a function): the scripts log with Write-Host on purpose, since Write-Output would mix the
       #   log lines into the functions' return values
       # - S6698 (password in docker-compose.yaml): it's the password of the local PostgreSQL used by the tests
+      # The coverage excludes the scripts and the build-time generator tools, which no test covers
       - name: Prepare code analysis on SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -63,6 +64,7 @@ jobs:
             /v:"$version" \
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.exclusions="**/obj/**,**/*.dll,docs/**,.claude/**" \
+            /d:sonar.coverage.exclusions="**/*.ps1,tools/**" \
             /d:sonar.issue.ignore.multicriteria="generics,cancellation,obsolete,markers,writehost,password" \
             /d:sonar.issue.ignore.multicriteria.generics.ruleKey=csharpsquid:S2436 \
             /d:sonar.issue.ignore.multicriteria.generics.resourceKey="$CSHARP_FILES" \
@@ -81,7 +83,9 @@ jobs:
       - name: Build (${{ env.BUILD_CONFIGURATION }})
         run: |
           dotnet build Silverback.slnx --configuration "$BUILD_CONFIGURATION"
-      # The unit and E2E tests run in a single pass, so that a failure doesn't hide the failures of the other tests
+      # The unit and E2E tests run in a single pass, so that a failure doesn't hide the failures of the other tests.
+      # The pass includes the tests tagged Dependency=Docker (PostgreSQL), whose fixtures start their own containers.
+      # Keep the coverlet options in sync with coverage.ps1.
       - name: Run tests
         run: |
           dotnet test --solution Silverback.slnx \
@@ -94,11 +98,13 @@ jobs:
             --hangdump-type Mini \
             --results-directory TestResults \
             --results-directory-layout per-module \
-            --filter "Dependency!=Docker&CI!=Skip" \
             --coverlet \
             --coverlet-output-format opencover \
             --coverlet-exclude "[xunit.*]*" \
             --coverlet-exclude "[Silverback.Tests.*]*" \
+            --coverlet-exclude "[*]*.Migrations.*" \
+            --coverlet-exclude-by-attribute GeneratedCodeAttribute \
+            --coverlet-skip-auto-props \
             --coverlet-exclude-assemblies-without-sources MissingAll
       - name: Run SonarCloud analysis
         if: ${{ !cancelled() }}

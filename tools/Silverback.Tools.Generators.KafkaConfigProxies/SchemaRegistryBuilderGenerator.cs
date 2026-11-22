@@ -38,6 +38,7 @@ public class SchemaRegistryBuilderGenerator : BuilderGenerator
 
             fieldsStringBuilder.AppendLine($"    private {propertyType} {field};");
 
+            propertiesStringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
             propertiesStringBuilder.AppendLine($"    {visibility} {GeneratedClassName} With{property.Name}({propertyType} {argument})");
             propertiesStringBuilder.AppendLine("    {");
             propertiesStringBuilder.AppendLine($"        {field} = {argument};");
@@ -50,6 +51,7 @@ public class SchemaRegistryBuilderGenerator : BuilderGenerator
 
         StringBuilder.Append(fieldsStringBuilder);
         StringBuilder.Append(propertiesStringBuilder);
+        StringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
         StringBuilder.AppendLine($"    private {BuiltTypeName} BuildCore() =>");
         StringBuilder.AppendLine("        new()");
         StringBuilder.AppendLine("        {");

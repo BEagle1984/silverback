@@ -146,6 +146,7 @@ public partial record KafkaSchemaRegistryConfiguration
     /// <returns>
     ///     The Confluent client configuration.
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private SchemaRegistryConfig MapCore() =>
         new()
         {
@@ -245,6 +246,7 @@ public partial record KafkaAvroSerializerConfiguration
     /// <returns>
     ///     The Confluent serializer or deserializer configuration.
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private AvroSerializerConfig MapCore()
     {
         AvroSerializerConfig confluentConfig = new()
@@ -317,6 +319,7 @@ public partial record KafkaAvroDeserializerConfiguration
     /// <returns>
     ///     The Confluent serializer or deserializer configuration.
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private AvroDeserializerConfig MapCore()
     {
         AvroDeserializerConfig confluentConfig = new()
@@ -425,6 +428,7 @@ public partial record KafkaJsonSerializerConfiguration
     /// <returns>
     ///     The Confluent serializer or deserializer configuration.
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private JsonSerializerConfig MapCore()
     {
         JsonSerializerConfig confluentConfig = new()
@@ -510,6 +514,7 @@ public partial record KafkaJsonDeserializerConfiguration
     /// <returns>
     ///     The Confluent serializer or deserializer configuration.
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private JsonDeserializerConfig MapCore()
     {
         JsonDeserializerConfig confluentConfig = new()
@@ -627,6 +632,7 @@ public partial record KafkaProtobufSerializerConfiguration
     /// <returns>
     ///     The Confluent serializer or deserializer configuration.
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private ProtobufSerializerConfig MapCore()
     {
         ProtobufSerializerConfig confluentConfig = new()
@@ -708,6 +714,7 @@ public partial record KafkaProtobufDeserializerConfiguration
     /// <returns>
     ///     The Confluent serializer or deserializer configuration.
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private ProtobufDeserializerConfig MapCore()
     {
         ProtobufDeserializerConfig confluentConfig = new()
@@ -786,144 +793,168 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
 
     private string? _bearerAuthTokenEndpointQuery;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBasicAuthCredentialsSource(AuthCredentialsSource? basicAuthCredentialsSource)
     {
         _basicAuthCredentialsSource = basicAuthCredentialsSource;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithUrl(string? url)
     {
         _url = url;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithRequestTimeoutMs(int? requestTimeoutMs)
     {
         _requestTimeoutMs = requestTimeoutMs;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithMaxRetries(int? maxRetries)
     {
         _maxRetries = maxRetries;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithRetriesWaitMs(int? retriesWaitMs)
     {
         _retriesWaitMs = retriesWaitMs;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithRetriesMaxWaitMs(int? retriesMaxWaitMs)
     {
         _retriesMaxWaitMs = retriesMaxWaitMs;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithMaxConnectionsPerServer(int? maxConnectionsPerServer)
     {
         _maxConnectionsPerServer = maxConnectionsPerServer;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithSslCaLocation(string? sslCaLocation)
     {
         _sslCaLocation = sslCaLocation;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithSslKeystoreLocation(string? sslKeystoreLocation)
     {
         _sslKeystoreLocation = sslKeystoreLocation;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithSslKeystorePassword(string? sslKeystorePassword)
     {
         _sslKeystorePassword = sslKeystorePassword;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithMaxCachedSchemas(int? maxCachedSchemas)
     {
         _maxCachedSchemas = maxCachedSchemas;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithLatestCacheTtlSecs(int? latestCacheTtlSecs)
     {
         _latestCacheTtlSecs = latestCacheTtlSecs;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBasicAuthUserInfo(string? basicAuthUserInfo)
     {
         _basicAuthUserInfo = basicAuthUserInfo;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthCredentialsSource(BearerAuthCredentialsSource? bearerAuthCredentialsSource)
     {
         _bearerAuthCredentialsSource = bearerAuthCredentialsSource;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthToken(string? bearerAuthToken)
     {
         _bearerAuthToken = bearerAuthToken;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthLogicalCluster(string? bearerAuthLogicalCluster)
     {
         _bearerAuthLogicalCluster = bearerAuthLogicalCluster;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthIdentityPoolId(string? bearerAuthIdentityPoolId)
     {
         _bearerAuthIdentityPoolId = bearerAuthIdentityPoolId;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthClientId(string? bearerAuthClientId)
     {
         _bearerAuthClientId = bearerAuthClientId;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthClientSecret(string? bearerAuthClientSecret)
     {
         _bearerAuthClientSecret = bearerAuthClientSecret;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthScope(string? bearerAuthScope)
     {
         _bearerAuthScope = bearerAuthScope;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthTokenEndpointUrl(string? bearerAuthTokenEndpointUrl)
     {
         _bearerAuthTokenEndpointUrl = bearerAuthTokenEndpointUrl;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaSchemaRegistryConfigurationBuilder WithBearerAuthTokenEndpointQuery(string? bearerAuthTokenEndpointQuery)
     {
         _bearerAuthTokenEndpointQuery = bearerAuthTokenEndpointQuery;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaSchemaRegistryConfigurationBuilder WithEnableSslCertificateVerification(bool? enableSslCertificateVerification)
     {
         _enableSslCertificateVerification = enableSslCertificateVerification;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private KafkaSchemaRegistryConfiguration BuildCore() =>
         new()
         {
@@ -982,66 +1013,77 @@ public partial class KafkaAvroSerializerConfigurationBuilder
 
     private bool? _validationRulesFailFast;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroSerializerConfigurationBuilder WithBufferBytes(int? bufferBytes)
     {
         _bufferBytes = bufferBytes;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroSerializerConfigurationBuilder WithUseSchemaId(int? useSchemaId)
     {
         _useSchemaId = useSchemaId;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroSerializerConfigurationBuilder WithUseLatestWithMetadata(IReadOnlyDictionary<string, string>? useLatestWithMetadata)
     {
         _useLatestWithMetadata = useLatestWithMetadata;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroSerializerConfigurationBuilder WithSubjectNameStrategy(SubjectNameStrategy? subjectNameStrategy)
     {
         _subjectNameStrategy = subjectNameStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroSerializerConfigurationBuilder WithSchemaIdStrategy(SchemaIdSerializerStrategy? schemaIdStrategy)
     {
         _schemaIdStrategy = schemaIdStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroSerializerConfigurationBuilder WithValidationRulesExecution(ValidationRulesExecution? validationRulesExecution)
     {
         _validationRulesExecution = validationRulesExecution;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaAvroSerializerConfigurationBuilder WithAutoRegisterSchemas(bool? autoRegisterSchemas)
     {
         _autoRegisterSchemas = autoRegisterSchemas;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaAvroSerializerConfigurationBuilder WithNormalizeSchemas(bool? normalizeSchemas)
     {
         _normalizeSchemas = normalizeSchemas;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaAvroSerializerConfigurationBuilder WithUseLatestVersion(bool? useLatestVersion)
     {
         _useLatestVersion = useLatestVersion;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaAvroSerializerConfigurationBuilder WithValidationRulesFailFast(bool? validationRulesFailFast)
     {
         _validationRulesFailFast = validationRulesFailFast;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private KafkaAvroSerializerConfiguration BuildCore() =>
         new()
         {
@@ -1079,42 +1121,49 @@ public partial class KafkaAvroDeserializerConfigurationBuilder
 
     private bool? _validationRulesFailFast;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroDeserializerConfigurationBuilder WithUseLatestWithMetadata(IReadOnlyDictionary<string, string>? useLatestWithMetadata)
     {
         _useLatestWithMetadata = useLatestWithMetadata;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroDeserializerConfigurationBuilder WithSubjectNameStrategy(SubjectNameStrategy? subjectNameStrategy)
     {
         _subjectNameStrategy = subjectNameStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroDeserializerConfigurationBuilder WithSchemaIdStrategy(SchemaIdDeserializerStrategy? schemaIdStrategy)
     {
         _schemaIdStrategy = schemaIdStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaAvroDeserializerConfigurationBuilder WithValidationRulesExecution(ValidationRulesExecution? validationRulesExecution)
     {
         _validationRulesExecution = validationRulesExecution;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaAvroDeserializerConfigurationBuilder WithUseLatestVersion(bool? useLatestVersion)
     {
         _useLatestVersion = useLatestVersion;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaAvroDeserializerConfigurationBuilder WithValidationRulesFailFast(bool? validationRulesFailFast)
     {
         _validationRulesFailFast = validationRulesFailFast;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private KafkaAvroDeserializerConfiguration BuildCore() =>
         new()
         {
@@ -1162,84 +1211,98 @@ public partial class KafkaJsonSerializerConfigurationBuilder
 
     private bool? _validationRulesFailFast;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonSerializerConfigurationBuilder WithBufferBytes(int? bufferBytes)
     {
         _bufferBytes = bufferBytes;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonSerializerConfigurationBuilder WithUseSchemaId(int? useSchemaId)
     {
         _useSchemaId = useSchemaId;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonSerializerConfigurationBuilder WithUseLatestWithMetadata(IReadOnlyDictionary<string, string>? useLatestWithMetadata)
     {
         _useLatestWithMetadata = useLatestWithMetadata;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonSerializerConfigurationBuilder WithSubjectNameStrategy(SubjectNameStrategy? subjectNameStrategy)
     {
         _subjectNameStrategy = subjectNameStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonSerializerConfigurationBuilder WithSchemaIdStrategy(SchemaIdSerializerStrategy? schemaIdStrategy)
     {
         _schemaIdStrategy = schemaIdStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonSerializerConfigurationBuilder WithValidationRulesExecution(ValidationRulesExecution? validationRulesExecution)
     {
         _validationRulesExecution = validationRulesExecution;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonSerializerConfigurationBuilder WithAutoRegisterSchemas(bool? autoRegisterSchemas)
     {
         _autoRegisterSchemas = autoRegisterSchemas;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonSerializerConfigurationBuilder WithNormalizeSchemas(bool? normalizeSchemas)
     {
         _normalizeSchemas = normalizeSchemas;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonSerializerConfigurationBuilder WithUseLatestVersion(bool? useLatestVersion)
     {
         _useLatestVersion = useLatestVersion;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonSerializerConfigurationBuilder WithLatestCompatibilityStrict(bool? latestCompatibilityStrict)
     {
         _latestCompatibilityStrict = latestCompatibilityStrict;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonSerializerConfigurationBuilder WithValidate(bool? validate)
     {
         _validate = validate;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonSerializerConfigurationBuilder WithValidateBeforeDomainRules(bool? validateBeforeDomainRules)
     {
         _validateBeforeDomainRules = validateBeforeDomainRules;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonSerializerConfigurationBuilder WithValidationRulesFailFast(bool? validationRulesFailFast)
     {
         _validationRulesFailFast = validationRulesFailFast;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private KafkaJsonSerializerConfiguration BuildCore() =>
         new()
         {
@@ -1284,54 +1347,63 @@ public partial class KafkaJsonDeserializerConfigurationBuilder
 
     private bool? _validationRulesFailFast;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonDeserializerConfigurationBuilder WithUseLatestWithMetadata(IReadOnlyDictionary<string, string>? useLatestWithMetadata)
     {
         _useLatestWithMetadata = useLatestWithMetadata;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonDeserializerConfigurationBuilder WithSubjectNameStrategy(SubjectNameStrategy? subjectNameStrategy)
     {
         _subjectNameStrategy = subjectNameStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonDeserializerConfigurationBuilder WithSchemaIdStrategy(SchemaIdDeserializerStrategy? schemaIdStrategy)
     {
         _schemaIdStrategy = schemaIdStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaJsonDeserializerConfigurationBuilder WithValidationRulesExecution(ValidationRulesExecution? validationRulesExecution)
     {
         _validationRulesExecution = validationRulesExecution;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonDeserializerConfigurationBuilder WithUseLatestVersion(bool? useLatestVersion)
     {
         _useLatestVersion = useLatestVersion;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonDeserializerConfigurationBuilder WithValidate(bool? validate)
     {
         _validate = validate;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonDeserializerConfigurationBuilder WithValidateBeforeDomainRules(bool? validateBeforeDomainRules)
     {
         _validateBeforeDomainRules = validateBeforeDomainRules;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaJsonDeserializerConfigurationBuilder WithValidationRulesFailFast(bool? validationRulesFailFast)
     {
         _validationRulesFailFast = validationRulesFailFast;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private KafkaJsonDeserializerConfiguration BuildCore() =>
         new()
         {
@@ -1383,90 +1455,105 @@ public partial class KafkaProtobufSerializerConfigurationBuilder
 
     private bool? _validationRulesFailFast;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufSerializerConfigurationBuilder WithBufferBytes(int? bufferBytes)
     {
         _bufferBytes = bufferBytes;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufSerializerConfigurationBuilder WithUseSchemaId(int? useSchemaId)
     {
         _useSchemaId = useSchemaId;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufSerializerConfigurationBuilder WithUseLatestWithMetadata(IReadOnlyDictionary<string, string>? useLatestWithMetadata)
     {
         _useLatestWithMetadata = useLatestWithMetadata;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufSerializerConfigurationBuilder WithSubjectNameStrategy(SubjectNameStrategy? subjectNameStrategy)
     {
         _subjectNameStrategy = subjectNameStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufSerializerConfigurationBuilder WithReferenceSubjectNameStrategy(ReferenceSubjectNameStrategy? referenceSubjectNameStrategy)
     {
         _referenceSubjectNameStrategy = referenceSubjectNameStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufSerializerConfigurationBuilder WithSchemaIdStrategy(SchemaIdSerializerStrategy? schemaIdStrategy)
     {
         _schemaIdStrategy = schemaIdStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufSerializerConfigurationBuilder WithCustomReferenceSubjectNameStrategy(ICustomReferenceSubjectNameStrategy? customReferenceSubjectNameStrategy)
     {
         _customReferenceSubjectNameStrategy = customReferenceSubjectNameStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufSerializerConfigurationBuilder WithValidationRulesExecution(ValidationRulesExecution? validationRulesExecution)
     {
         _validationRulesExecution = validationRulesExecution;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaProtobufSerializerConfigurationBuilder WithAutoRegisterSchemas(bool? autoRegisterSchemas)
     {
         _autoRegisterSchemas = autoRegisterSchemas;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaProtobufSerializerConfigurationBuilder WithNormalizeSchemas(bool? normalizeSchemas)
     {
         _normalizeSchemas = normalizeSchemas;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaProtobufSerializerConfigurationBuilder WithUseLatestVersion(bool? useLatestVersion)
     {
         _useLatestVersion = useLatestVersion;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaProtobufSerializerConfigurationBuilder WithSkipKnownTypes(bool? skipKnownTypes)
     {
         _skipKnownTypes = skipKnownTypes;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaProtobufSerializerConfigurationBuilder WithUseDeprecatedFormat(bool? useDeprecatedFormat)
     {
         _useDeprecatedFormat = useDeprecatedFormat;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaProtobufSerializerConfigurationBuilder WithValidationRulesFailFast(bool? validationRulesFailFast)
     {
         _validationRulesFailFast = validationRulesFailFast;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private KafkaProtobufSerializerConfiguration BuildCore() =>
         new()
         {
@@ -1510,48 +1597,56 @@ public partial class KafkaProtobufDeserializerConfigurationBuilder
 
     private bool? _validationRulesFailFast;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufDeserializerConfigurationBuilder WithUseLatestWithMetadata(IReadOnlyDictionary<string, string>? useLatestWithMetadata)
     {
         _useLatestWithMetadata = useLatestWithMetadata;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufDeserializerConfigurationBuilder WithSubjectNameStrategy(SubjectNameStrategy? subjectNameStrategy)
     {
         _subjectNameStrategy = subjectNameStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufDeserializerConfigurationBuilder WithSchemaIdStrategy(SchemaIdDeserializerStrategy? schemaIdStrategy)
     {
         _schemaIdStrategy = schemaIdStrategy;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     public partial KafkaProtobufDeserializerConfigurationBuilder WithValidationRulesExecution(ValidationRulesExecution? validationRulesExecution)
     {
         _validationRulesExecution = validationRulesExecution;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaProtobufDeserializerConfigurationBuilder WithUseLatestVersion(bool? useLatestVersion)
     {
         _useLatestVersion = useLatestVersion;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaProtobufDeserializerConfigurationBuilder WithUseDeprecatedFormat(bool? useDeprecatedFormat)
     {
         _useDeprecatedFormat = useDeprecatedFormat;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     internal KafkaProtobufDeserializerConfigurationBuilder WithValidationRulesFailFast(bool? validationRulesFailFast)
     {
         _validationRulesFailFast = validationRulesFailFast;
         return this;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private KafkaProtobufDeserializerConfiguration BuildCore() =>
         new()
         {

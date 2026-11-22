@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Serialization;
 ///     specific error occurs, other exceptions related to reflection or the underlying serializer are not
 ///     wrapped.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class MessageSerializerException : SilverbackException
 {
     /// <summary>

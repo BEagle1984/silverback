@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker;
 ///     The exception that is thrown by the <see cref="IProducer" /> when the message cannot be produced or
 ///     the message broker didn't acknowledge it.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class ProduceException : SilverbackException
 {
     /// <summary>

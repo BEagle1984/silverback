@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker;
 /// <summary>
 ///     The exception that is thrown when a transactional producer is used but the transaction has not been initialized.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class MissingKafkaTransactionException : SilverbackException
 {
     /// <summary>

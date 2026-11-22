@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
+using Silverback.Tools.Generators.Common;
 
 namespace Silverback.Tools.Generators.KafkaConfigProxies;
 
@@ -56,6 +57,7 @@ public class SerdeProxyClassGenerator : ProxyClassGenerator
         StringBuilder.AppendLine("    /// <returns>");
         StringBuilder.AppendLine("    ///     The Confluent serializer or deserializer configuration.");
         StringBuilder.AppendLine("    /// </returns>");
+        StringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
         StringBuilder.AppendLine($"    private {ProxiedType.FullName} MapCore()");
         StringBuilder.AppendLine("    {");
         StringBuilder.AppendLine($"        {ProxiedType.FullName} confluentConfig = new()");

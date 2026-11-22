@@ -49,6 +49,10 @@ public sealed class PostgresContainerFixture : IDisposable
         _postgresContainer = null;
     }
 
+    // On Linux, Docker reports the binding address of the published port (0.0.0.0 or ::), which can't be connected to
+    private static IPAddress GetConnectableAddress(IPAddress address) =>
+        address.Equals(IPAddress.Any) || address.Equals(IPAddress.IPv6Any) ? IPAddress.Loopback : address;
+
     private static async Task WaitForConnectionAsync(string connectionString)
     {
         bool connected = false;
@@ -87,7 +91,7 @@ public sealed class PostgresContainerFixture : IDisposable
 
         IPEndPoint hostExposedEndpoint = _postgresContainer.ToHostExposedEndpoint("5432/tcp");
         _connectionString = $"User ID=postgres;Password=silverback;" +
-                            $"Host={hostExposedEndpoint.Address};Port={hostExposedEndpoint.Port};" +
+                            $"Host={GetConnectableAddress(hostExposedEndpoint.Address)};Port={hostExposedEndpoint.Port};" +
                             "Database={database};Pooling=true;Maximum Pool Size=100;Connection Lifetime=0;";
 
         await WaitForConnectionAsync(_connectionString.Replace("{database}", "default", StringComparison.Ordinal));
