@@ -51,16 +51,14 @@ public class ChunkSequenceWriter : ISequenceWriter
         if (chunkSettings == null || chunkSettings.Size == int.MaxValue)
             return false;
 
-        if (chunkSettings.AlwaysAddHeaders)
-            return true;
-
+        // A null payload (tombstone) can't be split and is produced as is
         if (envelope.RawMessage == null)
             return false;
 
-        if (!envelope.RawMessage.CanSeek)
+        if (chunkSettings.AlwaysAddHeaders || !envelope.RawMessage.CanSeek)
             return true;
 
-        return envelope.RawMessage != null && envelope.RawMessage.Length > chunkSettings.Size;
+        return envelope.RawMessage.Length > chunkSettings.Size;
     }
 
     /// <inheritdoc cref="ISequenceWriter.ProcessMessageAsync" />

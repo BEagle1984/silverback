@@ -133,6 +133,43 @@ public partial class ChunkingTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Chunking_ShouldProduceAndConsumeBinaryMessageWithoutChunking_WhenContentIsNull(bool alwaysAddHeaders)
+    {
+        TestingCollection<BinaryMessage> receivedMessages = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName).EnableChunking(10, alwaysAddHeaders)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedMessages.Add(binaryMessage);
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(new BinaryMessage { Content = null });
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        IOutboundEnvelope outboundEnvelope = Helper.Spy.RawOutboundEnvelopes.ShouldHaveSingleItem();
+        outboundEnvelope.RawMessage.ShouldBeNull();
+        outboundEnvelope.Headers.GetValue(DefaultMessageHeaders.ChunkIndex).ShouldBeNull();
+        DefaultTopic.GetAllMessages().ShouldHaveSingleItem().Value.ShouldBeNull();
+
+        receivedMessages.ShouldHaveSingleItem().Content.ShouldBeNull();
+    }
+
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedBinaryMessageWithIsLastChunkHeader()
     {

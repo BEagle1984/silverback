@@ -83,6 +83,35 @@ public partial class ChunkingTests : MqttTests
         DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Chunking_ShouldProduceTombstoneWithoutChunking(bool alwaysAddHeaders)
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<IIntegrationEvent>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .WithAtLeastOnceQoS()
+                        .EnableChunking(ChunkSize, alwaysAddHeaders))))
+            .AddIntegrationSpy());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
+
+        Helper.Spy.RawOutboundEnvelopes.ShouldHaveSingleItem().RawMessage.ShouldBeNull();
+        MqttApplicationMessage message = GetDefaultTopicMessages().ShouldHaveSingleItem();
+        message.Payload.IsEmpty.ShouldBeTrue();
+        GetUserProperty(message, DefaultMessageHeaders.ChunkIndex).ShouldBeNull();
+    }
+
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedJson_WhenProcessingInParallel()
     {
