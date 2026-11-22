@@ -4,6 +4,7 @@
 using System;
 using Shouldly;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Tests.Types;
 using Xunit;
@@ -40,6 +41,35 @@ public class ConsumerEndpointConfigurationTests
         Action act = configuration.Validate;
 
         act.ShouldThrow<BrokerConfigurationException>();
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenSequenceTimeoutIsNotPositive(int milliseconds)
+    {
+        TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            Sequence = new SequenceSettings { Timeout = TimeSpan.FromMilliseconds(milliseconds) }
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldThrow<BrokerConfigurationException>().Message.ShouldBe("Sequence.Timeout must be greater than zero.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenSequenceTimeoutExceedsInt32MaxValueMilliseconds()
+    {
+        TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            Sequence = new SequenceSettings { Timeout = TimeSpan.FromMilliseconds(int.MaxValue + 1.0) }
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldThrow<BrokerConfigurationException>().Message
+            .ShouldBe("Sequence.Timeout must be less than or equal to Int32.MaxValue milliseconds.");
     }
 
     [Fact]
