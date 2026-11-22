@@ -111,12 +111,6 @@ public sealed class ChunkStream : Stream
     /// <inheritdoc cref="Stream.Write(byte[], int, int)" />
     public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 
-    /// <inheritdoc cref="Stream.Close" />
-    public override void Close()
-    {
-        // Nothing to close
-    }
-
     /// <inheritdoc cref="Stream.DisposeAsync" />
     public override async ValueTask DisposeAsync()
     {
