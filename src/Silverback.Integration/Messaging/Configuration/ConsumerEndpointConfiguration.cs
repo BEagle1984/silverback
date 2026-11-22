@@ -104,6 +104,7 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
         if (ErrorPolicy == null)
             throw new BrokerConfigurationException($"{nameof(ErrorPolicy)} is required.");
 
+        Sequence.Validate();
         Batch?.Validate();
         Encryption?.Validate();
 

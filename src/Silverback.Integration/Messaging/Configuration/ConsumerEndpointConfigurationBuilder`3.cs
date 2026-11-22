@@ -141,7 +141,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     ///     <see cref="EnableBatchProcessing" /> method instead.
     /// </remarks>
     /// <param name="timeout">
-    ///     The timeout.
+    ///     The timeout. It must be greater than zero and less than or equal to <see cref="int.MaxValue" /> milliseconds.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
