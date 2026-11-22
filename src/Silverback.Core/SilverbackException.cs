@@ -9,7 +9,7 @@ namespace Silverback;
 /// <summary>
 ///     The base class for all the custom exceptions thrown by Silverback.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public abstract class SilverbackException : Exception
 {
     /// <summary>

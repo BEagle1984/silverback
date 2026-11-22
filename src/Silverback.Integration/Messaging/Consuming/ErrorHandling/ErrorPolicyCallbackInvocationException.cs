@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Consuming.ErrorHandling;
 /// <summary>
 ///     The exception that wraps the exception thrown by an <see cref="IErrorPolicyCallback" />.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class ErrorPolicyCallbackInvocationException : SilverbackException
 {
     /// <summary>

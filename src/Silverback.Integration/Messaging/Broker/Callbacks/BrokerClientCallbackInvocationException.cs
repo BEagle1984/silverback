@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// <summary>
 ///     The exception that wraps the exception thrown by a <see cref="IBrokerClientCallback" />.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class BrokerClientCallbackInvocationException : SilverbackException
 {
     /// <summary>

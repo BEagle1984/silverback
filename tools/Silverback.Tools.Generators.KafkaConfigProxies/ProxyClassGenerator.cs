@@ -87,6 +87,7 @@ public class ProxyClassGenerator
         StringBuilder.AppendLine("    /// <returns>");
         StringBuilder.AppendLine("    ///     The Confluent client configuration.");
         StringBuilder.AppendLine("    /// </returns>");
+        StringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
         StringBuilder.AppendLine($"    protected override {ProxiedType.FullName} MapCore()");
         StringBuilder.AppendLine("    {");
         StringBuilder.AppendLine($"        {ProxiedType.FullName} confluentConfig = base.MapCore();");

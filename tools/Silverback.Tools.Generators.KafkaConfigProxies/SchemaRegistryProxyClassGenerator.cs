@@ -50,6 +50,7 @@ public class SchemaRegistryProxyClassGenerator : ProxyClassGenerator
         StringBuilder.AppendLine("    /// <returns>");
         StringBuilder.AppendLine("    ///     The Confluent client configuration.");
         StringBuilder.AppendLine("    /// </returns>");
+        StringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
         StringBuilder.AppendLine($"    private {ProxiedType.Name} MapCore() =>");
         StringBuilder.AppendLine("        new()");
         StringBuilder.AppendLine("        {");

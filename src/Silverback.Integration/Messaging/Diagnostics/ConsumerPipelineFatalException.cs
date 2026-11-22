@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Diagnostics;
 ///     The exception that is rethrown by the <see cref="FatalExceptionLoggerConsumerBehavior" /> when a fatal
 ///     exception occurs down the consumer pipeline.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class ConsumerPipelineFatalException : SilverbackException
 {
     /// <summary>

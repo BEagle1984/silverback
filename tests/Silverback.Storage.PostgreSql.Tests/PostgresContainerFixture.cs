@@ -35,7 +35,7 @@ public class PostgresContainerFixture : IAsyncLifetime
 
         IPEndPoint hostExposedEndpoint = _postgresContainer.ToHostExposedEndpoint("5432/tcp");
         _connectionString = $"User ID=postgres;Password=silverback;" +
-                            $"Host={hostExposedEndpoint.Address};Port={hostExposedEndpoint.Port};" +
+                            $"Host={GetConnectableAddress(hostExposedEndpoint.Address)};Port={hostExposedEndpoint.Port};" +
                             "Database={database};Pooling=true;Maximum Pool Size=100;Connection Lifetime=0;";
     }
 
@@ -63,6 +63,10 @@ public class PostgresContainerFixture : IAsyncLifetime
         GC.SuppressFinalize(this);
         return ValueTask.CompletedTask;
     }
+
+    // On Linux, Docker reports the binding address of the published port (0.0.0.0 or ::), which can't be connected to
+    private static IPAddress GetConnectableAddress(IPAddress address) =>
+        address.Equals(IPAddress.Any) || address.Equals(IPAddress.IPv6Any) ? IPAddress.Loopback : address;
 
     private async Task WaitForConnectionAsync()
     {

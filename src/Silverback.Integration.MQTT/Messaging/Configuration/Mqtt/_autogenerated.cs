@@ -131,6 +131,7 @@ public partial record MqttClientConfiguration
     /// </summary>
     public int WriterBufferSizeMax { get; init; } = DefaultInstance.WriterBufferSizeMax;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private MqttClientOptions MapCore() =>
         new()
         {
@@ -214,6 +215,7 @@ public partial record MqttClientTcpConfiguration
     /// </summary>
     public IMqttClientStreamProvider? StreamProvider { get; init; }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private MqttClientTcpOptions MapCore() =>
         new()
         {
@@ -280,6 +282,7 @@ public partial record MqttClientWebSocketConfiguration
     /// </summary>
     public bool UseDefaultCredentials { get; init; } = DefaultInstance.UseDefaultCredentials;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private MqttClientWebSocketOptions MapCore() =>
         new()
         {
@@ -353,6 +356,7 @@ public partial record MqttClientTlsConfiguration
     /// </summary>
     public SslProtocols SslProtocol { get; init; } = DefaultInstance.SslProtocol;
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private MqttClientTlsOptions MapCore() =>
         new()
         {
@@ -413,6 +417,7 @@ public partial record MqttClientWebSocketProxyConfiguration
     /// </summary>
     public string? Username { get; init; }
 
+    [ExcludeFromCodeCoverage(Justification = "Generated code")]
     private MqttClientWebSocketProxyOptions MapCore() =>
         new()
         {

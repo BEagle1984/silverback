@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Mqtt;
 /// <summary>
 ///     The exception that is thrown when the MQTT client connection fails.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class MqttConnectException : SilverbackException
 {
     /// <summary>

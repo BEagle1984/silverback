@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Mqtt;
 /// <summary>
 ///     The exception that is thrown when the result of a publish to the MQTT broker doesn't indicate success.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class MqttProduceException : ProduceException
 {
     /// <summary>

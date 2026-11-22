@@ -36,7 +36,8 @@ jobs:
       - name: Build (${{ env.BUILD_CONFIGURATION }})
         run: |
           dotnet build Silverback.slnx --configuration "$BUILD_CONFIGURATION" -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
-      # The unit and E2E tests run in a single pass, so that a failure doesn't hide the failures of the other tests
+      # The unit and E2E tests run in a single pass, so that a failure doesn't hide the failures of the other tests.
+      # The pass includes the tests tagged Dependency=Docker (PostgreSQL), whose fixtures start their own containers.
       - name: Run tests
         id: tests
         run: |
@@ -49,8 +50,7 @@ jobs:
             --hangdump-timeout 5m \
             --hangdump-type Mini \
             --results-directory TestResults \
-            --results-directory-layout per-module \
-            --filter "Dependency!=Docker&CI!=Skip"
+            --results-directory-layout per-module
       # Publish results
       # The results are published as a check run, in the job summary and, on pull requests, in a single comment that is updated
       # on each push. The token of fork and Dependabot pull requests is read-only, so they get the job summary only.

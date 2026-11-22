@@ -67,6 +67,7 @@ public class ParentProxyClassGenerator : ProxyClassGenerator
         StringBuilder.AppendLine("    /// <returns>");
         StringBuilder.AppendLine("    ///     The Confluent client configuration.");
         StringBuilder.AppendLine("    /// </returns>");
+        StringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
         StringBuilder.AppendLine("    protected virtual TConfluentConfig MapCore()");
         StringBuilder.AppendLine("    {");
         StringBuilder.AppendLine("        TConfluentConfig confluentConfig = new()");
@@ -85,6 +86,7 @@ public class ParentProxyClassGenerator : ProxyClassGenerator
         StringBuilder.AppendLine("    /// <returns>");
         StringBuilder.AppendLine("    ///     The Confluent admin client configuration.");
         StringBuilder.AppendLine("    /// </returns>");
+        StringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
         StringBuilder.AppendLine("    protected AdminClientConfig MapToAdminClientConfig()");
         StringBuilder.AppendLine("    {");
         StringBuilder.AppendLine("        AdminClientConfig confluentConfig = new()");

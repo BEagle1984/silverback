@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Sequences;
 ///     The exception that is thrown when a sequence cannot be properly recreated (e.g. because of bad
 ///     ordering or similar).
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class SequenceException : SilverbackException
 {
     /// <summary>

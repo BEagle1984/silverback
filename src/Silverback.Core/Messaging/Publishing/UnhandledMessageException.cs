@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Publishing;
 ///     The exception that is thrown when some published messages aren't handled by any registered
 ///     subscriber.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class UnhandledMessageException : SilverbackException
 {
     /// <summary>

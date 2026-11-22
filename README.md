@@ -157,7 +157,7 @@ The v4 documentation is still available at [silverback-messaging.net/v4](https:/
 | [Integration tests](tests/extended/README.md#integration-tests)         | xUnit tests against real Kafka and MQTT brokers, including stress workloads and diagnostic controls |
 | [Benchmarks](tests/extended/README.md#benchmarks)                       | General performance benchmarks and current-versus-historical Silverback comparisons                 |
 | [UpdateOlderVersions.ps1](tests/extended/UpdateOlderVersions.ps1)       | Scaffold another historical benchmark project                                                       |
-| [coverage.ps1](coverage.ps1)                                            | Build and test the main solution with coverage, then generate and open an HTML report               |
+| [coverage.ps1](coverage.ps1)                                            | Build and test the main solution with coverage, then generate and open an HTML report (`-UnitOnly`) |
 | [docker-compose.yaml](docker-compose.yaml)                              | Local Kafka, Schema Registry, MQTT and PostgreSQL infrastructure, with administration UIs           |
 | [nuget/pack.ps1](nuget/pack.ps1)                                        | Build local Silverback packages for package-based development and samples                           |
 | [.NET tool manifest](.config/dotnet-tools.json)                         | Repository-local ReportGenerator installation used by the coverage script                           |

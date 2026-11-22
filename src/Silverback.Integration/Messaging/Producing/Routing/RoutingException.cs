@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Producing.Routing;
 /// <summary>
 ///     The exception that is thrown when the outbound message(s) cannot be routed.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class RoutingException : SilverbackException
 {
     /// <summary>

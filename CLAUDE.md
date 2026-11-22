@@ -15,14 +15,18 @@ dotnet test --solution Silverback.slnx
 
 - CI builds with `-c Release -warnaserror`. Analyzers run with `AnalysisMode=All`, StyleCop and `EnforceCodeStyleInBuild`, so any analyzer
   or style warning fails CI.
-- CI runs the tests in two passes without Docker: `--filter "Type!=E2E&Dependency!=Docker&CI!=Skip"` (unit), then
-  `--filter "Type=E2E&Dependency!=Docker&CI!=Skip"` (E2E). Tests tagged `Dependency=Docker` (PostgreSQL) need `docker compose up -d` in
-  the repository root.
+- CI (the continuous and sonar workflows) runs all the unit and E2E tests in a single pass, with no filter, including the tests tagged
+  `Dependency=Docker` (PostgreSQL). Those tests start their own PostgreSQL containers, so they need only a running Docker. Without
+  Docker, leave them out locally with `--filter "Dependency!=Docker"`.
 - The tests use xUnit v3 on Microsoft Testing Platform (`global.json` sets the runner), so `dotnet test` takes `--solution` or `--project` and
   the MTP options (e.g. `--report-trx`, `--coverlet`, `--hangdump`). xUnit accepts the usual `--filter` expressions. A project that has no
   test matching the filter fails with exit code 8, so a solution-wide filtered run needs `--ignore-exit-code 8`, as in CI. Example for a
   single class: `dotnet test --project tests/Silverback.Integration.Kafka.Tests --filter "FullyQualifiedName~KafkaConsumerEndpointsCacheTests"`.
-- `./coverage.ps1` builds and tests with coverage and opens an HTML report.
+- `./coverage.ps1` builds and tests with coverage and opens an HTML report. `-UnitOnly` leaves out the E2E tests. Its coverlet options
+  must match the sonar workflow's (they leave out the test assemblies, migrations, `GeneratedCodeAttribute` members and auto-properties).
+  Hand-written code is excluded from the coverage only with `[ExcludeFromCodeCoverage(Justification = "...")]`, which the proxy
+  generators also emit on the generated members. Paths are excluded only for the scripts (`**/*.ps1`), the generator tools (`tools/**`) and
+  the generated `LoggerMessage.g.cs` files (under `obj`, which Sonar skips).
 - `docs/build.ps1`, run from `docs/`, builds and serves the DocFX site. It first runs the generators that produce the header and log-event
   reference tables.
 - The extended solution (`tests/extended/Silverback.Tests.Extended.slnx`) holds real-broker integration tests, benchmarks and a WPF
@@ -100,7 +104,8 @@ These packages ship to users, so a bug in the mocks is a user-facing bug.
 - `ITestingHelper` and the broker-specific `IKafkaTestingHelper`/`IMqttTestingHelper` expose helpers such as
   `WaitUntilAllMessagesAreConsumedAsync`.
 
-The E2E tests in `tests/Silverback.Integration.Tests.E2E` run against these mocks, without Docker. Kafka tests derive from
-`TestHost/KafkaTests`, which provides `Host`, `Helper`, `DefaultTopic` and `DefaultConsumerGroup`. MQTT tests derive from `MqttTests`.
-`E2ETests` itself has no `Type` trait, so a class that derives directly from it must declare `[Trait("Type", "E2E")]`. Without the trait,
-the CI filters run it in the unit pass.
+The E2E tests in `tests/Silverback.Integration.Tests.E2E` run against these mocks. Only the PostgreSQL storage tests among them, tagged
+`Dependency=Docker`, need Docker. Kafka tests derive from `TestHost/KafkaTests`, which provides `Host`, `Helper`, `DefaultTopic` and
+`DefaultConsumerGroup`. MQTT tests derive from `MqttTests`. `E2ETests` itself has no `Type` trait, so a class that derives directly from it
+must declare `[Trait("Type", "E2E")]` to be selectable with `--filter "Type=E2E"`. No CI filter uses the trait, and `coverage.ps1 -UnitOnly`
+leaves out the E2E tests by namespace.

@@ -106,6 +106,7 @@ public class ProxyClassGenerator
         }
 
         _stringBuilder.Append(propertiesStringBuilder);
+        _stringBuilder.AppendLine(GeneratedCodeAttributes.ExcludeFromCodeCoverage);
         _stringBuilder.AppendLine($"    private {_proxiedType.FullName} MapCore() =>");
         _stringBuilder.AppendLine("        new()");
         _stringBuilder.AppendLine("        {");

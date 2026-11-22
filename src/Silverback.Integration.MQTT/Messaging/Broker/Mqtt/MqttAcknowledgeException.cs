@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker.Mqtt;
 /// <summary>
 ///     The exception that stops the channel reader when a consumed message cannot be acknowledged.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 internal sealed class MqttAcknowledgeException : SilverbackException
 {
     /// <summary>
