@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -135,9 +136,21 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             return true;
         }
 
+        private static void RewindIfSeekable(Stream? stream)
+        {
+            if (stream is { CanSeek: true })
+                stream.Position = 0;
+        }
+
         private async ValueTask PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
         {
             _producer ??= _producers.GetProducerForEndpoint(_endpointName);
+
+            // Move the message as it was received, even if its stream was read by the deserializer or by the subscriber
+            RewindIfSeekable(envelope.RawMessage);
+
+            if (envelope is IInboundEnvelope { Message: IBinaryMessage binaryMessage })
+                RewindIfSeekable(binaryMessage.Content);
 
             IOutboundEnvelope outboundEnvelope =
                 envelope is IInboundEnvelope deserializedEnvelope

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
@@ -18,6 +19,7 @@ using Silverback.Storage;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
@@ -78,6 +80,50 @@ public class OutboxInMemoryTests : KafkaTests
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
             .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), true);
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldProduceUnreadBytesOnly_WhenBinaryMessageStreamIsPartiallyRead()
+    {
+        byte[] content = BytesUtil.GetRandomBytes(42);
+        BinaryMessage message = new()
+        {
+            Content = new MemoryStream(content) { Position = 32 }
+        };
+
+        TestingCollection<byte[]?> receivedFiles = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddInMemoryOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseMemory())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseMemory())))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
+            .AddIntegrationSpy());
+
+        void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(message);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedFiles.ShouldBe([content[32..]]);
     }
 
     [Fact]
