@@ -61,6 +61,69 @@ public partial class ErrorPoliciesTests
     }
 
     [Fact]
+    public async Task MovePolicy_ShouldMoveRawMessageAsReceived_WhenDeserializationFails()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce(endpoint => endpoint.ProduceTo("other-topic")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.MoveTo("other-topic")))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.RawProduceAsync("not json"u8.ToArray());
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        Helper.GetTopic("other-topic").GetAllMessages().ShouldHaveSingleItem().Value.ShouldBe("not json"u8.ToArray());
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task MovePolicy_ShouldMoveWholeBinaryMessage_WhenSubscriberReadContentBeforeFailing()
+    {
+        byte[] content = BytesUtil.GetRandomBytes(42);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo("other-topic")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.MoveTo("other-topic")))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
+
+        static void HandleMessage(BinaryMessage message)
+        {
+            message.Content!.ReadExactly(new byte[32]);
+            throw new InvalidOperationException("Move!");
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.RawProduceAsync(content);
+        await Helper.WaitUntilAllMessagesAreCommittedAsync();
+
+        Helper.GetTopic("other-topic").GetAllMessages().ShouldHaveSingleItem().Value.ShouldBe(content);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+    }
+
+    [Fact]
     public async Task MovePolicy_ShouldStopConsumerWithoutCommitting_WhenMoveFails()
     {
         await Host.ConfigureServicesAndRunAsync(services => services

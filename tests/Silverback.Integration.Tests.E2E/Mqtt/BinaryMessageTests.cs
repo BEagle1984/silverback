@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,5 +73,44 @@ public class BinaryMessageTests : MqttTests
                 message1.Content.ReReadAll(),
                 message2.Content.ReReadAll()
             });
+    }
+
+    [Fact]
+    public async Task BinaryMessage_ShouldProduceUnreadBytesOnly_WhenStreamIsPartiallyRead()
+    {
+        byte[] content = BytesUtil.GetRandomBytes(42);
+        BinaryMessage memoryStreamMessage = new()
+        {
+            Content = new MemoryStream(content) { Position = 32 }
+        };
+        BinaryMessage bufferedStreamMessage = new()
+        {
+            Content = new BufferedStream(new MemoryStream(content)) { Position = 32 }
+        };
+
+        TestingCollection<byte[]?> receivedFiles = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
+            .AddIntegrationSpy());
+
+        void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(memoryStreamMessage);
+        await publisher.PublishAsync(bufferedStreamMessage);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedFiles.ShouldBe([content[32..], content[32..]]);
     }
 }

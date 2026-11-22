@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,6 +72,46 @@ public class BinaryMessageTests : KafkaTests
 
         receivedFiles.Count.ShouldBe(2);
         receivedFiles.ShouldBe([message1.Content.ReReadAll(), message2.Content.ReReadAll()], true);
+    }
+
+    [Fact]
+    public async Task BinaryMessage_ShouldProduceUnreadBytesOnly_WhenStreamIsPartiallyRead()
+    {
+        byte[] content = BytesUtil.GetRandomBytes(42);
+        BinaryMessage memoryStreamMessage = new()
+        {
+            Content = new MemoryStream(content) { Position = 32 }
+        };
+        BinaryMessage bufferedStreamMessage = new()
+        {
+            Content = new BufferedStream(new MemoryStream(content)) { Position = 32 }
+        };
+
+        TestingCollection<byte[]?> receivedFiles = [];
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
+            .AddIntegrationSpy());
+
+        void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(memoryStreamMessage);
+        await publisher.PublishAsync(bufferedStreamMessage);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedFiles.ShouldBe([content[32..], content[32..]]);
     }
 
     [Fact]

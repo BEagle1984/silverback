@@ -148,6 +148,19 @@ public class RawMessageTests
     }
 
     [Fact]
+    public async Task ToByteArray_ShouldReturnRemainingBytes_WhenOwnedContentIsPartiallyRead()
+    {
+        byte[] buffer = [0x01, 0x02, 0x03];
+        RawMessage message = new(new OwnedReadOnlyMemoryStream(buffer) { Position = 1 });
+
+        byte[]? syncResult = message.ToByteArray();
+        byte[]? asyncResult = await message.ToByteArrayAsync();
+
+        syncResult.ShouldBe([0x02, 0x03]);
+        asyncResult.ShouldBe([0x02, 0x03]);
+    }
+
+    [Fact]
     public async Task ToByteArray_ShouldNotExposeOwnedBuffer_WhenReturnedArrayIsModified()
     {
         byte[] buffer = [0x01, 0x02, 0x03];

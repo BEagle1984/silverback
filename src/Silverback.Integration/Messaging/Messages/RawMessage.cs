@@ -118,6 +118,9 @@ public class RawMessage
     /// </returns>
     public async ValueTask<byte[]?> ToByteArrayAsync() => CopyIfShared(await Content.ReadAllAsync().ConfigureAwait(false));
 
-    // ReadAll returns the stream's own buffer when the content is an OwnedReadOnlyMemoryStream: the user must get a copy
-    private byte[]? CopyIfShared(byte[]? bytes) => bytes != null && Content is OwnedReadOnlyMemoryStream ? (byte[])bytes.Clone() : bytes;
+    // ReadAll may return the stream's own buffer when the content is an OwnedReadOnlyMemoryStream: the user must get a copy
+    private byte[]? CopyIfShared(byte[]? bytes) =>
+        bytes != null && Content is OwnedReadOnlyMemoryStream ownedStream && ReferenceEquals(bytes, ownedStream.Buffer)
+            ? (byte[])bytes.Clone()
+            : bytes;
 }
