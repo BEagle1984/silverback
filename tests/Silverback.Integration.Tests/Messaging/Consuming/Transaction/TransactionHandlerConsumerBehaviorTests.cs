@@ -23,6 +23,8 @@ using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Unbounded;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
@@ -1204,6 +1206,61 @@ public class TransactionHandlerConsumerBehaviorTests
     }
 
     [Fact]
+    public async Task HandleAsync_ShouldNotDisconnectClient_WhenSequenceAbortedByErrorHasNoConsumerTransactionManager()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        InvalidOperationException exception = new("test");
+        IConsumerTransactionManager sequenceTransactionManager = Substitute.For<IConsumerTransactionManager>();
+        TaskCompletionSource processingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource disposedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // The sequence is bound to a context whose transaction manager isn't a ConsumerTransactionManager (e.g., a substitute), so
+        // nothing tells whether its error handling stopped the consumer. Its abort sets the abort reason, as the SequenceBase does.
+        ISequence sequence = Substitute.For<ISequence>();
+        using ConsumerPipelineContext sequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(
+            transactionManager: sequenceTransactionManager,
+            consumer: context.Consumer,
+            sequence: sequence);
+        SequenceAbortReason abortReason = SequenceAbortReason.None;
+        sequence.Context.Returns(sequenceContext);
+        sequence.AbortReason.Returns(_ => abortReason);
+        sequence.AbortAsync(Arg.Any<SequenceAbortReason>(), Arg.Any<Exception?>()).Returns(callInfo =>
+        {
+            abortReason = callInfo.Arg<SequenceAbortReason>();
+            return Task.CompletedTask;
+        });
+        sequence.When(substitute => substitute.Dispose()).Do(_ => disposedTaskCompletionSource.TrySetResult());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                pipelineContext.ProcessingTask = processingTaskCompletionSource.Task;
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The subscriber fails while no message is being added (e.g., after the batch was completed by its max wait time)
+        processingTaskCompletionSource.SetException(exception);
+
+        // The disconnection of the client would be started on another thread before the sequence is disposed
+        await disposedTaskCompletionSource.Task.WaitAsync(Timeout);
+
+        // The client would be disconnected right after the sequence is disposed
+        await Task.Delay(100);
+
+        await sequence.Received(1).AbortAsync(Arg.Any<SequenceAbortReason>(), Arg.Any<Exception?>());
+        await sequence.Received(1).AbortAsync(SequenceAbortReason.Error, exception);
+        abortReason.ShouldBe(SequenceAbortReason.Error);
+        await sequenceTransactionManager.DidNotReceive().CommitAsync();
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+        await context.Consumer.Client.DidNotReceive().DisconnectAsync();
+    }
+
+    [Fact]
     public async Task HandleAsync_ShouldRethrow_WhenOperationCanceledWithoutStoppingConsumerFailsUnboundedSequence()
     {
         using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
@@ -1293,13 +1350,475 @@ public class TransactionHandlerConsumerBehaviorTests
             Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single().Equals(offset)));
     }
 
+    [Fact]
+    public void SortIndex_ShouldReturnTransactionHandlerSortIndex()
+    {
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        behavior.SortIndex.ShouldBe(BrokerBehaviorsSortIndexes.Consumer.TransactionHandler);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldCommitAndDisposeContext_WhenMessageIsProcessed()
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(offset);
+        ScopedService? scopedService = null;
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                scopedService = pipelineContext.ServiceProvider.GetRequiredService<ScopedService>();
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        await context.Consumer.Received(1).CommitAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single().Equals(offset)));
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        scopedService.ShouldNotBeNull().IsDisposed.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData(true, true, true, true)]
+    [InlineData(false, false, true, true)]
+    [InlineData(false, true, false, true)]
+    [InlineData(false, true, true, false)]
+    public async Task HandleAsync_ShouldCommitDiscardedMessageOnlyIfNotCommittingPendingSequences_WhenCommitIsCumulative(
+        bool isPublished,
+        bool isCommitCumulative,
+        bool isOtherSequencePending,
+        bool expectedIsCommitted)
+    {
+        TestOffset offset = new("test", "1");
+        IConsumer consumer = isCommitCumulative ? Substitute.For<CumulativeCommitConsumer>() : Substitute.For<IConsumer>();
+        ISequenceStore sequenceStore = Substitute.For<ISequenceStore>();
+        sequenceStore.GetPendingSequences(Arg.Any<bool>(), true).Returns(isOtherSequencePending ? [Substitute.For<ISequence>()] : []);
+        IConsumerBehavior sequencer = Substitute.For<IConsumerBehavior>();
+        sequencer.SortIndex.Returns(BrokerBehaviorsSortIndexes.Consumer.Sequencer);
+        IConsumerBehavior publisher = Substitute.For<IConsumerBehavior>();
+        publisher.SortIndex.Returns(BrokerBehaviorsSortIndexes.Consumer.Publisher);
+        using ConsumerPipelineContext context = CreateContext(
+            offset,
+            consumer: consumer,
+            sequenceStore: sequenceStore,
+            pipeline: [sequencer, publisher]);
+        ScopedService? scopedService = null;
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // The message is either published or discarded by the sequencer (e.g., a duplicated chunk), while another sequence might be
+        // pending (e.g., the batch that the chunked message was added to)
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                scopedService = pipelineContext.ServiceProvider.GetRequiredService<ScopedService>();
+                pipelineContext.CurrentStepIndex = isPublished ? 1 : 0;
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // With Kafka, committing the discarded message would implicitly commit the messages of the pending sequence
+        await consumer.Received(expectedIsCommitted ? 1 : 0).CommitAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single().Equals(offset)));
+        await consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        scopedService.ShouldNotBeNull().IsDisposed.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData("error claimed by abort", false)]
+    [InlineData("error claimed by pipeline", true)]
+    [InlineData("other exception", true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The pipeline completes before the disposal")]
+    public async Task HandleAsync_ShouldApplyErrorPoliciesUnlessAppliedByUnboundedSequenceAbort(string scenario, bool expectedAreErrorPoliciesApplied)
+    {
+        TestOffset offset = new("test", "1");
+        using ConsumerPipelineContext context = CreateContext(offset, errorPolicy: new SkipMessageErrorPolicy());
+        using ConsumerPipelineContext sequenceContext = CreateContext(new TestOffset("test", "0"));
+        using UnboundedSequence unboundedSequence = new("unbounded", sequenceContext);
+        InvalidOperationException abortException = new("Subscriber failed.");
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // The stream subscriber failed and aborted the unbounded sequence, either while no message was being added (the abort applies
+        // the error policies then) or while this message was being added (its pipeline applies them). Another subscriber might fail with
+        // another exception instead.
+        if (scenario == "error claimed by pipeline")
+            unboundedSequence.BeginAdd();
+
+        await unboundedSequence.AbortAsync(SequenceAbortReason.Error, abortException).WaitAsync(Timeout);
+
+        if (scenario == "error claimed by pipeline")
+            unboundedSequence.EndAdd().ShouldBeTrue();
+        else
+            unboundedSequence.TryClaimErrorForAbort().ShouldBeTrue();
+
+        Exception thrownException = scenario == "other exception" ? new InvalidOperationException("Other subscriber failed.") : abortException;
+
+        Task Act() => behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.UnboundedSequence = unboundedSequence;
+                throw thrownException;
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        Exception? exception = await Record.ExceptionAsync(Act);
+
+        if (expectedAreErrorPoliciesApplied)
+        {
+            // The skip error policy commits the message
+            exception.ShouldBeNull();
+            await context.Consumer.Received(1).CommitAsync(
+                Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single().Equals(offset)));
+            await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+            await context.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+        }
+        else
+        {
+            // The message is rolled back and the consumer stopped, without skipping the message a second time
+            exception.ShouldBeSameAs(abortException);
+            await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+            await context.Consumer.Received(1).RollbackAsync(
+                Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers => identifiers.Single().Equals(offset)));
+            await context.Consumer.Received(1).StopAsync(offset, false);
+        }
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldDisposeContextOfNextMessagesAndCommitSequence_WhenEndIsProcessed()
+    {
+        TestOffset offset1 = new("test", "1");
+        TestOffset offset2 = new("test", "2");
+        TestOffset offset3 = new("test", "3");
+        using ConsumerPipelineContext context1 = CreateContext(offset1);
+        using ConsumerPipelineContext context2 = CreateContext(offset2);
+        using ConsumerPipelineContext context3 = CreateContext(offset3);
+        TestSequence sequence = new(context1, 3);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        Task processingTask = Task.Run(async () =>
+        {
+            await foreach (IRawInboundEnvelope dummy in stream)
+            {
+                // Just consume the stream
+            }
+        });
+
+        await behavior.HandleAsync(
+            context1,
+            async (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                pipelineContext.ProcessingTask = processingTask;
+                await sequence.AddAsync(pipelineContext.Envelope, null, true);
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        ScopedService? scopedService2 = null;
+        await behavior.HandleAsync(
+            context2,
+            async (pipelineContext, _) =>
+            {
+                scopedService2 = pipelineContext.ServiceProvider.GetRequiredService<ScopedService>();
+                pipelineContext.SetSequence(sequence, false);
+                await sequence.AddAsync(pipelineContext.Envelope, null, true);
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The processing takes place in the context of the first message: the context of the next message is disposed right away, while
+        // the sequence is committed only once complete
+        scopedService2.ShouldNotBeNull().IsDisposed.ShouldBeTrue();
+        await context1.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+
+        ScopedService? scopedService3 = null;
+        await behavior.HandleAsync(
+            context3,
+            async (pipelineContext, _) =>
+            {
+                scopedService3 = pipelineContext.ServiceProvider.GetRequiredService<ScopedService>();
+                pipelineContext.SetSequence(sequence, false);
+                pipelineContext.SetIsSequenceEnd();
+                await sequence.AddAsync(pipelineContext.Envelope, null, true);
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The end of the sequence awaits its processing, including the commit
+        sequence.ProcessingCompletedTask.IsCompletedSuccessfully.ShouldBeTrue();
+        scopedService3.ShouldNotBeNull().IsDisposed.ShouldBeTrue();
+        await context1.Consumer.Received(1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context1.Consumer.Received(1).CommitAsync(
+            Arg.Is<IReadOnlyCollection<IBrokerMessageIdentifier>>(identifiers =>
+                identifiers.ToHashSet().SetEquals(new[] { offset1, offset2, offset3 })));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldNotAwaitSubscribersOfParentSequence_WhenChildSequenceIsAbortedAsIncomplete()
+    {
+        using ConsumerPipelineContext parentContext = CreateContext(new TestOffset("test", "1"));
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "2"));
+        ScopedService? scopedService = null;
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        // The child sequence (e.g., the chunk sequence of a binary message added to a batch) shares the context of its parent, whose
+        // subscribers are still waiting for the next messages
+        TaskCompletionSource parentProcessingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        parentContext.ProcessingTask = parentProcessingTaskCompletionSource.Task;
+        TestSequence childSequence = new(parentContext, 10);
+        ((ISequenceImplementation)childSequence).SetParentSequence(Substitute.For<ISequence>());
+
+        try
+        {
+            // The child sequence times out and is aborted as incomplete
+            await behavior.HandleAsync(
+                context,
+                async (pipelineContext, _) =>
+                {
+                    scopedService = pipelineContext.ServiceProvider.GetRequiredService<ScopedService>();
+                    pipelineContext.SetSequence(childSequence, false);
+                    await childSequence.AbortAsync(SequenceAbortReason.IncompleteSequence);
+                },
+                CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+            // It shares the outcome of the parent: neither committed nor rolled back
+            parentProcessingTaskCompletionSource.Task.IsCompleted.ShouldBeFalse();
+            childSequence.ProcessingCompletedTask.IsCompletedSuccessfully.ShouldBeTrue();
+            scopedService.ShouldNotBeNull().IsDisposed.ShouldBeTrue();
+            await parentContext.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+            await parentContext.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        }
+        finally
+        {
+            parentProcessingTaskCompletionSource.TrySetResult();
+        }
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldNeitherCommitNorDisposeOuterSequence_WhenSequenceStartJoinsOuterSequenceStartedByAnotherMessage()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        (ISequence innerSequence, Task innerContextRead, Task innerDisposed) = CreateInnerSequence(context);
+        ISequence outerSequence = Substitute.For<ISequence>();
+        TaskCompletionSource innerProcessingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(innerSequence, true);
+                pipelineContext.ProcessingTask = innerProcessingTaskCompletionSource.Task;
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The message starting the inner sequence (e.g., a chunk sequence) joins the outer sequence (e.g., a batch) started by another
+        // message, whose awaiter commits it
+        await innerContextRead.WaitAsync(Timeout);
+        context.SetSequence(outerSequence, false);
+        innerProcessingTaskCompletionSource.SetResult();
+
+        await innerDisposed.WaitAsync(Timeout);
+
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await innerSequence.DidNotReceive().AbortAsync(Arg.Any<SequenceAbortReason>(), Arg.Any<Exception?>());
+        await outerSequence.DidNotReceive().AbortAsync(Arg.Any<SequenceAbortReason>(), Arg.Any<Exception?>());
+        outerSequence.DidNotReceive().Dispose();
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldCommitAndDisposeOuterSequence_WhenOuterSequenceStartedByContextIsProcessed()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        (ISequence innerSequence, Task innerContextRead, Task innerDisposed) = CreateInnerSequence(context);
+        ISequence outerSequence = Substitute.For<ISequence>();
+        outerSequence.Context.Returns(context);
+        outerSequence.IsComplete.Returns(true);
+        outerSequence.ParentSequence.Returns((ISequence?)null);
+        TaskCompletionSource outerDisposedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        outerSequence.When(substitute => substitute.Dispose()).Do(_ => outerDisposedTaskCompletionSource.TrySetResult());
+        TaskCompletionSource innerProcessingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource outerProcessingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(innerSequence, true);
+                pipelineContext.ProcessingTask = innerProcessingTaskCompletionSource.Task;
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The message starting the inner sequence (e.g., a chunk sequence) starts the outer sequence (e.g., a batch) as well, replacing
+        // the processing task of the context: the awaiter awaits both and commits the outer sequence
+        await innerContextRead.WaitAsync(Timeout);
+        context.SetSequence(outerSequence, true);
+        context.ProcessingTask = outerProcessingTaskCompletionSource.Task;
+        innerProcessingTaskCompletionSource.SetResult();
+        outerProcessingTaskCompletionSource.SetResult();
+
+        await outerDisposedTaskCompletionSource.Task.WaitAsync(Timeout);
+        await innerDisposed.WaitAsync(Timeout);
+
+        await context.Consumer.Received(1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await outerSequence.DidNotReceive().AbortAsync(Arg.Any<SequenceAbortReason>(), Arg.Any<Exception?>());
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldCommitWithoutAborting_WhenProcessingOfIncompleteSequenceLinkedToParentCompletes()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "1"));
+        ISequence sequence = Substitute.For<ISequence>();
+        sequence.Context.Returns(context);
+        sequence.ParentSequence.Returns(Substitute.For<ISequence>());
+        TaskCompletionSource disposedTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        sequence.When(substitute => substitute.Dispose()).Do(_ => disposedTaskCompletionSource.TrySetResult());
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                pipelineContext.ProcessingTask = Task.CompletedTask;
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        await disposedTaskCompletionSource.Task.WaitAsync(Timeout);
+
+        // The sequence linked to a parent isn't aborted because the subscriber stopped enumerating it before its end: its parent
+        // decides its outcome
+        await context.Consumer.Received(1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+        await sequence.DidNotReceive().AbortAsync(Arg.Any<SequenceAbortReason>(), Arg.Any<Exception?>());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task HandleAsync_ShouldAbortSequenceAndAwaitItsProcessing_WhenProcessingOfNextMessageFails(bool isStopCancellation)
+    {
+        TestOffset offset1 = new("test", "1");
+        using ConsumerPipelineContext context1 = CreateContext(offset1);
+        using ConsumerPipelineContext context2 = CreateContext(new TestOffset("test", "2"));
+        using CancellationTokenSource cancellationTokenSource = new();
+        TestSequence sequence = new(context1, 10);
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        ScopedService? scopedService2 = null;
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        Task processingTask = Task.Run(async () =>
+        {
+            await foreach (IRawInboundEnvelope dummy in stream)
+            {
+                // Just consume the stream
+            }
+        });
+
+        await behavior.HandleAsync(
+            context1,
+            async (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(sequence, true);
+                pipelineContext.ProcessingTask = processingTask;
+                await sequence.AddAsync(pipelineContext.Envelope, null, true);
+            },
+            cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        // The processing of the next message fails, or is canceled by the consumer stop, before it's added to the sequence
+        if (isStopCancellation)
+            await cancellationTokenSource.CancelAsync();
+
+        Task Act() => behavior.HandleAsync(
+            context2,
+            (pipelineContext, cancellationToken) =>
+            {
+                scopedService2 = pipelineContext.ServiceProvider.GetRequiredService<ScopedService>();
+                pipelineContext.SetSequence(sequence, false);
+
+                if (isStopCancellation)
+                    throw new OperationCanceledException(cancellationToken);
+
+                throw new InvalidOperationException("Processing failed.");
+            },
+            cancellationTokenSource.Token).AsTask().WaitAsync(Timeout);
+
+        Exception? exception = await Record.ExceptionAsync(Act);
+
+        // The sequence is aborted and its subscribers are awaited before returning. The sequence aborted by the stop is rolled back without
+        // stopping the consumer and the exception isn't rethrown, while the error policies stop the consumer otherwise.
+        processingTask.IsCompleted.ShouldBeTrue();
+
+        if (isStopCancellation)
+        {
+            exception.ShouldBeNull();
+            sequence.AbortReason.ShouldBe(SequenceAbortReason.ConsumerAborted);
+            scopedService2.ShouldNotBeNull().IsDisposed.ShouldBeTrue();
+            await context1.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+            await context1.Consumer.DidNotReceive().StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>());
+        }
+        else
+        {
+            exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe("Processing failed.");
+            sequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
+            await context1.Consumer.Received(1).RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+            await context1.Consumer.Received(1).StopAsync(offset1, false);
+        }
+
+        await context1.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldAbortInnerSequence_WhenOuterSequenceJoinedByContextDidNotFail()
+    {
+        using ConsumerPipelineContext context = CreateContext(new TestOffset("test", "2"));
+        using ConsumerPipelineContext outerContext = CreateContext(new TestOffset("test", "1"));
+        InvalidOperationException exception = new("test");
+        TestSequence outerSequence = new(outerContext, 10);
+        (ISequence innerSequence, Task innerContextRead, Task innerDisposed) = CreateInnerSequence(context);
+        TaskCompletionSource innerProcessingTaskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TransactionHandlerConsumerBehavior behavior = new(Substitute.For<ISilverbackLogger<TransactionHandlerConsumerBehavior>>());
+
+        await behavior.HandleAsync(
+            context,
+            (pipelineContext, _) =>
+            {
+                pipelineContext.SetSequence(innerSequence, true);
+                pipelineContext.ProcessingTask = innerProcessingTaskCompletionSource.Task;
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken.None).AsTask().WaitAsync(Timeout);
+
+        // The processing of the inner sequence (e.g., a chunk sequence) fails while the outer sequence started by another message (e.g., a
+        // batch), which it's being added to, is still being processed: the failure belongs to the inner sequence
+        await innerContextRead.WaitAsync(Timeout);
+        context.SetSequence(outerSequence, false);
+        innerProcessingTaskCompletionSource.SetException(exception);
+
+        await innerDisposed.WaitAsync(Timeout);
+
+        await innerSequence.Received(1).AbortAsync(SequenceAbortReason.Error, exception);
+        outerSequence.IsAborted.ShouldBeFalse();
+        outerSequence.IsPending.ShouldBeTrue();
+    }
+
     // Not using the ConsumerPipelineContextHelper, since the behavior initializes the transaction manager
     private static ConsumerPipelineContext CreateContext(
         IBrokerMessageIdentifier identifier,
         Func<IAsyncEnumerable<IRawInboundEnvelope>, Task>? batchSubscriber = null,
         IErrorPolicy? errorPolicy = null,
         IErrorPolicyCallback? callback = null,
-        bool useLoggerSubstitute = false)
+        bool useLoggerSubstitute = false,
+        IConsumer? consumer = null,
+        ISequenceStore? sequenceStore = null,
+        IReadOnlyList<IConsumerBehavior>? pipeline = null)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
         {
@@ -1307,6 +1826,8 @@ public class TransactionHandlerConsumerBehaviorTests
                 services.AddLoggerSubstitute(LogLevel.Trace);
             else
                 services.AddFakeLogger();
+
+            services.AddScoped<ScopedService>();
 
             SilverbackBuilder silverbackBuilder = services
                 .AddSingleton(Substitute.For<IHostApplicationLifetime>())
@@ -1322,9 +1843,9 @@ public class TransactionHandlerConsumerBehaviorTests
 
         return new ConsumerPipelineContext(
             CreateEnvelope(identifier, errorPolicy),
-            Substitute.For<IConsumer>(),
-            Substitute.For<ISequenceStore>(),
-            [],
+            consumer ?? Substitute.For<IConsumer>(),
+            sequenceStore ?? Substitute.For<ISequenceStore>(),
+            pipeline ?? [],
             serviceProvider);
     }
 
@@ -1407,6 +1928,15 @@ public class TransactionHandlerConsumerBehaviorTests
         sequence.When(substitute => substitute.Dispose()).Do(_ => disposedTaskCompletionSource.TrySetResult());
 
         return (sequence, contextReadTaskCompletionSource.Task, disposedTaskCompletionSource.Task);
+    }
+
+    // Resolved from the scope of the context, to check whether the context was disposed
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Resolved from the service provider")]
+    private sealed class ScopedService : IDisposable
+    {
+        public bool IsDisposed { get; private set; }
+
+        public void Dispose() => IsDisposed = true;
     }
 
     private sealed class TestSequence : SequenceBase<IRawInboundEnvelope>
