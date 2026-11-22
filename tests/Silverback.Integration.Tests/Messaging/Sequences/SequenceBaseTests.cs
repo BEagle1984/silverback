@@ -22,6 +22,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Logging;
@@ -990,46 +991,16 @@ public class SequenceBaseTests
     }
 
     [Fact]
-    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The subscriber task is awaited before the disposal")]
     public async Task AddAsync_ShouldRefuseMessage_WhenEnumerationIsAbortedBeforeMessageIsPulled()
     {
         using AbortTestSequence sequence = new(
             CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()),
             trackIdentifiers: true);
         ((ISequenceImplementation)sequence).SetIsNew(false);
-        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
-        TaskCompletionSource firstMessagePulled = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        using CancellationTokenSource subscriberCancellationTokenSource = new();
-
-        // The subscriber stops enumerating while waiting for the next message (e.g. canceled by its own token)
-        Task subscriberTask = Task.Run(async () =>
-        {
-            try
-            {
-                await foreach (IRawInboundEnvelope dummy in stream.WithCancellation(subscriberCancellationTokenSource.Token))
-                {
-                    firstMessagePulled.TrySetResult();
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // Stopped enumerating
-            }
-        });
-
         RawInboundEnvelope firstEnvelope = CreateEnvelope();
-        AddToSequenceResult firstResult = await sequence.AddAsync(firstEnvelope, null, true).WaitAsync(Timeout);
-        firstResult.IsSuccess.ShouldBeTrue();
-        await firstMessagePulled.Task.WaitAsync(Timeout);
-        await subscriberCancellationTokenSource.CancelAsync();
-        await subscriberTask.WaitAsync(Timeout);
-
-        // The next message is pushed before the sequence is aborted because the subscriber stopped enumerating, but nobody pulls it
-        RawInboundEnvelope secondEnvelope = CreateEnvelope();
         using HookChildSequence childSequence = new(ConsumerPipelineContextHelper.CreateSubstitute(), () => { });
-        Task<AddToSequenceResult> addTask = sequence.AddAsync(secondEnvelope, childSequence, true);
-        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
-        AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+        AddToSequenceResult result = await AddUnpulledMessageToSequenceAbortedByEnumerationAsync(sequence, firstEnvelope, childSequence);
 
         // The message isn't committed with the sequence without being processed, but added to the next sequence
         result.IsSuccess.ShouldBeFalse();
@@ -1037,6 +1008,54 @@ public class SequenceBaseTests
         (result.AbortTask?.IsCompleted).ShouldBe(true);
         childSequence.Parent.ShouldBeNull();
         sequence.GetCommitIdentifiers().ShouldBe([firstEnvelope.BrokerMessageIdentifier]);
+    }
+
+    [Theory]
+    [InlineData("none")]
+    [InlineData("self")]
+    [InlineData("not-implementation")]
+    public async Task AddAsync_ShouldRefuseMessage_WhenEnumerationIsAbortedBeforeMessageIsPulledWithoutLinkedSequence(string childSequenceKind)
+    {
+        using AbortTestSequence sequence = new(
+            CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()),
+            trackIdentifiers: true);
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+        RawInboundEnvelope firstEnvelope = CreateEnvelope();
+
+        // No child sequence, the sequence itself (which isn't linked) or a custom sequence (linked, but not tracking its parent)
+        ISequence? childSequence = childSequenceKind switch
+        {
+            "none" => null,
+            "self" => sequence,
+            _ => Substitute.For<ISequence>()
+        };
+
+        AddToSequenceResult result = await AddUnpulledMessageToSequenceAbortedByEnumerationAsync(sequence, firstEnvelope, childSequence);
+
+        // The message is added to the next sequence and no sequence is left linked to this one
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+        sequence.Sequences.ShouldBeEmpty();
+        sequence.GetCommitIdentifiers().ShouldBe([firstEnvelope.BrokerMessageIdentifier]);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldRefuseMessage_WhenEnumerationIsAbortedBeforeMessageIsPulledWithCustomTransactionManager()
+    {
+        IConsumerTransactionManager transactionManager = Substitute.For<IConsumerTransactionManager>();
+        using AbortTestSequence sequence = new(
+            CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy(), transactionManager),
+            trackIdentifiers: true);
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+
+        AddToSequenceResult result = await AddUnpulledMessageToSequenceAbortedByEnumerationAsync(sequence, CreateEnvelope(), null);
+
+        // The sequence is committed without the message, which is added to the next sequence
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+        await transactionManager.Received(1).CommitAsync();
     }
 
     [Theory]
@@ -1400,6 +1419,301 @@ public class SequenceBaseTests
         sequence.TimeoutElapsedCount.ShouldBeInRange(2, 10);
     }
 
+    [Fact]
+    public async Task AddAsync_ShouldLogErrorAndEnforceTimeoutAgain_WhenTimeoutHandlingFails()
+    {
+        HookLogger logger = new();
+        TaskCompletionSource errorLogged = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        logger.OnLog("Error occurred executing timeout for {SequenceType} {SequenceId}", errorLogged.SetResult);
+        using FailingTimeoutTestSequence sequence = new(CreateContext(logger));
+
+        await sequence.AddAsync(CreateEnvelope(), null, false).WaitAsync(Timeout);
+        await errorLogged.Task.WaitAsync(Timeout);
+        await AsyncTestingUtil.WaitAsync(() => sequence.TimeoutElapsedCount >= 2, Timeout);
+
+        // The error is logged and the timer keeps enforcing the timeout, since the sequence is still pending
+        sequence.TimeoutElapsedCount.ShouldBeGreaterThanOrEqualTo(2);
+        sequence.IsPending.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsBeingConsumed_ShouldReturnTrue_WhenStreamIsCreated()
+    {
+        using TestSequence sequence = CreateSequence(new HookLogger());
+        bool isBeingConsumedBeforeCreatingStream = sequence.IsBeingConsumed;
+
+        sequence.CreateStream<IRawInboundEnvelope>();
+
+        isBeingConsumedBeforeCreatingStream.ShouldBeFalse();
+        sequence.IsBeingConsumed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void CompleteSequencerBehaviorsTask_ShouldCompleteSequencerBehaviorsTask()
+    {
+        using TestSequence sequence = CreateSequence(new HookLogger());
+        bool isCompletedBefore = sequence.SequencerBehaviorsTask.IsCompleted;
+
+        ((ISequenceImplementation)sequence).CompleteSequencerBehaviorsTask();
+
+        isCompletedBefore.ShouldBeFalse();
+        sequence.SequencerBehaviorsTask.IsCompletedSuccessfully.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void AbortPendingChildSequencesAsync_ShouldCompleteSynchronously_WhenDisposed()
+    {
+        TestSequence sequence = CreateSequence(new HookLogger());
+        sequence.Dispose();
+
+        Task abortTask = ((ISequenceImplementation)sequence).AbortPendingChildSequencesAsync();
+
+        abortTask.IsCompletedSuccessfully.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldThrow_WhenEnvelopeTypeIsNotSupported()
+    {
+        using FakeSequence sequence = new(); // Accepts the IInboundEnvelope only
+
+        Exception exception = await Should.ThrowAsync<ArgumentException>(() => sequence.AddAsync(CreateEnvelope(), null, false));
+
+        exception.Message.ShouldBe("Expected an envelope of type IInboundEnvelope.");
+        sequence.Length.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldLogAndRethrow_WhenMessageIsUnhandled()
+    {
+        HookLogger logger = new();
+        bool isErrorLogged = false;
+        logger.OnLog("Error occurred adding message to {SequenceType} '{SequenceId}'.", () => isErrorLogged = true);
+        using TestSequence sequence = CreateSequence(logger);
+
+        // No stream accepts the message
+        await Should.ThrowAsync<UnhandledMessageException>(() => sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout));
+
+        // The add semaphore is released: the next message can be added
+        isErrorLogged.ShouldBeTrue();
+        AddToSequenceResult result = await sequence.AddAsync(CreateEnvelope(), null, false).WaitAsync(Timeout);
+        result.IsSuccess.ShouldBeTrue();
+        result.PushedStreamsCount.ShouldBe(0);
+        sequence.IsPending.ShouldBeTrue();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, while the sequence is not disposed yet")]
+    public async Task AddAsync_ShouldReturnFailed_WhenDisposedRightBeforeWaitingForSemaphore()
+    {
+        HookLogger logger = new();
+        TestSequence sequence = CreateSequence(logger);
+        bool isObjectDisposedLogged = false;
+
+        // Dispose after the add checked whether the sequence is disposed and before it waits for the add semaphore, which is disposed
+        logger.OnLog("Waiting for semaphore...", sequence.Dispose);
+        logger.OnLog("Object disposed exception while waiting for semaphore", () => isObjectDisposedLogged = true);
+
+        AddToSequenceResult result = await sequence.AddAsync(CreateEnvelope(), null, true).WaitAsync(Timeout);
+
+        result.ShouldBe(AddToSequenceResult.Failed);
+        isObjectDisposedLogged.ShouldBeTrue();
+        sequence.IsPending.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task AbortIfIncompleteAsync_ShouldAbortAndRollBack_WhenPending()
+    {
+        IConsumerTransactionManager transactionManager = Substitute.For<IConsumerTransactionManager>();
+        ISequenceStore sequenceStore = Substitute.For<ISequenceStore>();
+        using TestSequence sequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(transactionManager: transactionManager, sequenceStore: sequenceStore));
+
+        await sequence.AbortIfIncompleteAsync().WaitAsync(Timeout);
+
+        sequence.IsAborted.ShouldBeTrue();
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.IncompleteSequence);
+        await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
+        await sequenceStore.Received(1).RemoveAsync(sequence.SequenceId);
+        await transactionManager.Received(1).RollbackAsync(null, true);
+    }
+
+    [Fact]
+    public async Task AbortIfIncompleteAsync_ShouldNotAbort_WhenComplete()
+    {
+        IConsumerTransactionManager transactionManager = Substitute.For<IConsumerTransactionManager>();
+        ISequenceStore sequenceStore = Substitute.For<ISequenceStore>();
+        using TestSequence sequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(transactionManager: transactionManager, sequenceStore: sequenceStore));
+        await sequence.CompleteFromTestAsync().WaitAsync(Timeout);
+
+        await sequence.AbortIfIncompleteAsync().WaitAsync(Timeout);
+
+        sequence.IsComplete.ShouldBeTrue();
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.None);
+        await sequenceStore.DidNotReceive().RemoveAsync(Arg.Any<string>());
+        transactionManager.ReceivedCalls().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task AbortAsync_ShouldThrow_WhenReasonIsNone()
+    {
+        using TestSequence sequence = CreateSequence(new HookLogger());
+
+        await Should.ThrowAsync<ArgumentOutOfRangeException>(() => sequence.AbortAsync(SequenceAbortReason.None));
+
+        sequence.IsPending.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task AbortAsync_ShouldThrow_WhenReasonIsErrorAndExceptionIsNull()
+    {
+        using TestSequence sequence = CreateSequence(new HookLogger());
+
+        await Should.ThrowAsync<ArgumentNullException>(() => sequence.AbortAsync(SequenceAbortReason.Error));
+
+        sequence.IsPending.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task AbortAsync_ShouldRollBack_WhenReasonIsUndefined()
+    {
+        IConsumerTransactionManager transactionManager = Substitute.For<IConsumerTransactionManager>();
+        using TestSequence sequence = new(ConsumerPipelineContextHelper.CreateSubstitute(transactionManager: transactionManager));
+
+        await sequence.AbortAsync((SequenceAbortReason)42).WaitAsync(Timeout);
+
+        sequence.IsAborted.ShouldBeTrue();
+        await sequence.ProcessingCompletedTask.WaitAsync(Timeout);
+        await transactionManager.Received(1).RollbackAsync(null);
+    }
+
+    [Fact]
+    public async Task AbortAsync_ShouldRollBackAndNotifyFailure_WhenCommitFailsAfterEnumerationAbortedWithCustomTransactionManager()
+    {
+        IConsumerTransactionManager transactionManager = Substitute.For<IConsumerTransactionManager>();
+        InvalidOperationException commitException = new("Commit failed.");
+        transactionManager.CommitAsync().Returns(Task.FromException(commitException));
+        using TestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new StopConsumerErrorPolicy(), transactionManager));
+
+        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
+
+        // The stop policy doesn't handle the failed commit: the transaction is rolled back and the commit exception is notified
+        Exception? exception = await Record.ExceptionAsync(() => sequence.ProcessingCompletedTask.WaitAsync(Timeout));
+        exception.ShouldBeSameAs(commitException);
+        sequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
+        sequence.AbortException.ShouldBeSameAs(commitException);
+        await transactionManager.Received(1).RollbackAsync(commitException);
+    }
+
+    [Fact]
+    public async Task GetCommitIdentifiers_ShouldIncludeIdentifiersOfChildSequences()
+    {
+        using TrackingTestSequence sequence = new(CreateContext(new HookLogger()), 10);
+        TestOffset childOffset = new("child", "1");
+        ISequence childSequence = Substitute.For<ISequence>();
+        childSequence.GetCommitIdentifiers().Returns([childOffset]);
+        await sequence.AddAsync(CreateEnvelope(), childSequence, false).WaitAsync(Timeout);
+
+        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = sequence.GetCommitIdentifiers();
+
+        identifiers.ShouldBe([childOffset]);
+    }
+
+    [Fact]
+    public async Task GetRollbackIdentifiers_ShouldIncludeIdentifiersOfChildSequences()
+    {
+        using TrackingTestSequence sequence = new(CreateContext(new HookLogger()), 10);
+        TestOffset childOffset = new("child", "1");
+        ISequence childSequence = Substitute.For<ISequence>();
+        childSequence.GetRollbackIdentifiers().Returns([childOffset]);
+        await sequence.AddAsync(CreateEnvelope(), childSequence, false).WaitAsync(Timeout);
+
+        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = sequence.GetRollbackIdentifiers();
+
+        identifiers.ShouldBe([childOffset]);
+    }
+
+    [Fact]
+    public async Task GetCommitAndRollbackIdentifiers_ShouldReturnEmptyCollection_WhenIdentifiersAreNotTracked()
+    {
+        using TestSequence sequence = CreateSequence(new HookLogger());
+        ISequence childSequence = Substitute.For<ISequence>();
+        childSequence.GetCommitIdentifiers().Returns([new TestOffset("child", "1")]);
+        childSequence.GetRollbackIdentifiers().Returns([new TestOffset("child", "1")]);
+        await sequence.AddAsync(CreateEnvelope(), childSequence, false).WaitAsync(Timeout);
+
+        sequence.GetCommitIdentifiers().ShouldBeEmpty();
+        sequence.GetRollbackIdentifiers().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldLinkSequence_WhenMessageIsFilteredAndSequenceRefusesMessagesOnAbort()
+    {
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+        TestSequence childSequence = CreateSequence(new HookLogger()); // Disposed by the parent sequence
+
+        AddToSequenceResult result = await sequence.AddAsync(CreateInboundEnvelope(true), childSequence, false).WaitAsync(Timeout);
+
+        result.IsSuccess.ShouldBeTrue();
+        result.PushedStreamsCount.ShouldBe(0);
+        childSequence.ParentSequence.ShouldBeSameAs(sequence);
+        sequence.Sequences.ShouldBe([childSequence]);
+        sequence.Length.ShouldBe(0);
+    }
+
+    [Theory]
+    [InlineData("sequence")]
+    [InlineData("streams")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Invoked by the add, before the disposal")]
+    public async Task AddAsync_ShouldRefuseFilteredMessage_WhenAbortedWhileLinkingSequence(string aborted)
+    {
+        using AbortTestSequence sequence = new(CreateErrorPolicyContext(new HookLogger(), new SkipMessageErrorPolicy()));
+        ((ISequenceImplementation)sequence).SetIsNew(false);
+        Task? abortTask = null;
+
+        // The sequence (or only its streams, e.g. by the publisher when another subscriber fails) is aborted while the chunk sequence of the
+        // filtered message is being linked, after the checks at the beginning of the add
+        using HookChildSequence childSequence = new(
+            ConsumerPipelineContextHelper.CreateSubstitute(),
+            () =>
+            {
+                if (aborted == "sequence")
+                    abortTask = sequence.AbortAsync(SequenceAbortReason.EnumerationAborted);
+                else
+                    ((MessageStreamProvider)sequence.StreamProvider).AbortIfPending();
+            });
+
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateInboundEnvelope(true), childSequence, false);
+
+        // The sequence whose streams were aborted is aborted once the subscribers returned
+        abortTask ??= sequence.AbortAsync(SequenceAbortReason.Error, new InvalidOperationException("test"));
+        await abortTask.WaitAsync(Timeout);
+        AddToSequenceResult result = await addTask.WaitAsync(Timeout);
+
+        // The message didn't join the committed (or skipped) sequence and is added to the next one, without the chunk sequence linked
+        result.IsSuccess.ShouldBeFalse();
+        result.IsAborted.ShouldBeFalse();
+        (result.AbortTask?.IsCompleted).ShouldBe(true);
+        childSequence.Parent.ShouldBeNull();
+        sequence.Sequences.ShouldNotContain(childSequence);
+    }
+
+    [Fact]
+    public async Task Dispose_ShouldNotReleaseResources_WhenNotDisposing()
+    {
+        ISequenceStore sequenceStore = Substitute.For<ISequenceStore>();
+        using TestSequence sequence = CreateSequence(new HookLogger(), sequenceStore);
+
+        // E.g. invoked by the finalizer of a derived class
+        sequence.DisposeFromFinalizer();
+
+        // Still usable: the disposed sequence would skip the abort
+        await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted).WaitAsync(Timeout);
+        sequence.IsAborted.ShouldBeTrue();
+        await sequenceStore.Received(1).RemoveAsync(sequence.SequenceId);
+    }
+
     private static async Task<AddToSequenceResult> AddRefusedByTimeoutAsync(string abort)
     {
         HookLogger logger = new();
@@ -1505,6 +1819,44 @@ public class SequenceBaseTests
         }
     }
 
+    // The subscriber stops enumerating while waiting for the next message (e.g. canceled by its own token), then the next message is pushed
+    // before the sequence is aborted because the subscriber stopped enumerating, but nobody pulls it: returns the result of its add
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The subscriber task is awaited before the disposal")]
+    private static async Task<AddToSequenceResult> AddUnpulledMessageToSequenceAbortedByEnumerationAsync(
+        AbortTestSequence sequence,
+        RawInboundEnvelope firstEnvelope,
+        ISequence? childSequence)
+    {
+        IMessageStreamEnumerable<IRawInboundEnvelope> stream = sequence.CreateStream<IRawInboundEnvelope>();
+        TaskCompletionSource firstMessagePulled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        using CancellationTokenSource subscriberCancellationTokenSource = new();
+
+        Task subscriberTask = Task.Run(async () =>
+        {
+            try
+            {
+                await foreach (IRawInboundEnvelope dummy in stream.WithCancellation(subscriberCancellationTokenSource.Token))
+                {
+                    firstMessagePulled.TrySetResult();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Stopped enumerating
+            }
+        });
+
+        AddToSequenceResult firstResult = await sequence.AddAsync(firstEnvelope, null, true).WaitAsync(Timeout);
+        firstResult.IsSuccess.ShouldBeTrue();
+        await firstMessagePulled.Task.WaitAsync(Timeout);
+        await subscriberCancellationTokenSource.CancelAsync();
+        await subscriberTask.WaitAsync(Timeout);
+
+        Task<AddToSequenceResult> addTask = sequence.AddAsync(CreateEnvelope(), childSequence, true);
+        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).WaitAsync(Timeout);
+        return await addTask.WaitAsync(Timeout);
+    }
+
     // The child sequence joins the parent while still pending (e.g. the chunk sequence of a binary message added to a batch with its first
     // chunk), then a message is being pushed to it: returns the pending add
     private static async Task<Task<AddToSequenceResult>> AddPendingChildSequenceAsync(
@@ -1549,7 +1901,7 @@ public class SequenceBaseTests
     private static ConsumerPipelineContext CreateErrorPolicyContext(
         HookLogger logger,
         IErrorPolicy errorPolicy,
-        ConsumerTransactionManager? transactionManager = null)
+        IConsumerTransactionManager? transactionManager = null)
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services =>
         {
@@ -1625,6 +1977,8 @@ public class SequenceBaseTests
         }
 
         public Task CompleteFromTestAsync() => CompleteAsync();
+
+        public void DisposeFromFinalizer() => Dispose(false);
     }
 
     // Tracks the identifiers of the added messages and completes once the specified number of messages is added, like a batch
@@ -1716,6 +2070,30 @@ public class SequenceBaseTests
             Interlocked.Increment(ref _timeoutElapsedCount);
             _timeoutElapsed.TrySetResult();
             return _abortsOnTimeout ? base.OnTimeoutElapsedAsync() : Task.CompletedTask;
+        }
+    }
+
+    // Fails handling the elapsed timeout, leaving the sequence pending
+    private sealed class FailingTimeoutTestSequence : SequenceBase<IRawInboundEnvelope>
+    {
+        private int _timeoutElapsedCount;
+
+        public FailingTimeoutTestSequence(ConsumerPipelineContext context)
+            : base(
+                "failing-timeout-test-sequence",
+                context,
+                enforceTimeout: true,
+                timeout: TimeSpan.FromMilliseconds(50),
+                trackIdentifiers: false)
+        {
+        }
+
+        public int TimeoutElapsedCount => Volatile.Read(ref _timeoutElapsedCount);
+
+        protected override Task OnTimeoutElapsedAsync()
+        {
+            Interlocked.Increment(ref _timeoutElapsedCount);
+            return Task.FromException(new InvalidOperationException("Timeout handling failed."));
         }
     }
 
