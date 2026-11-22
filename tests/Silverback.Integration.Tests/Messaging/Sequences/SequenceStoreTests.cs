@@ -1,9 +1,11 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Sequences;
@@ -203,5 +205,72 @@ public class SequenceStoreTests
 
         enumeratedSequenceIds.ShouldBe(["aaa", "bbb"]);
         store.Count.ShouldBe(4);
+    }
+
+    [Fact]
+    public async Task GetEnumerator_ShouldEnumerateSequences_WhenEnumeratedAsNonGenericEnumerable()
+    {
+        SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        await store.AddAsync(new FakeSequence("aaa", false, false, store));
+        await store.AddAsync(new FakeSequence("bbb", false, false, store));
+        List<string> enumeratedSequenceIds = [];
+
+        foreach (object sequence in (IEnumerable)store)
+        {
+            enumeratedSequenceIds.Add(((ISequence)sequence).SequenceId);
+        }
+
+        enumeratedSequenceIds.ShouldBe(["aaa", "bbb"], true);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void IsReadingCanceled_ShouldReturnCallbackResult(bool isReadingCanceled)
+    {
+        SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>(), () => isReadingCanceled);
+
+        store.IsReadingCanceled.ShouldBe(isReadingCanceled);
+    }
+
+    [Fact]
+    public void IsReadingCanceled_ShouldReturnFalse_WhenNoCallbackIsSpecified()
+    {
+        SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+
+        store.IsReadingCanceled.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task DisposeAsync_ShouldAbortPendingSequences()
+    {
+        SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        FakeSequence pendingSequence = await store.AddAsync(new FakeSequence("aaa", false, false, store));
+        FakeSequence completeSequence = await store.AddAsync(new FakeSequence("bbb", true, false, store));
+        ((ISequenceImplementation)completeSequence).NotifyProcessingCompleted(); // The disposal awaits the processing
+
+        await store.DisposeAsync();
+
+        store.IsDisposed.ShouldBeTrue();
+        pendingSequence.IsAborted.ShouldBeTrue();
+        pendingSequence.AbortReason.ShouldBe(SequenceAbortReason.Disposing);
+        completeSequence.IsComplete.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task DisposeAsync_ShouldAbortPendingSequencesOnlyOnce_WhenDisposedTwice()
+    {
+        SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        ISequence sequence = Substitute.For<ISequence>();
+        sequence.SequenceId.Returns("aaa");
+        sequence.IsPending.Returns(true);
+        sequence.Context.Returns(ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store));
+        await store.AddAsync(sequence);
+
+        await store.DisposeAsync();
+        await store.DisposeAsync();
+
+        store.IsDisposed.ShouldBeTrue();
+        await sequence.Received(1).AbortAsync(SequenceAbortReason.Disposing);
     }
 }
