@@ -198,6 +198,63 @@ public class RetryErrorPolicyTests
     }
 
     [Fact]
+    public async Task HandleErrorAsync_ShouldLogAndTriggerReconnect_WhenRollbackFails()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+            .AddLoggerSubstitute(LogLevel.Trace)
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+        LoggerSubstitute<RetryErrorPolicy> logger = (LoggerSubstitute<RetryErrorPolicy>)serviceProvider.GetRequiredService<ILogger<RetryErrorPolicy>>();
+        IErrorPolicyImplementation policy = new RetryErrorPolicy
+        {
+            InitialDelay = TimeSpan.FromMilliseconds(10)
+        }.Build(serviceProvider);
+        IConsumer consumer = Substitute.For<IConsumer>();
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            [new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1)],
+            TestConsumerEndpoint.GetDefault(),
+            consumer,
+            new TestOffset("a", "42"));
+        IConsumerTransactionManager transactionManager = Substitute.For<IConsumerTransactionManager>();
+        transactionManager.RollbackAsync(Arg.Any<Exception?>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<bool>())
+            .Returns(Task.FromException<bool>(new InvalidOperationException("Rollback failed.")));
+
+        bool result = await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider, transactionManager, consumer),
+            new InvalidOperationException("test"));
+
+        // The message can't be retried without rolling back: the consumer is reconnected instead, without delaying the retry
+        result.ShouldBeTrue();
+        await consumer.Received(1).TriggerReconnectAsync();
+        logger.Received(LogLevel.Warning, typeof(InvalidOperationException), eventId: 1061, exceptionMessage: "Rollback failed.");
+        logger.DidNotReceive(LogLevel.Trace, null, eventId: 1999);
+    }
+
+    [Fact]
+    public async Task HandleErrorAsync_ShouldNotTriggerReconnect_WhenRollbackSucceeds()
+    {
+        IErrorPolicyImplementation policy = new RetryErrorPolicy().Build(_serviceProvider);
+        IConsumer consumer = Substitute.For<IConsumer>();
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            consumer,
+            new TestOffset());
+
+        bool result = await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, consumer: consumer),
+            new InvalidOperationException("test"));
+
+        result.ShouldBeTrue();
+        await consumer.DidNotReceive().TriggerReconnectAsync();
+    }
+
+    [Fact]
     public async Task HandleErrorAsync_ShouldInvokeCallbacks()
     {
         IErrorPolicyImplementation policy = new RetryErrorPolicy().Build(_serviceProvider);

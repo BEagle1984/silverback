@@ -189,6 +189,96 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
+    public async Task HandleErrorAsync_ShouldRewindRawMessageAndBinaryMessageContent()
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
+
+        // Both the raw message and the content of the binary message were read by the deserializer or by the subscriber
+        MemoryStream rawMessage = new(BytesUtil.GetRandomBytes());
+        rawMessage.Seek(0, SeekOrigin.End);
+        MemoryStream content = new(BytesUtil.GetRandomBytes());
+        content.Seek(0, SeekOrigin.End);
+        BinaryMessage binaryMessage = new(content);
+        InboundEnvelope inboundEnvelope = new(
+            binaryMessage,
+            rawMessage,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
+            new InvalidOperationException("test"));
+
+        // The message is moved as it was received
+        await producer.Received(1).ProduceAsync(Arg.Is<IOutboundEnvelope>(outboundEnvelope => outboundEnvelope.Message == binaryMessage));
+        rawMessage.Position.ShouldBe(0);
+        content.Position.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task HandleErrorAsync_ShouldProduceNonSeekableStreamsAsIs()
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
+
+        NonSeekableStream rawMessage = new(BytesUtil.GetRandomBytes());
+        NonSeekableStream content = new(BytesUtil.GetRandomBytes());
+        BinaryMessage binaryMessage = new(content);
+        InboundEnvelope inboundEnvelope = new(
+            binaryMessage,
+            rawMessage,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
+            new InvalidOperationException("test"));
+
+        // The streams that can't be rewound aren't touched
+        await producer.Received(1).ProduceAsync(Arg.Is<IOutboundEnvelope>(outboundEnvelope => outboundEnvelope.Message == binaryMessage));
+        rawMessage.PositionSetCount.ShouldBe(0);
+        content.PositionSetCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task HandleErrorAsync_ShouldProduceMessage_WhenRawMessageAndBinaryMessageContentAreNull()
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
+
+        BinaryMessage binaryMessage = new((Stream?)null);
+        InboundEnvelope inboundEnvelope = new(
+            binaryMessage,
+            null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        bool result = await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
+            new InvalidOperationException("test"));
+
+        result.ShouldBeTrue();
+        await producer.Received(1).ProduceAsync(
+            Arg.Is<IOutboundEnvelope>(outboundEnvelope => outboundEnvelope.Message == binaryMessage));
+    }
+
+    [Fact]
     public async Task HandleErrorAsync_ShouldPreserveHeaders()
     {
         IProducer producer = Substitute.For<IProducer>();
@@ -324,5 +414,27 @@ public class MoveMessageErrorPolicyTests
         _callback.Invocations.ShouldBe([nameof(IMoveMessageErrorPolicyCallback.OnMovingMessageAsync)]);
         _callback.Envelopes.ShouldBe([envelope]);
         _callback.Exceptions.ShouldBe([exception]);
+    }
+
+    private sealed class NonSeekableStream : MemoryStream
+    {
+        public NonSeekableStream(byte[] buffer)
+            : base(buffer)
+        {
+        }
+
+        public int PositionSetCount { get; private set; }
+
+        public override bool CanSeek => false;
+
+        public override long Position
+        {
+            get => base.Position;
+            set
+            {
+                PositionSetCount++;
+                base.Position = value;
+            }
+        }
     }
 }
