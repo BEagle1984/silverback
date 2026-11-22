@@ -689,6 +689,112 @@ public class ConsumerTransactionManagerTests
         await context.Consumer.Received(1).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
     }
 
+    [Fact]
+    public async Task CommitAsync_ShouldThrow_WhenAlreadyAborted()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
+
+        await transaction.RollbackAsync(null);
+
+        Task Act() => transaction.CommitAsync();
+
+        InvalidOperationException exception = await Should.ThrowAsync<InvalidOperationException>(Act);
+        exception.Message.ShouldBe("The transaction already aborted.");
+        counter.CommittingCount.ShouldBe(0);
+        await context.Consumer.DidNotReceive().CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task RollbackAsync_ShouldRethrowAbortingHandlerException_WhenStopAfterRollbackFailureFails()
+    {
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        transaction.Aborting.AddHandler(_ => ValueTask.FromException(new InvalidOperationException("Handler failed.")));
+        context.Consumer.StopAsync(Arg.Any<IBrokerMessageIdentifier>(), Arg.Any<bool>())
+            .Returns(_ => ValueTask.FromException(new InvalidOperationException("Stop failed.")));
+
+        Task Act() => transaction.RollbackAsync(new InvalidOperationException("test"));
+
+        // The exception thrown by the failed rollback is rethrown instead of the one thrown by the stop, which might have failed after
+        // being accepted
+        AggregateException exception = await Should.ThrowAsync<AggregateException>(Act);
+        exception.InnerExceptions.ShouldHaveSingleItem().Message.ShouldBe("Handler failed.");
+        transaction.IsConsumerStopped.ShouldBeTrue();
+        await context.Consumer.Received(1).StopAsync(context.Envelope.BrokerMessageIdentifier, false);
+        await context.Consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+    }
+
+    [Theory]
+    [InlineData("child of skipped sequence", true)]
+    [InlineData("unbounded", true)]
+    [InlineData("unresolved", false)]
+    [InlineData("unresolved child of another sequence", true)]
+    [InlineData("resolved", true)]
+    [InlineData("complete sequence not tracking its processing", true)]
+    public async Task RollbackAsync_ShouldCommitSequenceOnlyIfOtherSequencesAreResolved_WhenCommittingConsumer(
+        string scenario,
+        bool expectedIsCommitted)
+    {
+        await using SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
+        IConsumer consumer = Substitute.For<CumulativeCommitConsumer>();
+        using ConsumerPipelineContext otherSequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
+        using ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(consumer: consumer, sequenceStore: store);
+        ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
+        EventsCounter counter = new(transaction);
+        ChunkSequence skippedSequence = await store.AddAsync(new ChunkSequence("skipped", 5, context));
+        context.SetSequence(skippedSequence, true);
+
+        // The other sequences in the store don't prevent the commit when they're linked to the skipped sequence (and thus share its
+        // outcome), when they're unbounded (their messages are committed one by one) and when their processing is completed or tracked
+        // by their parent. A complete sequence whose processing isn't completed yet (e.g., a batch completed by its max wait time) does.
+        TestSequence? otherSequence = null;
+
+        switch (scenario)
+        {
+            case "child of skipped sequence":
+                ChunkSequence childSequence = await store.AddAsync(new ChunkSequence("child", 5, otherSequenceContext));
+                ((ISequenceImplementation)childSequence).SetParentSequence(skippedSequence);
+                break;
+            case "unbounded":
+                await store.AddAsync(new UnboundedSequence("unbounded", otherSequenceContext));
+                break;
+            case "complete sequence not tracking its processing":
+                ISequence sequence = Substitute.For<ISequence>();
+                sequence.SequenceId.Returns("other");
+                await store.AddAsync(sequence);
+                break;
+            default:
+                otherSequence = await store.AddAsync(new TestSequence(otherSequenceContext));
+                await otherSequence.CompleteFromTestAsync();
+
+                if (scenario == "unresolved child of another sequence")
+                    ((ISequenceImplementation)otherSequence).SetParentSequence(Substitute.For<ISequence>());
+
+                if (scenario == "resolved")
+                    ((ISequenceImplementation)otherSequence).NotifyProcessingCompleted();
+
+                break;
+        }
+
+        try
+        {
+            await transaction.RollbackAsync(null, commitConsumer: true);
+
+            await consumer.Received(expectedIsCommitted ? 1 : 0).CommitAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+            await consumer.DidNotReceive().RollbackAsync(Arg.Any<IReadOnlyCollection<IBrokerMessageIdentifier>>());
+            counter.SkippingCount.ShouldBe(expectedIsCommitted ? 1 : 0);
+        }
+        finally
+        {
+            // The store disposal awaits the processing of the sequences
+            if (otherSequence != null)
+                ((ISequenceImplementation)otherSequence).NotifyProcessingCompleted();
+        }
+    }
+
     private sealed class TestSequence : SequenceBase<IRawInboundEnvelope>
     {
         public TestSequence(ConsumerPipelineContext context)
