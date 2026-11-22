@@ -53,6 +53,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     // (see ConsumerPipelineContext.GetRollbackIdentifiers)
     private readonly System.Threading.Lock _sequencesLock = new();
 
+    private readonly List<ISequence> _sequences = [];
+
     // The state and the completing flag are also read without holding the semaphores (e.g., when the processing completes). They are
     // volatile because the readers rely on the order of the updates: IsCompleting is reset only after the state is switched to complete,
     // while _abortingTaskCompletionSource, the abort reason and the abort exception are set before the state is switched to aborted.
@@ -72,8 +74,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     private TEnvelope? _lastPulledEnvelope;
 
     private DateTime _timeoutExpiration = DateTime.MaxValue;
-
-    private List<ISequence>? _sequences;
 
     private bool _isTimeoutTimerInitialized;
 
@@ -205,6 +205,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public SequenceAbortReason AbortReason { get; private set; }
 
     /// <summary>
+    ///     Gets the completion source of the abort, created when the abort starts, before the sequence is flagged as aborted.
+    /// </summary>
+    internal TaskCompletionSource<bool> AbortingTaskCompletionSource =>
+        _abortingTaskCompletionSource ?? throw new InvalidOperationException("The sequence isn't aborted.");
+
+    /// <summary>
     ///     Gets a value indicating whether the abort caused by an error, by the subscribers stopping the enumeration or by the consumer
     ///     stopping completes the transaction of the <see cref="Context" />, applying the error policies and rolling it back or committing
     ///     it. Otherwise, the caller handles it (e.g., the pipeline of the message being added rethrows the <see cref="AbortException" />,
@@ -241,6 +247,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     Gets how the timeout is measured: restarting with each added message (by default) or from the first message.
     /// </summary>
     private protected virtual SequenceTimeoutMode TimeoutMode => SequenceTimeoutMode.Sliding;
+
+    /// <summary>
+    ///     Gets a value indicating whether the streams of the sequence were completed or aborted.
+    /// </summary>
+    private protected bool AreStreamsCompletedOrAborted => _streamProvider.IsCompletedOrAborted;
 
     // Not when the sequence is new, i.e. started by the refused message itself: it shares the message's context (and transaction), which
     // the message must not reuse for the next sequence, and the message shares its outcome instead (e.g. skipped or ignored with it)
@@ -374,7 +385,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         // Wait for an abort already in progress as well, to ensure that the sequence is fully aborted (rolled back and removed from the
         // store) before the next sequence starts
-        await (isAbortStarted ? AbortCoreAsync(null) : _abortingTaskCompletionSource!.Task).ConfigureAwait(false);
+        await (isAbortStarted ? AbortCoreAsync(null) : AbortingTaskCompletionSource.Task).ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="ISequence.AbortAsync" />
@@ -388,7 +399,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             foreach (IBrokerMessageIdentifier offset in GetSequencesSnapshot().SelectMany(sequence => sequence.GetCommitIdentifiers()))
             {
-                _identifiersTracker?.TrackIdentifier(offset);
+                _identifiersTracker.TrackIdentifier(offset);
             }
         }
 
@@ -403,7 +414,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             foreach (IBrokerMessageIdentifier offset in GetSequencesSnapshot().SelectMany(sequence => sequence.GetRollbackIdentifiers()))
             {
-                _identifiersTracker?.TrackIdentifier(offset);
+                _identifiersTracker.TrackIdentifier(offset);
             }
         }
 
@@ -482,7 +493,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             lock (_sequencesLock)
             {
-                _sequences ??= [];
                 _sequences.Add(sequence);
             }
 
@@ -714,7 +724,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         // An abort that was already waiting for the complete semaphore might have started in the meantime: release the semaphores to
         // let it complete (it needs the add semaphore) and acquire them again
-        if (_abortingTaskCompletionSource is { Task.IsCompleted: false })
+        if (_abortingTaskCompletionSource != null && !_abortingTaskCompletionSource.Task.IsCompleted)
         {
             _completeSemaphoreSlim.Release();
             _addSemaphoreSlim.Release();
@@ -777,7 +787,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             lock (_sequencesLock)
             {
-                _sequences?.Remove(sequence);
+                _sequences.Remove(sequence);
             }
 
             sequence.Dispose();
@@ -788,7 +798,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     {
         lock (_sequencesLock)
         {
-            return _sequences == null ? [] : [.. _sequences];
+            return [.. _sequences];
         }
     }
 
@@ -812,13 +822,16 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         lock (_sequencesLock)
         {
-            _sequences?.Remove(sequence);
+            _sequences.Remove(sequence);
         }
 
         (sequence as ISequenceImplementation)?.SetParentSequence(null);
     }
 
+    // IsAborted is read first, since the completion source, the abort reason and the abort exception are set before the state is switched
+    // to aborted
     private bool IsCommittedOnAbort() =>
+        IsAborted &&
         AbortReason is SequenceAbortReason.Error or SequenceAbortReason.EnumerationAborted &&
         Context.TransactionManager is not ConsumerTransactionManager { IsConsumerRolledBack: true };
 
@@ -833,7 +846,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             return AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task);
 
         return isAddedToNextSequenceIfCommitted && IsCommittedOnAbort()
-            ? new AddToSequenceResult(false, AbortTask: _abortingTaskCompletionSource?.Task)
+            ? new AddToSequenceResult(false, AbortTask: AbortingTaskCompletionSource.Task)
             : AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
     }
 
@@ -843,6 +856,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async ValueTask<bool> EnforceTimeoutAsync()
     {
+        // Check again, since a message added concurrently might have extended the sliding timeout since the timer loop checked it (this
+        // race-only path is the reason why the branch isn't covered by the tests)
         if (!IsTimeoutElapsed())
             return false;
 
@@ -880,9 +895,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
     }
 
+    // Called only when the timeout is enforced
     private void ResetTimeout()
     {
-        if (!_enforceTimeout || !IsPending)
+        // Don't extend the timeout of the sequence aborted concurrently, since the message was checked for being pending (this race-only
+        // path is the reason why the branch isn't covered by the tests)
+        if (!IsPending)
             return;
 
         if (TimeoutMode == SequenceTimeoutMode.Absolute && _timeoutExpiration != DateTime.MaxValue)
@@ -954,7 +972,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         // Multiple calls to AbortAsync should wait until the sequence is aborted for real; otherwise the TransactionHandlerConsumerBehavior
         // could continue before the abort is done, preventing the error policies to be correctly and successfully applied.
-        await (isAbortStarted ? AbortCoreAsync(exception) : _abortingTaskCompletionSource!.Task).ConfigureAwait(false);
+        await (isAbortStarted ? AbortCoreAsync(exception) : AbortingTaskCompletionSource.Task).ConfigureAwait(false);
     }
 
     // Must be called holding the complete semaphore. Returns false if the sequence was already aborted, otherwise the caller has to
@@ -969,13 +987,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         // Set the completion source, the reason and the exception before switching the state, for the readers checking IsAborted
         // without the complete semaphore
         _abortingTaskCompletionSource = new TaskCompletionSource<bool>();
-
-        if (reason > AbortReason)
-        {
-            AbortReason = reason;
-            AbortException = exception;
-        }
-
+        AbortReason = reason;
+        AbortException = exception;
         _completeState = CompleteState.Aborted;
 
         _logger.LogSequenceAborting(this, AbortReason, AbortException);
@@ -1026,7 +1039,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         finally
         {
             // Complete the abort even if it failed, not to block forever the callers waiting for it (e.g. Dispose)
-            _abortingTaskCompletionSource?.TrySetResult(true);
+            AbortingTaskCompletionSource.TrySetResult(true);
         }
     }
 

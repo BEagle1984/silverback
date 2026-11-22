@@ -144,7 +144,7 @@ public sealed class ChunkStream : Stream
 
         while (_syncEnumerator.MoveNext())
         {
-            if (_syncEnumerator.Current?.RawMessage == null)
+            if (_syncEnumerator.Current.RawMessage == null)
                 continue;
 
             _currentChunk = new Memory<byte>(_syncEnumerator.Current.RawMessage.ReadAll());

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences.Batch;
@@ -78,7 +77,7 @@ public class BatchSequence : Sequence
         {
             await CompleteAsync().ConfigureAwait(false);
         }
-        catch (InvalidOperationException) when (IsPending && AreStreamsCompletedOrAborted())
+        catch (InvalidOperationException) when (IsPending && AreStreamsCompletedOrAborted)
         {
             // The streams were aborted by the publisher before the batch, because one of several subscribers failed: the publisher
             // aborts the batch with the exception of the subscriber once the others returned, applying the error policies to it
@@ -90,7 +89,4 @@ public class BatchSequence : Sequence
             await AbortAsync(SequenceAbortReason.Error, ex).ConfigureAwait(false);
         }
     }
-
-    private bool AreStreamsCompletedOrAborted() =>
-        StreamProvider is MessageStreamProvider<IInboundEnvelope> { IsCompletedOrAborted: true };
 }
