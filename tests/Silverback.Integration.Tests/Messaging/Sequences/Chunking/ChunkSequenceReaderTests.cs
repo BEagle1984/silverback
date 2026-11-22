@@ -113,6 +113,71 @@ public sealed class ChunkSequenceReaderTests : IDisposable
         result.ShouldBeFalse();
     }
 
+    [Theory]
+    [InlineData("0", null, "true", false)]
+    [InlineData("0", null, "false", true)]
+    [InlineData("2", null, "true", true)]
+    [InlineData("0", "0", null, false)]
+    [InlineData("0", "2", "true", false)]
+    [InlineData("1", "2", "true", true)]
+    public async Task CanHandle_ShouldReturnTrueOnlyForMultipleChunks(
+        string chunkIndex,
+        string? chunksCount,
+        string? isLastChunk,
+        bool expectedResult)
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { DefaultMessageHeaders.ChunkIndex, chunkIndex }
+        };
+
+        if (chunksCount != null)
+            headers.Add(DefaultMessageHeaders.ChunksCount, chunksCount);
+
+        if (isLastChunk != null)
+            headers.Add(DefaultMessageHeaders.IsLastChunk, isLastChunk);
+
+        RawInboundEnvelope envelope = new(
+            BytesUtil.GetRandomBytes(10),
+            headers,
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
+            envelope,
+            sequenceStore: _sequenceStore);
+
+        bool result = await new ChunkSequenceReader().CanHandleAsync(context);
+
+        result.ShouldBe(expectedResult);
+    }
+
+    [Fact]
+    public async Task GetSequence_ShouldThrow_WhenChunkIndexMissing()
+    {
+        RawInboundEnvelope envelope = new(
+            BytesUtil.GetRandomBytes(10),
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageKey, "123" },
+                { DefaultMessageHeaders.ChunksCount, "4" }
+            },
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
+            envelope,
+            sequenceStore: _sequenceStore);
+
+        Func<Task> act = () => new ChunkSequenceReader().GetSequenceAsync(context).AsTask();
+
+        Exception exception = await act.ShouldThrowAsync<InvalidOperationException>();
+        exception.Message.ShouldBe("Chunk index header not found.");
+        _sequenceStore.ShouldBeEmpty();
+    }
+
     [Fact]
     public async Task GetSequence_ShouldReturnNewSequence_WhenFirstChunk()
     {

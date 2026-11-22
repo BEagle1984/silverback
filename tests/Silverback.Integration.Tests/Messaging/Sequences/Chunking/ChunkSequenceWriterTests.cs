@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.TestTypes;
@@ -477,6 +478,59 @@ public class ChunkSequenceWriterTests
         arrayPool.RentedCount.ShouldBe(1);
         arrayPool.ReturnedCount.ShouldBe(1);
         arrayPool.OutstandingCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldThrow_WhenRawMessageIsNull()
+    {
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(null, 3);
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>());
+
+        Func<Task> act = () => writer.ProcessMessageAsync(sourceEnvelope).ToListAsync().AsTask();
+
+        Exception exception = await act.ShouldThrowAsync<InvalidOperationException>();
+        exception.Message.ShouldBe("RawMessage is null");
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldProduceSingleChunk_WhenChunkSettingsAreNotSet()
+    {
+        byte[] rawMessage = BytesUtil.GetRandomBytes(10);
+        OutboundEnvelope sourceEnvelope = new(
+            rawMessage,
+            null,
+            new TestProducerEndpointConfiguration("test"),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        ChunkSequenceWriter writer = new(new ChunkEnricherFactory(), Substitute.For<IServiceProvider>());
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        IOutboundEnvelope envelope = envelopes.ShouldHaveSingleItem();
+        envelope.RawMessage.ReadAll().ShouldBe(rawMessage);
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "1"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.IsLastChunk, "True"));
+    }
+
+    [Fact]
+    public async Task ProcessMessage_ShouldAddFirstChunkMessageHeaderToSubsequentChunks()
+    {
+        IChunkEnricher enricher = Substitute.For<IChunkEnricher>();
+        enricher.GetFirstChunkMessageHeader(Arg.Any<IOutboundEnvelope>()).Returns(new MessageHeader("x-first-chunk", "42"));
+        IChunkEnricherFactory enricherFactory = Substitute.For<IChunkEnricherFactory>();
+        enricherFactory.GetEnricher(Arg.Any<ProducerEndpointConfiguration>(), Arg.Any<IServiceProvider>()).Returns(enricher);
+        OutboundEnvelope sourceEnvelope = CreateEnvelope(BytesUtil.GetRandomBytes(10), 4);
+
+        ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+
+        envelopes.Count.ShouldBe(3);
+        envelopes[0].Headers.GetValue("x-first-chunk").ShouldBeNull();
+        envelopes[1].Headers.GetValue("x-first-chunk").ShouldBe("42");
+        envelopes[2].Headers.GetValue("x-first-chunk").ShouldBe("42");
+        enricher.Received(1).GetFirstChunkMessageHeader(envelopes[0]);
     }
 
     private static OutboundEnvelope CreateEnvelope(object? rawMessage, int chunkSize, bool alwaysAddHeaders = false) =>
