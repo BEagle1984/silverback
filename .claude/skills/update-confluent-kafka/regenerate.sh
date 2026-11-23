@@ -11,7 +11,9 @@ output_dir=${1:-"${TEMP:-/tmp}/silverback-kafka-proxies"}
 
 mkdir -p "$output_dir"
 
-dotnet run --project "$generator" -c Release > "$output_dir/kafka.cs"
+# Built separately so that compile errors are shown (dotnet run writes them to stdout, i.e. into the output file)
+dotnet build "$generator" -c Release --verbosity quiet
+dotnet run --project "$generator" -c Release --no-build > "$output_dir/kafka.cs"
 dotnet run --project "$generator" -c Release --no-build -- --schemaregistry > "$output_dir/schema-registry.cs"
 
 # Keeps the hand-written file header (everything before the first generated type) and replaces the rest
@@ -25,6 +27,9 @@ splice() {
 
 splice "$kafka_file" "$output_dir/kafka.cs"
 splice "$schema_registry_file" "$output_dir/schema-registry.cs"
+
+# Without a restore (e.g. in a fresh worktree) the cleanup can't resolve the library types and silently rewrites the files (qualified type names, dropped usings)
+dotnet restore Silverback.slnx --verbosity quiet
 
 # --no-build: the solution may not compile yet (missing partial declarations), the cleanup doesn't need it
 dotnet tool restore > /dev/null
