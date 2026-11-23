@@ -7,6 +7,7 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Collections;
 using Silverback.Diagnostics;
+using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
@@ -287,6 +288,17 @@ public class ConfluentAdminClientFactoryTests
     }
 
     [Fact]
+    public void GetClientForProducerEndpoint_ShouldThrow_WhenOnlyDynamicEndpointResolvesToTopic()
+    {
+        SetProducers(GetProducer("client1", new KafkaDynamicProducerEndpointResolver<object>(_ => "topic")));
+
+        Action act = () => _factory.GetClientForProducerEndpoint("topic");
+
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("No Kafka producer has been configured for endpoint 'topic'.");
+    }
+
+    [Fact]
     public void GetClientForProducerEndpoint_ShouldThrow_WhenEndpointNotFound()
     {
         SetProducers(GetProducer("client1", new KafkaStaticProducerEndpointResolver("topic1")));
@@ -426,7 +438,7 @@ public class ConfluentAdminClientFactoryTests
 
     private static KafkaTransactionalProducer GetProducer(
         string clientId,
-        KafkaStaticProducerEndpointResolver endpointResolver,
+        IProducerEndpointResolver<KafkaProducerEndpoint> endpointResolver,
         string? friendlyName = null) =>
         new(
             "producer",
@@ -449,7 +461,7 @@ public class ConfluentAdminClientFactoryTests
 
     private static KafkaProducerConfiguration GetProducerConfiguration(
         string clientId,
-        KafkaStaticProducerEndpointResolver endpointResolver,
+        IProducerEndpointResolver<KafkaProducerEndpoint> endpointResolver,
         string? friendlyName = null) =>
         new()
         {

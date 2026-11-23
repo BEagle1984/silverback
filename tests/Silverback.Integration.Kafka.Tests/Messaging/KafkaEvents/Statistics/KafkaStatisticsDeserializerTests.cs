@@ -1,10 +1,13 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks.Statistics;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics;
@@ -309,5 +312,22 @@ public class KafkaStatisticsDeserializerTests
             Substitute.For<ISilverbackLogger>());
 
         statistics.ShouldBeNull();
+    }
+
+    [Fact]
+    public void TryDeserialize_ShouldReturnNullAndLogError_WhenJsonIsNullLiteral()
+    {
+        LoggerSubstitute<KafkaStatisticsDeserializerTests> loggerSubstitute = new(LogLevel.Trace);
+        SilverbackLogger<KafkaStatisticsDeserializerTests> logger = new(
+            new MappedLevelsLogger<KafkaStatisticsDeserializerTests>([], loggerSubstitute));
+
+        KafkaStatistics? statistics = KafkaStatisticsDeserializer.TryDeserialize("null", logger);
+
+        statistics.ShouldBeNull();
+        loggerSubstitute.Received(
+            LogLevel.Error,
+            typeof(InvalidOperationException),
+            eventId: KafkaLogEvents.StatisticsDeserializationError.EventId.Id,
+            exceptionMessage: "Failed to deserialize Kafka statistics.");
     }
 }
