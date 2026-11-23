@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
+using MQTTnet.Formatter;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
@@ -55,6 +56,32 @@ public class RequestResponseTests : MqttTests
         messages[1].CorrelationData.ShouldBe([1, 2, 3, 4]);
         messages[1].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.ResponseTopic);
         messages[1].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.CorrelationData);
+    }
+
+    [Fact]
+    public async Task Producer_ShouldNotSetResponseTopicAndCorrelationData_WhenUsingV311()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .UseProtocolVersion(MqttProtocolVersion.V311)
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.WrapAndPublishAsync(
+            new TestEventOne(),
+            envelope => envelope.SetMqttResponseTopic("response/one").SetMqttCorrelationData("data"));
+
+        IReadOnlyList<MqttApplicationMessage> messages = GetDefaultTopicMessages();
+        messages.Count.ShouldBe(1);
+        messages[0].ResponseTopic.ShouldBeNull();
+        messages[0].CorrelationData.ShouldBeNull();
     }
 
     [Fact]
