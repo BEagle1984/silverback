@@ -135,6 +135,9 @@ internal sealed class ConsumeLoopHandler : IDisposable
         if (completion == null)
         {
             TaskCompletionSource<bool> newCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            // The only caller serializes the calls under the assignment lock, but the exchange keeps the method safe without it (this
+            // race-only path is the reason why the branch isn't covered by the tests)
             completion = Interlocked.CompareExchange(ref _pendingPollTaskCompletionSource, newCompletion, null) ?? newCompletion;
         }
 
@@ -266,6 +269,8 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     private void NotifyPollCompleted()
     {
+        // Null only if two loops overlapping on a stop and start cleared the field concurrently (this race-only path is the reason why
+        // the branch isn't covered by the tests)
         if (_pendingPollTaskCompletionSource != null)
             Interlocked.Exchange(ref _pendingPollTaskCompletionSource, null)?.TrySetResult(true);
     }
@@ -291,13 +296,13 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     private bool CheckConsumerStall()
     {
-        if (!_consumer.Configuration.StallDetectionThreshold.HasValue ||
-            DateTime.UtcNow - _lastSuccessfulConsume <= _consumer.Configuration.StallDetectionThreshold)
+        if (_consumer.Configuration.StallDetectionThreshold is not { } stallDetectionThreshold ||
+            DateTime.UtcNow - _lastSuccessfulConsume <= stallDetectionThreshold)
         {
             return true;
         }
 
-        _logger.LogStaleConsumer(_consumer.Configuration.StallDetectionThreshold.Value, _consumer);
+        _logger.LogStaleConsumer(stallDetectionThreshold, _consumer);
         _consumer.TriggerReconnectAsync().FireAndForget();
 
         return false;

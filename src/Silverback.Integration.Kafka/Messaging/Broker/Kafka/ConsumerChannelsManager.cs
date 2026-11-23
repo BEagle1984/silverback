@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -91,14 +90,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
                 return;
             }
 
-            try
-            {
-                channel.WriteOverflowAsync(consumeResult).SafeWait();
-            }
-            catch (ChannelClosedException)
-            {
-                _logger.LogMessageWriteToOverflowChannelFailed(_consumer, consumeResult, channel);
-            }
+            channel.WriteOverflow(consumeResult);
         }
     }
 
@@ -126,7 +118,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
     {
         base.Dispose(disposing);
 
-        if (!disposing || _isDisposed)
+        if (_isDisposed)
             return;
 
         _messagesLimiterSemaphoreSlim.Dispose();

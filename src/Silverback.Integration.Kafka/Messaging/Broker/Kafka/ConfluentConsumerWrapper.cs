@@ -63,7 +63,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
         _consumerBuilder = Check.NotNull(consumerBuilder)
             .SetConfig(configuration.ToConfluentConfig())
-            .SetEventsHandlers(this, Configuration, _brokerClientCallbacksInvoker, _logger);
+            .SetEventsHandlers(this, _brokerClientCallbacksInvoker, _logger);
         _adminClientFactory = Check.NotNull(adminClientFactory);
     }
 

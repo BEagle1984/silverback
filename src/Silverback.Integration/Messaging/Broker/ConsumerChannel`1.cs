@@ -102,10 +102,14 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         }
     }
 
-    public ValueTask WriteOverflowAsync(T message)
+    public void WriteOverflow(T message)
     {
         lock (_channelLock)
-            return _overflowChannel.Writer.WriteAsync(message, CancellationToken.None);
+        {
+            // The overflow channel is unbounded and only Reset completes it, replacing it under the same lock
+            if (!_overflowChannel.Writer.TryWrite(message))
+                throw new InvalidOperationException("The overflow channel is completed.");
+        }
     }
 
     public async ValueTask<T> ReadAsync()

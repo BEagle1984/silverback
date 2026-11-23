@@ -1,7 +1,6 @@
 // Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
 
@@ -42,8 +41,7 @@ public class ConfluentAdminClientFactory : ConfluentAdminClientFactoryBase
             .SetLogHandler((_, logMessage) => OnLog(logMessage, _logger))
             .Build();
 
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    private static void OnError(Error error, ISilverbackLogger logger)
+    internal static void OnError(Error error, ISilverbackLogger logger)
     {
         if (error.IsFatal)
             logger.LogConfluentAdminClientFatalError(error);
@@ -51,8 +49,7 @@ public class ConfluentAdminClientFactory : ConfluentAdminClientFactoryBase
             logger.LogConfluentAdminClientError(error);
     }
 
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    private static void OnLog(
+    internal static void OnLog(
         LogMessage logMessage,
         ISilverbackLogger logger)
     {

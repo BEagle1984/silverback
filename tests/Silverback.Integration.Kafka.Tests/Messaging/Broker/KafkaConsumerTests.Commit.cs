@@ -17,6 +17,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker;
 
 public partial class KafkaConsumerTests
 {
+    private const string RollbackRestartSkippedLog = "Skipping rollback restart";
+
     [Fact]
     public async Task CommitAsync_ShouldCommitEveryCommitOffsetEachOffsets()
     {
@@ -172,11 +174,16 @@ public partial class KafkaConsumerTests
             throw new InvalidOperationException("The offset store is unavailable.");
         };
 
+        harness.HasLog(RollbackRestartSkippedLog).ShouldBeFalse();
+
         await harness.Consumer.RollbackAsync(offset);
         await loadFailed.Task.WaitAsync(Timeout);
 
         if (revokedMeanwhile)
         {
+            // Logged by the restart's catch block after deciding not to reconnect, the last step of the skipped restart
+            await LifecycleHarness.WaitUntilAsync(() => harness.HasLog(RollbackRestartSkippedLog));
+
             harness.HasLog("Error occurred (re)starting").ShouldBeFalse();
             _ = harness.Client.DidNotReceive().ReconnectAsync();
         }
@@ -185,6 +192,7 @@ public partial class KafkaConsumerTests
             await reconnected.Task.WaitAsync(Timeout);
 
             harness.HasLog("Error occurred (re)starting").ShouldBeTrue();
+            harness.HasLog(RollbackRestartSkippedLog).ShouldBeFalse();
         }
 
         harness.Seeks.ShouldBeEmpty();

@@ -74,7 +74,7 @@ public class KafkaEventsBinderTests
         builder.When(consumerBuilder => consumerBuilder.SetLogHandler(Arg.Any<Action<IConsumer<byte[]?, byte[]?>, LogMessage>>()))
             .Do(call => logHandler = call.Arg<Action<IConsumer<byte[]?, byte[]?>, LogMessage>>());
 
-        builder.SetEventsHandlers(GetConsumerWrapper(), new KafkaConsumerConfiguration(), _callbacksInvoker, _logger);
+        builder.SetEventsHandlers(GetConsumerWrapper(), _callbacksInvoker, _logger);
 
         logHandler.ShouldNotBeNull().Invoke(Substitute.For<IConsumer<byte[]?, byte[]?>>(), GetLogMessage());
 
@@ -95,7 +95,7 @@ public class KafkaEventsBinderTests
     public void ConsumerLogHandler_ShouldLogWithMappedLevel(SyslogLevel syslogLevel, string expectedLogEventName)
     {
         IConfluentConsumerBuilder builder = GetConsumerBuilder();
-        builder.SetEventsHandlers(GetConsumerWrapper(), new KafkaConsumerConfiguration(), _callbacksInvoker, _logger);
+        builder.SetEventsHandlers(GetConsumerWrapper(), _callbacksInvoker, _logger);
         Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler = GetRegisteredHandler<Action<IConsumer<byte[]?, byte[]?>, LogMessage>>(builder);
 
         logHandler.Invoke(Substitute.For<IConsumer<byte[]?, byte[]?>>(), new LogMessage("rdkafka", syslogLevel, "TEST", "test message"));
@@ -124,7 +124,7 @@ public class KafkaEventsBinderTests
         builder.When(consumerBuilder => consumerBuilder.SetErrorHandler(Arg.Any<Action<IConsumer<byte[]?, byte[]?>, Error>>()))
             .Do(call => errorHandler = call.Arg<Action<IConsumer<byte[]?, byte[]?>, Error>>());
 
-        builder.SetEventsHandlers(GetConsumerWrapper(), new KafkaConsumerConfiguration(), _callbacksInvoker, _logger);
+        builder.SetEventsHandlers(GetConsumerWrapper(), _callbacksInvoker, _logger);
 
         errorHandler.ShouldNotBeNull().Invoke(Substitute.For<IConsumer<byte[]?, byte[]?>>(), new Error(ErrorCode.Local_Transport));
 
@@ -139,7 +139,7 @@ public class KafkaEventsBinderTests
     public void ConsumerErrorHandler_ShouldLogFatalError_WhenErrorIsFatal(ClientStatus status)
     {
         IConfluentConsumerBuilder builder = GetConsumerBuilder();
-        builder.SetEventsHandlers(GetConsumerWrapper(status: status), new KafkaConsumerConfiguration(), _callbacksInvoker, _logger);
+        builder.SetEventsHandlers(GetConsumerWrapper(status: status), _callbacksInvoker, _logger);
         Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler = GetRegisteredHandler<Action<IConsumer<byte[]?, byte[]?>, Error>>(builder);
 
         errorHandler.Invoke(Substitute.For<IConsumer<byte[]?, byte[]?>>(), new Error(ErrorCode.Local_Fatal, "fatal", true));
@@ -160,7 +160,7 @@ public class KafkaEventsBinderTests
         SetupCallbacks(callback);
 
         IConfluentConsumerBuilder builder = GetConsumerBuilder();
-        builder.SetEventsHandlers(GetConsumerWrapper(status: status), new KafkaConsumerConfiguration(), _callbacksInvoker, _logger);
+        builder.SetEventsHandlers(GetConsumerWrapper(status: status), _callbacksInvoker, _logger);
         Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler = GetRegisteredHandler<Action<IConsumer<byte[]?, byte[]?>, Error>>(builder);
 
         errorHandler.Invoke(Substitute.For<IConsumer<byte[]?, byte[]?>>(), new Error(ErrorCode.Local_Fatal, "fatal", true));
@@ -177,7 +177,7 @@ public class KafkaEventsBinderTests
 
         IConfluentConsumerWrapper consumerWrapper = GetConsumerWrapper();
         IConfluentConsumerBuilder builder = GetConsumerBuilder();
-        builder.SetEventsHandlers(consumerWrapper, new KafkaConsumerConfiguration(), _callbacksInvoker, _logger);
+        builder.SetEventsHandlers(consumerWrapper, _callbacksInvoker, _logger);
         Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler = GetRegisteredHandler<Action<IConsumer<byte[]?, byte[]?>, string>>(builder);
 
         statisticsHandler.Invoke(Substitute.For<IConsumer<byte[]?, byte[]?>>(), StatisticsJson);
@@ -204,7 +204,7 @@ public class KafkaEventsBinderTests
 
         IConfluentConsumerWrapper consumerWrapper = GetConsumerWrapper();
         IConfluentConsumerBuilder builder = GetConsumerBuilder();
-        builder.SetEventsHandlers(consumerWrapper, new KafkaConsumerConfiguration(), _callbacksInvoker, _logger);
+        builder.SetEventsHandlers(consumerWrapper, _callbacksInvoker, _logger);
         Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>> assignedHandler =
             GetRegisteredHandler<Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>>(builder);
         List<TopicPartition> topicPartitions = [new("topic1", 0), new("topic1", 1)];
@@ -235,7 +235,7 @@ public class KafkaEventsBinderTests
         SetupCallbacks(callback);
 
         IConfluentConsumerBuilder builder = GetConsumerBuilder();
-        builder.SetEventsHandlers(GetConsumerWrapper(), new KafkaConsumerConfiguration(), _callbacksInvoker, _logger);
+        builder.SetEventsHandlers(GetConsumerWrapper(), _callbacksInvoker, _logger);
         Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>> assignedHandler =
             GetRegisteredHandler<Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>>(builder);
 
@@ -269,13 +269,18 @@ public class KafkaEventsBinderTests
         IKafkaPartitionsRevokedCallback callback = Substitute.For<IKafkaPartitionsRevokedCallback>();
         SetupCallbacks(callback);
 
-        IConfluentConsumerWrapper consumerWrapper = GetConsumerWrapper(new KafkaConsumerConfiguration { EnableAutoCommit = false });
+        IConfluentConsumerWrapper consumerWrapper = GetConsumerWrapper(
+            new KafkaConsumerConfiguration
+            {
+                EnableAutoCommit = false,
+                PartitionAssignmentStrategy = strategy
+            });
         IConfluentConsumerBuilder builder = GetConsumerBuilder();
-        builder.SetEventsHandlers(
-            consumerWrapper,
-            new KafkaConsumerConfiguration { PartitionAssignmentStrategy = strategy },
-            _callbacksInvoker,
-            _logger);
+        builder.SetEventsHandlers(consumerWrapper, _callbacksInvoker, _logger);
+
+        // The Action overload is registered with any strategy: a Func result makes Confluent.Kafka throw under the cooperative protocol
+        builder.DidNotReceiveWithAnyArgs().SetPartitionsRevokedHandler(
+            Arg.Any<Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>>());
         Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> revokedHandler =
             GetRegisteredHandler<Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>>>(builder);
         List<TopicPartitionOffset> topicPartitionOffsets =
@@ -300,7 +305,7 @@ public class KafkaEventsBinderTests
 
         IConfluentConsumerWrapper consumerWrapper = GetConsumerWrapper();
         IConfluentConsumerBuilder builder = GetConsumerBuilder();
-        builder.SetEventsHandlers(consumerWrapper, new KafkaConsumerConfiguration(), _callbacksInvoker, _logger);
+        builder.SetEventsHandlers(consumerWrapper, _callbacksInvoker, _logger);
         Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> committedHandler =
             GetRegisteredHandler<Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>>(builder);
         CommittedOffsets committedOffsets = new(

@@ -18,7 +18,8 @@ internal sealed class KafkaTransaction : IKafkaTransaction
 
     private IConfluentProducerWrapper? _confluentProducer;
 
-    private bool _isPending;
+    // The bound producer, set only while the transaction is pending
+    private IConfluentProducerWrapper? _pendingTransactionProducer;
 
     public KafkaTransaction(ISilverbackContext context, string? transactionalIdSuffix = null)
     {
@@ -35,7 +36,7 @@ internal sealed class KafkaTransaction : IKafkaTransaction
         if (_confluentProducer == null)
             throw new InvalidOperationException("The transaction is not bound to a producer.");
 
-        EnsureIsPending();
+        IConfluentProducerWrapper confluentProducer = GetPendingTransactionProducer();
 
         if (_context.TryGetConsumerPipelineContext(out ConsumerPipelineContext? consumerPipelineContext) &&
             consumerPipelineContext is
@@ -43,34 +44,34 @@ internal sealed class KafkaTransaction : IKafkaTransaction
                 Consumer: KafkaConsumer { Configuration.SendOffsetsToTransaction: true } kafkaConsumer
             })
         {
-            _confluentProducer.SendOffsetsToTransaction(
+            confluentProducer.SendOffsetsToTransaction(
                 [.. consumerPipelineContext.GetCommitIdentifiers().Cast<KafkaOffset>().Select(offset => new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1))],
                 kafkaConsumer.Client.GetConsumerGroupMetadata());
         }
 
-        _confluentProducer.CommitTransaction();
-        _isPending = false;
+        confluentProducer.CommitTransaction();
+        _pendingTransactionProducer = null;
         _confluentProducer = null;
     }
 
     public void Abort()
     {
-        EnsureIsPending();
+        IConfluentProducerWrapper confluentProducer = GetPendingTransactionProducer();
 
-        _confluentProducer?.AbortTransaction();
-        _isPending = false;
+        confluentProducer.AbortTransaction();
+        _pendingTransactionProducer = null;
         _confluentProducer = null;
     }
 
     public void AbortIfPending()
     {
-        if (_isPending)
+        if (_pendingTransactionProducer != null)
             Abort();
     }
 
     public void Dispose()
     {
-        if (_isPending)
+        if (_pendingTransactionProducer != null)
             Abort();
 
         _context.ClearKafkaTransaction();
@@ -81,7 +82,7 @@ internal sealed class KafkaTransaction : IKafkaTransaction
         if (_confluentProducer == null)
             throw new InvalidOperationException("The transaction is not bound to a producer.");
 
-        if (!_isPending)
+        if (_pendingTransactionProducer == null)
             Begin();
     }
 
@@ -91,7 +92,7 @@ internal sealed class KafkaTransaction : IKafkaTransaction
             throw new InvalidOperationException("The transaction is not bound to a producer.");
 
         _confluentProducer.BeginTransaction();
-        _isPending = true;
+        _pendingTransactionProducer = _confluentProducer;
     }
 
     internal void BindConfluentProducer(IConfluentProducerWrapper confluentProducer)
@@ -102,9 +103,6 @@ internal sealed class KafkaTransaction : IKafkaTransaction
         _confluentProducer = confluentProducer;
     }
 
-    private void EnsureIsPending()
-    {
-        if (!_isPending)
-            throw new InvalidOperationException("The transaction is not pending.");
-    }
+    private IConfluentProducerWrapper GetPendingTransactionProducer() =>
+        _pendingTransactionProducer ?? throw new InvalidOperationException("The transaction is not pending.");
 }
