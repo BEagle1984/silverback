@@ -13,6 +13,7 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Transactions;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Transactions;
@@ -106,6 +107,51 @@ public class SilverbackContextKafkaTransactionExtensionsTests
 
         transaction.ShouldNotBeNull();
         transaction.TransactionalIdSuffix.ShouldBeNull();
+    }
+
+    [Fact]
+    public void InitKafkaTransaction_ShouldNotAppendPartitionToTransactionalId_WhenConsumerIsNotKafkaConsumer()
+    {
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        context.SetConsumerPipelineContext(
+            ConsumerPipelineContextHelper.CreateSubstitute(
+                consumer: Substitute.For<IConsumer>(),
+                identifier: new KafkaOffset("topic1", 42, 1)));
+
+        IKafkaTransaction transaction = context.InitKafkaTransaction("suffix");
+
+        transaction.TransactionalIdSuffix.ShouldBe("suffix");
+    }
+
+    [Fact]
+    public void InitKafkaTransaction_ShouldNotAppendPartitionToTransactionalId_WhenIdentifierIsNotKafkaOffset()
+    {
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        IConfluentConsumerWrapper confluentConsumerWrapper = Substitute.For<IConfluentConsumerWrapper>();
+        confluentConsumerWrapper.Initialized.Returns(new AsyncEvent<BrokerClient>());
+        confluentConsumerWrapper.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
+        KafkaConsumer kafkaConsumer = new(
+            "consumer1",
+            confluentConsumerWrapper,
+            new KafkaConsumerConfigurationBuilder(Substitute.For<IServiceProvider>())
+                .WithBootstrapServers("PLAINTEXT://tests:9092")
+                .WithGroupId("group1")
+                .ProcessPartitionsIndependently()
+                .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
+                .Build(),
+            Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+            Substitute.For<IBrokerClientCallbacksInvoker>(),
+            Substitute.For<IKafkaOffsetStoreFactory>(),
+            Substitute.For<IServiceProvider>(),
+            Substitute.For<ISilverbackLogger<KafkaConsumer>>());
+        context.SetConsumerPipelineContext(
+            ConsumerPipelineContextHelper.CreateSubstitute(
+                consumer: kafkaConsumer,
+                identifier: new TestOffset()));
+
+        IKafkaTransaction transaction = context.InitKafkaTransaction("suffix");
+
+        transaction.TransactionalIdSuffix.ShouldBe("suffix");
     }
 
     [Fact]
