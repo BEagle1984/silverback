@@ -54,6 +54,7 @@ public partial record MqttClientTlsConfiguration : IValidatableSettings
         options.CipherSuitesPolicy = CipherSuitesPolicy;
         options.EncryptionPolicy = EncryptionPolicy;
         options.AllowRenegotiation = AllowRenegotiation;
+        options.TrustChain = TrustChain;
 
         return options;
     }
