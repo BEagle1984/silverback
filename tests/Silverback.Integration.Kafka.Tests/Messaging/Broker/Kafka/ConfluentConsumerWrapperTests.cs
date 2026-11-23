@@ -815,8 +815,9 @@ public class ConfluentConsumerWrapperTests
     }
 
     [Fact]
-    public async Task ConnectAsync_ShouldDisposeAdminClientAndThrow_WhenPartitionOffsetsProviderFails()
+    public async Task ConnectAsync_ShouldDisposeAdminClientAndConsumerAndThrow_WhenPartitionOffsetsProviderFails()
     {
+        _confluentConsumer.Assignment.Returns([new TopicPartition("topic1", 0)]);
         IAdminClient adminClient = Substitute.For<IAdminClient>();
         adminClient.GetMetadata("topic1", Arg.Any<TimeSpan>()).Returns(GetMetadata("topic1", 0));
         _adminClientFactory.GetClient(Arg.Any<AdminClientConfig>()).Returns(adminClient);
@@ -844,6 +845,46 @@ public class ConfluentConsumerWrapperTests
         (await act.ShouldThrowAsync<InvalidOperationException>()).ShouldBeSameAs(exception);
         adminClient.Received(1).Dispose();
         _confluentConsumer.DidNotReceive().Assign(Arg.Any<IEnumerable<TopicPartitionOffset>>());
+        _confluentConsumer.Received(1).Dispose();
+        consumer.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.Assignment.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldDisposeConsumerAndThrow_WhenSubscribeFails()
+    {
+        _confluentConsumer.Assignment.Returns([new TopicPartition("topic1", 0)]);
+        InvalidOperationException exception = new("subscribe failed");
+        _confluentConsumer.When(native => native.Subscribe(Arg.Any<IEnumerable<string>>())).Do(_ => throw exception);
+        KafkaConsumerConfiguration configuration = new()
+        {
+            Endpoints = new[]
+            {
+                new KafkaConsumerEndpointConfiguration
+                {
+                    TopicPartitions = new[]
+                    {
+                        new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+                    }.AsValueReadOnlyCollection()
+                }
+            }.AsValueReadOnlyCollection()
+        };
+        ConfluentConsumerWrapper consumer = new(
+            "test",
+            _consumerBuilder,
+            configuration,
+            _adminClientFactory,
+            _callbacksInvoker,
+            _offsetStoreFactory,
+            _serviceProvider,
+            _logger);
+
+        Func<Task> act = () => consumer.ConnectAsync().AsTask();
+
+        (await act.ShouldThrowAsync<InvalidOperationException>()).ShouldBeSameAs(exception);
+        _confluentConsumer.Received(1).Dispose();
+        consumer.Status.ShouldBe(ClientStatus.Disconnected);
+        consumer.Assignment.ShouldBeEmpty();
     }
 
     [Fact]

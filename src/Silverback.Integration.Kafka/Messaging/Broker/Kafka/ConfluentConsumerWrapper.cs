@@ -219,12 +219,29 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     protected override async ValueTask ConnectCoreAsync()
     {
-        _confluentConsumer = _consumerBuilder.Build();
+        IConsumer<byte[]?, byte[]?> confluentConsumer = _consumerBuilder.Build();
+        _confluentConsumer = confluentConsumer;
 
-        if (Configuration.IsStaticAssignment)
-            await PerformStaticAssignmentAsync().ConfigureAwait(false);
-        else
-            Subscribe();
+        try
+        {
+            if (Configuration.IsStaticAssignment)
+                await PerformStaticAssignmentAsync().ConfigureAwait(false);
+            else
+                Subscribe();
+        }
+        catch
+        {
+            // The failed connection isn't disconnected, so the native consumer is released here. It doesn't need to be closed, since it
+            // hasn't polled yet: it hasn't joined the group nor consumed anything.
+            lock (_confluentConsumerLock)
+            {
+                _confluentConsumer = null;
+            }
+
+            confluentConsumer.Dispose();
+
+            throw;
+        }
     }
 
     protected override ValueTask DisconnectCoreAsync()
