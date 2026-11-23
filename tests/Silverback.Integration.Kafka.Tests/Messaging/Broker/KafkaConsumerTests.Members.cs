@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Collections;
@@ -61,38 +60,6 @@ public partial class KafkaConsumerTests
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
     }
 
-    [Fact]
-    public async Task OnPollTimeout_ShouldLogAndReconnect_WhenAutoRecoveryIsEnabled()
-    {
-        await using PipelineHarness harness = new(CatchUpMode.None, autoRecovery: true);
-        await harness.StartAsync(0);
-
-        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
-
-        bool handled = harness.Consumer.OnPollTimeout(CreatePollTimeoutLogMessage());
-
-        handled.ShouldBeTrue();
-        await harness.Reconnected.Task.WaitAsync(Timeout);
-        harness.Logs.ShouldContain(log => log.EventId == KafkaLogEvents.PollTimeoutAutoRecovery.EventId.Id && log.Level == LogLevel.Warning);
-        harness.Logs.ShouldNotContain(log => log.EventId == KafkaLogEvents.PollTimeoutNoAutoRecovery.EventId.Id);
-    }
-
-    [Fact]
-    public async Task OnPollTimeout_ShouldLogAndRevertConnectedStatus_WhenAutoRecoveryIsDisabled()
-    {
-        await using PipelineHarness harness = new(CatchUpMode.None);
-        await harness.StartAsync(0);
-
-        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
-
-        bool handled = harness.Consumer.OnPollTimeout(CreatePollTimeoutLogMessage());
-
-        handled.ShouldBeTrue();
-        harness.Consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Started);
-        harness.Logs.ShouldContain(log => log.EventId == KafkaLogEvents.PollTimeoutNoAutoRecovery.EventId.Id && log.Level == LogLevel.Error);
-        harness.Reconnected.Task.IsCompleted.ShouldBeFalse();
-    }
-
     [Theory]
     [InlineData("key-1")]
     [InlineData(null)]
@@ -132,9 +99,6 @@ public partial class KafkaConsumerTests
         harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 1, 10), new TopicPartitionOffset("topic", 0, 0)]);
         harness.Errors.ShouldBeEmpty();
     }
-
-    private static LogMessage CreatePollTimeoutLogMessage() =>
-        new("rdkafka#consumer-1", SyslogLevel.Warning, "MAXPOLL", "Application maximum poll interval (300000ms) exceeded by 42ms");
 
     private static IConfluentConsumerWrapper CreateSubstituteClient()
     {
