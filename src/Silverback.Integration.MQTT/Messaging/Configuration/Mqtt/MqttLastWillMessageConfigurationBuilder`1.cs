@@ -248,7 +248,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     /// <returns>
     ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageConfigurationBuilder<TMessage> WithPayloadFormatIndicator(string? topic)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithResponseTopic(string? topic)
     {
         _responseTopic = topic;
         return this;
