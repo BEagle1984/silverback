@@ -36,6 +36,7 @@ public partial record MqttClientWebSocketConfiguration : MqttClientChannelConfig
     {
         MqttClientWebSocketOptions options = MapCore();
         options.TlsOptions = Tls.ToMqttNetType();
+        options.ProxyOptions = Proxy?.ToMqttNetType();
         return options;
     }
 }
