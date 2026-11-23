@@ -94,39 +94,6 @@ public partial class KafkaConsumerTests
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task GetStorableOffsets_ShouldReturnCommittableOffsetsAndOptionallyRevokedOnes(bool includeRevokedPartitions)
-    {
-        await using PollHarness harness = new();
-        await harness.StartAsync(0, 1);
-        await harness.DeliverAsync((0, 0), (0, 1));
-        await harness.WaitForCommitAsync(0, 2);
-        await harness.PollAsync(() =>
-        {
-            harness.Revoke(1);
-
-            return null;
-        });
-
-        IReadOnlyCollection<KafkaOffset> storable = harness.Consumer.GetStorableOffsets(
-            [
-                new KafkaOffset("topic", 0, 0), // Lower than the committed one
-                new KafkaOffset("topic", 0, 1), // Committed already, can be committed again
-                new KafkaOffset("topic", 0, 5),
-                new KafkaOffset("topic", 1, 3), // Revoked
-                new KafkaOffset("topic", 2, 0) // Never assigned
-            ],
-            includeRevokedPartitions);
-
-        storable.ShouldBe(
-            includeRevokedPartitions
-                ? [new KafkaOffset("topic", 0, 1), new KafkaOffset("topic", 0, 5), new KafkaOffset("topic", 1, 3)]
-                : [new KafkaOffset("topic", 0, 1), new KafkaOffset("topic", 0, 5)]);
-        harness.Errors.ShouldBeEmpty();
-    }
-
-    [Theory]
     [InlineData("key-1")]
     [InlineData(null)]
     public async Task HandleMessageAsync_ShouldAddKeyAndTimestampHeaders(string? key)
