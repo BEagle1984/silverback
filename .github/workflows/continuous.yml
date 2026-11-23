@@ -53,7 +53,7 @@ jobs:
             --results-directory-layout per-module
       # Publish results
       # The results are published as a check run, in the job summary and, on pull requests, in a single comment that is updated
-      # on each push. The token of fork and Dependabot pull requests is read-only, so they get the job summary only.
+      # on each push. The token of fork pull requests is read-only, so they get the job summary only.
       # The step doesn't fail the job: the test steps already do when tests fail, and a reporting error shouldn't.
       - name: Publish test results
         if: ${{ !cancelled() && steps.tests.outcome != 'skipped' }}
@@ -62,8 +62,8 @@ jobs:
         with:
           files: TestResults/**/*.trx
           check_name: Test results
-          check_run: ${{ github.event.pull_request.head.repo.fork != true && github.actor != 'dependabot[bot]' }}
-          comment_mode: ${{ (github.event.pull_request.head.repo.fork == true || github.actor == 'dependabot[bot]') && 'off' || 'always' }}
+          check_run: ${{ github.event.pull_request.head.repo.fork != true }}
+          comment_mode: ${{ github.event.pull_request.head.repo.fork == true && 'off' || 'always' }}
           # Without it, every test of the solution is listed in the check run
           check_run_annotations: none
       - name: Collect hang dumps

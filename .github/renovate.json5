@@ -1,0 +1,245 @@
+// Renovate configuration. Docs: https://docs.renovatebot.com/configuration-options/
+// Rules in packageRules are applied in order and later ones override earlier ones, so the order below matters.
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    // Keep the actions pinned by SHA (the version stays in the trailing comment)
+    "helpers:pinGitHubActionDigests",
+    // Commit messages and PR titles read "chore: update ...", without scope
+    ":semanticCommits",
+    ":semanticCommitTypeAll(chore)",
+    ":semanticCommitScopeDisabled",
+  ],
+
+  // The nuget manager covers the Directory.Packages.props files (root, samples and tests/extended), .config/dotnet-tools.json and
+  // global.json (.NET SDK). Docker images (docker-compose.yaml, Dockerfiles) are deliberately not updated.
+  enabledManagers: ["nuget", "github-actions"],
+
+  // The dependency dashboard issue is enabled by config:recommended
+  timezone: "Europe/Zurich",
+  // All of Friday: the hosted app runs about every 4 hours, so a short window would get a single run
+  schedule: ["* * * * 5"],
+  minimumReleaseAge: "3 days",
+  // The weekly schedule already batches the PRs, a limit would push most of them to the next week (the manual and major PRs
+  // that stay open would otherwise use up the concurrent slots of the automerged groups)
+  prHourlyLimit: 0,
+  prConcurrentLimit: 0,
+
+  // The main ruleset requires the branch to be up to date with main
+  rebaseWhen: "behind-base-branch",
+
+  // Native GitHub auto-merge: the PR merges (rebase) when the required checks pass and the approval is there. The approval of the
+  // automerge PRs comes from .github/workflows/renovate-approve.yml, which keys on the "automerge" label.
+  automergeType: "pr",
+  platformAutomerge: true,
+  automergeStrategy: "rebase",
+
+  // Security PRs skip the schedule and the release age and aren't grouped (vulnerabilityAlerts defaults). They follow the
+  // packageRules below otherwise, so they get the automerge policy of the group the package belongs to.
+
+  packageRules: [
+    // The SDK version passed to actions/setup-dotnet (dotnet-version: 10.0.x) already floats to the latest 10.0 SDK, and the exact
+    // one comes from global.json. It's changed by hand with the next runtime jump.
+    {
+      matchManagers: ["github-actions"],
+      matchDepTypes: ["uses-with"],
+      matchDatasources: ["dotnet-version"],
+      enabled: false,
+    },
+
+    // Bare versions in the props files are bumped (the nuget manager default, which Renovate plans to remove)
+    {
+      matchManagers: ["nuget"],
+      rangeStrategy: "bump",
+    },
+
+    // The nuget manager reads the dotnet tools with semver, which drops 4-part releases (e.g. the ReSharper CLI hotfixes). The
+    // prerelease group keeps the EAP and RC builds (e.g. 2026.3.0-eap01) unstable, so they're never proposed.
+    {
+      matchManagers: ["nuget"],
+      matchFileNames: [".config/dotnet-tools.json"],
+      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(\\.(?<build>\\d+))?(-(?<prerelease>.+))?$",
+    },
+
+    // Silverback.* versions come from $(BaseVersion), they are never updated by Renovate
+    {
+      matchPackageNames: ["Silverback.*"],
+      enabled: false,
+    },
+
+    // Default for every NuGet package that is not matched by a rule below: the packages shipped as dependencies of the Silverback
+    // packages. They are never automerged. New packages land here too, which is the safe default.
+    {
+      matchManagers: ["nuget"],
+      groupName: "shipped dependencies",
+      automerge: false,
+    },
+
+    // Test-only and build-only packages (including the ones used only by the samples and the extended tests) and the dotnet tools
+    // except docfx. Major updates are excluded: they fall back to the rules above and below. The automerge label is added only here,
+    // so that it never ends up on a PR that must not be automerged.
+    {
+      matchManagers: ["nuget"],
+      matchPackageNames: [
+        "BenchmarkDotNet",
+        "coverlet.MTP",
+        "Ductus.FluentDocker",
+        "MartinCostello.Logging.XUnit.v3",
+        "Microsoft.Testing.Extensions.*",
+        "Microsoft.VisualStudio.Threading.Analyzers",
+        "NSubstitute",
+        "Serilog",
+        "Serilog.*",
+        "SharpCompress",
+        "Shouldly",
+        "StyleCop.Analyzers",
+        "Swashbuckle.AspNetCore",
+        "xunit.v3",
+        // dotnet tools (.config/dotnet-tools.json)
+        "dotnet-reportgenerator-globaltool",
+        "jetbrains.resharper.globaltools",
+      ],
+      matchUpdateTypes: ["minor", "patch", "pin", "pinDigest", "digest"],
+      groupName: "test and build tooling",
+      automerge: true,
+      addLabels: ["automerge"],
+    },
+
+    // GitHub Actions (same restriction to non-major updates as above)
+    {
+      matchManagers: ["github-actions"],
+      matchUpdateTypes: ["minor", "patch", "pin", "pinDigest", "digest"],
+      groupName: "github actions",
+      automerge: true,
+      addLabels: ["automerge"],
+    },
+
+    // Runtime-aligned packages: held on .NET 10. The next runtime jump goes straight to the next LTS and has to lift this hold
+    // (and the SDK one below) in the same change, see the upgrade-dotnet skill. An explicit list, because other Microsoft.*
+    // packages are not runtime-aligned.
+    {
+      matchManagers: ["nuget"],
+      matchPackageNames: [
+        "Microsoft.Extensions.*",
+        "Microsoft.EntityFrameworkCore*",
+        "Microsoft.Data.Sqlite*",
+        "Microsoft.AspNetCore.Mvc.Testing",
+        "System.Text.Json",
+        "System.Threading.Channels",
+        "System.Diagnostics.DiagnosticSource",
+        "System.CodeDom",
+        "Npgsql",
+        "Npgsql.EntityFrameworkCore.PostgreSQL",
+      ],
+      groupName: "runtime",
+      // A regex, so that the bound doesn't depend on how the versioning scheme parses ranges
+      allowedVersions: "/^10\\./",
+      automerge: false,
+    },
+
+    // Test packages whose major follows Microsoft.Extensions: held on 10 as well, but they stay in the tooling group
+    {
+      matchManagers: ["nuget"],
+      matchPackageNames: ["Serilog.Extensions.*"],
+      allowedVersions: "/^10\\./",
+    },
+
+    // The .NET SDK (global.json) and the SDK-aligned packages move together, held to the 10.0 SDK line
+    {
+      matchManagers: ["nuget"],
+      matchPackageNames: [
+        "dotnet-sdk",
+        "Microsoft.CodeAnalysis.NetAnalyzers",
+        "Microsoft.SourceLink.GitHub",
+      ],
+      groupName: "sdk",
+      allowedVersions: "/^10\\./",
+      automerge: false,
+      prBodyNotes: [
+        "**Maintainer:** if the SDK feature band changes (e.g. 12.0.1xx to 12.0.2xx), raise the `allowedVersions` of the roslyn rule in `.github/renovate.json5` to the compiler of the new SDK (the product version of `sdk/<version>/Roslyn/bincore/Microsoft.CodeAnalysis.CSharp.dll`).",
+      ],
+    },
+
+    // Roslyn is referenced by the LogEvents source generator, which fails to load (CS9057, fatal with -warnaserror) when Roslyn is
+    // newer than the compiler of the pinned SDK. The BannedApiAnalyzers ship on the Roslyn version line and have the same
+    // constraint. The 10.0.4xx SDK is the last feature band of .NET 10 and its compiler is Roslyn 5.9, so they are held below 5.10
+    // until the next runtime jump, which moves the bound to the compiler of the new SDK (as does each later feature band, see the
+    // note on the sdk PRs). They have their own PR, not in the sdk group, so that a Roslyn version that doesn't build doesn't block
+    // the SDK updates.
+    {
+      matchManagers: ["nuget"],
+      matchPackageNames: [
+        "Microsoft.CodeAnalysis.CSharp",
+        "Microsoft.CodeAnalysis.BannedApiAnalyzers",
+      ],
+      groupName: "roslyn",
+      // 5.0 to 5.9 (a regex, like the holds above)
+      allowedVersions: "/^5\\.[0-9]\\./",
+      automerge: false,
+    },
+
+    // Confluent.* move together. After the update the maintainer must run the update-confluent-kafka skill (it regenerates the
+    // configuration proxies and updates the docs and the changelog).
+    {
+      matchManagers: ["nuget"],
+      matchPackageNames: ["Confluent.*"],
+      groupName: "confluent",
+      automerge: false,
+      addLabels: ["confluent"],
+      prBodyNotes: [
+        "**Maintainer:** run the `update-confluent-kafka` skill on top of this PR (it regenerates the configuration proxies and updates the docs and the changelog) before merging.",
+      ],
+    },
+
+    // MQTTnet has its own PR, like Confluent. After the update the maintainer must run the update-mqttnet skill (it regenerates the
+    // configuration proxies and updates the docs and the changelog).
+    {
+      matchManagers: ["nuget"],
+      matchPackageNames: ["MQTTnet"],
+      groupName: "mqttnet",
+      automerge: false,
+      prBodyNotes: [
+        "**Maintainer:** run the `update-mqttnet` skill on top of this PR (it regenerates the configuration proxies and updates the docs and the changelog) before merging.",
+      ],
+    },
+
+    // docfx is never built on PRs, so a broken update would go unnoticed
+    {
+      matchManagers: ["nuget"],
+      matchPackageNames: ["docfx"],
+      groupName: "docfx",
+      automerge: false,
+    },
+
+    // Every major update gets its own PR (apart from the sets grouped right below) and is never automerged. After the other rules,
+    // to override their groups and automerge.
+    // Confluent keeps its own group, to keep its packages together.
+    {
+      matchUpdateTypes: ["major"],
+      matchPackageNames: ["!Confluent.*"],
+      groupName: null,
+      automerge: false,
+    },
+
+    // Majors of packages that depend on each other's major (with central transitive pinning, one of them alone fails to restore).
+    // One PR per set. The holds above block the Serilog and EF Core sets until the next runtime jump, so these rules matter for
+    // the packages that ship their new major after it.
+    {
+      matchUpdateTypes: ["major"],
+      matchPackageNames: ["Serilog.Extensions.*"],
+      groupName: "serilog extensions",
+    },
+    {
+      matchUpdateTypes: ["major"],
+      matchPackageNames: ["Npgsql*", "Microsoft.EntityFrameworkCore*"],
+      groupName: "npgsql and ef core",
+    },
+    // The testing platform extensions require the same major of Microsoft.Testing.Platform
+    {
+      matchUpdateTypes: ["major"],
+      matchPackageNames: ["Microsoft.Testing.Extensions.*"],
+      groupName: "testing platform",
+    },
+  ],
+}

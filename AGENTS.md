@@ -42,6 +42,11 @@ dotnet test --solution Silverback.slnx
 ## Repository mechanics
 
 - Package versions are managed centrally in `Directory.Packages.props`, so `PackageReference` elements carry no `Version`.
+- Renovate updates the dependencies (`.github/renovate.json5`). The runtime-aligned packages (Microsoft.Extensions.*, EF Core, System.Text.Json
+  and so on, plus Serilog.Extensions.*) and the SDK-aligned ones (the SDK in `global.json`, NetAnalyzers, SourceLink) are held on .NET 10.
+  The next runtime jump goes straight to the next LTS, with no STS in between, and lifts these holds in the same change: run the
+  `upgrade-dotnet` skill (in `.claude/skills`). A Confluent or MQTTnet PR needs the `update-confluent-kafka` or `update-mqttnet` skill run
+  on top of it.
 - Each `.cs` file starts with the two-line copyright header from `stylecop.json`, which StyleCop enforces. Public and protected members in
   `src` need XML docs. `tests/.editorconfig` relaxes many rules for test code.
 - Line endings are CRLF (`.editorconfig`). In Git Bash, `sed -i` silently rewrites files to LF, so edit source files with a tool that keeps
