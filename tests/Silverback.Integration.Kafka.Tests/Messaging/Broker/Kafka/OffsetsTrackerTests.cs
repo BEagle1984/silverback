@@ -61,6 +61,29 @@ public class OffsetsTrackerTests
     }
 
     [Fact]
+    public void GetRollbackOffset_ShouldReturnFirstTrackedOffsetOfPartition()
+    {
+        OffsetsTracker tracker = new();
+
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 1, 2));
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 1, 3));
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 2, 4));
+
+        tracker.GetRollbackOffset(new TopicPartition("topic", 1)).ShouldBe(new KafkaOffset("topic", 1, 2));
+        tracker.GetRollbackOffset(new TopicPartition("topic", 2)).ShouldBe(new KafkaOffset("topic", 2, 4));
+    }
+
+    [Fact]
+    public void GetRollbackOffset_ShouldReturnNull_WhenPartitionIsNotTracked()
+    {
+        OffsetsTracker tracker = new();
+
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 1, 2));
+
+        tracker.GetRollbackOffset(new TopicPartition("topic", 3)).ShouldBeNull();
+    }
+
+    [Fact]
     public void UntrackPartition_ShouldRemovePartitionOffsets()
     {
         OffsetsTracker tracker = new();

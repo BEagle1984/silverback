@@ -210,6 +210,51 @@ public class ConsumerChannelsManagerTests
         }
     }
 
+    [Fact]
+    public async Task StopReadingAsync_ShouldReturnCompletedTask_WhenPartitionHasNoChannel()
+    {
+        BlockingBehavior behavior = new();
+        using KafkaConsumer consumer = CreateConsumer(behavior, true);
+        using ConsumerChannelsManager manager = new(
+            consumer,
+            Substitute.For<IBrokerClientCallbacksInvoker>(),
+            Substitute.For<ISilverbackLogger>());
+
+        TopicPartition readPartition = new("topic", 0);
+        TopicPartition otherPartition = new("topic", 1);
+
+        try
+        {
+            manager.StartReading(readPartition);
+
+            Task stopping = manager.StopReadingAsync(otherPartition);
+
+            stopping.ShouldBeSameAs(Task.CompletedTask);
+            manager.IsReading(readPartition).ShouldBeTrue();
+            manager.GetChannel(otherPartition).ShouldBeNull();
+        }
+        finally
+        {
+            await manager.StopReadingAsync().WaitAsync(TimeSpan.FromSeconds(5));
+        }
+    }
+
+    [Fact]
+    public void Dispose_ShouldDoNothing_WhenAlreadyDisposed()
+    {
+        BlockingBehavior behavior = new();
+        using KafkaConsumer consumer = CreateConsumer(behavior, true);
+        ConsumerChannelsManager manager = new(
+            consumer,
+            Substitute.For<IBrokerClientCallbacksInvoker>(),
+            Substitute.For<ISilverbackLogger>());
+
+        manager.Dispose();
+
+        Should.NotThrow(manager.Dispose);
+        Should.Throw<ObjectDisposedException>(() => manager.Write(CreateRecord(new TopicPartition("topic", 0), 0), CancellationToken.None));
+    }
+
     private static KafkaConsumer CreateConsumer(IConsumerBehavior behavior, bool processPartitionsIndependently)
     {
         IConfluentConsumerWrapper client = Substitute.For<IConfluentConsumerWrapper>();

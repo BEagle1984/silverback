@@ -213,6 +213,47 @@ public class KafkaOffsetTests
     }
 
     [Fact]
+    public void CompareTo_ShouldCompareOffsets_WhenOtherIsKafkaOffsetObject()
+    {
+        KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, 10));
+        object offsetB = new KafkaOffset(new TopicPartitionOffset("test-topic", 2, 5));
+
+        int result = offsetA.CompareTo(offsetB);
+
+        result.ShouldBe(1);
+    }
+
+    [Fact]
+    public void CompareTo_ShouldReturnMinusOne_WhenOtherIsNotKafkaOffset()
+    {
+        KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 2, 10));
+
+        int result = offset.CompareTo(new TestOtherOffset("test-topic", "10"));
+
+        result.ShouldBe(-1);
+    }
+
+    [Fact]
+    public void ToLogString_ShouldReturnPartitionAndOffset()
+    {
+        KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 2, 42));
+
+        string result = offset.ToLogString();
+
+        result.ShouldBe("[2]@42");
+    }
+
+    [Fact]
+    public void ToVerboseLogString_ShouldReturnTopicPartitionAndOffset()
+    {
+        KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 2, 42));
+
+        string result = offset.ToVerboseLogString();
+
+        result.ShouldBe("test-topic[2]@42");
+    }
+
+    [Fact]
     public void Equals_ShouldReturnTrue_WhenSameInstance()
     {
         KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 0, 42));
