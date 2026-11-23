@@ -16,24 +16,24 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 public record MqttLastWillMessageConfiguration : IValidatableSettings
 {
     /// <summary>
-    ///     Gets the content type.
+    ///     Gets the content type. This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the connection fail.
     /// </summary>
     public string? ContentType { get; init; }
 
     /// <summary>
-    ///     Gets the correlation data.
+    ///     Gets the correlation data. This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the connection fail.
     /// </summary>
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Same as wrapped library")]
     public byte[]? CorrelationData { get; init; }
 
     /// <summary>
     ///     Gets the number of seconds to wait before sending the last will message. If the client reconnects between this interval the message
-    ///     will not be sent.
+    ///     will not be sent. This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the connection fail.
     /// </summary>
     public uint Delay { get; init; }
 
     /// <summary>
-    ///     Gets the message expiry interval.
+    ///     Gets the message expiry interval. This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the connection fail.
     /// </summary>
     public uint Expiration { get; init; }
 
@@ -44,7 +44,8 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     public byte[]? Payload { get; init; }
 
     /// <summary>
-    ///     Gets the payload format indicator.
+    ///     Gets the payload format indicator. This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the connection
+    ///     fail.
     /// </summary>
     public MqttPayloadFormatIndicator PayloadFormatIndicator { get; init; }
 
@@ -55,7 +56,7 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     public MqttQualityOfServiceLevel QualityOfServiceLevel { get; init; }
 
     /// <summary>
-    ///     Gets the response topic.
+    ///     Gets the response topic. This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the connection fail.
     /// </summary>
     public string? ResponseTopic { get; init; }
 
@@ -71,7 +72,8 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     public string Topic { get; init; } = "";
 
     /// <summary>
-    ///     Gets the user properties of the will message.
+    ///     Gets the user properties of the will message. This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the
+    ///     connection fail.
     /// </summary>
     public IValueReadOnlyCollection<MqttUserProperty> UserProperties { get; init; } = ValueReadOnlyCollection.Empty<MqttUserProperty>();
 

@@ -116,15 +116,16 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     list will be refreshed every interval but no more often than every 10s.");
                 break;
             case nameof(ClientConfig.MetadataMaxAgeMs):
-                builder.AppendLine("    ///     Gets the metadata cache max age (in milliseconds). Defaults to <see cref=\"TopicMetadataRefreshIntervalMs\" />.");
+                builder.AppendLine("    ///     Gets the metadata cache max age (in milliseconds). Defaults to three times the <see cref=\"TopicMetadataRefreshIntervalMs\" />.");
                 break;
             case nameof(ClientConfig.TopicMetadataRefreshFastIntervalMs):
-                builder.AppendLine("    ///     Gets the refresh interval (in milliseconds) to be applied instead of the <see cref=\"TopicMetadataRefreshIntervalMs\" />");
-                builder.AppendLine("    ///     when a topic loses its leader and a new metadata request will be enqueued. This initial interval will be exponentially increased");
-                builder.AppendLine("    ///     until the topic metadata has been refreshed. This is used to recover quickly from transitioning leader brokers.");
+                builder.AppendLine("    ///     Gets the initial refresh interval (in milliseconds) to be applied when a topic loses its leader. A new metadata request is enqueued");
+                builder.AppendLine("    ///     immediately and then with this initial interval, exponentially increasing up to <see cref=\"RetryBackoffMaxMs\" />, until the topic");
+                builder.AppendLine("    ///     metadata has been refreshed. If not set explicitly, it defaults to <see cref=\"RetryBackoffMs\" />. This is used to recover quickly");
+                builder.AppendLine("    ///     from transitioning leader brokers.");
                 break;
             case nameof(ClientConfig.TopicMetadataRefreshSparse):
-                builder.AppendLine("    ///     Gets a value indicating whether less metadata requests must be performed (consuming less network bandwidth).");
+                builder.AppendLine("    ///     Gets a value indicating whether sparse topic metadata requests are performed, which consume less network bandwidth.");
                 break;
             case nameof(ClientConfig.TopicMetadataPropagationMaxMs):
                 builder.AppendLine("    ///     Gets the delay (in milliseconds) to be applied before marking a topic as non-existent. The maximum propagation time is calculated");
@@ -188,21 +189,26 @@ public static class DocumentationProvider
             case nameof(ClientConfig.ApiVersionRequest):
                 builder.AppendLine("    ///     Gets a value indicating whether the broker's supported API versions must be requested to adjust the functionality to the available protocol features.");
                 builder.AppendLine("    ///     If set to <c>false</c>, or the API version request fails, the fallback version <see cref=\"BrokerVersionFallback\" /> will be used.");
+                builder.AppendLine("    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.");
                 break;
             case nameof(ClientConfig.ApiVersionRequestTimeoutMs):
                 builder.AppendLine("    ///     Gets the timeout (in milliseconds) for the broker API version requests.");
                 break;
             case nameof(ClientConfig.ApiVersionFallbackMs):
-                builder.AppendLine("    ///     Gets how long the <see cref=\"BrokerVersionFallback\" /> is used in the case the API version request fails.");
+                builder.AppendLine("    ///     Gets how long (in milliseconds) the <see cref=\"BrokerVersionFallback\" /> is used in the case the API version request fails.");
+                builder.AppendLine("    ///     The API version request is only issued when a new connection to the broker is made.");
+                builder.AppendLine("    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.");
                 break;
             case nameof(ClientConfig.BrokerVersionFallback):
                 builder.AppendLine("    ///     Gets the broker API version to be used when the API version request fails or it's disabled. Older broker versions (before 0.10.0) don't support");
                 builder.AppendLine("    ///     the API version request. Valid values are: 0.9.0, 0.8.2, 0.8.1, 0.8.0. Any other value &gt;= 0.10, such as 0.10.2.1, enables the <see cref=\"ApiVersionRequest\" />.");
+                builder.AppendLine("    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.");
                 break;
             case nameof(ClientConfig.AllowAutoCreateTopics):
                 builder.AppendLine("    ///     Gets a value indicating whether topics can be automatically created on the broker when subscribing to or assigning a non-existent");
                 builder.AppendLine("    ///     topic. The broker must also be configured with <c>auto.create.topics.enable=true</c> for this configuration to take effect.");
-                builder.AppendLine("    ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.");
+                builder.AppendLine("    ///     Note: the default value is <c>true</c> for the producer and <c>false</c> for the consumer (unlike the Java consumer, which defaults");
+                builder.AppendLine("    ///     to <c>true</c>). Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.");
                 break;
             case nameof(ClientConfig.SecurityProtocol):
                 builder.AppendLine("    ///     Gets the protocol to be used to communicate with the brokers.");
@@ -268,7 +274,8 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the comma-separated list of OpenSSL 3.0.x implementation providers.");
                 break;
             case nameof(ClientConfig.SslEngineLocation):
-                builder.AppendLine("    ///     Gets the path to the OpenSSL engine library. OpenSSL &gt;= 1.1.0 required.");
+                builder.AppendLine("    ///     Gets the path to the OpenSSL engine library. OpenSSL &gt;= 1.1.x required.");
+                builder.AppendLine("    ///     <br />Deprecated: the OpenSSL engine support is deprecated and should be replaced by the OpenSSL 3 providers (see <see cref=\"SslProviders\" />).");
                 break;
             case nameof(ClientConfig.SslEngineId):
                 builder.AppendLine("    ///     Gets the OpenSSL engine id (the name used for loading engine).");
@@ -373,13 +380,19 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the path to the JWT template file. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\" and JWT assertion is needed.");
                 break;
             case nameof(ClientConfig.SaslOauthbearerMetadataAuthenticationType):
-                builder.AppendLine("    ///     Gets the type of metadata-based authentication to use for OAUTHBEARER/OIDC <c>azure_imds</c> authenticates using the Azure IMDS endpoint. Sets a default value for <c>sasl.oauthbearer.token.endpoint.url</c> if missing. Configuration values specific of chosen authentication type can be passed through <c>sasl.oauthbearer.config</c>.");
+                builder.AppendLine("    ///     Gets the type of metadata-based authentication to use for OAUTHBEARER/OIDC.");
+                builder.AppendLine("    ///     <see cref=\"Confluent.Kafka.SaslOauthbearerMetadataAuthenticationType.AzureIMDS\" /> authenticates using the Azure IMDS endpoint and sets a default");
+                builder.AppendLine("    ///     value for <see cref=\"SaslOauthbearerTokenEndpointUrl\" /> if missing.");
+                builder.AppendLine("    ///     <see cref=\"Confluent.Kafka.SaslOauthbearerMetadataAuthenticationType.AwsIam\" /> indicates AWS IAM-based authentication using the");
+                builder.AppendLine("    ///     GetWebIdentityToken API; librdkafka does not implement this token flow natively.");
+                builder.AppendLine("    ///     Configuration values specific of the chosen authentication type can be passed through <see cref=\"SaslOauthbearerConfig\" />.");
                 break;
             case nameof(ClientConfig.PluginLibraryPaths):
                 builder.AppendLine("    ///     Gets the list of plugin libraries to load (<c>;</c> separated). The library search path is platform dependent. If no filename extension is specified the platform-specific extension (such as .dll or .so) will be appended automatically.");
                 break;
             case nameof(ClientConfig.ClientRack):
                 builder.AppendLine("    ///     Gets the rack identifier for this client. This can be any string value which indicates where this client is physically located.");
+                builder.AppendLine("    ///     It corresponds with the broker's <c>broker.rack</c> configuration.");
                 break;
             case nameof(ClientConfig.RetryBackoffMs):
                 builder.AppendLine("    ///     Gets the backoff time in milliseconds before retrying a protocol request, this is the first backoff time, and will be backed off exponentially until number of retries is exhausted, ");
@@ -426,19 +439,29 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the partition assignment strategy: <see cref=\"Confluent.Kafka.PartitionAssignmentStrategy.Range\" /> to co-localize the partitions");
                 builder.AppendLine("    ///     of several topics, <see cref=\"Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin\" /> to evenly distribute the partitions among");
                 builder.AppendLine("    ///     the consumer group members, <see cref=\"Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky\" /> to evenly distribute the");
-                builder.AppendLine("    ///     partitions and limit minimize the partitions movements. The default is <see cref=\"Confluent.Kafka.PartitionAssignmentStrategy.Range\" />.");
+                builder.AppendLine("    ///     partitions and minimize the partitions movements. The default is <c>range,roundrobin</c>, which prefers");
+                builder.AppendLine("    ///     <see cref=\"Confluent.Kafka.PartitionAssignmentStrategy.Range\" /> when it is supported by all group members.");
+                builder.AppendLine("    ///     This setting is not supported when <see cref=\"GroupProtocol\" /> is <see cref=\"Confluent.Kafka.GroupProtocol.Consumer\" />: use");
+                builder.AppendLine("    ///     <see cref=\"GroupRemoteAssignor\" /> instead.");
                 break;
             case nameof(ConsumerConfig.SessionTimeoutMs):
                 builder.AppendLine("    ///     Gets the client group session and failure detection timeout (in milliseconds). The consumer sends periodic heartbeats");
                 builder.AppendLine("    ///     <see cref=\"HeartbeatIntervalMs\" /> to indicate its liveness to the broker. If no heartbeat is received by the broker for a group");
-                builder.AppendLine("    ///     member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance. Also see");
-                builder.AppendLine("    ///     <see cref=\"MaxPollIntervalMs\" />.");
+                builder.AppendLine("    ///     member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance.");
+                builder.AppendLine("    ///     The allowed range is configured with the broker configuration properties <c>group.min.session.timeout.ms</c> and");
+                builder.AppendLine("    ///     <c>group.max.session.timeout.ms</c>. This setting is not supported when <see cref=\"GroupProtocol\" /> is");
+                builder.AppendLine("    ///     <see cref=\"Confluent.Kafka.GroupProtocol.Consumer\" />, in which case the session timeout is set on the broker");
+                builder.AppendLine("    ///     (<c>group.consumer.session.timeout.ms</c>). Also see <see cref=\"MaxPollIntervalMs\" />.");
                 break;
             case nameof(ConsumerConfig.HeartbeatIntervalMs):
                 builder.AppendLine("    ///     Gets the interval (in milliseconds) at which the heartbeats have to be sent to the broker.");
+                builder.AppendLine("    ///     This setting is not supported when <see cref=\"GroupProtocol\" /> is <see cref=\"Confluent.Kafka.GroupProtocol.Consumer\" />, in which");
+                builder.AppendLine("    ///     case the heartbeat interval is set on the broker (<c>group.consumer.heartbeat.interval.ms</c>).");
                 break;
             case nameof(ConsumerConfig.GroupProtocolType):
-                builder.AppendLine("    ///     Gets the group protocol type.");
+                builder.AppendLine("    ///     Gets the group protocol type for the <see cref=\"Confluent.Kafka.GroupProtocol.Classic\" /> group protocol. Currently, the only supported");
+                builder.AppendLine("    ///     group protocol type is <c>consumer</c>. This setting is not supported when <see cref=\"GroupProtocol\" /> is");
+                builder.AppendLine("    ///     <see cref=\"Confluent.Kafka.GroupProtocol.Consumer\" />.");
                 break;
             case nameof(ConsumerConfig.CoordinatorQueryIntervalMs):
                 builder.AppendLine("    ///     Gets the interval (in milliseconds) at which the current group coordinator must be queried. If the currently assigned coordinator");
@@ -457,7 +480,7 @@ public static class DocumentationProvider
                 break;
             case nameof(ConsumerConfig.QueuedMaxMessagesKbytes):
                 builder.AppendLine("    ///     Gets the maximum number of kilobytes of queued pre-fetched messages to store in the local consumer queue. This setting applies to");
-                builder.AppendLine("    ///     the single consumer queue, regardless of the number of partitions. This value may be overshot by <see cref=\"FetchMaxBytes\" />. This");
+                builder.AppendLine("    ///     the single consumer queue, regardless of the number of partitions. This value may be overshot by <see cref=\"MaxPartitionFetchBytes\" />. This");
                 builder.AppendLine("    ///     property has higher priority than <see cref=\"QueuedMinMessages\" />.");
                 break;
             case nameof(ConsumerConfig.FetchWaitMaxMs):
@@ -507,7 +530,7 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     delays between messages. Low values may increase CPU utilization.");
                 break;
             case nameof(ConsumerConfig.MaxPollRecords):
-                builder.AppendLine("    ///     Gets the maximum number of records returned in a single call to <see cref=\"IConsumer{TKey,TValue}.Consume(System.TimeSpan)\" />.");
+                builder.AppendLine("    ///     Gets the maximum number of records returned in a single share consumer poll (<c>rd_kafka_share_poll()</c>).");
                 builder.AppendLine("    ///     This value is sent to the broker in the ShareFetch request and therefore bounds the number of records the broker acquires and returns per fetch. Note: this limit is currently best-effort and not strictly enforced, ");
                 builder.AppendLine("    ///     so a poll may occasionally return more records than this value. This property is only supported for share consumers.");
                 break;
@@ -556,7 +579,8 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the identifier to be used to identify the same transactional producer instance across process restarts. This is required to");
                 builder.AppendLine("    ///     enable the transactional producer and it allows the producer to guarantee that transactions corresponding to earlier instances of");
                 builder.AppendLine("    ///     the same producer have been finalized prior to starting any new transaction, and that any zombie instances are fenced off. If no");
-                builder.AppendLine("    ///     <see cref=\"TransactionalId\" /> is provided, then the producer is limited to idempotent delivery (see <see cref=\"EnableIdempotence\" />).");
+                builder.AppendLine("    ///     <see cref=\"TransactionalId\" /> is provided, then the producer is limited to idempotent delivery (if <see cref=\"EnableIdempotence\" />");
+                builder.AppendLine("    ///     is set).");
                 builder.AppendLine("    ///     Requires broker version &gt;= 0.11.0.");
                 break;
             case nameof(ProducerConfig.TransactionTimeoutMs):
@@ -577,11 +601,13 @@ public static class DocumentationProvider
                 break;
             case nameof(ProducerConfig.EnableGaplessGuarantee):
                 builder.AppendLine("    ///     Gets a value indicating whether an error that could result in a gap in the produced message series when a batch of messages fails,");
-                builder.AppendLine("    ///     must raise a fatal error (ERR_GAPLESS_GUARANTEE) and stop the producer. Messages failing due to <see cref=\"MessageTimeoutMs\" /> are");
+                builder.AppendLine("    ///     must raise a fatal error (<see cref=\"Confluent.Kafka.ErrorCode.Local_GaplessGuarantee\" />) and stop the producer. Messages failing due to <see cref=\"MessageTimeoutMs\" /> are");
                 builder.AppendLine("    ///     not covered by this guarantee. Requires <see cref=\"EnableIdempotence\" />=true.");
+                builder.AppendLine("    ///     This setting is experimental and subject to change or removal.");
                 break;
             case nameof(ProducerConfig.QueueBufferingMaxMessages):
                 builder.AppendLine("    ///     Gets the maximum number of messages allowed on the producer queue. This queue is shared by all topics and partitions.");
+                builder.AppendLine("    ///     A value of 0 disables this limit.");
                 break;
             case nameof(ProducerConfig.QueueBufferingMaxKbytes):
                 builder.AppendLine("    ///     Gets the maximum total message size sum allowed on the producer queue. This queue is shared by all topics and partitions. This");
@@ -595,9 +621,6 @@ public static class DocumentationProvider
             case nameof(ProducerConfig.MessageSendMaxRetries):
                 builder.AppendLine("    ///     Gets how many times to retry sending a failing message.<br />");
                 builder.AppendLine("    ///     Note: retrying may cause reordering unless <see cref=\"EnableIdempotence\" /> is set to <c>true</c>.");
-                break;
-            case nameof(ProducerConfig.RetryBackoffMs):
-                builder.AppendLine("    ///     Gets the backoff time in milliseconds before retrying a request.");
                 break;
             case nameof(ProducerConfig.QueueBufferingBackpressureThreshold):
                 builder.AppendLine("    ///     Gets the threshold of outstanding not yet transmitted broker requests needed to backpressure the producer's message accumulator.");
@@ -633,8 +656,11 @@ public static class DocumentationProvider
         switch (property.Name)
         {
             case nameof(SchemaRegistryConfig.BasicAuthCredentialsSource):
-                builder.AppendLine("    ///     Gets the source of the basic authentication credentials. This specifies whether the credentials are specified in the <see cref=\"BasicAuthUserInfo\" />");
-                builder.AppendLine("    ///     or they are inherited from the producer or consumer configuration.");
+                builder.AppendLine("    ///     Gets the source of the basic authentication credentials. With <see cref=\"Confluent.SchemaRegistry.AuthCredentialsSource.UserInfo\" />");
+                builder.AppendLine("    ///     the credentials are specified in the <see cref=\"BasicAuthUserInfo\" />.");
+                builder.AppendLine("    ///     <see cref=\"Confluent.SchemaRegistry.AuthCredentialsSource.SaslInherit\" /> requires the <c>sasl.username</c> and <c>sasl.password</c>");
+                builder.AppendLine("    ///     properties in the schema registry configuration, which are neither inherited from the producer or consumer configuration nor exposed");
+                builder.AppendLine("    ///     by this configuration.");
                 break;
             case nameof(SchemaRegistryConfig.Url):
                 builder.AppendLine("    ///     Gets the comma-separated list of URLs for schema registry instances that are used to register or lookup schemas.");
@@ -643,10 +669,7 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the timeout in milliseconds for the requests to the Confluent schema registry.");
                 break;
             case nameof(SchemaRegistryConfig.SslCaLocation):
-                builder.AppendLine("    ///     Gets the file or directory path to the CA certificate(s) for verifying the registry's key. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store.");
-                builder.AppendLine("    ///     On Mac OSX this configuration defaults to <c>probe</c>. It is recommended to install openssl using Homebrew, to provide CA certificates. On Linux install the distribution's ca-certificates package.");
-                builder.AppendLine("    ///     If OpenSSL is statically linked or <see cref=\"SslCaLocation\" /> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.");
-                builder.AppendLine("    ///     If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see <c>OPENSSLDIR</c> in <c>openssl version -a</c>).");
+                builder.AppendLine("    ///     Gets the file or directory path to the CA certificate(s) for verifying the registry's key.");
                 break;
             case nameof(SchemaRegistryConfig.SslKeystoreLocation):
                 builder.AppendLine("    ///     Gets the path to the client's keystore (PKCS#12) used for the authentication.");
@@ -656,6 +679,7 @@ public static class DocumentationProvider
                 break;
             case nameof(SchemaRegistryConfig.EnableSslCertificateVerification):
                 builder.AppendLine("    ///     Gets a value indicating whether the registry (server) certificate must be verified.");
+                builder.AppendLine("    ///     Disabling the verification is insecure and should only be done in contained test or development environments.");
                 break;
             case nameof(SchemaRegistryConfig.MaxCachedSchemas):
                 builder.AppendLine("    ///     Gets the maximum number of schemas that are cached by the schema registry client.");

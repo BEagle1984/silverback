@@ -568,7 +568,10 @@ public partial class KafkaConsumerConfigurationBuilder
     ///     Sets the partition assignment strategy: <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" /> to co-localize the partitions
     ///     of several topics, <see cref="Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin" /> to evenly distribute the partitions among
     ///     the consumer group members, <see cref="Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky" /> to evenly distribute the
-    ///     partitions and minimize the partitions movements. The default is <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" />.
+    ///     partitions and minimize the partitions movements. The default is <c>range,roundrobin</c>, which prefers
+    ///     <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" /> when it is supported by all group members.
+    ///     This setting is not supported when <see cref="KafkaConsumerConfiguration.GroupProtocol" /> is <see cref="Confluent.Kafka.GroupProtocol.Consumer" />: use
+    ///     <see cref="WithGroupRemoteAssignor" /> instead.
     /// </summary>
     /// <param name="partitionAssignmentStrategy">
     ///     The partition assignment strategy.
@@ -580,7 +583,8 @@ public partial class KafkaConsumerConfigurationBuilder
 
     /// <summary>
     ///     Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" /> to co-localize the
-    ///     partitions of several topics.
+    ///     partitions of several topics. This setting is not supported when <see cref="KafkaConsumerConfiguration.GroupProtocol" /> is
+    ///     <see cref="Confluent.Kafka.GroupProtocol.Consumer" />: use <see cref="WithGroupRemoteAssignor" /> instead.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
@@ -589,7 +593,9 @@ public partial class KafkaConsumerConfigurationBuilder
 
     /// <summary>
     ///     Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin" /> to evenly distribute
-    ///     the partitions among the consumer group members.
+    ///     the partitions among the consumer group members. This setting is not supported when
+    ///     <see cref="KafkaConsumerConfiguration.GroupProtocol" /> is <see cref="Confluent.Kafka.GroupProtocol.Consumer" />: use
+    ///     <see cref="WithGroupRemoteAssignor" /> instead.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
@@ -598,7 +604,9 @@ public partial class KafkaConsumerConfigurationBuilder
 
     /// <summary>
     ///     Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky" /> to evenly distribute
-    ///     the partitions and minimize the partitions movements.
+    ///     the partitions and minimize the partitions movements. This setting is not supported when
+    ///     <see cref="KafkaConsumerConfiguration.GroupProtocol" /> is <see cref="Confluent.Kafka.GroupProtocol.Consumer" />: use
+    ///     <see cref="WithGroupRemoteAssignor" /> instead.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
@@ -609,6 +617,9 @@ public partial class KafkaConsumerConfigurationBuilder
     ///     Sets the client group session and failure detection timeout (in milliseconds). The consumer sends periodic heartbeats
     ///     <see cref="KafkaConsumerConfiguration.HeartbeatIntervalMs" /> to indicate its liveness to the broker. If no heartbeat is received
     ///     by the broker for a group member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance.
+    ///     The allowed range is configured with the broker configuration properties <c>group.min.session.timeout.ms</c> and
+    ///     <c>group.max.session.timeout.ms</c>. This setting is not supported when <see cref="KafkaConsumerConfiguration.GroupProtocol" /> is <see cref="Confluent.Kafka.GroupProtocol.Consumer" />,
+    ///     in which case the session timeout is set on the broker (<c>group.consumer.session.timeout.ms</c>).
     ///     Also see <see cref="KafkaConsumerConfiguration.MaxPollIntervalMs" />.
     /// </summary>
     /// <param name="sessionTimeoutMs">
@@ -621,6 +632,8 @@ public partial class KafkaConsumerConfigurationBuilder
 
     /// <summary>
     ///     Sets the interval (in milliseconds) at which the heartbeats have to be sent to the broker.
+    ///     This setting is not supported when <see cref="KafkaConsumerConfiguration.GroupProtocol" /> is <see cref="Confluent.Kafka.GroupProtocol.Consumer" />, in which case
+    ///     the heartbeat interval is set on the broker (<c>group.consumer.heartbeat.interval.ms</c>).
     /// </summary>
     /// <param name="heartbeatIntervalMs">
     ///     The interval at which the heartbeats have to be sent.
@@ -631,7 +644,8 @@ public partial class KafkaConsumerConfigurationBuilder
     public partial KafkaConsumerConfigurationBuilder WithHeartbeatIntervalMs(int? heartbeatIntervalMs);
 
     /// <summary>
-    ///     Sets the group protocol type.
+    ///     Sets the group protocol type for the <see cref="Confluent.Kafka.GroupProtocol.Classic" /> group protocol. Currently, the only supported
+    ///     group protocol type is <c>consumer</c>. This setting is not supported when <see cref="KafkaConsumerConfiguration.GroupProtocol" /> is <see cref="Confluent.Kafka.GroupProtocol.Consumer" />.
     /// </summary>
     /// <param name="groupProtocolType">
     ///     The group protocol type.
@@ -691,7 +705,7 @@ public partial class KafkaConsumerConfigurationBuilder
     /// <summary>
     ///     Sets the maximum number of kilobytes of queued pre-fetched messages to store in the local consumer queue. This setting applies to
     ///     the single consumer queue, regardless of the number of partitions. This value may be overshot by
-    ///     <see cref="KafkaConsumerConfiguration.FetchMaxBytes" />. This property has higher priority than
+    ///     <see cref="KafkaConsumerConfiguration.MaxPartitionFetchBytes" />. This property has higher priority than
     ///     <see cref="KafkaConsumerConfiguration.QueuedMinMessages" />.
     /// </summary>
     /// <param name="queuedMaxMessagesKbytes">
@@ -791,8 +805,8 @@ public partial class KafkaConsumerConfigurationBuilder
     }
 
     /// <summary>
-    ///     Disables the verification of the CRC32 of the consumed messages, ensuring no on-the-wire or on-disk corruption to the messages
-    ///     occurred. This check comes at slightly increased CPU usage.
+    ///     Disables the verification of the CRC32 of the consumed messages, avoiding the slightly increased CPU usage of the check. This is the
+    ///     default.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
@@ -845,7 +859,7 @@ public partial class KafkaConsumerConfigurationBuilder
     public partial KafkaConsumerConfigurationBuilder WithFetchQueueBackoffMs(int? fetchQueueBackoffMs);
 
     /// <summary>
-    ///     Sets the maximum number of records returned in a single call to <see cref="IConsumer{TKey,TValue}.Consume(System.TimeSpan)" />.
+    ///     Sets the maximum number of records returned in a single share consumer poll (<c>rd_kafka_share_poll()</c>).
     ///     This value is sent to the broker in the ShareFetch request and therefore bounds the number of records the broker acquires and returns per fetch. Note: this limit is currently best-effort and not strictly enforced,
     ///     so a poll may occasionally return more records than this value. This property is only supported for share consumers.
     /// </summary>

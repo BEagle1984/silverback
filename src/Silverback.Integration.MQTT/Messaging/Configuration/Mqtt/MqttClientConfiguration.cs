@@ -21,7 +21,8 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 public sealed partial record MqttClientConfiguration : IValidatableSettings
 {
     /// <summary>
-    ///     Gets the client identifier. The default is <c>Guid.NewGuid().ToString()</c>.
+    ///     Gets the client identifier. It must be unique across all clients connected to the broker, otherwise the clients will disconnect each
+    ///     other. The default is a new <see cref="Guid" /> (<c>Guid.NewGuid().ToString("N")</c>).
     /// </summary>
     public string ClientId { get; init; } = Guid.NewGuid().ToString("N");
 
@@ -32,7 +33,8 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
 
     /// <summary>
     ///     Gets the list of user properties to be sent with the <i>CONNECT</i> packet. They can be used to send connection related
-    ///     properties from the client to the server.
+    ///     properties from the client to the server. This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the
+    ///     connection fail.
     /// </summary>
     public IValueReadOnlyCollection<MqttUserProperty> UserProperties { get; init; } = ValueReadOnlyCollection.Empty<MqttUserProperty>();
 

@@ -166,7 +166,7 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     public partial TBuilder WithTopicMetadataRefreshIntervalMs(int? topicMetadataRefreshIntervalMs);
 
     /// <summary>
-    ///     Sets the metadata cache max age (in milliseconds). Defaults to <see cref="KafkaClientConfiguration{TClientConfig}.TopicMetadataRefreshIntervalMs" />.
+    ///     Sets the metadata cache max age (in milliseconds). Defaults to three times the <see cref="KafkaClientConfiguration{TClientConfig}.TopicMetadataRefreshIntervalMs" />.
     /// </summary>
     /// <param name="metadataMaxAgeMs">
     ///     The metadata cache max age.
@@ -177,9 +177,11 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     public partial TBuilder WithMetadataMaxAgeMs(int? metadataMaxAgeMs);
 
     /// <summary>
-    ///     Sets the refresh interval (in milliseconds) to be applied instead of the <see cref="KafkaClientConfiguration{TClientConfig}.TopicMetadataRefreshIntervalMs" />
-    ///     when a topic loses its leader and a new metadata request will be enqueued. This initial interval will be exponentially increased
-    ///     until the topic metadata has been refreshed. This is used to recover quickly from transitioning leader brokers.
+    ///     Sets the initial refresh interval (in milliseconds) to be applied when a topic loses its leader. A new metadata request is enqueued
+    ///     immediately and then with this initial interval, exponentially increasing up to
+    ///     <see cref="KafkaClientConfiguration{TClientConfig}.RetryBackoffMaxMs" />, until the topic metadata has been refreshed. If not set
+    ///     explicitly, it defaults to <see cref="KafkaClientConfiguration{TClientConfig}.RetryBackoffMs" />. This is used to recover quickly from
+    ///     transitioning leader brokers.
     /// </summary>
     /// <param name="topicMetadataRefreshFastIntervalMs">
     ///     The refresh interval.
@@ -190,7 +192,7 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     public partial TBuilder WithTopicMetadataRefreshFastIntervalMs(int? topicMetadataRefreshFastIntervalMs);
 
     /// <summary>
-    ///     Enables Generates less topic metadata requests (consuming less network bandwidth).
+    ///     Enables sparse topic metadata requests, which consume less network bandwidth.
     /// </summary>
     /// <returns>
     ///     The builder so that additional calls can be chained.
@@ -429,6 +431,7 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     /// <summary>
     ///     Enables the API versions requests to adjust the functionality according to the available protocol features.
     ///     If the request fails, the fallback version specified in <see cref="KafkaClientConfiguration{TClientConfig}.BrokerVersionFallback" /> will be used.
+    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.
     /// </summary>
     /// <returns>
     ///     The builder so that additional calls can be chained.
@@ -441,6 +444,7 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
 
     /// <summary>
     ///     Disables the API versions requests and uses the fallback version specified in <see cref="KafkaClientConfiguration{TClientConfig}.BrokerVersionFallback" />.
+    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.
     /// </summary>
     /// <returns>
     ///     The builder so that additional calls can be chained.
@@ -463,7 +467,9 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     public partial TBuilder WithApiVersionRequestTimeoutMs(int? apiVersionRequestTimeoutMs);
 
     /// <summary>
-    ///     Sets how long the <see cref="KafkaClientConfiguration{TClientConfig}.BrokerVersionFallback" /> is used in the case the API version request fails.
+    ///     Sets how long (in milliseconds) the <see cref="KafkaClientConfiguration{TClientConfig}.BrokerVersionFallback" /> is used in the case the API version request fails.
+    ///     The API version request is only issued when a new connection to the broker is made.
+    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.
     /// </summary>
     /// <param name="apiVersionFallbackMs">
     ///     How long the fallback API version must be used.
@@ -476,6 +482,7 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     /// <summary>
     ///     Sets the broker API version to be used when the API version request fails or it's disabled. Older broker versions (before 0.10.0) don't support
     ///     the API version request. Valid values are: 0.9.0, 0.8.2, 0.8.1, 0.8.0. Any other value &gt;= 0.10, such as 0.10.2.1, enables the <see cref="KafkaClientConfiguration{TClientConfig}.ApiVersionRequest" />.
+    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.
     /// </summary>
     /// <param name="brokerVersionFallback">
     ///     The broker API version to be used as fallback.
@@ -486,9 +493,10 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     public partial TBuilder WithBrokerVersionFallback(string? brokerVersionFallback);
 
     /// <summary>
-    ///     Allow automatic topic creation on the broker when subscribing to or assigning non-existent topics. The broker must also
-    ///     be configured with `auto.create.topics.enable=true` for this configuration to take effect.
-    ///     Note: The default value (false) is different from the Java consumer (true).
+    ///     Allows automatic topic creation on the broker when subscribing to or assigning non-existent topics. The broker must also
+    ///     be configured with <c>auto.create.topics.enable=true</c> for this configuration to take effect.
+    ///     Note: the default value is <c>true</c> for the producer and <c>false</c> for the consumer (unlike the Java consumer, which
+    ///     defaults to <c>true</c>).
     ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
     /// </summary>
     /// <returns>
@@ -497,7 +505,7 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     public TBuilder AllowAutoCreateTopics() => WithAllowAutoCreateTopics(true);
 
     /// <summary>
-    ///     Disallow automatic topic creation on the broker when subscribing to or assigning non-existent topics.
+    ///     Disallows automatic topic creation on the broker when subscribing to or assigning non-existent topics.
     /// </summary>
     /// <returns>
     ///     The builder so that additional calls can be chained.
@@ -712,7 +720,9 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     public partial TBuilder WithSslProviders(string? sslProviders);
 
     /// <summary>
-    ///     Sets the path to the OpenSSL engine library. OpenSSL &gt;= 1.1.0 required.
+    ///     Sets the path to the OpenSSL engine library. OpenSSL &gt;= 1.1.x required.
+    ///     <br />Deprecated: the OpenSSL engine support is deprecated and should be replaced by the OpenSSL 3 providers (see
+    ///     <see cref="KafkaClientConfiguration{TClientConfig}.SslProviders" />).
     /// </summary>
     /// <param name="sslEngineLocation">
     ///     The path to the OpenSSL engine library.
@@ -1149,7 +1159,12 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
     public partial TBuilder WithSaslOauthbearerAssertionJwtTemplateFile(string? saslOauthbearerAssertionJwtTemplateFile);
 
     /// <summary>
-    ///     Sets the type of metadata-based authentication to use for OAUTHBEARER/OIDC <c>azure_imds</c> authenticates using the Azure IMDS endpoint. Sets a default value for <c>sasl.oauthbearer.token.endpoint.url</c> if missing. Configuration values specific of chosen authentication type can be passed through <c>sasl.oauthbearer.config</c>.
+    ///     Sets the type of metadata-based authentication to use for OAUTHBEARER/OIDC.
+    ///     <see cref="Confluent.Kafka.SaslOauthbearerMetadataAuthenticationType.AzureIMDS" /> authenticates using the Azure IMDS endpoint and sets a default
+    ///     value for <see cref="KafkaClientConfiguration{TClientConfig}.SaslOauthbearerTokenEndpointUrl" /> if missing.
+    ///     <see cref="Confluent.Kafka.SaslOauthbearerMetadataAuthenticationType.AwsIam" /> indicates AWS IAM-based authentication using the
+    ///     GetWebIdentityToken API; librdkafka does not implement this token flow natively.
+    ///     Configuration values specific of the chosen authentication type can be passed through <see cref="KafkaClientConfiguration{TClientConfig}.SaslOauthbearerConfig" />.
     /// </summary>
     /// <param name="saslOauthbearerMetadataAuthenticationType">
     ///     The type of metadata-based authentication to use for OAUTHBEARER/OIDC.
@@ -1173,6 +1188,7 @@ public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluen
 
     /// <summary>
     ///     Sets the rack identifier for this client. This can be any string value which indicates where this client is physically located.
+    ///     It corresponds with the broker's <c>broker.rack</c> configuration.
     /// </summary>
     /// <param name="clientRack">
     ///     The rack identifier for this client.

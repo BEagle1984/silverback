@@ -32,12 +32,13 @@ public partial record MqttClientConfiguration
     public bool AllowPacketFragmentation { get; init; } = DefaultInstance.AllowPacketFragmentation;
 
     /// <summary>
-    ///     Gets the authentication data to be used for the custom authentication.
+    ///     Gets the authentication data to be used for the custom authentication. This is an MQTT 5.0 feature: setting it with an earlier
+    ///     protocol version makes the connection fail.
     /// </summary>
     public byte[]? AuthenticationData { get; init; }
 
     /// <summary>
-    ///     Gets the custom authentication method.
+    ///     Gets the custom authentication method. This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the connection fail.
     /// </summary>
     public string? AuthenticationMethod { get; init; }
 
@@ -54,35 +55,40 @@ public partial record MqttClientConfiguration
     public IMqttClientCredentialsProvider? Credentials { get; init; }
 
     /// <summary>
-    ///     Gets the handler for AUTH packets. This can happen when connecting or at any time while being already connected.
+    ///     Gets the handler for AUTH packets. This can happen when connecting or at any time while being already connected. This is an
+    ///     MQTT 5.0 feature: setting it with an earlier protocol version makes the connection fail.
     /// </summary>
     public IMqttEnhancedAuthenticationHandler? EnhancedAuthenticationHandler { get; init; }
 
     /// <summary>
-    ///     Gets the communication timeout. The default is 10 seconds.
+    ///     Gets the keep alive period, which is the maximum period that can elapse without a packet being sent to the message broker. When
+    ///     this period elapses, the client sends a <i>PINGREQ</i> packet and expects a <i>PINGRESP</i> from the broker. The default is 15
+    ///     seconds.
     /// </summary>
     public TimeSpan KeepAlivePeriod { get; init; } = DefaultInstance.KeepAlivePeriod;
 
     /// <summary>
     ///     Gets the maximum packet size in byte the client will process. The default is no limit.
+    ///     This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the connection fail.
     /// </summary>
     public uint MaximumPacketSize { get; init; } = DefaultInstance.MaximumPacketSize;
 
     /// <summary>
-    ///     Gets the maximum number of QoS 1 and QoS 2 publications that can be received and processed concurrently. The default value is
-    ///     <c>null</c>, which means <c>65'535</c>.
+    ///     Gets the maximum number of QoS 1 and QoS 2 publications that can be received and processed concurrently. The default is <c>0</c>,
+    ///     meaning that the value is not sent and the protocol default of <c>65'535</c> applies.
+    ///     This is an MQTT 5.0 feature: setting it with an earlier protocol version makes the connection fail.
     /// </summary>
     public ushort ReceiveMaximum { get; init; } = DefaultInstance.ReceiveMaximum;
 
     /// <summary>
     ///     Gets a value indicating whether the reason string or user properties can be sent with any packet. The default is usually
-    ///     <c>true</c>.
+    ///     <c>true</c>. This is an MQTT 5.0 feature and is ignored with earlier protocol versions.
     /// </summary>
     public bool RequestProblemInformation { get; init; } = DefaultInstance.RequestProblemInformation;
 
     /// <summary>
     ///     Gets a value indicating whether the server should return the response information in the <i>CONNACK</i> packet. The default is
-    ///     usually <c>false</c>.
+    ///     usually <c>false</c>. This is an MQTT 5.0 feature: enabling it with an earlier protocol version makes the connection fail.
     /// </summary>
     public bool RequestResponseInformation { get; init; } = DefaultInstance.RequestResponseInformation;
 
@@ -101,7 +107,7 @@ public partial record MqttClientConfiguration
 
     /// <summary>
     ///     Gets the maximum number of topic aliases the server can send in the <i>PUBLISH</i> packet. The default is 0, meaning that no
-    ///     alias can be sent.
+    ///     alias can be sent. This is an MQTT 5.0 feature and is ignored with earlier protocol versions.
     /// </summary>
     public ushort TopicAliasMaximum { get; init; } = DefaultInstance.TopicAliasMaximum;
 
@@ -109,13 +115,14 @@ public partial record MqttClientConfiguration
     ///     Gets a value indicating whether the bridge must attempt to indicate to the remote broker that it is a bridge and not an ordinary
     ///     client. If successful, this means that the loop detection will be more effective and that the retained messages will be propagated
     ///     correctly. Not all brokers support this feature, so it may be necessary to set it to <c>false</c> if your bridge does not connect
-    ///     properly.
+    ///     properly. This is only supported by MQTT 3.1 and 3.1.1: enabling it with MQTT 5.0 makes the connection fail.
     /// </summary>
     public bool TryPrivate { get; init; } = DefaultInstance.TryPrivate;
 
     /// <summary>
     ///     Gets a value indicating whether the client should check if the configuration is valid for the selected protocol version.
-    ///     The default is <c>true</c>.
+    ///     The default is <c>true</c>. When disabled, the MQTT 5.0 features used with an earlier protocol version (in the connection options,
+    ///     the published messages and the subscriptions) don't make the operation fail but are ignored.
     /// </summary>
     public bool ValidateFeatures { get; init; } = DefaultInstance.ValidateFeatures;
 
@@ -177,6 +184,8 @@ public partial record MqttClientTcpConfiguration
 
     /// <summary>
     ///     Gets a value that specifies whether the underlying <see cref="Socket" /> is a dual-mode socket used for both IPv4 and IPv6.
+    ///     If <c>null</c> (the default), the value isn't set at socket level. Any other value causes an exception when only IPv4 is supported
+    ///     on the machine.
     /// </summary>
     public bool? DualMode { get; init; }
 
@@ -191,7 +200,8 @@ public partial record MqttClientTcpConfiguration
     public EndPoint? LocalEndpoint { get; init; }
 
     /// <summary>
-    ///     Gets a value indicating whether the underlying <see cref="Socket" /> is a dual-mode socket used for both IPv4 and IPv6.
+    ///     Gets a value indicating whether the Nagle algorithm is disabled on the underlying <see cref="Socket" /> (TCP no-delay). This is
+    ///     only supported for TCP and is ignored for other protocol types. The default is <c>true</c>.
     /// </summary>
     public bool NoDelay { get; init; } = DefaultInstance.NoDelay;
 
@@ -278,7 +288,8 @@ public partial record MqttClientWebSocketConfiguration
     public string? Uri { get; init; }
 
     /// <summary>
-    ///     Gets a value indicating whether the default (system) credentials should be used. The default is <c>false</c>.
+    ///     Gets a value indicating whether the default (system) credentials should be used for the WebSocket connection.
+    ///     This is not related to the credentials used for the MQTT protocol. The default is <c>false</c>.
     /// </summary>
     public bool UseDefaultCredentials { get; init; } = DefaultInstance.UseDefaultCredentials;
 

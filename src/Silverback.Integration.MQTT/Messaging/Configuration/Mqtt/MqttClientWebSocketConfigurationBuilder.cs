@@ -21,7 +21,7 @@ public class MqttClientWebSocketConfigurationBuilder
     ///     The URI. Must not be empty.
     /// </param>
     /// <returns>
-    ///     The <see cref="MqttClientTcpConfigurationBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="MqttClientWebSocketConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "Declared as string in the underlying library")]
     public MqttClientWebSocketConfigurationBuilder WithUri(string uri)

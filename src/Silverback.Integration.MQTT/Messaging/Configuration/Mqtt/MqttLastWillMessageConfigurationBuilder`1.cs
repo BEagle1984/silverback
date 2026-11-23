@@ -76,9 +76,8 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     }
 
     /// <summary>
-    ///     Sets the last will message delay.
+    ///     Sets the last will message delay. This is an MQTT 5.0 feature and cannot be used with earlier protocol versions.
     /// </summary>
-    /// t
     /// <param name="delay">
     ///     The <see cref="TimeSpan" /> representing the delay. Must be between <see cref="TimeSpan.Zero" /> and 4,294,967,295 seconds.
     /// </param>
@@ -94,9 +93,8 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     }
 
     /// <summary>
-    ///     Sets the last will message expiration.
+    ///     Sets the last will message expiration. This is an MQTT 5.0 feature and cannot be used with earlier protocol versions.
     /// </summary>
-    /// t
     /// <param name="expiration">
     ///     The <see cref="TimeSpan" /> representing the expiration. Must be between <see cref="TimeSpan.Zero" /> and 4,294,967,295 seconds.
     /// </param>
@@ -197,7 +195,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     }
 
     /// <summary>
-    ///     Sets the content type.
+    ///     Sets the content type. This is an MQTT 5.0 feature and cannot be used with earlier protocol versions.
     /// </summary>
     /// <param name="contentType">
     ///     The content type.
@@ -212,7 +210,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     }
 
     /// <summary>
-    ///     Sets the correlation data.
+    ///     Sets the correlation data. This is an MQTT 5.0 feature and cannot be used with earlier protocol versions.
     /// </summary>
     /// <param name="correlationData">
     ///     The correlation data.
@@ -227,7 +225,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     }
 
     /// <summary>
-    ///     Sets the payload format indicator.
+    ///     Sets the payload format indicator. This is an MQTT 5.0 feature and cannot be used with earlier protocol versions.
     /// </summary>
     /// <param name="payloadFormatIndicator">
     ///     The payload format indicator.
@@ -242,7 +240,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     }
 
     /// <summary>
-    ///     Sets the response topic.
+    ///     Sets the response topic. This is an MQTT 5.0 feature and cannot be used with earlier protocol versions.
     /// </summary>
     /// <param name="topic">
     ///     The response topic.
@@ -257,7 +255,8 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSeriali
     }
 
     /// <summary>
-    ///     Adds an header (user property) to the last will message.
+    ///     Adds an header (user property) to the last will message. This is an MQTT 5.0 feature and cannot be used with earlier protocol
+    ///     versions.
     /// </summary>
     /// <param name="name">
     ///     The property name.
