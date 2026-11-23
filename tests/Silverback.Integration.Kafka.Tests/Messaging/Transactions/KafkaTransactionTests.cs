@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Confluent.Kafka;
 using NSubstitute;
+using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -241,5 +242,211 @@ public class KafkaTransactionTests
         transaction.EnsureBegin();
 
         confluentProducer.Received(1).BeginTransaction();
+    }
+
+    [Fact]
+    public void EnsureBegin_ShouldThrow_WhenNotBoundToProducer()
+    {
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+
+        Action act = transaction.EnsureBegin;
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The transaction is not bound to a producer.");
+    }
+
+    [Fact]
+    public void Begin_ShouldThrow_WhenNotBoundToProducer()
+    {
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+
+        Action act = transaction.Begin;
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The transaction is not bound to a producer.");
+    }
+
+    [Fact]
+    public void Commit_ShouldThrow_WhenNotBoundToProducer()
+    {
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+
+        Action act = transaction.Commit;
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The transaction is not bound to a producer.");
+    }
+
+    [Fact]
+    public void Commit_ShouldThrow_WhenNotPending()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+
+        Action act = transaction.Commit;
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The transaction is not pending.");
+        confluentProducer.DidNotReceive().CommitTransaction();
+    }
+
+    [Fact]
+    public void Commit_ShouldNotSendOffsets_WhenNotInConsumerPipelineContext()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+        transaction.Begin();
+
+        transaction.Commit();
+
+        confluentProducer.DidNotReceive().SendOffsetsToTransaction(
+            Arg.Any<IReadOnlyCollection<TopicPartitionOffset>>(),
+            Arg.Any<IConsumerGroupMetadata>());
+        confluentProducer.Received(1).CommitTransaction();
+    }
+
+    [Fact]
+    public void Commit_ShouldNotSendOffsets_WhenConsumerIsNotKafkaConsumer()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+        transaction.Begin();
+        context.SetConsumerPipelineContext(
+            ConsumerPipelineContextHelper.CreateSubstitute(
+                identifier: new KafkaOffset("test", 1, 42),
+                consumer: Substitute.For<IConsumer>()));
+
+        transaction.Commit();
+
+        confluentProducer.DidNotReceive().SendOffsetsToTransaction(
+            Arg.Any<IReadOnlyCollection<TopicPartitionOffset>>(),
+            Arg.Any<IConsumerGroupMetadata>());
+        confluentProducer.Received(1).CommitTransaction();
+    }
+
+    [Fact]
+    public void Commit_ShouldUnbindProducerAndCompleteTransaction()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        IConfluentProducerWrapper otherConfluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+        transaction.Begin();
+
+        transaction.Commit();
+
+        Action abort = transaction.Abort;
+        abort.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The transaction is not pending.");
+        Action ensureBegin = transaction.EnsureBegin;
+        ensureBegin.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The transaction is not bound to a producer.");
+
+        transaction.BindConfluentProducer(otherConfluentProducer);
+        transaction.EnsureBegin();
+
+        otherConfluentProducer.Received(1).BeginTransaction();
+    }
+
+    [Fact]
+    public void Abort_ShouldThrow_WhenNotPending()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+
+        Action act = transaction.Abort;
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The transaction is not pending.");
+        confluentProducer.DidNotReceive().AbortTransaction();
+    }
+
+    [Fact]
+    public void Abort_ShouldAbortTransaction_WhenCommitFailed()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        confluentProducer.When(producer => producer.CommitTransaction()).Throw(new InvalidOperationException("test"));
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+        transaction.Begin();
+        Action commit = transaction.Commit;
+        commit.ShouldThrow<InvalidOperationException>();
+
+        transaction.Abort();
+
+        confluentProducer.Received(1).AbortTransaction();
+    }
+
+    [Fact]
+    public void AbortIfPending_ShouldAbortTransaction_WhenPending()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+        transaction.Begin();
+
+        transaction.AbortIfPending();
+
+        confluentProducer.Received(1).AbortTransaction();
+    }
+
+    [Fact]
+    public void AbortIfPending_ShouldNotAbortTransaction_WhenNotPending()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+
+        transaction.AbortIfPending();
+
+        confluentProducer.DidNotReceive().AbortTransaction();
+    }
+
+    [Fact]
+    public void Dispose_ShouldRemoveTransactionFromContext()
+    {
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+
+        transaction.Dispose();
+
+        Action act = () => context.GetKafkaTransaction();
+        act.ShouldThrow<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void BindConfluentProducer_ShouldNotThrow_WhenBindingSameProducerAgain()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+
+        transaction.BindConfluentProducer(confluentProducer);
+
+        transaction.Begin();
+        confluentProducer.Received(1).BeginTransaction();
+    }
+
+    [Fact]
+    public void BindConfluentProducer_ShouldThrow_WhenAlreadyBoundToAnotherProducer()
+    {
+        IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        IConfluentProducerWrapper otherConfluentProducer = Substitute.For<IConfluentProducerWrapper>();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
+        KafkaTransaction transaction = new(context);
+        transaction.BindConfluentProducer(confluentProducer);
+
+        Action act = () => transaction.BindConfluentProducer(otherConfluentProducer);
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The transaction is already bound to a producer.");
     }
 }
