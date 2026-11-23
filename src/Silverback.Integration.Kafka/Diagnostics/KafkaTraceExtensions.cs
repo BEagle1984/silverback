@@ -57,19 +57,6 @@ internal static partial class KafkaTraceExtensions
             channel.Id,
             consumer.DisplayName);
 
-    public static void LogMessageWriteToOverflowChannelFailed(
-        this ISilverbackLogger logger,
-        IConsumer consumer,
-        ConsumeResult<byte[]?, byte[]?> consumeResult,
-        IConsumerChannel channel) =>
-        MessageWriteToOverflowChannelFailed(
-            logger.InnerLogger,
-            consumeResult.Topic,
-            consumeResult.Partition.Value,
-            consumeResult.Offset.Value,
-            channel.Id,
-            consumer.DisplayName);
-
     public static void LogPolledMessageDropped(
         this ISilverbackLogger logger,
         IConsumer consumer,
@@ -170,19 +157,6 @@ internal static partial class KafkaTraceExtensions
         "Writing message ({Topic}[{Partition}]@{Offset}) to channel {Channel} | ConsumerName: {ConsumerName}",
         EventName = "Silverback.Integration.Kafka_Tracing_MessageWritingToChannel")]
     private static partial void MessageWritingToChannel(
-        ILogger logger,
-        string topic,
-        int partition,
-        long offset,
-        string channel,
-        string consumerName);
-
-    [LoggerMessage(
-        IntegrationLogEvents.TracingEventId,
-        LogLevel.Trace,
-        "Failed to write message ({Topic}[{Partition}]@{Offset}) to overflow channel {Channel} | ConsumerName: {ConsumerName}",
-        EventName = "Silverback.Integration.Kafka_Tracing_MessageWriteToOverflowChannelFailed")]
-    private static partial void MessageWriteToOverflowChannelFailed(
         ILogger logger,
         string topic,
         int partition,

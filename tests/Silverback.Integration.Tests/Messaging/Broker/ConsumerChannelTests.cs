@@ -113,8 +113,8 @@ public class ConsumerChannelTests
         TestMessage testMessage1 = new();
         TestMessage testMessage2 = new();
 
-        await channel.WriteOverflowAsync(testMessage1);
-        await channel.WriteOverflowAsync(testMessage2);
+        channel.WriteOverflow(testMessage1);
+        channel.WriteOverflow(testMessage2);
 
         TestMessage readMessage1 = await channel.ReadAsync();
         TestMessage readMessage2 = await channel.ReadAsync();
@@ -131,8 +131,8 @@ public class ConsumerChannelTests
         TestMessage testMessage3 = new();
         TestMessage testMessage4 = new();
 
-        await channel.WriteOverflowAsync(testMessage1);
-        await channel.WriteOverflowAsync(testMessage2);
+        channel.WriteOverflow(testMessage1);
+        channel.WriteOverflow(testMessage2);
         Task.Run(async () =>
         {
             await channel.WriteAsync(testMessage3, CancellationToken.None);
@@ -173,7 +173,7 @@ public class ConsumerChannelTests
 
             await cancellation.CancelAsync();
             await Should.ThrowAsync<OperationCanceledException>(async () => await write.WaitAsync(timeout.Token));
-            await channel.WriteOverflowAsync(value);
+            channel.WriteOverflow(value);
         }
 
         Task nextWrite = channel.WriteAsync(capacity + overflowCount, timeout.Token).AsTask();
@@ -213,7 +213,7 @@ public class ConsumerChannelTests
                 }
                 catch (OperationCanceledException) when (!timeout.IsCancellationRequested)
                 {
-                    await channel.WriteOverflowAsync(value);
+                    channel.WriteOverflow(value);
                 }
             }
         });
@@ -254,7 +254,7 @@ public class ConsumerChannelTests
     {
         using ConsumerChannel<int> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
         using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(10));
-        await channel.WriteOverflowAsync(1);
+        channel.WriteOverflow(1);
 
         Task pendingWrite = channel.WriteAsync(2, timeout.Token).AsTask();
 
@@ -277,7 +277,7 @@ public class ConsumerChannelTests
         TestMessage testMessage3 = new();
 
         await channel.WriteAsync(testMessage1, CancellationToken.None);
-        await channel.WriteOverflowAsync(testMessage2);
+        channel.WriteOverflow(testMessage2);
         ValueTask writeTask = channel.WriteAsync(testMessage3, CancellationToken.None);
 
         await Task.Delay(100);
@@ -330,7 +330,7 @@ public class ConsumerChannelTests
         pendingRead.IsCompleted.ShouldBeFalse();
 
         // Reproduce a canceled Kafka write being redirected to overflow after the reader is already waiting
-        await channel.WriteOverflowAsync(overflowMessage);
+        channel.WriteOverflow(overflowMessage);
 
         try
         {
@@ -415,7 +415,7 @@ public class ConsumerChannelTests
         await channel.WriteAsync(buffered, CancellationToken.None);
 
         if (overflow)
-            await channel.WriteOverflowAsync(new TestMessage());
+            channel.WriteOverflow(new TestMessage());
 
         using CancellationTokenSource cancellation = new();
         Task writer = channel.WriteAsync(waiting, cancellation.Token).AsTask();

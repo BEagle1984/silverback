@@ -402,7 +402,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
 
             foreach (KafkaOffset offset in replayOffsets)
             {
-                // A partition being rolled back is sought by the rollback itself
+                // A partition being rolled back is sought by the rollback itself. It's only the case if a concurrent RollbackAsync started
+                // after StartReadingAssignment (this race-only path is the reason why the branch isn't covered by the tests).
                 if (!assignment.Contains(offset.TopicPartition) || !IsNotRevoked(offset.TopicPartition) ||
                     _rollingBackPartitions.Contains(offset.TopicPartition))
                 {
@@ -765,6 +766,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
                 partitions.Add(new RollbackPartition(offset.AsTopicPartitionOffset(), version));
             }
 
+            // Empty only if the client starts disconnecting between the filter above and the loop, since its status changes outside the
+            // assignment lock (this race-only path is the reason why the branch isn't covered by the tests)
             if (partitions.Count == 0)
                 return ValueTask.CompletedTask;
 
@@ -835,14 +838,17 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
 
         // Read after the sequences in the store: a sequence committed and removed from the store meanwhile is reflected here
         KafkaOffset? rollbackOffset = _offsets.GetRollbackOffset(topicPartition);
+
+        // Null only if this read, done outside the assignment lock, falls between the untracking and the re-tracking of the partition by
+        // a concurrent Seek (this race-only path is the reason why the branch isn't covered by the tests)
         long? lastCommittedOffset = rollbackOffset is { IsSpecial: false } ? rollbackOffset.Offset.Value - 1 : null;
 
         long? lastOffset = new[] { lastInFlightOffset, lastCommittedOffset }.Max();
 
-        if (firstIncompleteOffset == null)
+        if (firstIncompleteOffset is not { } firstIncomplete)
             return lastOffset;
 
-        return lastOffset == null ? firstIncompleteOffset - 1 : Math.Min(lastOffset.Value, firstIncompleteOffset.Value - 1);
+        return lastOffset is { } last ? Math.Min(last, firstIncomplete - 1) : firstIncomplete - 1;
     }
 
     private ValueTask OnClientConnectedAsync(BrokerClient client)
@@ -936,7 +942,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
             lock (_assignmentLock)
             {
                 if (!partitions.Any(IsCurrentRollback))
+                {
+                    _logger.LogRollbackRestartSkipped(this);
                     return;
+                }
             }
 
             _logger.LogConsumerStartError(this, ex);
@@ -1026,14 +1035,16 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
     private bool IsKeptPausedAtEndCore(TopicPartition topicPartition) =>
         _catchUpPausedPartitions.Contains(topicPartition) && _catchUp.IsPartitionCaughtUp(topicPartition);
 
-    // Must be called while holding the assignment lock. The partition doesn't need to be consumed any further before disconnecting.
     // Must be called while holding the assignment lock
     private bool IsCurrentChannelCore(PartitionChannel channel, Guid channelInstanceId, TopicPartition topicPartition) =>
         !channel.ReadCancellationToken.IsCancellationRequested && channel.InstanceId == channelInstanceId &&
         _channelsManager.GetChannel(topicPartition) == channel;
 
+    // Must be called while holding the assignment lock. The partition doesn't need to be consumed any further before disconnecting.
     private void PauseAtEndCore(TopicPartition topicPartition)
     {
+        // A revoked partition is reached only if the revocation races with a reader checking the last record before the end, outside
+        // the assignment lock (this race-only path is the reason why the branch isn't covered by the tests)
         if (_catchUp.Mode != CatchUpMode.Disconnect || _catchUpPausedPartitions.Contains(topicPartition) ||
             !IsNotRevoked(topicPartition) || Client.Status != ClientStatus.Initialized)
         {
@@ -1132,9 +1143,6 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer, ICumulativeC
 
     private void StartConsumeLoopHandler()
     {
-        if (!(IsStarted || IsStarting) || IsStopping)
-            return;
-
         _consumeLoopHandler.Start();
 
         _logger.LogConsumeLoopHandlerStarted(this, _consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id);

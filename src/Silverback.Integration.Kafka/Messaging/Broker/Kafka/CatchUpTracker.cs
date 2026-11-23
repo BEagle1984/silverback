@@ -306,7 +306,7 @@ internal sealed class CatchUpTracker
             if (!TryGetCatchingUpPartitionCore(topicPartition, out PartitionState? state) || !state.IsEndReached)
                 return null;
 
-            if (state.LastPolledOffset == null || offset - 1 < state.LastPolledOffset)
+            if (offset - 1 < state.LastPolledOffset)
                 state.LastPolledOffset = offset - 1;
 
             return CheckCaughtUpCore();

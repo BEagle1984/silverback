@@ -8,7 +8,6 @@ using Confluent.Kafka;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks.Statistics;
 using Silverback.Messaging.Broker.Kafka;
-using Silverback.Messaging.Configuration.Kafka;
 
 namespace Silverback.Messaging.Broker.Callbacks;
 
@@ -27,7 +26,6 @@ internal static class KafkaEventsBinder
     public static IConfluentConsumerBuilder SetEventsHandlers(
         this IConfluentConsumerBuilder consumerBuilder,
         IConfluentConsumerWrapper consumerWrapper,
-        KafkaConsumerConfiguration consumerConfiguration,
         IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
@@ -42,24 +40,10 @@ internal static class KafkaEventsBinder
             .SetErrorHandler((_, error) => OnError(error, consumerWrapper, callbacksInvoker, logger))
             .SetLogHandler((_, logMessage) => OnLog(logMessage, consumerWrapper, callbacksInvoker, logger));
 
-        if (consumerConfiguration.PartitionAssignmentStrategy != null &&
-            consumerConfiguration.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.CooperativeSticky))
-        {
-            // This is done to discard the result of the revoke handler. Using the SetPartitionsRevokedHandler
-            // overload with a Func<> results in an exception in the internal rebalance method since you are
-            // not supposed to alter the partitions being revoked with the cooperative sticky strategy.
-            consumerBuilder
-                .SetPartitionsRevokedHandler((_, topicPartitionOffsets) =>
-                {
-                    OnPartitionsRevoked(topicPartitionOffsets, consumerWrapper, callbacksInvoker, logger);
-                });
-        }
-        else
-        {
-            consumerBuilder
-                .SetPartitionsRevokedHandler((_, topicPartitionOffsets) =>
-                    OnPartitionsRevoked(topicPartitionOffsets, consumerWrapper, callbacksInvoker, logger));
-        }
+        // The Action overload is deliberate (OnPartitionsRevoked returns void): with the overload taking a Func<>, Confluent.Kafka
+        // throws under the cooperative protocol, since the partitions being revoked must not be altered
+        consumerBuilder.SetPartitionsRevokedHandler((_, topicPartitionOffsets) =>
+            OnPartitionsRevoked(topicPartitionOffsets, consumerWrapper, callbacksInvoker, logger));
 
         return consumerBuilder;
     }
