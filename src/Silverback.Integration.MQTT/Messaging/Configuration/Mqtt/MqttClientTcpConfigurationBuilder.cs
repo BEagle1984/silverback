@@ -45,7 +45,7 @@ public class MqttClientTcpConfigurationBuilder
     }
 
     /// <summary>
-    ///     Enables dual-mode on the underlying socket (IPv4 &amp; IPv6).
+    ///     Enables dual-mode on the underlying socket (IPv4 &amp; IPv6). This causes an exception when only IPv4 is supported on the machine.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientTcpConfigurationBuilder" /> so that additional calls can be chained.
@@ -57,7 +57,8 @@ public class MqttClientTcpConfigurationBuilder
     }
 
     /// <summary>
-    ///     Disables dual-mode on the underlying socket.
+    ///     Explicitly disables dual-mode on the underlying socket. This causes an exception when only IPv4 is supported on the machine.
+    ///     Leave dual-mode unset to keep the socket default.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientTcpConfigurationBuilder" /> so that additional calls can be chained.

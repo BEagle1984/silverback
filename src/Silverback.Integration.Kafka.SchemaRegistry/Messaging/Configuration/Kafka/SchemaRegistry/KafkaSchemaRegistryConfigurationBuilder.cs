@@ -12,8 +12,11 @@ namespace Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 public partial class KafkaSchemaRegistryConfigurationBuilder
 {
     /// <summary>
-    ///     Sets the source of the basic authentication credentials. This specifies whether the credentials are specified in the
-    ///     <see cref="KafkaSchemaRegistryConfiguration.BasicAuthUserInfo" /> or they are inherited from the producer or consumer configuration.
+    ///     Sets the source of the basic authentication credentials. With <see cref="Confluent.SchemaRegistry.AuthCredentialsSource.UserInfo" />
+    ///     the credentials are specified in the <see cref="KafkaSchemaRegistryConfiguration.BasicAuthUserInfo" />.
+    ///     <see cref="Confluent.SchemaRegistry.AuthCredentialsSource.SaslInherit" /> requires the <c>sasl.username</c> and <c>sasl.password</c>
+    ///     properties in the schema registry configuration, which are neither inherited from the producer or consumer configuration nor exposed
+    ///     by the <see cref="KafkaSchemaRegistryConfiguration" />.
     /// </summary>
     /// <param name="basicAuthCredentialsSource">
     ///     The source of the basic authentication credentials.
@@ -136,7 +139,7 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     }
 
     /// <summary>
-    ///     Disables the SSL certificate validation.
+    ///     Disables the SSL certificate validation. This is insecure and should only be done in contained test or development environments.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.

@@ -90,7 +90,8 @@ public sealed partial class MqttClientsConfigurationBuilder
     /// <summary>
     ///     Specifies that the bridge must attempt to indicate to the remote broker that it is a bridge and not an ordinary client. If successful,
     ///     this means that the loop detection will be more effective and that the retained messages will be propagated correctly. Not all brokers
-    ///     support this feature, so it may be necessary to disable it if your bridge does not connect properly.
+    ///     support this feature, so it may be necessary to disable it if your bridge does not connect properly. This is only supported by
+    ///     MQTT 3.1 and 3.1.1 and cannot be used with MQTT 5.0.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -213,7 +214,8 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies the authentication method to be used and the associated data.
+    ///     Specifies the authentication method to be used and the associated data. This is an MQTT 5.0 feature and cannot be used with earlier
+    ///     protocol versions.
     /// </summary>
     /// <param name="method">
     ///     The authentication method.
@@ -232,7 +234,7 @@ public sealed partial class MqttClientsConfigurationBuilder
 
     /// <summary>
     ///     Sets the maximum number of topic aliases the server can send in the <i>PUBLISH</i> packet. The
-    ///     default is 0, meaning that no alias can be sent.
+    ///     default is 0, meaning that no alias can be sent. This is an MQTT 5.0 feature and is ignored with earlier protocol versions.
     /// </summary>
     /// <param name="topicAliasMaximum">
     ///     The maximum number of topic aliases. Must be between 0 and 65535.
@@ -249,7 +251,8 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the maximum packet size in byte the client will process. The default is no limit.
+    ///     Sets the maximum packet size in byte the client will process. The default is no limit. This is an MQTT 5.0 feature and cannot be used
+    ///     with earlier protocol versions.
     /// </summary>
     /// <param name="maximumPacketSize">
     ///     The maximum packet size. Must be between 1 and 4294967295.
@@ -267,7 +270,8 @@ public sealed partial class MqttClientsConfigurationBuilder
 
     /// <summary>
     ///     Sets the maximum number of QoS 1 and QoS 2 publications that can be received and processed
-    ///     concurrently. The default value is <c>null</c>, that means <c>65'535</c>.
+    ///     concurrently. The default is the protocol default of <c>65'535</c>. This is an MQTT 5.0 feature and cannot be used with earlier
+    ///     protocol versions.
     /// </summary>
     /// <param name="receiveMaximum">
     ///     The maximum number of concurrent publications. Must be between 1 and 65535.
@@ -287,7 +291,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies that the reason string or user properties can be sent with any packet. This is usually the default.
+    ///     Specifies that the reason string or user properties can be sent with any packet. This is usually the default. This is an MQTT 5.0 feature and is ignored with earlier protocol versions.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -299,7 +303,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies that the reason string or user properties can be sent with <i>CONNACK</i> or <i>DISCONNECT</i> packets only.
+    ///     Specifies that the reason string or user properties can be sent with <i>CONNACK</i> or <i>DISCONNECT</i> packets only. This is an MQTT 5.0 feature and is ignored with earlier protocol versions.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -311,7 +315,8 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies that the server should return the response information in the <i>CONNACK</i> packet.
+    ///     Specifies that the server should return the response information in the <i>CONNACK</i> packet. This is an MQTT 5.0 feature and cannot be
+    ///     used with earlier protocol versions.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -359,7 +364,7 @@ public sealed partial class MqttClientsConfigurationBuilder
 
     /// <summary>
     ///     Adds a user property to be sent with the <i>CONNECT</i> packet. It can be used to send connection
-    ///     related properties from the client to the server.
+    ///     related properties from the client to the server. This is an MQTT 5.0 feature and cannot be used with earlier protocol versions.
     /// </summary>
     /// <param name="name">
     ///     The property name.
@@ -436,7 +441,8 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the handler to be used to handle the authentication.
+    ///     Sets the handler to be used to handle the authentication. This is an MQTT 5.0 feature and cannot be used with earlier protocol
+    ///     versions.
     /// </summary>
     /// <param name="handler">
     ///     The <see cref="IMqttEnhancedAuthenticationHandler" /> instance to be used.
@@ -453,7 +459,8 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the handler to be used to handle the authentication.
+    ///     Sets the handler to be used to handle the authentication. This is an MQTT 5.0 feature and cannot be used with earlier protocol
+    ///     versions.
     /// </summary>
     /// <typeparam name="THandler">
     ///     The type of the <see cref="IMqttEnhancedAuthenticationHandler" /> to be used. The instance will be resolved via the
@@ -467,7 +474,8 @@ public sealed partial class MqttClientsConfigurationBuilder
         UseEnhancedAuthenticationHandler(typeof(THandler));
 
     /// <summary>
-    ///     Sets the handler to be used to handle the authentication.
+    ///     Sets the handler to be used to handle the authentication. This is an MQTT 5.0 feature and cannot be used with earlier protocol
+    ///     versions.
     /// </summary>
     /// <param name="handlerType">
     ///     The type of the <see cref="IMqttEnhancedAuthenticationHandler" /> to be used. The instance will be resolved via the

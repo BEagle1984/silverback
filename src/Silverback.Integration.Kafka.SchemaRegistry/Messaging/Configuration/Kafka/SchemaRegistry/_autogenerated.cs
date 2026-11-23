@@ -17,8 +17,11 @@ namespace Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 public partial record KafkaSchemaRegistryConfiguration
 {
     /// <summary>
-    ///     Gets the source of the basic authentication credentials. This specifies whether the credentials are specified in the <see cref="BasicAuthUserInfo" />
-    ///     or they are inherited from the producer or consumer configuration.
+    ///     Gets the source of the basic authentication credentials. With <see cref="Confluent.SchemaRegistry.AuthCredentialsSource.UserInfo" />
+    ///     the credentials are specified in the <see cref="BasicAuthUserInfo" />.
+    ///     <see cref="Confluent.SchemaRegistry.AuthCredentialsSource.SaslInherit" /> requires the <c>sasl.username</c> and <c>sasl.password</c>
+    ///     properties in the schema registry configuration, which are neither inherited from the producer or consumer configuration nor exposed
+    ///     by this configuration.
     /// </summary>
     public AuthCredentialsSource? BasicAuthCredentialsSource { get; init; }
 
@@ -54,10 +57,7 @@ public partial record KafkaSchemaRegistryConfiguration
     public int? MaxConnectionsPerServer { get; init; }
 
     /// <summary>
-    ///     Gets the file or directory path to the CA certificate(s) for verifying the registry's key. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store.
-    ///     On Mac OSX this configuration defaults to <c>probe</c>. It is recommended to install openssl using Homebrew, to provide CA certificates. On Linux install the distribution's ca-certificates package.
-    ///     If OpenSSL is statically linked or <see cref="SslCaLocation" /> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.
-    ///     If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see <c>OPENSSLDIR</c> in <c>openssl version -a</c>).
+    ///     Gets the file or directory path to the CA certificate(s) for verifying the registry's key.
     /// </summary>
     public string? SslCaLocation { get; init; }
 
@@ -73,6 +73,7 @@ public partial record KafkaSchemaRegistryConfiguration
 
     /// <summary>
     ///     Gets a value indicating whether the registry (server) certificate must be verified.
+    ///     Disabling the verification is insecure and should only be done in contained test or development environments.
     /// </summary>
     public bool? EnableSslCertificateVerification { get; init; }
 

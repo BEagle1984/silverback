@@ -92,19 +92,20 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     public int? TopicMetadataRefreshIntervalMs { get; init; }
 
     /// <summary>
-    ///     Gets the metadata cache max age (in milliseconds). Defaults to <see cref="TopicMetadataRefreshIntervalMs" />.
+    ///     Gets the metadata cache max age (in milliseconds). Defaults to three times the <see cref="TopicMetadataRefreshIntervalMs" />.
     /// </summary>
     public int? MetadataMaxAgeMs { get; init; }
 
     /// <summary>
-    ///     Gets the refresh interval (in milliseconds) to be applied instead of the <see cref="TopicMetadataRefreshIntervalMs" />
-    ///     when a topic loses its leader and a new metadata request will be enqueued. This initial interval will be exponentially increased
-    ///     until the topic metadata has been refreshed. This is used to recover quickly from transitioning leader brokers.
+    ///     Gets the initial refresh interval (in milliseconds) to be applied when a topic loses its leader. A new metadata request is enqueued
+    ///     immediately and then with this initial interval, exponentially increasing up to <see cref="RetryBackoffMaxMs" />, until the topic
+    ///     metadata has been refreshed. If not set explicitly, it defaults to <see cref="RetryBackoffMs" />. This is used to recover quickly
+    ///     from transitioning leader brokers.
     /// </summary>
     public int? TopicMetadataRefreshFastIntervalMs { get; init; }
 
     /// <summary>
-    ///     Gets a value indicating whether less metadata requests must be performed (consuming less network bandwidth).
+    ///     Gets a value indicating whether sparse topic metadata requests are performed, which consume less network bandwidth.
     /// </summary>
     public bool? TopicMetadataRefreshSparse { get; init; }
 
@@ -202,6 +203,7 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     /// <summary>
     ///     Gets a value indicating whether the broker's supported API versions must be requested to adjust the functionality to the available protocol features.
     ///     If set to <c>false</c>, or the API version request fails, the fallback version <see cref="BrokerVersionFallback" /> will be used.
+    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.
     /// </summary>
     public bool? ApiVersionRequest { get; init; }
 
@@ -211,20 +213,24 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     public int? ApiVersionRequestTimeoutMs { get; init; }
 
     /// <summary>
-    ///     Gets how long the <see cref="BrokerVersionFallback" /> is used in the case the API version request fails.
+    ///     Gets how long (in milliseconds) the <see cref="BrokerVersionFallback" /> is used in the case the API version request fails.
+    ///     The API version request is only issued when a new connection to the broker is made.
+    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.
     /// </summary>
     public int? ApiVersionFallbackMs { get; init; }
 
     /// <summary>
     ///     Gets the broker API version to be used when the API version request fails or it's disabled. Older broker versions (before 0.10.0) don't support
     ///     the API version request. Valid values are: 0.9.0, 0.8.2, 0.8.1, 0.8.0. Any other value &gt;= 0.10, such as 0.10.2.1, enables the <see cref="ApiVersionRequest" />.
+    ///     <br />Deprecated: this setting will be removed in librdkafka 3.x, which will no longer support brokers older than 0.10.0.
     /// </summary>
     public string? BrokerVersionFallback { get; init; }
 
     /// <summary>
     ///     Gets a value indicating whether topics can be automatically created on the broker when subscribing to or assigning a non-existent
     ///     topic. The broker must also be configured with <c>auto.create.topics.enable=true</c> for this configuration to take effect.
-    ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
+    ///     Note: the default value is <c>true</c> for the producer and <c>false</c> for the consumer (unlike the Java consumer, which defaults
+    ///     to <c>true</c>). Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
     /// </summary>
     public bool? AllowAutoCreateTopics { get; init; }
 
@@ -328,7 +334,8 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     public string? SslProviders { get; init; }
 
     /// <summary>
-    ///     Gets the path to the OpenSSL engine library. OpenSSL &gt;= 1.1.0 required.
+    ///     Gets the path to the OpenSSL engine library. OpenSSL &gt;= 1.1.x required.
+    ///     <br />Deprecated: the OpenSSL engine support is deprecated and should be replaced by the OpenSSL 3 providers (see <see cref="SslProviders" />).
     /// </summary>
     public string? SslEngineLocation { get; init; }
 
@@ -500,7 +507,12 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     public string? SaslOauthbearerAssertionJwtTemplateFile { get; init; }
 
     /// <summary>
-    ///     Gets the type of metadata-based authentication to use for OAUTHBEARER/OIDC <c>azure_imds</c> authenticates using the Azure IMDS endpoint. Sets a default value for <c>sasl.oauthbearer.token.endpoint.url</c> if missing. Configuration values specific of chosen authentication type can be passed through <c>sasl.oauthbearer.config</c>.
+    ///     Gets the type of metadata-based authentication to use for OAUTHBEARER/OIDC.
+    ///     <see cref="Confluent.Kafka.SaslOauthbearerMetadataAuthenticationType.AzureIMDS" /> authenticates using the Azure IMDS endpoint and sets a default
+    ///     value for <see cref="SaslOauthbearerTokenEndpointUrl" /> if missing.
+    ///     <see cref="Confluent.Kafka.SaslOauthbearerMetadataAuthenticationType.AwsIam" /> indicates AWS IAM-based authentication using the
+    ///     GetWebIdentityToken API; librdkafka does not implement this token flow natively.
+    ///     Configuration values specific of the chosen authentication type can be passed through <see cref="SaslOauthbearerConfig" />.
     /// </summary>
     public SaslOauthbearerMetadataAuthenticationType? SaslOauthbearerMetadataAuthenticationType { get; init; }
 
@@ -511,6 +523,7 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
 
     /// <summary>
     ///     Gets the rack identifier for this client. This can be any string value which indicates where this client is physically located.
+    ///     It corresponds with the broker's <c>broker.rack</c> configuration.
     /// </summary>
     public string? ClientRack { get; init; }
 
@@ -803,25 +816,35 @@ public partial record KafkaConsumerConfiguration
     ///     Gets the partition assignment strategy: <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" /> to co-localize the partitions
     ///     of several topics, <see cref="Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin" /> to evenly distribute the partitions among
     ///     the consumer group members, <see cref="Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky" /> to evenly distribute the
-    ///     partitions and limit minimize the partitions movements. The default is <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" />.
+    ///     partitions and minimize the partitions movements. The default is <c>range,roundrobin</c>, which prefers
+    ///     <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" /> when it is supported by all group members.
+    ///     This setting is not supported when <see cref="GroupProtocol" /> is <see cref="Confluent.Kafka.GroupProtocol.Consumer" />: use
+    ///     <see cref="GroupRemoteAssignor" /> instead.
     /// </summary>
     public PartitionAssignmentStrategy? PartitionAssignmentStrategy { get; init; }
 
     /// <summary>
     ///     Gets the client group session and failure detection timeout (in milliseconds). The consumer sends periodic heartbeats
     ///     <see cref="HeartbeatIntervalMs" /> to indicate its liveness to the broker. If no heartbeat is received by the broker for a group
-    ///     member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance. Also see
-    ///     <see cref="MaxPollIntervalMs" />.
+    ///     member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance.
+    ///     The allowed range is configured with the broker configuration properties <c>group.min.session.timeout.ms</c> and
+    ///     <c>group.max.session.timeout.ms</c>. This setting is not supported when <see cref="GroupProtocol" /> is
+    ///     <see cref="Confluent.Kafka.GroupProtocol.Consumer" />, in which case the session timeout is set on the broker
+    ///     (<c>group.consumer.session.timeout.ms</c>). Also see <see cref="MaxPollIntervalMs" />.
     /// </summary>
     public int? SessionTimeoutMs { get; init; }
 
     /// <summary>
     ///     Gets the interval (in milliseconds) at which the heartbeats have to be sent to the broker.
+    ///     This setting is not supported when <see cref="GroupProtocol" /> is <see cref="Confluent.Kafka.GroupProtocol.Consumer" />, in which
+    ///     case the heartbeat interval is set on the broker (<c>group.consumer.heartbeat.interval.ms</c>).
     /// </summary>
     public int? HeartbeatIntervalMs { get; init; }
 
     /// <summary>
-    ///     Gets the group protocol type.
+    ///     Gets the group protocol type for the <see cref="Confluent.Kafka.GroupProtocol.Classic" /> group protocol. Currently, the only supported
+    ///     group protocol type is <c>consumer</c>. This setting is not supported when <see cref="GroupProtocol" /> is
+    ///     <see cref="Confluent.Kafka.GroupProtocol.Consumer" />.
     /// </summary>
     public string? GroupProtocolType { get; init; }
 
@@ -861,7 +884,7 @@ public partial record KafkaConsumerConfiguration
 
     /// <summary>
     ///     Gets the maximum number of kilobytes of queued pre-fetched messages to store in the local consumer queue. This setting applies to
-    ///     the single consumer queue, regardless of the number of partitions. This value may be overshot by <see cref="FetchMaxBytes" />. This
+    ///     the single consumer queue, regardless of the number of partitions. This value may be overshot by <see cref="MaxPartitionFetchBytes" />. This
     ///     property has higher priority than <see cref="QueuedMinMessages" />.
     /// </summary>
     public int? QueuedMaxMessagesKbytes { get; init; }
@@ -924,7 +947,7 @@ public partial record KafkaConsumerConfiguration
     public bool? CheckCrcs { get; init; }
 
     /// <summary>
-    ///     Gets the maximum number of records returned in a single call to <see cref="IConsumer{TKey,TValue}.Consume(System.TimeSpan)" />.
+    ///     Gets the maximum number of records returned in a single share consumer poll (<c>rd_kafka_share_poll()</c>).
     ///     This value is sent to the broker in the ShareFetch request and therefore bounds the number of records the broker acquires and returns per fetch. Note: this limit is currently best-effort and not strictly enforced,
     ///     so a poll may occasionally return more records than this value. This property is only supported for share consumers.
     /// </summary>
@@ -1028,7 +1051,8 @@ public partial record KafkaProducerConfiguration
     ///     Gets the identifier to be used to identify the same transactional producer instance across process restarts. This is required to
     ///     enable the transactional producer and it allows the producer to guarantee that transactions corresponding to earlier instances of
     ///     the same producer have been finalized prior to starting any new transaction, and that any zombie instances are fenced off. If no
-    ///     <see cref="TransactionalId" /> is provided, then the producer is limited to idempotent delivery (see <see cref="EnableIdempotence" />).
+    ///     <see cref="TransactionalId" /> is provided, then the producer is limited to idempotent delivery (if <see cref="EnableIdempotence" />
+    ///     is set).
     ///     Requires broker version &gt;= 0.11.0.
     /// </summary>
     public string? TransactionalId { get; init; }
@@ -1055,13 +1079,15 @@ public partial record KafkaProducerConfiguration
 
     /// <summary>
     ///     Gets a value indicating whether an error that could result in a gap in the produced message series when a batch of messages fails,
-    ///     must raise a fatal error (ERR_GAPLESS_GUARANTEE) and stop the producer. Messages failing due to <see cref="MessageTimeoutMs" /> are
+    ///     must raise a fatal error (<see cref="Confluent.Kafka.ErrorCode.Local_GaplessGuarantee" />) and stop the producer. Messages failing due to <see cref="MessageTimeoutMs" /> are
     ///     not covered by this guarantee. Requires <see cref="EnableIdempotence" />=true.
+    ///     This setting is experimental and subject to change or removal.
     /// </summary>
     public bool? EnableGaplessGuarantee { get; init; }
 
     /// <summary>
     ///     Gets the maximum number of messages allowed on the producer queue. This queue is shared by all topics and partitions.
+    ///     A value of 0 disables this limit.
     /// </summary>
     public int? QueueBufferingMaxMessages { get; init; }
 

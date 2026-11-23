@@ -292,8 +292,9 @@ public partial class KafkaProducerConfigurationBuilder
 
     /// <summary>
     ///     Specifies that an error that could result in a gap in the produced message series when a batch of messages fails, must raise a
-    ///     fatal error (ERR_GAPLESS_GUARANTEE) and stop the producer. Messages failing due to <see cref="KafkaProducerConfiguration.MessageTimeoutMs" />
+    ///     fatal error (<see cref="Confluent.Kafka.ErrorCode.Local_GaplessGuarantee" />) and stop the producer. Messages failing due to <see cref="KafkaProducerConfiguration.MessageTimeoutMs" />
     ///     are not covered by this guarantee. Requires <see cref="EnableIdempotence" />=true.
+    ///     This setting is experimental and subject to change or removal.
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
@@ -332,7 +333,8 @@ public partial class KafkaProducerConfigurationBuilder
         WithTransactionalId(Check.NotNullOrEmpty(transactionalId));
 
     /// <summary>
-    ///     Disables the Kafka transactions. The producer is limited to idempotent delivery (see <see cref="EnableIdempotence" />).
+    ///     Disables the Kafka transactions. The producer is then limited to idempotent delivery, if idempotence is enabled (see
+    ///     <see cref="EnableIdempotence" />).
     /// </summary>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
@@ -464,6 +466,7 @@ public partial class KafkaProducerConfigurationBuilder
 
     /// <summary>
     ///     Sets the maximum number of messages allowed on the producer queue. This queue is shared by all topics and partitions.
+    ///     A value of 0 disables this limit.
     /// </summary>
     /// <param name="queueBufferingMaxMessages">
     ///     The maximum number of messages allowed on the producer queue.
