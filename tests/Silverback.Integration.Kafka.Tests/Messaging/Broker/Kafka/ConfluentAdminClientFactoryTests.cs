@@ -2,7 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading.Tasks;
 using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Collections;
@@ -13,6 +17,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Producing.EndpointResolvers;
+using Silverback.Tests.Integration.Kafka.TestTypes;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker.Kafka;
@@ -436,6 +441,107 @@ public class ConfluentAdminClientFactoryTests
         act.ShouldThrow<ArgumentNullException>();
     }
 
+    [Fact]
+    public async Task GetClient_ShouldLogConfluentDebugLogAsDebug()
+    {
+        await using DisconnectingLoopbackServer server = new();
+        RecordingLogger logger = new();
+        ConfluentAdminClientFactory factory = new(_producers, _consumers, GetSilverbackLogger(logger));
+
+        using IAdminClient client = factory.GetClient(
+            new AdminClientConfig
+            {
+                BootstrapServers = server.BootstrapServers,
+                Debug = "generic"
+            });
+
+        RecordedLog log = await logger.WaitForLogAsync(2315);
+        log.LogLevel.ShouldBe(LogLevel.Debug);
+        log.Message.ShouldStartWith("Debug from Confluent.Kafka admin client: '");
+    }
+
+    [Fact]
+    public async Task GetClient_ShouldLogConfluentInfoLogAsInformation()
+    {
+        // The disconnection by the broker is logged as info
+        await using DisconnectingLoopbackServer server = new();
+        RecordingLogger logger = new();
+        ConfluentAdminClientFactory factory = new(_producers, _consumers, GetSilverbackLogger(logger));
+
+        using IAdminClient client = factory.GetClient(new AdminClientConfig { BootstrapServers = server.BootstrapServers });
+
+        RecordedLog log = await logger.WaitForLogAsync(2314, "Info from Confluent.Kafka admin client: '");
+        log.LogLevel.ShouldBe(LogLevel.Information);
+    }
+
+    [Fact]
+    public async Task GetClient_ShouldLogConfluentNoticeLogAsInformation()
+    {
+        // The start of the librdkafka mock cluster is logged as notice
+        AdminClientConfig config = new();
+        config.Set("test.mock.num.brokers", "1");
+        RecordingLogger logger = new();
+        ConfluentAdminClientFactory factory = new(_producers, _consumers, GetSilverbackLogger(logger));
+
+        using IAdminClient client = factory.GetClient(config);
+
+        RecordedLog log = await logger.WaitForLogAsync(2314, "Notice from Confluent.Kafka admin client: '");
+        log.LogLevel.ShouldBe(LogLevel.Information);
+    }
+
+    [Fact]
+    public async Task GetClient_ShouldLogConfluentWarningLogAsWarning()
+    {
+        // The configuration properties of the consumers are ignored by the admin client, with a warning
+        await using DisconnectingLoopbackServer server = new();
+        AdminClientConfig config = new() { BootstrapServers = server.BootstrapServers };
+        config.Set("group.id", "group1");
+        RecordingLogger logger = new();
+        ConfluentAdminClientFactory factory = new(_producers, _consumers, GetSilverbackLogger(logger));
+
+        using IAdminClient client = factory.GetClient(config);
+
+        RecordedLog log = await logger.WaitForLogAsync(2313);
+        log.LogLevel.ShouldBe(LogLevel.Warning);
+        log.Message.ShouldStartWith("Warning from Confluent.Kafka admin client: '");
+        log.Message.ShouldContain("group.id");
+    }
+
+    [Fact]
+    public async Task GetClient_ShouldLogConfluentErrorLogAsError()
+    {
+        // The refused connection is logged as error (nothing listens on port 1)
+        RecordingLogger logger = new();
+        ConfluentAdminClientFactory factory = new(_producers, _consumers, GetSilverbackLogger(logger));
+
+        using IAdminClient client = factory.GetClient(new AdminClientConfig { BootstrapServers = "127.0.0.1:1" });
+
+        RecordedLog log = await logger.WaitForLogAsync(2312);
+        log.LogLevel.ShouldBe(LogLevel.Error);
+        log.Message.ShouldStartWith("Error from Confluent.Kafka admin client: '");
+    }
+
+    [Fact]
+    public async Task GetClient_ShouldLogNonFatalError()
+    {
+        await using DisconnectingLoopbackServer server = new();
+        RecordingLogger logger = new();
+        ConfluentAdminClientFactory factory = new(_producers, _consumers, GetSilverbackLogger(logger));
+
+        using IAdminClient client = factory.GetClient(new AdminClientConfig { BootstrapServers = server.BootstrapServers });
+
+        RecordedLog log = await logger.WaitForLogAsync(2301, "Error in Kafka admin client: '1/1 brokers are down' (-187)");
+        log.LogLevel.ShouldBe(LogLevel.Warning);
+    }
+
+    private static ISilverbackLogger<ConfluentAdminClientFactory> GetSilverbackLogger(ILogger innerLogger)
+    {
+        ISilverbackLogger<ConfluentAdminClientFactory> logger = Substitute.For<ISilverbackLogger<ConfluentAdminClientFactory>>();
+        logger.InnerLogger.Returns(innerLogger);
+        logger.IsEnabled(Arg.Any<LogEvent>()).Returns(true);
+        return logger;
+    }
+
     private static KafkaTransactionalProducer GetProducer(
         string clientId,
         IProducerEndpointResolver<KafkaProducerEndpoint> endpointResolver,
@@ -521,6 +627,34 @@ public class ConfluentAdminClientFactoryTests
         foreach (IConsumer consumer in consumers)
         {
             _consumers.Add(consumer);
+        }
+    }
+
+    private sealed record RecordedLog(LogLevel LogLevel, int EventId, string Message);
+
+    // Records the logs written from the librdkafka threads
+    private sealed class RecordingLogger : ILogger
+    {
+        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+
+        private readonly ConcurrentQueue<RecordedLog> _logs = [];
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull => null;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
+            _logs.Enqueue(new RecordedLog(logLevel, eventId.Id, formatter(state, exception)));
+
+        public async Task<RecordedLog> WaitForLogAsync(int eventId, string? messagePrefix = null)
+        {
+            bool IsMatch(RecordedLog log) =>
+                log.EventId == eventId && (messagePrefix == null || log.Message.StartsWith(messagePrefix, StringComparison.Ordinal));
+
+            await AsyncTestingUtil.WaitAsync(() => _logs.Any(IsMatch), Timeout);
+
+            return _logs.FirstOrDefault(IsMatch).ShouldNotBeNull();
         }
     }
 }

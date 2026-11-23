@@ -751,6 +751,316 @@ public class ConfluentConsumerWrapperTests
         _confluentConsumer.Received(1).Close();
     }
 
+    [Fact]
+    public async Task ConnectAsync_ShouldAssignPartitionsFromProvider_WhenPartitionOffsetsProviderIsSet()
+    {
+        IAdminClient adminClient = Substitute.For<IAdminClient>();
+        adminClient.GetMetadata("topic1", TimeSpan.FromSeconds(42)).Returns(GetMetadata("topic1", 0, 1));
+        adminClient.GetMetadata("topic2", TimeSpan.FromSeconds(42)).Returns(GetMetadata("topic2", 0, 1, 2));
+        _adminClientFactory.GetClient(Arg.Any<AdminClientConfig>()).Returns(adminClient);
+        List<IReadOnlyCollection<TopicPartition>> availablePartitions = [];
+        KafkaConsumerConfiguration configuration = new()
+        {
+            BootstrapServers = "PLAINTEXT://test:9092",
+            GetMetadataTimeout = TimeSpan.FromSeconds(42),
+            Endpoints = new[]
+            {
+                GetProviderEndpointConfiguration(
+                    "topic1",
+                    partitions =>
+                    {
+                        availablePartitions.Add(partitions);
+                        return [new TopicPartitionOffset("topic1", 1, 42)];
+                    }),
+                GetProviderEndpointConfiguration(
+                    "topic2",
+                    partitions =>
+                    {
+                        availablePartitions.Add(partitions);
+                        return [new TopicPartitionOffset("topic2", 0, Offset.Beginning), new TopicPartitionOffset("topic2", 2, Offset.End)];
+                    })
+            }.AsValueReadOnlyCollection()
+        };
+        ConfluentConsumerWrapper consumer = new(
+            "test",
+            _consumerBuilder,
+            configuration,
+            _adminClientFactory,
+            _callbacksInvoker,
+            _offsetStoreFactory,
+            _serviceProvider,
+            _logger);
+        consumer.Consumer = GetKafkaConsumer(consumer);
+
+        await consumer.ConnectAsync();
+
+        availablePartitions.Count.ShouldBe(2);
+        availablePartitions[0].ShouldBe([new TopicPartition("topic1", 0), new TopicPartition("topic1", 1)]);
+        availablePartitions[1].ShouldBe([new TopicPartition("topic2", 0), new TopicPartition("topic2", 1), new TopicPartition("topic2", 2)]);
+        _confluentConsumer.Received(1).Assign(
+            Arg.Is<IEnumerable<TopicPartitionOffset>>(enumerable =>
+                enumerable.SequenceEqual(
+                    new[]
+                    {
+                        new TopicPartitionOffset("topic1", 1, 42),
+                        new TopicPartitionOffset("topic2", 0, Offset.Beginning),
+                        new TopicPartitionOffset("topic2", 2, Offset.End)
+                    })));
+        _confluentConsumer.DidNotReceive().Subscribe(Arg.Any<IEnumerable<string>>());
+        _loggerSubstitute.Received(LogLevel.Information, null, "Assigned partition topic2[2]@-1 | ConsumerName: test", 2031);
+
+        // The admin client is created once and released after the assignment
+        _adminClientFactory.Received(1).GetClient(Arg.Is<AdminClientConfig>(config => config.BootstrapServers == "PLAINTEXT://test:9092"));
+        adminClient.Received(1).Dispose();
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldDisposeAdminClientAndThrow_WhenPartitionOffsetsProviderFails()
+    {
+        IAdminClient adminClient = Substitute.For<IAdminClient>();
+        adminClient.GetMetadata("topic1", Arg.Any<TimeSpan>()).Returns(GetMetadata("topic1", 0));
+        _adminClientFactory.GetClient(Arg.Any<AdminClientConfig>()).Returns(adminClient);
+        InvalidOperationException exception = new("provider failed");
+        KafkaConsumerConfiguration configuration = new()
+        {
+            Endpoints = new[]
+            {
+                GetProviderEndpointConfiguration("topic1", _ => throw exception)
+            }.AsValueReadOnlyCollection()
+        };
+        ConfluentConsumerWrapper consumer = new(
+            "test",
+            _consumerBuilder,
+            configuration,
+            _adminClientFactory,
+            _callbacksInvoker,
+            _offsetStoreFactory,
+            _serviceProvider,
+            _logger);
+        consumer.Consumer = GetKafkaConsumer(consumer);
+
+        Func<Task> act = () => consumer.ConnectAsync().AsTask();
+
+        (await act.ShouldThrowAsync<InvalidOperationException>()).ShouldBeSameAs(exception);
+        adminClient.Received(1).Dispose();
+        _confluentConsumer.DidNotReceive().Assign(Arg.Any<IEnumerable<TopicPartitionOffset>>());
+    }
+
+    [Fact]
+    public void Assignment_ShouldReturnEmptyList_WhenNotConnected()
+    {
+        ConfluentConsumerWrapper consumer = GetConsumer();
+
+        consumer.Assignment.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Assignment_ShouldReturnConfluentConsumerAssignment_WhenConnected()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        List<TopicPartition> assignment = [new("topic", 0), new("topic", 1)];
+        _confluentConsumer.Assignment.Returns(_ => assignment);
+
+        consumer.Assignment.ShouldBe(assignment);
+
+        // Released, so that the disconnect doesn't wait for the leave group timeout
+        assignment.Clear();
+    }
+
+    [Fact]
+    public void Consumer_ShouldThrow_WhenNotInitialized()
+    {
+        ConfluentConsumerWrapper consumer = GetConsumer();
+
+        Action act = () => _ = consumer.Consumer;
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The consumer is not initialized yet.");
+    }
+
+    [Fact]
+    public void GetConsumerGroupMetadata_ShouldThrow_WhenNotConnected()
+    {
+        ConfluentConsumerWrapper consumer = GetConsumer();
+
+        Action act = () => consumer.GetConsumerGroupMetadata();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The consumer is not connected.");
+    }
+
+    [Fact]
+    public async Task GetConsumerGroupMetadata_ShouldReturnConfluentConsumerGroupMetadata()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        IConsumerGroupMetadata groupMetadata = Substitute.For<IConsumerGroupMetadata>();
+        _confluentConsumer.ConsumerGroupMetadata.Returns(groupMetadata);
+
+        consumer.GetConsumerGroupMetadata().ShouldBeSameAs(groupMetadata);
+    }
+
+    [Fact]
+    public async Task Consume_ShouldReturnConfluentConsumerResult()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        ConsumeResult<byte[]?, byte[]?> consumeResult = new();
+        _confluentConsumer.Consume(TimeSpan.FromSeconds(42)).Returns(consumeResult);
+
+        consumer.Consume(TimeSpan.FromSeconds(42)).ShouldBeSameAs(consumeResult);
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The assertion delegate is invoked before the consumer is disposed")]
+    public async Task Consume_ShouldThrow_WhenClientIsReleasedAfterCloseFailed()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        _confluentConsumer.When(native => native.Close()).Do(_ => throw new KafkaException(new Error(ErrorCode.Local_Fail)));
+        await Should.ThrowAsync<KafkaException>(() => consumer.DisconnectAsync().AsTask());
+        _confluentConsumer.ClearReceivedCalls();
+
+        Action act = () => consumer.Consume(TimeSpan.Zero);
+
+        // The failed disconnect leaves the client initialized, but the native consumer is released
+        consumer.Status.ShouldBe(ClientStatus.Initialized);
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The underlying consumer is not initialized.");
+        _confluentConsumer.DidNotReceive().Consume(Arg.Any<TimeSpan>());
+    }
+
+    [Fact]
+    public void Seek_ShouldThrow_WhenNotConnected()
+    {
+        ConfluentConsumerWrapper consumer = GetConsumer();
+
+        Action act = () => consumer.Seek(new TopicPartitionOffset("topic", 0, 42));
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The consumer is not connected.");
+    }
+
+    [Fact]
+    public async Task Seek_ShouldSeekConfluentConsumer()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        TopicPartitionOffset offset = new("topic", 0, 42);
+
+        consumer.Seek(offset);
+
+        _confluentConsumer.Received(1).Seek(offset);
+    }
+
+    [Fact]
+    public void Pause_ShouldThrow_WhenNotConnected()
+    {
+        ConfluentConsumerWrapper consumer = GetConsumer();
+
+        Action act = () => consumer.Pause([new TopicPartition("topic", 0)]);
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The consumer is not connected.");
+    }
+
+    [Fact]
+    public async Task Pause_ShouldPauseConfluentConsumer()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        TopicPartition[] partitions = [new("topic", 0), new("topic", 1)];
+
+        consumer.Pause(partitions);
+
+        _confluentConsumer.Received(1).Pause(partitions);
+    }
+
+    [Fact]
+    public void Resume_ShouldThrow_WhenNotConnected()
+    {
+        ConfluentConsumerWrapper consumer = GetConsumer();
+
+        Action act = () => consumer.Resume([new TopicPartition("topic", 0)]);
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The consumer is not connected.");
+    }
+
+    [Fact]
+    public async Task Resume_ShouldResumeConfluentConsumer()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        TopicPartition[] partitions = [new("topic", 0), new("topic", 1)];
+
+        consumer.Resume(partitions);
+
+        _confluentConsumer.Received(1).Resume(partitions);
+    }
+
+    [Fact]
+    public void OffsetsForTimes_ShouldThrow_WhenNotConnected()
+    {
+        ConfluentConsumerWrapper consumer = GetConsumer();
+
+        Action act = () => consumer.OffsetsForTimes([new TopicPartitionTimestamp("topic", 0, new Timestamp(DateTime.UtcNow))], TimeSpan.FromSeconds(1));
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("The consumer is not connected.");
+    }
+
+    [Fact]
+    public async Task OffsetsForTimes_ShouldReturnConfluentConsumerOffsets()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
+        TopicPartitionTimestamp[] timestamps = [new("topic", 0, new Timestamp(DateTime.UtcNow))];
+        List<TopicPartitionOffset> offsets = [new("topic", 0, 42)];
+        _confluentConsumer.OffsetsForTimes(timestamps, TimeSpan.FromSeconds(3)).Returns(offsets);
+
+        consumer.OffsetsForTimes(timestamps, TimeSpan.FromSeconds(3)).ShouldBeSameAs(offsets);
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_ShouldPollWithPollingTimeout_WhenShorterThanLeaveGroupPollTimeout()
+    {
+        await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync(pollingTimeout: TimeSpan.FromMilliseconds(10));
+        List<TopicPartition> assignment = [new("topic", 0)];
+        ConcurrentQueue<string> nativeCalls = [];
+
+        _confluentConsumer.Assignment.Returns(_ => assignment);
+        _confluentConsumer.When(native => native.Unsubscribe()).Do(_ => nativeCalls.Enqueue("Unsubscribe"));
+        _confluentConsumer.When(native => native.Close()).Do(_ => nativeCalls.Enqueue("Close"));
+        _confluentConsumer.Consume(Arg.Any<TimeSpan>()).Returns<ConsumeResult<byte[]?, byte[]?>?>(call =>
+        {
+            // The consume loop polls until the disconnect stops it
+            if (!nativeCalls.Contains("Unsubscribe"))
+                return null;
+
+            nativeCalls.Enqueue($"Consume {call.Arg<TimeSpan>().TotalMilliseconds}");
+
+            if (nativeCalls.Count(nativeCall => nativeCall.StartsWith("Consume", StringComparison.Ordinal)) == 2)
+                assignment.Clear();
+
+            return null;
+        });
+
+        await consumer.DisconnectAsync();
+
+        nativeCalls.ShouldBe(["Unsubscribe", "Consume 0", "Consume 10", "Close"]);
+    }
+
+    private static Metadata GetMetadata(string topic, params int[] partitions) =>
+        new(
+            [],
+            [
+                new TopicMetadata(
+                    topic,
+                    [.. partitions.Select(partition => new PartitionMetadata(partition, 0, [], [], new Error(ErrorCode.NoError)))],
+                    new Error(ErrorCode.NoError))
+            ],
+            0,
+            "broker");
+
+    private static KafkaConsumerEndpointConfiguration GetProviderEndpointConfiguration(
+        string topic,
+        Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> partitionOffsetsProvider) =>
+        new()
+        {
+            TopicPartitions = new[]
+            {
+                new TopicPartitionOffset(topic, Partition.Any, Offset.Unset)
+            }.AsValueReadOnlyCollection(),
+            PartitionOffsetsProvider = partitions => ValueTask.FromResult(partitionOffsetsProvider(partitions))
+        };
+
     private static KafkaConsumer GetKafkaConsumer(IConfluentConsumerWrapper consumerWrapper) => new(
         "test",
         consumerWrapper,
@@ -767,7 +1077,8 @@ public class ConfluentConsumerWrapperTests
         bool staticAssignment = false,
         GroupProtocol? groupProtocol = null,
         PartitionAssignmentStrategy? partitionAssignmentStrategy = null,
-        string? groupInstanceId = null)
+        string? groupInstanceId = null,
+        TimeSpan? pollingTimeout = null)
     {
         KafkaConsumerConfiguration configuration = new()
         {
@@ -778,6 +1089,7 @@ public class ConfluentConsumerWrapperTests
             EnableAutoCommit = enableAutoCommit,
             CommitOffsetEach = enableAutoCommit ? null : 1,
             CommitOffsets = commitOffsets,
+            PollingTimeout = pollingTimeout ?? TimeSpan.FromMilliseconds(100),
             Endpoints = new[]
             {
                 new KafkaConsumerEndpointConfiguration
@@ -804,6 +1116,17 @@ public class ConfluentConsumerWrapperTests
 
         return consumer;
     }
+
+    private ConfluentConsumerWrapper GetConsumer() =>
+        new(
+            "test",
+            _consumerBuilder,
+            new KafkaConsumerConfiguration(),
+            _adminClientFactory,
+            _callbacksInvoker,
+            _offsetStoreFactory,
+            _serviceProvider,
+            _logger);
 
     private void RecordPauseAndClose(ConcurrentQueue<string> nativeCalls)
     {
