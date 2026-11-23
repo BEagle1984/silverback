@@ -15,8 +15,8 @@ env:
 
 jobs:
   sonar:
-    # SONAR_TOKEN isn't available to fork and Dependabot pull requests
-    if: ${{ !github.event.pull_request.head.repo.fork && github.actor != 'dependabot[bot]' }}
+    # SONAR_TOKEN isn't available to fork pull requests
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     steps:
       # SonarCloud needs the full history to assign the new code and the issues

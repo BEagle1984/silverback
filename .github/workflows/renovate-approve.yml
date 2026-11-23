@@ -1,0 +1,66 @@
+name: renovate-approve
+
+# Approves the Renovate pull requests that are meant to be automerged (they carry the "automerge" label, see
+# .github/renovate.json5), because the main ruleset requires an approving review. The native auto-merge then merges them when the
+# required checks pass. Renovate rebases its branches to keep them up to date and each push dismisses the approval, so the
+# workflow runs on every push (synchronize) and approves again.
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+
+permissions:
+  contents: read
+
+jobs:
+  approve:
+    # Only the pull requests that Renovate opens from a branch of this repository, and only for Renovate's own pushes and labels:
+    # a commit or a label added by someone else still needs a human review
+    if: >-
+      ${{
+        github.event.pull_request.user.login == 'renovate[bot]' &&
+        github.event.sender.login == 'renovate[bot]' &&
+        !github.event.pull_request.head.repo.fork &&
+        startsWith(github.event.pull_request.head.ref, 'renovate/') &&
+        contains(github.event.pull_request.labels.*.name, 'automerge')
+      }}
+    runs-on: ubuntu-latest
+    permissions:
+      # To approve the pull request
+      pull-requests: write
+    steps:
+      # No checkout needed: the pull request is addressed explicitly. The sender only tells who triggered the event, so the step
+      # approves only if the commit of the event is still the head, Renovate added the automerge label and every commit of the pull
+      # request is Renovate's: a label or a commit added by someone else needs a human review.
+      - name: Approve
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPOSITORY: ${{ github.repository }}
+        # With pipefail, so that a failed API call fails the job instead of reading as "not approved"
+        shell: bash
+        run: |
+          current_head=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq '.head.sha')
+          if [ "$current_head" != "$HEAD_SHA" ]; then
+            echo "The head moved from $HEAD_SHA to $current_head, skipping (the run of the new head decides)"
+            exit 0
+          fi
+
+          # The label check above reads the current labels: the automerge label must have been added by Renovate as well
+          label_actor=$(gh api --paginate "repos/$REPOSITORY/issues/$PR_NUMBER/events" --jq '.[] | select(.event == "labeled" and .label.name == "automerge") | .actor.login' | tail -n 1)
+          if [ "$label_actor" != "renovate[bot]" ]; then
+            echo "Not approved: the automerge label was added by ${label_actor:-nobody}"
+            exit 0
+          fi
+
+          authors=$(gh api --paginate "repos/$REPOSITORY/pulls/$PR_NUMBER/commits" --jq '.[] | .author.login // "unknown"' | sort -u)
+          if [ "$authors" != "renovate[bot]" ]; then
+            echo "Not approved: the pull request has commits by $(echo $authors)"
+            exit 0
+          fi
+
+          gh api --method POST "repos/$REPOSITORY/pulls/$PR_NUMBER/reviews" -f event=APPROVE -f commit_id="$HEAD_SHA"
