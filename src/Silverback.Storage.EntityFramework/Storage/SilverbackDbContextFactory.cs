@@ -43,7 +43,7 @@ internal static class SilverbackDbContextFactory
                     }
                 }
 
-                throw new InvalidOperationException($"The type {key.ConnectionType.Name} doesn't have a constructor that accepts a DbConnection.");
+                throw new InvalidOperationException($"The type {key.DbContextType.Name} doesn't have a constructor that accepts a {key.ConnectionType.Name}.");
             });
 
     private sealed record CacheKey(Type DbContextType, Type ConnectionType);

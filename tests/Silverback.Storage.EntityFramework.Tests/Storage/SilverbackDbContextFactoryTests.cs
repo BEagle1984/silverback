@@ -79,6 +79,18 @@ public sealed class SilverbackDbContextFactoryTests : IDisposable
         dbContext2.ShouldNotBeSameAs(dbContext1);
     }
 
+    [Fact]
+    public void CreateDbContext_ShouldThrow_WhenDbContextHasNoConstructorAcceptingTheConnection()
+    {
+        SilverbackContext context = new(_serviceProvider);
+        using IStorageTransaction storageTransaction = context.EnlistDbTransaction(_sqliteConnection.BeginTransaction());
+
+        Action act = () => SilverbackDbContextFactory.CreateDbContext<NoConnectionConstructorDbContext>(_serviceProvider, context);
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe(
+            "The type NoConnectionConstructorDbContext doesn't have a constructor that accepts a SqliteConnection.");
+    }
+
     public void Dispose() => _sqliteConnection.Dispose();
 
     private sealed class TestDbContext : DbContext
@@ -97,4 +109,6 @@ public sealed class SilverbackDbContextFactoryTests : IDisposable
 
         public bool CreatedWithConnection { get; }
     }
+
+    private sealed class NoConnectionConstructorDbContext : DbContext;
 }
