@@ -29,55 +29,79 @@ public class ConfluentAdminClientFactoryTests
 
     private readonly ConsumerCollection _consumers = [];
 
-    private readonly ConfluentAdminClientFactory _factory;
+    // Builds no librdkafka client, so that the tests of the resolution logic are fast. The tests that need the mapped configuration to
+    // be accepted by librdkafka build real clients with GetRealFactory, against a loopback server, because a client whose broker host
+    // has to be resolved by DNS takes seconds to be disposed.
+    private readonly FakeAdminClientFactory _factory;
 
     public ConfluentAdminClientFactoryTests()
     {
-        _factory = new ConfluentAdminClientFactory(
-            _producers,
-            _consumers,
-            Substitute.For<ISilverbackLogger<ConfluentAdminClientFactory>>());
+        _factory = new FakeAdminClientFactory(_producers, _consumers);
     }
 
     [Fact]
-    public void GetClient_ShouldReturnClientForBuilderAction()
+    public async Task GetClient_ShouldReturnClientForBuilderAction()
     {
-        using IAdminClient client = _factory.GetClient(builder => builder.WithBootstrapServers("PLAINTEXT://test:9092"));
+        await using DisconnectingLoopbackServer server = new();
+        string bootstrapServers = server.BootstrapServers;
+
+        using IAdminClient client = GetRealFactory().GetClient(builder => builder.WithBootstrapServers(bootstrapServers));
 
         client.ShouldNotBeNull();
     }
 
     [Fact]
-    public void GetClient_WithConfiguration_ShouldReturnClientForClientConfiguration()
+    public async Task GetClient_ShouldNameClientAfterClientId()
     {
-        using IAdminClient client = _factory.GetClient(
+        await using DisconnectingLoopbackServer server = new();
+
+        using IAdminClient client = GetRealFactory().GetClient(
+            new AdminClientConfig
+            {
+                BootstrapServers = server.BootstrapServers,
+                ClientId = "client1"
+            });
+
+        client.Name.ShouldStartWith("client1");
+    }
+
+    [Fact]
+    public async Task GetClient_WithConfiguration_ShouldReturnClientForClientConfiguration()
+    {
+        await using DisconnectingLoopbackServer server = new();
+
+        using IAdminClient client = GetRealFactory().GetClient(
             new KafkaClientConfiguration
             {
-                BootstrapServers = "PLAINTEXT://test:9092"
+                BootstrapServers = server.BootstrapServers
             });
 
         client.ShouldNotBeNull();
     }
 
     [Fact]
-    public void GetClient_WithConfiguration_ShouldReturnClientForProducerConfiguration()
+    public async Task GetClient_WithConfiguration_ShouldReturnClientForProducerConfiguration()
     {
-        using IAdminClient client = _factory.GetClient(
+        await using DisconnectingLoopbackServer server = new();
+
+        using IAdminClient client = GetRealFactory().GetClient(
             new KafkaProducerConfiguration
             {
-                BootstrapServers = "PLAINTEXT://test:9092"
+                BootstrapServers = server.BootstrapServers
             });
 
         client.ShouldNotBeNull();
     }
 
     [Fact]
-    public void GetClient_WithConfiguration_ShouldIgnoreProducerSpecificConfigurations()
+    public async Task GetClient_WithConfiguration_ShouldIgnoreProducerSpecificConfigurations()
     {
-        using IAdminClient client = _factory.GetClient(
+        await using DisconnectingLoopbackServer server = new();
+
+        using IAdminClient client = GetRealFactory().GetClient(
             new KafkaProducerConfiguration
             {
-                BootstrapServers = "PLAINTEXT://test:9092",
+                BootstrapServers = server.BootstrapServers,
                 EnableDeliveryReports = false
             });
 
@@ -85,24 +109,28 @@ public class ConfluentAdminClientFactoryTests
     }
 
     [Fact]
-    public void GetClient_WithConfiguration_ShouldReturnClientForConsumerConfiguration()
+    public async Task GetClient_WithConfiguration_ShouldReturnClientForConsumerConfiguration()
     {
-        using IAdminClient client = _factory.GetClient(
+        await using DisconnectingLoopbackServer server = new();
+
+        using IAdminClient client = GetRealFactory().GetClient(
             new KafkaConsumerConfiguration
             {
-                BootstrapServers = "PLAINTEXT://test:9092"
+                BootstrapServers = server.BootstrapServers
             });
 
         client.ShouldNotBeNull();
     }
 
     [Fact]
-    public void GetClient_WithConfiguration_ShouldIgnoreConsumerSpecificConfigurations()
+    public async Task GetClient_WithConfiguration_ShouldIgnoreConsumerSpecificConfigurations()
     {
-        using IAdminClient client = _factory.GetClient(
+        await using DisconnectingLoopbackServer server = new();
+
+        using IAdminClient client = GetRealFactory().GetClient(
             new KafkaConsumerConfiguration
             {
-                BootstrapServers = "PLAINTEXT://test:9092",
+                BootstrapServers = server.BootstrapServers,
                 ConsumeResultFields = "something"
             });
 
@@ -635,6 +663,9 @@ public class ConfluentAdminClientFactoryTests
         }
     }
 
+    private ConfluentAdminClientFactory GetRealFactory() =>
+        new(_producers, _consumers, Substitute.For<ISilverbackLogger<ConfluentAdminClientFactory>>());
+
     private sealed record RecordedLog(LogLevel LogLevel, int EventId, string Message);
 
     // Records the logs written from the librdkafka threads
@@ -657,6 +688,23 @@ public class ConfluentAdminClientFactoryTests
             await AsyncTestingUtil.WaitAsync(() => _logs.Any(log => log.EventId == eventId), Timeout);
 
             return _logs.First(log => log.EventId == eventId);
+        }
+    }
+
+    // Returns a fake client named after the client.id, as librdkafka names it (see GetClient_ShouldNameClientAfterClientId)
+    private sealed class FakeAdminClientFactory : ConfluentAdminClientFactoryBase
+    {
+        public FakeAdminClientFactory(IProducerCollection producers, IConsumerCollection consumers)
+            : base(producers, consumers)
+        {
+        }
+
+        public override IAdminClient GetClient(AdminClientConfig config)
+        {
+            IAdminClient client = Substitute.For<IAdminClient>();
+            client.Name.Returns(config.ClientId);
+
+            return client;
         }
     }
 }
