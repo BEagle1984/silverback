@@ -527,6 +527,87 @@ public class OutboxWorkerTests
         outboxWorker.LastPassFailed.ShouldBeTrue();
     }
 
+    [Fact]
+    public async Task ProcessOutboxAsync_ShouldNotProduceNextMessage_WhenPreviousFailedAsynchronouslyAndEnforcingOrder()
+    {
+        Action? failPendingProduce = null;
+        _producer1
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, (OutboxMessage, Activity)>>(),
+                Arg.Any<Action<Exception, (OutboxMessage, Activity)>>(),
+                Arg.Any<(OutboxMessage, Activity)>()))
+            .Do(callInfo => failPendingProduce = () => callInfo.ArgAt<Action<Exception, (OutboxMessage, Activity)>>(3)
+                .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<(OutboxMessage, Activity)>(4)));
+
+        // The first produce fails while the producer of the next message is being resolved, after the failure check of the loop
+        _producerCollection.GetProducerForEndpoint("two").Returns(_ =>
+        {
+            failPendingProduce.ShouldNotBeNull().Invoke();
+
+            return _producer2;
+        });
+
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "two"));
+
+        OutboxWorker outboxWorker = new(
+            new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
+            new InMemoryOutboxReader(_inMemoryOutbox),
+            _producerCollection,
+            _logger);
+
+        Func<Task> act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10));
+        await act.ShouldThrowAsync<OutboxProcessingException>();
+
+        AssertReceivedCalls(_producer1, 1);
+        AssertReceivedCalls(_producer2, 0);
+        outboxWorker.LastPassFailed.ShouldBeTrue();
+        outboxWorker.LastPassProducedCount.ShouldBe(0);
+        (await outboxWorker.GetLengthAsync()).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task ProcessOutboxAsync_ShouldThrowWithoutAcknowledging_WhenDisposedWhileProducing()
+    {
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "two"));
+
+        OutboxWorker outboxWorker = new(
+            new OutboxWorkerSettings(new InMemoryOutboxSettings()),
+            new InMemoryOutboxReader(_inMemoryOutbox),
+            _producerCollection,
+            _logger);
+
+        // The first message is produced, while the second one is still pending when the worker is disposed
+        _producer1
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, (OutboxMessage, Activity)>>(),
+                Arg.Any<Action<Exception, (OutboxMessage, Activity)>>(),
+                Arg.Any<(OutboxMessage, Activity)>()))
+            .Do(callInfo => callInfo.ArgAt<Action<IBrokerMessageIdentifier?, (OutboxMessage, Activity)>>(2)
+                .Invoke(null, callInfo.ArgAt<(OutboxMessage, Activity)>(4)));
+        _producer2
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, (OutboxMessage, Activity)>>(),
+                Arg.Any<Action<Exception, (OutboxMessage, Activity)>>(),
+                Arg.Any<(OutboxMessage, Activity)>()))
+            .Do(_ => outboxWorker.Dispose());
+
+        Func<Task> act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10));
+
+        // The worker can't wait for the pending produce, so it doesn't acknowledge the produced message either
+        await act.ShouldThrowAsync<ObjectDisposedException>();
+        AssertReceivedCalls(_producer1, 1);
+        AssertReceivedCalls(_producer2, 1);
+        (await outboxWorker.GetLengthAsync()).ShouldBe(2);
+    }
+
     private static void AssertReceivedCalls(IProducer producer, int requiredNumberOfCalls) =>
         producer.Received(requiredNumberOfCalls).RawProduce(
             Arg.Any<byte[]>(),

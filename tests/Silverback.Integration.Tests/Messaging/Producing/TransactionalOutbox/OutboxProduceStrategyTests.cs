@@ -68,6 +68,106 @@ public class OutboxProduceStrategyTests
     }
 
     [Fact]
+    [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Test code")]
+    public void Equals_ShouldReturnFalse_WhenComparingWithNull()
+    {
+        OutboxProduceStrategy strategy = new(new TestSettings("outbox"));
+
+        strategy.Equals(null).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnTrue_WhenComparingAsProduceStrategyWithSameSettings()
+    {
+        OutboxProduceStrategy strategy1 = new(new TestSettings("outbox"));
+        IProduceStrategy strategy2 = new OutboxProduceStrategy(new TestSettings("outbox"));
+
+        strategy1.Equals(strategy2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnTrue_WhenComparingAsObjectWithSameSettings()
+    {
+        OutboxProduceStrategy strategy1 = new(new TestSettings("outbox"));
+        object strategy2 = new OutboxProduceStrategy(new TestSettings("outbox"));
+
+        strategy1.Equals(strategy2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenComparingAsObjectWithDifferentType()
+    {
+        OutboxProduceStrategy strategy1 = new(new TestSettings("outbox"));
+        object strategy2 = new DefaultProduceStrategy();
+
+        strategy1.Equals(strategy2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void EqualityOperator_ShouldReturnTrue_WhenSettingsAreEqual()
+    {
+        OutboxProduceStrategy strategy1 = new(new TestSettings("outbox"));
+        OutboxProduceStrategy strategy2 = new(new TestSettings("outbox"));
+
+        (strategy1 == strategy2).ShouldBeTrue();
+        (strategy1 != strategy2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void EqualityOperator_ShouldReturnFalse_WhenSettingsAreDifferent()
+    {
+        OutboxProduceStrategy strategy1 = new(new TestSettings("outbox1"));
+        OutboxProduceStrategy strategy2 = new(new TestSettings("outbox2"));
+
+        (strategy1 == strategy2).ShouldBeFalse();
+        (strategy1 != strategy2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void GetHashCode_ShouldReturnSameValue_WhenSettingsAreEqual()
+    {
+        OutboxProduceStrategy strategy1 = new(new TestSettings("outbox"));
+        OutboxProduceStrategy strategy2 = new(new TestSettings("outbox"));
+
+        strategy1.GetHashCode().ShouldBe(strategy2.GetHashCode());
+    }
+
+    [Fact]
+    public async Task Build_ShouldReuseWriter_WhenCalledAgain()
+    {
+        TestOutboxWriter writer1 = new();
+        TestOutboxWriter writer2 = new();
+        OutboxProduceStrategy strategy = new(new TestSettings("outbox"));
+
+        IProduceStrategyImplementation implementation1 = strategy.Build(CreateContext(writer1), EndpointConfiguration);
+        IProduceStrategyImplementation implementation2 = strategy.Build(CreateContext(writer2), EndpointConfiguration);
+        await implementation1.ProduceAsync(CreateEnvelope("one"), CancellationToken.None);
+        await implementation2.ProduceAsync(CreateEnvelope("two"), CancellationToken.None);
+
+        writer1.Messages.Select(message => Encoding.UTF8.GetString(message.Content.ShouldNotBeNull())).ShouldBe(["one", "two"]);
+        writer2.Messages.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ProduceAsync_ShouldThrow_WhenFriendlyNameIsNotSet()
+    {
+        TestProducerEndpointConfiguration endpointConfiguration = EndpointConfiguration with { FriendlyName = null };
+        TestOutboxWriter writer = new();
+        IProduceStrategyImplementation strategy = BuildStrategy(writer, endpointConfiguration);
+
+        Exception? exception = await Record.ExceptionAsync(() => strategy.ProduceAsync(
+            new OutboundEnvelope<TestEventOne>(
+                new TestEventOne { Content = "one" },
+                null,
+                endpointConfiguration,
+                Substitute.For<IProducer>()),
+            CancellationToken.None));
+
+        exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe("FriendlyName not set.");
+        writer.Messages.ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task ProduceAsync_ShouldStoreHeaders()
     {
         TestOutboxWriter writer = new();
@@ -397,7 +497,12 @@ public class OutboxProduceStrategyTests
 
     private static IProduceStrategyImplementation BuildStrategy(
         TestOutboxWriter writer,
-        TestProducerEndpointConfiguration? endpointConfiguration = null)
+        TestProducerEndpointConfiguration? endpointConfiguration = null) =>
+        new OutboxProduceStrategy(new TestSettings("outbox")).Build(
+            CreateContext(writer),
+            endpointConfiguration ?? EndpointConfiguration);
+
+    private static SilverbackContext CreateContext(TestOutboxWriter writer)
     {
         ServiceCollection services = [];
         services
@@ -406,12 +511,9 @@ public class OutboxProduceStrategyTests
             .WithConnectionToMessageBroker();
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        TestSettings settings = new("outbox");
         serviceProvider.GetRequiredService<OutboxWriterFactory>().AddFactory<TestSettings>((_, _) => writer);
 
-        return new OutboxProduceStrategy(settings).Build(
-            new SilverbackContext(serviceProvider),
-            endpointConfiguration ?? EndpointConfiguration);
+        return new SilverbackContext(serviceProvider);
     }
 
     private static OutboundEnvelope<TestEventOne> CreateEnvelope(string content) =>

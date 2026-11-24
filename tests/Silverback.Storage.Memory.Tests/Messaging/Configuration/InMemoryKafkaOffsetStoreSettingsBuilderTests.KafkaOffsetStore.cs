@@ -33,6 +33,41 @@ public partial class BrokerOptionsBuilderMemoryExtensionsTests
     }
 
     [Fact]
+    public void AddInMemoryKafkaOffsetStore_ShouldNotThrow_WhenCalledTwice()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddInMemoryKafkaOffsetStore().AddInMemoryKafkaOffsetStore()));
+
+        IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
+
+        IKafkaOffsetStore store = factory.GetStore(new InMemoryKafkaOffsetStoreSettings(), serviceProvider);
+
+        store.ShouldBeOfType<InMemoryKafkaOffsetStore>();
+    }
+
+    [Fact]
+    public void AddInMemoryKafkaOffsetStore_ShouldThrow_WhenKafkaNotAdded()
+    {
+        BrokerOptionsBuilder builder = new(new SilverbackBuilder(new ServiceCollection()));
+
+        Action act = () => builder.AddInMemoryKafkaOffsetStore();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("OffsetStoreFactory not found, AddKafka has not been called.");
+    }
+
+    [Fact]
+    public void UseInMemoryKafkaOffsetStore_ShouldThrow_WhenKafkaNotAdded()
+    {
+        BrokerOptionsBuilder builder = new(new SilverbackBuilder(new ServiceCollection()));
+
+        Action act = () => builder.UseInMemoryKafkaOffsetStore();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("OffsetStoreFactory not found, AddKafka has not been called.");
+    }
+
+    [Fact]
     public void UseInMemoryKafkaOffsetStore_ShouldOverrideAllOffsetStoreSettingsTypes()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services

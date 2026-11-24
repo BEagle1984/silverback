@@ -57,6 +57,22 @@ public class PostgreSqlTableLockSettingsTests
         exception.Message.ShouldBe("ConnectionString is required.");
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Validate_ShouldThrow_WhenTableNameIsEmptyOrWhitespace(string tableName)
+    {
+        PostgreSqlTableLockSettings settings = new("my-lock", "connection-string")
+        {
+            TableName = tableName
+        };
+
+        Action act = settings.Validate;
+
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("TableName is required.");
+    }
+
     [Fact]
     public void Validate_ShouldThrow_WhenDbCommandTimeoutIsZero()
     {

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Storage;
 using Silverback.Tests.Logging;
 using Silverback.Util;
 using Xunit;
@@ -64,6 +66,142 @@ public partial class BrokerOptionsBuilderSqliteExtensionsTests
         reader2.ShouldBeOfType<SqliteOutboxReader>();
         writer1.ShouldBeOfType<SqliteOutboxWriter>();
         writer2.ShouldBeOfType<SqliteOutboxWriter>();
+    }
+
+    [Fact]
+    public void AddSqliteOutbox_ShouldNotThrow_WhenCalledTwice()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddSqliteOutbox().AddSqliteOutbox()));
+
+        IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+
+        OutboxSettings outboxSettings = new SqliteOutboxSettings("conn");
+
+        readerFactory.GetReader(outboxSettings, serviceProvider).ShouldBeOfType<SqliteOutboxReader>();
+        writerFactory.GetWriter(outboxSettings, serviceProvider).ShouldBeOfType<SqliteOutboxWriter>();
+    }
+
+    [Fact]
+    public void AddSqliteOutbox_ShouldThrow_WhenWithConnectionToMessageBrokerNotCalled()
+    {
+        BrokerOptionsBuilder builder = new(new ServiceCollection().AddSilverback());
+
+        Action act = () => builder.AddSqliteOutbox();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldContain("WithConnectionToMessageBroker has not been called");
+    }
+
+    [Fact]
+    public void AddSqliteOutbox_ShouldThrow_WhenOutboxWriterFactoryNotRegistered()
+    {
+        ServiceCollection services = [];
+        services.AddSingleton(new OutboxReaderFactory());
+        BrokerOptionsBuilder builder = new(services.AddSilverback());
+
+        Action act = () => builder.AddSqliteOutbox();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldContain("WithConnectionToMessageBroker has not been called");
+    }
+
+    [Fact]
+    public void UseSqliteOutbox_ShouldThrow_WhenWithConnectionToMessageBrokerNotCalled()
+    {
+        BrokerOptionsBuilder builder = new(new ServiceCollection().AddSilverback());
+
+        Action act = () => builder.UseSqliteOutbox("conn");
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldContain("WithConnectionToMessageBroker has not been called");
+    }
+
+    [Fact]
+    public void UseSqliteOutbox_ShouldUseSpecifiedSettings_WhenSettingsAreSqliteOutboxSettings()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.UseSqliteOutbox("conn")));
+
+        IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+
+        SqliteOutboxSettings outboxSettings = new("other-conn")
+        {
+            TableName = "other-table"
+        };
+
+        IOutboxReader reader = readerFactory.GetReader(outboxSettings, serviceProvider);
+        IOutboxWriter writer = writerFactory.GetWriter(outboxSettings, serviceProvider);
+
+        GetSettings(reader.ShouldBeOfType<SqliteOutboxReader>()).ShouldBeSameAs(outboxSettings);
+        GetSettings(writer.ShouldBeOfType<SqliteOutboxWriter>()).ShouldBeSameAs(outboxSettings);
+    }
+
+    [Fact]
+    public void UseSqliteOutbox_ShouldUseDefaultSettings_WhenSettingsAreNotDatabaseConnectionSettings()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.UseSqliteOutbox("conn")));
+
+        IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+
+        IOutboxReader reader = readerFactory.GetReader(new OutboxSettings1(), serviceProvider);
+        IOutboxWriter writer = writerFactory.GetWriter(new OutboxSettings1(), serviceProvider);
+
+        GetSettings(reader.ShouldBeOfType<SqliteOutboxReader>()).ShouldBe(new SqliteOutboxSettings("conn"));
+        GetSettings(writer.ShouldBeOfType<SqliteOutboxWriter>()).ShouldBe(new SqliteOutboxSettings("conn"));
+    }
+
+    [Fact]
+    public void UseSqliteOutbox_ShouldMapTimeouts_WhenSettingsAreDatabaseConnectionSettings()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.UseSqliteOutbox("conn")));
+
+        IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+
+        DatabaseOutboxSettings outboxSettings = new()
+        {
+            DbCommandTimeout = TimeSpan.FromSeconds(42),
+            CreateTableTimeout = TimeSpan.FromSeconds(84)
+        };
+
+        IOutboxReader reader = readerFactory.GetReader(outboxSettings, serviceProvider);
+        IOutboxWriter writer = writerFactory.GetWriter(outboxSettings, serviceProvider);
+
+        SqliteOutboxSettings readerSettings = GetSettings(reader.ShouldBeOfType<SqliteOutboxReader>()).ShouldBeOfType<SqliteOutboxSettings>();
+        readerSettings.ConnectionString.ShouldBe("conn");
+        readerSettings.DbCommandTimeout.ShouldBe(TimeSpan.FromSeconds(42));
+        readerSettings.CreateTableTimeout.ShouldBe(TimeSpan.FromSeconds(84));
+        SqliteOutboxSettings writerSettings = GetSettings(writer.ShouldBeOfType<SqliteOutboxWriter>()).ShouldBeOfType<SqliteOutboxSettings>();
+        writerSettings.ConnectionString.ShouldBe("conn");
+        writerSettings.DbCommandTimeout.ShouldBe(TimeSpan.FromSeconds(42));
+        writerSettings.CreateTableTimeout.ShouldBe(TimeSpan.FromSeconds(84));
+    }
+
+    private static object? GetSettings(object instance) =>
+        instance.GetType().GetField("_settings", BindingFlags.Instance | BindingFlags.NonPublic).ShouldNotBeNull().GetValue(instance);
+
+    private record DatabaseOutboxSettings : OutboxSettings, IDatabaseConnectionSettings
+    {
+        public string ConnectionString => "other-conn";
+
+        public string TableName { get; init; } = "other-table";
+
+        public TimeSpan DbCommandTimeout { get; init; }
+
+        public TimeSpan CreateTableTimeout { get; init; }
+
+        public override DistributedLockSettings? GetCompatibleLockSettings() => null;
     }
 
     private record OutboxSettings1 : OutboxSettings

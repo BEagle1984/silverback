@@ -30,6 +30,33 @@ public class SilverbackBuilderEntityFrameworkExtensionsTests
         distributedLock.ShouldBeOfType<EntityFrameworkLock>();
     }
 
+    [Fact]
+    public void AddEntityFrameworkLock_ShouldNotThrow_WhenCalledTwice()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddEntityFrameworkLock()
+            .AddEntityFrameworkLock());
+        DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
+
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(
+            new EntityFrameworkLockSettings("lock", typeof(TestDbContext), GetDbContext),
+            serviceProvider);
+
+        distributedLock.ShouldBeOfType<EntityFrameworkLock>();
+    }
+
+    [Fact]
+    public void AddEntityFrameworkLock_ShouldThrow_WhenSilverbackHasNotBeenAdded()
+    {
+        SilverbackBuilder builder = new(new ServiceCollection());
+
+        Action act = () => builder.AddEntityFrameworkLock();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldContain("AddSilverback has not been called");
+    }
+
     private static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => new TestDbContext();
 
     private class TestDbContext : DbContext;

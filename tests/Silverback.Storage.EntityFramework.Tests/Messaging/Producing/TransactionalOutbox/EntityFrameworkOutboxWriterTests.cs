@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage;
 using Silverback.Tests.Logging;
@@ -132,6 +133,24 @@ public sealed class EntityFrameworkOutboxWriterTests : IDisposable
         dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
                                                           dbOutboxMessage.Headers == null &&
                                                           dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldStoreHeaders()
+    {
+        using IServiceScope scope = _serviceProvider.CreateScope();
+        TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+
+        IOutboxWriterFactory writerFactory = _serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, _serviceProvider);
+
+        await outboxWriter.AddAsync(new OutboxMessage([0x01], [new MessageHeader("one", "1"), new MessageHeader("two", "2")], "test"));
+
+        List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
+        OutboxMessage dbOutboxMessage = dbOutboxMessages.ShouldHaveSingleItem();
+        dbOutboxMessage.Headers.ShouldNotBeNull();
+        dbOutboxMessage.Headers.Select(header => (header.Name, header.Value)).ShouldBe([("one", "1"), ("two", "2")]);
     }
 
     [Fact]

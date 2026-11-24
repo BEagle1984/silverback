@@ -76,6 +76,56 @@ public class DbTransactionWrapperTests
     }
 
     [Fact]
+    [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Testing the null handling")]
+    public void Equals_ShouldReturnFalse_WhenOtherIsNull()
+    {
+        DbTransactionWrapper transactionWrapper = new(new TestTransaction(), _context, true);
+
+        transactionWrapper.Equals(null).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnFalse_WhenObjectIsNotWrapper()
+    {
+        DbTransaction transaction = new TestTransaction();
+        object transactionWrapper = new DbTransactionWrapper(transaction, _context, true);
+
+        transactionWrapper.Equals(transaction).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void EqualityOperator_ShouldReturnTrue_WhenWrappedTransactionIsSame()
+    {
+        DbTransaction transaction = new TestTransaction();
+        DbTransactionWrapper transactionWrapper1 = new(transaction, _context, true);
+        DbTransactionWrapper transactionWrapper2 = new(transaction, _context, true);
+
+        (transactionWrapper1 == transactionWrapper2).ShouldBeTrue();
+        (transactionWrapper1 != transactionWrapper2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void EqualityOperator_ShouldReturnFalse_WhenWrappedTransactionIsDifferent()
+    {
+        DbTransactionWrapper transactionWrapper1 = new(new TestTransaction(), _context, true);
+        DbTransactionWrapper transactionWrapper2 = new(new TestTransaction(), _context, true);
+
+        (transactionWrapper1 == transactionWrapper2).ShouldBeFalse();
+        (transactionWrapper1 != transactionWrapper2).ShouldBeTrue();
+    }
+
+    [Fact]
+    [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Testing the null handling")]
+    public void EqualityOperator_ShouldReturnFalse_WhenOneSideIsNull()
+    {
+        DbTransactionWrapper transactionWrapper = new(new TestTransaction(), _context, true);
+        DbTransactionWrapper? nullWrapper = null;
+
+        (transactionWrapper == nullWrapper).ShouldBeFalse();
+        (nullWrapper != transactionWrapper).ShouldBeTrue();
+    }
+
+    [Fact]
     public void GetHashCode_ShouldReturnHashCodeOfWrappedTransaction()
     {
         DbTransaction transaction = new TestTransaction();

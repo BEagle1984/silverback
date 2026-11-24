@@ -29,12 +29,7 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
     {
         Check.NotNull(builder);
 
-        builder.AddInMemoryKafkaOffsetStore();
-
-        KafkaOffsetStoreFactory factory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<KafkaOffsetStoreFactory>() ??
-                                          throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");
-
-        factory.OverrideFactories((_, _) => new InMemoryKafkaOffsetStore());
+        AddInMemoryKafkaOffsetStoreFactory(builder).OverrideFactories((_, _) => new InMemoryKafkaOffsetStore());
 
         return builder;
     }
@@ -55,12 +50,19 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
     {
         Check.NotNull(builder);
 
+        AddInMemoryKafkaOffsetStoreFactory(builder);
+
+        return builder;
+    }
+
+    private static KafkaOffsetStoreFactory AddInMemoryKafkaOffsetStoreFactory(BrokerOptionsBuilder builder)
+    {
         KafkaOffsetStoreFactory factory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<KafkaOffsetStoreFactory>() ??
                                           throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");
 
         if (!factory.HasFactory<InMemoryKafkaOffsetStoreSettings>())
             factory.AddFactory<InMemoryKafkaOffsetStoreSettings>((_, _) => new InMemoryKafkaOffsetStore());
 
-        return builder;
+        return factory;
     }
 }

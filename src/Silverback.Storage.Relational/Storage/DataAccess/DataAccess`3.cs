@@ -42,17 +42,16 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         CancellationToken cancellationToken = default)
     {
         DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, cancellationToken: cancellationToken).ConfigureAwait(false);
-        DbDataReader reader = await wrapper.Command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
         try
         {
-            IAsyncEnumerable<T> asyncEnumerable = MapAsync(reader, projection, cancellationToken);
+            DbDataReader reader = await wrapper.Command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
-            return new DataReaderAsyncEnumerable<T>(asyncEnumerable, reader, wrapper);
+            // The returned enumerable disposes the reader and the wrapper. Creating it can't throw, so only the wrapper is disposed below.
+            return new DataReaderAsyncEnumerable<T>(MapAsync(reader, projection, cancellationToken), reader, wrapper);
         }
-        catch
+        catch (Exception)
         {
-            await reader.DisposeAsync().ConfigureAwait(false);
             wrapper.Dispose();
             throw;
         }
@@ -192,47 +191,21 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     }
 
     [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed")]
-    private DbCommandWrapper GetCommand(
-        string sql,
-        TParameter[]? parameters,
-        TimeSpan timeout,
-        bool beginTransaction = false,
-        ISilverbackContext? context = null)
+    private DbCommandWrapper GetCommand(string sql, TParameter[]? parameters, TimeSpan timeout)
     {
-        bool isNewConnection = false;
-        bool isNewTransaction = false;
-        DbConnection connection;
+        DbConnection connection = CreateConnection(_connectionString);
 
-        DbTransaction? transaction = context.GetActiveDbTransaction<TTransaction>();
-
-        if (transaction != null)
+        try
         {
-            connection = transaction.Connection ?? throw new InvalidOperationException("Transaction.Connection is null");
+            connection.Open();
         }
-        else
+        catch (Exception)
         {
-            connection = CreateConnection(_connectionString);
-            isNewConnection = true;
-
-            try
-            {
-                connection.Open();
-
-                if (beginTransaction)
-                {
-                    transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
-                    isNewTransaction = true;
-                }
-            }
-            catch (Exception)
-            {
-                connection.Dispose();
-                throw;
-            }
+            connection.Dispose();
+            throw;
         }
 
         DbCommand command = connection.CreateCommand();
-        command.Transaction = transaction;
         command.CommandText = sql;
 
         if (parameters != null)
@@ -240,7 +213,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
 
         command.CommandTimeout = (int)timeout.TotalSeconds;
 
-        return new DbCommandWrapper(command, connection, isNewConnection, transaction, isNewTransaction);
+        return new DbCommandWrapper(command, connection, true, null);
     }
 
     [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed")]
@@ -253,7 +226,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         CancellationToken cancellationToken = default)
     {
         bool isNewConnection = false;
-        bool isNewTransaction = false;
+        DbTransaction? ownedTransaction = null;
         DbConnection connection;
 
         DbTransaction? transaction = context.GetActiveDbTransaction<TTransaction>();
@@ -273,8 +246,8 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
 
                 if (beginTransaction)
                 {
-                    transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
-                    isNewTransaction = true;
+                    ownedTransaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
+                    transaction = ownedTransaction;
                 }
             }
             catch (Exception)
@@ -293,7 +266,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
 
         command.CommandTimeout = (int)timeout.TotalSeconds;
 
-        return new DbCommandWrapper(command, connection, isNewConnection, transaction, isNewTransaction);
+        return new DbCommandWrapper(command, connection, isNewConnection, ownedTransaction);
     }
 
     private sealed class DbCommandWrapper : IDisposable
@@ -302,22 +275,14 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
 
         private readonly bool _isConnectionOwner;
 
-        private readonly DbTransaction? _transaction;
+        private readonly DbTransaction? _ownedTransaction;
 
-        private readonly bool _isTransactionOwner;
-
-        public DbCommandWrapper(
-            DbCommand command,
-            DbConnection connection,
-            bool isConnectionOwner,
-            DbTransaction? transaction,
-            bool isTransactionOwner)
+        public DbCommandWrapper(DbCommand command, DbConnection connection, bool isConnectionOwner, DbTransaction? ownedTransaction)
         {
             Command = command;
             _connection = connection;
             _isConnectionOwner = isConnectionOwner;
-            _transaction = transaction;
-            _isTransactionOwner = isTransactionOwner;
+            _ownedTransaction = ownedTransaction;
         }
 
         public DbCommand Command { get; }
@@ -325,19 +290,17 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         public void Dispose()
         {
             Command.Dispose();
-
-            if (_isTransactionOwner && _transaction != null)
-                _transaction.Dispose();
+            _ownedTransaction?.Dispose();
 
             if (_isConnectionOwner)
                 _connection.Dispose();
         }
 
         public ValueTask CommitOwnedTransactionAsync(CancellationToken cancellationToken = default) =>
-            _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.CommitAsync(cancellationToken)) : default;
+            _ownedTransaction != null ? new ValueTask(_ownedTransaction.CommitAsync(cancellationToken)) : default;
 
         public ValueTask RollbackOwnedTransactionAsync(CancellationToken cancellationToken = default) =>
-            _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.RollbackAsync(cancellationToken)) : default;
+            _ownedTransaction != null ? new ValueTask(_ownedTransaction.RollbackAsync(cancellationToken)) : default;
     }
 
     private sealed class DataReaderAsyncEnumerable<T> : DisposableAsyncEnumerable<T>

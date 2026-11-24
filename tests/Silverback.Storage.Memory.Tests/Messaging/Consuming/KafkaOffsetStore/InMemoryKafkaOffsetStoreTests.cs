@@ -65,6 +65,17 @@ public class InMemoryKafkaOffsetStoreTests
     }
 
     [Fact]
+    public async Task GetStoredOffsets_ShouldReturnEmptyCollection_WhenNoOffsetsAreStoredForGroup()
+    {
+        InMemoryKafkaOffsetStore store = new();
+        await store.StoreOffsetsAsync("group1", [new KafkaOffset("topic1", 0, 42)]);
+
+        IReadOnlyCollection<KafkaOffset> offsets = store.GetStoredOffsets("group2");
+
+        offsets.ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task StoreOffsetsAsync_ShouldStoreOffsets()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services

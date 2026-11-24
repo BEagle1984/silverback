@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage;
 using Silverback.Tests.Logging;
@@ -156,6 +157,31 @@ public sealed class SqliteOutboxWriterTests : IDisposable
         dbOutboxMessages.Count.ShouldBe(3);
         dbOutboxMessages.ShouldAllBe(dbOutboxMessage => dbOutboxMessage.Content == null);
         dbOutboxMessages.Select(dbOutboxMessage => dbOutboxMessage.EndpointName).ShouldBe(["test1", "test2", "test3"], ignoreOrder: true);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldAddItemsWithHeadersToStorage()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddSqliteOutbox()));
+
+        SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(_outboxSettings);
+
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
+
+        await outboxWriter.AddAsync(new OutboxMessage([0x01], [new MessageHeader("one", "1")], "test1"));
+        await outboxWriter.AddAsync([new OutboxMessage([0x02], [new MessageHeader("two", "2")], "test2")]);
+        await outboxWriter.AddAsync(new[] { new OutboxMessage([0x03], [new MessageHeader("three", "3")], "test3") }.ToAsyncEnumerable());
+
+        List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
+        dbOutboxMessages.Count.ShouldBe(3);
+        dbOutboxMessages.Single(dbOutboxMessage => dbOutboxMessage.EndpointName == "test1").Headers.ShouldBe([new MessageHeader("one", "1")]);
+        dbOutboxMessages.Single(dbOutboxMessage => dbOutboxMessage.EndpointName == "test2").Headers.ShouldBe([new MessageHeader("two", "2")]);
+        dbOutboxMessages.Single(dbOutboxMessage => dbOutboxMessage.EndpointName == "test3").Headers.ShouldBe([new MessageHeader("three", "3")]);
     }
 
     [Fact]

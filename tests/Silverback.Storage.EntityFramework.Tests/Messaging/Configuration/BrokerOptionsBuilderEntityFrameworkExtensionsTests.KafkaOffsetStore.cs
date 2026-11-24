@@ -30,4 +30,34 @@ public partial class BrokerOptionsBuilderEntityFrameworkExtensionsTests
 
         store.ShouldBeOfType<EntityFrameworkKafkaOffsetStore>();
     }
+
+    [Fact]
+    public void AddEntityFrameworkKafkaOffsetStore_ShouldNotThrow_WhenCalledTwice()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddEntityFrameworkKafkaOffsetStore()
+                .AddEntityFrameworkKafkaOffsetStore()));
+
+        IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
+
+        IKafkaOffsetStore store = factory.GetStore(
+            new EntityFrameworkKafkaOffsetStoreSettings(typeof(TestDbContext), GetDbContext),
+            serviceProvider);
+
+        store.ShouldBeOfType<EntityFrameworkKafkaOffsetStore>();
+    }
+
+    [Fact]
+    public void AddEntityFrameworkKafkaOffsetStore_ShouldThrow_WhenKafkaHasNotBeenAdded()
+    {
+        BrokerOptionsBuilder builder = new(new SilverbackBuilder(new ServiceCollection()));
+
+        Action act = () => builder.AddEntityFrameworkKafkaOffsetStore();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldContain("AddKafka has not been called");
+    }
 }

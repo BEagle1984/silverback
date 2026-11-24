@@ -38,6 +38,59 @@ public partial class BrokerOptionsBuilderMemoryExtensionsTests
     }
 
     [Fact]
+    public void AddInMemoryOutbox_ShouldNotThrow_WhenCalledTwice()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox().AddInMemoryOutbox()));
+
+        IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+
+        IOutboxReader reader = readerFactory.GetReader(new InMemoryOutboxSettings(), serviceProvider);
+        IOutboxWriter writer = writerFactory.GetWriter(new InMemoryOutboxSettings(), serviceProvider);
+
+        reader.ShouldBeOfType<InMemoryOutboxReader>();
+        writer.ShouldBeOfType<InMemoryOutboxWriter>();
+    }
+
+    [Fact]
+    public void AddInMemoryOutbox_ShouldThrow_WhenNotConnectedToMessageBroker()
+    {
+        BrokerOptionsBuilder builder = new(new SilverbackBuilder(new ServiceCollection()));
+
+        Action act = () => builder.AddInMemoryOutbox();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe(
+            "OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
+    }
+
+    [Fact]
+    public void AddInMemoryOutbox_ShouldThrow_WhenOutboxWriterFactoryNotRegistered()
+    {
+        ServiceCollection services = new();
+        services.AddSingleton(new OutboxReaderFactory());
+        BrokerOptionsBuilder builder = new(new SilverbackBuilder(services));
+
+        Action act = () => builder.AddInMemoryOutbox();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe(
+            "OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
+    }
+
+    [Fact]
+    public void UseInMemoryOutbox_ShouldThrow_WhenNotConnectedToMessageBroker()
+    {
+        BrokerOptionsBuilder builder = new(new SilverbackBuilder(new ServiceCollection()));
+
+        Action act = () => builder.UseInMemoryOutbox();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe(
+            "OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
+    }
+
+    [Fact]
     public void UseInMemoryOutbox_ShouldOverrideAllOutboxSettingsTypes()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services

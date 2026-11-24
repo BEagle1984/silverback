@@ -33,9 +33,9 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
         Check.NotNull(context);
         Check.NotNull(next);
 
-        if (context.Consumer is KafkaConsumer { Configuration.ClientSideOffsetStore: not null } kafkaConsumer)
+        if (context.Consumer is KafkaConsumer kafkaConsumer && kafkaConsumer.Configuration.ClientSideOffsetStore is { } offsetStoreSettings)
         {
-            KafkaOffsetStoreScope offsetStoreScope = CreateOffsetStoreScope(context, kafkaConsumer.Configuration.ClientSideOffsetStore);
+            KafkaOffsetStoreScope offsetStoreScope = CreateOffsetStoreScope(context, offsetStoreSettings);
 
             // The handlers are bound to the scope of this context, which stores the offsets of its transaction. The scope set in the
             // ISilverbackContext is the one of the current async flow instead, which belongs to another message when the transaction is
