@@ -1,57 +1,218 @@
 # Repository guidance
 
-## Temporary investigation files
+Silverback is a .NET message bus with Kafka and MQTT integration, shipped as a set of NuGet packages. It targets only the latest .NET LTS
+(`net10.0`, set in `Directory.Build.props`).
 
-- Use the repository's top-level `temp/` directory for human-readable Markdown investigation reports. Keep one current summary per investigation, updating the findings, evidence and status instead of accumulating overlapping reports. Distinguish committed fixes, pending fixes and open issues.
-- Give reports meaningful names including the creation date: `YYYY-MM-DD-description.md`, for example `2026-09-18-kafka-rebalance-findings.md`. Keep the filename stable when updating an existing summary; update the date inside it.
-- Do not retain disposable editing scripts, scratch projects, build output or duplicate logs in `temp/`. Prefer inline commands or the operating system's temporary directory for one-off helpers; delete any repository-local scratch files before finishing the task.
-- Put test logs, TRX files and other generated evidence in the existing test/tool output directories. Retain only evidence needed for unresolved findings or meaningful verification, reference it from the report, and remove redundant outputs. Do not discard an unexplained failure merely because a retry passes.
-- `temp/` is ignored by Git. Do not commit or force-add reports, add them as Solution Items, or create permanent documentation links to individual temporary files. Keep maintained documentation in its normal location.
+## Commands
 
-## Code conventions
+```shell
+dotnet build Silverback.slnx
+dotnet test --solution Silverback.slnx
+```
 
-- Follow the applicable `.editorconfig` and the surrounding code, including the existing main-solution style when adding extended tests. Formatting tools are a first pass; review logical grouping manually afterward.
-- Use blank lines to separate logical steps. Normally leave a blank line before an `if`, loop, `lock`, `try`, or final `return` when it follows other statements, and after a guard clause before continuing the method. Do not insert blank lines immediately inside braces or between a condition and its body.
-- Keep closely related declarations and operations together, but separate setup, execution, synchronization and assertions in tests. Separate independent mock/callback registrations. Do not compress unrelated statements into one uninterrupted block or add a blank line after every statement mechanically.
-- Expand dense configuration initializers, long argument lists and fluent configuration chains over multiple lines. Use one property or configuration step per line when a block contains several settings; short, obvious initializers can remain inline.
-- Use braces for loops, following the repository's Rider settings. Keep simple single-statement guards compact where the surrounding code does so.
-- Keep formatting and readability changes behavior-preserving; do not combine them with unrelated refactoring or bug fixes.
-- Do not add a trailing period to simple, single-sentence code comments.
-- Give every variable and parameter a meaningful name, including the lambda parameters: a lambda is no different from any other method. Write `properties.OrderBy(property => property.Name)`, not `properties.OrderBy(p => p.Name)`. Single letters are acceptable only where they are the conventional name, as they would be in a `for` loop or a formula: `i` for an index, `n` for a number or count, `x` and `y` for the two sides of a comparison, and the `_` discard for an unused parameter. Any other short name needs a specific reason.
-- Use primary constructors (positional parameters) for records, but never for classes or structs: declare a regular constructor, assigning the dependencies to `private readonly` fields.
-- Name internal implementation methods with the `Core` suffix, before `Async` when applicable: `Stop` -> `StopCore`, `StopAsync` -> `StopCoreAsync`.
-- Synchronize shared state with `lock`, `SemaphoreSlim`, `Interlocked` or tasks. Do not use `volatile` or `Volatile.Read`/`Volatile.Write` "just in case" or for weakly ordered CPUs: use them only where the code relies on the order of reads or writes of different fields without a lock, or on a loop without calls seeing a new value, and name that order in a comment.
-- Document with `<exception cref="...">` the exceptions that a caller of the public and protected API can expect and act on: the configuration errors of `Build()` and `Validate()`, the produce and routing errors, the invalid-state and unsupported-operation errors, the timeouts of the testing helpers, and Silverback's own exceptions that surface from a public member (e.g. `UnhandledMessageException` or `OutboxProcessingException`). Write the tag text as the condition, without "Thrown if": `<exception cref="TimeoutException">The timeout elapsed before the outbox was emptied.</exception>`. Put the tag on the interface or abstract member, which the implementations inherit through `<inheritdoc />`, and add tags to a concrete type only for what it throws in addition.
-- Do not document `ArgumentNullException`, which the nullable annotations already express, `ObjectDisposedException`, the `OperationCanceledException` of a passed `CancellationToken` (except for the testing helpers that wait), the exceptions that only propagate from user code, Confluent.Kafka or MQTTnet, or the failures of internal invariants. State the allowed values in the `<param>` text instead of an `<exception>` tag (e.g. "Must be greater than zero.").
-- Before considering a change done, check the changed C# files for the Rider inspection warnings, which the build does not report: `dotnet jb inspectcode Silverback.slnx --no-build --include="<file>;<file>" --severity=WARNING --format=Text --output=<report>`, with the report in the operating system's temporary directory (it takes about 1.5 minutes). Fix the warnings, or suppress false positives with `[SuppressMessage("ReSharper", "<InspectionId>", Justification = "...")]`, as the surrounding code does.
-
-## Test organization
-
-- Unit tests have one test class per production type, named `<ProductionType>Tests`, in the corresponding unit test project. Mirror the production type's relative folder and namespace beneath the test project's root namespace. Omit generic arity from the test class name, following the existing convention.
-- Add coverage to the existing test class instead of introducing a separate feature- or scenario-named class. Only split unusually large classes into partial files when needed; retain the same class and namespace, using filenames such as `<ProductionType>Tests.Feature.cs`.
-- E2E and extended integration tests may be organized by feature or use case. This exception does not apply to unit test projects, including unit tests that exercise several collaborating components.
+- CI builds with `-c Release -warnaserror`. Analyzers run with `AnalysisMode=All`, StyleCop and `EnforceCodeStyleInBuild`, so any analyzer
+  or style warning fails CI.
+- `./coverage.ps1` builds and tests with coverage and opens an HTML report. `-UnitOnly` leaves out the E2E tests. Its coverlet options
+  must match the sonar workflow's (they leave out the test assemblies, migrations, `GeneratedCodeAttribute` members and auto-properties).
+  Hand-written code is excluded from the coverage only with `[ExcludeFromCodeCoverage(Justification = "...")]`, which the proxy
+  generators also emit on the generated members. Paths are excluded only for the scripts (`**/*.ps1`), the generator tools (`tools/**`) and
+  the generated `LoggerMessage.g.cs` files (under `obj`, which Sonar skips).
+- `docs/build.ps1`, run from `docs/`, builds and serves the DocFX site. It first runs the generators that produce the header and log-event
+  reference tables.
+- Local .NET tools (`dotnet tool restore`) are `jb` (ReSharper CLI for inspections and cleanup), `docfx` and `reportgenerator`.
 
 ## Running tests
 
-- "Run the tests" means the main solution: `dotnet test --solution Silverback.slnx`. The tests tagged `Dependency=Docker` (PostgreSQL) start their own containers, so they need only a running Docker (CI runs them too).
-- Do not run the extended integration tests (`tests/extended`) unless the user asks for them. Offer them when a change affects broker client behavior, such as consumer or producer logic, rebalancing, or a Confluent.Kafka or MQTTnet upgrade. A run takes over 12 minutes and builds Docker images from the working tree, so do not edit files while it runs.
-- The extended tests build with the locally cached `mcr.microsoft.com/dotnet/sdk:10.0` image. If the build fails with "A compatible .NET SDK was not found", run `docker pull mcr.microsoft.com/dotnet/sdk:10.0` to satisfy the `global.json` minimum.
+- "Run the tests" means the main solution: `dotnet test --solution Silverback.slnx`. CI (the continuous and sonar workflows) runs all the
+  unit and E2E tests in a single pass, with no filter, including the tests tagged `Dependency=Docker` (PostgreSQL). Those tests start their
+  own PostgreSQL containers, so they need only a running Docker. Without Docker, leave them out locally with
+  `--filter "Dependency!=Docker"`.
+- The tests use xUnit v3 on Microsoft Testing Platform (`global.json` sets the runner), so `dotnet test` takes `--solution` or `--project` and
+  the MTP options (e.g. `--report-trx`, `--coverlet`, `--hangdump`). xUnit accepts the usual `--filter` expressions. A project that has no
+  test matching the filter fails with exit code 8, so a solution-wide filtered run needs `--ignore-exit-code 8`, as in CI. Example for a
+  single class: `dotnet test --project tests/Silverback.Integration.Kafka.Tests --filter "FullyQualifiedName~KafkaConsumerEndpointsCacheTests"`.
+- The extended solution (`tests/extended/Silverback.Tests.Extended.slnx`) holds real-broker integration tests, benchmarks and a WPF
+  testbench. See `tests/extended/README.md`.
+- Do not run the extended integration tests (`tests/extended`) unless the user asks for them. Offer them when a change affects broker client
+  behavior, such as consumer or producer logic, rebalancing, or a Confluent.Kafka or MQTTnet upgrade. A run takes over 12 minutes and builds
+  Docker images from the working tree, so do not edit files while it runs.
+- The extended tests build with the locally cached `mcr.microsoft.com/dotnet/sdk:10.0` image. If the build fails with "A compatible .NET SDK
+  was not found", run `docker pull mcr.microsoft.com/dotnet/sdk:10.0` to satisfy the `global.json` minimum.
+
+## Repository mechanics
+
+- Package versions are managed centrally in `Directory.Packages.props`, so `PackageReference` elements carry no `Version`.
+- Each `.cs` file starts with the two-line copyright header from `stylecop.json`, which StyleCop enforces. Public and protected members in
+  `src` need XML docs. `tests/.editorconfig` relaxes many rules for test code.
+- Line endings are CRLF (`.editorconfig`). In Git Bash, `sed -i` silently rewrites files to LF, so edit source files with a tool that keeps
+  the line endings.
+- Test projects can use internal types, because the `src` csproj files declare `InternalsVisibleTo` for them.
+- `_autogenerated.cs` files hold the Kafka, Schema Registry and MQTT configuration proxies, which wrap the Confluent.Kafka and MQTTnet
+  settings. They are generated by `tools/Silverback.Tools.Generators.KafkaConfigProxies` and `MqttConfigProxies`, so do not edit them by
+  hand. The `update-confluent-kafka` and `update-mqttnet` skills (in `.claude/skills`) regenerate the Kafka and the MQTT ones, and the
+  `start-release` skill bumps `BaseVersion` and opens the changelog chapter.
+- Logging uses source generation. Declare a log event once, as a `[LoggerMessage]` partial method in the package's
+  `Diagnostics/*LoggerExtensions.cs` or `*TraceExtensions.cs`. The in-repo Roslyn generator
+  `tools/Silverback.Tools.Generators.LogEvents` then generates the public `*LogEvents` properties and their docs from these declarations.
+  Each package has its own event ID range: Core below 100, Integration 1000s, Kafka 2000s, MQTT 4000s, storage 6000s.
+- User documentation lives in `docs/guides` and the release notes in `docs/changelog/<major>00.md`, for example `500.md` for 5.x.
+
+## Code conventions
+
+- Follow the applicable `.editorconfig` and the surrounding code, including the existing main-solution style when adding extended tests.
+  Formatting tools are a first pass; review logical grouping manually afterward.
+- Use blank lines to separate logical steps. Normally leave a blank line before an `if`, loop, `lock`, `try`, or final `return` when it
+  follows other statements, and after a guard clause before continuing the method. Do not insert blank lines immediately inside braces or
+  between a condition and its body.
+- Keep closely related declarations and operations together, but separate setup, execution, synchronization and assertions in tests.
+  Separate independent mock/callback registrations. Do not compress unrelated statements into one uninterrupted block or add a blank line
+  after every statement mechanically.
+- Expand dense configuration initializers, long argument lists and fluent configuration chains over multiple lines. Use one property or
+  configuration step per line when a block contains several settings; short, obvious initializers can remain inline.
+- Use braces for loops, following the repository's Rider settings. Keep simple single-statement guards compact where the surrounding code
+  does so.
+- Keep formatting and readability changes behavior-preserving; do not combine them with unrelated refactoring or bug fixes.
+- Do not add a trailing period to simple, single-sentence code comments.
+- Give every variable and parameter a meaningful name, including the lambda parameters: a lambda is no different from any other method.
+  Write `properties.OrderBy(property => property.Name)`, not `properties.OrderBy(p => p.Name)`. Single letters are acceptable only where
+  they are the conventional name, as they would be in a `for` loop or a formula: `i` for an index, `n` for a number or count, `x` and `y`
+  for the two sides of a comparison, and the `_` discard for an unused parameter. Any other short name needs a specific reason.
+- Use primary constructors (positional parameters) for records, but never for classes or structs: declare a regular constructor, assigning
+  the dependencies to `private readonly` fields.
+- Name internal implementation methods with the `Core` suffix, before `Async` when applicable: `Stop` -> `StopCore`,
+  `StopAsync` -> `StopCoreAsync`.
+- Synchronize shared state with `lock`, `SemaphoreSlim`, `Interlocked` or tasks. Do not use `volatile` or `Volatile.Read`/`Volatile.Write`
+  "just in case" or for weakly ordered CPUs: use them only where the code relies on the order of reads or writes of different fields
+  without a lock, or on a loop without calls seeing a new value, and name that order in a comment.
+- Document with `<exception cref="...">` the exceptions that a caller of the public and protected API can expect and act on: the
+  configuration errors of `Build()` and `Validate()`, the produce and routing errors, the invalid-state and unsupported-operation errors,
+  the timeouts of the testing helpers, and Silverback's own exceptions that surface from a public member (e.g. `UnhandledMessageException`
+  or `OutboxProcessingException`). Write the tag text as the condition, without "Thrown if":
+  `<exception cref="TimeoutException">The timeout elapsed before the outbox was emptied.</exception>`. Put the tag on the interface or
+  abstract member, which the implementations inherit through `<inheritdoc />`, and add tags to a concrete type only for what it throws in
+  addition.
+- Do not document `ArgumentNullException`, which the nullable annotations already express, `ObjectDisposedException`, the
+  `OperationCanceledException` of a passed `CancellationToken` (except for the testing helpers that wait), the exceptions that only
+  propagate from user code, Confluent.Kafka or MQTTnet, or the failures of internal invariants. State the allowed values in the `<param>`
+  text instead of an `<exception>` tag (e.g. "Must be greater than zero.").
+- Before considering a change done, check the changed C# files for the Rider inspection warnings, which the build does not report:
+  `dotnet jb inspectcode Silverback.slnx --no-build --include="<file>;<file>" --severity=WARNING --format=Text --output=<report>`, with the
+  report in the operating system's temporary directory (it takes about 1.5 minutes). Fix the warnings, or suppress false positives with
+  `[SuppressMessage("ReSharper", "<InspectionId>", Justification = "...")]`, as the surrounding code does.
+
+## Test organization
+
+- Unit tests have one test class per production type, named `<ProductionType>Tests`, in the corresponding unit test project. Mirror the
+  production type's relative folder and namespace beneath the test project's root namespace. Omit generic arity from the test class name,
+  following the existing convention.
+- Add coverage to the existing test class instead of introducing a separate feature- or scenario-named class. Only split unusually large
+  classes into partial files when needed; retain the same class and namespace, using filenames such as `<ProductionType>Tests.Feature.cs`.
+- E2E and extended integration tests may be organized by feature or use case. This exception does not apply to unit test projects,
+  including unit tests that exercise several collaborating components.
 
 ## Release notes
 
-- Write each entry in `docs/changelog/*.md` for the users, who don't know the internals. State what was added, changed or fixed as they would notice it (the behavior or symptom, the feature, the public types and settings, linked with `<xref:...>`), not how it was implemented. Leave out the internal names and mechanisms (e.g. sequences, rollbacks, pushes, internal overloads or helper classes), even when the fix was about them.
-- Keep each entry short and telegraphic, usually a single line, but longer when the extra detail is useful to the users. Mention the consequence of a bug when it helps the users recognize it (e.g. "which delayed the reassignment of its partitions until the session timeout"), but do not explain why or how it happened, and do not turn the entry into a guide: the entry is only a hint, optionally pointing to the resolved issue or to the docs page with the details.
-- A breaking change states what changed and what the users should check or update. When it's actually the fix of a documented behavior, say so.
-- Link the related GitHub issue (e.g. `[[#272](https://github.com/BEagle1984/silverback/issues/272)]`), not the pull request, unless the pull request itself carries significant information. Add no link when there is no issue.
-- Entries are grouped by area (e.g. Kafka, mocked Kafka and testing, MQTT, locks), not in chronological order. Insert a new entry next to the existing entries for the same area.
+- Write each entry in `docs/changelog/*.md` for the users, who don't know the internals. State what was added, changed or fixed as they
+  would notice it (the behavior or symptom, the feature, the public types and settings, linked with `<xref:...>`), not how it was
+  implemented. Leave out the internal names and mechanisms (e.g. sequences, rollbacks, pushes, internal overloads or helper classes), even
+  when the fix was about them.
+- Keep each entry short and telegraphic, usually a single line, but longer when the extra detail is useful to the users. Mention the
+  consequence of a bug when it helps the users recognize it (e.g. "which delayed the reassignment of its partitions until the session
+  timeout"), but do not explain why or how it happened, and do not turn the entry into a guide: the entry is only a hint, optionally
+  pointing to the resolved issue or to the docs page with the details.
+- A breaking change states what changed and what the users should check or update. When it's actually the fix of a documented behavior,
+  say so.
+- Link the related GitHub issue (e.g. `[[#272](https://github.com/BEagle1984/silverback/issues/272)]`), not the pull request, unless the
+  pull request itself carries significant information. Add no link when there is no issue.
+- Entries are grouped by area (e.g. Kafka, mocked Kafka and testing, MQTT, locks), not in chronological order. Insert a new entry next to
+  the existing entries for the same area.
 - Do not add entries for changes that only touch tests, such as flaky test fixes.
 
 ## Design decisions
 
-- Record design decisions and their rationale in the GitHub issue that tracks the work, and summarize the ones that matter to readers of the code in the PR description. Do not create ADRs unless explicitly asked.
+- Record design decisions and their rationale in the GitHub issue that tracks the work, and summarize the ones that matter to readers of
+  the code in the PR description. Do not create ADRs unless explicitly asked.
 
 ## Git
 
-- Write short Conventional Commits subjects, without articles or filler words: `chore: migrate solutions to slnx`, not `chore: migrate the solutions to the slnx format`.
-- When a commit resolves a GitHub issue, end the message with a `Fixes #123` line in the body, so that the issue is linked and closed when the commit reaches `main`. Use `Refs #123` for a commit that only partially addresses the issue.
-- Do not commit or push without the user's explicit approval, unless the user asked you to. An approval covers only the change it was given for, not later commits.
+- Write short Conventional Commits subjects, without articles or filler words: `chore: migrate solutions to slnx`, not
+  `chore: migrate the solutions to the slnx format`.
+- When a commit resolves a GitHub issue, end the message with a `Fixes #123` line in the body, so that the issue is linked and closed when
+  the commit reaches `main`. Use `Refs #123` for a commit that only partially addresses the issue.
+- Do not commit or push without the user's explicit approval, unless the user asked you to. An approval covers only the change it was
+  given for, not later commits.
+
+## Temporary investigation files
+
+- Use the repository's top-level `temp/` directory for human-readable Markdown investigation reports. Keep one current summary per
+  investigation, updating the findings, evidence and status instead of accumulating overlapping reports. Distinguish committed fixes,
+  pending fixes and open issues.
+- Give reports meaningful names including the creation date: `YYYY-MM-DD-description.md`, for example
+  `2026-09-18-kafka-rebalance-findings.md`. Keep the filename stable when updating an existing summary; update the date inside it.
+- Do not retain disposable editing scripts, scratch projects, build output or duplicate logs in `temp/`. Prefer inline commands or the
+  operating system's temporary directory for one-off helpers; delete any repository-local scratch files before finishing the task.
+- Put test logs, TRX files and other generated evidence in the existing test/tool output directories. Retain only evidence needed for
+  unresolved findings or meaningful verification, reference it from the report, and remove redundant outputs. Do not discard an
+  unexplained failure merely because a retry passes.
+- `temp/` is ignored by Git. Do not commit or force-add reports, add them as Solution Items, or create permanent documentation links to
+  individual temporary files. Keep maintained documentation in its normal location.
+
+## Architecture
+
+The packages are layered, and each layer extends the one below it through DI registrations and pipeline behaviors.
+
+### Silverback.Core: in-process bus
+
+`IPublisher` runs each message through the sorted `IBehavior` pipeline (`BehaviorsProvider`), then invokes the matching subscribed
+methods. `SubscribedMethodsCache` finds these in the registered subscriber types. Argument resolvers allow a subscriber to take a single
+message, a collection or a stream (`IMessageStreamEnumerable`/`IAsyncEnumerable`). Return-value handlers republish the messages a
+subscriber returns. Core also contains distributed locks, distributed background services and the `ExtensibleFactories` used for
+pluggable serializers, storage and similar components.
+
+### Silverback.Integration: broker-agnostic bridge
+
+- **Producing.** `OutboundRouterBehavior` is a bus behavior with sort index -100. It wraps each published message that matches a producer
+  endpoint in an `IOutboundEnvelope` and hands it to the `IProducer`. `Producer` then runs the `IProducerBehavior` pipeline (activity,
+  headers, enrichers, key, filter, validation, serialization, encryption, chunking, header mapping) and calls the broker-specific
+  `ProduceCore`/`ProduceCoreAsync`. The endpoint's `IProduceStrategy` decides whether the message goes to the broker directly or to the
+  transactional outbox (`OutboxProduceStrategy`). Outbox messages are produced later by `OutboxWorker`.
+- **Consuming.** `Consumer<TIdentifier>` is the base class of the broker consumers. A broker-specific `ConsumerChannelsManager<TChannel>`
+  feeds each message into a `ConsumerPipelineContext`, which passes through the `IConsumerBehavior` pipeline. In order, that is activity,
+  fatal-exception logging, header mapping, the transaction handler (commit, rollback and error policies), raw sequencing, decryption,
+  binary messages, deserialization, validation, headers, then sequencing into batches, chunks and streams. Last comes
+  `PublisherConsumerBehavior` (sort index 2000), which publishes the inbound envelope to the bus and therefore to the subscribers.
+- Pipeline order is defined only by the constants in `BrokerBehaviorsSortIndexes` (`Producer`/`Consumer`). A custom behavior positions
+  itself relative to these constants.
+- **Error policies** (`Consuming/ErrorHandling`): retry, skip, move and stop, which can be chained.
+- **Sequences** (`Messaging/Sequences`): batch, chunking and unbounded streams. They span several consumed messages and are tracked
+  in a `SequenceStore`.
+- `BrokerClientsConnectorService` connects and disconnects all broker clients along with the host lifecycle.
+- Storage abstractions cover the outbox, client-side offsets and locks.
+
+### Broker packages
+
+- **Silverback.Integration.Kafka** hides Confluent.Kafka behind `IConfluentConsumerBuilder`, `IConfluentProducerBuilder` and
+  `IConfluentAdminClientFactory` (in `Messaging/Broker/Kafka`). Confluent's `Consume` is synchronous, so `KafkaConsumer` runs one
+  long-running consume loop (`ConsumeLoopHandler`). The loop writes into per-partition `PartitionChannel`s, which are processed
+  concurrently up to `MaxDegreeOfParallelism`. Rebalance callbacks start and stop these channels, and `OffsetsTracker` tracks the offsets
+  to commit or roll back. Consumer and producer settings are fluent builders, such as `KafkaConsumerConfigurationBuilder`, that produce
+  immutable configuration records validated on build.
+- **Silverback.Integration.MQTT** follows the same structure, with MQTTnet behind `IMqttNetClientFactory`/`IMqttClientWrapper`.
+- **Storage.** `Silverback.Storage.Relational` is the base for `PostgreSql` and `Sqlite`, while `EntityFramework` builds on it through
+  `DbContext`. `Memory` provides in-memory implementations. Together they implement the outbox, the Kafka offset store and the locks.
+
+### Testing packages
+
+These packages ship to users, so a bug in the mocks is a user-facing bug.
+
+- `UseMockedKafka()` replaces the Confluent builders with an in-memory broker: topics and partitions, consumer groups with rebalance
+  strategies (`Mocks/Rebalance`) and transactions.
+- `UseMockedMqtt()` does the same for MQTT.
+- `ITestingHelper` and the broker-specific `IKafkaTestingHelper`/`IMqttTestingHelper` expose helpers such as
+  `WaitUntilAllMessagesAreConsumedAsync`.
+
+The E2E tests in `tests/Silverback.Integration.Tests.E2E` run against these mocks. Only the PostgreSQL storage tests among them, tagged
+`Dependency=Docker`, need Docker. Kafka tests derive from `TestHost/KafkaTests`, which provides `Host`, `Helper`, `DefaultTopic` and
+`DefaultConsumerGroup`. MQTT tests derive from `MqttTests`. `E2ETests` itself has no `Type` trait, so a class that derives directly from it
+must declare `[Trait("Type", "E2E")]` to be selectable with `--filter "Type=E2E"`. No CI filter uses the trait, and `coverage.ps1 -UnitOnly`
+leaves out the E2E tests by namespace.
