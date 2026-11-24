@@ -57,6 +57,23 @@ public class StoredOffsetLoaderTests
         loader.ApplyStoredOffset(new TopicPartitionOffset("test-topic", 42, 3)).Offset.Value.ShouldBe(3);
     }
 
+    [Fact]
+    public void LoadStoredOffsets_ShouldThrow_WhenGroupIdIsNotSet()
+    {
+        IKafkaOffsetStore store = Substitute.For<IKafkaOffsetStore>();
+        KafkaOffsetStoreFactory storeFactory = new();
+        storeFactory.AddFactory<InMemoryKafkaOffsetStoreSettings>((_, _) => store);
+        StoredOffsetsLoader loader = new(
+            storeFactory,
+            new KafkaConsumerConfiguration { ClientSideOffsetStore = new InMemoryKafkaOffsetStoreSettings() },
+            _serviceProvider);
+
+        Action act = loader.LoadStoredOffsets;
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("GroupId not set.");
+        store.DidNotReceive().GetStoredOffsets(Arg.Any<string>());
+    }
+
     [Theory]
     [InlineData(10, 5)]
     [InlineData(5, 5)]
