@@ -185,7 +185,7 @@ The last will (or testament) message is sent by the broker on behalf of the clie
 - `WithDelay(TimeSpan)` (MQTT 5) delays the sending of the message; it isn't sent if the client reconnects in the meantime.
 - `WithExpiration(TimeSpan)` (MQTT 5) sets the message expiry interval.
 - `AddHeader(name, value)` (MQTT 5) adds a user property.
-- `WithContentType`, `WithCorrelationData` and `WithPayloadFormatIndicator` set the corresponding MQTT 5 properties.
+- `WithContentType`, `WithCorrelationData`, `WithResponseTopic` and `WithPayloadFormatIndicator` set the corresponding MQTT 5 properties.
 - The message is serialized as JSON by default; use `SerializeAsJson(...)` or `SerializeUsing(...)` to customize the serialization.
 
 ## Persistent Sessions

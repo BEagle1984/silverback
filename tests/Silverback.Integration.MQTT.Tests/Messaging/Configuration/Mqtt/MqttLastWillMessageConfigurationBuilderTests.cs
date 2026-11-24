@@ -269,6 +269,20 @@ public class MqttLastWillMessageConfigurationBuilderTests
     }
 
     [Fact]
+    public void WithResponseTopic_ShouldSetResponseTopic()
+    {
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
+
+        configurationBuilder
+            .ProduceTo("testaments")
+            .WithResponseTopic("responses");
+
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
+        willMessage.ResponseTopic.ShouldBe("responses");
+        willMessage.PayloadFormatIndicator.ShouldBe(MqttPayloadFormatIndicator.Unspecified);
+    }
+
+    [Fact]
     public void AddHeader_ShouldAddUserProperty()
     {
         MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();

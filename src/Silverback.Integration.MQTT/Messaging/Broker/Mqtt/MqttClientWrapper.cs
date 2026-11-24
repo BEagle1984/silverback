@@ -394,16 +394,20 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             PayloadSegment = queuedMessage.Content ?? EmptyBuffer.ArraySegment,
             QualityOfServiceLevel = queuedMessage.Endpoint.Configuration.QualityOfServiceLevel,
             Retain = queuedMessage.Endpoint.Configuration.Retain,
-            MessageExpiryInterval = queuedMessage.Endpoint.Configuration.MessageExpiryInterval,
-            ResponseTopic = queuedMessage.Headers?.GetValue(MqttMessageHeaders.ResponseTopic)
+            MessageExpiryInterval = queuedMessage.Endpoint.Configuration.MessageExpiryInterval
         };
 
-        string? correlationData = queuedMessage.Headers?.GetValue(MqttMessageHeaders.CorrelationData);
-        if (correlationData != null)
-            mqttApplicationMessage.CorrelationData = Convert.FromBase64String(correlationData);
-
+        // The response topic, the correlation data and the user properties require MQTT 5
         if (Configuration.AreHeadersSupported)
+        {
+            mqttApplicationMessage.ResponseTopic = queuedMessage.Headers?.GetValue(MqttMessageHeaders.ResponseTopic);
+
+            string? correlationData = queuedMessage.Headers?.GetValue(MqttMessageHeaders.CorrelationData);
+            if (correlationData != null)
+                mqttApplicationMessage.CorrelationData = Convert.FromBase64String(correlationData);
+
             mqttApplicationMessage.UserProperties = queuedMessage.Headers?.ToUserProperties(queuedMessage.Endpoint.Configuration.Chunk is { Size: < int.MaxValue });
+        }
 
         while (!_mqttClient.IsConnected)
         {
