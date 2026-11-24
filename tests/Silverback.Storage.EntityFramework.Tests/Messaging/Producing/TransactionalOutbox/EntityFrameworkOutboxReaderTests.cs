@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
@@ -162,6 +163,60 @@ public sealed class EntityFrameworkOutboxReaderTests : IDisposable
     }
 
     [Fact]
+    public async Task GetAsync_ShouldDisposeDbContextAndScope_WhenReturnedEnumerableIsDisposed()
+    {
+        using IServiceScope scope = _serviceProvider.CreateScope();
+        TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "test"));
+
+        IServiceScope readerScope = Substitute.For<IServiceScope>();
+        readerScope.ServiceProvider.Returns(_serviceProvider);
+        IServiceScopeFactory serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
+        serviceScopeFactory.CreateScope().Returns(readerScope);
+        TestDbContext? readerDbContext = null;
+        EntityFrameworkOutboxSettings outboxSettings = new(
+            typeof(TestDbContext),
+            (_, _) => readerDbContext = new TestDbContext(
+                new DbContextOptionsBuilder<TestDbContext>().UseSqlite(_sqliteConnection).Options));
+        EntityFrameworkOutboxReader outboxReader = new(outboxSettings, serviceScopeFactory);
+
+        IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
+        (await messages.ToListAsync()).Count.ShouldBe(1);
+        readerScope.DidNotReceive().Dispose();
+
+        messages.Dispose();
+
+        readerScope.Received(1).Dispose();
+        TestDbContext createdDbContext = readerDbContext.ShouldNotBeNull();
+        Action act = () => _ = createdDbContext.Model;
+        act.ShouldThrow<ObjectDisposedException>();
+    }
+
+    [Fact]
+    public async Task GetAsync_ShouldDisposeDbContextAndScopeAndRethrow_WhenQueryCannotBeCreated()
+    {
+        IServiceScope readerScope = Substitute.For<IServiceScope>();
+        readerScope.ServiceProvider.Returns(_serviceProvider);
+        IServiceScopeFactory serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
+        serviceScopeFactory.CreateScope().Returns(readerScope);
+        NoOutboxDbContext? readerDbContext = null;
+        EntityFrameworkOutboxSettings outboxSettings = new(
+            typeof(NoOutboxDbContext),
+            (_, _) => readerDbContext = new NoOutboxDbContext(
+                new DbContextOptionsBuilder<NoOutboxDbContext>().UseSqlite(_sqliteConnection).Options));
+        EntityFrameworkOutboxReader outboxReader = new(outboxSettings, serviceScopeFactory);
+
+        Func<Task> act = () => outboxReader.GetAsync(3);
+
+        await act.ShouldThrowAsync<InvalidOperationException>();
+        readerScope.Received(1).Dispose();
+        NoOutboxDbContext createdDbContext = readerDbContext.ShouldNotBeNull();
+        Action accessModel = () => _ = createdDbContext.Model;
+        accessModel.ShouldThrow<ObjectDisposedException>();
+    }
+
+    [Fact]
     public async Task GetLengthAsync_ShouldReturnCommittedItemsCount()
     {
         using IServiceScope scope = _serviceProvider.CreateScope();
@@ -239,5 +294,13 @@ public sealed class EntityFrameworkOutboxReaderTests : IDisposable
         }
 
         public DbSet<SilverbackOutboxMessage> Outbox { get; set; } = null!;
+    }
+
+    private sealed class NoOutboxDbContext : DbContext
+    {
+        public NoOutboxDbContext(DbContextOptions<NoOutboxDbContext> options)
+            : base(options)
+        {
+        }
     }
 }

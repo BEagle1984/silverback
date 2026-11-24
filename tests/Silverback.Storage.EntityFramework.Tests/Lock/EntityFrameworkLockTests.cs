@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -449,7 +450,78 @@ public sealed class EntityFrameworkLockTests : IDisposable
         handle.LockLostToken.IsCancellationRequested.ShouldBeTrue();
     }
 
+    [Fact]
+    public async Task AcquireAsync_ShouldLogAndRetry_WhenLockRowIsCreatedConcurrently()
+    {
+        EntityFrameworkLockSettings lockSettings = new($"test-lock{Guid.NewGuid():N}", _dbContextType, _dbContextFactory)
+        {
+            AcquireInterval = TimeSpan.FromMilliseconds(10),
+            HeartbeatInterval = TimeSpan.FromMilliseconds(10),
+            LockTimeout = TimeSpan.FromSeconds(100)
+        };
+        ConcurrentLockCreationInterceptor interceptor = new(lockSettings.LockName);
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString).AddInterceptors(interceptor))
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .AddEntityFrameworkLock());
+
+        using IServiceScope scope = serviceProvider.CreateScope();
+        TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(lockSettings, serviceProvider);
+
+        using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(10));
+        await using DistributedLockHandle handle = await distributedLock.AcquireAsync(cancellationTokenSource.Token);
+
+        interceptor.CompetingRowsInserted.ShouldBe(1);
+        SilverbackLock lockEntity = await dbContext.Locks.AsNoTracking().SingleAsync();
+        lockEntity.Handler.ShouldNotBeNull();
+        LoggerSubstitute<EntityFrameworkLock> logger =
+            serviceProvider.GetRequiredService<ILogger<EntityFrameworkLock>>().ShouldBeOfType<LoggerSubstitute<EntityFrameworkLock>>();
+        logger.Received(LogLevel.Information, typeof(DbUpdateException), $"Failed to acquire lock {lockSettings.LockName}", 65);
+        logger.DidNotReceive(LogLevel.Error, typeof(DbUpdateException), eventId: 64);
+    }
+
     public void Dispose() => _sqliteConnection.Dispose();
+
+    // Simulates another process creating the (free) lock row between the existence check and the insert
+    private sealed class ConcurrentLockCreationInterceptor : SaveChangesInterceptor
+    {
+        private readonly string _lockName;
+
+        private int _competingRowsInserted;
+
+        public ConcurrentLockCreationInterceptor(string lockName)
+        {
+            _lockName = lockName;
+        }
+
+        public int CompetingRowsInserted => _competingRowsInserted;
+
+        public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData,
+            InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
+        {
+            DbContext dbContext = eventData.Context.ShouldNotBeNull();
+
+            bool isInsertingLock = dbContext.ChangeTracker.Entries<SilverbackLock>()
+                .Any(entry => entry.State == EntityState.Added && entry.Entity.LockName == _lockName);
+
+            if (isInsertingLock && Interlocked.CompareExchange(ref _competingRowsInserted, 1, 0) == 0)
+            {
+                await dbContext.Database.ExecuteSqlAsync(
+                    $"INSERT INTO \"Locks\" (\"LockName\") VALUES ({_lockName})",
+                    cancellationToken);
+            }
+
+            return result;
+        }
+    }
 
     private class TestDbContext : DbContext
     {
