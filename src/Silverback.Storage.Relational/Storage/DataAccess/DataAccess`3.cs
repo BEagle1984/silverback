@@ -42,17 +42,16 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         CancellationToken cancellationToken = default)
     {
         DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, cancellationToken: cancellationToken).ConfigureAwait(false);
-        DbDataReader reader = await wrapper.Command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
         try
         {
-            IAsyncEnumerable<T> asyncEnumerable = MapAsync(reader, projection, cancellationToken);
+            DbDataReader reader = await wrapper.Command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
-            return new DataReaderAsyncEnumerable<T>(asyncEnumerable, reader, wrapper);
+            // The returned enumerable disposes the reader and the wrapper. Creating it can't throw, so only the wrapper is disposed below.
+            return new DataReaderAsyncEnumerable<T>(MapAsync(reader, projection, cancellationToken), reader, wrapper);
         }
-        catch
+        catch (Exception)
         {
-            await reader.DisposeAsync().ConfigureAwait(false);
             wrapper.Dispose();
             throw;
         }

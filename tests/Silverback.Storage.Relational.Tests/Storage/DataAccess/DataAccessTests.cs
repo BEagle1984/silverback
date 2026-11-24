@@ -80,6 +80,21 @@ public sealed class DataAccessTests : IDisposable
     }
 
     [Fact]
+    public async Task ExecuteQueryAsync_ShouldThrowAndDisposeConnection_WhenQueryFails()
+    {
+        Func<Task> act = () => _dataAccess.ExecuteQueryAsync(
+            reader => reader.GetString(0),
+            "SELECT Name FROM NonExistingTable",
+            null,
+            Timeout);
+
+        await act.ShouldThrowAsync<SqliteException>();
+        SqliteConnection connection = _dataAccess.CreatedConnections.ShouldHaveSingleItem();
+        connection.State.ShouldBe(ConnectionState.Closed);
+        _dataAccess.DisposedConnections.ShouldContain(connection);
+    }
+
+    [Fact]
     public async Task ExecuteNonQueryAsync_ShouldRollbackOwnedTransaction_WhenCommandFails()
     {
         Func<Task> act = () => _dataAccess.ExecuteNonQueryAsync(
