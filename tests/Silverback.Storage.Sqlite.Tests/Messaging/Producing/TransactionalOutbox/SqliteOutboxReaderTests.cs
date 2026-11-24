@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage;
 using Silverback.Storage.DataAccess;
@@ -97,6 +98,30 @@ public sealed class SqliteOutboxReaderTests : IDisposable
             [0x02],
             [0x03]
         ]);
+    }
+
+    [Fact]
+    public async Task GetAsync_ShouldReturnItemsWithHeaders()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddSqliteOutbox()));
+
+        SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(_outboxSettings);
+
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], [new MessageHeader("one", "1"), new MessageHeader("two", "2")], "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "test"));
+
+        IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
+
+        List<OutboxMessage> messages = await (await outboxReader.GetAsync(10)).ToListAsync();
+
+        messages.Count.ShouldBe(2);
+        messages[0].Headers.ShouldBe([new MessageHeader("one", "1"), new MessageHeader("two", "2")]);
+        messages[1].Headers.ShouldBeNull();
     }
 
     [Fact]

@@ -50,4 +50,28 @@ public class SqliteKafkaOffsetStoreSettingsBuilderTests
 
         settings.ShouldBeOfType<SqliteKafkaOffsetStoreSettings>().CreateTableTimeout.ShouldBe(TimeSpan.FromSeconds(40));
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void WithDbCommandTimeout_ShouldThrow_WhenTimeoutIsNotPositive(int seconds)
+    {
+        SqliteKafkaOffsetStoreSettingsBuilder builder = new("connection-string");
+
+        Action act = () => builder.WithDbCommandTimeout(TimeSpan.FromSeconds(seconds));
+
+        act.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe("dbCommandTimeout");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void WithCreateTableTimeout_ShouldThrow_WhenTimeoutIsNotPositive(int seconds)
+    {
+        SqliteKafkaOffsetStoreSettingsBuilder builder = new("connection-string");
+
+        Action act = () => builder.WithCreateTableTimeout(TimeSpan.FromSeconds(seconds));
+
+        act.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe("createTableTimeout");
+    }
 }
