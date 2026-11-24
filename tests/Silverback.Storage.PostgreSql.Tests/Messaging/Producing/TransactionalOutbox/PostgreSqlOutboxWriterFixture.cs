@@ -12,6 +12,7 @@ using Npgsql;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage;
 using Silverback.Tests.Logging;
@@ -152,6 +153,31 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresTests
         dbOutboxMessages.Count.ShouldBe(3);
         dbOutboxMessages.ShouldAllBe(dbOutboxMessage => dbOutboxMessage.Content == null);
         dbOutboxMessages.Select(dbOutboxMessage => dbOutboxMessage.EndpointName).ShouldBe(["test1", "test2", "test3"], ignoreOrder: true);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldAddItemWithHeadersToStorage()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+
+        SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
+
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
+
+        byte[] content = [0x01];
+        MessageHeader[] headers = [new("one", "1"), new("two", "2")];
+        await outboxWriter.AddAsync(new OutboxMessage(content, headers, "test"));
+
+        List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
+        OutboxMessage dbOutboxMessage = dbOutboxMessages.ShouldHaveSingleItem();
+        dbOutboxMessage.Content.ShouldBe(content);
+        dbOutboxMessage.Headers.ShouldBe(headers);
+        dbOutboxMessage.EndpointName.ShouldBe("test");
     }
 
     [Fact]
