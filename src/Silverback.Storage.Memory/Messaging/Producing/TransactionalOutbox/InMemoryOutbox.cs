@@ -44,11 +44,7 @@ public class InMemoryOutbox
             if (_storedOutboxMessages.Count == 0)
                 return TimeSpan.Zero;
 
-            DateTime oldestInsertDateTime = _storedOutboxMessages.Min(item => item.InsertDateTime);
-
-            return oldestInsertDateTime == default
-                ? TimeSpan.Zero
-                : DateTime.UtcNow - oldestInsertDateTime;
+            return DateTime.UtcNow - _storedOutboxMessages.Min(item => item.InsertDateTime);
         }
     }
 

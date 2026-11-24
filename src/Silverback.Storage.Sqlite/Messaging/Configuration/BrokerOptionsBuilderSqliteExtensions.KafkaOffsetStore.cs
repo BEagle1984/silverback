@@ -34,12 +34,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     {
         Check.NotNull(builder);
 
-        builder.AddSqliteKafkaOffsetStore();
-
-        KafkaOffsetStoreFactory factory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<KafkaOffsetStoreFactory>() ??
-                                          throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");
-
-        factory.OverrideFactories((settings, _) => new SqliteKafkaOffsetStore(MapSqliteSettings(settings, connectionString)));
+        AddSqliteKafkaOffsetStoreFactory(builder).OverrideFactories((settings, _) => new SqliteKafkaOffsetStore(MapSqliteSettings(settings, connectionString)));
 
         return builder;
     }
@@ -60,13 +55,20 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     {
         Check.NotNull(builder);
 
+        AddSqliteKafkaOffsetStoreFactory(builder);
+
+        return builder;
+    }
+
+    private static KafkaOffsetStoreFactory AddSqliteKafkaOffsetStoreFactory(BrokerOptionsBuilder builder)
+    {
         KafkaOffsetStoreFactory factory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<KafkaOffsetStoreFactory>() ??
                                           throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");
 
         if (!factory.HasFactory<SqliteKafkaOffsetStoreSettings>())
             factory.AddFactory<SqliteKafkaOffsetStoreSettings>((settings, _) => new SqliteKafkaOffsetStore(settings));
 
-        return builder;
+        return factory;
     }
 
     [SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Not security relevant")]

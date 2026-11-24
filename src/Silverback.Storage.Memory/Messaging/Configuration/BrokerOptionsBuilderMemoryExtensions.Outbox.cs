@@ -28,15 +28,8 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
     {
         Check.NotNull(builder);
 
-        builder.AddInMemoryOutbox();
-
-        OutboxReaderFactory? readerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxReaderFactory>();
-        OutboxWriterFactory? writerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxWriterFactory>();
-
-        if (readerFactory == null || writerFactory == null)
-            throw new InvalidOperationException("OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
-
-        InMemoryOutboxFactory outboxFactory = GetInMemoryOutboxFactory(builder);
+        (OutboxReaderFactory readerFactory, OutboxWriterFactory writerFactory, InMemoryOutboxFactory outboxFactory) =
+            AddInMemoryOutboxFactories(builder);
 
         readerFactory.OverrideFactories((settings, _) => new InMemoryOutboxReader(outboxFactory.GetOutbox(settings)));
         writerFactory.OverrideFactories((settings, serviceProvider) => new InMemoryOutboxWriter(
@@ -59,6 +52,14 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
     {
         Check.NotNull(builder);
 
+        AddInMemoryOutboxFactories(builder);
+
+        return builder;
+    }
+
+    private static (OutboxReaderFactory ReaderFactory, OutboxWriterFactory WriterFactory, InMemoryOutboxFactory OutboxFactory)
+        AddInMemoryOutboxFactories(BrokerOptionsBuilder builder)
+    {
         OutboxReaderFactory? readerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxReaderFactory>();
         OutboxWriterFactory? writerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxWriterFactory>();
 
@@ -79,7 +80,7 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
 
         builder.SilverbackBuilder.AddInMemoryLock();
 
-        return builder;
+        return (readerFactory, writerFactory, outboxFactory);
     }
 
     private static InMemoryOutboxFactory GetInMemoryOutboxFactory(BrokerOptionsBuilder builder)

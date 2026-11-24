@@ -73,7 +73,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
     /// <inheritdoc cref="object.GetHashCode" />
     public override int GetHashCode() => Settings.GetHashCode();
 
-    private sealed class OutboxProduceStrategyImplementation : IProduceStrategyImplementation, IDisposable
+    private sealed class OutboxProduceStrategyImplementation : IProduceStrategyImplementation
     {
         private readonly IOutboxWriter _outboxWriter;
 
@@ -82,8 +82,6 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         private readonly ISilverbackLogger<OutboxProduceStrategy> _logger;
 
         private readonly ISilverbackContext _context;
-
-        private DelegatedProducer<DelegatedProducerState>? _producer;
 
         public OutboxProduceStrategyImplementation(
             IOutboxWriter outboxWriter,
@@ -99,7 +97,8 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
 
         public async Task ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken)
         {
-            _producer ??= new DelegatedProducer<DelegatedProducerState>(
+            // The implementation is built for each produce, so the producer isn't reused
+            using DelegatedProducer<DelegatedProducerState> producer = new(
                 static (finalEnvelope, state, finalCancellationToken) => state.OutboxWriter.AddAsync(
                     MapToOutboxMessage(finalEnvelope),
                     state.Context,
@@ -108,7 +107,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
                 new DelegatedProducerState(_outboxWriter, _context),
                 _context.ServiceProvider);
 
-            await _producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
+            await producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
             _logger.LogStoringIntoOutbox(envelope);
         }
 
@@ -137,8 +136,6 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
                     }
                 },
                 cancellationToken);
-
-        public void Dispose() => _producer?.Dispose();
 
         private static OutboxMessage MapToOutboxMessage(IOutboundEnvelope envelope) =>
             new(

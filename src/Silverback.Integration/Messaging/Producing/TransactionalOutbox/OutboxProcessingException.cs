@@ -2,12 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
 /// <summary>
 ///     The exception that is thrown when an error occurs while processing the outbox messages.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = "Exception type: its throw sites are measured in the code that throws it")]
 public class OutboxProcessingException : SilverbackException
 {
     /// <summary>

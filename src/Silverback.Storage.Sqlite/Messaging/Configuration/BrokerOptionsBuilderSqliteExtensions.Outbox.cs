@@ -31,13 +31,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     {
         Check.NotNull(builder);
 
-        builder.AddSqliteOutbox();
-
-        OutboxReaderFactory? readerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxReaderFactory>();
-        OutboxWriterFactory? writerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxWriterFactory>();
-
-        if (readerFactory == null || writerFactory == null)
-            throw new InvalidOperationException("OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
+        (OutboxReaderFactory readerFactory, OutboxWriterFactory writerFactory) = AddSqliteOutboxFactories(builder);
 
         readerFactory.OverrideFactories((settings, _) => new SqliteOutboxReader(MapSqliteSettings(settings, connectionString)));
         writerFactory.OverrideFactories((settings, _) => new SqliteOutboxWriter(MapSqliteSettings(settings, connectionString)));
@@ -58,6 +52,13 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     {
         Check.NotNull(builder);
 
+        AddSqliteOutboxFactories(builder);
+
+        return builder;
+    }
+
+    private static (OutboxReaderFactory ReaderFactory, OutboxWriterFactory WriterFactory) AddSqliteOutboxFactories(BrokerOptionsBuilder builder)
+    {
         OutboxReaderFactory? readerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxReaderFactory>();
         OutboxWriterFactory? writerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxWriterFactory>();
 
@@ -72,7 +73,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
 
         builder.SilverbackBuilder.AddInMemoryLock();
 
-        return builder;
+        return (readerFactory, writerFactory);
     }
 
     private static SqliteOutboxSettings MapSqliteSettings(OutboxSettings settings, string connectionString)
