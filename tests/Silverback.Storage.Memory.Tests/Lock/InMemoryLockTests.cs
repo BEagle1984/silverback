@@ -4,8 +4,10 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Lock;
 using Silverback.Tests.Logging;
 using Xunit;
@@ -66,6 +68,17 @@ public class InMemoryLockTests
         Func<Task> act = () => handle.DisposeAsync().AsTask();
 
         await act.ShouldNotThrowAsync();
+    }
+
+    [Fact]
+    public async Task AcquireAsync_ShouldThrow_WhenLockIsDisposed()
+    {
+        InMemoryLock distributedLock = new(new InMemoryLockSettings("Lock"), Substitute.For<ISilverbackLogger<InMemoryLock>>());
+
+        distributedLock.Dispose();
+        Func<Task> act = () => distributedLock.AcquireAsync().AsTask();
+
+        await act.ShouldThrowAsync<ObjectDisposedException>();
     }
 
     [Fact]

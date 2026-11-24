@@ -5,10 +5,14 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Storage;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -16,6 +20,13 @@ namespace Silverback.Tests.Storage.Memory.Messaging.Producing.TransactionalOutbo
 
 public class InMemoryOutboxWriterTests
 {
+    public enum AddOverload
+    {
+        OneMessage,
+        MessagesEnumerable,
+        MessagesAsyncEnumerable
+    }
+
     [Fact]
     public async Task AddAsync_ShouldAddItemToStorage()
     {
@@ -131,5 +142,67 @@ public class InMemoryOutboxWriterTests
         [
             [0x02]
         ]);
+    }
+
+    [Theory]
+    [InlineData(AddOverload.OneMessage)]
+    [InlineData(AddOverload.MessagesEnumerable)]
+    [InlineData(AddOverload.MessagesAsyncEnumerable)]
+    public async Task AddAsync_ShouldLogWarningAndAddItem_WhenTransactionIsEnlisted(AddOverload overload)
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        LoggerSubstitute<InMemoryOutboxWriter> logger =
+            (LoggerSubstitute<InMemoryOutboxWriter>)serviceProvider.GetRequiredService<ILogger<InMemoryOutboxWriter>>();
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+        InMemoryOutboxSettings outboxSettings = new();
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
+        using IServiceScope scope = serviceProvider.CreateScope();
+        ISilverbackContext context = scope.ServiceProvider.GetRequiredService<ISilverbackContext>();
+        context.EnlistTransaction(Substitute.For<IStorageTransaction>());
+
+        OutboxMessage outboxMessage = new([0x01], null, "test");
+        Task addTask = overload switch
+        {
+            AddOverload.OneMessage => outboxWriter.AddAsync(outboxMessage, context),
+            AddOverload.MessagesEnumerable => outboxWriter.AddAsync([outboxMessage], context),
+            _ => outboxWriter.AddAsync(new[] { outboxMessage }.ToAsyncEnumerable(), context)
+        };
+        await addTask;
+
+        InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
+        InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
+        outbox.Get(10).ShouldBe([outboxMessage]);
+        logger.Received(
+            LogLevel.Warning,
+            null,
+            "Ambient transaction not supported by the in-memory outbox implementation; the messages will be stored ignoring the transaction",
+            StorageMemoryLogEvents.OutboxTransactionUnsupported.EventId.Id);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldNotLogWarning_WhenContextHasNoTransaction()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        LoggerSubstitute<InMemoryOutboxWriter> logger =
+            (LoggerSubstitute<InMemoryOutboxWriter>)serviceProvider.GetRequiredService<ILogger<InMemoryOutboxWriter>>();
+        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
+        InMemoryOutboxSettings outboxSettings = new();
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
+        using IServiceScope scope = serviceProvider.CreateScope();
+        ISilverbackContext context = scope.ServiceProvider.GetRequiredService<ISilverbackContext>();
+
+        OutboxMessage outboxMessage = new([0x01], null, "test");
+        await outboxWriter.AddAsync(outboxMessage, context);
+
+        InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
+        InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
+        outbox.Get(10).ShouldBe([outboxMessage]);
+        logger.DidNotReceive(LogLevel.Warning, null, eventId: StorageMemoryLogEvents.OutboxTransactionUnsupported.EventId.Id);
     }
 }

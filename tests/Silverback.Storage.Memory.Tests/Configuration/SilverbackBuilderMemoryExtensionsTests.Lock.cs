@@ -32,6 +32,43 @@ public class SilverbackBuilderMemoryExtensionsTests
     }
 
     [Fact]
+    public void AddInMemoryLock_ShouldNotThrow_WhenCalledTwice()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddInMemoryLock()
+            .AddInMemoryLock());
+        DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
+
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(
+            new InMemoryLockSettings("lock"),
+            serviceProvider);
+
+        distributedLock.ShouldBeOfType<InMemoryLock>();
+    }
+
+    [Fact]
+    public void AddInMemoryLock_ShouldThrow_WhenSilverbackNotAdded()
+    {
+        SilverbackBuilder builder = new(new ServiceCollection());
+
+        Action act = () => builder.AddInMemoryLock();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("DistributedLockFactory not found, AddSilverback has not been called.");
+    }
+
+    [Fact]
+    public void UseInMemoryLock_ShouldThrow_WhenSilverbackNotAdded()
+    {
+        SilverbackBuilder builder = new(new ServiceCollection());
+
+        Action act = () => builder.UseInMemoryLock();
+
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("DistributedLockFactory not found, AddSilverback has not been called.");
+    }
+
+    [Fact]
     public void UseInMemoryLock_ShouldOverrideAllLockSettingsTypes()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
